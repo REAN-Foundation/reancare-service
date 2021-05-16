@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "es6",
+        "listFiles":true,
+        "noImplicitAny": false,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "noEmitHelpers":false,
+        "alwaysStrict": true,
+        "suppressImplicitAnyIndexErrors": false,
+        "forceConsistentCasingInFileNames": true,
+        "outDir": "dist/",
+        "diagnostics": true,
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude":[ 
+        "node_modules",
+        "src/tests/*"
+     ],
+}
+

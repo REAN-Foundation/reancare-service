@@ -1,0 +1,37 @@
+{
+    "resourceType" : "Patient",
+    "name": [
+        {
+            "use": "official",
+            "given": ["patient_first_name", "patient_middle_name"],
+            "family": "patient_last_name",
+            "prefix": [
+                "patient_name_prefix"
+              ]
+        }
+    ],
+    "gender": "unknown",
+    "birthDate": "1234-12-12",
+    "telecom": [
+        {
+            "system": "phone",
+            "use": "mobile",
+            "value": "patient_phone_number"
+        },
+        {
+            "system": "email",
+            "value": "patient_email"
+        }
+    ],
+    "address": [
+        {
+            "line": [
+                "patient_address_first_line",
+                "patient_address_second_line"
+            ],
+            "city": "patient_address_city",
+            "district": "patient_address_district",
+            "postalCode": "patient_address_postal_code"
+        }
+    ]
+}

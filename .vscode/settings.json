@@ -1,0 +1,10 @@
+{
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "*.fhir.json"
+            ],
+            "url": "./src/modules/ehr/fhir/schema/fhir.schema.json"
+        }
+    ]
+}

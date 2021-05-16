@@ -40,6 +40,9 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+dist/
+test_data/clinical-nlp/output/
+test_data/fhir/output/
 
 # TypeScript v1 declaration files
 typings/
@@ -102,3 +105,8 @@ dist
 
 # TernJS port file
 .tern-port
+.vs/slnx.sqlite
+.vs/tasks.vs.json
+.vs/VSWorkspaceState.json
+.vs/config/applicationhost.config
+.vs/v16/.suo

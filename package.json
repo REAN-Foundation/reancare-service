@@ -27,8 +27,13 @@
     "express-fileupload": "^1.2.1",
     "googleapis": "^71.0.0",
     "helmet": "^4.6.0",
+    "mysql": "^2.18.1",
     "needle": "^2.6.0",
+    "pg": "^8.6.0",
+    "pg-hstore": "^2.3.3",
     "reflect-metadata": "^0.1.13",
+    "sequelize": "^6.6.2",
+    "sequelize-cli": "^6.2.0",
     "sleep": "^6.3.0",
     "tsyringe": "^4.5.0"
   },

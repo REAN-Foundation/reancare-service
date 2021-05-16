@@ -1,3 +1,11 @@
+
+/// <reference path = "../interfaces/patient.store.interface.ts" />  
+import { IStorageService } from "../interfaces/storage.service.interface";
+import { injectable, inject } from "tsyringe";
+
+////////////////////////////////////////////////////////////////////////
+
+@injectable()
 export class DbConnector {
 
     private static _instance: DbConnector = null;

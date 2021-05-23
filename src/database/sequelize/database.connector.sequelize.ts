@@ -3,17 +3,15 @@ import path = require('path');
 import { Sequelize, Dialect } from 'sequelize';
 import { DbConfig } from '../../configs/db.config';
 import { Logger } from '../../common/logger';
-import { IDbConnector } from '../../interfaces/db.connector.interface';
+import { IDatabaseConnector } from '../../interfaces/database.connector.interface';
 import { PostgresqlClient } from './clients/postgresql.client';
 import { MysqlClient } from './clients/mysql.client';
 
 const execSync = require('child_process').execSync;
 
-import { cat } from 'shelljs';
-
 //////////////////////////////////////////////////////////////
 
-export class DbConnectorSequelize implements IDbConnector {
+export class DatabaseConnector_Sequelize implements IDatabaseConnector {
 
     private _sequelize: Sequelize = null;
 
@@ -44,21 +42,8 @@ export class DbConnectorSequelize implements IDbConnector {
         });
     };
 
-    public authenticate = async (): Promise<boolean> => {
-        try {
-            if (!this._sequelize) {
-                throw new Error('Database conenction is invalid.');
-            }
-            await this._sequelize.authenticate();
-            return true;
-        } catch (error) {
-            Logger.instance().log(error.message);
-        }
-        return false;
-    };
-
     //Creates DB if does not exist
-    public createDb = async () => {
+    public createDatabase = async () => {
         try {
             var client = this.getClient();
             await client.createDb();
@@ -70,7 +55,7 @@ export class DbConnectorSequelize implements IDbConnector {
     };
 
     //Drops DB if exists
-    public dropDb = async () => {
+    public dropDatabase = async () => {
         try {
             var client = this.getClient();
             await client.dropDb();

@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import child_process from 'child_process';
+import { InputValidationError } from './input.validation.error';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -80,6 +81,16 @@ export class Helper {
             return true;
         }
         return false;
+    }
+
+    static handleValidationError = (result) => {
+        var index = 1;
+        var errorMessages = [];
+        for (var er of result.errors) {
+            errorMessages.push(` ${index}. ${er.msg} - <${er.value}> for <${er.param}> in ${er.location}`);
+            index++;
+        }
+        throw new InputValidationError(errorMessages);
     }
 }
 

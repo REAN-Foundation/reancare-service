@@ -6,10 +6,10 @@ import fileUpload = require('express-fileupload');
 import cors = require('cors');
 import helmet = require('helmet');
 
-import { Router } from './startup/router';
+import { Router } from './routes/router';
 import { Loader } from './startup/loader';
 import { Seeder } from './startup/seeder';
-import { DbConnector } from './startup/db.connector';
+import { DbConnector } from './database/database.connector';
 import { Scheduler } from './startup/scheduler';
 
 import { Logger } from './common/logger';
@@ -18,7 +18,7 @@ import { Logger } from './common/logger';
 
 export default class Application {
 
-    public _app:any = null;
+    public _app:express.Application = null;
     private _router: Router = null;
     private static _instance: Application = null;
 

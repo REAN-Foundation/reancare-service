@@ -27,8 +27,8 @@ import * as bcrypt from 'bcryptjs';
 
 @Table({
     timestamps: true,
-    modelName: 'User',
-    tableName: 'users',
+    modelName: 'Client',
+    tableName: 'clients',
     paranoid: true,
     freezeTableName: true
 })
@@ -43,40 +43,19 @@ export class User extends Model {
     })
     id: string;
 
+    @Length({ min: 1, max: 64})
+    @Column({
+        type: DataType.STRING(64),
+        allowNull: false,
+    })
+    ClientName: string;
+
     @Length({ min: 1, max: 16})
     @Column({
         type: DataType.STRING(16),
-        allowNull: true,
-    })
-    Prefix: string;
-
-    @Length({ min: 1, max: 25})
-    @Column({
-        type: DataType.STRING(25),
         allowNull: false,
     })
-    FirstName: string;
-
-    @Length({ min: 1, max: 25})
-    @Column({
-        type: DataType.STRING(25),
-        allowNull: true,
-    })
-    MiddleName: string;
-
-    @Length({ min: 1, max: 25})
-    @Column({
-        type: DataType.STRING(25),
-        allowNull: false,
-    })
-    LastName: string;
-
-    @Length({ min: 1, max: 10})
-    @Column({
-        type: DataType.STRING(10),
-        allowNull: true,
-    })
-    UserName: string;
+    ClientCode: string;
 
     @Length({ min: 6, max: 256})
     @Column({
@@ -100,41 +79,24 @@ export class User extends Model {
     })
     Email: string;
 
+    @Length({ min: 16, max: 256})
     @Column({
-        type: DataType.ENUM,
-        values: ['Male', 'Female', 'Other'],
-        defaultValue: 'Male',
+        type: DataType.STRING(256),
+        allowNull: true,
+    })
+    APIKey: string;
+
+    @Column({
+        type: DataType.DATE,
         allowNull: false,
     })
-    Gender: string;
+    ValidFrom: Date;
 
-    @IsDate
     @Column({
-        type: DataType.DATEONLY,
-        allowNull: true
+        type: DataType.STRING(10),
+        allowNull: false,
     })
-    BirthDate: Date;
-
-    @IsUUID(4)
-    @Column({
-        type: DataType.UUIDV4,
-        allowNull: true
-    })
-    ImageResourceId: string;
-
-    @IsInt
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: true
-    })
-    MainRole: number;
-
-    @IsUUID(4)
-    @Column({
-        type: DataType.UUIDV4,
-        allowNull: true
-    })
-    RoleTableId: string;
+    ValidTo: Date;
 
     @Column({
         type: DataType.BOOLEAN,
@@ -154,8 +116,8 @@ export class User extends Model {
     DeletedAt: Date;
 
     @BeforeCreate
-    static encryptPassword(user) {
-        user.Password = bcrypt.hashSync(user.Password, bcrypt.genSaltSync(8));
+    static encryptPassword(client) {
+        client.Password = bcrypt.hashSync(client.Password, bcrypt.genSaltSync(8));
     }
 
 };

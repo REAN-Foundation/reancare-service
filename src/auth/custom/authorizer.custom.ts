@@ -31,7 +31,7 @@ export class Authorizer_custom implements IAuthorizer {
 
             }
             catch (err) {
-                Logger.instance().log(JSON.stringify(err, null, 2));
+                ResponseHandler.failure(request, response, 'Unauthorized access', 401);
             }            
     };
 

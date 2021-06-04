@@ -16,6 +16,7 @@ export class Router {
                 });
 
                 require('./user.routes')(this._app);
+                require('./client.routes')(this._app);
                 require('./patient.routes')(this._app);
 
                 resolve(true);

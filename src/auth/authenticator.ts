@@ -3,6 +3,9 @@ import express from 'express';
 import { IAuthenticator } from '../interfaces/authenticator.interface';
 import { injectable, inject } from "tsyringe";
 
+import { ResponseHandler } from '../common/response.handler';
+import {Logger } from '../common/logger';
+
 ////////////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -12,16 +15,31 @@ export class Authenticator {
         @inject('IAuthenticator') private _authenticator: IAuthenticator
     ) {}
 
-    public authenticate = async (
+    public authenticateUser = async (
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
     ) => {
         try {
-            await this._authenticator.authenticate(request, response);
+            await this._authenticator.authenticateUser(request, response);
             next();
         } catch (error) {
+            Logger.instance().log(error.message);
+            ResponseHandler.failure(request, response, 'User authentication error: ' + error.message, 401);
+        }
+    };
 
+    public authenticateClient = async (
+        request: express.Request,
+        response: express.Response,
+        next: express.NextFunction
+    ) => {
+        try {
+            await this._authenticator.authenticateClient(request, response);
+            next();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            ResponseHandler.failure(request, response, 'Client authentication error: ' + error.message, 401);
         }
     };
 }

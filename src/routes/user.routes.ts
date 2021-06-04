@@ -10,34 +10,17 @@ export default (app: express.Application) => {
     const authorizer = Loader.authorizer;
     const controller = new UserController();
 
-    router.post(
-        '',
-        [
-            authenticator.authenticate,
-            controller.setCreateContext,
-            controller.sanitizeCreate,
-            authorizer.authorize,
-        ],
-        controller.create
-    );
+    //Note:
+    //For user controller, there will not be end-points for create, update and delete.
+    //User will not be directly created/updated/deleted, but through user type specific
+    //entity controllers such patient, doctor, etc.
 
-    // router.get('/list', [
-    //     authenticator.authenticate,
-    //     controller.authorizeList,
-    //     controller.sanitizeList
-    // ], controller.search);
-
-    // router.get('/:id', authenticate, controller.authorize_get_by_id, controller.sanitize_get_by_id, controller.get_by_id);
-    // router.get('/display-id/:displayId', authenticate, controller.authorize_get_by_id, controller.sanitize_get_by_id, controller.get_by_display_id);
-    // router.put('/:id', authenticate, controller.authorize_update, controller.sanitize_update, controller.update);
-    // router.delete('/:id', authenticate, controller.authorize_delete, controller.sanitize_delete, controller.delete);
-
-    // router.post('/generate-otp', controller.generate_otp);
-    // router.post('/login-otp', controller.login_with_otp);
-    // router.post('/login', controller.login_with_password);
-    // router.post("/change-password", authenticate, controller.authorize_change_password, controller.sanitize_change_password, controller.change_password);
-    
-    // router.get('/deleted', authenticate, controller.get_deleted);
+    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
+    router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
+    router.post('/login-with-password', authenticator.authenticateClient, controller.loginWithPassword);
+    router.post('/reset-password', authenticator.authenticateClient, controller.resetPassword);
+    router.post('/generate-otp', authenticator.authenticateClient, controller.generateOtp);
+    router.post('/login-with-otp', authenticator.authenticateClient, controller.loginWithOtp);
 
     app.use('/api/v1/user', router);
 };

@@ -6,8 +6,6 @@ export interface CurrentUser {
     Prefix: string,
     Phone: string,
     Email: string,
-    Roles: string[],
-    ClientId: string,
-    ClientName: string 
+    Roles: string[]
 };
 

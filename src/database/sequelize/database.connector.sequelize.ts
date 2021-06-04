@@ -4,8 +4,8 @@ import { Sequelize, Dialect } from 'sequelize';
 import { DbConfig } from '../../configs/db.config';
 import { Logger } from '../../common/logger';
 import { IDatabaseConnector } from '../../interfaces/database.connector.interface';
-import { PostgresqlClient } from './clients/postgresql.client';
-import { MysqlClient } from './clients/mysql.client';
+import { PostgresqlClient } from './db_clients/postgresql.client';
+import { MysqlClient } from './db_clients/mysql.client';
 
 const execSync = require('child_process').execSync;
 

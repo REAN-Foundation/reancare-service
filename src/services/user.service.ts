@@ -28,28 +28,28 @@ export class UserService {
         return true;
     }
 
-    public generateOtp = async(obj: any): Promise<boolean> => {
+    public generateOtp = async(obj: any): Promise<any> => {
 
         return true;
     }
 
-    public loginWithOtp = async(phone:string, email:string, userId:string): Promise<boolean> => {
+    public loginWithOtp = async(loginObject:any): Promise<any> => {
 
         return true;
     }
 
-    public addUserDeviceDetails = async(phone:string, email:string, userId:string): Promise<boolean> => {
+    // public addUserDeviceDetails = async(phone:string, email:string, userId:string): Promise<boolean> => {
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    public deleteUserDeviceDetails = async(phone:string, email:string, userId:string): Promise<boolean> => {
+    // public deleteUserDeviceDetails = async(phone:string, email:string, userId:string): Promise<boolean> => {
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    public getUserDeviceDetails = async(phone:string, email:string, userId:string): Promise<boolean> => {
+    // public getUserDeviceDetails = async(phone:string, email:string, userId:string): Promise<boolean> => {
 
-        return true;
-    }
+    //     return true;
+    // }
 }

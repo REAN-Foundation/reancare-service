@@ -8,6 +8,7 @@ import { Helper } from '../../../../common/helper';
 import { NotThere } from '../../../../common/system.types';
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
+import { UserRole } from "../models/user.role.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -23,6 +24,9 @@ export class UserMapper {
         var firstName = user.FirstName ? (user.FirstName + ' ') : '';
         const displayName:string = prefix + firstName + user.LastName ?? '';
         const age = Helper.getAgeFromBirthDate(user.BirthDate);
+
+        var userRoleRepo = new UserRoleRepo();
+        const userRoles = await userRoleRepo.getUserRoles(user.id);
 
         var dto: UserDTO = {
             id: user.id,
@@ -41,7 +45,7 @@ export class UserMapper {
             ActiveSince: user.CreateAt,
             IsActive: user.IsActive,
             LastLogin: user.LastLogin,
-            Roles: 
+            Roles: userRoles
         };
         return dto;
     }

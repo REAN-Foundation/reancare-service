@@ -2,9 +2,6 @@ import { UserDTO, UserDTOLight } from "../../../dtos/user.dto";
 import { IUserRepo } from "../../../repository.interfaces/user.repo.interface";
 import { User } from '../models/user.model';
 import { UserMapper } from "../mappers/user.mapper";
-import { Sequelize } from "sequelize/types";
-import { Helper } from '../../../../common/helper';
-import { NotThere } from '../../../../common/system.types';
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 

@@ -33,7 +33,7 @@ export class Role extends Model {
         autoIncrement: true,
         allowNull: false
     })
-    id: Number;
+    id: number;
 
     @Length({ min: 1, max: 16})
     @Column({

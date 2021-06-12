@@ -7,7 +7,7 @@ export interface IUserRoleRepo {
 
     addUserRole(userId: string, roleId: number): Promise<UserRoleDTO>;
 
-    removeUserRole(userId: string, roleId: number): Promise<boolean>;
+    removeUserRole(userId: string): Promise<boolean>;
 
     getUserCountByRoles(): Promise<any>;
 

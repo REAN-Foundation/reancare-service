@@ -1,19 +1,29 @@
 
 import { IUserRoleRepo } from "../../../repository.interfaces/user.role.repo.interface";
-import { Role } from '../models/role.model';
 import { UserRole } from '../models/user.role.model';
-import { Sequelize } from "sequelize/types";
-import { RoleDTO } from "../../../../data/dtos/role.dto";
 import { UserRoleDTO } from "../../../../data/dtos/user.role.dto";
 import { UserRoleMapper } from '../mappers/user.role.mapper';
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
+import { RoleRepo } from "./role.repo";
 
+///////////////////////////////////////////////////////////////////////
 
 export class UserRoleRepo implements IUserRoleRepo {
-    
-    getUserRoles(userId: string): Promise<UserRoleDTO[]> {
-        throw new Error('Method not implemented.');
+
+    getUserRoles = async (userId: string): Promise<UserRoleDTO[]> => {
+        try {
+            var userRoles = await UserRole.findAll({where: {UserId: userId}});
+            var dtos: UserRoleDTO[] = [];
+            for await(var r of userRoles) {
+                var dto = await UserRoleMapper.toDTO(r);
+                dtos.push(dto);
+            }          
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
     addUserRole = async (userId: string, roleId: number): Promise<UserRoleDTO> => {
@@ -31,11 +41,33 @@ export class UserRoleRepo implements IUserRoleRepo {
         }
     };
 
-    removeUserRole(userId: string, roleId: number): Promise<boolean> {
-        throw new Error('Method not implemented.');
+    removeUserRole = async (userId: string): Promise<boolean> => {
+        try {
+            await UserRole.destroy({where: {UserId: userId}});
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
-    getUserCountByRoles(): Promise<any> {
-        throw new Error('Method not implemented.');
+    getUserCountByRoles = async (): Promise<any> => {
+        try {
+            var userCountForRoles = {};
+            var roleRepo = new RoleRepo();
+            var allRoles = await roleRepo.search();
+            for await(var r of allRoles) {
+                var roleCount = await UserRole.count({
+                    where: {
+                        RoleId: r.id,
+                    },
+                });
+                userCountForRoles[r.RoleName] = roleCount;
+            }  
+            return userCountForRoles;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 }

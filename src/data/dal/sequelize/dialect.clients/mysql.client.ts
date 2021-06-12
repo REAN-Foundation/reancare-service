@@ -1,11 +1,12 @@
 
 const mysql = require('mysql');
-import { Logger } from '../../../common/logger';
-import { DbConfig } from '../../../configs/db.config';
+import { Logger } from '../../../../common/logger';
+import { DbConfig } from '../../../../configs/db.config';
 
 ////////////////////////////////////////////////////////////////
 
 export class MysqlClient {
+    
     public static createDb = async () => {
         try {
             const config = DbConfig.config;

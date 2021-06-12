@@ -1,10 +1,22 @@
 
-import { User } from '../database/sequelize/models/user.model';
-
+import { IUserRepo } from '../data/repository.interfaces/user.repo.interface';
+import { IUserRoleRepo } from '../data/repository.interfaces/user.role.repo.interface';
+import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
 
 export class UserService {
 
+    _userRepo: IUserRepo = null;
+    _userRoleRepo: IUserRoleRepo = null;
+
+
     constructor(){}
+
+    public search = async(filters: any): Promise<any[]> => {
+
+        var users = [];
+
+        return users;
+    }
 
     public search = async(filters: any): Promise<any[]> => {
 

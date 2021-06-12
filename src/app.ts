@@ -9,9 +9,6 @@ import helmet = require('helmet');
 import { Router } from './routes/router';
 import { Loader } from './startup/loader';
 import { Seeder } from './startup/seeder';
-import { DbConnector } from './database/database.connector';
-import { Scheduler } from './startup/scheduler';
-
 import { Logger } from './common/logger';
 
 /////////////////////////////////////////////////////////////////////////
@@ -33,15 +30,15 @@ export default class Application {
     
     public start = async() => {
         try{
+
             //Load the modules
-            var loader = Loader.instance();
-            await loader.init();
+            await Loader.init();
 
             //Connect with database
-            await DbConnector.instance().init();
+            await Loader.databaseConnector.init();
 
             //Set-up middlewares
-            this.setupMiddlewares();
+            await this.setupMiddlewares();
 
             //Set the routes
             await this._router.init();
@@ -62,7 +59,7 @@ export default class Application {
     }
 
 
-    private setupMiddlewares = () => {
+    private setupMiddlewares = async (): Promise<boolean> => {
 
         return new Promise((resolve, reject) => {
             try {

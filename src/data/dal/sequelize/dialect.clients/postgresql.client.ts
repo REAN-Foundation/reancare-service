@@ -1,7 +1,7 @@
 
 import { Client } from 'pg';
-import { Logger } from '../../../common/logger';
-import { DbConfig } from '../../../configs/db.config';
+import { Logger } from '../../../../common/logger';
+import { DbConfig } from '../../../../configs/db.config';
 
 ////////////////////////////////////////////////////////////////
 

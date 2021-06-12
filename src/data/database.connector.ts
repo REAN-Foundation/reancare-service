@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { IDatabaseConnector } from '../interfaces/database.connector.interface';
 import { injectable, inject } from "tsyringe";
-import { String } from 'aws-sdk/clients/acm';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -11,7 +10,7 @@ export class DatabaseConnector {
     constructor(@inject("IDatabaseConnector") private _db: IDatabaseConnector) {
     }
 
-    public init = async () => {
+    public init = async (): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             try {
                 this._db.connect();
@@ -22,7 +21,7 @@ export class DatabaseConnector {
         });
     };
 
-    public createDatabase = async () => {
+    public createDatabase = async (): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             try {
                 this._db.createDatabase();
@@ -33,7 +32,7 @@ export class DatabaseConnector {
         });
     };
 
-    public dropDatabase = async () => {
+    public dropDatabase = async (): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             try {
                 this._db.dropDatabase();
@@ -44,7 +43,7 @@ export class DatabaseConnector {
         });
     };
 
-    public migrate = async () => {
+    public migrate = async (): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             try {
                 this._db.migrate();
@@ -55,7 +54,7 @@ export class DatabaseConnector {
         });
     };
 
-    public executeQuery = async (query: String) => {
+    public executeQuery = async (query: string): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             try {
                 this._db.executeQuery(query);

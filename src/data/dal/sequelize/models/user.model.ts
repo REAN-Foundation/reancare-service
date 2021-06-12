@@ -46,27 +46,28 @@ export class User extends Model {
     @Length({ min: 1, max: 16})
     @Column({
         type: DataType.STRING(16),
-        allowNull: true,
+        allowNull: false,
+        defaultValue: ''
     })
     Prefix: string;
 
-    @Length({ min: 1, max: 25})
+    @Length({ min: 1, max: 70})
     @Column({
-        type: DataType.STRING(25),
+        type: DataType.STRING(70),
         allowNull: false,
     })
     FirstName: string;
 
-    @Length({ min: 1, max: 25})
+    @Length({ min: 1, max: 70})
     @Column({
-        type: DataType.STRING(25),
+        type: DataType.STRING(70),
         allowNull: true,
     })
     MiddleName: string;
 
-    @Length({ min: 1, max: 25})
+    @Length({ min: 1, max: 70})
     @Column({
-        type: DataType.STRING(25),
+        type: DataType.STRING(70),
         allowNull: false,
     })
     LastName: string;
@@ -102,7 +103,7 @@ export class User extends Model {
 
     @Column({
         type: DataType.ENUM,
-        values: ['Male', 'Female', 'Other'],
+        values: ['Male', 'Female', 'Other', 'Unknown'],
         defaultValue: 'Male',
         allowNull: false,
     })
@@ -122,26 +123,19 @@ export class User extends Model {
     })
     ImageResourceId: string;
 
-    @IsInt
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: true
-    })
-    MainRole: number;
-
-    @IsUUID(4)
-    @Column({
-        type: DataType.UUIDV4,
-        allowNull: true
-    })
-    RoleTableId: string;
-
     @Column({
         type: DataType.BOOLEAN,
         allowNull: false,
         defaultValue: true
     })
     IsActive: boolean;
+
+    @IsDate
+    @Column({
+        type: DataType.DATE,
+        allowNull: true
+    })
+    LastLogin: Date;
 
     @Column
     @CreatedAt

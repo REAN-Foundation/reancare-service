@@ -92,5 +92,31 @@ export class Helper {
         }
         throw new InputValidationError(errorMessages);
     }
+
+    static getAgeFromBirthDate = (birthdate: Date, onlyYears: boolean = false): string => {
+
+        if(birthdate === null) {
+            return '';
+        }
+        var bd = Date.parse(birthdate.toDateString());
+        var milsecs = Date.now() - bd;
+
+        const milsecInYear = 365 * 24 * 3600 * 1000;
+        const milsecsInMonth = 30 * 24 * 3600 * 1000;
+
+        var years = Math.floor(milsecs / milsecInYear);
+        var remainder = milsecs % milsecInYear;
+        var months = Math.floor(remainder / milsecsInMonth);
+        
+        var age = years > 0 ? years.toString() + ' years': '';
+        if(onlyYears) {
+            if(age.length == 0) {
+                return '0 years';
+            }
+            return age;
+        }
+        age = age + (months > 0 ? ' and ' + months.toString() + ' months': '');
+        return age;
+    }
 }
 

@@ -76,7 +76,7 @@ export class User extends Model {
         allowNull: false,
         defaultValue: '+05:30'
     })
-    TimeZone: string;
+    DefaultTimeZone: string;
 
     @Column
     @CreatedAt

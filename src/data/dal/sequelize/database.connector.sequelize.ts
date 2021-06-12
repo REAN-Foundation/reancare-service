@@ -1,44 +1,44 @@
 import fs = require('fs');
 import path = require('path');
 import { Sequelize, Dialect } from 'sequelize';
-import { DbConfig } from '../../configs/db.config';
-import { Logger } from '../../common/logger';
-import { IDatabaseConnector } from '../../interfaces/database.connector.interface';
-import { PostgresqlClient } from './db_clients/postgresql.client';
-import { MysqlClient } from './db_clients/mysql.client';
+import { DbConfig } from '../../../configs/db.config';
+import { Logger } from '../../../common/logger';
+import { IDatabaseConnector } from '../../../interfaces/database.connector.interface';
+import { PostgresqlClient } from './dialect.clients/postgresql.client';
+import { MysqlClient } from './dialect.clients/mysql.client';
 
 const execSync = require('child_process').execSync;
 
 //////////////////////////////////////////////////////////////
 
 export class DatabaseConnector_Sequelize implements IDatabaseConnector {
-
     private _sequelize: Sequelize = null;
 
     public connect = async (): Promise<boolean> => {
         return new Promise((resolve, reject) => {
-            const config = DbConfig.config;
-            const dialect: Dialect = this.getDialect();
+            try {
+                const config = DbConfig.config;
+                const dialect: Dialect = this.getDialect();
 
-            var options = {
-                host: config.host,
-                dialect: dialect,
-                pool: {
-                    max: config.pool.max,
-                    min: config.pool.min,
-                    acquire: config.pool.acquire,
-                    idle: config.pool.idle,
-                },
-                logging: false, //TODO: Please provide a function here to handle logging...
-            };
+                var options = {
+                    host: config.host,
+                    dialect: dialect,
+                    pool: {
+                        max: config.pool.max,
+                        min: config.pool.min,
+                        acquire: config.pool.acquire,
+                        idle: config.pool.idle,
+                    },
+                    logging: false, //TODO: Please provide a function here to handle logging...
+                };
 
-            const sequelize = new Sequelize(
-                config.database,
-                config.username,
-                config.password,
-                options
-            );
-            this._sequelize = sequelize;
+                const sequelize = new Sequelize(config.database, config.username, config.password, options);
+                this._sequelize = sequelize;
+                resolve(true);
+            } catch (error) {
+                reject(error);
+                Logger.instance().log(error.message);
+            }
         });
     };
 
@@ -113,5 +113,4 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
         }
         return PostgresqlClient;
     }
-
 }

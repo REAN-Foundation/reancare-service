@@ -1,12 +1,10 @@
 import 'reflect-metadata';
-import { container } from 'tsyringe';
+import { container, DependencyContainer } from 'tsyringe';
 
-import { DatabaseConnector_Sequelize } from "../data/dal/sequelize/database.connector.sequelize";
 import { DatabaseConnector } from '../data/database.connector';
-import { Authenticator_jwt } from "../auth/jwt/authenticator.jwt";
 import { Authenticator } from '../auth/authenticator';
-import { Authorizer_custom } from "../auth/custom/authorizer.custom";
 import { Authorizer } from '../auth/authorizer';
+import { Injector } from './injector';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,6 +13,7 @@ export class Loader {
     private static _authorizer: Authorizer = null;
     private static _authenticator: Authenticator = null;
     private static _databaseConnector: DatabaseConnector = null;
+    private static _container: DependencyContainer = container;
 
     public static get authenticator() {
         return Loader._authenticator;
@@ -28,20 +27,18 @@ export class Loader {
         return Loader._databaseConnector;
     }
 
+    public static get container() {
+        return Loader._container;
+    }
+
     public static init = async () => {
         return new Promise((resolve, reject) => {
             try {
 
-                //Register database service
-                container.register('IDatabaseConnector', DatabaseConnector_Sequelize);
+                Injector.registerInjections(container);
+
                 Loader._databaseConnector = container.resolve(DatabaseConnector);
-
-                //Register authenticator
-                container.register('IAuthenticator', Authenticator_jwt);
                 Loader._authenticator = container.resolve(Authenticator);
-
-                //Register authorizer
-                container.register('IAuthorizer', Authorizer_custom);
                 Loader._authorizer = container.resolve(Authorizer);
 
                 resolve(true);
@@ -52,3 +49,4 @@ export class Loader {
         });
     };
 }
+

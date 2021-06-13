@@ -1,11 +1,9 @@
 
 export interface CurrentUser {
     UserId: string,
-    FirstName: string,
-    LastName: string,
-    Prefix: string,
+    DisplayName: string,
     Phone: string,
     Email: string,
-    Roles: string[]
+    CurrentRoleId: number
 };
 

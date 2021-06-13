@@ -11,9 +11,15 @@ export interface IUserRepo {
 
     userExistsWithPhone(phone: string): Promise<boolean>;
 
+    getUserWithPhone(phone: string): Promise<UserDTO>;
+
     userExistsWithEmail(email: string): Promise<boolean>;
+
+    getUserWithEmail(email: string): Promise<UserDTO>;
 
     searchLight(filters: any): Promise<UserDTOLight[]>;
 
     searchFull(filters: any): Promise<UserDTO[]>;
+
+    getUserHashedPassword(id: string): Promise<string>;
 }

@@ -17,12 +17,28 @@ export class UserRepo implements IUserRepo {
         return false;
     };
 
+    getUserWithPhone = async (phone: string): Promise<UserDTO> => {
+        if (phone != null && typeof phone != 'undefined') {
+            var user = await User.findOne({ where: { Phone: phone } });
+            return await UserMapper.toDTO(user);
+        }
+        return null;
+    };
+
     userExistsWithEmail = async (email: string): Promise<boolean> => {
         if (email != null && typeof email != 'undefined') {
             var existing = await User.findOne({ where: { Email: email } });
             return existing != null;
         }
         return false;
+    };
+
+    getUserWithEmail = async (email: string): Promise<UserDTO> => {
+        if (email != null && typeof email != 'undefined') {
+            var user = await User.findOne({ where: { Email: email } });
+            return await UserMapper.toDTO(user);
+        }
+        return null;
     };
 
     create = async (userEntity: any): Promise<UserDTO> => {
@@ -81,5 +97,11 @@ export class UserRepo implements IUserRepo {
         throw new Error('Method not implemented.');
     }
 
-
+    getUserHashedPassword = async (id: string): Promise<string> => {
+        var user = await User.findByPk(id);
+        if(user == null){
+            return null;
+        }
+        return user.Password;
+    }
 }

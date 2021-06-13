@@ -3,6 +3,7 @@ import express from 'express';
 import { IAuthorizer } from '../interfaces/authorizer.interface';
 import { injectable, inject } from "tsyringe";
 import { ResponseHandler } from '../common/response.handler';
+import { CurrentUser } from '../data/dtos/current.user.dto';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +22,10 @@ export class Authorizer {
         }
         return true;
     };
-}
 
+    public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
+        return await this._authorizer.generateUserSessionToken(user);
+    }
+}
 
 ////////////////////////////////////////////////////////////////////////

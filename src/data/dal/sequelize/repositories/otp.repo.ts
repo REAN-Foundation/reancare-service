@@ -12,7 +12,6 @@ import { Op, Sequelize } from 'sequelize/types';
 ///////////////////////////////////////////////////////////////////////
 
 export class OtpRepo implements IOtpRepo {
-
     create = async (entity: OtpPersistenceEntity): Promise<OtpDTO> => {
         try {
             var otp = await Otp.create(entity);
@@ -22,7 +21,7 @@ export class OtpRepo implements IOtpRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getLatestByUserId = async (userId: string): Promise<OtpDTO> => {
         try {
@@ -34,7 +33,7 @@ export class OtpRepo implements IOtpRepo {
                 },
                 order: Sequelize.literal('max(ValidTo) DESC'),
             });
-            if(otps.length > 0) {
+            if (otps.length > 0) {
                 var otp = otps[0];
                 var dto = await OtpMapper.toDTO(otp);
                 return dto;
@@ -44,7 +43,22 @@ export class OtpRepo implements IOtpRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
+
+    getByOtpAndUserId = async (userId: string, otp: string): Promise<OtpDTO> => {
+        try {
+            return await Otp.findOne({
+                where: {
+                    UserId: userId,
+                    Otp: otp,
+                    Utilized: false,
+                },
+            });
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
     markAsUtilized = async (id: string): Promise<OtpDTO> => {
         try {
@@ -57,6 +71,5 @@ export class OtpRepo implements IOtpRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
-
+    };
 }

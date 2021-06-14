@@ -155,7 +155,45 @@ export class UserService {
     };
 
     public loginWithOtp = async (loginObject: UserLoginRequestDTO): Promise<any> => {
-        return true;
+        var user: UserDTO = null;
+
+        if (loginObject.Phone) {
+            user = await this._userRepo.getUserWithPhone(loginObject.Phone);
+            if (user == null) {
+                let message = 'User does not exist with phone(' + loginObject.Phone + ')';
+                throw new ApiError(404, message);
+            }
+        } else if (loginObject.Email) {
+            user = await this._userRepo.getUserWithPhone(loginObject.Email);
+            if (user == null) {
+                let message = 'User does not exist with email(' + loginObject.Email + ')';
+                throw new ApiError(404, message);
+            }
+        }
+        if (user == null) {
+            throw new ApiError(404, 'An error occurred authenticating the user.');
+        }
+
+        var storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginObject.Otp);
+        if(!storedOtp) {
+            throw new ApiError(404, 'Active Otp record not found!');
+        }
+        var date = new Date();
+        if (storedOtp.ValidTo <= date) {
+            throw new ApiError(400, 'Login OTP has expired. Please regenerate OTP again!');
+        }
+
+        //The following user data is immutable. Don't include any mutable data
+        var currentUser: CurrentUser = {
+            UserId: user.id,
+            DisplayName: user.DisplayName,
+            Phone: user.Phone,
+            Email: user.Email,
+            CurrentRoleId: loginObject.LoginRoleId,
+        };
+        var accessToken = Loader.authorizer.generateUserSessionToken(currentUser);
+
+        return { user: user, accessToken: accessToken };
     };
 
     public generateUserName = async (firstName, lastName):Promise<string> => {

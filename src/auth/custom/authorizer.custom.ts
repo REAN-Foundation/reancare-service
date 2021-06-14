@@ -7,7 +7,7 @@ import jwt = require('jsonwebtoken');
 import { Logger } from '../../common/logger';
 import { ResponseHandler } from '../../common/response.handler';
 import { IAuthorizer } from '../../interfaces/authorizer.interface';
-import { CurrentUser } from '../../data/dtos/current.user.dto';
+import { CurrentUser } from '../../data/domain.types/current.user';
 
 const execSync = require('child_process').execSync;
 

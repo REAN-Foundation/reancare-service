@@ -1,14 +1,14 @@
-import { UserDTO, UserDTOLight } from "../../../dtos/user.dto";
+import { UserDTO, UserDTOLight } from "../../../domain.types/user.domain.types";
 import { IUserRepo } from "../../../repository.interfaces/user.repo.interface";
 import { User } from '../models/user.model';
 import { UserMapper } from "../mappers/user.mapper";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
+import { Op } from "sequelize/types";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserRepo implements IUserRepo {
-    
     userExistsWithPhone = async (phone: string): Promise<boolean> => {
         if (phone != null && typeof phone != 'undefined') {
             var existing = await User.findOne({ where: { Phone: phone } });
@@ -39,6 +39,14 @@ export class UserRepo implements IUserRepo {
             return await UserMapper.toDTO(user);
         }
         return null;
+    };
+
+    userExistsWithUsername = async (userName: string): Promise<boolean> => {
+        if (userName != null && typeof userName != 'undefined') {
+            var existing = await User.findOne({ where: { UserName: { [Op.like]: '%' + userName + '%' } } });
+            return existing != null;
+        }
+        return false;
     };
 
     create = async (userEntity: any): Promise<UserDTO> => {
@@ -87,7 +95,7 @@ export class UserRepo implements IUserRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     searchLight(filters: any): Promise<UserDTOLight[]> {
         throw new Error('Method not implemented.');
@@ -99,9 +107,9 @@ export class UserRepo implements IUserRepo {
 
     getUserHashedPassword = async (id: string): Promise<string> => {
         var user = await User.findByPk(id);
-        if(user == null){
+        if (user == null) {
             return null;
         }
         return user.Password;
-    }
+    };
 }

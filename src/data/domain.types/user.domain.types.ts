@@ -1,7 +1,7 @@
 import { String } from 'aws-sdk/clients/iot';
 import { DateRangeUnit } from 'aws-sdk/clients/securityhub';
 import { DateImported } from 'aws-sdk/clients/transfer';
-import { UserRoleDTO } from './user.role.dto';
+import { UserRoleDTO } from './role.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

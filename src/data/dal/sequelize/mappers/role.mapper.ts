@@ -1,6 +1,6 @@
 import { RoleRepo } from "../repositories/role.repo";
 import { Role } from '../models/role.model';
-import { RoleDTO } from "../../../dtos/role.dto";
+import { RoleDTO } from "../../../domain.types/role.domain.types";
 
 
 ///////////////////////////////////////////////////////////////////////////////////

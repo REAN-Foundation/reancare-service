@@ -1,13 +1,17 @@
+import { Loader } from '../startup/loader';
 import { IUserRepo } from '../data/repository.interfaces/user.repo.interface';
 import { IUserRoleRepo } from '../data/repository.interfaces/user.role.repo.interface';
 import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
-import { UserDTO, UserDTOLight, UserSearchFilters, UserLoginRequestDTO } from '../data/dtos/user.dto';
+import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
+import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
+import { UserDTO, UserDTOLight, UserSearchFilters, UserLoginRequestDTO } from '../data/domain.types/user.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
 import { compareSync } from 'bcryptjs';
-import { CurrentUser } from '../data/dtos/current.user.dto';
-import { Loader } from '../startup/loader';
+import { CurrentUser } from '../data/domain.types/current.user';
+import { OtpPersistenceEntity } from '../data/domain.types/otp.domain.types';
+import { Roles } from '../data/domain.types/role.domain.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +20,9 @@ export class UserService {
     constructor(
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserRoleRepo') private _userRoleRepo: IUserRoleRepo,
-        @inject('IRoleRepo') private _roleRepo: IRoleRepo
+        @inject('IRoleRepo') private _roleRepo: IRoleRepo,
+        @inject('IOtpRepo') private _otpRepo: IOtpRepo,
+        @inject('IMessagingService') private _messagingService: IMessagingService
     ) {}
 
     createUser = async (requestDto) => {
@@ -105,10 +111,6 @@ export class UserService {
         return { user: user, accessToken: accessToken };
     };
 
-    // resetPassword = async (obj: any): Promise<boolean> => {
-    //     return true;
-    // };
-
     public generateOtp = async (obj: any): Promise<boolean> => {
 
         var user: UserDTO = null;
@@ -131,26 +133,105 @@ export class UserService {
         }
 
         var otp = (Math.floor(Math.random() * 900000) + 100000).toString();
-        var currDate = DateTime.fromJSDate(new Date());
-        var validTo = currDate.plus({ seconds: 300 }).toJSDate();
+        var currMillsecs = Date.now();
+        var validTo = new Date(currMillsecs + (300 * 1000));
 
-        var entity = await OTP.create({
-            Purpose: purpose,
+        var otpEntity: OtpPersistenceEntity = {
+            Purpose: obj.Purpose,
             UserId: user.id,
-            OTP: otp,
-            ValidFrom: Date.now(),
+            Otp: otp,
+            ValidFrom: new Date(),
             ValidTo: validTo
-        });
+        }
 
-        var systemPhoneNumber = process.env.SYSTEM_PHONE_NUMBER;
-        var message = `Hello ${user.FirstName}, ${otp} is OTP for your REANCare account. This OTP will expire in 3 minutes. If you have not requested this OTP, please contact REANCare support.`;
-        await MessageService.SendMessage_SMS(user.PhoneNumber, message, systemPhoneNumber);
-        return { Success: true };
+        var otpDto = await this._otpRepo.create(otpEntity);
+        var message = `Hello ${user.DisplayName}, ${otp} is OTP for your REANCare account and will expire in 5 minutes. If you have not requested this OTP, please contact REANCare support.`;
+        var sendStatus = await this._messagingService.sendSMS(user.Phone, message);
+        if(sendStatus) {
+            Logger.instance().log('Otp sent successfully.\n ' + JSON.stringify(otpDto, null, 2));
+        }
+
+        return true;
     };
 
     public loginWithOtp = async (loginObject: UserLoginRequestDTO): Promise<any> => {
         return true;
     };
+
+    public generateUserName = async (firstName, lastName):Promise<string> => {
+        var rand = Math.random().toString(10).substr(2, 5);
+        var userName = firstName.substr(0, 3) + lastName.substr(0, 3) + rand;
+        userName = userName.toLowerCase();
+        var exists = await this._userRepo.userExistsWithUsername(userName);
+        while (exists) {
+            rand = Math.random().toString(36).substr(2, 5);
+            userName = firstName.substr(0, 3) + lastName.substr(0, 2) + rand;
+            userName = userName.toLowerCase();
+            exists = await this._userRepo.userExistsWithUsername(userName);
+        }
+        return userName;
+    }
+
+    public generateUserDisplayId = async (role:Roles, phone, phoneCount = 0) => {
+
+        var prefix = '';
+    
+        if(role == Roles.Doctor){
+            prefix = 'DR#';
+        }else if(role == Roles.Patient){
+            prefix = 'PT#';
+        }else if(role == Roles.LabUser){
+            prefix = 'LU#';
+        }else if(role == Roles.PharmacyUser){
+            prefix = 'PU#';
+        }
+    
+        var str = '';
+        if (phone != null && typeof phone != 'undefined') {
+    
+            var phoneTemp = phone.toString();
+            var tokens = phoneTemp.split('+');
+            var s = tokens.length > 1 ? tokens[1] : phoneTemp;
+
+            if(s.startsWith('91')){
+                s = s.slice(2);
+            }
+            s = s.trim();
+            s = s.replace('+', '');
+            s = s.replace(' ', '');
+            s = s.replace('-', '');
+    
+            if (role == Roles.Patient) {
+                var idx = (phoneCount + 1).toString();
+                str = str + idx + '-' + s;
+            } else {
+                str = str + '0-' + s;
+            }
+        }
+        else {
+            var tmp = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
+            str = tmp.substr(-10);
+        }
+        str = str.substr(0, 20);
+    
+        var username = prefix + str;
+        
+        var exists = await exports.UserNameExists(username);
+        while(exists)
+        {
+            tmp = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
+            str = tmp.substr(-10);
+            username = prefix + str;
+            exists = await exports.UserNameExists(username);
+        }
+    
+        return username;
+    }
+    
+    // resetPassword = async (obj: any): Promise<boolean> => {
+    //     return true;
+    // };
+
 
     // public addUserDeviceDetails = async(phone:string, email:string, userId:string): Promise<boolean> => {
 

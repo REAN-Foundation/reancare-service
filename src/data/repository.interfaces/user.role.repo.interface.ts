@@ -1,4 +1,4 @@
-import { UserRoleDTO } from '../dtos/user.role.dto';
+import { UserRoleDTO } from '../domain.types/role.domain.types';
 
 
 export interface IUserRoleRepo {

@@ -7,7 +7,7 @@ import { ResponseHandler } from '../common/response.handler';
 import { Loader } from '../startup/loader';
 import { Authorizer } from '../auth/authorizer';
 import { String } from 'aws-sdk/clients/appstream';
-import { UserSearchFilters, UserDTO, UserLoginRequestDTO } from '../data/dtos/user.dto';
+import { UserSearchFilters, UserDTO, UserLoginRequestDTO } from '../data/domain.types/user.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -141,7 +141,7 @@ export class UserController {
         try {
             request.context = 'User.LoginWithPassword';
 
-            var loginObject = UserController.Sanitizer.loginWithOtp(request, response);
+            var loginObject = await UserController.Sanitizer.loginWithOtp(request, response);
             var userDetails = await this._service.loginWithOtp(loginObject);
             if (userDetails == null) {
                 ResponseHandler.failure(request, response, 'User not found!', 404);

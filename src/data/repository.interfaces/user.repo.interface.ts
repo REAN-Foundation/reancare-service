@@ -1,4 +1,4 @@
-import { UserDTO, UserDTOLight } from '../dtos/user.dto';
+import { UserDTO, UserDTOLight } from '../domain.types/user.domain.types';
 
 
 export interface IUserRepo {
@@ -16,6 +16,8 @@ export interface IUserRepo {
     userExistsWithEmail(email: string): Promise<boolean>;
 
     getUserWithEmail(email: string): Promise<UserDTO>;
+
+    userExistsWithUsername(userName: string): Promise<boolean>;
 
     searchLight(filters: any): Promise<UserDTOLight[]>;
 

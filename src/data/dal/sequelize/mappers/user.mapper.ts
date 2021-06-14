@@ -1,4 +1,4 @@
-import { UserDTO, UserDTOLight } from "../../../dtos/user.dto";
+import { UserDTO, UserDTOLight } from "../../../domain.types/user.domain.types";
 import { UserRepo } from "../../sequelize/repositories/user.repo";
 import { UserRoleRepo } from "../../sequelize/repositories/user.role.repo";
 import { RoleRepo } from "../../sequelize/repositories/role.repo";

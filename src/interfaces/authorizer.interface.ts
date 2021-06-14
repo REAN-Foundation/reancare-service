@@ -1,5 +1,5 @@
 import express from 'express';
-import { CurrentUser } from '../data/dtos/current.user.dto';
+import { CurrentUser } from '../data/domain.types/current.user';
 
 export interface IAuthorizer {
 

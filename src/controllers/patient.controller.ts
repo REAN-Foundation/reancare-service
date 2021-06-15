@@ -7,10 +7,13 @@ import { ResponseHandler } from '../common/response.handler';
 import { Loader } from '../startup/loader';
 import { Authorizer } from '../auth/authorizer';
 import { PatientInputValidator } from './input.validators/patient.input.validator';
+import { PatientDomainModel } from '../data/domain.types/patient.domain.types';
+import { UserService } from '../services/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class PatientController {
+
     //#region member variables and constructors
 
     _service: PatientService = null;
@@ -31,8 +34,9 @@ export class PatientController {
             if (!this._authorizer.authorize(request, response)) {
                 return false;
             }
-            var id: string = await PatientInputValidator.create(request, response);
-            const user = await this._service.getById(id);
+            var entity: PatientDomainModel = await PatientInputValidator.create(request, response);
+            var patientsSharingPhone = await PatientService.CheckforExistingPatient(entity);
+            const patient = await this._service.create(patientEntity);
             if (user == null) {
                 ResponseHandler.failure(request, response, 'User not found.', 404);
                 return;

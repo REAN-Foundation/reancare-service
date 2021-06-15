@@ -1,8 +1,9 @@
 import { UserDto, UserDtoLight } from "../../../domain.types/user.domain.types";
-import { PatientDomainModel, PatientDto } from "../../../domain.types/patient.domain.types";
+import { PatientDomainModel, PatientDetailsDto } from "../../../domain.types/patient.domain.types";
 import { IPatientRepo } from "../../../repository.interfaces/patient.repo.interface";
 import { User } from '../models/user.model';
 import { UserMapper } from "../mappers/user.mapper";
+import { PatientMapper } from "../mappers/patient.mapper";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { Op } from "sequelize/types";
@@ -11,14 +12,14 @@ import { Op } from "sequelize/types";
 
 export class PatientRepo implements IPatientRepo {
 
-    getByUserId(userId: string): Promise<PatientDto> {
+    getByUserId(userId: string): Promise<PatientDetailsDto> {
         throw new Error("Method not implemented.");
     }
-    updateByUserId(userId: string, updateModel: PatientDomainModel): Promise<PatientDto> {
+    updateByUserId(userId: string, updateModel: PatientDomainModel): Promise<PatientDetailsDto> {
         throw new Error("Method not implemented.");
     }
 
-    create = async (createModel: PatientDomainModel): Promise<PatientDto> => {
+    create = async (createModel: PatientDomainModel): Promise<PatientDetailsDto> => {
         try {
             // var entity = {
             //     Prefix: userEntity.Prefix ?? '',

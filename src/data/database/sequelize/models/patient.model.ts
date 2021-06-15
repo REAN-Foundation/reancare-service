@@ -31,7 +31,7 @@ import { UUIDV4 } from 'sequelize/types';
     paranoid: true,
     freezeTableName: true
 })
-export class User extends Model {
+export class Patient extends Model {
 
     @IsUUID(4)
     @PrimaryKey

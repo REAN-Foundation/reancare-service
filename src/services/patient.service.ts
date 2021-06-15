@@ -6,7 +6,7 @@ import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
 import { UserDto, UserDtoLight, UserSearchFilters, UserLoginRequestDto } from '../data/domain.types/user.domain.types';
-import { PatientDomainModel, PatientDto, PatientDtoLight } from '../data/domain.types/patient.domain.types';
+import { PatientDomainModel, PatientDetailsDto, PatientDto } from '../data/domain.types/patient.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
@@ -16,6 +16,9 @@ import { Roles } from '../data/domain.types/role.domain.types';
 
 @injectable()
 export class PatientService {
+    static CheckforExistingPatient(entity: PatientDomainModel) {
+        throw new Error('Method not implemented.');
+    }
     constructor(
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
@@ -25,7 +28,9 @@ export class PatientService {
         @inject('IMessagingService') private _messagingService: IMessagingService
     ) {}
 
-    create = async (createModel: PatientDomainModel): Promise<PatientDto> => {
+    create = async (createModel: PatientDomainModel): Promise<PatientDetailsDto> => {
+
+
         // var entity = {
         //     FirstName: requestDto.FirstName,
         //     LastName: requestDto.LastName,
@@ -39,14 +44,14 @@ export class PatientService {
         return await this._patientRepo.create(createModel);
     };
 
-    public getByUserId = async (id: string): Promise<PatientDto> => {
+    public getByUserId = async (id: string): Promise<PatientDetailsDto> => {
         return await this._patientRepo.getByUserId(id);
     };
 
     public search = async (
         filters: UserSearchFilters,
         full: boolean = false
-    ): Promise<PatientDto[] | PatientDtoLight[]> => {
+    ): Promise<PatientDetailsDto[] | PatientDto[]> => {
         if (full) {
             return await this._patientRepo.searchFull(filters);
         } else {
@@ -54,7 +59,7 @@ export class PatientService {
         }
     };
 
-    public updateByUserId = async (id: string, updateModel: PatientDomainModel): Promise<PatientDto> => {
+    public updateByUserId = async (id: string, updateModel: PatientDomainModel): Promise<PatientDetailsDto> => {
         return await this._patientRepo.updateByUserId(id, updateModel);
     };
 }

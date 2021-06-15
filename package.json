@@ -28,6 +28,7 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "express-validator": "^6.11.1",
+    "generate-password": "^1.6.0",
     "googleapis": "^71.0.0",
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",

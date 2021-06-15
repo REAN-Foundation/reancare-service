@@ -27,14 +27,25 @@ export class RoleRepo implements IRoleRepo {
 
     getById = async (id: number): Promise<RoleDto> => {
         try {
-            var user = await Role.findByPk(id);
-            var dto = await RoleMapper.toDto(user);
+            var role = await Role.findByPk(id);
+            var dto = await RoleMapper.toDto(role);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
+
+    getByName = async (name: string): Promise<RoleDto> => {
+        try {
+            var role = await Role.findOne({where:{RoleName: { [Op.like]: '%' + name + '%' }}});
+            var dto = await RoleMapper.toDto(role);
+            return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
     delete = async (id: number): Promise<boolean> => {
         try {

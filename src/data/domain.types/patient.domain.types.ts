@@ -1,3 +1,4 @@
+import { Gender } from '../../common/system.types';
 import { AddressDomainModel, AddressDto } from './address.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -6,6 +7,7 @@ import { AddressDomainModel, AddressDto } from './address.domain.types';
 
 export interface PatientDomainModel {
     id?: string;
+    UserId?: string;
     DisplayName?: string;
     FirstName?: string;
     MiddleName?: string;
@@ -13,7 +15,7 @@ export interface PatientDomainModel {
     Prefix?: string;
     Phone: string;
     Email?: string;
-    Gender?: string;
+    Gender?: Gender;
     BirthDate?: Date;
     ActiveSince?: Date;
     ImageResourceId?:string;
@@ -50,7 +52,7 @@ export interface PatientDetailsDto {
     LastName: string;
     Phone: string;
     Email: string;
-    Gender: string;
+    Gender: Gender;
     BirthDate: Date;
     Age: string;
     ImageResourceId: string;
@@ -82,7 +84,7 @@ export interface PatientDto {
     UserName: string,
     Phone: string;
     Email: string;
-    Gender: string;
+    Gender: Gender;
     BirthDate: Date;
     Age: string;
 };
@@ -95,7 +97,7 @@ export interface PatientSearchFilters {
     Phone: string;
     Email: string;
     Name: string;
-    Gender: string;
+    Gender: Gender;
     BirthdateFrom: Date;
     BirthdateTo: Date;
     CreatedDateFrom: Date;

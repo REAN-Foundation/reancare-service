@@ -5,6 +5,7 @@ import { UserMapper } from "../mappers/user.mapper";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { Op } from "sequelize/types";
+import { UserRole } from "../models/user.role.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -21,6 +22,23 @@ export class UserRepo implements IUserRepo {
         if (phone != null && typeof phone != 'undefined') {
             var user = await User.findOne({ where: { Phone: phone } });
             return await UserMapper.toDto(user);
+        }
+        return null;
+    };
+
+    getAllUsersWithPhoneAndRole = async (phone: string, roleId: number): Promise<UserDto[]> => {
+        if (phone != null && typeof phone != 'undefined') {
+            //KK: To be optimized with associations
+            var usersWithRole: UserDto[] = [];
+            var users = await User.findAll({ where: { Phone: phone, IsActive: true } });
+            for await (var user of users) {
+                var withRole = await UserRole.findOne({ where: { UserId: user.id, RoleId: roleId } });
+                if (withRole != null) {
+                    var dto = await UserMapper.toDto(user);
+                    usersWithRole.push(dto);
+                }
+            }
+            return usersWithRole;
         }
         return null;
     };

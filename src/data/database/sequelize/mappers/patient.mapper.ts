@@ -1,4 +1,4 @@
-import { UserDto, UserDtoLight } from "../../../domain.types/user.domain.types";
+import { UserDomainModel, UserDtoLight } from "../../../domain.types/user.domain.types";
 import { UserRepo } from "../repositories/user.repo";
 import { UserRoleRepo } from "../repositories/user.role.repo";
 import { RoleRepo } from "../repositories/role.repo";
@@ -10,11 +10,25 @@ import { NotThere } from '../../../../common/system.types';
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { UserRole } from "../models/user.role.model";
-import { PatientDetailsDto, PatientDto } from "../../../domain.types/patient.domain.types";
+import { PatientDetailsDto, PatientDomainModel, PatientDto } from "../../../domain.types/patient.domain.types";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class PatientMapper {
+
+    static toUserDomainModel(patientDomainModel: PatientDomainModel): UserDomainModel {
+        var userDm: UserDomainModel = {
+            Prefix: patientDomainModel.Prefix,
+            FirstName: patientDomainModel.FirstName,
+            MiddleName: patientDomainModel.MiddleName,
+            LastName: patientDomainModel.LastName,
+            Phone: patientDomainModel.Phone,
+            Email: patientDomainModel.Email,
+            BirthDate: patientDomainModel.BirthDate,
+            ImageResourceId: patientDomainModel.ImageResourceId,
+        };
+        return userDm;
+    }
 
     static toDetailsDto = async (patient: Patient): Promise<PatientDetailsDto> => {
 

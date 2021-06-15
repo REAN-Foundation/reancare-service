@@ -5,6 +5,7 @@ import { Helper } from '../../common/helper';
 import { PatientDomainModel, PatientSearchFilters } from '../../data/domain.types/patient.domain.types';
 import { exists } from 'fs';
 import { TypeHandler } from '../../common/type.handler';
+import { Gender } from '../../common/system.types';
 import { AddressDomainModel } from '../../data/domain.types/address.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -29,17 +30,30 @@ export class PatientInputValidator {
             };
         }
 
+        if (
+            request.body.Gender !== 'Male' ||
+            request.body.Gender !== 'Female' ||
+            request.body.Gender !== 'male' ||
+            request.body.Gender !== 'female' ||
+            request.body.Gender !== 'Other' ||
+            request.body.Gender !== 'other'
+        ) {
+            request.body.Gender = 'Unknown';
+        }
         var entity: PatientDomainModel = {
             FirstName: request.body.FirstName ?? null,
             LastName: request.body.LastName ?? null,
             Prefix: request.body.Prefix ?? null,
             Phone: request.body.Phone,
-            Email: request.body.email ?? null,
-            Gender: request.body.gender ?? null,
+            Email: request.body.Email ?? null,
+            Gender: request.body.Gender ?? null,
             BirthDate: request.body.BirthDate ?? null,
             ImageResourceId: request.body.ImageResourceId ?? null,
             Address: addressModel,
         };
+        if(entity.Gender != null && entity.Prefix == null) {
+            entity.Prefix = Helper.guessPrefixByGender(entity.Gender);
+        }
         return entity;
     };
 
@@ -98,7 +112,7 @@ export class PatientInputValidator {
             await query('order').optional().trim().escape().run(request);
             await query('pageIndex').optional().isInt().trim().escape().run(request);
             await query('itemsPerPage').optional().isInt().trim().escape().run(request);
-            await query('allDetails').optional().isBoolean().run(request);
+            await query('fullDetails').optional().isBoolean().run(request);
 
             const result = validationResult(request);
             if (!result.isEmpty()) {

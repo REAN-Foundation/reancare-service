@@ -6,6 +6,8 @@ export interface IRoleRepo {
 
     getById(id: number): Promise<RoleDto>;
 
+    getByName(name: string): Promise<RoleDto>;
+
     delete(id: number): Promise<boolean>;
 
     search(name?: string): Promise<RoleDto[]>;

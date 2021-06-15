@@ -13,6 +13,8 @@ export interface IUserRepo {
 
     getUserWithPhone(phone: string): Promise<UserDto>;
 
+    getAllUsersWithPhoneAndRole(phone: string, roleId: number): Promise<UserDto[]>;
+
     userExistsWithEmail(email: string): Promise<boolean>;
 
     getUserWithEmail(email: string): Promise<UserDto>;

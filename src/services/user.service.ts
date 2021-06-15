@@ -4,7 +4,7 @@ import { IUserRoleRepo } from '../data/repository.interfaces/user.role.repo.inte
 import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserDto, UserDtoLight, UserSearchFilters, UserLoginRequestDto } from '../data/domain.types/user.domain.types';
+import { UserDto, UserDtoLight, UserSearchFilters, UserLoginRequestDto, UserDomainModel } from '../data/domain.types/user.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
@@ -12,6 +12,7 @@ import { compareSync } from 'bcryptjs';
 import { CurrentUser } from '../data/domain.types/current.user';
 import { OtpPersistenceEntity } from '../data/domain.types/otp.domain.types';
 import { Roles } from '../data/domain.types/role.domain.types';
+import { generate} from 'generate-password';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,15 +26,15 @@ export class UserService {
         @inject('IMessagingService') private _messagingService: IMessagingService
     ) {}
 
-    createUser = async (requestDto) => {
+    createUser = async (userDomainModel: UserDomainModel) => {
         var entity = {
-            FirstName: requestDto.FirstName,
-            LastName: requestDto.LastName,
-            Prefix: requestDto.Prefix,
-            Phone: requestDto.Phone,
-            Email: requestDto.Email ? requestDto.Email : null,
-            UserName: requestDto.UserName,
-            Password: requestDto.Password,
+            FirstName: userDomainModel.FirstName,
+            LastName: userDomainModel.LastName,
+            Prefix: userDomainModel.Prefix,
+            Phone: userDomainModel.Phone,
+            Email: userDomainModel.Email ?? null,
+            UserName: userDomainModel.UserName,
+            Password: userDomainModel.Password,
         };
 
         var user = await this._userRepo.create(entity);
@@ -41,7 +42,7 @@ export class UserService {
             return null;
         }
 
-        if (requestDto.hasOwnProperty('GenerateLoginOTP') && requestDto.GenerateLoginOTP === true) {
+        if (userDomainModel.hasOwnProperty('GenerateLoginOTP') && userDomainModel.GenerateLoginOTP === true) {
             var obj = {
                 Phone: user.Phone,
                 Email: user.Email,
@@ -197,6 +198,12 @@ export class UserService {
     };
 
     public generateUserName = async (firstName, lastName):Promise<string> => {
+        if(firstName == null) {
+            firstName = generate({length: 4, numbers: false, lowercase: true, uppercase: false, symbols: false});
+        }
+        if(lastName == null) {
+            lastName = generate({length: 4, numbers: false, lowercase: true, uppercase: false, symbols: false});
+        }
         var rand = Math.random().toString(10).substr(2, 5);
         var userName = firstName.substr(0, 3) + lastName.substr(0, 3) + rand;
         userName = userName.toLowerCase();

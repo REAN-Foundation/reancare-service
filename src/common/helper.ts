@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import child_process from 'child_process';
 import { InputValidationError } from './input.validation.error';
+import { Gender } from './system.types';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -118,5 +119,23 @@ export class Helper {
         age = age + (months > 0 ? ' and ' + months.toString() + ' months': '');
         return age;
     }
+
+    static guessPrefixByGender = (gender: Gender) =>{
+        if(gender == 'Male' || gender == 'male') {
+            return 'Mr.';
+        }
+        if(gender == 'Female' || gender == 'female') {
+            return 'Miss.';
+        }
+        return ''; //Return empty prefix
+    }
+
+    static constructUserDisplayName = (prefix: string|null, firstName: string|null, lastName: string|null): string => {
+        var prefix = prefix ? (prefix + ' ') : '';
+        var firstName = firstName ? (firstName + ' ') : '';
+        const displayName:string = prefix + firstName + lastName ?? '';
+        return displayName;
+    }
+
 }
 

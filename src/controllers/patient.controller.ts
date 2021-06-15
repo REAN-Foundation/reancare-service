@@ -9,6 +9,10 @@ import { Authorizer } from '../auth/authorizer';
 import { PatientInputValidator } from './input.validators/patient.input.validator';
 import { PatientDomainModel } from '../data/domain.types/patient.domain.types';
 import { UserService } from '../services/user.service';
+import { Roles } from '../data/domain.types/role.domain.types';
+import { PatientMapper } from '../data/database/sequelize/mappers/patient.mapper';
+import { UserDomainModel } from '../data/domain.types/user.domain.types';
+import { ApiError } from 'src/common/api.error';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,10 +21,12 @@ export class PatientController {
     //#region member variables and constructors
 
     _service: PatientService = null;
+    _userService: UserService = null;
     _authorizer: Authorizer = null;
 
     constructor() {
         this._service = Loader.container.resolve(PatientService);
+        this._userService = Loader.container.resolve(UserService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -34,16 +40,33 @@ export class PatientController {
             if (!this._authorizer.authorize(request, response)) {
                 return false;
             }
-            var entity: PatientDomainModel = await PatientInputValidator.create(request, response);
-            var patientsSharingPhone = await PatientService.CheckforExistingPatient(entity);
-            const patient = await this._service.create(patientEntity);
-            if (user == null) {
-                ResponseHandler.failure(request, response, 'User not found.', 404);
-                return;
+
+            var patientDomainModel: PatientDomainModel = await PatientInputValidator.create(request, response);
+
+            //Throw an error if patient with same name and phone number exists
+            var existingPatientCountSharingPhone = await this._service.checkforExistingPatients(patientDomainModel);
+            var userName = await this._userService.generateUserName(patientDomainModel.FirstName, patientDomainModel.LastName);
+            var displayId = await this._userService.generateUserDisplayId(Roles.Patient, patientDomainModel.Phone, existingPatientCountSharingPhone);
+            var displayName = Helper.constructUserDisplayName(patientDomainModel.Prefix, patientDomainModel.FirstName, patientDomainModel.LastName);
+            var userDomainModel: UserDomainModel = PatientMapper.toUserDomainModel(patientDomainModel);
+            userDomainModel.DisplayName = displayName;
+            userDomainModel.UserName =  userName;
+
+            var user = await this._userService.createUser(userDomainModel);
+            if(user == null) {
+                throw new ApiError(400, 'Cannot create user!');
             }
-            ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
-                user: user,
-            });
+            patientDomainModel.UserId = user.id;
+
+            //KK: Note - Please add user to appointment service here...
+            // var appointmentCustomerModel = PatientMapper.ToAppointmentCustomerDomainModel(userDomainModel);
+            // var customer = await this._appointmentService.createCustomer(appointmentCustomerModel);
+
+            var patient = await this._service.create(patientDomainModel);
+            if(user == null) {
+                throw new ApiError(400, 'Cannot create patient!');
+            }
+            ResponseHandler.success(request, response, 'Patient created successfully!', 201, {Patient: patient});
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -56,13 +79,13 @@ export class PatientController {
                 return false;
             }
             var id: string = await PatientInputValidator.getByUserId(request, response);
-            const user = await this._service.getById(id);
-            if (user == null) {
-                ResponseHandler.failure(request, response, 'User not found.', 404);
+            const patient = await this._service.getByUserId(id);
+            if (patient == null) {
+                ResponseHandler.failure(request, response, 'Patient not found.', 404);
                 return;
             }
-            ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
-                user: user,
+            ResponseHandler.success(request, response, 'Patient retrieved successfully!', 200, {
+                Patient: patient,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -78,8 +101,8 @@ export class PatientController {
             var filters = await PatientInputValidator.search(request, response);
 
             var extractFull: boolean =
-                request.query.full != 'undefined' && typeof request.query.full == 'boolean'
-                    ? request.query.full
+                request.query.fullDetails != 'undefined' && typeof request.query.fullDetails == 'boolean'
+                    ? request.query.fullDetails
                     : false;
 
             const users = await this._service.search(filters, extractFull);
@@ -96,7 +119,6 @@ export class PatientController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-
     
     updateByUserId = async (request: express.Request, response: express.Response) => {
         try {
@@ -104,14 +126,14 @@ export class PatientController {
             if (!this._authorizer.authorize(request, response)) {
                 return false;
             }
-            var id: string = await PatientInputValidator.updateByUserId(request, response);
-            const user = await this._service.getById(id);
-            if (user == null) {
-                ResponseHandler.failure(request, response, 'User not found.', 404);
+            var patientDomainModel = await PatientInputValidator.updateByUserId(request, response);
+            const patient = await this._service.updateByUserId(patientDomainModel.UserId, patientDomainModel);
+            if (patient == null) {
+                ResponseHandler.failure(request, response, 'Unable to update patient records!', 400);
                 return;
             }
-            ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
-                user: user,
+            ResponseHandler.success(request, response, 'Patient recors updated successfully!', 200, {
+                Patient: patient,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

@@ -1,7 +1,7 @@
-import { UserDTO, UserDTOLight } from "../../../domain.types/user.domain.types";
-import { UserRepo } from "../../sequelize/repositories/user.repo";
-import { UserRoleRepo } from "../../sequelize/repositories/user.role.repo";
-import { RoleRepo } from "../../sequelize/repositories/role.repo";
+import { UserDto, UserDtoLight } from "../../../domain.types/user.domain.types";
+import { UserRepo } from "../repositories/user.repo";
+import { UserRoleRepo } from "../repositories/user.role.repo";
+import { RoleRepo } from "../repositories/role.repo";
 import { User } from '../models/user.model';
 import { Sequelize } from "sequelize/types";
 import { Helper } from '../../../../common/helper';
@@ -14,7 +14,7 @@ import { UserRole } from "../models/user.role.model";
 
 export class UserMapper {
 
-    static toDTO = async (user: User): Promise<UserDTO> => {
+    static toDto = async (user: User): Promise<UserDto> => {
 
         if(user == null){
             return null;
@@ -28,7 +28,7 @@ export class UserMapper {
         var userRoleRepo = new UserRoleRepo();
         const userRoles = await userRoleRepo.getUserRoles(user.id);
 
-        var dto: UserDTO = {
+        var dto: UserDto = {
             id: user.id,
             UserName: user.UserName,
             Prefix: user.Prefix,
@@ -50,7 +50,7 @@ export class UserMapper {
         return dto;
     }
 
-    toLightDTO = (user: User) => {
+    toLightDto = (user: User) => {
         
     }
 }

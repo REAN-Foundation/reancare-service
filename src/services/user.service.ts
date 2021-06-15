@@ -4,7 +4,7 @@ import { IUserRoleRepo } from '../data/repository.interfaces/user.role.repo.inte
 import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserDTO, UserDTOLight, UserSearchFilters, UserLoginRequestDTO } from '../data/domain.types/user.domain.types';
+import { UserDto, UserDtoLight, UserSearchFilters, UserLoginRequestDto } from '../data/domain.types/user.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
@@ -56,14 +56,14 @@ export class UserService {
         return user;
     };
 
-    public getById = async (id: string): Promise<UserDTO> => {
-        return await this._userRepo.create(id);
+    public getById = async (id: string): Promise<UserDto> => {
+        return await this._userRepo.getById(id);
     };
 
     public search = async (
         filters: UserSearchFilters,
         full: boolean = false
-    ): Promise<UserDTO[] | UserDTOLight[]> => {
+    ): Promise<UserDto[] | UserDtoLight[]> => {
         if (full) {
             return await this._userRepo.searchFull(filters);
         } else {
@@ -71,9 +71,9 @@ export class UserService {
         }
     };
 
-    public loginWithPassword = async (loginObject: UserLoginRequestDTO): Promise<any> => {
+    public loginWithPassword = async (loginObject: UserLoginRequestDto): Promise<any> => {
 
-        var user: UserDTO = null;
+        var user: UserDto = null;
 
         if (loginObject.Phone) {
             user = await this._userRepo.getUserWithPhone(loginObject.Phone);
@@ -113,7 +113,7 @@ export class UserService {
 
     public generateOtp = async (obj: any): Promise<boolean> => {
 
-        var user: UserDTO = null;
+        var user: UserDto = null;
 
         if (obj.Phone) {
             user = await this._userRepo.getUserWithPhone(obj.Phone);
@@ -154,8 +154,8 @@ export class UserService {
         return true;
     };
 
-    public loginWithOtp = async (loginObject: UserLoginRequestDTO): Promise<any> => {
-        var user: UserDTO = null;
+    public loginWithOtp = async (loginObject: UserLoginRequestDto): Promise<any> => {
+        var user: UserDto = null;
 
         if (loginObject.Phone) {
             user = await this._userRepo.getUserWithPhone(loginObject.Phone);
@@ -270,19 +270,4 @@ export class UserService {
     //     return true;
     // };
 
-
-    // public addUserDeviceDetails = async(phone:string, email:string, userId:string): Promise<boolean> => {
-
-    //     return true;
-    // }
-
-    // public deleteUserDeviceDetails = async(phone:string, email:string, userId:string): Promise<boolean> => {
-
-    //     return true;
-    // }
-
-    // public getUserDeviceDetails = async(phone:string, email:string, userId:string): Promise<boolean> => {
-
-    //     return true;
-    // }
 }

@@ -1,5 +1,5 @@
 import express from 'express';
-import { UserController } from '../controllers/user.controller';
+import { PatientController } from '../controllers/patient.controller';
 import { Loader } from '../startup/loader';
 
 
@@ -8,20 +8,17 @@ export default (app: express.Application) => {
     const router = require('express').Router();
     const authenticator = Loader.authenticator;
     const authorizer = Loader.authorizer;
-    const controller = new UserController();
+    const controller = new PatientController();
 
     //Note:
     //For user controller, there will not be end-points for create, update and delete.
     //User will not be directly created/updated/deleted, but through user type specific
     //entity controllers such patient, doctor, etc.
 
-    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
+    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
+    router.get('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByUserId);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.post('/login-with-password', authenticator.authenticateClient, controller.loginWithPassword);
-    //router.post('/reset-password', authenticator.authenticateClient, controller.resetPassword);
-    router.post('/generate-otp', authenticator.authenticateClient, controller.generateOtp);
-    router.post('/login-with-otp', authenticator.authenticateClient, controller.loginWithOtp);
-
+    router.put('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateByUserId);
+    
     app.use('/api/v1/user', router);
 };
-

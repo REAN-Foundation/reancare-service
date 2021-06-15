@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { IDatabaseConnector } from '../interfaces/database.connector.interface';
+import { IDatabaseConnector } from '../../interfaces/database.connector.interface';
 import { injectable, inject } from "tsyringe";
 
 ////////////////////////////////////////////////////////////////////////

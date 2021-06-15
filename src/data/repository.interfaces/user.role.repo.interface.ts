@@ -1,11 +1,11 @@
-import { UserRoleDTO } from '../domain.types/role.domain.types';
+import { UserRoleDto } from '../domain.types/role.domain.types';
 
 
 export interface IUserRoleRepo {
 
-    getUserRoles(userId: string): Promise<UserRoleDTO[]>;
+    getUserRoles(userId: string): Promise<UserRoleDto[]>;
 
-    addUserRole(userId: string, roleId: number): Promise<UserRoleDTO>;
+    addUserRole(userId: string, roleId: number): Promise<UserRoleDto>;
 
     removeUserRole(userId: string): Promise<boolean>;
 

@@ -1,5 +1,5 @@
 
-export interface RoleDTO {
+export interface RoleDto {
     id: number;
     RoleName: string;
 }
@@ -16,7 +16,7 @@ export enum Roles {
     SystemAdmin = 'SystemAdmin'
 }
 
-export interface UserRoleDTO {
+export interface UserRoleDto {
     id: string,
     UserId: string;
     RoleId: number;

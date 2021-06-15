@@ -1,4 +1,4 @@
-import { UserDTO, UserDTOLight } from "../../../domain.types/user.domain.types";
+import { UserDto, UserDtoLight } from "../../../domain.types/user.domain.types";
 import { IUserRepo } from "../../../repository.interfaces/user.repo.interface";
 import { User } from '../models/user.model';
 import { UserMapper } from "../mappers/user.mapper";
@@ -17,10 +17,10 @@ export class UserRepo implements IUserRepo {
         return false;
     };
 
-    getUserWithPhone = async (phone: string): Promise<UserDTO> => {
+    getUserWithPhone = async (phone: string): Promise<UserDto> => {
         if (phone != null && typeof phone != 'undefined') {
             var user = await User.findOne({ where: { Phone: phone } });
-            return await UserMapper.toDTO(user);
+            return await UserMapper.toDto(user);
         }
         return null;
     };
@@ -33,10 +33,10 @@ export class UserRepo implements IUserRepo {
         return false;
     };
 
-    getUserWithEmail = async (email: string): Promise<UserDTO> => {
+    getUserWithEmail = async (email: string): Promise<UserDto> => {
         if (email != null && typeof email != 'undefined') {
             var user = await User.findOne({ where: { Email: email } });
-            return await UserMapper.toDTO(user);
+            return await UserMapper.toDto(user);
         }
         return null;
     };
@@ -49,7 +49,7 @@ export class UserRepo implements IUserRepo {
         return false;
     };
 
-    create = async (userEntity: any): Promise<UserDTO> => {
+    create = async (userEntity: any): Promise<UserDto> => {
         try {
             var entity = {
                 Prefix: userEntity.Prefix ?? '',
@@ -66,7 +66,7 @@ export class UserRepo implements IUserRepo {
             };
 
             var user = await User.create(entity);
-            var dto = await UserMapper.toDTO(user);
+            var dto = await UserMapper.toDto(user);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -74,10 +74,10 @@ export class UserRepo implements IUserRepo {
         }
     };
 
-    getById = async (id: string): Promise<UserDTO> => {
+    getById = async (id: string): Promise<UserDto> => {
         try {
             var user = await User.findByPk(id);
-            var dto = await UserMapper.toDTO(user);
+            var dto = await UserMapper.toDto(user);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -97,11 +97,11 @@ export class UserRepo implements IUserRepo {
         }
     };
 
-    searchLight(filters: any): Promise<UserDTOLight[]> {
+    searchLight(filters: any): Promise<UserDtoLight[]> {
         throw new Error('Method not implemented.');
     }
 
-    searchFull(filters: any): Promise<UserDTO[]> {
+    searchFull(filters: any): Promise<UserDto[]> {
         throw new Error('Method not implemented.');
     }
 

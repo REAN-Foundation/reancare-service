@@ -1,20 +1,20 @@
 import { RoleRepo } from "../repositories/role.repo";
 import { UserRole } from '../models/user.role.model';
-import { UserRoleDTO } from "../../../domain.types/role.domain.types";
+import { UserRoleDto } from "../../../domain.types/role.domain.types";
 
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserRoleMapper {
 
-    static toDTO = async (userRole: UserRole): Promise<UserRoleDTO> => {
+    static toDto = async (userRole: UserRole): Promise<UserRoleDto> => {
 
         if(userRole == null){
             return null;
         }
         var roleRepo = new RoleRepo();
         const role = await roleRepo.getById(userRole.RoleId);
-        var dto: UserRoleDTO = {
+        var dto: UserRoleDto = {
             id: userRole.id,
             UserId: userRole.UserId,
             RoleId: userRole.RoleId,

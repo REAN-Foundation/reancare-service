@@ -5,17 +5,17 @@ import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { RoleRepo } from "./role.repo";
 import { IOtpRepo } from "../../../repository.interfaces/otp.repo.interface";
-import { OtpDTO, OtpPersistenceEntity } from "../../../domain.types/otp.domain.types";
+import { OtpDto, OtpPersistenceEntity } from "../../../domain.types/otp.domain.types";
 import { Otp } from "../models/otp.model";
 import { Op, Sequelize } from 'sequelize/types';
 
 ///////////////////////////////////////////////////////////////////////
 
 export class OtpRepo implements IOtpRepo {
-    create = async (entity: OtpPersistenceEntity): Promise<OtpDTO> => {
+    create = async (entity: OtpPersistenceEntity): Promise<OtpDto> => {
         try {
             var otp = await Otp.create(entity);
-            var dto = await OtpMapper.toDTO(otp);
+            var dto = await OtpMapper.toDto(otp);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -23,7 +23,7 @@ export class OtpRepo implements IOtpRepo {
         }
     };
 
-    getLatestByUserId = async (userId: string): Promise<OtpDTO> => {
+    getLatestByUserId = async (userId: string): Promise<OtpDto> => {
         try {
             var otps = await Otp.findAll({
                 where: {
@@ -35,7 +35,7 @@ export class OtpRepo implements IOtpRepo {
             });
             if (otps.length > 0) {
                 var otp = otps[0];
-                var dto = await OtpMapper.toDTO(otp);
+                var dto = await OtpMapper.toDto(otp);
                 return dto;
             }
             return null;
@@ -45,7 +45,7 @@ export class OtpRepo implements IOtpRepo {
         }
     };
 
-    getByOtpAndUserId = async (userId: string, otp: string): Promise<OtpDTO> => {
+    getByOtpAndUserId = async (userId: string, otp: string): Promise<OtpDto> => {
         try {
             return await Otp.findOne({
                 where: {
@@ -60,12 +60,12 @@ export class OtpRepo implements IOtpRepo {
         }
     };
 
-    markAsUtilized = async (id: string): Promise<OtpDTO> => {
+    markAsUtilized = async (id: string): Promise<OtpDto> => {
         try {
             var otp = await Otp.findByPk(id);
             otp.Utilized = true;
             await otp.save();
-            var dto = await OtpMapper.toDTO(otp);
+            var dto = await OtpMapper.toDto(otp);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);

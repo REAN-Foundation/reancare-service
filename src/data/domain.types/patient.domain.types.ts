@@ -2,10 +2,10 @@ import { String } from 'aws-sdk/clients/iot';
 import { DateRangeUnit } from 'aws-sdk/clients/securityhub';
 import { DateImported } from 'aws-sdk/clients/transfer';
 import { UserRoleDto } from './role.domain.types';
-
+import { UserDto } from './user.domain.types';
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export interface UserDto {
+export interface PatientDto {
     id: string;
     UserName: string;
     Prefix: string;
@@ -25,7 +25,7 @@ export interface UserDto {
     LastLogin: Date;
 };
 
-export interface UserDtoLight {
+export interface PatientDtoLight {
     id: string;
     DisplayName: string;
     Phone: string;
@@ -34,7 +34,7 @@ export interface UserDtoLight {
     BirthDate: Date;
 };
 
-export interface UserSearchFilters {
+export interface PatientSearchFilters {
     Phone: string;
     Email: string;
     UserId: string;
@@ -50,10 +50,11 @@ export interface UserSearchFilters {
     ItemsPerPage: number;
 };
 
-export interface UserLoginRequestDto {
-    Phone?: string,
-    Email?: string,
-    Password?: string,
-    Otp?: string,
-    LoginRoleId: number
+export interface PatientDomainModel {
+    id: string;
+    DisplayName: string;
+    Phone: string;
+    Email: string;
+    Gender: string;
+    BirthDate: Date;
 };

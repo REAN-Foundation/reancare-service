@@ -1,17 +1,17 @@
 import { RoleRepo } from "../repositories/role.repo";
 import { Role } from '../models/role.model';
-import { RoleDTO } from "../../../domain.types/role.domain.types";
+import { RoleDto } from "../../../domain.types/role.domain.types";
 
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class RoleMapper {
 
-    static toDTO = (role: Role): RoleDTO => {
+    static toDto = (role: Role): RoleDto => {
         if(role == null){
             return null;
         }
-        var dto: RoleDTO = {
+        var dto: RoleDto = {
             id: role.id,
             RoleName: role.RoleName
         };

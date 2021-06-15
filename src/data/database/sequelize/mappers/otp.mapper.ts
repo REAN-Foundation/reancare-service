@@ -1,4 +1,4 @@
-import { OtpDTO } from "../../../domain.types/otp.domain.types";
+import { OtpDto } from "../../../domain.types/otp.domain.types";
 import { Otp } from "../models/otp.model";
 
 
@@ -6,11 +6,11 @@ import { Otp } from "../models/otp.model";
 
 export class OtpMapper {
 
-    static toDTO = (otp: Otp): OtpDTO => {
+    static toDto = (otp: Otp): OtpDto => {
         if(otp == null){
             return null;
         }
-        var dto: OtpDTO = {
+        var dto: OtpDto = {
             id: otp.id,
             UserId: otp.UserId,
             Purpose: otp.Purpose,

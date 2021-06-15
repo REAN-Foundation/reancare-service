@@ -1,7 +1,7 @@
 import { IRoleRepo } from '../../../repository.interfaces/role.repo.interface';
 import { Role } from '../models/role.model';
 import { Op, Sequelize } from 'sequelize/types';
-import { RoleDTO } from '../../../domain.types/role.domain.types';
+import { RoleDto } from '../../../domain.types/role.domain.types';
 import { RoleMapper } from '../mappers/role.mapper';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
@@ -10,14 +10,14 @@ import { ApiError } from '../../../../common/api.error';
 
 export class RoleRepo implements IRoleRepo {
     
-    create = async (roleEntity: any): Promise<RoleDTO> => {
+    create = async (roleEntity: any): Promise<RoleDto> => {
         try {
             var entity = {
                 RoleName: roleEntity.RoleName,
                 Description: roleEntity.Description,
             };
             var role = await Role.create(entity);
-            var dto = await RoleMapper.toDTO(role);
+            var dto = await RoleMapper.toDto(role);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -25,10 +25,10 @@ export class RoleRepo implements IRoleRepo {
         }
     };
 
-    getById = async (id: number): Promise<RoleDTO> => {
+    getById = async (id: number): Promise<RoleDto> => {
         try {
             var user = await Role.findByPk(id);
-            var dto = await RoleMapper.toDTO(user);
+            var dto = await RoleMapper.toDto(user);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -46,7 +46,7 @@ export class RoleRepo implements IRoleRepo {
         }
     };
 
-    search = async (name?: string): Promise<RoleDTO[]> => {
+    search = async (name?: string): Promise<RoleDto[]> => {
         try {
             var filter = { where: {} };
             if (name != null && name != 'undefined') {
@@ -58,7 +58,7 @@ export class RoleRepo implements IRoleRepo {
             }
             var roles = await Role.findAll(filter);
             var dtos = roles.map((x) => {
-                return RoleMapper.toDTO(x);
+                return RoleMapper.toDto(x);
             });
             return dtos;
         } catch (error) {

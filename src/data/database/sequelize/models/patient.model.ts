@@ -78,6 +78,14 @@ export class User extends Model {
     })
     DefaultTimeZone: string;
 
+    @Length({ min: 4, max: 16})
+    @Column({
+        type: DataType.STRING(16),
+        allowNull: false,
+        defaultValue: '+05:30'
+    })
+    CurrentTimeZone: string;
+
     @Column
     @CreatedAt
     CreateAt: Date;

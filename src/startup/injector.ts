@@ -1,14 +1,14 @@
 import 'reflect-metadata';
 import { DependencyContainer } from 'tsyringe';
 
-import { DatabaseConnector_Sequelize } from "../data/dal/sequelize/database.connector.sequelize";
+import { DatabaseConnector_Sequelize } from "../data/database/sequelize/database.connector.sequelize";
 import { Authenticator_jwt } from "../auth/jwt/authenticator.jwt";
 import { Authorizer_custom } from "../auth/custom/authorizer.custom";
 
-import { UserRepo } from '../data/dal/sequelize/repositories/user.repo';
-import { UserRoleRepo } from '../data/dal/sequelize/repositories/user.role.repo';
-import { RoleRepo } from '../data/dal/sequelize/repositories/role.repo';
-import { OtpRepo } from '../data/dal/sequelize/repositories/otp.repo';
+import { UserRepo } from '../data/database/sequelize/repositories/user.repo';
+import { UserRoleRepo } from '../data/database/sequelize/repositories/user.role.repo';
+import { RoleRepo } from '../data/database/sequelize/repositories/role.repo';
+import { OtpRepo } from '../data/database/sequelize/repositories/otp.repo';
 //import { ClientRepo } from '../data/dal/sequelize/repositories/client.repo';
 //import { PatientRepo } from '../data/dal/sequelize/repositories/patient.repo';
 import { TwilioMessagingService } from '../modules/communication/providers/twilio.messaging.service';

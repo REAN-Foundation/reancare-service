@@ -1,5 +1,5 @@
 
-export interface OtpDTO {
+export interface OtpDto {
     id: string;
     UserId: string;
     Purpose: string;

@@ -5,7 +5,7 @@ import { UserService } from '../services/user.service';
 import { ResponseHandler } from '../common/response.handler';
 import { Loader } from '../startup/loader';
 import { Authorizer } from '../auth/authorizer';
-import { UserSearchFilters, UserDetailsDto, UserLoginRequestDto } from '../data/domain.types/user.domain.types';
+import { UserSearchFilters, UserDetailsDto, UserLoginDetails } from '../data/domain.types/user.domain.types';
 import { UserInputValidator } from './input.validators/user.input.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////

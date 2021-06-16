@@ -1,10 +1,9 @@
-import { String } from 'aws-sdk/clients/iot';
-import { DateRangeUnit } from 'aws-sdk/clients/securityhub';
-import { DateImported } from 'aws-sdk/clients/transfer';
 import { Gender } from '../../common/system.types';
 import { UserRoleDto } from './role.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
+
+//#region Domain models
 
 export interface UserDomainModel {
     id?: string;
@@ -23,6 +22,17 @@ export interface UserDomainModel {
     GenerateLoginOTP?:boolean;
 }
 
+export interface UserLoginDetails {
+    Phone?: string,
+    Email?: string,
+    Password?: string,
+    Otp?: string,
+    LoginRoleId: number
+};
+
+//#endregion
+
+//#region DTOs
 export interface UserDetailsDto {
     id: string;
     UserName: string;
@@ -52,6 +62,9 @@ export interface UserDto {
     BirthDate: Date;
 };
 
+//#endregion
+
+//#region Search filters
 export interface UserSearchFilters {
     Phone: string;
     Email: string;
@@ -68,11 +81,4 @@ export interface UserSearchFilters {
     ItemsPerPage: number;
 };
 
-export interface UserLoginRequestDto {
-    Phone?: string,
-    Email?: string,
-    Password?: string,
-    Otp?: string,
-    LoginRoleId: number
-};
-
+//#endregion

@@ -4,7 +4,7 @@ import { IUserRoleRepo } from '../data/repository.interfaces/user.role.repo.inte
 import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserDetailsDto, UserDto, UserSearchFilters, UserLoginRequestDto, UserDomainModel } from '../data/domain.types/user.domain.types';
+import { UserDetailsDto, UserDto, UserSearchFilters, UserLoginDetails, UserDomainModel } from '../data/domain.types/user.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
@@ -76,7 +76,7 @@ export class UserService {
         return await this._userRepo.update(id, userDomainModel);
     };
 
-    public loginWithPassword = async (loginObject: UserLoginRequestDto): Promise<any> => {
+    public loginWithPassword = async (loginObject: UserLoginDetails): Promise<any> => {
 
         var user: UserDetailsDto = null;
 
@@ -159,7 +159,7 @@ export class UserService {
         return true;
     };
 
-    public loginWithOtp = async (loginObject: UserLoginRequestDto): Promise<any> => {
+    public loginWithOtp = async (loginObject: UserLoginDetails): Promise<any> => {
         var user: UserDetailsDto = null;
 
         if (loginObject.Phone) {

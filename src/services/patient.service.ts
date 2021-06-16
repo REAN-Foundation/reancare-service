@@ -5,7 +5,7 @@ import { IUserRoleRepo } from '../data/repository.interfaces/user.role.repo.inte
 import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserDetailsDto, UserDto, UserSearchFilters, UserLoginRequestDto } from '../data/domain.types/user.domain.types';
+import { UserDetailsDto, UserDto, UserSearchFilters, UserLoginDetails } from '../data/domain.types/user.domain.types';
 import { PatientDomainModel, PatientDetailsDto, PatientDto, PatientSearchFilters } from '../data/domain.types/patient.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';

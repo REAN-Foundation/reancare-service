@@ -2,7 +2,7 @@ import express from 'express';
 import { query, body, oneOf, validationResult, param } from 'express-validator';
 import { ResponseHandler } from '../../common/response.handler';
 import { Helper } from '../../common/helper';
-import { UserSearchFilters, UserLoginRequestDto } from '../../data/domain.types/user.domain.types';
+import { UserSearchFilters, UserLoginDetails } from '../../data/domain.types/user.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -73,7 +73,7 @@ export class UserInputValidator {
         static loginWithPassword = async (
             request: express.Request,
             response: express.Response
-        ): Promise<UserLoginRequestDto> => {
+        ): Promise<UserLoginDetails> => {
             try {
                 await oneOf([
                     body('Phone').optional().trim().escape(),
@@ -87,7 +87,7 @@ export class UserInputValidator {
                     Helper.handleValidationError(result);
                 }
 
-                var loginObject: UserLoginRequestDto = {
+                var loginObject: UserLoginDetails = {
                     Phone: null,
                     Email: null,
                     Password: request.body.Password,
@@ -178,7 +178,7 @@ export class UserInputValidator {
             }
         };
 
-        static loginWithOtp = async (request: express.Request, response: express.Response): Promise<UserLoginRequestDto> => {
+        static loginWithOtp = async (request: express.Request, response: express.Response): Promise<UserLoginDetails> => {
             try {
                 await oneOf([
                     body('Phone').optional().trim().isLength({ min: 10 }).escape(),
@@ -192,7 +192,7 @@ export class UserInputValidator {
                     Helper.handleValidationError(result);
                 }
 
-                var loginObject: UserLoginRequestDto = {
+                var loginObject: UserLoginDetails = {
                     Phone: null,
                     Email: null,
                     Password: null,

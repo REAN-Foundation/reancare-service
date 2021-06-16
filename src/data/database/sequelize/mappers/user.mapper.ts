@@ -1,20 +1,13 @@
-import { UserDto, UserDtoLight } from "../../../domain.types/user.domain.types";
-import { UserRepo } from "../repositories/user.repo";
+import { UserDetailsDto } from "../../../domain.types/user.domain.types";
 import { UserRoleRepo } from "../repositories/user.role.repo";
-import { RoleRepo } from "../repositories/role.repo";
 import { User } from '../models/user.model';
-import { Sequelize } from "sequelize/types";
 import { Helper } from '../../../../common/helper';
-import { NotThere } from '../../../../common/system.types';
-import { Logger } from "../../../../common/logger";
-import { ApiError } from "../../../../common/api.error";
-import { UserRole } from "../models/user.role.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserMapper {
 
-    static toDto = async (user: User): Promise<UserDto> => {
+    static toDto = async (user: User): Promise<UserDetailsDto> => {
 
         if(user == null){
             return null;
@@ -28,7 +21,7 @@ export class UserMapper {
         var userRoleRepo = new UserRoleRepo();
         const userRoles = await userRoleRepo.getUserRoles(user.id);
 
-        var dto: UserDto = {
+        var dto: UserDetailsDto = {
             id: user.id,
             UserName: user.UserName,
             Prefix: user.Prefix,
@@ -36,7 +29,7 @@ export class UserMapper {
             MiddleName: user.MiddleName,
             LastName: user.LastName,
             DisplayName: displayName,
-            Gender: user.Gender,
+            Gender: Helper.getGender(user.Gender),
             BirthDate: user.BirthDate,
             Age: age,
             Phone: user.Phone,

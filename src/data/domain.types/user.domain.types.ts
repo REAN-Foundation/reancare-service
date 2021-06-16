@@ -23,7 +23,7 @@ export interface UserDomainModel {
     GenerateLoginOTP?:boolean;
 }
 
-export interface UserDto {
+export interface UserDetailsDto {
     id: string;
     UserName: string;
     Prefix: string;
@@ -43,7 +43,7 @@ export interface UserDto {
     LastLogin: Date;
 };
 
-export interface UserDtoLight {
+export interface UserDto {
     id: string;
     DisplayName: string;
     Phone: string;

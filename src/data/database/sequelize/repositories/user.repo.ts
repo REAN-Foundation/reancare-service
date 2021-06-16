@@ -1,4 +1,4 @@
-import { UserDto, UserDtoLight } from "../../../domain.types/user.domain.types";
+import { UserDetailsDto, UserDomainModel, UserDto } from "../../../domain.types/user.domain.types";
 import { IUserRepo } from "../../../repository.interfaces/user.repo.interface";
 import { User } from '../models/user.model';
 import { UserMapper } from "../mappers/user.mapper";
@@ -6,6 +6,7 @@ import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { Op } from "sequelize/types";
 import { UserRole } from "../models/user.role.model";
+import userRoutes from "src/routes/user.routes";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +19,7 @@ export class UserRepo implements IUserRepo {
         return false;
     };
 
-    getUserWithPhone = async (phone: string): Promise<UserDto> => {
+    getUserWithPhone = async (phone: string): Promise<UserDetailsDto> => {
         if (phone != null && typeof phone != 'undefined') {
             var user = await User.findOne({ where: { Phone: phone } });
             return await UserMapper.toDto(user);
@@ -26,10 +27,10 @@ export class UserRepo implements IUserRepo {
         return null;
     };
 
-    getAllUsersWithPhoneAndRole = async (phone: string, roleId: number): Promise<UserDto[]> => {
+    getAllUsersWithPhoneAndRole = async (phone: string, roleId: number): Promise<UserDetailsDto[]> => {
         if (phone != null && typeof phone != 'undefined') {
             //KK: To be optimized with associations
-            var usersWithRole: UserDto[] = [];
+            var usersWithRole: UserDetailsDto[] = [];
             var users = await User.findAll({ where: { Phone: phone, IsActive: true } });
             for await (var user of users) {
                 var withRole = await UserRole.findOne({ where: { UserId: user.id, RoleId: roleId } });
@@ -51,7 +52,7 @@ export class UserRepo implements IUserRepo {
         return false;
     };
 
-    getUserWithEmail = async (email: string): Promise<UserDto> => {
+    getUserWithEmail = async (email: string): Promise<UserDetailsDto> => {
         if (email != null && typeof email != 'undefined') {
             var user = await User.findOne({ where: { Email: email } });
             return await UserMapper.toDto(user);
@@ -67,7 +68,7 @@ export class UserRepo implements IUserRepo {
         return false;
     };
 
-    create = async (userEntity: any): Promise<UserDto> => {
+    create = async (userEntity: any): Promise<UserDetailsDto> => {
         try {
             var entity = {
                 Prefix: userEntity.Prefix ?? '',
@@ -92,11 +93,50 @@ export class UserRepo implements IUserRepo {
         }
     };
 
-    getById = async (id: string): Promise<UserDto> => {
+    getById = async (id: string): Promise<UserDetailsDto> => {
         try {
             var user = await User.findByPk(id);
             var dto = await UserMapper.toDto(user);
             return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    update = async(id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
+        try {
+            var user = await User.findByPk(id);
+
+            if(userDomainModel.Prefix != null) {
+                user.Prefix = userDomainModel.Prefix;
+            }            
+            if(userDomainModel.FirstName != null) {
+                user.FirstName = userDomainModel.FirstName;
+            }
+            if(userDomainModel.LastName != null) {
+                user.LastName = userDomainModel.LastName;
+            }
+            if(userDomainModel.Phone != null) {
+                user.Phone = userDomainModel.Phone;
+            }
+            if(userDomainModel.Email != null) {
+                user.Email = userDomainModel.Email;
+            }
+            if(userDomainModel.Gender != null) {
+                user.Gender = userDomainModel.Gender;
+            }
+            if(userDomainModel.BirthDate != null) {
+                user.BirthDate = userDomainModel.BirthDate;
+            }
+            if(userDomainModel.ImageResourceId != null) {
+                user.ImageResourceId = userDomainModel.ImageResourceId;
+            }
+            await user.save();
+
+            var dto = await UserMapper.toDto(user);
+            return dto;
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -115,11 +155,11 @@ export class UserRepo implements IUserRepo {
         }
     };
 
-    searchLight(filters: any): Promise<UserDtoLight[]> {
+    searchLight(filters: any): Promise<UserDto[]> {
         throw new Error('Method not implemented.');
     }
 
-    searchFull(filters: any): Promise<UserDto[]> {
+    searchFull(filters: any): Promise<UserDetailsDto[]> {
         throw new Error('Method not implemented.');
     }
 

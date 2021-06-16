@@ -1,4 +1,4 @@
-import { UserDto, UserDtoLight } from "../../../domain.types/user.domain.types";
+import { UserDetailsDto, UserDto } from "../../../domain.types/user.domain.types";
 import { PatientDomainModel, PatientDetailsDto } from "../../../domain.types/patient.domain.types";
 import { IPatientRepo } from "../../../repository.interfaces/patient.repo.interface";
 import { User } from '../models/user.model';
@@ -68,11 +68,11 @@ export class PatientRepo implements IPatientRepo {
         }
     };
 
-    searchLight(filters: any): Promise<UserDtoLight[]> {
+    searchLight(filters: any): Promise<UserDto[]> {
         throw new Error('Method not implemented.');
     }
 
-    searchFull(filters: any): Promise<UserDto[]> {
+    searchFull(filters: any): Promise<UserDetailsDto[]> {
         throw new Error('Method not implemented.');
     }
 

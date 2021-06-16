@@ -31,11 +31,11 @@ export class PatientInputValidator {
         }
 
         if (
-            request.body.Gender !== 'Male' ||
-            request.body.Gender !== 'Female' ||
-            request.body.Gender !== 'male' ||
-            request.body.Gender !== 'female' ||
-            request.body.Gender !== 'Other' ||
+            request.body.Gender !== 'Male' &&
+            request.body.Gender !== 'Female' &&
+            request.body.Gender !== 'male' &&
+            request.body.Gender !== 'female' &&
+            request.body.Gender !== 'Other' &&
             request.body.Gender !== 'other'
         ) {
             request.body.Gender = 'Unknown';
@@ -44,7 +44,7 @@ export class PatientInputValidator {
             FirstName: request.body.FirstName ?? null,
             LastName: request.body.LastName ?? null,
             Prefix: request.body.Prefix ?? null,
-            Phone: request.body.Phone,
+            Phone: request.body.Phone ?? null,
             Email: request.body.Email ?? null,
             Gender: request.body.Gender ?? null,
             BirthDate: request.body.BirthDate ?? null,

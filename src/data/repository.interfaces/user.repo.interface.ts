@@ -1,29 +1,31 @@
-import { UserDto, UserDtoLight } from '../domain.types/user.domain.types';
+import { UserDetailsDto, UserDomainModel, UserDto } from '../domain.types/user.domain.types';
 
 
 export interface IUserRepo {
 
-    create(entity: any): Promise<UserDto>;
+    create(entity: any): Promise<UserDetailsDto>;
 
-    getById(id: string): Promise<UserDto>;
+    getById(id: string): Promise<UserDetailsDto>;
 
     delete(id: string): Promise<boolean>;
 
     userExistsWithPhone(phone: string): Promise<boolean>;
 
-    getUserWithPhone(phone: string): Promise<UserDto>;
+    getUserWithPhone(phone: string): Promise<UserDetailsDto>;
 
-    getAllUsersWithPhoneAndRole(phone: string, roleId: number): Promise<UserDto[]>;
+    getAllUsersWithPhoneAndRole(phone: string, roleId: number): Promise<UserDetailsDto[]>;
 
     userExistsWithEmail(email: string): Promise<boolean>;
 
-    getUserWithEmail(email: string): Promise<UserDto>;
+    getUserWithEmail(email: string): Promise<UserDetailsDto>;
 
     userExistsWithUsername(userName: string): Promise<boolean>;
 
-    searchLight(filters: any): Promise<UserDtoLight[]>;
+    searchLight(filters: any): Promise<UserDto[]>;
 
-    searchFull(filters: any): Promise<UserDto[]>;
+    searchFull(filters: any): Promise<UserDetailsDto[]>;
+
+    update(id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto>;
 
     getUserHashedPassword(id: string): Promise<string>;
 }

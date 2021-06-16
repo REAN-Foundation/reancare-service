@@ -5,7 +5,7 @@ import { IUserRoleRepo } from '../data/repository.interfaces/user.role.repo.inte
 import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserDto, UserDtoLight, UserSearchFilters, UserLoginRequestDto } from '../data/domain.types/user.domain.types';
+import { UserDetailsDto, UserDto, UserSearchFilters, UserLoginRequestDto } from '../data/domain.types/user.domain.types';
 import { PatientDomainModel, PatientDetailsDto, PatientDto, PatientSearchFilters } from '../data/domain.types/patient.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
@@ -27,7 +27,6 @@ export class PatientService {
     ) {}
 
     create = async (createModel: PatientDomainModel): Promise<PatientDetailsDto> => {
-
         return await this._patientRepo.create(createModel);
     };
 
@@ -50,15 +49,19 @@ export class PatientService {
         return await this._patientRepo.updateByUserId(id, updateModel);
     };
 
-    public checkforExistingPatients = async (entity: PatientDomainModel): Promise<number> => {
-        var roleDto = await this._roleRepo.getByName(Roles.Patient);
-        if(roleDto == null) {
+    public checkforDuplicatePatients = async (entity: PatientDomainModel): Promise<number> => {
+        var role = await this._roleRepo.getByName(Roles.Patient);
+        if(role == null) {
             throw new ApiError(404, 'Role- ' + Roles.Patient + 'does not exist!');
         }
-        var users = await this._userRepo.getAllUsersWithPhoneAndRole(entity.Phone, roleDto.id);
+        var users = await this._userRepo.getAllUsersWithPhoneAndRole(entity.Phone, role.id);
+
+        //construct display name
         var prefix = entity.Prefix ? (entity.Prefix + ' ') : '';
         var firstName = entity.FirstName ? (entity.FirstName + ' ') : '';
         const displayName:string = (prefix + firstName + entity.LastName ?? '').toLowerCase();
+
+        //compare display name with all users sharing same phone number
         for(var user of users) {
             var name = user.DisplayName.toLowerCase();
             if(name === displayName){

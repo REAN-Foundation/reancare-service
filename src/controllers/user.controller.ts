@@ -5,7 +5,7 @@ import { UserService } from '../services/user.service';
 import { ResponseHandler } from '../common/response.handler';
 import { Loader } from '../startup/loader';
 import { Authorizer } from '../auth/authorizer';
-import { UserSearchFilters, UserDto, UserLoginRequestDto } from '../data/domain.types/user.domain.types';
+import { UserSearchFilters, UserDetailsDto, UserLoginRequestDto } from '../data/domain.types/user.domain.types';
 import { UserInputValidator } from './input.validators/user.input.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ export class UserController {
                 return;
             }
 
-            var user: UserDto = userDetails.UserDto;
+            var user: UserDetailsDto = userDetails.UserDto;
             var accessToken = userDetails.AccessToken;
 
             ResponseHandler.success(

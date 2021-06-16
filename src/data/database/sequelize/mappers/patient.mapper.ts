@@ -1,4 +1,4 @@
-import { UserDomainModel, UserDtoLight } from "../../../domain.types/user.domain.types";
+import { UserDomainModel, UserDto } from "../../../domain.types/user.domain.types";
 import { UserRepo } from "../repositories/user.repo";
 import { UserRoleRepo } from "../repositories/user.role.repo";
 import { RoleRepo } from "../repositories/role.repo";
@@ -25,6 +25,7 @@ export class PatientMapper {
             Phone: patientDomainModel.Phone,
             Email: patientDomainModel.Email,
             BirthDate: patientDomainModel.BirthDate,
+            Gender: patientDomainModel.Gender,
             ImageResourceId: patientDomainModel.ImageResourceId,
         };
         return userDm;

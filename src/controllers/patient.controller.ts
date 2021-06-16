@@ -12,7 +12,7 @@ import { UserService } from '../services/user.service';
 import { Roles } from '../data/domain.types/role.domain.types';
 import { PatientMapper } from '../data/database/sequelize/mappers/patient.mapper';
 import { UserDomainModel } from '../data/domain.types/user.domain.types';
-import { ApiError } from 'src/common/api.error';
+import { ApiError } from '../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,7 +44,8 @@ export class PatientController {
             var patientDomainModel: PatientDomainModel = await PatientInputValidator.create(request, response);
 
             //Throw an error if patient with same name and phone number exists
-            var existingPatientCountSharingPhone = await this._service.checkforExistingPatients(patientDomainModel);
+            var existingPatientCountSharingPhone = await this._service.checkforDuplicatePatients(patientDomainModel);
+
             var userName = await this._userService.generateUserName(patientDomainModel.FirstName, patientDomainModel.LastName);
             var displayId = await this._userService.generateUserDisplayId(Roles.Patient, patientDomainModel.Phone, existingPatientCountSharingPhone);
             var displayName = Helper.constructUserDisplayName(patientDomainModel.Prefix, patientDomainModel.FirstName, patientDomainModel.LastName);
@@ -127,13 +128,21 @@ export class PatientController {
                 return false;
             }
             var patientDomainModel = await PatientInputValidator.updateByUserId(request, response);
-            const patient = await this._service.updateByUserId(patientDomainModel.UserId, patientDomainModel);
-            if (patient == null) {
-                ResponseHandler.failure(request, response, 'Unable to update patient records!', 400);
-                return;
+
+            //This throws an error if the duplicate patient being added
+            await this._service.checkforDuplicatePatients(patientDomainModel);
+
+            var userDomainModel: UserDomainModel = PatientMapper.toUserDomainModel(patientDomainModel);
+            var updatedUser = await this._userService.update(patientDomainModel.UserId, userDomainModel);
+            if(!updatedUser) {
+                throw new ApiError(400, 'Unable to update user!');
+            }
+            const updatedPatient = await this._service.updateByUserId(patientDomainModel.UserId, patientDomainModel);
+            if (updatedPatient == null) {
+                throw new ApiError(400, 'Unable to update patient record!');
             }
             ResponseHandler.success(request, response, 'Patient recors updated successfully!', 200, {
-                Patient: patient,
+                Patient: updatedPatient,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

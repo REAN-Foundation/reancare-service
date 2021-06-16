@@ -13,7 +13,7 @@ export interface PatientDomainModel {
     MiddleName?: string;
     LastName?: string;
     Prefix?: string;
-    Phone: string;
+    Phone?: string;
     Email?: string;
     Gender?: Gender;
     BirthDate?: Date;

@@ -137,5 +137,18 @@ export class Helper {
         return displayName;
     }
 
+    static getGender = (str: string): Gender => {
+        if (
+            str != 'Male' &&
+            str != 'Female' &&
+            str != 'male' &&
+            str != 'female' &&
+            str != 'Other' &&
+            str != 'other'
+        ) {
+            return 'Unknown';
+        }
+        return str;
+    }
 }
 

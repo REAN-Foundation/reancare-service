@@ -6,11 +6,11 @@ import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { Op } from "sequelize/types";
 import { UserRole } from "../models/user.role.model";
-import userRoutes from "src/routes/user.routes";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserRepo implements IUserRepo {
+
     userExistsWithPhone = async (phone: string): Promise<boolean> => {
         if (phone != null && typeof phone != 'undefined') {
             var existing = await User.findOne({ where: { Phone: phone } });
@@ -22,20 +22,22 @@ export class UserRepo implements IUserRepo {
     getUserWithPhone = async (phone: string): Promise<UserDetailsDto> => {
         if (phone != null && typeof phone != 'undefined') {
             var user = await User.findOne({ where: { Phone: phone } });
-            return await UserMapper.toDto(user);
+            return await UserMapper.toDetailsDto(user);
         }
         return null;
     };
 
     getAllUsersWithPhoneAndRole = async (phone: string, roleId: number): Promise<UserDetailsDto[]> => {
         if (phone != null && typeof phone != 'undefined') {
+
             //KK: To be optimized with associations
+            
             var usersWithRole: UserDetailsDto[] = [];
             var users = await User.findAll({ where: { Phone: phone, IsActive: true } });
             for await (var user of users) {
                 var withRole = await UserRole.findOne({ where: { UserId: user.id, RoleId: roleId } });
                 if (withRole != null) {
-                    var dto = await UserMapper.toDto(user);
+                    var dto = await UserMapper.toDetailsDto(user);
                     usersWithRole.push(dto);
                 }
             }
@@ -55,7 +57,7 @@ export class UserRepo implements IUserRepo {
     getUserWithEmail = async (email: string): Promise<UserDetailsDto> => {
         if (email != null && typeof email != 'undefined') {
             var user = await User.findOne({ where: { Email: email } });
-            return await UserMapper.toDto(user);
+            return await UserMapper.toDetailsDto(user);
         }
         return null;
     };
@@ -68,24 +70,26 @@ export class UserRepo implements IUserRepo {
         return false;
     };
 
-    create = async (userEntity: any): Promise<UserDetailsDto> => {
+    create = async (userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
-            var entity = {
-                Prefix: userEntity.Prefix ?? '',
-                FirstName: userEntity.FirstName,
-                MiddleName: userEntity.MiddleName ?? null,
-                LastName: userEntity.LastName,
-                Phone: userEntity.Phone,
-                Email: userEntity.Email ?? null,
-                UserName: userEntity.UserName,
-                Password: userEntity.Password ?? null,
-                Gender: userEntity.Gender ?? 'Unknown',
-                BirthDate: userEntity.BirthDate ?? null,
-                ImageResourceId: userEntity.ImageResourceId ?? null,
-            };
 
+            var entity = {
+                Prefix: userDomainModel.Prefix ?? '',
+                FirstName: userDomainModel.FirstName,
+                MiddleName: userDomainModel.MiddleName ?? null,
+                LastName: userDomainModel.LastName,
+                Phone: userDomainModel.Phone,
+                Email: userDomainModel.Email ?? null,
+                UserName: userDomainModel.UserName,
+                Password: userDomainModel.Password ?? null,
+                Gender: userDomainModel.Gender ?? 'Unknown',
+                BirthDate: userDomainModel.BirthDate ?? null,
+                ImageResourceId: userDomainModel.ImageResourceId ?? null,
+                DefaultTimeZone: userDomainModel.DefaultTimeZone ?? '+05:30',
+                CurrentTimeZone: userDomainModel.DefaultTimeZone ?? '+05:30',
+            };
             var user = await User.create(entity);
-            var dto = await UserMapper.toDto(user);
+            var dto = await UserMapper.toDetailsDto(user);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -96,7 +100,7 @@ export class UserRepo implements IUserRepo {
     getById = async (id: string): Promise<UserDetailsDto> => {
         try {
             var user = await User.findByPk(id);
-            var dto = await UserMapper.toDto(user);
+            var dto = await UserMapper.toDetailsDto(user);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -134,7 +138,7 @@ export class UserRepo implements IUserRepo {
             }
             await user.save();
 
-            var dto = await UserMapper.toDto(user);
+            var dto = await UserMapper.toDetailsDto(user);
             return dto;
             
         } catch (error) {

@@ -18,6 +18,7 @@ import { generate} from 'generate-password';
 
 @injectable()
 export class UserService {
+    
     constructor(
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserRoleRepo') private _userRoleRepo: IUserRoleRepo,
@@ -26,34 +27,13 @@ export class UserService {
         @inject('IMessagingService') private _messagingService: IMessagingService
     ) {}
 
-    createUser = async (userDomainModel: UserDomainModel) => {
-        var entity = {
-            FirstName: userDomainModel.FirstName,
-            LastName: userDomainModel.LastName,
-            Prefix: userDomainModel.Prefix,
-            Phone: userDomainModel.Phone,
-            Email: userDomainModel.Email ?? null,
-            UserName: userDomainModel.UserName,
-            Password: userDomainModel.Password,
-        };
+    create = async (userDomainModel: UserDomainModel) => {
 
-        var user = await this._userRepo.create(entity);
+        var user = await this._userRepo.create(userDomainModel);
         if (user == null) {
             return null;
         }
-
-        if (userDomainModel.hasOwnProperty('GenerateLoginOTP') && userDomainModel.GenerateLoginOTP === true) {
-            var obj = {
-                Phone: user.Phone,
-                Email: user.Email,
-                UserId: user.id,
-                Purpose: 'Login',
-            };
-            var successful = await this.generateOtp(obj);
-            if (successful) {
-                Logger.instance().log(`Login OTP sent successfully to user ${user.DisplayName}.`);
-            }
-        }
+        await this.generateLoginOtp(userDomainModel, user);
         return user;
     };
 
@@ -277,7 +257,24 @@ export class UserService {
         return username;
     }
     
-    // resetPassword = async (obj: any): Promise<boolean> => {
+    private async generateLoginOtp(userDomainModel: UserDomainModel, user: UserDetailsDto) {
+
+        if (userDomainModel.hasOwnProperty('GenerateLoginOTP') && 
+            userDomainModel.GenerateLoginOTP === true) {
+            var obj = {
+                Phone: user.Phone,
+                Email: user.Email,
+                UserId: user.id,
+                Purpose: 'Login',
+            };
+            var successful = await this.generateOtp(obj);
+            if (successful) {
+                Logger.instance().log(`Login OTP sent successfully to user ${user.DisplayName}.`);
+            }
+        }
+    }
+
+    // public resetPassword = async (obj: any): Promise<boolean> => {
     //     return true;
     // };
 

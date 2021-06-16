@@ -12,6 +12,8 @@ import { OtpRepo } from '../data/database/sequelize/repositories/otp.repo';
 //import { ClientRepo } from '../data/dal/sequelize/repositories/client.repo';
 //import { PatientRepo } from '../data/dal/sequelize/repositories/patient.repo';
 import { TwilioMessagingService } from '../modules/communication/providers/twilio.messaging.service';
+import { AddressRepo } from '../data/database/sequelize/repositories/address.repo';
+import { PatientRepo } from '../data/database/sequelize/repositories/patient.repo';
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class Injector {
@@ -29,7 +31,8 @@ export class Injector {
         container.register('IRoleRepo', RoleRepo);
         container.register('IOtpRepo', OtpRepo);
         // container.register('IClientRepo', ClientRepo);
-        // container.register('IPatientRepo', PatientRepo);
+        container.register('IPatientRepo', PatientRepo);
+        container.register('IAddressRepo', AddressRepo);
 
         //Modules
         container.register('IMessagingService', TwilioMessagingService);

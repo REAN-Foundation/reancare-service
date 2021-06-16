@@ -11,13 +11,14 @@ import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { UserRole } from "../models/user.role.model";
 import { PatientDetailsDto, PatientDomainModel, PatientDto } from "../../../domain.types/patient.domain.types";
+import { AddressRepo } from "../repositories/address.repo";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class PatientMapper {
 
     static toUserDomainModel(patientDomainModel: PatientDomainModel): UserDomainModel {
-        var userDm: UserDomainModel = {
+        var userDomainModel: UserDomainModel = {
             Prefix: patientDomainModel.Prefix,
             FirstName: patientDomainModel.FirstName,
             MiddleName: patientDomainModel.MiddleName,
@@ -28,7 +29,7 @@ export class PatientMapper {
             Gender: patientDomainModel.Gender,
             ImageResourceId: patientDomainModel.ImageResourceId,
         };
-        return userDm;
+        return userDomainModel;
     }
 
     static toDetailsDto = async (patient: Patient): Promise<PatientDetailsDto> => {
@@ -40,8 +41,12 @@ export class PatientMapper {
         var userRepo = new UserRepo();
         const user = await userRepo.getById(patient.UserId);
 
+        var addressRepo = new AddressRepo();
+        const address = await addressRepo.getByUserId(user.id);
+
         var dto: PatientDetailsDto = {
-            id: user.id,
+            id: patient.id,
+            UserId: user.id,
             DisplayId: patient.DisplayId,
             UserName: user.UserName,
             Prefix: user.Prefix,
@@ -58,7 +63,9 @@ export class PatientMapper {
             ActiveSince: user.ActiveSince,
             IsActive: user.IsActive,
             LastLogin: user.LastLogin,
-            Address: null, //AddressDto;
+            DefaultTimeZone: user.DefaultTimeZone,
+            CurrentTimeZone: user.CurrentTimeZone,
+            Address: address,
             MedicalProfile: null, //PatientMedicalProfileDto;
             Insurances: [], //PatientInsuranceDto[];
             EmergencyContacts: [], // PatientEmergencyContactDto[];

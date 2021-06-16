@@ -16,7 +16,6 @@ import { Roles } from '../data/domain.types/role.domain.types';
 
 @injectable()
 export class PatientService {
-
     constructor(
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
@@ -26,8 +25,8 @@ export class PatientService {
         @inject('IMessagingService') private _messagingService: IMessagingService
     ) {}
 
-    create = async (createModel: PatientDomainModel): Promise<PatientDetailsDto> => {
-        return await this._patientRepo.create(createModel);
+    create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
+        return await this._patientRepo.create(patientDomainModel);
     };
 
     public getByUserId = async (id: string): Promise<PatientDetailsDto> => {
@@ -45,29 +44,32 @@ export class PatientService {
         }
     };
 
-    public updateByUserId = async (id: string, updateModel: PatientDomainModel): Promise<PatientDetailsDto> => {
+    public updateByUserId = async (
+        id: string,
+        updateModel: PatientDomainModel
+    ): Promise<PatientDetailsDto> => {
         return await this._patientRepo.updateByUserId(id, updateModel);
     };
 
     public checkforDuplicatePatients = async (entity: PatientDomainModel): Promise<number> => {
         var role = await this._roleRepo.getByName(Roles.Patient);
-        if(role == null) {
+        if (role == null) {
             throw new ApiError(404, 'Role- ' + Roles.Patient + 'does not exist!');
         }
         var users = await this._userRepo.getAllUsersWithPhoneAndRole(entity.Phone, role.id);
 
         //construct display name
-        var prefix = entity.Prefix ? (entity.Prefix + ' ') : '';
-        var firstName = entity.FirstName ? (entity.FirstName + ' ') : '';
-        const displayName:string = (prefix + firstName + entity.LastName ?? '').toLowerCase();
+        var prefix = entity.Prefix ? entity.Prefix + ' ' : '';
+        var firstName = entity.FirstName ? entity.FirstName + ' ' : '';
+        const displayName: string = (prefix + firstName + entity.LastName ?? '').toLowerCase();
 
         //compare display name with all users sharing same phone number
-        for(var user of users) {
+        for (var user of users) {
             var name = user.DisplayName.toLowerCase();
-            if(name === displayName){
+            if (name === displayName) {
                 throw new ApiError(409, 'Patient with same name and phone number exists!');
             }
         }
         return users.length;
-    }
+    };
 }

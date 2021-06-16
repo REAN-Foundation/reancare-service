@@ -107,16 +107,16 @@ export class Address extends Model {
     PostalCode: string;
 
     @Column({
-        type: DataType.STRING(128),
+        type: DataType.FLOAT,
         allowNull: true,
     })
-    LocationCoordsLongitude: string;
+    LocationCoordsLongitude: number;
 
     @Column({
-        type: DataType.STRING(128),
+        type: DataType.FLOAT,
         allowNull: true,
     })
-    LocationCoordsLattitude: string;
+    LocationCoordsLattitude: number;
 
     @Column
     @CreatedAt

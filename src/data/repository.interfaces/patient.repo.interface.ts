@@ -1,4 +1,4 @@
-import { PatientDetailsDto, PatientDto, PatientDomainModel } from '../domain.types/patient.domain.types';
+import { PatientDetailsDto, PatientDto, PatientDomainModel, PatientSearchFilters } from '../domain.types/patient.domain.types';
 
 
 export interface IPatientRepo {
@@ -11,8 +11,8 @@ export interface IPatientRepo {
 
     delete(userId: string): Promise<boolean>;
 
-    searchLight(filters: any): Promise<PatientDto[]>;
+    searchLight(filters: PatientSearchFilters): Promise<PatientDto[]>;
 
-    searchFull(filters: any): Promise<PatientDetailsDto[]>;
+    searchFull(filters: PatientSearchFilters): Promise<PatientDetailsDto[]>;
 
 }

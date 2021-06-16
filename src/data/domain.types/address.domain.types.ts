@@ -2,7 +2,9 @@
 export interface AddressDomainModel {
     id?: string;
     Type: string;
-    Line?: string;
+    UserId?: string;
+    OrganizationId?: string;
+    AddressLine?: string;
     City?: string;
     District?: string;
     State?: string;
@@ -15,7 +17,9 @@ export interface AddressDomainModel {
 export interface AddressDto {
     id: string;
     Type: string;
-    Line: string;
+    UserId?: string;
+    OrganizationId?: string;
+    AddressLine: string;
     City: string;
     District: string;
     State: string;

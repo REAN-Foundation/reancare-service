@@ -68,23 +68,7 @@ export class Patient extends Model {
         type:  DataType.UUIDV4,
         allowNull: true,
     })
-    AddressId: string;
-
-    @Length({ min: 4, max: 16})
-    @Column({
-        type: DataType.STRING(16),
-        allowNull: false,
-        defaultValue: '+05:30'
-    })
-    DefaultTimeZone: string;
-
-    @Length({ min: 4, max: 16})
-    @Column({
-        type: DataType.STRING(16),
-        allowNull: false,
-        defaultValue: '+05:30'
-    })
-    CurrentTimeZone: string;
+    MedicalProfileId: string;
 
     @Column
     @CreatedAt

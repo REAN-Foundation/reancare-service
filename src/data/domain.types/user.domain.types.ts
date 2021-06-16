@@ -19,6 +19,8 @@ export interface UserDomainModel {
     Gender?: Gender;
     BirthDate?: Date;
     ImageResourceId?: string;
+    DefaultTimeZone?:string;
+    CurrentTimeZone?:string;
     GenerateLoginOTP?:boolean;
 }
 
@@ -51,6 +53,8 @@ export interface UserDetailsDto {
     IsActive: boolean;
     ActiveSince: Date;
     LastLogin: Date;
+    DefaultTimeZone:string;
+    CurrentTimeZone:string;
 };
 
 export interface UserDto {

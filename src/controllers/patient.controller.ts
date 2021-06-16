@@ -1,5 +1,4 @@
 import express from 'express';
-import { query, body, oneOf, validationResult, param } from 'express-validator';
 
 import { PatientService } from '../services/patient.service';
 import { Helper } from '../common/helper';
@@ -7,12 +6,15 @@ import { ResponseHandler } from '../common/response.handler';
 import { Loader } from '../startup/loader';
 import { Authorizer } from '../auth/authorizer';
 import { PatientInputValidator } from './input.validators/patient.input.validator';
-import { PatientDomainModel } from '../data/domain.types/patient.domain.types';
+import { PatientDetailsDto, PatientDomainModel } from '../data/domain.types/patient.domain.types';
 import { UserService } from '../services/user.service';
 import { Roles } from '../data/domain.types/role.domain.types';
 import { PatientMapper } from '../data/database/sequelize/mappers/patient.mapper';
 import { UserDomainModel } from '../data/domain.types/user.domain.types';
 import { ApiError } from '../common/api.error';
+import { AddressDomainModel } from '../data/domain.types/address.domain.types';
+import { AddressInputValidator } from './input.validators/address.input.validator';
+import { AddressService } from '../services/address.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +24,7 @@ export class PatientController {
 
     _service: PatientService = null;
     _userService: UserService = null;
+    _addressService: AddressService = null;
     _authorizer: Authorizer = null;
 
     constructor() {
@@ -53,7 +56,7 @@ export class PatientController {
             userDomainModel.DisplayName = displayName;
             userDomainModel.UserName =  userName;
 
-            var user = await this._userService.createUser(userDomainModel);
+            var user = await this._userService.create(userDomainModel);
             if(user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }
@@ -63,12 +66,18 @@ export class PatientController {
             // var appointmentCustomerModel = PatientMapper.ToAppointmentCustomerDomainModel(userDomainModel);
             // var customer = await this._appointmentService.createCustomer(appointmentCustomerModel);
 
+            patientDomainModel.DisplayId = displayId;
             var patient = await this._service.create(patientDomainModel);
             if(user == null) {
                 throw new ApiError(400, 'Cannot create patient!');
             }
+
+            await this.createAddress(request, patient);
+
             ResponseHandler.success(request, response, 'Patient created successfully!', 201, {Patient: patient});
+
         } catch (error) {
+            //KK: Todo: Add rollback in case of mid-way exception
             ResponseHandler.handleError(request, response, error);
         }
     };
@@ -141,13 +150,57 @@ export class PatientController {
             if (updatedPatient == null) {
                 throw new ApiError(400, 'Unable to update patient record!');
             }
-            ResponseHandler.success(request, response, 'Patient recors updated successfully!', 200, {
+
+            await this.createOrUpdateAddress(request, patientDomainModel);
+
+            ResponseHandler.success(request, response, 'Patient records updated successfully!', 200, {
                 Patient: updatedPatient,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    private async createOrUpdateAddress(request, patientDomainModel: PatientDomainModel) {
+
+        var addressDomainModel: AddressDomainModel = null;
+        var addressBody = request.body.Address ?? null;
+
+        if (addressBody != null) {
+            addressDomainModel = await AddressInputValidator.getDomainModel(addressBody);
+            //get existing address to update
+            var existingAddress = await this._addressService.getByUserId(patientDomainModel.UserId);
+            if (existingAddress == null) {
+                addressDomainModel.UserId = patientDomainModel.UserId;
+                var address = await this._addressService.create(addressDomainModel);
+                if (address == null) {
+                    throw new ApiError(400, 'Cannot create address!');
+                }
+            }
+            else {
+                const updatedAddress = await this._addressService.update(
+                    existingAddress.id,
+                    addressDomainModel
+                );
+                if (updatedAddress == null) {
+                    throw new ApiError(400, 'Unable to update address record!');
+                }
+            }
+        }
+    }
+
+    private async createAddress(request, patient: PatientDetailsDto) {
+        var addressDomainModel: AddressDomainModel = null;
+        var addressBody = request.body.Address ?? null;
+        if (addressBody != null) {
+            addressDomainModel = await AddressInputValidator.getDomainModel(addressBody);
+            addressDomainModel.UserId = patient.UserId;
+            var address = await this._addressService.create(addressDomainModel);
+            if (address == null) {
+                throw new ApiError(400, 'Cannot create address!');
+            }
+        }
+    }
 
     //#endregion
 };

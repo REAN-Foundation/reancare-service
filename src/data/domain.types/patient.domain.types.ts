@@ -1,5 +1,6 @@
+import { String } from 'aws-sdk/clients/iot';
 import { Gender } from '../../common/system.types';
-import { AddressDomainModel, AddressDto } from './address.domain.types';
+import { AddressDto } from './address.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -8,6 +9,12 @@ import { AddressDomainModel, AddressDto } from './address.domain.types';
 export interface PatientDomainModel {
     id?: string;
     UserId?: string;
+    DisplayId?: string,
+    NationalHealthId?:string;
+    MedicalProfileId?: string;
+    InsuranceIds?: String[];
+    EmergencyContactIds?: string[];
+
     DisplayName?: string;
     FirstName?: string;
     MiddleName?: string;
@@ -19,10 +26,8 @@ export interface PatientDomainModel {
     BirthDate?: Date;
     ActiveSince?: Date;
     ImageResourceId?:string;
-    Address?: AddressDomainModel;
-    MedicalProfile?: PatientMedicalProfileDomainModel;
-    Insurances?: PatientInsuranceDomainModel[];
-    EmergencyContacts?: PatientEmergencyContactDomainModel[];
+    DefaultTimeZone?:string;
+    CurrentTimeZone?:string;
 };
 
 export interface PatientMedicalProfileDomainModel {
@@ -43,6 +48,7 @@ export interface PatientEmergencyContactDomainModel {
 
 export interface PatientDetailsDto {
     id: string;
+    UserId: string;
     UserName: string;
     DisplayId: string;
     DisplayName: string;
@@ -59,6 +65,8 @@ export interface PatientDetailsDto {
     IsActive: boolean;
     ActiveSince: Date;
     LastLogin: Date;
+    DefaultTimeZone:string;
+    CurrentTimeZone:string;
     Address?: AddressDto;
     MedicalProfile?: PatientMedicalProfileDto;
     Insurances?: PatientInsuranceDto[];
@@ -79,6 +87,7 @@ export interface PatientEmergencyContactDto {
 
 export interface PatientDto {
     id: string;
+    UserId: string;
     DisplayId: string;
     DisplayName: string;
     UserName: string,

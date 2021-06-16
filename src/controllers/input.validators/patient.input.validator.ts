@@ -19,7 +19,7 @@ export class PatientInputValidator {
         if (address != null) {
             addressModel = {
                 Type: 'Home',
-                Line: request.body.Address.Line ?? null,
+                AddressLine: request.body.Address.AddressLine ?? null,
                 City: request.body.Address.City ?? null,
                 District: request.body.Address.District ?? null,
                 State: request.body.Address.State ?? null,
@@ -49,7 +49,6 @@ export class PatientInputValidator {
             Gender: request.body.Gender ?? null,
             BirthDate: request.body.BirthDate ?? null,
             ImageResourceId: request.body.ImageResourceId ?? null,
-            Address: addressModel,
         };
         if(entity.Gender != null && entity.Prefix == null) {
             entity.Prefix = Helper.guessPrefixByGender(entity.Gender);

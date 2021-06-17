@@ -94,6 +94,15 @@ export class PatientInputValidator {
         return request.params.userId;
     };
 
+    static delete = async (request: express.Request, response: express.Response): Promise<string> => {
+        await param('userId').trim().escape().isUUID().run(request);
+        const result = validationResult(request);
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+        return request.params.userId;
+    };
+
     static search = async (
         request: express.Request,
         response: express.Response

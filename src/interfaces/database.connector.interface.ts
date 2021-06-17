@@ -4,6 +4,8 @@ export interface IDatabaseConnector {
 
     connect(): Promise<boolean>;
 
+    sync(): Promise<boolean>;
+
     createDatabase(): Promise<boolean>;
 
     dropDatabase(): Promise<boolean>;

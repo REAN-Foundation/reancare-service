@@ -15,6 +15,7 @@ import { ApiError } from '../common/api.error';
 import { AddressDomainModel } from '../data/domain.types/address.domain.types';
 import { AddressInputValidator } from './input.validators/address.input.validator';
 import { AddressService } from '../services/address.service';
+import { request } from 'http';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,6 +53,7 @@ export class PatientController {
             var userName = await this._userService.generateUserName(patientDomainModel.FirstName, patientDomainModel.LastName);
             var displayId = await this._userService.generateUserDisplayId(Roles.Patient, patientDomainModel.Phone, existingPatientCountSharingPhone);
             var displayName = Helper.constructUserDisplayName(patientDomainModel.Prefix, patientDomainModel.FirstName, patientDomainModel.LastName);
+
             var userDomainModel: UserDomainModel = PatientMapper.toUserDomainModel(patientDomainModel);
             userDomainModel.DisplayName = displayName;
             userDomainModel.UserName =  userName;
@@ -88,12 +90,19 @@ export class PatientController {
             if (!this._authorizer.authorize(request, response)) {
                 return false;
             }
-            var id: string = await PatientInputValidator.getByUserId(request, response);
-            const patient = await this._service.getByUserId(id);
-            if (patient == null) {
-                ResponseHandler.failure(request, response, 'Patient not found.', 404);
-                return;
+
+            var userId: string = await PatientInputValidator.getByUserId(request, response);
+
+            const exists = await this._userService.exists(userId);
+            if(!exists){
+                throw new ApiError(404, 'User not found.');
             }
+
+            const patient = await this._service.getByUserId(userId);
+            if (patient == null) {
+                throw new ApiError(404, 'Patient not found.');
+            }
+
             ResponseHandler.success(request, response, 'Patient retrieved successfully!', 200, {
                 Patient: patient,
             });
@@ -136,7 +145,14 @@ export class PatientController {
             if (!this._authorizer.authorize(request, response)) {
                 return false;
             }
+
             var patientDomainModel = await PatientInputValidator.updateByUserId(request, response);
+
+            var userId: string = await PatientInputValidator.getByUserId(request, response);
+            const exists = await this._userService.exists(patientDomainModel.UserId);
+            if(!exists){
+                throw new ApiError(404, 'User not found.');
+            }
 
             //This throws an error if the duplicate patient being added
             await this._service.checkforDuplicatePatients(patientDomainModel);
@@ -160,6 +176,33 @@ export class PatientController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    delete = async (request: express.Request, response: express.Response) => {
+        try {
+            request.context = 'Patient.DeleteByUserId';
+            if (!this._authorizer.authorize(request, response)) {
+                return false;
+            }
+
+            var userId: string = await PatientInputValidator.delete(request, response);
+            const exists = await this._userService.exists(userId);
+            if(!exists){
+                throw new ApiError(404, 'User not found.');
+            }
+
+            const deleted = await this._userService.delete(userId);
+            if(!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
+
+            ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
+                Deleted: true,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
 
     private async createOrUpdateAddress(request, patientDomainModel: PatientDomainModel) {
 

@@ -1,6 +1,6 @@
 import { IRoleRepo } from '../../../repository.interfaces/role.repo.interface';
 import { Role } from '../models/role.model';
-import { Op, Sequelize } from 'sequelize/types';
+import { Op, Sequelize } from 'sequelize';
 import { RoleDto } from '../../../domain.types/role.domain.types';
 import { RoleMapper } from '../mappers/role.mapper';
 import { Logger } from '../../../../common/logger';

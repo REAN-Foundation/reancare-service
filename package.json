@@ -19,6 +19,7 @@
   "dependencies": {
     "@aws-sdk/client-comprehendmedical": "^3.13.0",
     "@types/bcryptjs": "^2.4.2",
+    "@types/sequelize": "^4.28.9",
     "approx-string-match": "^1.1.0",
     "aws-sdk": "^2.888.0",
     "bcryptjs": "^2.4.3",

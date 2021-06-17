@@ -36,6 +36,7 @@ export default class Application {
 
             //Connect with database
             await Loader.databaseConnector.init();
+            await Loader.databaseConnector.sync();
 
             //Set-up middlewares
             await this.setupMiddlewares();

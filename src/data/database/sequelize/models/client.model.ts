@@ -20,7 +20,7 @@ import {
     ForeignKey
     } from 'sequelize-typescript';
 
-import { UUIDV4 } from 'sequelize/types';
+import { UUIDV4 } from 'sequelize';
 import * as bcrypt from 'bcryptjs';
 
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ import * as bcrypt from 'bcryptjs';
     paranoid: true,
     freezeTableName: true
 })
-export class User extends Model {
+export class Client extends Model {
 
     @IsUUID(4)
     @PrimaryKey

@@ -1,15 +1,6 @@
-import { UserDomainModel, UserDto } from "../../../domain.types/user.domain.types";
+import { UserDomainModel } from "../../../domain.types/user.domain.types";
 import { UserRepo } from "../repositories/user.repo";
-import { UserRoleRepo } from "../repositories/user.role.repo";
-import { RoleRepo } from "../repositories/role.repo";
-import { User } from '../models/user.model';
 import { Patient } from '../models/patient.model';
-import { Sequelize } from "sequelize/types";
-import { Helper } from '../../../../common/helper';
-import { NotThere } from '../../../../common/system.types';
-import { Logger } from "../../../../common/logger";
-import { ApiError } from "../../../../common/api.error";
-import { UserRole } from "../models/user.role.model";
 import { PatientDetailsDto, PatientDomainModel, PatientDto } from "../../../domain.types/patient.domain.types";
 import { AddressRepo } from "../repositories/address.repo";
 
@@ -83,7 +74,8 @@ export class PatientMapper {
         const user = await userRepo.getById(patient.UserId);
 
         var dto: PatientDto = {
-            id: user.id,
+            id: patient.id,
+            UserId: user.id,
             DisplayId: patient.DisplayId,
             DisplayName: user.DisplayName,
             UserName: user.UserName,

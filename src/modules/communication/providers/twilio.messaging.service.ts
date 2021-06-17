@@ -7,7 +7,7 @@ import { Twilio } from 'twilio';
 const account_sid = process.env.TWILIO_ACCOUNT_SID;
 const auth_token = process.env.TWILIO_AUTH_TOKEN;
 var serviceFromPhone = process.env.SYSTEM_PHONE_NUMBER;
-const client = new Twilio(account_sid, auth_token);
+// const client = new Twilio(account_sid, auth_token);
 
 ///////////////////////////////////////////////////////////////////////////////////
 

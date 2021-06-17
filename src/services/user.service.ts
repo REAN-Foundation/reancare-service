@@ -41,6 +41,10 @@ export class UserService {
         return await this._userRepo.getById(id);
     };
 
+    public exists = async (id: string): Promise<boolean> => {
+        return await this._userRepo.exists(id);
+    };
+
     public search = async (
         filters: UserSearchFilters,
         full: boolean = false
@@ -54,6 +58,10 @@ export class UserService {
 
     public update = async (id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         return await this._userRepo.update(id, userDomainModel);
+    };
+
+    public delete = async (id: string): Promise<boolean> => {
+        return await this._userRepo.delete(id);
     };
 
     public loginWithPassword = async (loginObject: UserLoginDetails): Promise<any> => {

@@ -23,6 +23,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
                 var options = {
                     host: config.host,
                     dialect: dialect,
+                    models: [__dirname + '/models'],
                     pool: {
                         max: config.pool.max,
                         min: config.pool.min,
@@ -40,6 +41,17 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
                 Logger.instance().log(error.message);
             }
         });
+    };
+
+    //Creates DB if does not exist
+    public sync = async () => {
+        try {
+            await this._sequelize.sync({force: true});
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+        return false;
     };
 
     //Creates DB if does not exist

@@ -1,11 +1,10 @@
 import express from 'express';
-import { query, body, oneOf, validationResult, param } from 'express-validator';
 
 import { UserService } from '../services/user.service';
 import { ResponseHandler } from '../common/response.handler';
 import { Loader } from '../startup/loader';
 import { Authorizer } from '../auth/authorizer';
-import { UserSearchFilters, UserDetailsDto, UserLoginDetails } from '../data/domain.types/user.domain.types';
+import { UserDetailsDto } from '../data/domain.types/user.domain.types';
 import { UserInputValidator } from './input.validators/user.input.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +24,7 @@ export class UserController {
     //#endregion
 
 
-    getByUserId = async (request: express.Request, response: express.Response) => {
+    getById = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'User.GetById';
             if (!this._authorizer.authorize(request, response)) {

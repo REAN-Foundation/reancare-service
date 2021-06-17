@@ -7,6 +7,8 @@ export interface IUserRepo {
 
     getById(id: string): Promise<UserDetailsDto>;
 
+    exists(id: string): Promise<boolean>;
+
     delete(id: string): Promise<boolean>;
 
     userExistsWithPhone(phone: string): Promise<boolean>;

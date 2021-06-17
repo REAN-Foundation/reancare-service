@@ -6,9 +6,8 @@ import { injectable, inject } from "tsyringe";
 
 @injectable()
 export class DatabaseConnector {
-
-    constructor(@inject("IDatabaseConnector") private _db: IDatabaseConnector) {
-    }
+    
+    constructor(@inject('IDatabaseConnector') private _db: IDatabaseConnector) {}
 
     public init = async (): Promise<boolean> => {
         return new Promise((resolve, reject) => {
@@ -19,6 +18,15 @@ export class DatabaseConnector {
                 reject(error);
             }
         });
+    };
+
+    public sync = async (): Promise<boolean> => {
+        try {
+            this._db.sync();
+            return true;
+        } catch (error) {
+            throw new Error(error.message);
+        }
     };
 
     public createDatabase = async (): Promise<boolean> => {

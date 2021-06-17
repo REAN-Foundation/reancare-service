@@ -9,8 +9,6 @@ export interface IPatientRepo {
 
     updateByUserId(userId: string, updateModel: PatientDomainModel): Promise<PatientDetailsDto>;
 
-    delete(userId: string): Promise<boolean>;
-
     searchLight(filters: PatientSearchFilters): Promise<PatientDto[]>;
 
     searchFull(filters: PatientSearchFilters): Promise<PatientDetailsDto[]>;

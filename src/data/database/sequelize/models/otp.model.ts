@@ -20,7 +20,7 @@ import {
     ForeignKey
     } from 'sequelize-typescript';
 
-import { UUIDV4 } from 'sequelize/types';
+import { UUIDV4 } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 

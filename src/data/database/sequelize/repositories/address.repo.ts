@@ -1,6 +1,6 @@
 import { IAddressRepo } from '../../../repository.interfaces/address.repo.interface';
 import { Address } from '../models/address.model';
-import { Op, Sequelize } from 'sequelize/types';
+import { Op, Sequelize } from 'sequelize';
 import { AddressDomainModel, AddressDto } from '../../../domain.types/address.domain.types';
 import { AddressMapper } from '../mappers/address.mapper';
 import { Logger } from '../../../../common/logger';

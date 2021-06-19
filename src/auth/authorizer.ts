@@ -4,6 +4,7 @@ import { IAuthorizer } from '../interfaces/authorizer.interface';
 import { injectable, inject } from "tsyringe";
 import { ResponseHandler } from '../common/response.handler';
 import { CurrentUser } from '../data/domain.types/current.user';
+import { ApiError } from '../common/api.error';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -17,10 +18,8 @@ export class Authorizer {
     ) => {
         var authorized = await this._authorizer.authorize(request, response);
         if(!authorized) {
-            ResponseHandler.failure(request, response, 'Unauthorized access', 403);
-            return false;
+            throw new ApiError(403, 'Unauthorized access');
         }
-        return true;
     };
 
     public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {

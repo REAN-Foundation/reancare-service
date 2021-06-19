@@ -34,6 +34,6 @@ export class ClientInputValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return ClientInputValidator.getDomainModel(request.body);
+        return ClientInputValidator.getDomainModel(request);
     };
 }

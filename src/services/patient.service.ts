@@ -26,7 +26,10 @@ export class PatientService {
     ) {}
 
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
-        return await this._patientRepo.create(patientDomainModel);
+        var patientDto = await this._patientRepo.create(patientDomainModel);
+        var role = await this._roleRepo.getByName(Roles.Patient);
+        var userRole = await this._userRoleRepo.addUserRole(patientDto.UserId, role.id);
+        return patientDto;
     };
 
     public getByUserId = async (id: string): Promise<PatientDetailsDto> => {
@@ -54,7 +57,7 @@ export class PatientService {
     public checkforDuplicatePatients = async (entity: PatientDomainModel): Promise<number> => {
         var role = await this._roleRepo.getByName(Roles.Patient);
         if (role == null) {
-            throw new ApiError(404, 'Role- ' + Roles.Patient + 'does not exist!');
+            throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');
         }
         var users = await this._userRepo.getAllUsersWithPhoneAndRole(entity.Phone, role.id);
 

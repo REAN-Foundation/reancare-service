@@ -8,7 +8,6 @@ import helmet = require('helmet');
 
 import { Router } from './routes/router';
 import { Loader } from './startup/loader';
-import { Seeder } from './startup/seeder';
 import { Logger } from './common/logger';
 
 /////////////////////////////////////////////////////////////////////////
@@ -44,7 +43,7 @@ export default class Application {
             await this._router.init();
 
             //Seed the service
-            await Seeder.instance().init();
+            await Loader.seeder.init();
 
             //Set-up cron jobs
 
@@ -57,7 +56,6 @@ export default class Application {
             Logger.instance().log('An error occurred while starting reancare-api service.' + error.message);
         }
     }
-
 
     private setupMiddlewares = async (): Promise<boolean> => {
 

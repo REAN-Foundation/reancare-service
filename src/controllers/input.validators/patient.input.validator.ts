@@ -15,6 +15,7 @@ export class PatientInputValidator {
     static getDomainModel = async (request: express.Request): Promise<PatientDomainModel> => {
 
         var addressModel: AddressDomainModel = null;
+
         var address = TypeHandler.checkObj(request.body.Address);
         if (address != null) {
             addressModel = {
@@ -40,6 +41,10 @@ export class PatientInputValidator {
         ) {
             request.body.Gender = 'Unknown';
         }
+
+        var birthdate = request.body.BirthDate != null && typeof request.body.BirthDate != undefined ?
+                        new Date(Date.parse(request.body.BirthDate)) : null;
+
         var entity: PatientDomainModel = {
             FirstName: request.body.FirstName ?? null,
             LastName: request.body.LastName ?? null,
@@ -47,7 +52,7 @@ export class PatientInputValidator {
             Phone: request.body.Phone ?? null,
             Email: request.body.Email ?? null,
             Gender: request.body.Gender ?? null,
-            BirthDate: request.body.BirthDate ?? null,
+            BirthDate: birthdate,
             ImageResourceId: request.body.ImageResourceId ?? null,
         };
         if(entity.Gender != null && entity.Prefix == null) {
@@ -60,15 +65,19 @@ export class PatientInputValidator {
         request: express.Request,
         response: express.Response): Promise<PatientDomainModel> => {
 
-        await oneOf([
-            body('FirstName').optional().trim().escape(),
-            body('LastName').optional().trim().escape(),
-        ]).run(request);
+        await body('Phone').exists().trim().escape().run(request);
+        await body('Email').optional().trim().isEmail().escape().normalizeEmail().run(request);
+        await body('FirstName').optional().trim().escape().run(request);
+        await body('LastName').optional().trim().escape().run(request);
 
-        await oneOf([
-            body('Phone').optional().trim().escape(), 
-            body('Email').optional().trim().isEmail().escape()
-        ]).run(request);
+        // await oneOf([
+        //     body('FirstName').optional().trim().escape(),
+        //     body('LastName').optional().trim().escape(),
+        // ]).run(request);
+        // await oneOf([
+        //     body('Phone').optional().trim().escape(), 
+        //     body('Email').optional().trim().isEmail().escape()
+        // ]).run(request);
 
         await body('Prefix').optional().trim().escape().run(request);
         await body('Gender').optional().trim().escape().run(request);
@@ -82,7 +91,7 @@ export class PatientInputValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return PatientInputValidator.getDomainModel(request.body);
+        return PatientInputValidator.getDomainModel(request);
     };
 
     static getByUserId = async (request: express.Request, response: express.Response): Promise<string> => {

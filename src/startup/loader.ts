@@ -5,6 +5,7 @@ import { DatabaseConnector } from '../data/database/database.connector';
 import { Authenticator } from '../auth/authenticator';
 import { Authorizer } from '../auth/authorizer';
 import { Injector } from './injector';
+import { Seeder } from './seeder';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,6 +14,7 @@ export class Loader {
     private static _authorizer: Authorizer = null;
     private static _authenticator: Authenticator = null;
     private static _databaseConnector: DatabaseConnector = null;
+    private static _seeder: Seeder = null;
     private static _container: DependencyContainer = container;
 
     public static get authenticator() {
@@ -25,6 +27,10 @@ export class Loader {
 
     public static get databaseConnector() {
         return Loader._databaseConnector;
+    }
+
+    public static get seeder() {
+        return Loader._seeder;
     }
 
     public static get container() {
@@ -40,6 +46,7 @@ export class Loader {
                 Loader._databaseConnector = container.resolve(DatabaseConnector);
                 Loader._authenticator = container.resolve(Authenticator);
                 Loader._authorizer = container.resolve(Authorizer);
+                Loader._seeder = container.resolve(Seeder);
 
                 resolve(true);
 

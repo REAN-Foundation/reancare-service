@@ -8,6 +8,7 @@ import { Logger } from '../../common/logger';
 import { ResponseHandler } from '../../common/response.handler';
 import { IAuthorizer } from '../../interfaces/authorizer.interface';
 import { CurrentUser } from '../../data/domain.types/current.user';
+import { ApiError } from '../../common/api.error';
 
 const execSync = require('child_process').execSync;
 
@@ -15,18 +16,17 @@ const execSync = require('child_process').execSync;
 
 export class Authorizer_custom implements IAuthorizer {
     public authorize = async (request: express.Request, response: express.Response) => {
+
         const authHeader = request.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-
         if (token == null) {
-            ResponseHandler.failure(request, response, 'Unauthorized access', 401);
-            return;
+            throw new ApiError(401, 'Unauthorized access');
         }
 
-        try {
-        } catch (err) {
-            ResponseHandler.failure(request, response, 'Unauthorized access', 401);
-        }
+        // try {
+        // } catch (error) {
+        //     throw new ApiError(401, 'Unauthorized access' + error.message);
+        // }
     };
 
     public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {

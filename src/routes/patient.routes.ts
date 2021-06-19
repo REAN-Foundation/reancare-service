@@ -10,10 +10,10 @@ export const register = (app: express.Application) => {
     const authorizer = Loader.authorizer;
     const controller = new PatientController();
 
-    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
+    router.post('/', authenticator.authenticateClient, controller.create);
     router.get('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByUserId);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.put('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateByUserId);
     
-    app.use('/api/v1/user', router);
+    app.use('/api/v1/patients', router);
 };

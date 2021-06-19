@@ -97,7 +97,7 @@ export class ResponseHandler {
             ResponseHandler.failure(request, response, validationError.message, validationError.httpErrorCode, error);
         }
         else {
-            exports.failure(request, response, error.message, 400, error);
+            ResponseHandler.failure(request, response, error.message, 400, error);
         }
     }
 

@@ -40,9 +40,6 @@ export class PatientController {
     create = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Patient.Create';
-            if (!this._authorizer.authorize(request, response)) {
-                return false;
-            }
 
             var patientDomainModel: PatientDomainModel = await PatientInputValidator.create(request, response);
 
@@ -87,7 +84,7 @@ export class PatientController {
         try {
             request.context = 'Patient.GetByUserId';
             if (!this._authorizer.authorize(request, response)) {
-                return false;
+                throw new ApiError(400, 'Cannot create user!');
             }
 
             var userId: string = await PatientInputValidator.getByUserId(request, response);

@@ -3,13 +3,15 @@ import { UserDetailsDto, UserDomainModel, UserDto } from '../domain.types/user.d
 
 export interface IUserRepo {
 
-    create(entity: any): Promise<UserDetailsDto>;
+    create(userDomainModel: UserDomainModel): Promise<UserDetailsDto>;
 
     getById(id: string): Promise<UserDetailsDto>;
 
     exists(id: string): Promise<boolean>;
 
     delete(id: string): Promise<boolean>;
+
+    userNameExists(userName: string): Promise<Boolean>;
 
     userExistsWithPhone(phone: string): Promise<boolean>;
 

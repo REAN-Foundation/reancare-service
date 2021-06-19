@@ -99,7 +99,7 @@ export class Helper {
         if(birthdate === null) {
             return '';
         }
-        var bd = Date.parse(birthdate.toDateString());
+        var bd = birthdate.getTime();
         var milsecs = Date.now() - bd;
 
         const milsecInYear = 365 * 24 * 3600 * 1000;

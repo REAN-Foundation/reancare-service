@@ -47,7 +47,7 @@ export class AddressRepo implements IAddressRepo {
 
     getByUserId = async (userId: string): Promise<AddressDto> => {
         try {
-            var address = await Address.findOne({where:{userId: userId}});
+            var address = await Address.findOne({where:{UserId: userId}});
             var dto = await AddressMapper.toDto(address);
             return dto;
         } catch (error) {

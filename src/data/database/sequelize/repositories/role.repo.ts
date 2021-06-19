@@ -17,7 +17,7 @@ export class RoleRepo implements IRoleRepo {
                 Description: roleEntity.Description,
             };
             var role = await Role.create(entity);
-            var dto = await RoleMapper.toDto(role);
+            var dto = RoleMapper.toDto(role);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);

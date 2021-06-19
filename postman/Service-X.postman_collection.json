@@ -1,0 +1,55 @@
+{
+	"info": {
+		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"name": "Service-X",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Patient",
+			"item": [
+				{
+					"name": "Create patient",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"FirstName\": \"K\",\r\n    \"LastName\": \"Kharade\",\r\n    \"Phone\": \"+91 9970155165\",\r\n    \"Email\": \"kk@gmail.com\",\r\n    \"Prefix\": \"Mr.\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1975-06-01\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patients",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patients"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}",
+					"host": [
+						"{{BASE_URL}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

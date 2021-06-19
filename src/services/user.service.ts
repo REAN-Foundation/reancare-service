@@ -253,13 +253,13 @@ export class UserService {
     
         var username = prefix + str;
         
-        var exists = await exports.UserNameExists(username);
+        var exists = await this._userRepo.userNameExists(username);
         while(exists)
         {
             tmp = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
             str = tmp.substr(-10);
             username = prefix + str;
-            exists = await exports.UserNameExists(username);
+            exists = await this._userRepo.userNameExists(username);
         }
     
         return username;

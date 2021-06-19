@@ -10,6 +10,15 @@ import UserRole from "../models/user.role.model";
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserRepo implements IUserRepo {
+
+    userNameExists = async (userName: string): Promise<Boolean> => {
+        if (userName != null && typeof userName != 'undefined') {
+            var existing = await User.findOne({ where: { UserName: userName } });
+            return existing != null;
+        }
+        return false;
+    }
+
     userExistsWithPhone = async (phone: string): Promise<boolean> => {
         if (phone != null && typeof phone != 'undefined') {
             var existing = await User.findOne({ where: { Phone: phone, IsActive: true } });
@@ -75,6 +84,7 @@ export class UserRepo implements IUserRepo {
 
     create = async (userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
+
             var entity = {
                 Prefix: userDomainModel.Prefix ?? '',
                 FirstName: userDomainModel.FirstName,

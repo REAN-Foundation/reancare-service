@@ -111,7 +111,7 @@ export default class User extends Model {
 
     @IsDate
     @Column({
-        type: DataType.DATEONLY,
+        type: DataType.DATE,
         allowNull: true
     })
     BirthDate: Date;
@@ -165,6 +165,8 @@ export default class User extends Model {
 
     @BeforeCreate
     static encryptPassword(user) {
-        user.Password = bcrypt.hashSync(user.Password, bcrypt.genSaltSync(8));
+        if(user.Password != null) {
+            user.Password = bcrypt.hashSync(user.Password, bcrypt.genSaltSync(8));
+        }
     }
 };

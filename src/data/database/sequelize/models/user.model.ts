@@ -20,7 +20,7 @@ import {
     ForeignKey
     } from 'sequelize-typescript';
 
-import { UUIDV4 } from 'sequelize';
+import { uuid } from 'uuidv4';
 import * as bcrypt from 'bcryptjs';
 
 ///////////////////////////////////////////////////////////////////////
@@ -32,13 +32,13 @@ import * as bcrypt from 'bcryptjs';
     paranoid: true,
     freezeTableName: true
 })
-export class User extends Model {
+export default class User extends Model {
 
     @IsUUID(4)
     @PrimaryKey
     @Column({
-        type: DataType.UUIDV4,
-        defaultValue: UUIDV4,
+        type: DataType.UUID,
+        defaultValue: () => { return uuid(); },
         allowNull: false
     })
     id: string;
@@ -118,7 +118,7 @@ export class User extends Model {
 
     @IsUUID(4)
     @Column({
-        type: DataType.UUIDV4,
+        type: DataType.UUID,
         allowNull: true
     })
     ImageResourceId: string;
@@ -167,5 +167,4 @@ export class User extends Model {
     static encryptPassword(user) {
         user.Password = bcrypt.hashSync(user.Password, bcrypt.genSaltSync(8));
     }
-
 };

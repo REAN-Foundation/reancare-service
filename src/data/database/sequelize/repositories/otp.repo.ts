@@ -6,7 +6,7 @@ import { ApiError } from "../../../../common/api.error";
 import { RoleRepo } from "./role.repo";
 import { IOtpRepo } from "../../../repository.interfaces/otp.repo.interface";
 import { OtpDto, OtpPersistenceEntity } from "../../../domain.types/otp.domain.types";
-import { Otp } from "../models/otp.model";
+import Otp from "../models/otp.model";
 import { Op, Sequelize } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////

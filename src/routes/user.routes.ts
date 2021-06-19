@@ -3,7 +3,7 @@ import { UserController } from '../controllers/user.controller';
 import { Loader } from '../startup/loader';
 
 
-export default (app: express.Application) => {
+export const register = (app: express.Application) => {
 
     const router = require('express').Router();
     const authenticator = Loader.authenticator;

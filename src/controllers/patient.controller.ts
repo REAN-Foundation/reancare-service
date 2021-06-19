@@ -15,7 +15,6 @@ import { ApiError } from '../common/api.error';
 import { AddressDomainModel } from '../data/domain.types/address.domain.types';
 import { AddressInputValidator } from './input.validators/address.input.validator';
 import { AddressService } from '../services/address.service';
-import { request } from 'http';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

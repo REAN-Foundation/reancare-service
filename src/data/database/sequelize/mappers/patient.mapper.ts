@@ -1,6 +1,6 @@
 import { UserDomainModel } from "../../../domain.types/user.domain.types";
 import { UserRepo } from "../repositories/user.repo";
-import { Patient } from '../models/patient.model';
+import Patient from '../models/patient.model';
 import { PatientDetailsDto, PatientDomainModel, PatientDto } from "../../../domain.types/patient.domain.types";
 import { AddressRepo } from "../repositories/address.repo";
 

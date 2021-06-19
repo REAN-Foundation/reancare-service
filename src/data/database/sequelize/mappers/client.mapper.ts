@@ -1,4 +1,4 @@
-import { Client } from '../models/client.model';
+import Client from '../models/client.model';
 import { ClientDto, ClientSecretsDto, ClientDomainModel } from "../../../domain.types/client.domain.types";
 
 ///////////////////////////////////////////////////////////////////////////////////

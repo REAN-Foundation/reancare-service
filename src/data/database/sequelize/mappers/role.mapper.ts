@@ -1,4 +1,4 @@
-import { Role } from '../models/role.model';
+import Role from '../models/role.model';
 import { RoleDto } from "../../../domain.types/role.domain.types";
 
 ///////////////////////////////////////////////////////////////////////////////////

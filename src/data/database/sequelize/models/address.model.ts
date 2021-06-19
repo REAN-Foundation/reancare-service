@@ -20,7 +20,7 @@ import {
     ForeignKey
     } from 'sequelize-typescript';
 
-import { UUIDV4 } from 'sequelize';
+import { uuid } from 'uuidv4';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -31,27 +31,27 @@ import { UUIDV4 } from 'sequelize';
     paranoid: true,
     freezeTableName: true
 })
-export class Address extends Model {
+export default class Address extends Model {
 
     @IsUUID(4)
     @PrimaryKey
     @Column({
-        type: DataType.UUIDV4,
-        defaultValue: UUIDV4,
+        type: DataType.UUID,
+        defaultValue: () => { return uuid(); },
         allowNull: false
     })
     id: string;
 
     @IsUUID(4)
     @Column({
-        type:  DataType.UUIDV4,
+        type:  DataType.UUID,
         allowNull: true,
     })
     UserId: string;
 
     @IsUUID(4)
     @Column({
-        type:  DataType.UUIDV4,
+        type:  DataType.UUID,
         allowNull: true,
     })
     OrganizationId: string;

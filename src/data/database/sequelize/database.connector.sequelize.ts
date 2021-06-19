@@ -1,6 +1,5 @@
-import fs = require('fs');
-import path = require('path');
-import { Sequelize, Dialect } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
+import { Dialect } from 'sequelize';
 import { DbConfig } from '../../../configs/db.config';
 import { Logger } from '../../../common/logger';
 import { IDatabaseConnector } from '../../../interfaces/database.connector.interface';
@@ -15,15 +14,15 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
     private _sequelize: Sequelize = null;
 
     public connect = async (): Promise<boolean> => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 const config = DbConfig.config;
                 const dialect: Dialect = this.getDialect();
-
+                var modelsPath = [__dirname + '/models'];
                 var options = {
                     host: config.host,
                     dialect: dialect,
-                    models: [__dirname + '/models'],
+                    models: modelsPath,
                     pool: {
                         max: config.pool.max,
                         min: config.pool.min,
@@ -35,6 +34,11 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
 
                 const sequelize = new Sequelize(config.database, config.username, config.password, options);
                 this._sequelize = sequelize;
+
+                await this.createDatabase();
+                await this._sequelize.authenticate();
+                await this._sequelize.sync();
+                
                 resolve(true);
             } catch (error) {
                 reject(error);

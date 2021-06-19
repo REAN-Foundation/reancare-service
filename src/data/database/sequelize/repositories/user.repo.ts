@@ -1,11 +1,11 @@
 import { UserDetailsDto, UserDomainModel, UserDto } from "../../../domain.types/user.domain.types";
 import { IUserRepo } from "../../../repository.interfaces/user.repo.interface";
-import { User } from '../models/user.model';
+import User from '../models/user.model';
 import { UserMapper } from "../mappers/user.mapper";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { Op } from 'sequelize';
-import { UserRole } from "../models/user.role.model";
+import UserRole from "../models/user.role.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

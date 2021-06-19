@@ -36,7 +36,6 @@ export default class Application {
 
             //Connect with database
             await Loader.databaseConnector.init();
-            await Loader.databaseConnector.sync();
 
             //Set-up middlewares
             await this.setupMiddlewares();
@@ -55,7 +54,7 @@ export default class Application {
             
         }
         catch(error){
-            Logger.instance().log('An error occurred while starting reancare-api service.');
+            Logger.instance().log('An error occurred while starting reancare-api service.' + error.message);
         }
     }
 

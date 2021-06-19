@@ -34,6 +34,7 @@
     "helmet": "^4.6.0",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
+    "mysql2": "^2.2.5",
     "needle": "^2.6.0",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.3",
@@ -43,7 +44,8 @@
     "sequelize-typescript": "^2.1.0",
     "sleep": "^6.3.0",
     "tsyringe": "^4.5.0",
-    "twilio": "^3.63.1"
+    "twilio": "^3.63.1",
+    "uuidv4": "^6.2.10"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.0",

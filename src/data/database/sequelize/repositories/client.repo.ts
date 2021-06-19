@@ -1,5 +1,5 @@
 import { IClientRepo } from '../../../repository.interfaces/client.repo.interface';
-import { Client } from '../models/client.model';
+import Client from '../models/client.model';
 import { Op, Sequelize } from 'sequelize';
 import { ClientDomainModel, ClientDto, ClientSecretsDto } from '../../../domain.types/client.domain.types';
 import { ClientMapper } from '../mappers/client.mapper';

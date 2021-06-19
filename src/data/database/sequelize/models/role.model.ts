@@ -24,7 +24,7 @@ import {
     paranoid: true,
     freezeTableName: true
 })
-export class Role extends Model {
+export default class Role extends Model {
 
     @IsInt
     @PrimaryKey

@@ -1,6 +1,6 @@
 import { UserDetailsDto, UserDto } from "../../../domain.types/user.domain.types";
 import { UserRoleRepo } from "../repositories/user.role.repo";
-import { User } from '../models/user.model';
+import User from '../models/user.model';
 import { Helper } from '../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 
 import { IUserRoleRepo } from "../../../repository.interfaces/user.role.repo.interface";
-import { UserRole } from '../models/user.role.model';
+import UserRole from '../models/user.role.model';
 import { UserRoleDto } from "../../../domain.types/role.domain.types";
 import { UserRoleMapper } from '../mappers/user.role.mapper';
 import { Logger } from "../../../../common/logger";

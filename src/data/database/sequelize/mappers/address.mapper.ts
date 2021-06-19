@@ -1,4 +1,4 @@
-import { Address } from '../models/address.model';
+import Address from '../models/address.model';
 import { AddressDto } from "../../../domain.types/address.domain.types";
 
 ///////////////////////////////////////////////////////////////////////////////////

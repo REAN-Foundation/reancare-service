@@ -2,9 +2,9 @@ import { PatientDomainModel, PatientDetailsDto, PatientDto, PatientSearchFilters
 import { IPatientRepo } from "../../../repository.interfaces/patient.repo.interface";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
-import { Patient } from "../models/patient.model";
+import Patient from "../models/patient.model";
 import { PatientMapper } from "../mappers/patient.mapper";
-import { User } from "../models/user.model";
+import User from "../models/user.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

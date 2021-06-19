@@ -1,3 +1,9 @@
+import { register as registerUserRoutes } from "./user.routes";
+import { register as registerClientRoutes } from "./client.routes";
+import { register as registerPatientRoutes } from "./patient.routes";
+
+
+
 export class Router {
     private _app = null;
 
@@ -15,9 +21,9 @@ export class Router {
                     });
                 });
 
-                require('./user.routes')(this._app);
-                require('./client.routes')(this._app);
-                require('./patient.routes')(this._app);
+                registerUserRoutes(this._app);
+                registerClientRoutes(this._app);
+                registerPatientRoutes(this._app);
 
                 resolve(true);
 

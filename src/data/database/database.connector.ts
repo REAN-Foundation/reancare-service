@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { IDatabaseConnector } from '../../interfaces/database.connector.interface';
 import { injectable, inject } from "tsyringe";
+import { Logger } from '../../common/logger';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -10,11 +11,12 @@ export class DatabaseConnector {
     constructor(@inject('IDatabaseConnector') private _db: IDatabaseConnector) {}
 
     public init = async (): Promise<boolean> => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                this._db.connect();
+                await this._db.connect();
                 resolve(true);
             } catch (error) {
+                
                 reject(error);
             }
         });
@@ -22,11 +24,12 @@ export class DatabaseConnector {
 
     public sync = async (): Promise<boolean> => {
         try {
-            this._db.sync();
+            await this._db.sync();
             return true;
         } catch (error) {
-            throw new Error(error.message);
-        }
+            Logger.instance().log('Sync database error: ' + error.message);
+            //reject(error);
+    }
     };
 
     public createDatabase = async (): Promise<boolean> => {
@@ -35,7 +38,8 @@ export class DatabaseConnector {
                 this._db.createDatabase();
                 resolve(true);
             } catch (error) {
-                reject(error);
+                Logger.instance().log('Create database error: ' + error.message);
+                //reject(error);
             }
         });
     };

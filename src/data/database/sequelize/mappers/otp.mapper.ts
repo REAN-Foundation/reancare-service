@@ -1,5 +1,5 @@
 import { OtpDto } from "../../../domain.types/otp.domain.types";
-import { Otp } from "../models/otp.model";
+import Otp from "../models/otp.model";
 
 
 ///////////////////////////////////////////////////////////////////////////////////

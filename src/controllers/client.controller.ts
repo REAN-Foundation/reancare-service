@@ -12,7 +12,7 @@ import { generate} from 'generate-password';
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class ClientController {
-
+    
     //#region member variables and constructors
 
     _service: ClientService = null;
@@ -31,17 +31,25 @@ export class ClientController {
             if (!this._authorizer.authorize(request, response)) {
                 return false;
             }
-            var clientDomainModel: ClientDomainModel = await ClientInputValidator.getDomainModel(request.body);
-            if(clientDomainModel.ClientCode == null) {
+            var clientDomainModel: ClientDomainModel = await ClientInputValidator.getDomainModel(
+                request.body
+            );
+            if (clientDomainModel.ClientCode == null) {
                 var name = clientDomainModel.ClientName;
                 name = name.toLowerCase();
-                var postfix = generate({length: 8, numbers: false, lowercase: false, uppercase: true, symbols: false});
+                var postfix = generate({
+                    length: 8,
+                    numbers: false,
+                    lowercase: false,
+                    uppercase: true,
+                    symbols: false,
+                });
                 name = name + postfix;
                 clientDomainModel.ClientCode = name.substr(0, 8);
             }
             const client = await this._service.create(clientDomainModel);
             if (client == null) {
-                throw new ApiError(400, 'Unable to create client.')
+                throw new ApiError(400, 'Unable to create client.');
             }
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
                 Client: client,
@@ -51,5 +59,48 @@ export class ClientController {
         }
     };
 
+    getById = async (request: express.Request, response: express.Response) => {
+        try {
+            request.context = 'Client.GetById';
+            if (!this._authorizer.authorize(request, response)) {
+                return false;
+            }
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getSecrets = async (request: express.Request, response: express.Response) => {
+        try {
+            request.context = 'Client.GetSecrets';
+            if (!this._authorizer.authorize(request, response)) {
+                return false;
+            }
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    update = async (request: express.Request, response: express.Response) => {
+        try {
+            request.context = 'Client.Update';
+            if (!this._authorizer.authorize(request, response)) {
+                return false;
+            }
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    delete = async (request: express.Request, response: express.Response) => {
+        try {
+            request.context = 'Client.Delete';
+            if (!this._authorizer.authorize(request, response)) {
+                return false;
+            }
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
 }

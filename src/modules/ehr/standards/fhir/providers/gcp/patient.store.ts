@@ -1,5 +1,6 @@
 /// <reference path = "../../types/patient.types.ts" />
 
+import { Helper } from '../../../../../../common/helper';
 import { PatientDomainModel } from '../../../../../../data/domain.types/patient.domain.types';
 import { IPatientStore } from '../../../../interfaces/patient.store.interface';
 import { GcpStorageService as g } from './storage.service';
@@ -26,43 +27,65 @@ export class PatientStoreGCP implements IPatientStore {
     };
 
     private createPatientFhirResource(model: PatientDomainModel): any {
-        const resource = {
+
+        var givenNames = [];
+        if(model.FirstName != null) {
+            givenNames.push(model.FirstName);
+        }
+        if(model.MiddleName != null) {
+            givenNames.push(model.MiddleName);
+        }
+        var faamilyName = model.LastName != null ? model.LastName : '';
+        var prefixes = [];
+        if(model.Prefix != null) {
+            prefixes.push(model.Prefix);
+        }
+
+        var resource = {
             resourceType : "Patient",
             name: [
                 {
                     use: "official",
-                    given: ["KK", "A"],
-                    family: "Mhetre",
-                    prefix: [
-                        "Mr."
-                      ]
+                    given: givenNames,
+                    family: faamilyName,
+                    prefix: prefixes
                 }
             ],
-            gender: "male",
-            birthDate: "1975-12-12",
-            telecom: [
-                {
-                    system: "phone",
-                    use: "mobile",
-                    value: "+91 8434343552"
-                },
-                {
-                    system: "email",
-                    value: "patient@gmail.com"
-                }
-            ],
-            address: [
-                {
-                    line: [
-                        "patient_address_first_line",
-                        "patient_address_second_line"
-                    ],
-                    city: "Pune",
-                    district: "Pune",
-                    postalCode: "412307"
-                }
-            ]
-        };
+            gender: model.Gender != null ? model.Gender.toLowerCase() : 'unknown',
+            telecom: [],
+            address: []
+        }
+        
+        if(model.BirthDate != null) {
+            var str = Helper.formatDate(model.BirthDate);
+            resource['birthDate'] = str;
+        }
+
+        if(model.Phone != null) {
+            resource.telecom.push({
+                system: "phone",
+                use: "mobile",
+                value: model.Phone
+            });
+        }
+        if(model.Email != null) {
+            resource.telecom.push({
+                system: "email",
+                value: model.Email
+            });
+        }
+        if(model.Address != null) {
+            var address = {
+                line: [],
+                city: model.Address.City ?? '',
+                district: model.Address.District ?? '',
+                postalCode: model.Address.PostalCode ?? ''
+            };
+            if(model.Address.AddressLine != null) {
+                address.line.push(model.Address.AddressLine);
+            }
+            resource.address.push(address);
+        }
         return resource;
     }
 

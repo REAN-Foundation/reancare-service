@@ -1,6 +1,6 @@
 import { String } from 'aws-sdk/clients/iot';
 import { Gender } from '../../common/system.types';
-import { AddressDto } from './address.domain.types';
+import { AddressDomainModel, AddressDto } from './address.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,9 +13,6 @@ export interface PatientDomainModel {
     EhrId?: string;
     NationalHealthId?:string;
     MedicalProfileId?: string;
-    
-    InsuranceIds?: String[];
-    EmergencyContactIds?: string[];
 
     DisplayName?: string;
     FirstName?: string;
@@ -30,6 +27,11 @@ export interface PatientDomainModel {
     ImageResourceId?:string;
     DefaultTimeZone?:string;
     CurrentTimeZone?:string;
+        
+    InsuranceIds?: String[];
+    EmergencyContactIds?: string[];
+
+    Address?: AddressDomainModel;
 };
 
 export interface PatientMedicalProfileDomainModel {

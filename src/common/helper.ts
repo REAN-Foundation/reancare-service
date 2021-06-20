@@ -150,5 +150,12 @@ export class Helper {
         }
         return str;
     }
-}
 
+    static formatDate = (date) => {
+        var d = new Date(date);
+        var month = ('00' + (d.getMonth() + 1).toString()).slice(-2);
+        var day = ('00' + d.getDate().toString()).slice(-2);
+        var year = d.getFullYear();
+        return [year, month, day].join('-');
+    }
+}

@@ -54,6 +54,7 @@ export class PatientInputValidator {
             Gender: request.body.Gender ?? null,
             BirthDate: birthdate,
             ImageResourceId: request.body.ImageResourceId ?? null,
+            Address: addressModel,
         };
         if(entity.Gender != null && entity.Prefix == null) {
             entity.Prefix = Helper.guessPrefixByGender(entity.Gender);

@@ -20,8 +20,8 @@ export class PatientStore {
         return await this._service.getById(id);
     }
 
-    update = async (updates: PatientDomainModel): Promise<any> => {
-        return await this._service.update(updates);
+    update = async (id: string, updates: PatientDomainModel): Promise<any> => {
+        return await this._service.update(id, updates);
     }
 
     delete = async (id: string): Promise<any> => {

@@ -6,7 +6,7 @@ import { IPatientStore } from '../../../../interfaces/patient.store.interface';
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export class PatientStore implements IPatientStore {
+export class PatientStoreGCP implements IPatientStore {
 
     create = async (body: any): Promise<any> => {
 

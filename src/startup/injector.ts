@@ -14,6 +14,7 @@ import { AddressRepo } from '../data/database/sequelize/repositories/address.rep
 import { PatientRepo } from '../data/database/sequelize/repositories/patient.repo';
 
 import { TwilioMessagingService } from '../modules/communication/providers/twilio.messaging.service';
+import { EhrInjector } from '../modules/ehr/ehr.injector';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,6 +38,9 @@ export class Injector {
 
         //Modules
         container.register('IMessagingService', TwilioMessagingService);
+        
+        //Ehr
+        EhrInjector.registerInjections(container);
 
     }
 }

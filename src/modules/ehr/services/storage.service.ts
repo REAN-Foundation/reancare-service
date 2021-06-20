@@ -1,5 +1,3 @@
-
-/// <reference path = "../interfaces/patient.store.interface.ts" />  
 import { IStorageService } from "../interfaces/storage.service.interface";
 import { injectable, inject } from "tsyringe";
 

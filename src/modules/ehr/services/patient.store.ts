@@ -1,6 +1,3 @@
-/// <reference path = "../standards/fhir/types/patient.types.ts" />
-/// <reference path = "../interfaces/patient.store.interface.ts" />  
-
 import { IPatientStore } from '../interfaces/patient.store.interface';
 import { injectable, inject } from "tsyringe";
 import { PatientDomainModel, PatientSearchFilters } from '../../../data/domain.types/patient.domain.types';
@@ -32,4 +29,3 @@ export class PatientStore {
     }
 
 }
-

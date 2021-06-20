@@ -7,7 +7,6 @@ import { Helper } from '../../common/helper';
 
 /// <reference path = "./ehr.types.ts" />
 
-import { IStorageService } from './interfaces/storage.service.interface';
 import { GcpFhirStoreService } from './standards/fhir/providers/gcp/fhir.service.gcp';
 import { StorageService } from './services/storage.service';
 
@@ -20,7 +19,7 @@ export class Test_EHR {
 
             container.register('IStorageService', GcpFhirStoreService);
             const storeService = container.resolve(StorageService);
-            const initialized = await storeService.initialize();
+            const initialized = await storeService.init();
 
         } catch (error) {
             console.log(error);

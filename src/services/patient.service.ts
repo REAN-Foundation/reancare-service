@@ -11,11 +11,15 @@ import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
 import { Roles } from '../data/domain.types/role.domain.types';
+import { PatientStore } from '../modules/ehr/services/patient.store';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class PatientService {
+
+    _ehrPatientStore: PatientStore = null;
+
     constructor(
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
@@ -23,12 +27,23 @@ export class PatientService {
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IOtpRepo') private _otpRepo: IOtpRepo,
         @inject('IMessagingService') private _messagingService: IMessagingService
-    ) {}
+    ) {
+        this._ehrPatientStore = Loader.container.resolve(PatientStore);
+    }
 
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
+
+        var patientEhr = await this._ehrPatientStore.create(patientDomainModel);
+        patientDomainModel.EhrId = patientEhr.id;
+
         var patientDto = await this._patientRepo.create(patientDomainModel);
         var role = await this._roleRepo.getByName(Roles.Patient);
         var userRole = await this._userRoleRepo.addUserRole(patientDto.UserId, role.id);
+
+        //Finally add it to Ehr store
+
+
+
         return patientDto;
     };
 

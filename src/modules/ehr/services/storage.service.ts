@@ -8,8 +8,8 @@ export class StorageService {
 
     constructor(@inject('IStorageService') private _service: IStorageService) {}
 
-    initialize = async (): Promise<boolean> => {
-        return await this._service.initialize();
+    init = async (): Promise<boolean> => {
+        return await this._service.init();
     };
 };
 

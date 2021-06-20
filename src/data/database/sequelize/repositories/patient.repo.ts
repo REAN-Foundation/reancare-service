@@ -17,6 +17,7 @@ export class PatientRepo implements IPatientRepo {
                 DisplayId: patientDomainModel.DisplayId,
                 NationalHealthId: patientDomainModel.NationalHealthId,
                 MedicalProfileId: patientDomainModel.MedicalProfileId,
+                EhrId: patientDomainModel.EhrId
             };
             var patient = await Patient.create(entity);
             var dto = await PatientMapper.toDetailsDto(patient);
@@ -55,6 +56,7 @@ export class PatientRepo implements IPatientRepo {
     searchLight(filters: PatientSearchFilters): Promise<PatientDto[]> {
         throw new Error("Method not implemented.");
     }
+    
     searchFull(filters: PatientSearchFilters): Promise<PatientDetailsDto[]> {
         throw new Error("Method not implemented.");
     }

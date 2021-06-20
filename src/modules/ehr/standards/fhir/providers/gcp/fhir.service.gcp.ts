@@ -63,7 +63,7 @@ export class GcpFhirStoreService implements IStorageService {
 
     //#region public methods
 
-    public initialize = async (): Promise<boolean> => {
+    public init = async (): Promise<boolean> => {
         try {
 
             var datasets = await this.getDatasetList();

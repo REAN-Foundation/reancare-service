@@ -6,6 +6,7 @@ import { Authenticator } from '../auth/authenticator';
 import { Authorizer } from '../auth/authorizer';
 import { Injector } from './injector';
 import { Seeder } from './seeder';
+import { StorageService } from '../modules/ehr/services/storage.service';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,6 +16,7 @@ export class Loader {
     private static _authenticator: Authenticator = null;
     private static _databaseConnector: DatabaseConnector = null;
     private static _seeder: Seeder = null;
+    private static _ehrStore: StorageService = null;
     private static _container: DependencyContainer = container;
 
     public static get authenticator() {
@@ -33,6 +35,10 @@ export class Loader {
         return Loader._seeder;
     }
 
+    public static get storage() {
+        return Loader._ehrStore;
+    }
+
     public static get container() {
         return Loader._container;
     }
@@ -47,6 +53,9 @@ export class Loader {
                 Loader._authenticator = container.resolve(Authenticator);
                 Loader._authorizer = container.resolve(Authorizer);
                 Loader._seeder = container.resolve(Seeder);
+                
+                Loader._ehrStore = container.resolve(StorageService);
+                Loader._ehrStore.init();
 
                 resolve(true);
 

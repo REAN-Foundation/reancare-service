@@ -70,6 +70,12 @@ export default class Patient extends Model {
     })
     MedicalProfileId: string;
 
+    @Column({
+        type:  DataType.STRING(256),
+        allowNull: true,
+    })
+    EhrId: string;
+
     @Column
     @CreatedAt
     CreateAt: Date;

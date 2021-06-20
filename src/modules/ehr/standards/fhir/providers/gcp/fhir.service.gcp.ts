@@ -6,7 +6,8 @@ const healthcare = google.healthcare('v1');
 
 export class GcpFhirStoreService implements IStorageService {
 
-    //gcp fhir parameters
+    //#region gcp fhir parameters
+
     _projectId: string = process.env.GCP_PROJECT_ID;
     _cloudRegion: string = process.env.GCP_FHIR_CLOUD_REGION;
     _datasetId: string = process.env.GCP_FHIR_DATASET_ID;
@@ -18,7 +19,49 @@ export class GcpFhirStoreService implements IStorageService {
     _defaultFhirStore: healthcare_v1.Schema$FhirStore = null;
     _defaultDicomStore: healthcare_v1.Schema$DicomStore = null;
 
-    //// public methods
+    //#endregion
+
+    //#region properties
+
+    public get projectId(): string {
+        return this._projectId;
+    }
+
+    public get cloudRegion(): string {
+        return this._cloudRegion;
+    }
+
+    public get datasetId(): string {
+        return this._datasetId;
+    }
+
+    public get fhirStoreId(): string {
+        return this._fhirStoreId;
+    }
+
+    public get dicomStoreId(): string {
+        return this._dicomStoreId;
+    }
+
+    public get defaultDataset(): healthcare_v1.Schema$Dataset {
+        return this._defaultDataset;
+    }
+
+    public get defaultFhirStore(): healthcare_v1.Schema$FhirStore {
+        return this._defaultFhirStore;
+    }
+    
+    public get defaultDicomStore(): healthcare_v1.Schema$DicomStore {
+        return this._defaultDicomStore;
+    }
+    
+    public get fhirVersion(): string {
+        return this._fhirVersion;
+    }
+
+    //#endregion
+
+    //#region public methods
 
     public initialize = async (): Promise<boolean> => {
         try {
@@ -54,19 +97,9 @@ export class GcpFhirStoreService implements IStorageService {
         }
     };
 
-    public defaultDataset(): healthcare_v1.Schema$Dataset {
-        return this._defaultDataset;
-    }
+    //#endregion
 
-    public defaultFhirStore(): healthcare_v1.Schema$FhirStore {
-        return this._defaultFhirStore;
-    }
-
-    public defaultDicomStore(): healthcare_v1.Schema$DicomStore {
-        return this._defaultDicomStore;
-    }
-
-    ////Private methods
+    //#region Private methods
 
     private setClientAuth = async () => {
         const auth = await google.auth.getClient({
@@ -292,5 +325,7 @@ export class GcpFhirStoreService implements IStorageService {
         console.log(JSON.stringify(fhirStore.data, null, 2));
         return fhirStore.data;
     }
+
+    //#endregion
 
 }

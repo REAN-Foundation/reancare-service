@@ -10,8 +10,10 @@ export interface PatientDomainModel {
     id?: string;
     UserId?: string;
     DisplayId?: string,
+    EhrId?: string;
     NationalHealthId?:string;
     MedicalProfileId?: string;
+    
     InsuranceIds?: String[];
     EmergencyContactIds?: string[];
 
@@ -51,6 +53,7 @@ export interface PatientDetailsDto {
     UserId: string;
     UserName: string;
     DisplayId: string;
+    EhrId: string;
     DisplayName: string;
     Prefix: string;
     FirstName: string;
@@ -89,6 +92,7 @@ export interface PatientDto {
     id: string;
     UserId: string;
     DisplayId: string;
+    EhrId: string;
     DisplayName: string;
     UserName: string,
     Phone: string;

@@ -1,4 +1,4 @@
-/// <reference path = "../../../../types/patient.types.ts" />
+/// <reference path = "../../types/patient.types.ts" />
 
 import { google } from 'googleapis';
 const healthcare = google.healthcare('v1');

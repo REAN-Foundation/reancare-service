@@ -33,16 +33,12 @@ export class PatientService {
 
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
 
-        var patientEhr = await this._ehrPatientStore.create(patientDomainModel);
-        patientDomainModel.EhrId = patientEhr.id;
+        var ehrId = await this._ehrPatientStore.create(patientDomainModel);
+        patientDomainModel.EhrId = ehrId;
 
         var patientDto = await this._patientRepo.create(patientDomainModel);
         var role = await this._roleRepo.getByName(Roles.Patient);
         var userRole = await this._userRoleRepo.addUserRole(patientDto.UserId, role.id);
-
-        //Finally add it to Ehr store
-
-
 
         return patientDto;
     };

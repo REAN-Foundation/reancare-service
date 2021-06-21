@@ -17,14 +17,40 @@ export class PatientStoreGCP implements IPatientStore {
             const resource = await g.healthcare.projects.locations.datasets.fhirStores.fhir.create(
                 request
             );
-            var resourceStr = JSON.stringify(resource, null, 2);
+            var data: any = resource.data;
+            var resourceStr = JSON.stringify(data, null, 2);
             console.log(`Created FHIR resource ${resourceStr}`);
-            return resource;
+            return data.id;
         } catch (error) {
             console.log(error.message);
             throw error;
         }
     };
+
+    getById = async (resourceId: string): Promise<any> => {
+        try {
+            const resourceType = 'Patient';
+            const parent = `projects/${g.projectId}/locations/${g.cloudRegion}/datasets/${g.datasetId}/fhirStores/${g.fhirStoreId}/fhir/${resourceType}/${resourceId}`;
+            const resource = await g.healthcare.projects.locations.datasets.fhirStores.fhir.read(
+                { name: parent }
+            );
+            var data: any = resource.data;
+            var resourceStr = JSON.stringify(data, null, 2);
+            console.log(`Created FHIR resource ${resourceStr}`);
+            return data;
+        } catch (error) {
+            console.log(error.message);
+            throw error;
+        }
+    };
+    
+    search = async (filter: any): Promise<any> => {};
+
+    update = async (updates: any): Promise<any> => {};
+
+    delete = async (id: string): Promise<any> => {};
+
+     //#region Private methods
 
     private createPatientFhirResource(model: PatientDomainModel): any {
 
@@ -89,12 +115,6 @@ export class PatientStoreGCP implements IPatientStore {
         return resource;
     }
 
-    search = async (filter: any): Promise<any> => {};
-
-    getById = async (id: string): Promise<any> => {};
-
-    update = async (updates: any): Promise<any> => {};
-
-    delete = async (id: string): Promise<any> => {};
+     //#endregion
 }
 

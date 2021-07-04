@@ -3,6 +3,7 @@ import { UserRepo } from "../repositories/user.repo";
 import Patient from '../models/patient.model';
 import { PatientDetailsDto, PatientDomainModel, PatientDto } from "../../../domain.types/patient.domain.types";
 import { AddressRepo } from "../repositories/address.repo";
+import { UserMapper } from "./user.mapper";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -10,15 +11,20 @@ export class PatientMapper {
 
     static toUserDomainModel(patientDomainModel: PatientDomainModel): UserDomainModel {
         var userDomainModel: UserDomainModel = {
-            Prefix: patientDomainModel.Prefix,
-            FirstName: patientDomainModel.FirstName,
-            MiddleName: patientDomainModel.MiddleName,
-            LastName: patientDomainModel.LastName,
-            Phone: patientDomainModel.Phone,
-            Email: patientDomainModel.Email,
-            BirthDate: patientDomainModel.BirthDate,
-            Gender: patientDomainModel.Gender,
-            ImageResourceId: patientDomainModel.ImageResourceId,
+            Person: {
+                Prefix: patientDomainModel.User.Person.Prefix,
+                FirstName: patientDomainModel.User.Person.FirstName,
+                MiddleName: patientDomainModel.User.Person.MiddleName,
+                LastName: patientDomainModel.User.Person.LastName,
+                Phone: patientDomainModel.User.Person.Phone,
+                Email: patientDomainModel.User.Person.Email,
+                BirthDate: patientDomainModel.User.Person.BirthDate,
+                Gender: patientDomainModel.User.Person.Gender,
+                ImageResourceId: patientDomainModel.User.Person.ImageResourceId,
+            },
+            CurrentTimeZone: patientDomainModel.User.CurrentTimeZone,
+            DefaultTimeZone: patientDomainModel.User.DefaultTimeZone,
+            GenerateLoginOTP: patientDomainModel.User.GenerateLoginOTP
         };
         return userDomainModel;
     }
@@ -37,26 +43,9 @@ export class PatientMapper {
 
         var dto: PatientDetailsDto = {
             id: patient.id,
-            UserId: user.id,
+            User: user,
             DisplayId: patient.DisplayId,
             EhrId: patient.EhrId,
-            UserName: user.UserName,
-            Prefix: user.Prefix,
-            FirstName: user.FirstName,
-            MiddleName: user.MiddleName,
-            LastName: user.LastName,
-            DisplayName: user.DisplayName,
-            Gender: user.Gender,
-            BirthDate: user.BirthDate,
-            Age: user.Age,
-            Phone: user.Phone,
-            Email: user.Email,
-            ImageResourceId: user.ImageResourceId,
-            ActiveSince: user.ActiveSince,
-            IsActive: user.IsActive,
-            LastLogin: user.LastLogin,
-            DefaultTimeZone: user.DefaultTimeZone,
-            CurrentTimeZone: user.CurrentTimeZone,
             Address: address,
             MedicalProfile: null, //PatientMedicalProfileDto;
             Insurances: [], //PatientInsuranceDto[];
@@ -79,13 +68,13 @@ export class PatientMapper {
             UserId: user.id,
             DisplayId: patient.DisplayId,
             EhrId: patient.EhrId,
-            DisplayName: user.DisplayName,
+            DisplayName: user.Person.DisplayName,
             UserName: user.UserName,
-            Phone: user.Phone,
-            Email: user.Email,
-            Gender: user.Gender,
-            BirthDate: user.BirthDate,
-            Age: user.Age,
+            Phone: user.Person.Phone,
+            Email: user.Person.Email,
+            Gender: user.Person.Gender,
+            BirthDate: user.Person.BirthDate,
+            Age: user.Person.Age,
         };
         return dto; 
     }

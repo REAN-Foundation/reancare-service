@@ -94,9 +94,9 @@ export class UserService {
         //The following user data is immutable. Don't include any mutable data
         var currentUser: CurrentUser = {
             UserId: user.id,
-            DisplayName: user.DisplayName,
-            Phone: user.Phone,
-            Email: user.Email,
+            DisplayName: user.Person.DisplayName,
+            Phone: user.Person.Phone,
+            Email: user.Person.Email,
             CurrentRoleId: loginObject.LoginRoleId,
         };
         var accessToken = Loader.authorizer.generateUserSessionToken(currentUser);
@@ -138,8 +138,8 @@ export class UserService {
         }
 
         var otpDto = await this._otpRepo.create(otpEntity);
-        var message = `Hello ${user.DisplayName}, ${otp} is OTP for your REANCare account and will expire in 5 minutes. If you have not requested this OTP, please contact REANCare support.`;
-        var sendStatus = await this._messagingService.sendSMS(user.Phone, message);
+        var message = `Hello ${user.Person.DisplayName}, ${otp} is OTP for your REANCare account and will expire in 5 minutes. If you have not requested this OTP, please contact REANCare support.`;
+        var sendStatus = await this._messagingService.sendSMS(user.Person.Phone, message);
         if(sendStatus) {
             Logger.instance().log('Otp sent successfully.\n ' + JSON.stringify(otpDto, null, 2));
         }
@@ -179,9 +179,9 @@ export class UserService {
         //The following user data is immutable. Don't include any mutable data
         var currentUser: CurrentUser = {
             UserId: user.id,
-            DisplayName: user.DisplayName,
-            Phone: user.Phone,
-            Email: user.Email,
+            DisplayName: user.Person.DisplayName,
+            Phone: user.Person.Phone,
+            Email: user.Person.Email,
             CurrentRoleId: loginObject.LoginRoleId,
         };
         var accessToken = Loader.authorizer.generateUserSessionToken(currentUser);
@@ -270,14 +270,14 @@ export class UserService {
         if (userDomainModel.hasOwnProperty('GenerateLoginOTP') && 
             userDomainModel.GenerateLoginOTP === true) {
             var obj = {
-                Phone: user.Phone,
-                Email: user.Email,
+                Phone: user.Person.Phone,
+                Email: user.Person.Email,
                 UserId: user.id,
                 Purpose: 'Login',
             };
             var successful = await this.generateOtp(obj);
             if (successful) {
-                Logger.instance().log(`Login OTP sent successfully to user ${user.DisplayName}.`);
+                Logger.instance().log(`Login OTP sent successfully to user ${user.Person.DisplayName}.`);
             }
         }
     }

@@ -1,5 +1,5 @@
 import { register as registerUserRoutes } from "./user.routes";
-import { register as registerClientRoutes } from "./client.routes";
+import { register as registerClientRoutes } from "./api.client.routes";
 import { register as registerPatientRoutes } from "./patient.routes";
 
 

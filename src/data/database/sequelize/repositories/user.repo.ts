@@ -86,17 +86,17 @@ export class UserRepo implements IUserRepo {
         try {
 
             var entity = {
-                Prefix: userDomainModel.Prefix ?? '',
-                FirstName: userDomainModel.FirstName,
-                MiddleName: userDomainModel.MiddleName ?? null,
-                LastName: userDomainModel.LastName,
-                Phone: userDomainModel.Phone,
-                Email: userDomainModel.Email ?? null,
+                Prefix: userDomainModel.Person.Prefix ?? '',
+                FirstName: userDomainModel.Person.FirstName,
+                MiddleName: userDomainModel.Person.MiddleName ?? null,
+                LastName: userDomainModel.Person.LastName,
+                Phone: userDomainModel.Person.Phone,
+                Email: userDomainModel.Person.Email ?? null,
                 UserName: userDomainModel.UserName,
                 Password: userDomainModel.Password ?? null,
-                Gender: userDomainModel.Gender ?? 'Unknown',
-                BirthDate: userDomainModel.BirthDate ?? null,
-                ImageResourceId: userDomainModel.ImageResourceId ?? null,
+                Gender: userDomainModel.Person.Gender ?? 'Unknown',
+                BirthDate: userDomainModel.Person.BirthDate ?? null,
+                ImageResourceId: userDomainModel.Person.ImageResourceId ?? null,
                 DefaultTimeZone: userDomainModel.DefaultTimeZone ?? '+05:30',
                 CurrentTimeZone: userDomainModel.DefaultTimeZone ?? '+05:30',
             };

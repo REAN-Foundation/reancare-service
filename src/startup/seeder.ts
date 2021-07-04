@@ -47,8 +47,12 @@ export class Seeder {
             Description: 'Represents a pharmacy/pharmacist/pharmacy shop owner/drug dispenser.',
         });
         await this._roleRepo.create({
-            RoleName: Roles.AmbulanceService,
-            Description: 'Represents an ambulance service provider/driver/emergency medic.',
+            RoleName: Roles.Nurse,
+            Description: 'Represents an nurse and medical care taker.',
+        });
+        await this._roleRepo.create({
+            RoleName: Roles.AmbulanceServiceUser,
+            Description: 'Represents an ambulance service provider/driver/mobile emergency medic.',
         });
         await this._roleRepo.create({
             RoleName: Roles.PatientFamilyMember,

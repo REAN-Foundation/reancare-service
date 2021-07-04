@@ -41,17 +41,26 @@ export class PatientController {
         try {
             request.context = 'Patient.Create';
 
-            var patientDomainModel: PatientDomainModel = await PatientInputValidator.create(request, response);
+            var patientDomainModel = await PatientInputValidator.create(request, response);
 
             //Throw an error if patient with same name and phone number exists
             var existingPatientCountSharingPhone = await this._service.checkforDuplicatePatients(patientDomainModel);
 
-            var userName = await this._userService.generateUserName(patientDomainModel.FirstName, patientDomainModel.LastName);
-            var displayId = await this._userService.generateUserDisplayId(Roles.Patient, patientDomainModel.Phone, existingPatientCountSharingPhone);
-            var displayName = Helper.constructUserDisplayName(patientDomainModel.Prefix, patientDomainModel.FirstName, patientDomainModel.LastName);
+            var userName = await this._userService.generateUserName(
+                patientDomainModel.User.Person.FirstName, 
+                patientDomainModel.User.Person.LastName);
 
-            var userDomainModel: UserDomainModel = PatientMapper.toUserDomainModel(patientDomainModel);
-            userDomainModel.DisplayName = displayName;
+            var displayId = await this._userService.generateUserDisplayId(
+                Roles.Patient, patientDomainModel.User.Person.Phone, 
+                existingPatientCountSharingPhone);
+
+            var displayName = Helper.constructUserDisplayName(
+                patientDomainModel.User.Person.Prefix, 
+                patientDomainModel.User.Person.FirstName, 
+                patientDomainModel.User.Person.LastName);
+
+            var userDomainModel = PatientMapper.toUserDomainModel(patientDomainModel);
+            userDomainModel.Person.DisplayName = displayName;
             userDomainModel.UserName =  userName;
 
             var user = await this._userService.create(userDomainModel);
@@ -233,7 +242,7 @@ export class PatientController {
         var addressBody = request.body.Address ?? null;
         if (addressBody != null) {
             addressDomainModel = await AddressInputValidator.getDomainModel(addressBody);
-            addressDomainModel.UserId = patient.UserId;
+            addressDomainModel.UserId = patient.User.id;
             var address = await this._addressService.create(addressDomainModel);
             if (address == null) {
                 throw new ApiError(400, 'Cannot create address!');

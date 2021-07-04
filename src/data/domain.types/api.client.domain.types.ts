@@ -8,11 +8,12 @@ export interface ApiClientDomainModel {
     Password?: string;
     Phone?: string;
     Email?: string;
+    ApiKey: string;
     ValidFrom?: Date;
     ValidTo?: Date;
 };
 
-export interface ClientLoginDomainModel {
+export interface ApiClientVerificationDomainModel {
     ClientCode: string;
     Password: string;
     ValidFrom: Date;
@@ -32,10 +33,9 @@ export interface ApiClientDto {
 
 export interface ClientApiKeyDto {
     id: string;
-    ClientId: string;
     ClientName: string;
     ClientCode: string;
-    APIKey: string;
+    ApiKey: string;
     ValidFrom: Date;
     ValidTo: Date;
 }

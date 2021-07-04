@@ -38,7 +38,9 @@ export interface UserDetailsDto {
 
 export interface UserDto {
     id: string;
-    Person: PersonDto
+    Person: PersonDto;
+    DefaultTimeZone:string;
+    CurrentTimeZone:string;
 };
 
 //#endregion

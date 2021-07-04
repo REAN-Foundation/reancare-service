@@ -89,7 +89,7 @@ export class UserController {
             ResponseHandler.success(
                 request,
                 response,
-                `User \'' ${user.DisplayName}+ '\' logged in successfully!`,
+                `User \'' ${user.Person.DisplayName}+ '\' logged in successfully!`,
                 200,
                 {
                     accessToken: accessToken,

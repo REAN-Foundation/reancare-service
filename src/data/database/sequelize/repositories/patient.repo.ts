@@ -42,7 +42,7 @@ export class PatientRepo implements IPatientRepo {
     updateByUserId = async (userId: string, patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
         try {
             var patient = await Patient.findOne({where: {UserId: userId}});
-            if(patientDomainModel.Prefix != null) {
+            if(patientDomainModel.User.Person.Prefix != null) {
                 patient.NationalHealthId = patientDomainModel.NationalHealthId;
             }            
             var dto = await PatientMapper.toDetailsDto(patient);

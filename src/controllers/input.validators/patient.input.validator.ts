@@ -46,18 +46,25 @@ export class PatientInputValidator {
                         new Date(Date.parse(request.body.BirthDate)) : null;
 
         var entity: PatientDomainModel = {
-            FirstName: request.body.FirstName ?? null,
-            LastName: request.body.LastName ?? null,
-            Prefix: request.body.Prefix ?? null,
-            Phone: request.body.Phone ?? null,
-            Email: request.body.Email ?? null,
-            Gender: request.body.Gender ?? null,
-            BirthDate: birthdate,
-            ImageResourceId: request.body.ImageResourceId ?? null,
+            User: {
+                Person: {
+                    FirstName: request.body.FirstName ?? null,
+                    LastName: request.body.LastName ?? null,
+                    Prefix: request.body.Prefix ?? null,
+                    Phone: request.body.Phone,
+                    Email: request.body.Email ?? null,
+                    Gender: request.body.Gender ?? null,
+                    BirthDate: birthdate,
+                    ImageResourceId: request.body.ImageResourceId ?? null,
+                },
+                DefaultTimeZone: request.body.DefaultTimeZone ?? null,
+                CurrentTimeZone: request.body.DefaultTimeZone ?? null,
+                GenerateLoginOTP: request.body.DefaultTimeZone ?? null,
+            },
             Address: addressModel,
         };
-        if(entity.Gender != null && entity.Prefix == null) {
-            entity.Prefix = Helper.guessPrefixByGender(entity.Gender);
+        if(entity.User.Person.Gender != null && entity.User.Person.Prefix == null) {
+            entity.User.Person.Prefix = Helper.guessPrefixByGender(entity.User.Person.Gender);
         }
         return entity;
     };

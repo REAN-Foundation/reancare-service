@@ -74,7 +74,7 @@ export interface EmergencyContactDomainModel {
 
 //#region DTOs
 
-export interface PatienDetailsDto {
+export interface PatientDetailsDto {
     id: string;
     User: UserDto;
     DisplayId: string,

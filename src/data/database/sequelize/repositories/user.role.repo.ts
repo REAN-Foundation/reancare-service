@@ -1,7 +1,7 @@
 
 import { IPersonRoleRepo } from "../../../repository.interfaces/user.role.repo.interface";
 import PersonRole from '../models/person.role.model';
-import { UserRoleDto } from "../../../domain.types/role.domain.types";
+import { PersonRoleDto } from "../../../domain.types/role.domain.types";
 import { UserRoleMapper } from '../mappers/user.role.mapper';
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
@@ -11,10 +11,10 @@ import { RoleRepo } from "./role.repo";
 
 export class UserRoleRepo implements IPersonRoleRepo {
 
-    getUserRoles = async (userId: string): Promise<UserRoleDto[]> => {
+    getUserRoles = async (userId: string): Promise<PersonRoleDto[]> => {
         try {
             var userRoles = await PersonRole.findAll({where: {UserId: userId}});
-            var dtos: UserRoleDto[] = [];
+            var dtos: PersonRoleDto[] = [];
             for await(var r of userRoles) {
                 var dto = await UserRoleMapper.toDto(r);
                 dtos.push(dto);
@@ -26,7 +26,7 @@ export class UserRoleRepo implements IPersonRoleRepo {
         }
     }
 
-    addUserRole = async (userId: string, roleId: number): Promise<UserRoleDto> => {
+    addUserRole = async (userId: string, roleId: number): Promise<PersonRoleDto> => {
         try {
             var entity = {
                 UserId: userId,

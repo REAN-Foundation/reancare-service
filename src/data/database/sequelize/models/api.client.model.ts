@@ -82,6 +82,25 @@ export default class ApiClient extends Model {
     })
     Email: string;
 
+    @Length({ min: 16, max: 256})
+    @Column({
+        type: DataType.STRING(256),
+        allowNull: true,
+    })
+    ApiKey: string;
+
+    @Column({
+        type: DataType.DATE,
+        allowNull: false,
+    })
+    ValidFrom: Date;
+
+    @Column({
+        type: DataType.STRING(10),
+        allowNull: false,
+    })
+    ValidTo: Date;
+
     @Column({
         type: DataType.BOOLEAN,
         allowNull: false,

@@ -6,7 +6,9 @@ export interface IClientRepo {
 
     getById(id: string): Promise<ApiClientDto>;
 
-    getSecrets(id: string): Promise<ClientApiKeyDto>;
+    getByClientCode(clientCode: string): Promise<ApiClientDto>;
+
+    getApiKey(id: string): Promise<ClientApiKeyDto>;
 
     update(id: string, clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto>;
 

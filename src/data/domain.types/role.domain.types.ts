@@ -10,6 +10,7 @@ export enum Roles {
     LabUser = 'LabUser',
     PharmacyUser = 'PharmacyUser',
     Nurse = 'Nurse',
+    AmbulanceServiceUser = 'AmbulanceServiceUser',
     SocialHealthWorker = 'SocialHealthWorker',
     PatientFamilyMember = 'PatientFamilyMember',
     PatientFriend = 'PatientFriend',

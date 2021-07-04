@@ -6,7 +6,6 @@ import { Gender } from './system.types';
 ////////////////////////////////////////////////////////////////////////
 
 export class Helper {
-
     static dumpJson(obj, filename) {
         var txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);
@@ -16,11 +15,7 @@ export class Helper {
         return new Promise(function (resolve, reject) {
             child_process.exec(
                 command,
-                function (
-                    error: Error,
-                    standardOutput: string,
-                    standardError: string
-                ) {
+                function (error: Error, standardOutput: string, standardError: string) {
                     if (error) {
                         reject();
                         return;
@@ -33,8 +28,8 @@ export class Helper {
                 }
             );
         });
-    }
-    
+    };
+
     static getSessionHeaders = (token: string) => {
         return {
             'Content-Type': 'application/json; charset=utf-8',
@@ -44,7 +39,7 @@ export class Helper {
             Connection: 'keep-alive',
             Authorization: 'Bearer ' + token,
         };
-    }
+    };
 
     static getNeedleOptions = (headers) => {
         return {
@@ -52,7 +47,7 @@ export class Helper {
             compressed: true,
             json: true,
         };
-    }
+    };
 
     static removeArrayDuplicates<Type>(arr: Type[]): Type[] {
         function onlyUnique(value, index, self) {
@@ -61,28 +56,30 @@ export class Helper {
         var unique = arr.filter(onlyUnique);
         return unique;
     }
-    
-    static areStringsOverlapping = (firstStr:string, secondStr:string) =>{
-        if(firstStr.indexOf(secondStr) != -1 || secondStr.indexOf(firstStr) != -1){
+
+    static areStringsOverlapping = (firstStr: string, secondStr: string) => {
+        if (firstStr.indexOf(secondStr) != -1 || secondStr.indexOf(firstStr) != -1) {
             return true;
         }
         return false;
-    }
+    };
 
     static areOffsetsOverlapping = (
         firstStart: number,
         firstEnd: number,
         secondStart: number,
-        secondEnd: number): boolean => {
-
-        if ((firstStart <= secondStart && secondStart >= firstEnd) ||
+        secondEnd: number
+    ): boolean => {
+        if (
+            (firstStart <= secondStart && secondStart >= firstEnd) ||
             (firstStart <= secondEnd && secondEnd >= firstEnd) ||
             (secondStart <= firstStart && firstStart >= secondEnd) ||
-            (secondStart <= firstEnd && firstEnd >= secondEnd)) {
+            (secondStart <= firstEnd && firstEnd >= secondEnd)
+        ) {
             return true;
         }
         return false;
-    }
+    };
 
     static handleValidationError = (result) => {
         var index = 1;
@@ -92,11 +89,10 @@ export class Helper {
             index++;
         }
         throw new InputValidationError(errorMessages);
-    }
+    };
 
     static getAgeFromBirthDate = (birthdate: Date, onlyYears: boolean = false): string => {
-
-        if(birthdate === null) {
+        if (birthdate === null) {
             return '';
         }
         var bd = birthdate.getTime();
@@ -108,34 +104,38 @@ export class Helper {
         var years = Math.floor(milsecs / milsecInYear);
         var remainder = milsecs % milsecInYear;
         var months = Math.floor(remainder / milsecsInMonth);
-        
-        var age = years > 0 ? years.toString() + ' years': '';
-        if(onlyYears) {
-            if(age.length == 0) {
+
+        var age = years > 0 ? years.toString() + ' years' : '';
+        if (onlyYears) {
+            if (age.length == 0) {
                 return '0 years';
             }
             return age;
         }
-        age = age + (months > 0 ? ' and ' + months.toString() + ' months': '');
+        age = age + (months > 0 ? ' and ' + months.toString() + ' months' : '');
         return age;
-    }
+    };
 
-    static guessPrefixByGender = (gender: Gender) =>{
-        if(gender == 'Male' || gender == 'male') {
+    static guessPrefixByGender = (gender: Gender) => {
+        if (gender == 'Male' || gender == 'male') {
             return 'Mr.';
         }
-        if(gender == 'Female' || gender == 'female') {
+        if (gender == 'Female' || gender == 'female') {
             return 'Miss.';
         }
         return ''; //Return empty prefix
-    }
+    };
 
-    static constructUserDisplayName = (prefix: string|null, firstName: string|null, lastName: string|null): string => {
-        var prefix = prefix ? (prefix + ' ') : '';
-        var firstName = firstName ? (firstName + ' ') : '';
-        const displayName:string = prefix + firstName + lastName ?? '';
+    static constructUserDisplayName = (
+        prefix: string | null,
+        firstName: string | null,
+        lastName: string | null
+    ): string => {
+        var prefix = prefix ? prefix + ' ' : '';
+        var firstName = firstName ? firstName + ' ' : '';
+        const displayName: string = prefix + firstName + lastName ?? '';
         return displayName;
-    }
+    };
 
     static getGender = (str: string): Gender => {
         if (
@@ -149,7 +149,7 @@ export class Helper {
             return 'Unknown';
         }
         return str;
-    }
+    };
 
     static formatDate = (date) => {
         var d = new Date(date);
@@ -157,5 +157,24 @@ export class Helper {
         var day = ('00' + d.getDate().toString()).slice(-2);
         var year = d.getFullYear();
         return [year, month, day].join('-');
+    };
+
+    static isAlpha = (c) => {
+        var alphas = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        return alphas.indexOf(c) != -1;
+    };
+
+    static isAlphaVowel = (c) => {
+        var alphas = 'aeiouAEIOU';
+        return alphas.indexOf(c) != -1;
     }
+
+    static isDigit = (c) => {
+        var digits = '0123456789';
+        return digits.indexOf(c) != -1;
+    };
+
+    static isAlphaNum = (c) => {
+        return Helper.isAlpha(c) || Helper.isDigit(c);
+    };
 }

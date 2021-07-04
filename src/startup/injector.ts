@@ -9,7 +9,7 @@ import { UserRepo } from '../data/database/sequelize/repositories/user.repo';
 import { UserRoleRepo } from '../data/database/sequelize/repositories/user.role.repo';
 import { RoleRepo } from '../data/database/sequelize/repositories/role.repo';
 import { OtpRepo } from '../data/database/sequelize/repositories/otp.repo';
-import { ClientRepo } from '../data/database/sequelize/repositories/client.repo';
+import { ApiClientRepo } from '../data/database/sequelize/repositories/client.repo';
 import { AddressRepo } from '../data/database/sequelize/repositories/address.repo';
 import { PatientRepo } from '../data/database/sequelize/repositories/patient.repo';
 
@@ -32,7 +32,7 @@ export class Injector {
         container.register('IPersonRoleRepo', UserRoleRepo);
         container.register('IRoleRepo', RoleRepo);
         container.register('IOtpRepo', OtpRepo);
-        container.register('IClientRepo', ClientRepo);
+        container.register('IClientRepo', ApiClientRepo);
         container.register('IPatientRepo', PatientRepo);
         container.register('IAddressRepo', AddressRepo);
 

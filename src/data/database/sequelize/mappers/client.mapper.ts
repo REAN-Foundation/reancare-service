@@ -28,7 +28,7 @@ export class ClientMapper {
             id: client.id,
             ClientName: client.ClientName,
             ClientCode: client.ClientCode,
-            APIKey: client.APIKey,
+            ApiKey: client.ApiKey,
             ValidFrom: client.ValidFrom,
             ValidTo: client.ValidTo,
         };

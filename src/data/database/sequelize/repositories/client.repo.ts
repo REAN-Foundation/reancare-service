@@ -8,7 +8,7 @@ import { ApiError } from '../../../../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////
 
-export class ClientRepo implements IClientRepo {
+export class ApiClientRepo implements IClientRepo {
 
     create = async (clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         try {
@@ -18,7 +18,7 @@ export class ClientRepo implements IClientRepo {
                 Phone: clientDomainModel.Phone,
                 Email: clientDomainModel.Email,
                 Password: clientDomainModel.Password ?? null,
-                APIKey: clientDomainModel.APIKey ?? null,
+                ApiKey: clientDomainModel.ApiKey ?? null,
                 ValidFrom: clientDomainModel.ValidFrom ?? null,
                 ValidTo: clientDomainModel.ValidTo ?? null,
             };
@@ -42,7 +42,22 @@ export class ClientRepo implements IClientRepo {
         }
     };
 
-    getSecrets = async(id: string): Promise<ClientApiKeyDto> => {
+    getByClientCode = async (clientCode: string): Promise<ApiClientDto> =>{
+        try {
+            var client = await ApiClient.findOne({
+                where:{
+                    ClientCode: clientCode
+                }
+            });
+            var dto = await ClientMapper.toDto(client);
+            return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    getApiKey = async(id: string): Promise<ClientApiKeyDto> => {
         try {
             var client = await ApiClient.findByPk(id);
             var dto = await ClientMapper.toClientSecretsDto(client);
@@ -72,8 +87,8 @@ export class ClientRepo implements IClientRepo {
             if(clientDomainModel.Email != null) {
                 client.Email = clientDomainModel.Email;
             }
-            if(clientDomainModel.APIKey != null) {
-                client.APIKey = clientDomainModel.APIKey;
+            if(clientDomainModel.ApiKey != null) {
+                client.ApiKey = clientDomainModel.ApiKey;
             }
             if(clientDomainModel.ValidFrom != null) {
                 client.ValidFrom = clientDomainModel.ValidFrom;

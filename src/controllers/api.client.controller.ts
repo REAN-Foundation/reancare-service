@@ -1,25 +1,24 @@
 import express from 'express';
 
-import { ClientService } from '../services/client.service';
+import { ApiClientService } from '../services/api.client.service';
 import { ResponseHandler } from '../common/response.handler';
 import { Loader } from '../startup/loader';
 import { Authorizer } from '../auth/authorizer';
-import { ApiClientDomainModel } from '../data/domain.types/api.client.domain.types';
-import { ClientInputValidator } from './input.validators/client.input.validator';
+import { ApiClientDomainModel, ApiClientVerificationDomainModel } from '../data/domain.types/api.client.domain.types';
+import { ApiClientInputValidator } from './input.validators/api.client.input.validator';
 import { ApiError } from '../common/api.error';
-import { generate} from 'generate-password';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ClientController {
+export class ApiClientController {
     
     //#region member variables and constructors
 
-    _service: ClientService = null;
+    _service: ApiClientService = null;
     _authorizer: Authorizer = null;
 
     constructor() {
-        this._service = Loader.container.resolve(ClientService);
+        this._service = Loader.container.resolve(ApiClientService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -31,22 +30,9 @@ export class ClientController {
             if (!this._authorizer.authorize(request, response)) {
                 return false;
             }
-            var clientDomainModel: ApiClientDomainModel = await ClientInputValidator.getDomainModel(
+            var clientDomainModel: ApiClientDomainModel = await ApiClientInputValidator.getDomainModel(
                 request.body
             );
-            if (clientDomainModel.ClientCode == null) {
-                var name = clientDomainModel.ClientName;
-                name = name.toLowerCase();
-                var postfix = generate({
-                    length: 8,
-                    numbers: false,
-                    lowercase: false,
-                    uppercase: true,
-                    symbols: false,
-                });
-                name = name + postfix;
-                clientDomainModel.ClientCode = name.substr(0, 8);
-            }
             const client = await this._service.create(clientDomainModel);
             if (client == null) {
                 throw new ApiError(400, 'Unable to create client.');
@@ -62,17 +48,6 @@ export class ClientController {
     getById = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Client.GetById';
-            if (!this._authorizer.authorize(request, response)) {
-                return false;
-            }
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    getSecrets = async (request: express.Request, response: express.Response) => {
-        try {
-            request.context = 'Client.GetSecrets';
             if (!this._authorizer.authorize(request, response)) {
                 return false;
             }
@@ -102,5 +77,23 @@ export class ClientController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    getApiKey = async  (request: express.Request, response: express.Response) => {
+        try {
+            request.context = 'Client.GetApiKey';
+            var verificationModel = await ApiClientInputValidator.getVerificationDomainModel(
+                request.body
+            );
+            const apiKeyDto = await this._service.getApiKey(verificationModel);
+            if (apiKeyDto == null) {
+                throw new ApiError(400, 'Unable to retrieve client api key.');
+            }
+            ResponseHandler.success(request, response, 'Client api keys retrieved successfully!', 200, {
+                ApiKeyDetails: apiKeyDto,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
 
 }

@@ -5,7 +5,7 @@ import { UserMapper } from "../mappers/user.mapper";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { Op } from 'sequelize';
-import UserRole from "../models/user.role.model";
+import PersonRole from "../models/person.role.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -42,7 +42,7 @@ export class UserRepo implements IUserRepo {
             var usersWithRole: UserDetailsDto[] = [];
             var users = await User.findAll({ where: { Phone: phone, IsActive: true } });
             for await (var user of users) {
-                var withRole = await UserRole.findOne({ where: { UserId: user.id, RoleId: roleId } });
+                var withRole = await PersonRole.findOne({ where: { UserId: user.id, RoleId: roleId } });
                 if (withRole != null) {
                     var dto = await UserMapper.toDetailsDto(user);
                     usersWithRole.push(dto);
@@ -180,7 +180,7 @@ export class UserRepo implements IUserRepo {
         }
     };
 
-    searchLight(filters: any): Promise<UserDto[]> {
+    search(filters: any): Promise<UserDto[]> {
         throw new Error('Method not implemented.');
     }
 

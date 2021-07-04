@@ -1,10 +1,8 @@
 import { Loader } from '../startup/loader';
-import { IUserRepo } from '../data/repository.interfaces/user.repo.interface';
+import { IPersonRepo } from '../data/repository.interfaces/person.repo.interface';
 import { IPersonRoleRepo } from '../data/repository.interfaces/user.role.repo.interface';
 import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
-import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
-import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserDetailsDto, UserDto, UserSearchFilters, UserLoginDetails, UserDomainModel } from '../data/domain.types/user.domain.types';
+import { UserDetailsDto, UserDto, UserSearchFilters, UserLoginDetails, PersonDomainModel } from '../data/domain.types/user.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
@@ -20,20 +18,18 @@ import { generate} from 'generate-password';
 export class UserService {
     
     constructor(
-        @inject('IUserRepo') private _userRepo: IUserRepo,
-        @inject('IPersonRoleRepo') private _userRoleRepo: IPersonRoleRepo,
-        @inject('IRoleRepo') private _roleRepo: IRoleRepo,
-        @inject('IOtpRepo') private _otpRepo: IOtpRepo,
-        @inject('IMessagingService') private _messagingService: IMessagingService
+        @inject('IPersonRepo') private _userRepo: IPersonRepo,
+        @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
+        @inject('IRoleRepo') private _roleRepo: IRoleRepo
     ) {}
 
-    create = async (userDomainModel: UserDomainModel) => {
+    create = async (personDomainModel: PersonDomainModel) => {
 
-        var user = await this._userRepo.create(userDomainModel);
+        var user = await this._userRepo.create(personDomainModel);
         if (user == null) {
             return null;
         }
-        await this.generateLoginOtp(userDomainModel, user);
+        await this.generateLoginOtp(personDomainModel, user);
         return user;
     };
 
@@ -56,8 +52,8 @@ export class UserService {
         }
     };
 
-    public update = async (id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
-        return await this._userRepo.update(id, userDomainModel);
+    public update = async (id: string, personDomainModel: PersonDomainModel): Promise<UserDetailsDto> => {
+        return await this._userRepo.update(id, personDomainModel);
     };
 
     public delete = async (id: string): Promise<boolean> => {
@@ -265,10 +261,10 @@ export class UserService {
         return username;
     }
     
-    private async generateLoginOtp(userDomainModel: UserDomainModel, user: UserDetailsDto) {
+    private async generateLoginOtp(personDomainModel: PersonDomainModel, user: UserDetailsDto) {
 
-        if (userDomainModel.hasOwnProperty('GenerateLoginOTP') && 
-            userDomainModel.GenerateLoginOTP === true) {
+        if (personDomainModel.hasOwnProperty('GenerateLoginOTP') && 
+            personDomainModel.GenerateLoginOTP === true) {
             var obj = {
                 Phone: user.Phone,
                 Email: user.Email,

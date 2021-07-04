@@ -1,5 +1,5 @@
 import { Gender } from '../../common/system.types';
-import { UserRoleDto } from './role.domain.types';
+import { PersonDetailsDto, PersonDomainModel, PersonDto } from './person.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -7,18 +7,9 @@ import { UserRoleDto } from './role.domain.types';
 
 export interface UserDomainModel {
     id?: string;
+    Person: PersonDomainModel;
     UserName?: string;
     Password?:string;
-    Prefix?: string;
-    FirstName?: string;
-    MiddleName?: string;
-    LastName?: string;
-    DisplayName?: string;
-    Phone: string;
-    Email?: string;
-    Gender?: Gender;
-    BirthDate?: Date;
-    ImageResourceId?: string;
     DefaultTimeZone?:string;
     CurrentTimeZone?:string;
     GenerateLoginOTP?:boolean;
@@ -35,23 +26,11 @@ export interface UserLoginDetails {
 //#endregion
 
 //#region DTOs
+
 export interface UserDetailsDto {
     id: string;
+    Person: PersonDetailsDto;
     UserName: string;
-    Prefix: string;
-    FirstName: string;
-    MiddleName: string;
-    LastName: string;
-    DisplayName: string;
-    Phone: string;
-    Email: string;
-    Gender: Gender;
-    BirthDate: Date;
-    Age: string;
-    ImageResourceId: string;
-    Roles: UserRoleDto[];
-    IsActive: boolean;
-    ActiveSince: Date;
     LastLogin: Date;
     DefaultTimeZone:string;
     CurrentTimeZone:string;
@@ -59,11 +38,7 @@ export interface UserDetailsDto {
 
 export interface UserDto {
     id: string;
-    DisplayName: string;
-    Phone: string;
-    Email: string;
-    Gender: Gender;
-    BirthDate: Date;
+    Person: PersonDto
 };
 
 //#endregion

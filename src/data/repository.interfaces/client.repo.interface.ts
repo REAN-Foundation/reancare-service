@@ -1,14 +1,14 @@
-import { ClientDomainModel, ClientDto, ClientSecretsDto } from '../domain.types/client.domain.types';
+import { ApiClientDomainModel, ApiClientDto, ClientApiKeyDto } from '../domain.types/api.client.domain.types';
 
 export interface IClientRepo {
 
-    create(clientDomainModel: ClientDomainModel): Promise<ClientDto>;
+    create(clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto>;
 
-    getById(id: string): Promise<ClientDto>;
+    getById(id: string): Promise<ApiClientDto>;
 
-    getSecrets(id: string): Promise<ClientSecretsDto>;
+    getSecrets(id: string): Promise<ClientApiKeyDto>;
 
-    update(id: string, clientDomainModel: ClientDomainModel): Promise<ClientDto>;
+    update(id: string, clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto>;
 
     delete(id: string): Promise<boolean>;
 

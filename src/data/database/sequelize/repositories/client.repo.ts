@@ -1,7 +1,7 @@
 import { IClientRepo } from '../../../repository.interfaces/client.repo.interface';
-import Client from '../models/client.model';
+import ApiClient from '../models/api.client.model';
 import { Op, Sequelize } from 'sequelize';
-import { ClientDomainModel, ClientDto, ClientSecretsDto } from '../../../domain.types/client.domain.types';
+import { ApiClientDomainModel, ApiClientDto, ClientApiKeyDto } from '../../../domain.types/api.client.domain.types';
 import { ClientMapper } from '../mappers/client.mapper';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
@@ -10,7 +10,7 @@ import { ApiError } from '../../../../common/api.error';
 
 export class ClientRepo implements IClientRepo {
 
-    create = async (clientDomainModel: ClientDomainModel): Promise<ClientDto> => {
+    create = async (clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         try {
             var entity = {
                 ClientName: clientDomainModel.ClientName,
@@ -22,7 +22,7 @@ export class ClientRepo implements IClientRepo {
                 ValidFrom: clientDomainModel.ValidFrom ?? null,
                 ValidTo: clientDomainModel.ValidTo ?? null,
             };
-            var client = await Client.create(entity);
+            var client = await ApiClient.create(entity);
             var dto = await ClientMapper.toDto(client);
             return dto;
         } catch (error) {
@@ -31,9 +31,9 @@ export class ClientRepo implements IClientRepo {
         }
     };
 
-    getById = async (id: string): Promise<ClientDto> => {
+    getById = async (id: string): Promise<ApiClientDto> => {
         try {
-            var client = await Client.findByPk(id);
+            var client = await ApiClient.findByPk(id);
             var dto = await ClientMapper.toDto(client);
             return dto;
         } catch (error) {
@@ -42,9 +42,9 @@ export class ClientRepo implements IClientRepo {
         }
     };
 
-    getSecrets = async(id: string): Promise<ClientSecretsDto> => {
+    getSecrets = async(id: string): Promise<ClientApiKeyDto> => {
         try {
-            var client = await Client.findByPk(id);
+            var client = await ApiClient.findByPk(id);
             var dto = await ClientMapper.toClientSecretsDto(client);
             return dto;
         } catch (error) {
@@ -53,9 +53,9 @@ export class ClientRepo implements IClientRepo {
         }
     }
     
-    update = async (id: string, clientDomainModel: ClientDomainModel): Promise<ClientDto> => {
+    update = async (id: string, clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         try {
-            var client = await Client.findByPk(id);
+            var client = await ApiClient.findByPk(id);
 
             if(clientDomainModel.ClientName != null) {
                 client.ClientName = clientDomainModel.ClientName;
@@ -93,7 +93,7 @@ export class ClientRepo implements IClientRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            var client = await Client.findOne({ where: { id: id, IsActive: true } });
+            var client = await ApiClient.findOne({ where: { id: id, IsActive: true } });
             client.IsActive = false;
             await client.save();
             return true;

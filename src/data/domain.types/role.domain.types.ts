@@ -9,16 +9,17 @@ export enum Roles {
     Doctor = 'Doctor',
     LabUser = 'LabUser',
     PharmacyUser = 'PharmacyUser',
+    Nurse = 'Nurse',
     SocialHealthWorker = 'SocialHealthWorker',
     PatientFamilyMember = 'PatientFamilyMember',
     PatientFriend = 'PatientFriend',
-    AmbulanceService = 'AmbulanceService',
     SystemAdmin = 'SystemAdmin'
 }
 
-export interface UserRoleDto {
+export interface PersonRoleDto {
     id: string,
-    UserId: string;
+    PersonId: string;
     RoleId: number;
     RoleName: string;
 }
+

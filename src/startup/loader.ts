@@ -9,6 +9,9 @@ import { Seeder } from './seeder';
 import { StorageService } from '../modules/ehr/services/storage.service';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+//Register injections here...
+Injector.registerInjections(container);
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class Loader {
 
@@ -47,7 +50,7 @@ export class Loader {
         return new Promise((resolve, reject) => {
             try {
 
-                Injector.registerInjections(container);
+
 
                 Loader._databaseConnector = container.resolve(DatabaseConnector);
                 Loader._authenticator = container.resolve(Authenticator);

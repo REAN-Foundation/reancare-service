@@ -3,35 +3,28 @@ import {
     Column, 
     Model,
     DataType,
-    HasMany,
-    HasOne,
-    BelongsTo,
-    BelongsToMany,
     CreatedAt, 
     UpdatedAt, 
     DeletedAt, 
     IsUUID,
     PrimaryKey,
-    Length,
-    BeforeCreate,
-    IsEmail,
-    IsDate,
-    IsInt,
-    ForeignKey
+    ForeignKey,
+    Length
     } from 'sequelize-typescript';
 
 import { uuid } from 'uuidv4';
+import ApiClient from './api.client.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps: true,
-    modelName: 'UserRole',
-    tableName: 'user_roles',
+    modelName: 'ClientApiKey',
+    tableName: 'client_api_keys',
     paranoid: true,
     freezeTableName: true
 })
-export default class UserRole extends Model {
+export default class ClientApiKey extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -43,18 +36,38 @@ export default class UserRole extends Model {
     id: string;
 
     @IsUUID(4)
+    @ForeignKey(() => ApiClient)
     @Column({
         type: DataType.UUID,
         allowNull: false,
     })
-    UserId: string;
+    ClientId: string;
 
-    @IsInt
+    @Length({ min: 16, max: 256})
     @Column({
-        type: DataType.INTEGER,
+        type: DataType.STRING(256),
+        allowNull: true,
+    })
+    APIKey: string;
+
+    @Column({
+        type: DataType.DATE,
         allowNull: false,
     })
-    RoleId: number;
+    ValidFrom: Date;
+
+    @Column({
+        type: DataType.STRING(10),
+        allowNull: false,
+    })
+    ValidTo: Date;
+
+    @Column({
+        type: DataType.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+    })
+    IsActive: boolean;
 
     @Column
     @CreatedAt

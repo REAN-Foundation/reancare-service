@@ -1,6 +1,6 @@
 
-import { IUserRoleRepo } from "../../../repository.interfaces/user.role.repo.interface";
-import UserRole from '../models/user.role.model';
+import { IPersonRoleRepo } from "../../../repository.interfaces/user.role.repo.interface";
+import PersonRole from '../models/person.role.model';
 import { UserRoleDto } from "../../../domain.types/role.domain.types";
 import { UserRoleMapper } from '../mappers/user.role.mapper';
 import { Logger } from "../../../../common/logger";
@@ -9,11 +9,11 @@ import { RoleRepo } from "./role.repo";
 
 ///////////////////////////////////////////////////////////////////////
 
-export class UserRoleRepo implements IUserRoleRepo {
+export class UserRoleRepo implements IPersonRoleRepo {
 
     getUserRoles = async (userId: string): Promise<UserRoleDto[]> => {
         try {
-            var userRoles = await UserRole.findAll({where: {UserId: userId}});
+            var userRoles = await PersonRole.findAll({where: {UserId: userId}});
             var dtos: UserRoleDto[] = [];
             for await(var r of userRoles) {
                 var dto = await UserRoleMapper.toDto(r);
@@ -32,7 +32,7 @@ export class UserRoleRepo implements IUserRoleRepo {
                 UserId: userId,
                 RoleId: roleId,
             };
-            var userRole = await UserRole.create(entity);
+            var userRole = await PersonRole.create(entity);
             var dto = await UserRoleMapper.toDto(userRole);
             return dto;
         } catch (error) {
@@ -43,7 +43,7 @@ export class UserRoleRepo implements IUserRoleRepo {
 
     removeUserRole = async (userId: string): Promise<boolean> => {
         try {
-            await UserRole.destroy({where: {UserId: userId}});
+            await PersonRole.destroy({where: {UserId: userId}});
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -57,7 +57,7 @@ export class UserRoleRepo implements IUserRoleRepo {
             var roleRepo = new RoleRepo();
             var allRoles = await roleRepo.search();
             for await(var r of allRoles) {
-                var roleCount = await UserRole.count({
+                var roleCount = await PersonRole.count({
                     where: {
                         RoleId: r.id,
                     },

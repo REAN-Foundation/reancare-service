@@ -53,7 +53,7 @@ export class PatientRepo implements IPatientRepo {
         }
     }
 
-    searchLight(filters: PatientSearchFilters): Promise<PatientDto[]> {
+    search(filters: PatientSearchFilters): Promise<PatientDto[]> {
         throw new Error("Method not implemented.");
     }
     

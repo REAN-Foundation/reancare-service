@@ -1,7 +1,7 @@
 import { UserRoleDto } from '../domain.types/role.domain.types';
 
 
-export interface IUserRoleRepo {
+export interface IPersonRoleRepo {
 
     getUserRoles(userId: string): Promise<UserRoleDto[]>;
 

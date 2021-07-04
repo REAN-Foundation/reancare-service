@@ -29,7 +29,7 @@ export class Injector {
 
         //Repos
         container.register('IUserRepo', UserRepo);
-        container.register('IUserRoleRepo', UserRoleRepo);
+        container.register('IPersonRoleRepo', UserRoleRepo);
         container.register('IRoleRepo', RoleRepo);
         container.register('IOtpRepo', OtpRepo);
         container.register('IClientRepo', ClientRepo);

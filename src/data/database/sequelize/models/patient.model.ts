@@ -1,26 +1,21 @@
-import { 
-    Table, 
-    Column, 
+import {
+    Table,
+    Column,
     Model,
     DataType,
-    HasMany,
     HasOne,
-    BelongsTo,
-    BelongsToMany,
-    CreatedAt, 
-    UpdatedAt, 
-    DeletedAt, 
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
     IsUUID,
     PrimaryKey,
     Length,
-    BeforeCreate,
-    IsEmail,
-    IsDate,
-    IsInt,
-    ForeignKey
-    } from 'sequelize-typescript';
+    ForeignKey,
+} from 'sequelize-typescript';
 
 import { uuid } from 'uuidv4';
+import Person from './person.model';
+import User from './user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -29,27 +24,37 @@ import { uuid } from 'uuidv4';
     modelName: 'Patient',
     tableName: 'patients',
     paranoid: true,
-    freezeTableName: true
+    freezeTableName: true,
 })
 export default class Patient extends Model {
-
     @IsUUID(4)
     @PrimaryKey
     @Column({
         type: DataType.UUID,
-        defaultValue: () => { return uuid(); },
-        allowNull: false
+        defaultValue: () => {
+            return uuid();
+        },
+        allowNull: false,
     })
     id: string;
 
     @IsUUID(4)
+    @ForeignKey(() => User)
     @Column({
-        type:  DataType.UUID,
+        type: DataType.UUID,
         allowNull: false,
     })
     UserId: string;
 
-    @Length({ min: 4, max: 16})
+    @IsUUID(4)
+    @ForeignKey(() => Person)
+    @Column({
+        type: DataType.UUID,
+        allowNull: false,
+    })
+    PersonId: string;
+
+    @Length({ min: 4, max: 16 })
     @Column({
         type: DataType.STRING(16),
         allowNull: false,
@@ -65,16 +70,22 @@ export default class Patient extends Model {
 
     @IsUUID(4)
     @Column({
-        type:  DataType.UUID,
+        type: DataType.UUID,
         allowNull: true,
     })
     MedicalProfileId: string;
 
     @Column({
-        type:  DataType.STRING(256),
+        type: DataType.STRING(256),
         allowNull: true,
     })
     EhrId: string;
+
+    @HasOne(() => User)
+    User: User;
+
+    @HasOne(() => Person)
+    Person: Person;
 
     @Column
     @CreatedAt
@@ -85,5 +96,4 @@ export default class Patient extends Model {
 
     @DeletedAt
     DeletedAt: Date;
-
-};
+}

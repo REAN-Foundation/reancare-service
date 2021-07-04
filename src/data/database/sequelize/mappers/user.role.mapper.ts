@@ -1,5 +1,5 @@
 import { RoleRepo } from "../repositories/role.repo";
-import UserRole from '../models/user.role.model';
+import PersonRole from '../models/person.role.model';
 import { UserRoleDto } from "../../../domain.types/role.domain.types";
 
 
@@ -7,7 +7,7 @@ import { UserRoleDto } from "../../../domain.types/role.domain.types";
 
 export class UserRoleMapper {
 
-    static toDto = async (userRole: UserRole): Promise<UserRoleDto> => {
+    static toDto = async (userRole: PersonRole): Promise<UserRoleDto> => {
 
         if(userRole == null){
             return null;

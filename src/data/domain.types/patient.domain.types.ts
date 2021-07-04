@@ -1,6 +1,9 @@
-import { String } from 'aws-sdk/clients/iot';
 import { Gender } from '../../common/system.types';
 import { AddressDomainModel, AddressDto } from './address.domain.types';
+import { OrganizationDetailsDto } from './organization.domain.types';
+import { PersonDetailsDto } from './person.domain.types';
+import { RoleDto } from './role.domain.types';
+import { UserDomainModel, UserDto } from './user.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -9,85 +12,125 @@ import { AddressDomainModel, AddressDto } from './address.domain.types';
 export interface PatientDomainModel {
     id?: string;
     UserId?: string;
+    PersonId?: string;
     DisplayId?: string,
     EhrId?: string;
     NationalHealthId?:string;
     MedicalProfileId?: string;
-
-    DisplayName?: string;
-    FirstName?: string;
-    MiddleName?: string;
-    LastName?: string;
-    Prefix?: string;
-    Phone?: string;
-    Email?: string;
-    Gender?: Gender;
-    BirthDate?: Date;
-    ActiveSince?: Date;
-    ImageResourceId?:string;
-    DefaultTimeZone?:string;
-    CurrentTimeZone?:string;
-        
-    InsuranceIds?: String[];
+    User?: UserDomainModel;
+    InsuranceIds?: string[];
     EmergencyContactIds?: string[];
-
-    Address?: AddressDomainModel;
+    Address: AddressDomainModel;
 };
 
-export interface PatientMedicalProfileDomainModel {
-
+export interface MedicalProfileDomainModel {
+    id?: string;
+    PatientUserId?: string;
+    BloodGroup?: string;
+    MajorAilment?: string;
+    OtherConditions?: string;
+    IsDiabetic?: boolean;
+    HasHeartAilment?: boolean;
+    MaritalStatus?: string;
+    Ethnicity?: string;
+    Nationality?: string;
+    Occupation?: string;
+    SedentaryLifestyle?: boolean;
+    IsSmoker?: boolean;
+    SmokingSeverity?: string;
+    SmokingSince?: Date;
+    IsDrinker?: boolean;
+    DrinkingSeverity?: string;
+    DrinkingSince?: Date;
+    SubstanceAbuse?: boolean;
+    ProcedureHistory?: string;
+    ObstetricHistory?: string;
+    OtherInformation?: string;
 };
 
 export interface PatientInsuranceDomainModel {
-
+    id?: string;
+    InsuranceProvider?: string;
+    InsurancePolicyCode?: string;
+    ValidFrom?: string;
+    ValidTo?: string;
 };
-
-export interface PatientEmergencyContactDomainModel {
-
+ 
+export interface EmergencyContactDomainModel {
+    id?: string;
+    PersonId: string;
+    PatientUserId: string;
+    AddressId?: string;
+    OrganizationId?: string;
+    IsAvailableForEmergency?: boolean;
+    RoleId?: string;
+    Relation?: string;
+    TimeOfAvailability?: string;
+    Description?: string;
+    AdditionalPhoneNumbers?: string;
 };
 
 //#endregion
 
 //#region DTOs
 
-export interface PatientDetailsDto {
+export interface PatienDetailsDto {
     id: string;
-    UserId: string;
-    UserName: string;
-    DisplayId: string;
-    EhrId: string;
-    DisplayName: string;
-    Prefix: string;
-    FirstName: string;
-    MiddleName: string;
-    LastName: string;
-    Phone: string;
-    Email: string;
-    Gender: Gender;
-    BirthDate: Date;
-    Age: string;
-    ImageResourceId: string;
-    IsActive: boolean;
-    ActiveSince: Date;
-    LastLogin: Date;
-    DefaultTimeZone:string;
-    CurrentTimeZone:string;
-    Address?: AddressDto;
-    MedicalProfile?: PatientMedicalProfileDto;
+    User: UserDto;
+    DisplayId: string,
+    EhrId?: string;
+    NationalHealthId?:string;
+    MedicalProfile?: MedicalProfileDto;
     Insurances?: PatientInsuranceDto[];
-    EmergencyContacts?: PatientEmergencyContactDto[];
+    EmergencyContacts?: EmergencyContactDto[];
+    Address?: AddressDto;
 };
 
-export interface PatientMedicalProfileDto{
-
+export interface MedicalProfileDto {
+    id: string;
+    PatientUserId?: string;
+    BloodGroup?: string;
+    MajorAilment?: string;
+    OtherConditions?: string;
+    IsDiabetic?: boolean;
+    HasHeartAilment?: boolean;
+    MaritalStatus?: string;
+    Ethnicity?: string;
+    Nationality?: string;
+    Occupation?: string;
+    SedentaryLifestyle?: boolean;
+    IsSmoker?: boolean;
+    SmokingSeverity?: string;
+    SmokingSince?: Date;
+    IsDrinker?: boolean;
+    DrinkingSeverity?: string;
+    DrinkingSince?: Date;
+    SubstanceAbuse?: boolean;
+    ProcedureHistory?: string;
+    ObstetricHistory?: string;
+    OtherInformation?: string;
 };
 
 export interface PatientInsuranceDto {
-
+    id?: string;
+    InsuranceProvider?: string;
+    InsurancePolicyCode?: string;
+    ValidFrom?: string;
+    ValidTo?: string;
 };
-
-export interface PatientEmergencyContactDto {
-
+ 
+export interface EmergencyContactDto {
+    id?: string;
+    Person: PersonDetailsDto;
+    PatientUserId: string;
+    Address?: AddressDto;
+    Organization?: OrganizationDetailsDto;
+    IsAvailableForEmergency?: boolean;
+    Role: RoleDto;
+    Relation?: string;
+    TimeOfAvailability?: string;
+    Description?: string;
+    AdditionalPhoneNumbers?: string;
 };
 
 export interface PatientDto {

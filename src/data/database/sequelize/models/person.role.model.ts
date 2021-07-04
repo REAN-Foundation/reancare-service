@@ -7,23 +7,25 @@ import {
     UpdatedAt, 
     DeletedAt, 
     IsUUID,
-    PrimaryKey,    
-    ForeignKey} from 'sequelize-typescript';
+    PrimaryKey,
+    IsInt,
+    ForeignKey
+    } from 'sequelize-typescript';
 
 import { uuid } from 'uuidv4';
 import Person from './person.model';
-import User from './user.model';
+import Role from './role.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps: true,
-    modelName: 'PatientInsurance',
-    tableName: 'patient_insurances',
+    modelName: 'PersonRole',
+    tableName: 'person_roles',
     paranoid: true,
     freezeTableName: true
 })
-export default class PatientInsurance extends Model {
+export default class PersonRole extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -35,36 +37,20 @@ export default class PatientInsurance extends Model {
     id: string;
 
     @IsUUID(4)
-    @ForeignKey(() => User)
+    @ForeignKey(() => Person)
     @Column({
-        type:  DataType.UUID,
+        type: DataType.UUID,
         allowNull: false,
     })
-    PatientUserId: string;
+    PersonId: string;
 
+    @IsInt
+    @ForeignKey(() => Role)
     @Column({
-        type: DataType.STRING(64),
-        allowNull: true,
+        type: DataType.INTEGER,
+        allowNull: false,
     })
-    InsuranceProvider: string;
-
-    @Column({
-        type: DataType.STRING(64),
-        allowNull: true,
-    })
-    InsurancePolicyCode: string;
-
-    @Column({
-        type: DataType.DATE,
-        allowNull: true,
-    })
-    ValidFrom: Date;
-
-    @Column({
-        type: DataType.DATE,
-        allowNull: true,
-    })
-    ValidTo: Date;
+    RoleId: number;
 
     @Column
     @CreatedAt

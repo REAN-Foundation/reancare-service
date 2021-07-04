@@ -1,27 +1,24 @@
-import { 
-    Table, 
-    Column, 
+import {
+    Table,
+    Column,
     Model,
     DataType,
-    HasMany,
-    HasOne,
     BelongsTo,
-    BelongsToMany,
-    CreatedAt, 
-    UpdatedAt, 
-    DeletedAt, 
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
     IsUUID,
     PrimaryKey,
     Length,
     BeforeCreate,
-    IsEmail,
     IsDate,
-    IsInt,
-    ForeignKey
-    } from 'sequelize-typescript';
+    ForeignKey,
+} from 'sequelize-typescript';
 
 import { uuid } from 'uuidv4';
 import * as bcrypt from 'bcryptjs';
+import Person from './person.model';
+import Role from './role.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -30,129 +27,75 @@ import * as bcrypt from 'bcryptjs';
     modelName: 'User',
     tableName: 'users',
     paranoid: true,
-    freezeTableName: true
+    freezeTableName: true,
 })
 export default class User extends Model {
-
     @IsUUID(4)
     @PrimaryKey
     @Column({
         type: DataType.UUID,
-        defaultValue: () => { return uuid(); },
-        allowNull: false
+        defaultValue: () => {
+            return uuid();
+        },
+        allowNull: false,
     })
     id: string;
 
-    @Length({ min: 1, max: 16})
+    @IsUUID(4)
+    @ForeignKey(() => Person)
     @Column({
-        type: DataType.STRING(16),
-        allowNull: false,
-        defaultValue: ''
-    })
-    Prefix: string;
-
-    @Length({ min: 1, max: 70})
-    @Column({
-        type: DataType.STRING(70),
+        type: DataType.UUID,
         allowNull: false,
     })
-    FirstName: string;
-
-    @Length({ min: 1, max: 70})
+    PersonId: string;
+    
+    @ForeignKey(() => Role)
     @Column({
-        type: DataType.STRING(70),
-        allowNull: true,
-    })
-    MiddleName: string;
-
-    @Length({ min: 1, max: 70})
-    @Column({
-        type: DataType.STRING(70),
+        type: DataType.INTEGER,
         allowNull: false,
     })
-    LastName: string;
+    RoleId: number;
 
-    @Length({ min: 1, max: 10})
+    @Length({ min: 1, max: 10 })
     @Column({
         type: DataType.STRING(10),
         allowNull: true,
     })
     UserName: string;
 
-    @Length({ min: 6, max: 256})
+    @Length({ min: 6, max: 256 })
     @Column({
         type: DataType.STRING(256),
         allowNull: true,
     })
     Password: string;
 
-    @Length({ min: 10, max: 16})
-    @Column({
-        type: DataType.STRING(16),
-        allowNull: true,
-    })
-    Phone: string;
-
-    @Length({ min: 3, max: 50})
-    @IsEmail
-    @Column({
-        type: DataType.STRING(16),
-        allowNull: true,
-    })
-    Email: string;
-
-    @Column({
-        type: DataType.ENUM,
-        values: ['Male', 'Female', 'Other', 'Unknown'],
-        defaultValue: 'Male',
-        allowNull: false,
-    })
-    Gender: string;
-
     @IsDate
     @Column({
         type: DataType.DATE,
-        allowNull: true
-    })
-    BirthDate: Date;
-
-    @IsUUID(4)
-    @Column({
-        type: DataType.UUID,
-        allowNull: true
-    })
-    ImageResourceId: string;
-
-    @Column({
-        type: DataType.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
-    })
-    IsActive: boolean;
-
-    @IsDate
-    @Column({
-        type: DataType.DATE,
-        allowNull: true
+        allowNull: true,
     })
     LastLogin: Date;
 
-    @Length({ min: 4, max: 16})
+    @Length({ min: 4, max: 16 })
     @Column({
         type: DataType.STRING(16),
         allowNull: false,
-        defaultValue: '+05:30'
+        defaultValue: '+05:30',
     })
     DefaultTimeZone: string;
 
-    @Length({ min: 4, max: 16})
+    @Length({ min: 4, max: 16 })
     @Column({
         type: DataType.STRING(16),
         allowNull: false,
-        defaultValue: '+05:30'
+        defaultValue: '+05:30',
     })
     CurrentTimeZone: string;
-    
+
+    @BelongsTo(() => Person)
+    Person: Person;
+
     @Column
     @CreatedAt
     CreateAt: Date;
@@ -165,8 +108,8 @@ export default class User extends Model {
 
     @BeforeCreate
     static encryptPassword(user) {
-        if(user.Password != null) {
+        if (user.Password != null) {
             user.Password = bcrypt.hashSync(user.Password, bcrypt.genSaltSync(8));
         }
     }
-};
+}

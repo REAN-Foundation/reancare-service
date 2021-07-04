@@ -1,7 +1,7 @@
 import { Loader } from '../startup/loader';
 import { IPatientRepo } from '../data/repository.interfaces/patient.repo.interface';
 import { IUserRepo } from '../data/repository.interfaces/user.repo.interface';
-import { IUserRoleRepo } from '../data/repository.interfaces/user.role.repo.interface';
+import { IPersonRoleRepo } from '../data/repository.interfaces/user.role.repo.interface';
 import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
@@ -23,7 +23,7 @@ export class PatientService {
     constructor(
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
-        @inject('IUserRoleRepo') private _userRoleRepo: IUserRoleRepo,
+        @inject('IPersonRoleRepo') private _userRoleRepo: IPersonRoleRepo,
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IOtpRepo') private _otpRepo: IOtpRepo,
         @inject('IMessagingService') private _messagingService: IMessagingService
@@ -54,7 +54,7 @@ export class PatientService {
         if (full) {
             return await this._patientRepo.searchFull(filters);
         } else {
-            return await this._patientRepo.searchLight(filters);
+            return await this._patientRepo.search(filters);
         }
     };
 

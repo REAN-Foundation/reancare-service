@@ -1,17 +1,27 @@
 
-export interface ClientDomainModel {
+//#region Domain models
+
+export interface ApiClientDomainModel {
     id?: string;
     ClientName: string;
     ClientCode: string;
     Password?: string;
     Phone?: string;
     Email?: string;
-    APIKey?: string;
     ValidFrom?: Date;
     ValidTo?: Date;
 };
 
-export interface ClientDto {
+export interface ClientLoginDomainModel {
+    ClientCode: string;
+    Password: string;
+    ValidFrom: Date;
+    ValidTo: Date;
+}
+
+//#endregion
+
+export interface ApiClientDto {
     id: string;
     ClientName: string;
     ClientCode: string;
@@ -20,8 +30,9 @@ export interface ClientDto {
     IsActive: boolean;
 };
 
-export interface ClientSecretsDto {
+export interface ClientApiKeyDto {
     id: string;
+    ClientId: string;
     ClientName: string;
     ClientCode: string;
     APIKey: string;

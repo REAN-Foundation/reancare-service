@@ -6,12 +6,8 @@ import {
     CreatedAt, 
     UpdatedAt, 
     DeletedAt, 
-    IsUUID,
     PrimaryKey,
     Length,
-    BeforeCreate,
-    IsEmail,
-    IsDate,
     IsInt
     } from 'sequelize-typescript';
 

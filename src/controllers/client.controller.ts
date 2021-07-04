@@ -4,7 +4,7 @@ import { ClientService } from '../services/client.service';
 import { ResponseHandler } from '../common/response.handler';
 import { Loader } from '../startup/loader';
 import { Authorizer } from '../auth/authorizer';
-import { ClientDomainModel } from '../data/domain.types/client.domain.types';
+import { ApiClientDomainModel } from '../data/domain.types/api.client.domain.types';
 import { ClientInputValidator } from './input.validators/client.input.validator';
 import { ApiError } from '../common/api.error';
 import { generate} from 'generate-password';
@@ -31,7 +31,7 @@ export class ClientController {
             if (!this._authorizer.authorize(request, response)) {
                 return false;
             }
-            var clientDomainModel: ClientDomainModel = await ClientInputValidator.getDomainModel(
+            var clientDomainModel: ApiClientDomainModel = await ClientInputValidator.getDomainModel(
                 request.body
             );
             if (clientDomainModel.ClientCode == null) {

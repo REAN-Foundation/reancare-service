@@ -9,7 +9,7 @@ export interface IPatientRepo {
 
     updateByUserId(userId: string, updateModel: PatientDomainModel): Promise<PatientDetailsDto>;
 
-    searchLight(filters: PatientSearchFilters): Promise<PatientDto[]>;
+    search(filters: PatientSearchFilters): Promise<PatientDto[]>;
 
     searchFull(filters: PatientSearchFilters): Promise<PatientDetailsDto[]>;
 

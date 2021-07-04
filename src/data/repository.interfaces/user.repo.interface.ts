@@ -25,7 +25,7 @@ export interface IUserRepo {
 
     userExistsWithUsername(userName: string): Promise<boolean>;
 
-    searchLight(filters: any): Promise<UserDto[]>;
+    search(filters: any): Promise<UserDto[]>;
 
     searchFull(filters: any): Promise<UserDetailsDto[]>;
 

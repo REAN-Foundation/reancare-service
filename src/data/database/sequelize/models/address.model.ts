@@ -3,22 +3,12 @@ import {
     Column, 
     Model,
     DataType,
-    HasMany,
-    HasOne,
-    BelongsTo,
-    BelongsToMany,
     CreatedAt, 
     UpdatedAt, 
     DeletedAt, 
     IsUUID,
     PrimaryKey,
-    Length,
-    BeforeCreate,
-    IsEmail,
-    IsDate,
-    IsInt,
-    ForeignKey
-    } from 'sequelize-typescript';
+    Length    } from 'sequelize-typescript';
 
 import { uuid } from 'uuidv4';
 
@@ -54,7 +44,7 @@ export default class Address extends Model {
         type:  DataType.UUID,
         allowNull: true,
     })
-    OrganizationId: string;
+    OrganizationId: string;   
 
     @Length({ min: 2, max: 16})
     @Column({

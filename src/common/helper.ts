@@ -6,6 +6,7 @@ import { Gender } from './system.types';
 ////////////////////////////////////////////////////////////////////////
 
 export class Helper {
+
     static dumpJson(obj, filename) {
         var txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);
@@ -126,7 +127,7 @@ export class Helper {
         return ''; //Return empty prefix
     };
 
-    static constructUserDisplayName = (
+    static constructPersonDisplayName = (
         prefix: string | null,
         firstName: string | null,
         lastName: string | null
@@ -177,4 +178,40 @@ export class Helper {
     static isAlphaNum = (c) => {
         return Helper.isAlpha(c) || Helper.isDigit(c);
     };
+
+    static checkStr(val:any): string {
+        if(typeof(val) === null || typeof(val) === undefined || typeof(val) !== 'string') {
+            return null;
+        }
+        return val;
+    }
+
+    static isStr(val:any): boolean {
+        if(typeof(val) === null || typeof(val) === undefined || typeof(val) !== 'string') {
+            return false;
+        }
+        return true;
+    }
+
+    static checkNum(val:any): number {
+        if(val === null || typeof(val) === 'undefined' || typeof(val) !== 'number') {
+            return null;
+        }
+        return val;
+    }
+
+    static isNum(val:any): boolean {
+        if(val === null || typeof(val) === 'undefined' || typeof(val) !== 'number') {
+            return false;
+        }
+        return true;
+    }
+
+    static checkObj(val:any): object {
+        if(val === null || typeof(val) === 'undefined' || typeof(val) !== 'object') {
+            return null;
+        }
+        return val;
+    }
+
 }

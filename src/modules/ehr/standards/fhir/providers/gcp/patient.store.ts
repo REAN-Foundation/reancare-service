@@ -55,16 +55,16 @@ export class PatientStoreGCP implements IPatientStore {
     private createPatientFhirResource(model: PatientDomainModel): any {
 
         var givenNames = [];
-        if(model.FirstName != null) {
-            givenNames.push(model.FirstName);
+        if(model.User.Person.FirstName != null) {
+            givenNames.push(model.User.Person.FirstName);
         }
-        if(model.MiddleName != null) {
-            givenNames.push(model.MiddleName);
+        if(model.User.Person.MiddleName != null) {
+            givenNames.push(model.User.Person.MiddleName);
         }
-        var faamilyName = model.LastName != null ? model.LastName : '';
+        var faamilyName = model.User.Person.LastName != null ? model.User.Person.LastName : '';
         var prefixes = [];
-        if(model.Prefix != null) {
-            prefixes.push(model.Prefix);
+        if(model.User.Person.Prefix != null) {
+            prefixes.push(model.User.Person.Prefix);
         }
 
         var resource = {
@@ -77,27 +77,27 @@ export class PatientStoreGCP implements IPatientStore {
                     prefix: prefixes
                 }
             ],
-            gender: model.Gender != null ? model.Gender.toLowerCase() : 'unknown',
+            gender: model.User.Person.Gender != null ? model.User.Person.Gender.toLowerCase() : 'unknown',
             telecom: [],
             address: []
         }
         
-        if(model.BirthDate != null) {
-            var str = Helper.formatDate(model.BirthDate);
+        if(model.User.Person.BirthDate != null) {
+            var str = Helper.formatDate(model.User.Person.BirthDate);
             resource['birthDate'] = str;
         }
 
-        if(model.Phone != null) {
+        if(model.User.Person.Phone != null) {
             resource.telecom.push({
                 system: "phone",
                 use: "mobile",
-                value: model.Phone
+                value: model.User.Person.Phone
             });
         }
-        if(model.Email != null) {
+        if(model.User.Person.Email != null) {
             resource.telecom.push({
                 system: "email",
-                value: model.Email
+                value: model.User.Person.Email
             });
         }
         if(model.Address != null) {

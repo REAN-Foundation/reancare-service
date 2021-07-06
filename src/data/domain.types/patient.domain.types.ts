@@ -53,7 +53,7 @@ export interface PatientInsuranceDomainModel {
     InsuranceProvider?: string;
     InsurancePolicyCode?: string;
     ValidFrom?: string;
-    ValidTo?: string;
+    ValidTill?: string;
 };
  
 export interface EmergencyContactDomainModel {
@@ -116,7 +116,7 @@ export interface PatientInsuranceDto {
     InsuranceProvider?: string;
     InsurancePolicyCode?: string;
     ValidFrom?: string;
-    ValidTo?: string;
+    ValidTill?: string;
 };
  
 export interface EmergencyContactDto {

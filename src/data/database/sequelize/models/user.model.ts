@@ -11,6 +11,8 @@ import {
     PrimaryKey,
     Length,
     BeforeCreate,
+    BeforeUpdate,
+    BeforeSave,
     IsDate,
     ForeignKey,
 } from 'sequelize-typescript';
@@ -107,9 +109,13 @@ export default class User extends Model {
     DeletedAt: Date;
 
     @BeforeCreate
+    @BeforeSave
+    @BeforeUpdate
     static encryptPassword(user) {
         if (user.Password != null) {
             user.Password = bcrypt.hashSync(user.Password, bcrypt.genSaltSync(8));
         }
     }
+
+
 }

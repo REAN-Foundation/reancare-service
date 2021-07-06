@@ -1,68 +1,54 @@
 import { UserDetailsDto, UserDto } from "../../../domain.types/user.domain.types";
-import { UserRoleRepo } from "../repositories/user.role.repo";
+import { RoleRepo } from "../repositories/role.repo";
+import { PersonRepo } from '../repositories/person.repo'
 import User from '../models/user.model';
 import { Helper } from '../../../../common/helper';
+import { PersonDetailsDto, PersonDto } from "../../../domain.types/person.domain.types";
+import { RoleDto } from "../../../domain.types/role.domain.types";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserMapper {
 
-    static toDetailsDto = async (user: User): Promise<UserDetailsDto> => {
+    static toDetailsDto = async (user: User, personDto?: PersonDetailsDto): Promise<UserDetailsDto> => {
 
         if(user == null){
             return null;
         }
 
-        var prefix = user.Prefix ? (user.Prefix + ' ') : '';
-        var firstName = user.FirstName ? (user.FirstName + ' ') : '';
-        const displayName:string = prefix + firstName + user.LastName ?? '';
-        const age = Helper.getAgeFromBirthDate(user.BirthDate);
+        if(personDto == null) {
+            var personRepo = new PersonRepo();
+            personDto = await personRepo.getById(user.PersonId);
+        }
 
-        var userRoleRepo = new UserRoleRepo();
-        const userRoles = await userRoleRepo.getUserRoles(user.id);
+        var role: RoleDto = null;
+        if(user.RoleId != null) {
+            var roleRepo = new RoleRepo();
+            role = await roleRepo.getById(user.RoleId);
+        }
 
         var dto: UserDetailsDto = {
             id: user.id,
             UserName: user.UserName,
-            Prefix: user.Prefix,
-            FirstName: user.FirstName,
-            MiddleName: user.MiddleName,
-            LastName: user.LastName,
-            DisplayName: displayName,
-            Gender: Helper.getGender(user.Gender),
-            BirthDate: user.BirthDate,
-            Age: age,
-            Phone: user.Phone,
-            Email: user.Email,
-            ImageResourceId: user.ImageResourceId,
-            ActiveSince: user.CreateAt,
-            IsActive: user.IsActive,
+            Person: personDto,
             LastLogin: user.LastLogin,
             DefaultTimeZone:user.DefaultTimeZone,
             CurrentTimeZone:user.CurrentTimeZone,
-            Roles: userRoles
+            Role: role
         };
         return dto;
     }
 
-    toDto = (user: User) => {
+    toDto = (user: User, personDto: PersonDto) => {
 
         if(user == null){
             return null;
         }
-        
-        var prefix = user.Prefix ? (user.Prefix + ' ') : '';
-        var firstName = user.FirstName ? (user.FirstName + ' ') : '';
-        const displayName:string = prefix + firstName + user.LastName ?? '';
-        const age = Helper.getAgeFromBirthDate(user.BirthDate);
-
         var dto: UserDto = {
             id: user.id,
-            DisplayName: displayName,
-            Gender: Helper.getGender(user.Gender),
-            BirthDate: user.BirthDate,
-            Phone: user.Phone,
-            Email: user.Email,
+            Person: personDto,
+            CurrentTimeZone: user.CurrentTimeZone,
+            DefaultTimeZone: user.DefaultTimeZone
         };
         return dto;
     }

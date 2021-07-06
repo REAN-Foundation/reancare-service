@@ -6,64 +6,22 @@ import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { Op } from 'sequelize';
 import PersonRole from "../models/person.role.model";
+import { Helper } from "../../../../common/helper";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserRepo implements IUserRepo {
-
     userNameExists = async (userName: string): Promise<Boolean> => {
         if (userName != null && typeof userName != 'undefined') {
             var existing = await User.findOne({ where: { UserName: userName } });
             return existing != null;
         }
         return false;
-    }
-
-    userExistsWithPhone = async (phone: string): Promise<boolean> => {
-        if (phone != null && typeof phone != 'undefined') {
-            var existing = await User.findOne({ where: { Phone: phone, IsActive: true } });
-            return existing != null;
-        }
-        return false;
     };
 
-    getUserWithPhone = async (phone: string): Promise<UserDetailsDto> => {
-        if (phone != null && typeof phone != 'undefined') {
-            var user = await User.findOne({ where: { Phone: phone, IsActive: true } });
-            return await UserMapper.toDetailsDto(user);
-        }
-        return null;
-    };
-
-    getAllUsersWithPhoneAndRole = async (phone: string, roleId: number): Promise<UserDetailsDto[]> => {
-        if (phone != null && typeof phone != 'undefined') {
-            //KK: To be optimized with associations
-
-            var usersWithRole: UserDetailsDto[] = [];
-            var users = await User.findAll({ where: { Phone: phone, IsActive: true } });
-            for await (var user of users) {
-                var withRole = await PersonRole.findOne({ where: { UserId: user.id, RoleId: roleId } });
-                if (withRole != null) {
-                    var dto = await UserMapper.toDetailsDto(user);
-                    usersWithRole.push(dto);
-                }
-            }
-            return usersWithRole;
-        }
-        return null;
-    };
-
-    userExistsWithEmail = async (email: string): Promise<boolean> => {
-        if (email != null && typeof email != 'undefined') {
-            var existing = await User.findOne({ where: { Email: email, IsActive: true } });
-            return existing != null;
-        }
-        return false;
-    };
-
-    getUserWithEmail = async (email: string): Promise<UserDetailsDto> => {
-        if (email != null && typeof email != 'undefined') {
-            var user = await User.findOne({ where: { Email: email, IsActive: true } });
+    getUserByPersonIdAndRole = async (personId: string, roleId: number): Promise<UserDetailsDto> => {
+        if (Helper.isStr(personId) && Helper.isNum(roleId)) {
+            var user = await User.findOne({ where: { PersonId: personId, RoleId: roleId, IsActive: true } });
             return await UserMapper.toDetailsDto(user);
         }
         return null;
@@ -84,19 +42,9 @@ export class UserRepo implements IUserRepo {
 
     create = async (userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
-
             var entity = {
-                Prefix: userDomainModel.Person.Prefix ?? '',
-                FirstName: userDomainModel.Person.FirstName,
-                MiddleName: userDomainModel.Person.MiddleName ?? null,
-                LastName: userDomainModel.Person.LastName,
-                Phone: userDomainModel.Person.Phone,
-                Email: userDomainModel.Person.Email ?? null,
                 UserName: userDomainModel.UserName,
                 Password: userDomainModel.Password ?? null,
-                Gender: userDomainModel.Person.Gender ?? 'Unknown',
-                BirthDate: userDomainModel.Person.BirthDate ?? null,
-                ImageResourceId: userDomainModel.Person.ImageResourceId ?? null,
                 DefaultTimeZone: userDomainModel.DefaultTimeZone ?? '+05:30',
                 CurrentTimeZone: userDomainModel.DefaultTimeZone ?? '+05:30',
             };
@@ -120,43 +68,24 @@ export class UserRepo implements IUserRepo {
         }
     };
 
-    exists = async (id: string): Promise<boolean> => {
-        try {
-            var user = await User.findOne({ where: { id: id, IsActive: true } });
-            return user != null;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
     update = async (id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
             var user = await User.findOne({ where: { id: id, IsActive: true } });
 
-            if (userDomainModel.Prefix != null) {
-                user.Prefix = userDomainModel.Prefix;
+            if (userDomainModel.DefaultTimeZone != null) {
+                user.DefaultTimeZone = userDomainModel.DefaultTimeZone;
             }
-            if (userDomainModel.FirstName != null) {
-                user.FirstName = userDomainModel.FirstName;
+            if (userDomainModel.CurrentTimeZone != null) {
+                user.CurrentTimeZone = userDomainModel.CurrentTimeZone;
             }
-            if (userDomainModel.LastName != null) {
-                user.LastName = userDomainModel.LastName;
+            if (userDomainModel.UserName != null) {
+                user.UserName = userDomainModel.UserName;
             }
-            if (userDomainModel.Phone != null) {
-                user.Phone = userDomainModel.Phone;
+            if (userDomainModel.Password != null) {
+                user.Password = userDomainModel.Password;
             }
-            if (userDomainModel.Email != null) {
-                user.Email = userDomainModel.Email;
-            }
-            if (userDomainModel.Gender != null) {
-                user.Gender = userDomainModel.Gender;
-            }
-            if (userDomainModel.BirthDate != null) {
-                user.BirthDate = userDomainModel.BirthDate;
-            }
-            if (userDomainModel.ImageResourceId != null) {
-                user.ImageResourceId = userDomainModel.ImageResourceId;
+            if (userDomainModel.LastLogin != null) {
+                user.LastLogin = userDomainModel.LastLogin;
             }
             await user.save();
 
@@ -167,26 +96,6 @@ export class UserRepo implements IUserRepo {
             throw new ApiError(500, error.message);
         }
     };
-
-    delete = async (id: string): Promise<boolean> => {
-        try {
-            var user = await User.findOne({ where: { id: id, IsActive: true } });
-            user.IsActive = false;
-            await user.save();
-            return true;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    search(filters: any): Promise<UserDto[]> {
-        throw new Error('Method not implemented.');
-    }
-
-    searchFull(filters: any): Promise<UserDetailsDto[]> {
-        throw new Error('Method not implemented.');
-    }
 
     getUserHashedPassword = async (id: string): Promise<string> => {
         var user = await User.findOne({ where: { id: id, IsActive: true } });

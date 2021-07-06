@@ -5,7 +5,7 @@ import { PersonRoleDto } from "../../../domain.types/role.domain.types";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-export class UserRoleMapper {
+export class PersonRoleMapper {
 
     static toDto = async (personRole: PersonRole): Promise<PersonRoleDto> => {
 

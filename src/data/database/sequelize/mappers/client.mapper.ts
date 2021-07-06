@@ -30,7 +30,7 @@ export class ClientMapper {
             ClientCode: client.ClientCode,
             ApiKey: client.ApiKey,
             ValidFrom: client.ValidFrom,
-            ValidTo: client.ValidTo,
+            ValidTill: client.ValidTill,
         };
         return dto;
     }

@@ -1,6 +1,7 @@
 import { Roles } from "../data/domain.types/role.domain.types";
 import { injectable, inject } from "tsyringe";
 import { IRoleRepo } from "../data/repository.interfaces/role.repo.interface";
+import { IApiClientRepo } from "../data/repository.interfaces/api.client.repo.interface";
 import { Logger } from "../common/logger";
 
 //////////////////////////////////////////////////////////////////////////////
@@ -24,6 +25,10 @@ export class Seeder {
             }
         });
     };
+
+    private seedInternalClients = async () => {
+
+    }
 
     private seedDefaultRoles = async () => {
         var existing = await this._roleRepo.search();

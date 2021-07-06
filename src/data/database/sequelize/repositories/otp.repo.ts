@@ -28,10 +28,10 @@ export class OtpRepo implements IOtpRepo {
             var otps = await Otp.findAll({
                 where: {
                     UserId: userId,
-                    ValidTo: { [Op.lte]: new Date() },
+                    ValidTill: { [Op.lte]: new Date() },
                     Utilized: false,
                 },
-                order: Sequelize.literal('max(ValidTo) DESC'),
+                order: Sequelize.literal('max(ValidTill) DESC'),
             });
             if (otps.length > 0) {
                 var otp = otps[0];

@@ -99,7 +99,7 @@ export default class ApiClient extends Model {
         type: DataType.STRING(10),
         allowNull: false,
     })
-    ValidTo: Date;
+    ValidTill: Date;
 
     @Column({
         type: DataType.BOOLEAN,

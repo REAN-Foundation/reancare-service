@@ -1,22 +1,16 @@
 import express from 'express';
-import { query, body, oneOf, validationResult, param } from 'express-validator';
-import { ResponseHandler } from '../../common/response.handler';
+import { query, body, validationResult, param } from 'express-validator';
 import { Helper } from '../../common/helper';
 import { PatientDomainModel, PatientSearchFilters } from '../../data/domain.types/patient.domain.types';
-import { exists } from 'fs';
-import { TypeHandler } from '../../common/type.handler';
-import { Gender } from '../../common/system.types';
 import { AddressDomainModel } from '../../data/domain.types/address.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class PatientInputValidator {
-
     static getDomainModel = async (request: express.Request): Promise<PatientDomainModel> => {
-
         var addressModel: AddressDomainModel = null;
 
-        var address = TypeHandler.checkObj(request.body.Address);
+        var address = Helper.checkObj(request.body.Address);
         if (address != null) {
             addressModel = {
                 Type: 'Home',
@@ -42,8 +36,10 @@ export class PatientInputValidator {
             request.body.Gender = 'Unknown';
         }
 
-        var birthdate = request.body.BirthDate != null && typeof request.body.BirthDate != undefined ?
-                        new Date(Date.parse(request.body.BirthDate)) : null;
+        var birthdate =
+            request.body.BirthDate != null && typeof request.body.BirthDate != undefined
+                ? new Date(Date.parse(request.body.BirthDate))
+                : null;
 
         var entity: PatientDomainModel = {
             User: {
@@ -63,7 +59,7 @@ export class PatientInputValidator {
             },
             Address: addressModel,
         };
-        if(entity.User.Person.Gender != null && entity.User.Person.Prefix == null) {
+        if (entity.User.Person.Gender != null && entity.User.Person.Prefix == null) {
             entity.User.Person.Prefix = Helper.guessPrefixByGender(entity.User.Person.Gender);
         }
         return entity;
@@ -71,8 +67,8 @@ export class PatientInputValidator {
 
     static create = async (
         request: express.Request,
-        response: express.Response): Promise<PatientDomainModel> => {
-
+        response: express.Response
+    ): Promise<PatientDomainModel> => {
         await body('Phone').exists().trim().escape().run(request);
         await body('Email').optional().trim().isEmail().escape().normalizeEmail().run(request);
         await body('FirstName').optional().trim().escape().run(request);
@@ -83,7 +79,7 @@ export class PatientInputValidator {
         //     body('LastName').optional().trim().escape(),
         // ]).run(request);
         // await oneOf([
-        //     body('Phone').optional().trim().escape(), 
+        //     body('Phone').optional().trim().escape(),
         //     body('Email').optional().trim().isEmail().escape()
         // ]).run(request);
 
@@ -124,38 +120,31 @@ export class PatientInputValidator {
         request: express.Request,
         response: express.Response
     ): Promise<PatientSearchFilters> => {
-        try {
-            await query('phone').optional().trim().escape().run(request);
-            await query('email').optional().trim().escape().run(request);
-            await query('name').optional().trim().escape().run(request);
-            await query('gender').optional().isAlpha().trim().escape().run(request);
-            await query('birthdateFrom').optional().isDate().trim().escape().run(request);
-            await query('birthdateTo').optional().isDate().trim().escape().run(request);
-            await query('createdDateFrom').optional().isDate().trim().escape().run(request);
-            await query('createdDateTo').optional().isDate().trim().escape().run(request);
-            await query('orderBy').optional().trim().escape().run(request);
-            await query('order').optional().trim().escape().run(request);
-            await query('pageIndex').optional().isInt().trim().escape().run(request);
-            await query('itemsPerPage').optional().isInt().trim().escape().run(request);
-            await query('fullDetails').optional().isBoolean().run(request);
+        await query('phone').optional().trim().escape().run(request);
+        await query('email').optional().trim().escape().run(request);
+        await query('name').optional().trim().escape().run(request);
+        await query('gender').optional().isAlpha().trim().escape().run(request);
+        await query('birthdateFrom').optional().isDate().trim().escape().run(request);
+        await query('birthdateTo').optional().isDate().trim().escape().run(request);
+        await query('createdDateFrom').optional().isDate().trim().escape().run(request);
+        await query('createdDateTo').optional().isDate().trim().escape().run(request);
+        await query('orderBy').optional().trim().escape().run(request);
+        await query('order').optional().trim().escape().run(request);
+        await query('pageIndex').optional().isInt().trim().escape().run(request);
+        await query('itemsPerPage').optional().isInt().trim().escape().run(request);
+        await query('fullDetails').optional().isBoolean().run(request);
 
-            const result = validationResult(request);
-            if (!result.isEmpty()) {
-                Helper.handleValidationError(result);
-            }
-
-            return PatientInputValidator.getFilter(request);
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
+        const result = validationResult(request);
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
         }
+
+        return PatientInputValidator.getFilter(request);
     };
 
     private static getFilter(request): PatientSearchFilters {
-
         var pageIndex =
-            request.query.pageIndex != 'undefined' 
-                ? parseInt(request.query.pageIndex as string, 10) 
-                : 0;
+            request.query.pageIndex != 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
 
         var itemsPerPage =
             request.query.itemsPerPage != 'undefined'
@@ -183,28 +172,22 @@ export class PatientInputValidator {
         request: express.Request,
         response: express.Response
     ): Promise<PatientDomainModel> => {
-        try {
+        await body('FirstName').optional().trim().escape().run(request);
+        await body('LastName').optional().trim().escape().run(request);
+        await body('Phone').optional().trim().escape().run(request);
+        await body('Email').optional().trim().escape().isEmail().run(request);
+        await body('Prefix').optional().trim().escape().run(request);
+        await body('Gender').optional().trim().escape().run(request);
+        await body('BirthDate').optional().trim().escape().isDate().run(request);
+        await body('ImageResourceId').optional().trim().escape().isUUID().run(request);
+        await body('LocationCoordsLongitude').optional().trim().escape().isDecimal().run(request);
+        await body('LocationCoordsLattitude').optional().trim().escape().isDecimal().run(request);
+        await body('Address').optional().trim().escape().run(request);
 
-            await body('FirstName').optional().trim().escape().run(request);
-            await body('LastName').optional().trim().escape().run(request);
-            await body('Phone').optional().trim().escape().run(request);
-            await body('Email').optional().trim().escape().isEmail().run(request);
-            await body('Prefix').optional().trim().escape().run(request);
-            await body('Gender').optional().trim().escape().run(request);
-            await body('BirthDate').optional().trim().escape().isDate().run(request);
-            await body('ImageResourceId').optional().trim().escape().isUUID().run(request);
-            await body('LocationCoordsLongitude').optional().trim().escape().isDecimal().run(request);
-            await body('LocationCoordsLattitude').optional().trim().escape().isDecimal().run(request);
-            await body('Address').optional().trim().escape().run(request);
-
-            const result = validationResult(request);
-            if (!result.isEmpty()) {
-                Helper.handleValidationError(result);
-            }
-            return PatientInputValidator.getDomainModel(request.body);
-
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
+        const result = validationResult(request);
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
         }
+        return PatientInputValidator.getDomainModel(request.body);
     };
 }

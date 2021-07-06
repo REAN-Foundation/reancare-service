@@ -64,7 +64,7 @@ export default class PatientInsurance extends Model {
         type: DataType.DATE,
         allowNull: true,
     })
-    ValidTo: Date;
+    ValidTill: Date;
 
     @Column
     @CreatedAt

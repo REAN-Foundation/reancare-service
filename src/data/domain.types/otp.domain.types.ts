@@ -5,7 +5,7 @@ export interface OtpDto {
     Purpose: string;
     Otp: string;
     ValidFrom: Date;
-    ValidTo: Date;
+    ValidTill: Date;
     Utilized: boolean;
 }
 
@@ -14,5 +14,5 @@ export interface OtpPersistenceEntity {
     Purpose: string;
     Otp: string;
     ValidFrom: Date;
-    ValidTo: Date;
+    ValidTill: Date;
 }

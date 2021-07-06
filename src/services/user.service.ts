@@ -1,10 +1,10 @@
 import { Loader } from '../startup/loader';
 import { IUserRepo } from '../data/repository.interfaces/user.repo.interface';
-import { IPersonRoleRepo } from '../data/repository.interfaces/user.role.repo.interface';
+import { IPersonRoleRepo } from '../data/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserDetailsDto, UserDto, UserSearchFilters, UserLoginDetails, UserDomainModel } from '../data/domain.types/user.domain.types';
+import { UserDetailsDto, UserLoginDetails, UserDomainModel } from '../data/domain.types/user.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
@@ -13,6 +13,8 @@ import { CurrentUser } from '../data/domain.types/current.user';
 import { OtpPersistenceEntity } from '../data/domain.types/otp.domain.types';
 import { Roles } from '../data/domain.types/role.domain.types';
 import { generate} from 'generate-password';
+import { IPersonRepo } from '../data/repository.interfaces/person.repo.interface';
+import { PersonDetailsDto } from '../data/domain.types/person.domain.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,6 +23,7 @@ export class UserService {
     
     constructor(
         @inject('IUserRepo') private _userRepo: IUserRepo,
+        @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IPersonRoleRepo') private _userRoleRepo: IPersonRoleRepo,
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IOtpRepo') private _otpRepo: IOtpRepo,
@@ -28,7 +31,6 @@ export class UserService {
     ) {}
 
     create = async (userDomainModel: UserDomainModel) => {
-
         var user = await this._userRepo.create(userDomainModel);
         if (user == null) {
             return null;
@@ -41,52 +43,16 @@ export class UserService {
         return await this._userRepo.getById(id);
     };
 
-    public exists = async (id: string): Promise<boolean> => {
-        return await this._userRepo.exists(id);
-    };
-
-    public search = async (
-        filters: UserSearchFilters,
-        full: boolean = false
-    ): Promise<UserDetailsDto[] | UserDto[]> => {
-        if (full) {
-            return await this._userRepo.searchFull(filters);
-        } else {
-            return await this._userRepo.search(filters);
-        }
-    };
-
     public update = async (id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         return await this._userRepo.update(id, userDomainModel);
     };
 
-    public delete = async (id: string): Promise<boolean> => {
-        return await this._userRepo.delete(id);
-    };
+    public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
 
-    public loginWithPassword = async (loginObject: UserLoginDetails): Promise<any> => {
-
-        var user: UserDetailsDto = null;
-
-        if (loginObject.Phone) {
-            user = await this._userRepo.getUserWithPhone(loginObject.Phone);
-            if (user == null) {
-                let message = 'User does not exist with phone(' + loginObject.Phone + ')';
-                throw new ApiError(404, message);
-            }
-        } else if (loginObject.Email) {
-            user = await this._userRepo.getUserWithPhone(loginObject.Email);
-            if (user == null) {
-                let message = 'User does not exist with email(' + loginObject.Email + ')';
-                throw new ApiError(404, message);
-            }
-        }
-        if (user == null) {
-            throw new ApiError(404, 'An error occurred authenticating the user.');
-        }
+        var user: UserDetailsDto = await this.checkUserDetails(loginModel);
 
         var hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
-        var isPasswordValid = await compareSync(loginObject.Password, hashedPassword);
+        var isPasswordValid = await compareSync(loginModel.Password, hashedPassword);
         if (!isPasswordValid) {
             throw new ApiError(401, 'Invalid password!');
         }
@@ -97,44 +63,51 @@ export class UserService {
             DisplayName: user.Person.DisplayName,
             Phone: user.Person.Phone,
             Email: user.Person.Email,
-            CurrentRoleId: loginObject.LoginRoleId,
+            CurrentRoleId: loginModel.LoginRoleId,
         };
         var accessToken = Loader.authorizer.generateUserSessionToken(currentUser);
 
         return { user: user, accessToken: accessToken };
     };
 
-    public generateOtp = async (obj: any): Promise<boolean> => {
+    public generateOtp = async (otpDetails: any): Promise<boolean> => {
 
-        var user: UserDetailsDto = null;
+        var person: PersonDetailsDto = null;
 
-        if (obj.Phone) {
-            user = await this._userRepo.getUserWithPhone(obj.Phone);
-            if (user == null) {
-                let message = 'User does not exist with phone(' + obj.Phone + ')';
+        if (otpDetails.Phone) {
+            person = await this._personRepo.getPersonWithPhone(otpDetails.Phone);
+            if (person == null) {
+                let message = 'User does not exist with phone(' + otpDetails.Phone + ')';
                 throw new ApiError(404, message);
             }
-        } else if (obj.Email) {
-            user = await this._userRepo.getUserWithPhone(obj.Email);
-            if (user == null) {
-                let message = 'User does not exist with email(' + obj.Email + ')';
+        } else if (otpDetails.Email) {
+            person = await this._personRepo.getPersonWithPhone(otpDetails.Email);
+            if (person == null) {
+                let message = 'User does not exist with email(' + otpDetails.Email + ')';
                 throw new ApiError(404, message);
             }
         }
-        if (user == null) {
-            throw new ApiError(404, 'An error occurred authenticating the user.');
+        if (person == null) {
+            throw new ApiError(404, 'Cannot find user.');
+        }
+
+        //Now check if that person is an user with a given role
+        const personId = person.id;
+        var user: UserDetailsDto = await this._userRepo.getUserByPersonIdAndRole(personId, otpDetails.RoleId);
+        if (person == null) {
+            throw new ApiError(404, 'Cannot find user with the given role.');
         }
 
         var otp = (Math.floor(Math.random() * 900000) + 100000).toString();
         var currMillsecs = Date.now();
-        var validTo = new Date(currMillsecs + (300 * 1000));
+        var validTill = new Date(currMillsecs + (300 * 1000));
 
         var otpEntity: OtpPersistenceEntity = {
-            Purpose: obj.Purpose,
+            Purpose: otpDetails.Purpose,
             UserId: user.id,
             Otp: otp,
             ValidFrom: new Date(),
-            ValidTo: validTo
+            ValidTill: validTill
         }
 
         var otpDto = await this._otpRepo.create(otpEntity);
@@ -147,32 +120,16 @@ export class UserService {
         return true;
     };
 
-    public loginWithOtp = async (loginObject: UserLoginDetails): Promise<any> => {
-        var user: UserDetailsDto = null;
+    public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
+        
+        var user: UserDetailsDto = await this.checkUserDetails(loginModel);
 
-        if (loginObject.Phone) {
-            user = await this._userRepo.getUserWithPhone(loginObject.Phone);
-            if (user == null) {
-                let message = 'User does not exist with phone(' + loginObject.Phone + ')';
-                throw new ApiError(404, message);
-            }
-        } else if (loginObject.Email) {
-            user = await this._userRepo.getUserWithPhone(loginObject.Email);
-            if (user == null) {
-                let message = 'User does not exist with email(' + loginObject.Email + ')';
-                throw new ApiError(404, message);
-            }
-        }
-        if (user == null) {
-            throw new ApiError(404, 'An error occurred authenticating the user.');
-        }
-
-        var storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginObject.Otp);
+        var storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
         if(!storedOtp) {
             throw new ApiError(404, 'Active Otp record not found!');
         }
         var date = new Date();
-        if (storedOtp.ValidTo <= date) {
+        if (storedOtp.ValidTill <= date) {
             throw new ApiError(400, 'Login OTP has expired. Please regenerate OTP again!');
         }
 
@@ -182,7 +139,7 @@ export class UserService {
             DisplayName: user.Person.DisplayName,
             Phone: user.Person.Phone,
             Email: user.Person.Email,
-            CurrentRoleId: loginObject.LoginRoleId,
+            CurrentRoleId: loginModel.LoginRoleId,
         };
         var accessToken = Loader.authorizer.generateUserSessionToken(currentUser);
 
@@ -265,6 +222,36 @@ export class UserService {
         return username;
     }
     
+    private async checkUserDetails(loginModel: UserLoginDetails) {
+
+        var person: PersonDetailsDto = null;
+
+        if (loginModel.Phone) {
+            person = await this._personRepo.getPersonWithPhone(loginModel.Phone);
+            if (person == null) {
+                let message = 'User does not exist with phone(' + loginModel.Phone + ')';
+                throw new ApiError(404, message);
+            }
+        } else if (loginModel.Email) {
+            person = await this._personRepo.getPersonWithPhone(loginModel.Email);
+            if (person == null) {
+                let message = 'User does not exist with email(' + loginModel.Email + ')';
+                throw new ApiError(404, message);
+            }
+        }
+        if (person == null) {
+            throw new ApiError(404, 'Cannot find user.');
+        }
+
+        //Now check if that person is an user with a given role
+        const personId = person.id;
+        var user: UserDetailsDto = await this._userRepo.getUserByPersonIdAndRole(personId, loginModel.LoginRoleId);
+        if (person == null) {
+            throw new ApiError(404, 'Cannot find user with the given role.');
+        }
+        return user;
+    }
+
     private async generateLoginOtp(userDomainModel: UserDomainModel, user: UserDetailsDto) {
 
         if (userDomainModel.hasOwnProperty('GenerateLoginOTP') && 

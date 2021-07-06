@@ -10,14 +10,14 @@ export interface ApiClientDomainModel {
     Email?: string;
     ApiKey: string;
     ValidFrom?: Date;
-    ValidTo?: Date;
+    ValidTill?: Date;
 };
 
 export interface ApiClientVerificationDomainModel {
     ClientCode: string;
     Password: string;
     ValidFrom: Date;
-    ValidTo: Date;
+    ValidTill: Date;
 }
 
 //#endregion
@@ -37,5 +37,5 @@ export interface ClientApiKeyDto {
     ClientCode: string;
     ApiKey: string;
     ValidFrom: Date;
-    ValidTo: Date;
+    ValidTill: Date;
 }

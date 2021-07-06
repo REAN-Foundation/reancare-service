@@ -16,7 +16,7 @@ export class OtpMapper {
             Purpose: otp.Purpose,
             Otp: otp.Otp,
             ValidFrom: otp.ValidFrom,
-            ValidTo: otp.ValidTo,
+            ValidTill: otp.ValidTill,
             Utilized: otp.Utilized,
         };
         return dto;

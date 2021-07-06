@@ -1,5 +1,6 @@
 import { Gender } from '../../common/system.types';
 import { PersonDetailsDto, PersonDomainModel, PersonDto } from './person.domain.types';
+import { RoleDto } from './role.domain.types'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,6 +14,7 @@ export interface UserDomainModel {
     DefaultTimeZone?:string;
     CurrentTimeZone?:string;
     GenerateLoginOTP?:boolean;
+    LastLogin?: Date;
 }
 
 export interface UserLoginDetails {
@@ -30,10 +32,11 @@ export interface UserLoginDetails {
 export interface UserDetailsDto {
     id: string;
     Person: PersonDetailsDto;
+    Role: RoleDto;
     UserName: string;
-    LastLogin: Date;
     DefaultTimeZone:string;
     CurrentTimeZone:string;
+    LastLogin: Date;
 };
 
 export interface UserDto {

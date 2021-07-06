@@ -1,20 +1,28 @@
 import { inject, injectable } from "tsyringe";
-import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
 import { ApiClientDomainModel, ApiClientDto, ApiClientVerificationDomainModel, ClientApiKeyDto } from "../data/domain.types/api.client.domain.types";
-import { IClientRepo } from "../data/repository.interfaces/client.repo.interface";
+import { IApiClientRepo } from "../data/repository.interfaces/api.client.repo.interface";
 import { generate} from 'generate-password';
 import { Helper } from "../common/helper";
-
+import { compareSync } from 'bcryptjs';
+const uuidAPIKey = require('uuid-apikey');
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class ApiClientService {
-    constructor(@inject('IClientRepo') private _clientRepo: IClientRepo) {}
+    constructor(@inject('IClientRepo') private _clientRepo: IApiClientRepo) {}
 
     create = async (clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         var clientCode = await this.getClientCode(clientDomainModel.ClientName);
         clientDomainModel.ClientCode = clientCode;
+        clientDomainModel.ApiKey = uuidAPIKey.create();
+        return await this._clientRepo.create(clientDomainModel);
+    };
+
+    createInternalClients = async (clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
+        var clientCode = await this.getClientCode(clientDomainModel.ClientName);
+        clientDomainModel.ClientCode = clientCode;
+        clientDomainModel.ApiKey = uuidAPIKey.create();
         return await this._clientRepo.create(clientDomainModel);
     };
 
@@ -28,11 +36,41 @@ export class ApiClientService {
 
     getApiKey = async (verificationModel: ApiClientVerificationDomainModel): Promise<ClientApiKeyDto> => {
         var client = await this._clientRepo.getByClientCode(verificationModel.ClientCode);
-            if (client == null) {
-                let message = 'Client does not exist with code (' + verificationModel.ClientCode + ')';
-                throw new ApiError(404, message);
-            }
+        if (client == null) {
+            let message = 'Client does not exist with code (' + verificationModel.ClientCode + ')';
+            throw new ApiError(404, message);
+        }
+        var hashedPassword = await this._clientRepo.getClientHashedPassword(client.id);
+        var isPasswordValid = await compareSync(verificationModel.Password, hashedPassword);
+        if (!isPasswordValid) {
+            throw new ApiError(401, 'Invalid password!');
+        }
         return await this._clientRepo.getApiKey(client.id);
+    };
+
+    renewApiKey = async (verificationModel: ApiClientVerificationDomainModel): Promise<ClientApiKeyDto> => {
+
+        var client = await this._clientRepo.getByClientCode(verificationModel.ClientCode);
+        if (client == null) {
+            let message = 'Client does not exist for client code (' + verificationModel.ClientCode + ')';
+            throw new ApiError(404, message);
+        }
+
+        var hashedPassword = await this._clientRepo.getClientHashedPassword(client.id);
+        var isPasswordValid = await compareSync(verificationModel.Password, hashedPassword);
+        if (!isPasswordValid) {
+            throw new ApiError(401, 'Invalid password!');
+        }
+
+        var apiKey = uuidAPIKey.create();
+        var clientApiKeyDto = await this._clientRepo.setApiKey(
+            client.id,
+            apiKey,
+            verificationModel.ValidFrom,
+            verificationModel.ValidTill
+        );
+        
+        return clientApiKeyDto;
     };
 
     update = async (id: string, clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
@@ -44,14 +82,13 @@ export class ApiClientService {
     };
 
     private getClientCode = async (clientName: string) => {
-
         var name = clientName;
         name = name.toUpperCase();
         var cleanedName = '';
         var len = name.length;
-        for(var i = 0; i < len; i++) {
-            if(Helper.isAlpha(name.charAt(i))) {
-                if(!Helper.isAlphaVowel(name.charAt(i))) {
+        for (var i = 0; i < len; i++) {
+            if (Helper.isAlpha(name.charAt(i))) {
+                if (!Helper.isAlphaVowel(name.charAt(i))) {
                     cleanedName += name.charAt(i);
                 }
             }
@@ -60,14 +97,14 @@ export class ApiClientService {
         var tmpCode = cleanedName + postfix;
         tmpCode = tmpCode.substring(0, 8);
         var existing = await this._clientRepo.getByClientCode(tmpCode);
-        while(existing != null) {
+        while (existing != null) {
             tmpCode = tmpCode.substring(0, 4);
             tmpCode += this.getClientCodePostfix();
             tmpCode = tmpCode.substring(0, 8);
             existing = await this._clientRepo.getByClientCode(tmpCode);
         }
         return tmpCode;
-    }
+    };
 
     private getClientCodePostfix() {
         return generate({
@@ -76,7 +113,7 @@ export class ApiClientService {
             lowercase: false,
             uppercase: true,
             symbols: false,
-            exclude: ',-@#$%^&*()'
+            exclude: ',-@#$%^&*()',
         });
     }
 }

@@ -1,22 +1,22 @@
 
-import { IPersonRoleRepo } from "../../../repository.interfaces/user.role.repo.interface";
+import { IPersonRoleRepo } from "../../../repository.interfaces/person.role.repo.interface";
 import PersonRole from '../models/person.role.model';
 import { PersonRoleDto } from "../../../domain.types/role.domain.types";
-import { UserRoleMapper } from '../mappers/user.role.mapper';
+import { PersonRoleMapper } from '../mappers/person.role.mapper';
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { RoleRepo } from "./role.repo";
 
 ///////////////////////////////////////////////////////////////////////
 
-export class UserRoleRepo implements IPersonRoleRepo {
+export class PersonRoleRepo implements IPersonRoleRepo {
 
-    getUserRoles = async (userId: string): Promise<PersonRoleDto[]> => {
+    getPersonRoles = async (userId: string): Promise<PersonRoleDto[]> => {
         try {
             var userRoles = await PersonRole.findAll({where: {UserId: userId}});
             var dtos: PersonRoleDto[] = [];
             for await(var r of userRoles) {
-                var dto = await UserRoleMapper.toDto(r);
+                var dto = await PersonRoleMapper.toDto(r);
                 dtos.push(dto);
             }          
             return dtos;
@@ -26,14 +26,14 @@ export class UserRoleRepo implements IPersonRoleRepo {
         }
     }
 
-    addUserRole = async (userId: string, roleId: number): Promise<PersonRoleDto> => {
+    addPersonRole = async (userId: string, roleId: number): Promise<PersonRoleDto> => {
         try {
             var entity = {
                 UserId: userId,
                 RoleId: roleId,
             };
             var userRole = await PersonRole.create(entity);
-            var dto = await UserRoleMapper.toDto(userRole);
+            var dto = await PersonRoleMapper.toDto(userRole);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -41,7 +41,7 @@ export class UserRoleRepo implements IPersonRoleRepo {
         }
     };
 
-    removeUserRole = async (userId: string): Promise<boolean> => {
+    removePersonRole = async (userId: string): Promise<boolean> => {
         try {
             await PersonRole.destroy({where: {UserId: userId}});
             return true;
@@ -51,7 +51,7 @@ export class UserRoleRepo implements IPersonRoleRepo {
         }
     }
 
-    getUserCountByRoles = async (): Promise<any> => {
+    getPersonCountByRoles = async (): Promise<any> => {
         try {
             var userCountForRoles = {};
             var roleRepo = new RoleRepo();

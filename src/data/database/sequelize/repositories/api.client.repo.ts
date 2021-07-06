@@ -1,4 +1,4 @@
-import { IClientRepo } from '../../../repository.interfaces/client.repo.interface';
+import { IApiClientRepo } from '../../../repository.interfaces/api.client.repo.interface';
 import ApiClient from '../models/api.client.model';
 import { Op, Sequelize } from 'sequelize';
 import { ApiClientDomainModel, ApiClientDto, ClientApiKeyDto } from '../../../domain.types/api.client.domain.types';
@@ -8,7 +8,7 @@ import { ApiError } from '../../../../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////
 
-export class ApiClientRepo implements IClientRepo {
+export class ApiClientRepo implements IApiClientRepo {
 
     create = async (clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         try {
@@ -20,7 +20,7 @@ export class ApiClientRepo implements IClientRepo {
                 Password: clientDomainModel.Password ?? null,
                 ApiKey: clientDomainModel.ApiKey ?? null,
                 ValidFrom: clientDomainModel.ValidFrom ?? null,
-                ValidTo: clientDomainModel.ValidTo ?? null,
+                ValidTill: clientDomainModel.ValidTill ?? null,
             };
             var client = await ApiClient.create(entity);
             var dto = await ClientMapper.toDto(client);
@@ -57,9 +57,34 @@ export class ApiClientRepo implements IClientRepo {
         }
     }
 
+    getClientHashedPassword = async(id: string): Promise<string> => {
+        try {
+            var client = await ApiClient.findByPk(id);
+            return client.Password;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
     getApiKey = async(id: string): Promise<ClientApiKeyDto> => {
         try {
             var client = await ApiClient.findByPk(id);
+            var dto = await ClientMapper.toClientSecretsDto(client);
+            return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+    
+    setApiKey = async(id: string, apiKey: string, validFrom: Date, validTill: Date): Promise<ClientApiKeyDto> => {
+        try {
+            var client = await ApiClient.findByPk(id);
+            client.ApiKey = apiKey;
+            client.ValidFrom = validFrom;
+            client.ValidTill = validTill;
+            await client.save();
             var dto = await ClientMapper.toClientSecretsDto(client);
             return dto;
         } catch (error) {
@@ -72,11 +97,11 @@ export class ApiClientRepo implements IClientRepo {
         try {
             var client = await ApiClient.findByPk(id);
 
+            //Client code is not modifiable
+            //Use renew key to update ApiKey, ValidFrom and ValidTill
+            
             if(clientDomainModel.ClientName != null) {
                 client.ClientName = clientDomainModel.ClientName;
-            }
-            if(clientDomainModel.ClientCode != null) {
-                client.ClientCode = clientDomainModel.ClientCode;
             }
             if(clientDomainModel.Password != null) {
                 client.Password = clientDomainModel.Password;
@@ -87,14 +112,8 @@ export class ApiClientRepo implements IClientRepo {
             if(clientDomainModel.Email != null) {
                 client.Email = clientDomainModel.Email;
             }
-            if(clientDomainModel.ApiKey != null) {
-                client.ApiKey = clientDomainModel.ApiKey;
-            }
-            if(clientDomainModel.ValidFrom != null) {
-                client.ValidFrom = clientDomainModel.ValidFrom;
-            }
-            if(clientDomainModel.ValidTo != null) {
-                client.ValidTo = clientDomainModel.ValidTo;
+            if(clientDomainModel.ValidTill != null) {
+                client.ValidTill = clientDomainModel.ValidTill;
             }
             await client.save();
 

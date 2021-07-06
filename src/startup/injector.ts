@@ -6,10 +6,10 @@ import { Authenticator_jwt } from "../auth/jwt/authenticator.jwt";
 import { Authorizer_custom } from "../auth/custom/authorizer.custom";
 
 import { UserRepo } from '../data/database/sequelize/repositories/user.repo';
-import { UserRoleRepo } from '../data/database/sequelize/repositories/user.role.repo';
+import { PersonRoleRepo } from '../data/database/sequelize/repositories/person.role.repo';
 import { RoleRepo } from '../data/database/sequelize/repositories/role.repo';
 import { OtpRepo } from '../data/database/sequelize/repositories/otp.repo';
-import { ApiClientRepo } from '../data/database/sequelize/repositories/client.repo';
+import { ApiClientRepo } from '../data/database/sequelize/repositories/api.client.repo';
 import { AddressRepo } from '../data/database/sequelize/repositories/address.repo';
 import { PatientRepo } from '../data/database/sequelize/repositories/patient.repo';
 
@@ -29,7 +29,7 @@ export class Injector {
 
         //Repos
         container.register('IUserRepo', UserRepo);
-        container.register('IPersonRoleRepo', UserRoleRepo);
+        container.register('IPersonRoleRepo', PersonRoleRepo);
         container.register('IRoleRepo', RoleRepo);
         container.register('IOtpRepo', OtpRepo);
         container.register('IClientRepo', ApiClientRepo);

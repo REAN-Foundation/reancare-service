@@ -75,7 +75,7 @@ export default class Otp extends Model {
         type: DataType.DATE,
         allowNull: false
     })
-    ValidTo: Date;
+    ValidTill: Date;
 
     @Column({
         type: DataType.BOOLEAN,

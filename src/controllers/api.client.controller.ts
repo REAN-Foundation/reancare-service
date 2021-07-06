@@ -11,7 +11,6 @@ import { ApiError } from '../common/api.error';
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class ApiClientController {
-    
     //#region member variables and constructors
 
     _service: ApiClientService = null;
@@ -27,17 +26,14 @@ export class ApiClientController {
     create = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Client.Create';
-            if (!this._authorizer.authorize(request, response)) {
-                return false;
-            }
-            var clientDomainModel: ApiClientDomainModel = await ApiClientInputValidator.getDomainModel(
-                request.body
-            );
+            this._authorizer.authorize(request, response);
+
+            var clientDomainModel = await ApiClientInputValidator.create(request, response);
             const client = await this._service.create(clientDomainModel);
             if (client == null) {
                 throw new ApiError(400, 'Unable to create client.');
             }
-            ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'User created successfully!', 200, {
                 Client: client,
             });
         } catch (error) {
@@ -48,9 +44,17 @@ export class ApiClientController {
     getById = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Client.GetById';
-            if (!this._authorizer.authorize(request, response)) {
-                return false;
+            this._authorizer.authorize(request, response);
+
+            var id: string = await ApiClientInputValidator.getById(request, response);
+
+            const client = await this._service.getById(id);
+            if (client == null) {
+                throw new ApiError(404, 'Client not found.');
             }
+            ResponseHandler.success(request, response, 'Client retrieved successfully!', 200, {
+                Client: client,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -59,9 +63,17 @@ export class ApiClientController {
     update = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Client.Update';
-            if (!this._authorizer.authorize(request, response)) {
-                return false;
+            this._authorizer.authorize(request, response);
+
+            var id: string = await ApiClientInputValidator.getById(request, response);
+            var domainModel = await ApiClientInputValidator.update(request, response);
+            const client = await this._service.update(id, domainModel);
+            if (client == null) {
+                throw new ApiError(404, 'Client not found.');
             }
+            ResponseHandler.success(request, response, 'Client updated successfully!', 200, {
+                Client: client,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -70,20 +82,20 @@ export class ApiClientController {
     delete = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Client.Delete';
-            if (!this._authorizer.authorize(request, response)) {
-                return false;
-            }
+            this._authorizer.authorize(request, response);
+            var id: string = await ApiClientInputValidator.getById(request, response);
+            await this._service.delete(id);
+            ResponseHandler.success(request, response, 'Client deleted successfully!', 200, null);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    getApiKey = async  (request: express.Request, response: express.Response) => {
+    getApiKey = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Client.GetApiKey';
-            var verificationModel = await ApiClientInputValidator.getVerificationDomainModel(
-                request.body
-            );
+            var verificationModel = await ApiClientInputValidator.getOrRenewApiKey(request, response);
+
             const apiKeyDto = await this._service.getApiKey(verificationModel);
             if (apiKeyDto == null) {
                 throw new ApiError(400, 'Unable to retrieve client api key.');
@@ -94,6 +106,24 @@ export class ApiClientController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
+    renewApiKey = async (request: express.Request, response: express.Response) => {
+        try {
+            request.context = 'Client.RenewApiKey';
+            var verificationModel = await ApiClientInputValidator.getOrRenewApiKey(request, response);
+            if(verificationModel.ValidFrom == null) {
+                verificationModel.ValidFrom = new Date();
+            }
+            const apiKeyDto = await this._service.renewApiKey(verificationModel);
+            if (apiKeyDto == null) {
+                throw new ApiError(400, 'Unable to renew client api key.');
+            }
+            ResponseHandler.success(request, response, 'Client api keys renewed successfully!', 200, {
+                ApiKeyDetails: apiKeyDto,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 }

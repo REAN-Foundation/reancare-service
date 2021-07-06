@@ -54,7 +54,7 @@ export class PatientController {
                 Roles.Patient, patientDomainModel.User.Person.Phone, 
                 existingPatientCountSharingPhone);
 
-            var displayName = Helper.constructUserDisplayName(
+            var displayName = Helper.constructPersonDisplayName(
                 patientDomainModel.User.Person.Prefix, 
                 patientDomainModel.User.Person.FirstName, 
                 patientDomainModel.User.Person.LastName);
@@ -92,9 +92,7 @@ export class PatientController {
     getByUserId = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Patient.GetByUserId';
-            if (!this._authorizer.authorize(request, response)) {
-                throw new ApiError(400, 'Cannot create user!');
-            }
+            this._authorizer.authorize(request, response);
 
             var userId: string = await PatientInputValidator.getByUserId(request, response);
 
@@ -119,9 +117,8 @@ export class PatientController {
     search = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Patient.Search';
-            if (!this._authorizer.authorize(request, response)) {
-                return false;
-            }
+            this._authorizer.authorize(request, response);
+
             var filters = await PatientInputValidator.search(request, response);
 
             var extractFull: boolean =
@@ -154,7 +151,7 @@ export class PatientController {
             var patientDomainModel = await PatientInputValidator.updateByUserId(request, response);
 
             var userId: string = await PatientInputValidator.getByUserId(request, response);
-            const exists = await this._userService.exists(patientDomainModel.UserId);
+            const exists = await this._userService.exists(userId);
             if(!exists){
                 throw new ApiError(404, 'User not found.');
             }

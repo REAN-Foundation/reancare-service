@@ -1,4 +1,4 @@
-import { TypeHandler } from '../../common/type.handler';
+import { Helper } from '../../common/helper';
 import { AddressDomainModel } from '../../data/domain.types/address.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -8,7 +8,7 @@ export class AddressInputValidator {
     static getDomainModel = async (addressBody: any): Promise<AddressDomainModel> => {
 
         var addressModel: AddressDomainModel = null;
-        var address = TypeHandler.checkObj(addressBody);
+        var address = Helper.checkObj(addressBody);
         if (address != null) {
             addressModel = {
                 Type: 'Home',

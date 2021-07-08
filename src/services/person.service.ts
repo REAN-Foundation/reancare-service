@@ -7,7 +7,7 @@ import { injectable, inject } from 'tsyringe';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class UserService {
+export class PersonService {
     
     constructor(
         @inject('IPersonRepo') private _personRepo: IPersonRepo,

@@ -1,13 +1,15 @@
 import express from 'express';
 
 import { PatientService } from '../services/patient.service';
+import { UserService } from '../services/user.service';
+import { PersonService } from '../services/person.service';
 import { Helper } from '../common/helper';
 import { ResponseHandler } from '../common/response.handler';
 import { Loader } from '../startup/loader';
 import { Authorizer } from '../auth/authorizer';
 import { PatientInputValidator } from './input.validators/patient.input.validator';
 import { PatientDetailsDto, PatientDomainModel } from '../data/domain.types/patient.domain.types';
-import { UserService } from '../services/user.service';
+
 import { Roles } from '../data/domain.types/role.domain.types';
 import { PatientMapper } from '../data/database/sequelize/mappers/patient.mapper';
 import { UserDomainModel } from '../data/domain.types/user.domain.types';
@@ -24,12 +26,14 @@ export class PatientController {
 
     _service: PatientService = null;
     _userService: UserService = null;
+    _personService: PersonService = null;
     _addressService: AddressService = null;
     _authorizer: Authorizer = null;
 
     constructor() {
         this._service = Loader.container.resolve(PatientService);
         this._userService = Loader.container.resolve(UserService);
+        this._personService = Loader.container.resolve(PersonService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -96,8 +100,8 @@ export class PatientController {
 
             var userId: string = await PatientInputValidator.getByUserId(request, response);
 
-            const exists = await this._userService.exists(userId);
-            if(!exists){
+            const existingUser = await this._userService.getById(userId);
+            if(existingUser == null){
                 throw new ApiError(404, 'User not found.');
             }
 
@@ -151,8 +155,8 @@ export class PatientController {
             var patientDomainModel = await PatientInputValidator.updateByUserId(request, response);
 
             var userId: string = await PatientInputValidator.getByUserId(request, response);
-            const exists = await this._userService.exists(userId);
-            if(!exists){
+            const existingUser = await this._userService.getById(userId);
+            if(existingUser == null){
                 throw new ApiError(404, 'User not found.');
             }
 
@@ -187,12 +191,12 @@ export class PatientController {
             }
 
             var userId: string = await PatientInputValidator.delete(request, response);
-            const exists = await this._userService.exists(userId);
-            if(!exists){
+            const existingUser = await this._userService.getById(userId);
+            if(existingUser == null){
                 throw new ApiError(404, 'User not found.');
             }
 
-            const deleted = await this._userService.delete(userId);
+            const deleted = await this._personService.delete(userId);
             if(!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }

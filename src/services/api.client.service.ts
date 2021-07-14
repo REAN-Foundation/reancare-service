@@ -5,6 +5,7 @@ import { IApiClientRepo } from "../data/repository.interfaces/api.client.repo.in
 import { generate} from 'generate-password';
 import { Helper } from "../common/helper";
 import { compareSync } from 'bcryptjs';
+import { CurrentClient } from "../data/domain.types/current.client";
 const uuidAPIKey = require('uuid-apikey');
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -71,6 +72,10 @@ export class ApiClientService {
         );
         
         return clientApiKeyDto;
+    };
+
+    isApiKeyValid = async (apiKey: string): Promise<CurrentClient> => {
+        return await this._clientRepo.isApiKeyValid(apiKey);
     };
 
     update = async (id: string, clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {

@@ -1,6 +1,7 @@
 
 export interface CurrentClient {
-    ClientCode: string,
-    ClientName: string,
+    ClientCode: string;
+    ClientName: string;
+    // ClientApiKey: string;
 };
 

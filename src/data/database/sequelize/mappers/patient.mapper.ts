@@ -9,25 +9,6 @@ import { UserMapper } from "./user.mapper";
 
 export class PatientMapper {
 
-    static toUserDomainModel(patientDomainModel: PatientDomainModel): UserDomainModel {
-        var userDomainModel: UserDomainModel = {
-            Person: {
-                Prefix: patientDomainModel.User.Person.Prefix,
-                FirstName: patientDomainModel.User.Person.FirstName,
-                MiddleName: patientDomainModel.User.Person.MiddleName,
-                LastName: patientDomainModel.User.Person.LastName,
-                Phone: patientDomainModel.User.Person.Phone,
-                Email: patientDomainModel.User.Person.Email,
-                BirthDate: patientDomainModel.User.Person.BirthDate,
-                Gender: patientDomainModel.User.Person.Gender,
-                ImageResourceId: patientDomainModel.User.Person.ImageResourceId,
-            },
-            CurrentTimeZone: patientDomainModel.User.CurrentTimeZone,
-            DefaultTimeZone: patientDomainModel.User.DefaultTimeZone,
-            GenerateLoginOTP: patientDomainModel.User.GenerateLoginOTP
-        };
-        return userDomainModel;
-    }
 
     static toDetailsDto = async (patient: Patient): Promise<PatientDetailsDto> => {
 

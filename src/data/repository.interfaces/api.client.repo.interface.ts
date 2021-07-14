@@ -1,4 +1,5 @@
 import { ApiClientDomainModel, ApiClientDto, ClientApiKeyDto } from '../domain.types/api.client.domain.types';
+import { CurrentClient } from '../domain.types/current.client';
 
 export interface IApiClientRepo {
 
@@ -13,6 +14,8 @@ export interface IApiClientRepo {
     getApiKey(id: string): Promise<ClientApiKeyDto>;
 
     setApiKey(id: string, apiKey: string, validFrom: Date, validTill: Date): Promise<ClientApiKeyDto>;
+
+    isApiKeyValid(apiKey: string): Promise<CurrentClient>;
 
     update(id: string, clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto>;
 

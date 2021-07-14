@@ -55,7 +55,8 @@ export class PatientController {
                 patientDomainModel.User.Person.LastName);
 
             var displayId = await this._userService.generateUserDisplayId(
-                Roles.Patient, patientDomainModel.User.Person.Phone, 
+                Roles.Patient, 
+                patientDomainModel.User.Person.Phone, 
                 existingPatientCountSharingPhone);
 
             var displayName = Helper.constructPersonDisplayName(
@@ -63,9 +64,20 @@ export class PatientController {
                 patientDomainModel.User.Person.FirstName, 
                 patientDomainModel.User.Person.LastName);
 
-            var userDomainModel = PatientMapper.toUserDomainModel(patientDomainModel);
-            userDomainModel.Person.DisplayName = displayName;
-            userDomainModel.UserName =  userName;
+            patientDomainModel.User.Person.DisplayName = displayName;
+            patientDomainModel.User.UserName = userName;
+            patientDomainModel.DisplayId = displayId;
+
+            var userDomainModel = patientDomainModel.User;
+            var personDomainModel = userDomainModel.Person;
+
+            //Create a person first
+
+            var person = await this._personService.create(personDomainModel);
+            if(person == null) {
+                throw new ApiError(400, 'Cannot create person!');
+            }
+            patientDomainModel.PersonId = person.id;
 
             var user = await this._userService.create(userDomainModel);
             if(user == null) {
@@ -163,7 +175,7 @@ export class PatientController {
             //This throws an error if the duplicate patient being added
             await this._service.checkforDuplicatePatients(patientDomainModel);
 
-            var userDomainModel: UserDomainModel = PatientMapper.toUserDomainModel(patientDomainModel);
+            var userDomainModel: UserDomainModel = patientDomainModel.User;
             var updatedUser = await this._userService.update(patientDomainModel.UserId, userDomainModel);
             if(!updatedUser) {
                 throw new ApiError(400, 'Unable to update user!');

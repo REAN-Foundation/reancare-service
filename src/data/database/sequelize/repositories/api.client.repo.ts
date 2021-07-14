@@ -5,6 +5,7 @@ import { ApiClientDomainModel, ApiClientDto, ClientApiKeyDto } from '../../../do
 import { ClientMapper } from '../mappers/client.mapper';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
+import { CurrentClient } from '../../../domain.types/current.client';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -87,6 +88,29 @@ export class ApiClientRepo implements IApiClientRepo {
             await client.save();
             var dto = await ClientMapper.toClientSecretsDto(client);
             return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+    
+    isApiKeyValid = async (apiKey: string): Promise<CurrentClient> => {
+        try {
+            var client = await ApiClient.findOne({
+                where:{
+                    ApiKey: apiKey,
+                    ValidFrom: { [Op.gte]: new Date() },
+                    ValidTill: { [Op.lte]: new Date() }
+                }
+            });
+            if(client == null){
+                return null;
+            }
+            var currentClient: CurrentClient = {
+                ClientName: client.ClientName,
+                ClientCode: client.ClientCode
+            };
+            return currentClient;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

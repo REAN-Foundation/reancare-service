@@ -13,11 +13,13 @@ import {
     IsEmail,
     IsDate,
     Index,
+    ForeignKey,
 } from 'sequelize-typescript';
 import { PersonIdentificationType } from '../../../domain.types/person.domain.types';
 
 import { uuid } from 'uuidv4';
 import User from './user.model';
+import Organization from './organization.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -128,6 +130,14 @@ export default class Person extends Model {
         defaultValue: true,
     })
     IsActive: boolean;
+
+    @IsUUID(4)
+    @ForeignKey(() => Organization)
+    @Column({
+        type: DataType.UUID,
+        allowNull: true,
+    })
+    OrganizationId: string;
 
     @HasMany(() => User)
     Users: User[];

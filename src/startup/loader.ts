@@ -50,8 +50,6 @@ export class Loader {
         return new Promise((resolve, reject) => {
             try {
 
-
-
                 Loader._databaseConnector = container.resolve(DatabaseConnector);
                 Loader._authenticator = container.resolve(Authenticator);
                 Loader._authorizer = container.resolve(Authorizer);

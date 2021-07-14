@@ -44,33 +44,33 @@ export class UserController {
         }
     };
 
-    search = async (request: express.Request, response: express.Response) => {
-        try {
-            request.context = 'User.Search';
-            if (!this._authorizer.authorize(request, response)) {
-                return false;
-            }
-            var filters = await UserInputValidator.search(request, response);
+    // search = async (request: express.Request, response: express.Response) => {
+    //     try {
+    //         request.context = 'User.Search';
+    //         if (!this._authorizer.authorize(request, response)) {
+    //             return false;
+    //         }
+    //         var filters = await UserInputValidator.search(request, response);
 
-            var extractFull: boolean =
-                request.query.full != 'undefined' && typeof request.query.full == 'boolean'
-                    ? request.query.full
-                    : false;
+    //         var extractFull: boolean =
+    //             request.query.full != 'undefined' && typeof request.query.full == 'boolean'
+    //                 ? request.query.full
+    //                 : false;
 
-            const users = await this._service.search(filters, extractFull);
-            if (users != null) {
-                var count = users.length;
-                var message =
-                    count == 0 ? 'No records found!' : `Total ${count} user records retrieved successfully!`;
-                ResponseHandler.success(request, response, message, 200, {
-                    users: users,
-                });
-                return;
-            }
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
+    //         const users = await this._service.search(filters, extractFull);
+    //         if (users != null) {
+    //             var count = users.length;
+    //             var message =
+    //                 count == 0 ? 'No records found!' : `Total ${count} user records retrieved successfully!`;
+    //             ResponseHandler.success(request, response, message, 200, {
+    //                 users: users,
+    //             });
+    //             return;
+    //         }
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // };
 
     loginWithPassword = async (request: express.Request, response: express.Response) => {
         try {

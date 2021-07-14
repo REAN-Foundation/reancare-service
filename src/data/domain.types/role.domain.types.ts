@@ -24,3 +24,9 @@ export interface PersonRoleDto {
     RoleName: string;
 }
 
+export interface RolePrivilegeDto {
+    id: string,
+    RoleId: number;
+    Privilege: string;
+}
+

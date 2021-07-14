@@ -11,6 +11,7 @@ import {
     PrimaryKey,
     Length,
     ForeignKey,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import { uuid } from 'uuidv4';
@@ -81,10 +82,10 @@ export default class Patient extends Model {
     })
     EhrId: string;
 
-    @HasOne(() => User)
+    @BelongsTo(() => User)
     User: User;
 
-    @HasOne(() => Person)
+    @BelongsTo(() => Person)
     Person: Person;
 
     @Column

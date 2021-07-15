@@ -208,18 +208,8 @@ export class UserService {
         }
         str = str.substr(0, 20);
     
-        var username = prefix + str;
-        
-        var exists = await this._userRepo.userNameExists(username);
-        while(exists)
-        {
-            tmp = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
-            str = tmp.substr(-10);
-            username = prefix + str;
-            exists = await this._userRepo.userNameExists(username);
-        }
-    
-        return username;
+        var displayId = prefix + str;
+        return displayId;
     }
     
     private async checkUserDetails(loginModel: UserLoginDetails) {

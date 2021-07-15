@@ -4,11 +4,11 @@
 export interface ApiClientDomainModel {
     id?: string;
     ClientName: string;
-    ClientCode: string;
+    ClientCode?: string;
     Password?: string;
     Phone?: string;
     Email?: string;
-    ApiKey: string;
+    ApiKey?: string;
     ValidFrom?: Date;
     ValidTill?: Date;
 };

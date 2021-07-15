@@ -7,7 +7,7 @@ import { Helper } from '../../common/helper';
 
 /// <reference path = "./ehr.types.ts" />
 
-import { GcpStorageService } from './standards/fhir/providers/gcp/storage.service';
+import { GcpStorageService } from './specifications/fhir/providers/gcp/storage.service';
 import { StorageService } from './services/storage.service';
 
 ////////////////////////////////////////////////////////////////////////////////////

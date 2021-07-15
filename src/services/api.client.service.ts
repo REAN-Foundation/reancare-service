@@ -11,12 +11,13 @@ const uuidAPIKey = require('uuid-apikey');
 
 @injectable()
 export class ApiClientService {
-    constructor(@inject('IClientRepo') private _clientRepo: IApiClientRepo) {}
+    constructor(@inject('IApiClientRepo') private _clientRepo: IApiClientRepo) {}
 
     create = async (clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         var clientCode = await this.getClientCode(clientDomainModel.ClientName);
-        clientDomainModel.ClientCode = clientCode;
-        clientDomainModel.ApiKey = uuidAPIKey.create();
+        clientDomainModel.ClientCode = clientDomainModel.ClientCode ?? clientCode;
+        var key = uuidAPIKey.create();
+        clientDomainModel.ApiKey = key.apiKey;
         return await this._clientRepo.create(clientDomainModel);
     };
 

@@ -6,7 +6,7 @@ import jwt = require('jsonwebtoken');
 
 import { Logger } from '../../common/logger';
 import { ResponseHandler } from '../../common/response.handler';
-import { IAuthenticator } from '../../interfaces/authenticator.interface';
+import { IAuthenticator } from '../authenticator.interface';
 import { ApiClientService } from '../../services/api.client.service';
 import { Loader } from '../../startup/loader';
 import { CurrentClient } from '../../data/domain.types/current.client';

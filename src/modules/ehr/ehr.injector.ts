@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { DependencyContainer } from 'tsyringe';
-import { GcpStorageService } from './standards/fhir/providers/gcp/storage.service';
-import { PatientStoreGCP } from './standards/fhir/providers/gcp/patient.store';
+import { GcpStorageService } from './specifications/fhir/providers/gcp/storage.service';
+import { PatientStoreGCP } from './specifications/fhir/providers/gcp/patient.store';
 
 ////////////////////////////////////////////////////////////////////////////////
 

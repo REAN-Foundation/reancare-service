@@ -2,11 +2,11 @@ import * as fs from 'fs';
 import child_process from 'child_process';
 import { InputValidationError } from './input.validation.error';
 import { Gender } from './system.types';
+import { generate} from 'generate-password';
 
 ////////////////////////////////////////////////////////////////////////
 
 export class Helper {
-
     static dumpJson(obj, filename) {
         var txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);
@@ -168,7 +168,7 @@ export class Helper {
     static isAlphaVowel = (c) => {
         var alphas = 'aeiouAEIOU';
         return alphas.indexOf(c) != -1;
-    }
+    };
 
     static isDigit = (c) => {
         var digits = '0123456789';
@@ -179,39 +179,49 @@ export class Helper {
         return Helper.isAlpha(c) || Helper.isDigit(c);
     };
 
-    static checkStr(val:any): string {
-        if(typeof(val) === null || typeof(val) === undefined || typeof(val) !== 'string') {
+    static checkStr(val: any): string {
+        if (typeof val === null || typeof val === undefined || typeof val !== 'string') {
             return null;
         }
         return val;
     }
 
-    static isStr(val:any): boolean {
-        if(typeof(val) === null || typeof(val) === undefined || typeof(val) !== 'string') {
+    static isStr(val: any): boolean {
+        if (typeof val === null || typeof val === undefined || typeof val !== 'string') {
             return false;
         }
         return true;
     }
 
-    static checkNum(val:any): number {
-        if(val === null || typeof(val) === 'undefined' || typeof(val) !== 'number') {
+    static checkNum(val: any): number {
+        if (val === null || typeof val === 'undefined' || typeof val !== 'number') {
             return null;
         }
         return val;
     }
 
-    static isNum(val:any): boolean {
-        if(val === null || typeof(val) === 'undefined' || typeof(val) !== 'number') {
+    static isNum(val: any): boolean {
+        if (val === null || typeof val === 'undefined' || typeof val !== 'number') {
             return false;
         }
         return true;
     }
 
-    static checkObj(val:any): object {
-        if(val === null || typeof(val) === 'undefined' || typeof(val) !== 'object') {
+    static checkObj(val: any): object {
+        if (val === null || typeof val === 'undefined' || typeof val !== 'object') {
             return null;
         }
         return val;
     }
 
+    static generatePassword(): string {
+        var password = generate({
+            length: 8,
+            numbers: true,
+            lowercase: true,
+            uppercase: true,
+            symbols: true,
+        });
+        return password;
+    }
 }

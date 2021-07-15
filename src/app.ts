@@ -6,7 +6,7 @@ import fileUpload = require('express-fileupload');
 import cors = require('cors');
 import helmet = require('helmet');
 
-import { Router } from './routes/router';
+import { Router } from './api/routes/router';
 import { Loader } from './startup/loader';
 import { Logger } from './common/logger';
 

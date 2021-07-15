@@ -43,6 +43,8 @@ export class UserRepo implements IUserRepo {
     create = async (userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
             var entity = {
+                PersonId: userDomainModel.Person.id,
+                RoleId: userDomainModel.RoleId ?? null,
                 UserName: userDomainModel.UserName,
                 Password: userDomainModel.Password ?? null,
                 DefaultTimeZone: userDomainModel.DefaultTimeZone ?? '+05:30',

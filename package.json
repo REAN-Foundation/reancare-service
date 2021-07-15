@@ -43,6 +43,7 @@
     "sequelize-cli": "^6.2.0",
     "sequelize-typescript": "^2.1.0",
     "sleep": "^6.3.0",
+    "stream-json": "^1.7.2",
     "tsyringe": "^4.5.0",
     "twilio": "^3.63.1",
     "uuid-apikey": "^1.5.3",

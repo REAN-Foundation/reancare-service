@@ -1,6 +1,6 @@
 import express from 'express';
 import { ApiClientController } from '../controllers/api.client.controller';
-import { Loader } from '../startup/loader';
+import { Loader } from '../../startup/loader';
 
 
 export const register = (app: express.Application) => {
@@ -17,6 +17,6 @@ export const register = (app: express.Application) => {
 
     router.get('/:clientCode/apiKey', controller.getApiKey);
 
-    app.use('/api/v1/user', router);
+    app.use('/api/v1/api-clients', router);
 };
 

@@ -45,6 +45,27 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
         }
     };
 
+    search = async (): Promise<RolePrivilegeDto[]> => {
+        try {
+            var rolePrivileges = await RolePrivilege.findAll();
+            var dtos: RolePrivilegeDto[] = [];
+            for(var i = 0; i < rolePrivileges.length; i++)
+            {
+                var rp = rolePrivileges[i];
+                var dto: RolePrivilegeDto = {
+                    id: rp.id,
+                    RoleId: rp.RoleId,
+                    Privilege: rp.Privilege
+                }
+                dtos.push(dto);
+            }
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     getPrivilegesForRole = async (roleId: number): Promise<RolePrivilegeDto[]> => {
         try {
             var rolePrivileges = await RolePrivilege.findAll({
@@ -61,6 +82,7 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
                     RoleId: rp.RoleId,
                     Privilege: rp.Privilege
                 }
+                dtos.push(dto);
             }
             return dtos;
         } catch (error) {

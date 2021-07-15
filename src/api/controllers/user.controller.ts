@@ -1,11 +1,11 @@
 import express from 'express';
 
-import { UserService } from '../services/user.service';
-import { ResponseHandler } from '../common/response.handler';
-import { Loader } from '../startup/loader';
-import { Authorizer } from '../auth/authorizer';
-import { UserDetailsDto } from '../data/domain.types/user.domain.types';
-import { UserInputValidator } from './input.validators/user.input.validator';
+import { UserService } from '../../services/user.service';
+import { ResponseHandler } from '../../common/response.handler';
+import { Loader } from '../../startup/loader';
+import { Authorizer } from '../../auth/authorizer';
+import { UserDetailsDto } from '../../data/domain.types/user.domain.types';
+import { UserInputValidator } from '../input.validators/user.input.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

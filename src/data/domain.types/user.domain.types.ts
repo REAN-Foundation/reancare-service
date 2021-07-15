@@ -15,6 +15,7 @@ export interface UserDomainModel {
     CurrentTimeZone?:string;
     GenerateLoginOTP?:boolean;
     LastLogin?: Date;
+    RoleId?: number;
 }
 
 export interface UserLoginDetails {

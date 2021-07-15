@@ -35,7 +35,7 @@ export class Injector {
         container.register('IPersonRoleRepo', PersonRoleRepo);
         container.register('IRoleRepo', RoleRepo);
         container.register('IOtpRepo', OtpRepo);
-        container.register('IClientRepo', ApiClientRepo);
+        container.register('IApiClientRepo', ApiClientRepo);
         container.register('IPatientRepo', PatientRepo);
         container.register('IAddressRepo', AddressRepo);
         container.register('IRolePrivilegeRepo', RolePrivilegeRepo);

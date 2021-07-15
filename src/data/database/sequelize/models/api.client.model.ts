@@ -74,17 +74,17 @@ export default class ApiClient extends Model {
     })
     Phone: string;
 
-    @Length({ min: 3, max: 50 })
+    @Length({ min: 3, max: 128 })
     @IsEmail
     @Column({
-        type: DataType.STRING(16),
+        type: DataType.STRING(128),
         allowNull: true,
     })
     Email: string;
 
-    @Length({ min: 16, max: 256})
+    @Length({ min: 8, max: 512})
     @Column({
-        type: DataType.STRING(256),
+        type: DataType.STRING(512),
         allowNull: true,
     })
     ApiKey: string;
@@ -96,7 +96,7 @@ export default class ApiClient extends Model {
     ValidFrom: Date;
 
     @Column({
-        type: DataType.STRING(10),
+        type: DataType.DATE,
         allowNull: false,
     })
     ValidTill: Date;

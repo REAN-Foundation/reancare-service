@@ -1,12 +1,12 @@
 import express from 'express';
 
-import { ApiClientService } from '../services/api.client.service';
-import { ResponseHandler } from '../common/response.handler';
-import { Loader } from '../startup/loader';
-import { Authorizer } from '../auth/authorizer';
-import { ApiClientDomainModel, ApiClientVerificationDomainModel } from '../data/domain.types/api.client.domain.types';
-import { ApiClientInputValidator } from './input.validators/api.client.input.validator';
-import { ApiError } from '../common/api.error';
+import { ApiClientService } from '../../services/api.client.service';
+import { ResponseHandler } from '../../common/response.handler';
+import { Loader } from '../../startup/loader';
+import { Authorizer } from '../../auth/authorizer';
+import { ApiClientDomainModel, ApiClientVerificationDomainModel } from '../../data/domain.types/api.client.domain.types';
+import { ApiClientInputValidator } from '../input.validators/api.client.input.validator';
+import { ApiError } from '../../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

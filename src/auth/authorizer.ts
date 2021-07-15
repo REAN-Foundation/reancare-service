@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import express from 'express';
-import { IAuthorizer } from '../interfaces/authorizer.interface';
+import { IAuthorizer } from './authorizer.interface';
 import { injectable, inject } from "tsyringe";
 import { ResponseHandler } from '../common/response.handler';
 import { CurrentUser } from '../data/domain.types/current.user';

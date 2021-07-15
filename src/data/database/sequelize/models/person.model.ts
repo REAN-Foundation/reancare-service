@@ -42,29 +42,28 @@ export default class Person extends Model {
     })
     id: string;
 
-    @Length({ min: 1, max: 16 })
+    @Length({ max: 16 })
     @Column({
         type: DataType.STRING(16),
         allowNull: true,
-        defaultValue: '',
     })
     Prefix: string;
 
-    @Length({ min: 1, max: 70 })
+    @Length({ max: 70 })
     @Column({
         type: DataType.STRING(70),
         allowNull: true,
     })
     FirstName: string;
 
-    @Length({ min: 1, max: 70 })
+    @Length({ max: 70 })
     @Column({
         type: DataType.STRING(70),
         allowNull: true,
     })
     MiddleName: string;
 
-    @Length({ min: 1, max: 70 })
+    @Length({ max: 70 })
     @Column({
         type: DataType.STRING(70),
         allowNull: true,
@@ -72,17 +71,17 @@ export default class Person extends Model {
     LastName: string;
 
     @Index
-    @Length({ min: 10, max: 16 })
+    @Length({ max: 24 })
     @Column({
-        type: DataType.STRING(16),
+        type: DataType.STRING(24),
         allowNull: false,
     })
     Phone: string;
 
-    @Length({ min: 4, max: 64 })
+    @Length({ max: 128 })
     @IsEmail
     @Column({
-        type: DataType.STRING(64),
+        type: DataType.STRING(128),
         allowNull: true,
     })
     Email: string;
@@ -109,14 +108,14 @@ export default class Person extends Model {
     })
     ImageResourceId: string;
 
-    @Length({ min: 1, max: 64 })
+    @Length({ max: 64 })
     @Column({
         type: DataType.STRING(64),
         allowNull: true,
     })
     NationalId: string;
 
-    @Length({ min: 1, max: 32 })
+    @Length({ max: 32 })
     @Column({
         type: DataType.STRING(32),
         allowNull: false,

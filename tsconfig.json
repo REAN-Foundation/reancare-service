@@ -14,6 +14,7 @@
         "alwaysStrict": true,
         "suppressImplicitAnyIndexErrors": false,
         "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule" : true,
         "outDir": "dist/",
         "diagnostics": true,
         "baseUrl": ".",

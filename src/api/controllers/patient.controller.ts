@@ -1,22 +1,22 @@
 import express from 'express';
 
-import { PatientService } from '../services/patient.service';
-import { UserService } from '../services/user.service';
-import { PersonService } from '../services/person.service';
-import { Helper } from '../common/helper';
-import { ResponseHandler } from '../common/response.handler';
-import { Loader } from '../startup/loader';
-import { Authorizer } from '../auth/authorizer';
-import { PatientInputValidator } from './input.validators/patient.input.validator';
-import { PatientDetailsDto, PatientDomainModel } from '../data/domain.types/patient.domain.types';
+import { PatientService } from '../../services/patient.service';
+import { UserService } from '../../services/user.service';
+import { PersonService } from '../../services/person.service';
+import { Helper } from '../../common/helper';
+import { ResponseHandler } from '../../common/response.handler';
+import { Loader } from '../../startup/loader';
+import { Authorizer } from '../../auth/authorizer';
+import { PatientInputValidator } from '../input.validators/patient.input.validator';
+import { PatientDetailsDto, PatientDomainModel } from '../../data/domain.types/patient.domain.types';
 
-import { Roles } from '../data/domain.types/role.domain.types';
-import { PatientMapper } from '../data/database/sequelize/mappers/patient.mapper';
-import { UserDomainModel } from '../data/domain.types/user.domain.types';
-import { ApiError } from '../common/api.error';
-import { AddressDomainModel } from '../data/domain.types/address.domain.types';
-import { AddressInputValidator } from './input.validators/address.input.validator';
-import { AddressService } from '../services/address.service';
+import { Roles } from '../../data/domain.types/role.domain.types';
+import { PatientMapper } from '../../data/database/sequelize/mappers/patient.mapper';
+import { UserDomainModel } from '../../data/domain.types/user.domain.types';
+import { ApiError } from '../../common/api.error';
+import { AddressDomainModel } from '../../data/domain.types/address.domain.types';
+import { AddressInputValidator } from '../input.validators/address.input.validator';
+import { AddressService } from '../../services/address.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

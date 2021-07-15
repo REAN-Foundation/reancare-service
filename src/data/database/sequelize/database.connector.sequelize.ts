@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { Dialect } from 'sequelize';
 import { DbConfig } from '../../../configs/db.config';
 import { Logger } from '../../../common/logger';
-import { IDatabaseConnector } from '../../../interfaces/database.connector.interface';
+import { IDatabaseConnector } from '../../database.connector.interface';
 import { PostgresqlClient } from './dialect.clients/postgresql.client';
 import { MysqlClient } from './dialect.clients/mysql.client';
 
@@ -37,7 +37,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
 
                 Logger.instance().log(`Connecting to database '${config.database}' ...`);
                 Logger.instance().log(`Database flavour: ${config.dialect}`);
-                Logger.instance().log(`Database host   : ${config.host}`);
+                Logger.instance().log(`Database host: ${config.host}`);
 
                 await this.createDatabase();
                 await this._sequelize.authenticate();

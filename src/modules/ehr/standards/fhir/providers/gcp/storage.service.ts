@@ -1,5 +1,6 @@
 import { IStorageService } from '../../../../interfaces/storage.service.interface';
 import { google, healthcare_v1 } from 'googleapis';
+import { Logger } from '../../../../../../common/logger';
 
 const healthcare = google.healthcare({
     version: 'v1',
@@ -75,6 +76,8 @@ export class GcpStorageService implements IStorageService {
     public init = async (): Promise<boolean> => {
         try {
 
+            Logger.instance().log('Connecting to EHR store...');
+
             await this.setClientAuth();
             GcpStorageService._healthcare = healthcare;
 
@@ -96,8 +99,9 @@ export class GcpStorageService implements IStorageService {
                 GcpStorageService._defaultDicomStore = await this.createDicomStore();
             }
 
-            var metadata = await this.getDefaultFhirStoreMetadata();
-            console.log(JSON.stringify(metadata, null, 2));
+            Logger.instance().log('Connected to EHR store.');
+            //var metadata = await this.getDefaultFhirStoreMetadata();
+            //console.log(JSON.stringify(metadata, null, 2));
 
             return true;
 
@@ -134,7 +138,7 @@ export class GcpStorageService implements IStorageService {
         const dataset = await GcpStorageService.healthcare.projects.locations.datasets.get(
             get_dataset_request
         );
-        console.log(dataset.data);
+        //console.log(dataset.data);
         return dataset.data;
     };
 
@@ -161,7 +165,7 @@ export class GcpStorageService implements IStorageService {
             const store = await GcpStorageService.healthcare.projects.locations.datasets.fhirStores.get(
                 request
             );
-            console.log(store.data);
+            //console.log(store.data);
             return store.data;
         } catch (error) {
             throw error;
@@ -187,7 +191,7 @@ export class GcpStorageService implements IStorageService {
             const store = await GcpStorageService.healthcare.projects.locations.datasets.dicomStores.get(
                 request
             );
-            console.log(store.data);
+            //console.log(store.data);
             return store.data;
         } catch (error) {
             throw error;
@@ -202,7 +206,7 @@ export class GcpStorageService implements IStorageService {
             const dataset = await GcpStorageService.healthcare.projects.locations.datasets.get(
                 request
             );
-            console.log(dataset.data);
+            //console.log(dataset.data);
             return dataset.data;
         } catch (error) {
             console.log(error.message);
@@ -216,7 +220,7 @@ export class GcpStorageService implements IStorageService {
         const store = await GcpStorageService.healthcare.projects.locations.datasets.fhirStores.get(
             { name: parent }
         );
-        console.log(store.data);
+        //console.log(store.data);
         return store.data;
     };
 
@@ -226,7 +230,7 @@ export class GcpStorageService implements IStorageService {
         const store = await GcpStorageService.healthcare.projects.locations.datasets.dicomStores.get(
             { name: parent }
         );
-        console.log(store.data);
+        //console.log(store.data);
         return store.data;
     };
 
@@ -237,7 +241,7 @@ export class GcpStorageService implements IStorageService {
             const datasets = await GcpStorageService.healthcare.projects.locations.datasets.list(
                 request
             );
-            console.log(datasets);
+            //console.log(datasets);
             return datasets;
         } catch (error) {
             console.log(error.message);
@@ -252,7 +256,7 @@ export class GcpStorageService implements IStorageService {
             const stores = await GcpStorageService.healthcare.projects.locations.datasets.fhirStores.list(
                 request
             );
-            console.log(stores);
+            //console.log(stores);
             return stores;
         } catch (error) {
             console.log(error.message);
@@ -267,7 +271,7 @@ export class GcpStorageService implements IStorageService {
             const stores = await GcpStorageService.healthcare.projects.locations.datasets.dicomStores.list(
                 request
             );
-            console.log(stores);
+            //console.log(stores);
             return stores;
         } catch (error) {
             console.log(error.message);
@@ -318,7 +322,7 @@ export class GcpStorageService implements IStorageService {
             await GcpStorageService.healthcare.projects.locations.datasets.fhirStores.get(
                 request
             );
-        console.log(JSON.stringify(fhirStore.data, null, 2));
+        //console.log(JSON.stringify(fhirStore.data, null, 2));
         return fhirStore.data;
     }
 

@@ -47,7 +47,7 @@ export class Loader {
     }
 
     public static init = async () => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
 
                 Loader._databaseConnector = container.resolve(DatabaseConnector);
@@ -56,7 +56,7 @@ export class Loader {
                 Loader._seeder = container.resolve(Seeder);
                 
                 Loader._ehrStore = container.resolve(StorageService);
-                Loader._ehrStore.init();
+                await Loader._ehrStore.init();
 
                 resolve(true);
 

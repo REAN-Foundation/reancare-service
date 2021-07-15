@@ -43,10 +43,11 @@ export class MysqlClient {
                     if (err) {
                         throw err;
                     }
-                    console.log('Connected!');
+                    //console.log('Connected!');
                     connection.query(query, function (err, result) {
                         if (err) {
-                            throw err;
+                            Logger.instance().log(err.message);
+                            //throw err;
                         }
                         resolve(true);
                     });

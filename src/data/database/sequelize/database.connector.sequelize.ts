@@ -35,9 +35,15 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
                 const sequelize = new Sequelize(config.database, config.username, config.password, options);
                 this._sequelize = sequelize;
 
+                Logger.instance().log(`Connecting to database '${config.database}' ...`);
+                Logger.instance().log(`Database flavour: ${config.dialect}`);
+                Logger.instance().log(`Database host   : ${config.host}`);
+
                 await this.createDatabase();
                 await this._sequelize.authenticate();
                 await this._sequelize.sync();
+
+                Logger.instance().log(`Connected to database.`);
                 
                 resolve(true);
             } catch (error) {

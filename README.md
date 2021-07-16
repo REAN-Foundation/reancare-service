@@ -1,4 +1,4 @@
-# api-service-x
+# REANCare Service
 
-This is the new typescript service with new architecture for reancare-api.
+REANCare service is the main healthcare backend API service for REAN Foundation's healthcare software ecosystem.
 

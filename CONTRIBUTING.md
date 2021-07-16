@@ -3,7 +3,7 @@
 ## Getting started <!-- omit in toc -->
 
 Before you begin:
-- Check the [technology stack](docs/technology-stack.md).
+- Check the [technology stack](docs/development.md#technology-stack).
 - Have you read the [code of conduct](CODE_OF_CONDUCT.md)?
 - Check the [different ways](#Various-ways-to-contribute) you can contribute.
 - Check out the [existing issues](https://github.com/REAN-Foundation/reancare-service/issues).

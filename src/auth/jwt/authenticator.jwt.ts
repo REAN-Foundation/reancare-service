@@ -32,7 +32,7 @@ export class Authenticator_jwt implements IAuthenticator {
         }
 
         try {
-            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
+            jwt.verify(token, process.env.USER_ACCESS_TOKEN_SECRET, (error, user) => {
                 if (error) {
                     ResponseHandler.failure(request, response, 'Forebidden access', 403);
                     return;

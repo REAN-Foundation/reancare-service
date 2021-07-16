@@ -20,7 +20,7 @@ export class DbConfig {
         password: process.env.DB_USER_PASSWORD,
         database: process.env.DB_NAME,
         host: process.env.DB_HOST,
-        dialect: 'postgres',
+        dialect: 'mysql',
         pool: {
             max: 20,
             min: 0,

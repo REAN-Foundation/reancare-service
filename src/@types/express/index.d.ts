@@ -1,5 +1,5 @@
-import { CurrentUser } from "../../interfaces/current.user.interface";
-import { CurrentClient } from "../../interfaces/current.client.interface";
+import { CurrentUser } from "../../data/domain.types/current.user";
+import { CurrentClient } from "../../data/domain.types/current.client";
 
 declare global{
     namespace Express {

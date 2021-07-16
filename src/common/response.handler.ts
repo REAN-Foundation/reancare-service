@@ -26,7 +26,7 @@ export class ResponseHandler {
             Message: msg,
             HttpErroCode: httpErrorCode ? httpErrorCode : 500,
             Trace: error ? error.stack : [],
-            Client: request ? request.clientCode: null,
+            Client: request ? request.currentClient: null,
             User: request ? request.currentUser : null,
             Context: request ? request.context : null,
             RequestMethod: request ? request.method : null,
@@ -63,7 +63,7 @@ export class ResponseHandler {
             Message: message,
             HttpCode: httpCode,
             DataObject: data ? data : null,
-            Client: request ? request.clientCode: null,
+            Client: request ? request.currentClient: null,
             User: request ? request.currentUser : null,
             Context: request ? request.context : null,
             RequestMethod: request ? request.method : null,
@@ -97,7 +97,7 @@ export class ResponseHandler {
             ResponseHandler.failure(request, response, validationError.message, validationError.httpErrorCode, error);
         }
         else {
-            exports.failure(request, response, error.message, 400, error);
+            ResponseHandler.failure(request, response, error.message, 400, error);
         }
     }
 

@@ -1,0 +1,73 @@
+[
+    {
+        "Role": "SystemAdmin",
+        "Privileges": [
+            "Client.Create",
+            "Client.GetById",
+            "Client.Update",
+            "Client.Delete",
+            "Client.GetApiKey",
+            "Client.RenewApiKey",
+            "User.GetById",
+            "User.Search",
+            "User.LoginWithPassword",
+            "User.ResetPassword",
+            "User.GenerateOtp",
+            "User.LoginWithPassword"
+        ]
+    },
+    {
+        "Role": "Patient",
+        "Privileges": [
+            "User.GetById",
+            "User.Search",
+            "User.LoginWithPassword",
+            "User.ResetPassword",
+            "User.GenerateOtp",
+            "User.LoginWithPassword",
+            "Patient.GetByUserId",
+            "Patient.UpdateByUserId",
+            "Patient.DeleteByUserId"
+        ]
+    },
+    {
+        "Role": "Doctor",
+        "Privileges": [
+            "User.GetById",
+            "User.Search",
+            "User.LoginWithPassword",
+            "User.ResetPassword",
+            "User.GenerateOtp",
+            "User.LoginWithPassword",
+            "Patient.Search",
+            "Patient.GetByUserId",
+            "Patient.UpdateByUserId"
+        ]
+    },
+    {
+        "Role": "LabUser",
+        "Privileges": [
+            "User.GetById",
+            "User.Search",
+            "User.LoginWithPassword",
+            "User.ResetPassword",
+            "User.GenerateOtp",
+            "User.LoginWithPassword",
+            "Patient.Search",
+            "Patient.GetByUserId"
+        ]
+    },
+    {
+        "Role": "PharmacyUser",
+        "Privileges": [
+            "User.GetById",
+            "User.Search",
+            "User.LoginWithPassword",
+            "User.ResetPassword",
+            "User.GenerateOtp",
+            "User.LoginWithPassword",
+            "Patient.Search",
+            "Patient.GetByUserId"
+        ]
+    }
+]

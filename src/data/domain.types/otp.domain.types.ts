@@ -1,0 +1,18 @@
+
+export interface OtpDto {
+    id: string;
+    UserId: string;
+    Purpose: string;
+    Otp: string;
+    ValidFrom: Date;
+    ValidTill: Date;
+    Utilized: boolean;
+}
+
+export interface OtpPersistenceEntity {
+    UserId: string;
+    Purpose: string;
+    Otp: string;
+    ValidFrom: Date;
+    ValidTill: Date;
+}

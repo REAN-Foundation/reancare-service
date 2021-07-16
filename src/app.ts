@@ -6,12 +6,8 @@ import fileUpload = require('express-fileupload');
 import cors = require('cors');
 import helmet = require('helmet');
 
-import { Router } from './routes/router';
+import { Router } from './api/routes/router';
 import { Loader } from './startup/loader';
-import { Seeder } from './startup/seeder';
-import { DbConnector } from './database/database.connector';
-import { Scheduler } from './startup/scheduler';
-
 import { Logger } from './common/logger';
 
 /////////////////////////////////////////////////////////////////////////
@@ -33,21 +29,21 @@ export default class Application {
     
     public start = async() => {
         try{
+
             //Load the modules
-            var loader = Loader.instance();
-            await loader.init();
+            await Loader.init();
 
             //Connect with database
-            await DbConnector.instance().init();
+            await Loader.databaseConnector.init();
 
             //Set-up middlewares
-            this.setupMiddlewares();
+            await this.setupMiddlewares();
 
             //Set the routes
             await this._router.init();
 
             //Seed the service
-            await Seeder.instance().init();
+            await Loader.seeder.init();
 
             //Set-up cron jobs
 
@@ -57,12 +53,11 @@ export default class Application {
             
         }
         catch(error){
-            Logger.instance().log('An error occurred while starting reancare-api service.');
+            Logger.instance().log('An error occurred while starting reancare-api service.' + error.message);
         }
     }
 
-
-    private setupMiddlewares = () => {
+    private setupMiddlewares = async (): Promise<boolean> => {
 
         return new Promise((resolve, reject) => {
             try {

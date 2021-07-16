@@ -1,8 +1,6 @@
-/// <reference path = "../types/patient.types.ts" />
-/// <reference path = "../interfaces/patient.store.interface.ts" />  
-
 import { IPatientStore } from '../interfaces/patient.store.interface';
 import { injectable, inject } from "tsyringe";
+import { PatientDomainModel, PatientSearchFilters } from '../../../data/domain.types/patient.domain.types';
 ///////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -10,25 +8,24 @@ export class PatientStore {
 
     constructor(@inject('IPatientStore') private _service: IPatientStore) {}
 
-    create = async (body: any): Promise<any> => {
+    create = async (body: PatientDomainModel): Promise<any> => {
         return await this._service.create(body);
     }
 
-    search = async (filter: any): Promise<any> => {
-        return await this._service.create(filter);
+    search = async (filter: PatientSearchFilters): Promise<any> => {
+        return await this._service.search(filter);
     }
 
     getById = async (id: string): Promise<any> => {
-        return await this._service.create(id);
+        return await this._service.getById(id);
     }
 
-    update = async (updates: any): Promise<any> => {
-        return await this._service.create(updates);
+    update = async (id: string, updates: PatientDomainModel): Promise<any> => {
+        return await this._service.update(id, updates);
     }
 
     delete = async (id: string): Promise<any> => {
-        return await this._service.create(id);
+        return await this._service.delete(id);
     }
 
 }
-

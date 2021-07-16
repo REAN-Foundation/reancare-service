@@ -1,10 +1,11 @@
 
-import { EHRTypes } from '../types/patient.types';
+import { PatientDomainModel, PatientSearchFilters } from '../../../data/domain.types/patient.domain.types';
+import { AddressDomainModel } from '../../../data/domain.types/address.domain.types';
 
 export interface IPatientStore {
-    create(body: any): Promise<any>;
-    search(filter: any): Promise<any>;
+    create(patientDomainModel: PatientDomainModel): Promise<any>;
+    search(filter: PatientSearchFilters): Promise<any>;
     getById(id: string): Promise<any>;
-    update(updates: any): Promise<any>;
+    update(id: string, updates: PatientDomainModel): Promise<any>;
     delete(id: string): Promise<any>;
 }

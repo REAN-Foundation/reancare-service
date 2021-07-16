@@ -6,7 +6,11 @@ import jwt = require('jsonwebtoken');
 
 import { Logger } from '../../common/logger';
 import { ResponseHandler } from '../../common/response.handler';
-import { IAuthorizer } from '../../interfaces/authorizer.interface';
+import { IAuthorizer } from '../authorizer.interface';
+import { CurrentUser } from '../../data/domain.types/current.user';
+import { ApiError } from '../../common/api.error';
+import { RolePrivilegeService } from '../../services/role.privilege.service';
+import { Loader } from '../../startup/loader';
 
 const execSync = require('child_process').execSync;
 
@@ -14,28 +18,69 @@ const execSync = require('child_process').execSync;
 
 export class Authorizer_custom implements IAuthorizer {
 
-    public authorize = async (
+    _rolePrivilegeService: RolePrivilegeService = null;
+    constructor() {
+        this._rolePrivilegeService = Loader.container.resolve(RolePrivilegeService);
+    }
 
-        request: express.Request,
-        response: express.Response) => {
-
-            const authHeader = request.headers['authorization']
-            const token = authHeader && authHeader.split(' ')[1];
-        
-            if (token == null) {
-                ResponseHandler.failure(request, response, 'Unauthorized access', 401);
-                return;
+    public authorize = async (request: express.Request, response: express.Response) => {
+        try {
+            var currentUser = request.currentUser;
+            var context = request.context;
+            if (context == null || context === 'undefined') {
+                return false;
             }
-        
-            try {
-
+            if (currentUser == null) {
+                return false;
             }
-            catch (err) {
-                ResponseHandler.failure(request, response, 'Unauthorized access', 401);
-            }            
+            var hasPrivilege = await this.hasRolePrivileges(currentUser.CurrentRoleId, context);
+            if (!hasPrivilege) {
+                return false;
+            }
+            var isResourceOwner = await this.isResourceOwner(currentUser, request);
+            var hasConsent = await this.hasConsent(currentUser.CurrentRoleId, context);
+            if (hasConsent  || isResourceOwner) {
+                return true;
+            }
+            return false;
+        } catch (error) {
+            throw new ApiError(401, 'Unauthorized access' + error.message);
+        }
     };
 
+    public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            try {
+                const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '90d' });
+                resolve(token);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
 
+    private hasRolePrivileges = async (currentRoleId: number, context: string): Promise<boolean> => {
+        var rolePrivileges = await this._rolePrivilegeService.getPrivilegesForRole(currentRoleId);
+        if (rolePrivileges.length == 0) {
+            return false;
+        }
+        var privileges: string[] = rolePrivileges.map(x => { return x.Privilege.toLowerCase(); } );
+        var contextLower = context.toLowerCase();
+        var found = privileges.find(x => { return x === contextLower; });
+        if(!found) {
+            return false;
+        }
+        return true;
+    }
 
+    private isResourceOwner = async (user: CurrentUser, request: express.Request): Promise<boolean> => {
+        //for time being, return true always
+        return true;
+    }
+
+    private hasConsent = async (CurrentRoleId: number, context: string): Promise<boolean> => {
+        //for time being, return true always
+        return true;
+    }
 
 }

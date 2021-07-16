@@ -1,34 +1,26 @@
 import 'reflect-metadata';
-import { container } from 'tsyringe';
+import { container, DependencyContainer } from 'tsyringe';
 
-import { IAuthenticator } from "../interfaces/authenticator.interface";
-import { IAuthorizer } from '../interfaces/authorizer.interface';
-import { IDatabaseConnector } from "../interfaces/database.connector.interface";
-
-import { DatabaseConnector_Sequelize } from "../database/sequelize/database.connector.sequelize";
-import { DatabaseConnector } from '../database/database.connector';
-
-import { Authenticator_jwt } from "../auth/jwt/authenticator.jwt";
+import { DatabaseConnector } from '../data/database/database.connector';
 import { Authenticator } from '../auth/authenticator';
-import { Authorizer_custom } from "../auth/custom/authorizer.custom";
 import { Authorizer } from '../auth/authorizer';
+import { Injector } from './injector';
+import { Seeder } from './seeder';
+import { StorageService } from '../modules/ehr/services/storage.service';
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//Register injections here...
+Injector.registerInjections(container);
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class Loader {
 
-    private static _instance: Loader = null;
-
     private static _authorizer: Authorizer = null;
     private static _authenticator: Authenticator = null;
     private static _databaseConnector: DatabaseConnector = null;
-
-    private constructor() {
-    }
-
-    public static instance() {
-        return this._instance || (this._instance = new this());
-    }
+    private static _seeder: Seeder = null;
+    private static _ehrStore: StorageService = null;
+    private static _container: DependencyContainer = container;
 
     public static get authenticator() {
         return Loader._authenticator;
@@ -42,21 +34,29 @@ export class Loader {
         return Loader._databaseConnector;
     }
 
-    public init = async () => {
-        return new Promise((resolve, reject) => {
+    public static get seeder() {
+        return Loader._seeder;
+    }
+
+    public static get storage() {
+        return Loader._ehrStore;
+    }
+
+    public static get container() {
+        return Loader._container;
+    }
+
+    public static init = async () => {
+        return new Promise(async (resolve, reject) => {
             try {
 
-                //Register database service
-                container.register('IDatabaseConnector', DatabaseConnector_Sequelize);
-                const databaseConnector = container.resolve(DatabaseConnector);
-
-                //Register authenticator
-                container.register('IAuthenticator', Authenticator_jwt);
-                const authenticator = container.resolve(Authenticator);
-
-                //Register authorizer
-                container.register('IAuthorizer', Authorizer_custom);
-                const authorizer = container.resolve(Authorizer);
+                Loader._databaseConnector = container.resolve(DatabaseConnector);
+                Loader._authenticator = container.resolve(Authenticator);
+                Loader._authorizer = container.resolve(Authorizer);
+                Loader._seeder = container.resolve(Seeder);
+                
+                Loader._ehrStore = container.resolve(StorageService);
+                await Loader._ehrStore.init();
 
                 resolve(true);
 
@@ -66,3 +66,4 @@ export class Loader {
         });
     };
 }
+

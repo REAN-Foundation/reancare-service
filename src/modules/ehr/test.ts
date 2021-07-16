@@ -7,8 +7,7 @@ import { Helper } from '../../common/helper';
 
 /// <reference path = "./ehr.types.ts" />
 
-import { IStorageService } from './interfaces/storage.service.interface';
-import { GcpFhirStoreService } from './standards/fhir/providers/gcp/fhir.service.gcp';
+import { GcpStorageService } from './specifications/fhir/providers/gcp/storage.service';
 import { StorageService } from './services/storage.service';
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -18,9 +17,9 @@ export class Test_EHR {
     public static test = async () => {
         try {
 
-            container.register('IStorageService', GcpFhirStoreService);
+            container.register('IStorageService', GcpStorageService);
             const storeService = container.resolve(StorageService);
-            const initialized = await storeService.initialize();
+            const initialized = await storeService.init();
 
         } catch (error) {
             console.log(error);

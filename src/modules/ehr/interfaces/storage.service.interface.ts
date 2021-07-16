@@ -1,5 +1,5 @@
 
 export interface IStorageService {
 
-    initialize(): Promise<boolean>;
+    init(): Promise<boolean>;
 }

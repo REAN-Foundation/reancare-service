@@ -15,7 +15,7 @@ s | Work items | Status |Tentative date
 2  | :fire: Exposed FHIR API with consent mechanism| In-progress | Dec, 2021
 3  | :ambulance: Support for custom emergency protocols | Pending | Dec, 2021
 
-Other than, this there will be work items for -
+Other than, this there will be work items not yet scheduled but will be considered.
 * Unified patient experience
 * Multi-level patient medical history
 * Prototyping for National Digital Health Mission (NDHM)

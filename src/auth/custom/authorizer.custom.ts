@@ -51,7 +51,7 @@ export class Authorizer_custom implements IAuthorizer {
     public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
         return new Promise((resolve, reject) => {
             try {
-                const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '90d' });
+                const token = jwt.sign(user, process.env.USER_ACCESS_TOKEN_SECRET, { expiresIn: '90d' });
                 resolve(token);
             } catch (error) {
                 reject(error);

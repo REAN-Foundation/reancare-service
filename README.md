@@ -2,12 +2,14 @@
 
 REANCare service is the main healthcare backend API service for REAN Foundation's healthcare software ecosystem.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
 This project is open-sourced under [MIT license](./LICENSE).
 
 __We encourage forking and welcome contributions to this code base.__
 
 * [How to do dev-setup](docs/development.md) on your local machine
-* [Brief architecture/design review](docs/design.md) of the service
+* [Design considerations](docs/design.md) of the service
 * [How to contribute](./CONTRIBUTING.md)
 * [Code of Conduct](./CODE_OF_CONDUCT.md)
 

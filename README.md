@@ -7,7 +7,7 @@ This project is open-sourced under [MIT license](./LICENSE).
 __We encourage forking and welcome contributions to this code base.__
 
 * [How to do dev-setup](docs/development.md) on your local machine
-* [Brief architecture/design review](docs/design-architecture.md) of the service
+* [Brief architecture/design review](docs/design.md) of the service
 * [How to contribute](./CONTRIBUTING.md)
 * [Code of Conduct](./CODE_OF_CONDUCT.md)
 

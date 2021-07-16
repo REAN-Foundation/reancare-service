@@ -11,9 +11,9 @@ s | Work items | Status |Tentative date
 
 s | Work items | Status |Tentative date
 | :--- | :--- | :--- | :---:
-1  | :zap: Support for custom care plans| In-progress | Dec, 2021
+1  | :pill: Support for custom care plans| In-progress | Dec, 2021
 2  | :fire: Exposed FHIR API with consent mechanism| In-progress | Dec, 2021
-3  | :speaker: Support for custom emergency protocols | Pending | Dec, 2021
+3  | :ambulance: Support for custom emergency protocols | Pending | Dec, 2021
 
 Other than, this there will be work items for -
 * Unified patient experience

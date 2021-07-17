@@ -13,6 +13,8 @@ export interface IUserRepo {
 
     userExistsWithUsername(userName: string): Promise<boolean>;
 
+    getUserWithUserName(userName: string): Promise<UserDetailsDto>;
+
     update(id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto>;
 
     getUserHashedPassword(id: string): Promise<string>;

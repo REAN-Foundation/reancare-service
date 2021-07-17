@@ -22,6 +22,6 @@ export const register = (app: express.Application) => {
     router.post('/generate-otp', authenticator.authenticateClient, controller.generateOtp);
     router.post('/login-with-otp', authenticator.authenticateClient, controller.loginWithOtp);
 
-    app.use('/api/v1/user', router);
+    app.use('/api/v1/users', router);
 };
 

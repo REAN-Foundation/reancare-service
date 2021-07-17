@@ -40,6 +40,21 @@ export class UserRepo implements IUserRepo {
         return false;
     };
 
+    getUserWithUserName = async (userName: string): Promise<UserDetailsDto> => {
+        if (userName != null && typeof userName != 'undefined') {
+            var user = await User.findOne({
+                where: {
+                    UserName: { [Op.like]: '%' + userName + '%' },
+                    IsActive: true,
+                },
+            });
+            var dto = await UserMapper.toDetailsDto(user);
+            return dto;
+        }
+        return null;
+    };
+
+    
     create = async (userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
             var entity = {

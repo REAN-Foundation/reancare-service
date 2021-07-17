@@ -78,6 +78,7 @@ export class UserInputValidator {
                 await oneOf([
                     body('Phone').optional().trim().escape(),
                     body('Email').optional().trim().escape(),
+                    body('UserName').optional().trim().escape(),
                 ]).run(request);
                 await body('Password').exists().trim().run(request);
                 await body('LoginRoleId').exists().trim().isNumeric().run(request);
@@ -87,20 +88,24 @@ export class UserInputValidator {
                     Helper.handleValidationError(result);
                 }
 
-                var loginObject: UserLoginDetails = {
+                var loginDetails: UserLoginDetails = {
                     Phone: null,
                     Email: null,
+                    UserName: null,
                     Password: request.body.Password,
                     Otp: null,
                     LoginRoleId: request.body.LoginRoleId,
                 };
                 if (typeof request.body.Phone != 'undefined') {
-                    loginObject.Phone = request.body.Phone;
+                    loginDetails.Phone = request.body.Phone;
                 }
                 if (typeof request.body.Email != 'undefined') {
-                    loginObject.Email = request.body.Email;
+                    loginDetails.Email = request.body.Email;
                 }
-                return loginObject;
+                if (typeof request.body.UserName != 'undefined') {
+                    loginDetails.UserName = request.body.UserName;
+                }
+                return loginDetails;
             } catch (error) {
                 ResponseHandler.handleError(request, response, error);
             }

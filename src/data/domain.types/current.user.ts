@@ -4,6 +4,7 @@ export interface CurrentUser {
     DisplayName: string;
     Phone: string;
     Email: string;
+    UserName: string;
     CurrentRoleId: number;
 };
 

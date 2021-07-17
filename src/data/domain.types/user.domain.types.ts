@@ -21,6 +21,7 @@ export interface UserDomainModel {
 export interface UserLoginDetails {
     Phone?: string,
     Email?: string,
+    UserName?: string;
     Password?: string,
     Otp?: string,
     LoginRoleId: number

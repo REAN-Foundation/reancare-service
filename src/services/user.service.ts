@@ -50,7 +50,6 @@ export class UserService {
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
 
         var user: UserDetailsDto = await this.checkUserDetails(loginModel);
-
         var hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
         var isPasswordValid = await compareSync(loginModel.Password, hashedPassword);
         if (!isPasswordValid) {
@@ -63,6 +62,7 @@ export class UserService {
             DisplayName: user.Person.DisplayName,
             Phone: user.Person.Phone,
             Email: user.Person.Email,
+            UserName: user.UserName,
             CurrentRoleId: loginModel.LoginRoleId,
         };
         var accessToken = Loader.authorizer.generateUserSessionToken(currentUser);
@@ -139,6 +139,7 @@ export class UserService {
             DisplayName: user.Person.DisplayName,
             Phone: user.Person.Phone,
             Email: user.Person.Email,
+            UserName: user.UserName,
             CurrentRoleId: loginModel.LoginRoleId,
         };
         var accessToken = Loader.authorizer.generateUserSessionToken(currentUser);
@@ -215,6 +216,7 @@ export class UserService {
     private async checkUserDetails(loginModel: UserLoginDetails) {
 
         var person: PersonDetailsDto = null;
+        var user: UserDetailsDto = null;
 
         if (loginModel.Phone) {
             person = await this._personRepo.getPersonWithPhone(loginModel.Phone);
@@ -223,22 +225,32 @@ export class UserService {
                 throw new ApiError(404, message);
             }
         } else if (loginModel.Email) {
-            person = await this._personRepo.getPersonWithPhone(loginModel.Email);
+            person = await this._personRepo.getPersonWithEmail(loginModel.Email);
             if (person == null) {
                 let message = 'User does not exist with email(' + loginModel.Email + ')';
                 throw new ApiError(404, message);
             }
+        } else if(loginModel.UserName) {
+            user = await this._userRepo.getUserWithUserName(loginModel.UserName);
+            if (user == null) {
+                let message = 'User does not exist with username (' + loginModel.UserName + ')';
+                throw new ApiError(404, message);
+            }
+            person = await this._personRepo.getById(user.Person.id);
         }
         if (person == null) {
-            throw new ApiError(404, 'Cannot find user.');
+            throw new ApiError(404, 'Cannot find person.');
         }
 
         //Now check if that person is an user with a given role
         const personId = person.id;
-        var user: UserDetailsDto = await this._userRepo.getUserByPersonIdAndRole(personId, loginModel.LoginRoleId);
-        if (person == null) {
-            throw new ApiError(404, 'Cannot find user with the given role.');
+        if(user == null) {
+            user = await this._userRepo.getUserByPersonIdAndRole(personId, loginModel.LoginRoleId);
+            if (user == null) {
+                throw new ApiError(404, 'Cannot find user with the given role.');
+            }
         }
+
         return user;
     }
 

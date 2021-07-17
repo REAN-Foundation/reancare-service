@@ -5,6 +5,7 @@ export interface RoleDto {
 }
 
 export enum Roles {
+    SystemAdmin = 'SystemAdmin',
     Patient = 'Patient',
     Doctor = 'Doctor',
     LabUser = 'LabUser',
@@ -14,7 +15,6 @@ export enum Roles {
     SocialHealthWorker = 'SocialHealthWorker',
     PatientFamilyMember = 'PatientFamilyMember',
     PatientFriend = 'PatientFriend',
-    SystemAdmin = 'SystemAdmin'
 }
 
 export interface PersonRoleDto {

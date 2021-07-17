@@ -49,8 +49,9 @@ export class Seeder {
             return;
         }
         try {
-            for (var i = 0; i < RolePrivilegesList.length; i++) {
-                var rp = RolePrivilegesList[i];
+            var arr = RolePrivilegesList['default'];
+            for (var i = 0; i < arr.length; i++) {
+                var rp = arr[i];
                 var roleName = rp['Role'];
                 var privileges = rp['Privileges'];
 
@@ -58,7 +59,7 @@ export class Seeder {
                 if (role == null) {
                     continue;
                 }
-                for (var p in privileges) {
+                for (var p of privileges) {
                     var rolePrivilege = await this._rolePrivilegeRepo.create({
                         RoleId: role.id,
                         Privilege: p,
@@ -68,7 +69,7 @@ export class Seeder {
         } catch (error) {
             Logger.instance().log('Error occurred while seeding role-privileges!');
         }
-        Logger.instance().log('Seeded admin user successfully!');
+        Logger.instance().log('Seeded role-privileges successfully!');
     };
 
     private seedSystemAdmin = async () => {

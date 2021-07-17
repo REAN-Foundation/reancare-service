@@ -55,8 +55,10 @@ export class Loader {
                 Loader._authorizer = container.resolve(Authorizer);
                 Loader._seeder = container.resolve(Seeder);
                 
-                Loader._ehrStore = container.resolve(StorageService);
-                await Loader._ehrStore.init();
+                if(process.env.USE_FHIR_STORAGE == 'Yes') {
+                    Loader._ehrStore = container.resolve(StorageService);
+                    await Loader._ehrStore.init();
+                }
 
                 resolve(true);
 

@@ -14,7 +14,7 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
     create = async (object: any): Promise<RolePrivilegeDto> => {
         try {
             var entity = {
-                RoleId: object.RoleName,
+                RoleId: object.RoleId,
                 Privilege: object.Privilege,
             };
             var rolePrivilege = await RolePrivilege.create(entity);

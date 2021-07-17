@@ -33,8 +33,10 @@ export class PatientService {
 
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
         
-        var ehrId = await this._ehrPatientStore.create(patientDomainModel);
-        patientDomainModel.EhrId = ehrId;
+        if (process.env.USE_FHIR_STORAGE == 'Yes') {
+            var ehrId = await this._ehrPatientStore.create(patientDomainModel);
+            patientDomainModel.EhrId = ehrId;
+        }
 
         var patientDto = await this._patientRepo.create(patientDomainModel);
         var role = await this._roleRepo.getByName(Roles.Patient);

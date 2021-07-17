@@ -40,3 +40,4 @@ __Steps to run the default postman collection requests__
 2. Import the environment by importing environment JSON file, - *'reancare.default.local.postman_environment.json'*.
 3. Select the imported environment in Postman.
 4. When you are starting, it is advisable to execute the requests in sequential order from top-to-bottom.
+

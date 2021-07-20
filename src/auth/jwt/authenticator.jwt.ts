@@ -10,6 +10,7 @@ import { IAuthenticator } from '../authenticator.interface';
 import { ApiClientService } from '../../services/api.client.service';
 import { Loader } from '../../startup/loader';
 import { CurrentClient } from '../../data/domain.types/current.client';
+import { AuthenticationResult } from '../../data/domain.types/auth.domain.types';
 
 const execSync = require('child_process').execSync;
 
@@ -22,44 +23,89 @@ export class Authenticator_jwt implements IAuthenticator {
         this._clientService = Loader.container.resolve(ApiClientService);
     }
 
-    public authenticateUser = async (request: express.Request, response: express.Response) => {
-        const authHeader = request.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
-
-        if (token == null) {
-            ResponseHandler.failure(request, response, 'Unauthorized access', 401);
-            return;
-        }
-
+    public authenticateUser = async (
+        request: express.Request,
+        response: express.Response
+    ): Promise<AuthenticationResult> => {
         try {
+            var res: AuthenticationResult = {
+                Result: true,
+                Message: 'Authenticated',
+                HttpErrorCode: 200,
+            };
+
+            const authHeader = request.headers['authorization'];
+            const token = authHeader && authHeader.split(' ')[1];
+
+            if (token == null) {
+                res = {
+                    Result: false,
+                    Message: 'Unauthorized user access',
+                    HttpErrorCode: 401,
+                };
+                return res;
+            }
+
             jwt.verify(token, process.env.USER_ACCESS_TOKEN_SECRET, (error, user) => {
                 if (error) {
-                    ResponseHandler.failure(request, response, 'Forebidden access', 403);
-                    return;
+                    res = {
+                        Result: false,
+                        Message: 'Forebidden user access',
+                        HttpErrorCode: 403,
+                    };
+                    return res;
                 }
                 request.currentUser = user;
             });
         } catch (err) {
             Logger.instance().log(JSON.stringify(err, null, 2));
+            res = {
+                Result: false,
+                Message: 'Error authenticating user',
+                HttpErrorCode: 401,
+            };
         }
+        return res;
     };
 
-    public authenticateClient = async (request: express.Request, response: express.Response) => {
+    public authenticateClient = async (
+        request: express.Request,
+        response: express.Response
+    ): Promise<AuthenticationResult> => {
         try {
-            var apiKey: string = request.headers['X-API-KEY'] as string;
+            var res: AuthenticationResult = {
+                Result: true,
+                Message: 'Authenticated',
+                HttpErrorCode: 200,
+            };
+            var apiKey: string = request.headers['x-api-key'] as string;
             if (!apiKey) {
-                ResponseHandler.failure(request, response, 'Missing API key for the client', 401);
-                return;
+                res = {
+                    Result: false,
+                    Message: 'Missing API key for the client',
+                    HttpErrorCode: 401,
+                };
+                return res;
             }
             apiKey = apiKey.trim();
             var client: CurrentClient = await this._clientService.isApiKeyValid(apiKey);
             if (!client) {
-                ResponseHandler.failure(request, response, 'Invalid API Key: Forebidden access', 403);
-                return;
+                res = {
+                    Result: false,
+                    Message: 'Invalid API Key: Forebidden access',
+                    HttpErrorCode: 403,
+                };
+                return res;
             }
             request.currentClient = client;
         } catch (err) {
             Logger.instance().log(JSON.stringify(err, null, 2));
+            res = {
+                Result: false,
+                Message: 'Error authenticating client',
+                HttpErrorCode: 401,
+            };
         }
+        return res;
     };
 }

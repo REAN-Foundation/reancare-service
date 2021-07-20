@@ -17,7 +17,7 @@ export class ApiClientService {
         var clientCode = await this.getClientCode(clientDomainModel.ClientName);
         clientDomainModel.ClientCode = clientDomainModel.ClientCode ?? clientCode;
         var key = uuidAPIKey.create();
-        clientDomainModel.ApiKey = key.apiKey;
+        clientDomainModel.ApiKey = clientDomainModel.ApiKey?? key.apiKey;
         return await this._clientRepo.create(clientDomainModel);
     };
 

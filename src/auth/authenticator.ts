@@ -21,7 +21,11 @@ export class Authenticator {
         next: express.NextFunction
     ) => {
         try {
-            await this._authenticator.authenticateUser(request, response);
+            var authResult = await this._authenticator.authenticateUser(request, response);
+            if(authResult.Result == false){
+                ResponseHandler.failure(request, response, authResult.Message, authResult.HttpErrorCode);
+                return false;
+            }
             next();
         } catch (error) {
             Logger.instance().log(error.message);
@@ -35,7 +39,11 @@ export class Authenticator {
         next: express.NextFunction
     ) => {
         try {
-            await this._authenticator.authenticateClient(request, response);
+            var authResult = await this._authenticator.authenticateClient(request, response);
+            if(authResult.Result == false){
+                ResponseHandler.failure(request, response, authResult.Message, authResult.HttpErrorCode);
+                return false;
+            }
             next();
         } catch (error) {
             Logger.instance().log(error.message);

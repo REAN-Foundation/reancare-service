@@ -99,8 +99,8 @@ export class ApiClientRepo implements IApiClientRepo {
             var client = await ApiClient.findOne({
                 where:{
                     ApiKey: apiKey,
-                    ValidFrom: { [Op.gte]: new Date() },
-                    ValidTill: { [Op.lte]: new Date() }
+                    ValidFrom: { [Op.lte]: new Date() },
+                    ValidTill: { [Op.gte]: new Date() }
                 }
             });
             if(client == null){

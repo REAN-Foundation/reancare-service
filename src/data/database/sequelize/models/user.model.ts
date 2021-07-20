@@ -18,7 +18,7 @@ import {
 } from 'sequelize-typescript';
 
 import { uuid } from 'uuidv4';
-import * as bcrypt from 'bcryptjs';
+import { hashSync } from 'bcryptjs';
 import Person from './person.model';
 import Role from './role.model';
 
@@ -95,6 +95,13 @@ export default class User extends Model {
     })
     CurrentTimeZone: string;
 
+    @Column({
+        type: DataType.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+    })
+    IsActive: boolean;
+
     @BelongsTo(() => Person)
     Person: Person;
 
@@ -113,9 +120,7 @@ export default class User extends Model {
     @BeforeUpdate
     static encryptPassword(user) {
         if (user.Password != null) {
-            user.Password = bcrypt.hashSync(user.Password, bcrypt.genSaltSync(8));
+            user.Password = hashSync(user.Password, 8);
         }
     }
-
-
 }

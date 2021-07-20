@@ -45,7 +45,6 @@ export class Seeder {
     };
 
     private seedRolePrivileges = async () => {
-
         var rolePrivileges = await this._rolePrivilegeRepo.search();
         if (rolePrivileges.length > 0) {
             return;
@@ -86,7 +85,7 @@ export class Seeder {
                 DisplayName: 'system-admin',
             },
             UserName: 'admin',
-            Password: 'reancare', //Helper.generatePassword(),
+            Password: "rean-foundation", //Helper.generatePassword(),
             DefaultTimeZone: '+05:30',
             CurrentTimeZone: '+05:30',
             RoleId: role.id,
@@ -99,6 +98,24 @@ export class Seeder {
     };
 
     private seedInternalClients = async () => {
+        //Check for internal API client
+        var clientCode = 'REANINTR';
+        var client = await this._apiClientService.getByClientCode(clientCode);
+        if (client == null) {
+            var model: ApiClientDomainModel = {
+                ClientName: 'REAN Foundation - Internal API client',
+                ClientCode: clientCode,
+                Email: 'kiran.kharade@reanfoundation.org',
+                Password: Helper.generatePassword(),
+                ValidFrom: new Date(),
+                ValidTill: new Date(2030, 12, 31),
+                ApiKey: process.env.API_CLIENT_INTERNAL
+            };
+            client = await this._apiClientService.create(model);
+        }
+        var str = JSON.stringify(client, null, '  ');
+        Logger.instance().log(str);
+
         //Check for REAN patient app
         var clientCode = 'REANPTNT';
         var client = await this._apiClientService.getByClientCode(clientCode);
@@ -109,10 +126,14 @@ export class Seeder {
                 Email: 'tushar.katakdound@reanfoundation.org',
                 Password: Helper.generatePassword(),
                 ValidFrom: new Date(),
-                ValidTill: new Date(2030, 12, 31)
+                ValidTill: new Date(2030, 12, 31),
+                ApiKey: process.env.API_CLIENT_INTERNAL_PATIENT_APP
             };
-            await this._apiClientService.create(model);
+            client = await this._apiClientService.create(model);
         }
+        str = JSON.stringify(client, null, '  ');
+        Logger.instance().log(str);
+
         //Check for REAN patient app
         var clientCode = 'REANDCTR';
         var client = await this._apiClientService.getByClientCode(clientCode);
@@ -123,10 +144,14 @@ export class Seeder {
                 Email: 'tushar.katakdound@reanfoundation.org',
                 Password: Helper.generatePassword(),
                 ValidFrom: new Date(),
-                ValidTill: new Date(2030, 12, 31)
+                ValidTill: new Date(2030, 12, 31),
+                ApiKey: process.env.API_CLIENT_INTERNAL_DOCTOR_APP
             };
-            await this._apiClientService.create(model);
+            client = await this._apiClientService.create(model);
         }
+        str = JSON.stringify(client, null, '  ');
+        Logger.instance().log(str);
+
         //Check for REAN patient app
         var clientCode = 'REANALAB';
         var client = await this._apiClientService.getByClientCode(clientCode);
@@ -137,10 +162,14 @@ export class Seeder {
                 Email: 'tushar.katakdound@reanfoundation.org',
                 Password: Helper.generatePassword(),
                 ValidFrom: new Date(),
-                ValidTill: new Date(2030, 12, 31)
+                ValidTill: new Date(2030, 12, 31),
+                ApiKey: process.env.API_CLIENT_INTERNAL_LAB_APP
             };
-            await this._apiClientService.create(model);
+            client = await this._apiClientService.create(model);
         }
+        str = JSON.stringify(client, null, '  ');
+        Logger.instance().log(str);
+
         //Check for REAN patient app
         var clientCode = 'REANPHRM';
         var client = await this._apiClientService.getByClientCode(clientCode);
@@ -151,10 +180,13 @@ export class Seeder {
                 Email: 'tushar.katakdound@reanfoundation.org',
                 Password: Helper.generatePassword(),
                 ValidFrom: new Date(),
-                ValidTill: new Date(2030, 12, 31)
+                ValidTill: new Date(2030, 12, 31),
+                ApiKey: process.env.API_CLIENT_INTERNAL_PHARMACY_APP
             };
-            await this._apiClientService.create(model);
+            client = await this._apiClientService.create(model);
         }
+        str = JSON.stringify(client, null, '  ');
+        Logger.instance().log(str);
         Logger.instance().log('Seeded internal clients successfully!');
     };
 
@@ -205,6 +237,5 @@ export class Seeder {
             Description:
                 'Represents a health social worker/health support professional representing government/private health service.',
         });
-
     };
 }

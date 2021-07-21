@@ -3,6 +3,7 @@ import express from 'express';
 import { Logger } from './logger';
 import { ActivityRecorder } from './activity.recorder';
 import { InputValidationError } from './input.validation.error';
+import { ResponseDto } from '../data/domain.types/response.domain.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -21,11 +22,15 @@ export class ResponseHandler {
         
         var msg = error? error.message : (message? message : 'An error has occurred.');
 
-        var responseObject = {
+        var errorStack = error ? error.stack : '';
+        var tmp = errorStack.split('\n');
+        var trace_path = tmp.map(x => x.trim());
+
+        var responseObject: ResponseDto = {
             Status: 'failure',
             Message: msg,
             HttpErroCode: httpErrorCode ? httpErrorCode : 500,
-            Trace: error ? error.stack : [],
+            Trace: trace_path,
             Client: request ? request.currentClient: null,
             User: request ? request.currentUser : null,
             Context: request ? request.context : null,

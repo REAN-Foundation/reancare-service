@@ -116,7 +116,6 @@ export default class User extends Model {
     DeletedAt: Date;
 
     @BeforeCreate
-    @BeforeSave
     @BeforeUpdate
     static encryptPassword(user) {
         if (user.Password != null) {

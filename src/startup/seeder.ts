@@ -82,7 +82,7 @@ export class Seeder {
         var userDomainModel: UserDomainModel = {
             Person: {
                 Phone: '+91 0000000000',
-                DisplayName: 'system-admin',
+                FirstName: 'system-admin'
             },
             UserName: 'admin',
             Password: "rean-foundation", //Helper.generatePassword(),

@@ -65,7 +65,7 @@ export class UserService {
             UserName: user.UserName,
             CurrentRoleId: loginModel.LoginRoleId,
         };
-        var accessToken = Loader.authorizer.generateUserSessionToken(currentUser);
+        var accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
 
         return { user: user, accessToken: accessToken };
     };
@@ -213,7 +213,7 @@ export class UserService {
         return displayId;
     }
     
-    private async checkUserDetails(loginModel: UserLoginDetails) {
+    private async checkUserDetails(loginModel: UserLoginDetails): Promise<UserDetailsDto> {
 
         var person: PersonDetailsDto = null;
         var user: UserDetailsDto = null;
@@ -250,6 +250,7 @@ export class UserService {
                 throw new ApiError(404, 'Cannot find user with the given role.');
             }
         }
+        user.Person = user.Person ?? person;
 
         return user;
     }

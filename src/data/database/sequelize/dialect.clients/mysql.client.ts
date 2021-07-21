@@ -10,6 +10,7 @@ export class MysqlClient {
     public static createDb = async () => {
         try {
             const config = DbConfig.config;
+            //var query = `CREATE DATABASE ${config.database} CHARACTER SET utf8 COLLATE utf8_general_ci;`;
             var query = `CREATE DATABASE ${config.database}`;
             await MysqlClient.executeQuery(query);
         } catch (error) {

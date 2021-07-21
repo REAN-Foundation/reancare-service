@@ -83,20 +83,15 @@ export class UserController {
                 return;
             }
 
-            var user: UserDetailsDto = userDetails.UserDto;
-            var accessToken = userDetails.AccessToken;
+            var user: UserDetailsDto = userDetails.user;
+            var accessToken = userDetails.accessToken;
+            var message = `User '${user.Person.DisplayName}' logged in successfully!`;
+            var data = {
+                accessToken: accessToken,
+                user: user,
+            };
 
-            ResponseHandler.success(
-                request,
-                response,
-                `User \'' ${user.Person.DisplayName}+ '\' logged in successfully!`,
-                200,
-                {
-                    accessToken: accessToken,
-                    user: user,
-                },
-                false
-            );
+            ResponseHandler.success(request, response, message, 200, data, true);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

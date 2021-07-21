@@ -3,7 +3,7 @@ import child_process from 'child_process';
 import { InputValidationError } from './input.validation.error';
 import { Gender } from './system.types';
 import { generate} from 'generate-password';
-
+import { scryptSync, randomBytes } from 'crypto';
 ////////////////////////////////////////////////////////////////////////
 
 export class Helper {
@@ -132,9 +132,11 @@ export class Helper {
         firstName: string | null,
         lastName: string | null
     ): string => {
-        var prefix = prefix ? prefix + ' ' : '';
-        var firstName = firstName ? firstName + ' ' : '';
-        const displayName: string = prefix + firstName + lastName ?? '';
+        var prefix = Helper.checkStr(prefix) ? prefix + ' ' : '';
+        var firstName = Helper.checkStr(firstName) ? firstName + ' ' : '';
+        var lastName = Helper.isStr(lastName) ? lastName : '';
+        var displayName: string = prefix + firstName + lastName;
+        displayName = displayName.trim();
         return displayName;
     };
 
@@ -179,7 +181,7 @@ export class Helper {
         return Helper.isAlpha(c) || Helper.isDigit(c);
     };
 
-    static checkStr(val: any): string {
+    static checkStr(val: any) {
         if (typeof val === null || typeof val === undefined || typeof val !== 'string') {
             return null;
         }
@@ -223,5 +225,11 @@ export class Helper {
             symbols: true,
         });
         return password;
+    }
+
+    static _salt:string = randomBytes(16).toString("hex");
+    static createHash(str:string): string {
+        const hash = scryptSync(str, Helper._salt, 32).toString("hex");
+        return hash;
     }
 }

@@ -1,5 +1,5 @@
 import express from 'express';
-import { query, body, validationResult, param } from 'express-validator';
+import { query, body, validationResult, param, CustomSanitizer, CustomValidator } from 'express-validator';
 import { Helper } from '../../common/helper';
 import { PatientDomainModel, PatientSearchFilters } from '../../data/domain.types/patient.domain.types';
 import { AddressDomainModel } from '../../data/domain.types/address.domain.types';
@@ -41,13 +41,15 @@ export class PatientInputValidator {
                 ? new Date(Date.parse(request.body.BirthDate))
                 : null;
 
+        var phone = request.body.PhoneCountryCode + request.body.PhoneNumber;
+
         var entity: PatientDomainModel = {
             User: {
                 Person: {
                     FirstName: request.body.FirstName ?? null,
                     LastName: request.body.LastName ?? null,
                     Prefix: request.body.Prefix ?? null,
-                    Phone: request.body.Phone,
+                    Phone: phone,
                     Email: request.body.Email ?? null,
                     Gender: request.body.Gender ?? null,
                     BirthDate: birthdate,
@@ -69,7 +71,25 @@ export class PatientInputValidator {
         request: express.Request,
         response: express.Response
     ): Promise<PatientDomainModel> => {
-        await body('Phone').exists().trim().escape().run(request);
+
+        await body('PhoneCountryCode')
+            .exists()
+            .notEmpty()
+            .trim()
+            .escape()
+            .customSanitizer(Helper.sanitizePhoneCountryCode)
+            .custom(Helper.validatePhoneCountryCode)
+            .run(request);
+
+        await body('PhoneNumber')
+            .exists()
+            .notEmpty()
+            .trim()
+            .escape()
+            .customSanitizer(Helper.sanitizePhoneNumber)
+            .custom(Helper.validatePhoneNumber)
+            .run(request);
+        
         await body('Email').optional().trim().isEmail().escape().normalizeEmail().run(request);
         await body('FirstName').optional().trim().escape().run(request);
         await body('LastName').optional().trim().escape().run(request);

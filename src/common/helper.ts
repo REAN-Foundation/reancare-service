@@ -4,6 +4,7 @@ import { InputValidationError } from './input.validation.error';
 import { Gender } from './system.types';
 import { generate} from 'generate-password';
 import { scryptSync, randomBytes } from 'crypto';
+import { CustomSanitizer, CustomValidator } from 'express-validator';
 ////////////////////////////////////////////////////////////////////////
 
 export class Helper {
@@ -181,6 +182,26 @@ export class Helper {
         return Helper.isAlpha(c) || Helper.isDigit(c);
     };
 
+    static hasAlpha = (str: string) => {
+        for (var c of str) {
+            if (Helper.isAlpha(c)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    static getDigitsOnly = (str: string): string => {
+        var temp: string = '';
+        for (var x = 0; x < str.length; x++) {
+            var c = str.charAt(x);
+            if (Helper.isDigit(c)) {
+                temp += c;
+            }
+        }
+        return temp;
+    };
+
     static checkStr(val: any) {
         if (typeof val === null || typeof val === undefined || typeof val !== 'string') {
             return null;
@@ -227,9 +248,37 @@ export class Helper {
         return password;
     }
 
-    static _salt:string = randomBytes(16).toString("hex");
-    static createHash(str:string): string {
-        const hash = scryptSync(str, Helper._salt, 32).toString("hex");
+    static _salt: string = randomBytes(16).toString('hex');
+    static createHash(str: string): string {
+        const hash = scryptSync(str, Helper._salt, 32).toString('hex');
         return hash;
     }
+
+    static sanitizePhoneNumber(phoneNumber: string) {
+        var temp = Helper.getDigitsOnly(phoneNumber);
+        return temp;
+    }
+
+    static sanitizePhoneCountryCode(phoneCountryCode: string) {
+        var temp = Helper.getDigitsOnly(phoneCountryCode);
+        return '+' + temp;
+    }
+
+    public static validatePhoneCountryCode(phoneCountryCode: string) {
+        var validCountryCode = Helper.isStr(phoneCountryCode) && phoneCountryCode.length > 0;
+        if (!validCountryCode) {
+            return Promise.reject('Invalid country code');
+        }
+        return Promise.resolve();
+    }
+
+    public static validatePhoneNumber(phoneNumber: string) {
+        var validPhoneNumber = Helper.isStr(phoneNumber) && phoneNumber.length > 9;
+        if (!validPhoneNumber) {
+            //throw new InputValidationError(['Invalid phone number']);
+            return Promise.reject('Invalid phone number');
+        }
+        return Promise.resolve();
+    }
+
 }

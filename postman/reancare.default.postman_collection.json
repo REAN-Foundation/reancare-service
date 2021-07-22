@@ -6,13 +6,166 @@
 	},
 	"item": [
 		{
-			"name": "Patient",
+			"name": "Service health-check",
 			"item": [
 				{
-					"name": "Create patient",
+					"name": "Health-check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes).to.have.property('message');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}",
+							"host": [
+								"{{BASE_URL}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "System admin",
+			"item": [
+				{
+					"name": "Admin log-in",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"ADMIN_USER_JWT\", jsonRes.Data.accessToken);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Admin login: Access token is returned\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
+									"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserName\": \"admin\",\r\n    \"Password\": \"rean-foundation\",\r\n    \"LoginRoleId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/login-with-password",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"login-with-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Api Client",
+			"item": [
+				{
+					"name": "Create an API client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"API_CLIENT_ID\", jsonRes.Data.Client.id);\r",
+									"    pm.environment.set(\"API_CLIENT_CODE\", jsonRes.Data.Client.ClientCode);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Client is created\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Client');\r",
+									"    pm.expect(jsonRes.Data.Client).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Client).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Client).to.have.property('ClientCode');\r",
+									"    pm.expect(jsonRes.Data.Client.ClientCode).to.not.be.null;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
 							{
 								"key": "Content-Type",
 								"value": "application/json",
@@ -21,7 +174,230 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"FirstName\": \"K\",\r\n    \"LastName\": \"Kharade\",\r\n    \"Phone\": \"+91 9970155165\",\r\n    \"Email\": \"kk@gmail.com\",\r\n    \"Prefix\": \"Mr.\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1975-06-01\"\r\n}\r\n"
+							"raw": "{\r\n    \"ClientName\": \"My health app\",\r\n    \"Password\": \"my-password\",\r\n    \"Phone\": \"+91 9876543219\",\r\n    \"Email\": \"dev@excell-medicos.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api-clients",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api-clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create an API client - with validity period",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"API_CLIENT_ID\", jsonRes.Data.Client.id);\r",
+									"    pm.environment.set(\"API_CLIENT_CODE\", jsonRes.Data.Client.ClientCode);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Client is created\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Client');\r",
+									"    pm.expect(jsonRes.Data.Client).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Client).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Client).to.have.property('ClientCode');\r",
+									"    pm.expect(jsonRes.Data.Client.ClientCode).to.not.be.null;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ClientName\": \"Excellent Medicos\",\r\n    \"Password\": \"my-password\",\r\n    \"Phone\": \"+91 9876543219\",\r\n    \"Email\": \"dev@excell-medicos.com\",\r\n    \"ValidFrom\": \"2021-07-21\",\r\n    \"ValidTill\": \"2024-07-20\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api-clients",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api-clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get API client by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"API_CLIENT_ID\", jsonRes.DataObject.Client.id);\r",
+									"    pm.environment.set(\"API_CLIENT_CODE\", jsonRes.DataObject.Client.ClientCode);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Client is returned\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.DataObject).to.have.property('Client');\r",
+									"    pm.expect(jsonRes.DataObject.Client).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.DataObject.Client).to.have.property('id');\r",
+									"    pm.expect(jsonRes.DataObject.Client).to.have.property('ClientCode');\r",
+									"    pm.expect(jsonRes.DataObject.Client.ClientCode).to.not.be.null;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/api-clients/{{API_CLIENT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api-clients",
+								"{{API_CLIENT_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Patient",
+			"item": [
+				{
+					"name": "Register patient : with only a phone number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+									"    pm.environment.set(\"PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Client is created\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Client');\r",
+									"    pm.expect(jsonRes.Data.Patient).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Patient).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Patient).to.have.property('User');\r",
+									"    pm.expect(jsonRes.Data.Patient.User).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Patient.User).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Patient.User.Person).to.have.property('id');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PhoneCountryCode\": \"+91\",\r\n    \"PhoneNumber\": \"99701320165\"\r\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/patients",
@@ -38,18 +414,26 @@
 			]
 		},
 		{
-			"name": "New Request",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}",
-					"host": [
-						"{{BASE_URL}}"
-					]
+			"name": "Roles",
+			"item": [
+				{
+					"name": "Get existing roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASIC_URL}}/",
+							"host": [
+								"{{BASIC_URL}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	]
 }

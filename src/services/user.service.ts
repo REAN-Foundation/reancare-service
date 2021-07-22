@@ -154,16 +154,19 @@ export class UserService {
         if(lastName == null) {
             lastName = generate({length: 4, numbers: false, lowercase: true, uppercase: false, symbols: false});
         }
-        var rand = Math.random().toString(10).substr(2, 5);
-        var userName = firstName.substr(0, 3) + lastName.substr(0, 3) + rand;
-        userName = userName.toLowerCase();
+        var userName = this.constructUserName(firstName, lastName);
         var exists = await this._userRepo.userExistsWithUsername(userName);
         while (exists) {
-            rand = Math.random().toString(36).substr(2, 5);
-            userName = firstName.substr(0, 3) + lastName.substr(0, 2) + rand;
-            userName = userName.toLowerCase();
+            userName = this.constructUserName(firstName, lastName);
             exists = await this._userRepo.userExistsWithUsername(userName);
         }
+        return userName;
+    }
+    
+    private constructUserName(firstName: string, lastName: string) {
+        var rand = Math.random().toString(10).substr(2, 4);
+        var userName = firstName.substr(0, 3) + lastName.substr(0, 3) + rand;
+        userName = userName.toLowerCase();
         return userName;
     }
 
@@ -212,7 +215,7 @@ export class UserService {
         var displayId = prefix + str;
         return displayId;
     }
-    
+
     private async checkUserDetails(loginModel: UserLoginDetails): Promise<UserDetailsDto> {
 
         var person: PersonDetailsDto = null;

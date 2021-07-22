@@ -93,4 +93,5 @@ export class PatientService {
         }
         return persons.length;
     };
+
 }

@@ -51,4 +51,9 @@ export class PersonService {
         return await this._personRepo.delete(id);
     };
 
+    getPersonWithPhone = async (phone: string): Promise<PersonDetailsDto> => {
+        return await this._personRepo.getPersonWithPhone(phone);
+    };
+
+
 }

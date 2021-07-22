@@ -1,7 +1,4 @@
 import { inject, injectable } from "tsyringe";
-import { Logger } from '../common/logger';
-import { ApiError } from '../common/api.error';
-import { AddressDomainModel, AddressDto } from "../data/domain.types/address.domain.types";
 import { IRolePrivilegeRepo } from "../data/repository.interfaces/role.privilege.repo.interface";
 import { RolePrivilegeDto } from "../data/domain.types/role.domain.types";
 

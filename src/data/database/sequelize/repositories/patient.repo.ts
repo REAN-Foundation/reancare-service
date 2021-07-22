@@ -14,6 +14,7 @@ export class PatientRepo implements IPatientRepo {
         try {
             var entity = {
                 UserId: patientDomainModel.UserId,
+                PersonId: patientDomainModel.PersonId,
                 DisplayId: patientDomainModel.DisplayId,
                 NationalHealthId: patientDomainModel.NationalHealthId,
                 MedicalProfileId: patientDomainModel.MedicalProfileId,

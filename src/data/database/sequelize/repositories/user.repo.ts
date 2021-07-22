@@ -11,6 +11,7 @@ import { Helper } from "../../../../common/helper";
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserRepo implements IUserRepo {
+
     userNameExists = async (userName: string): Promise<Boolean> => {
         if (userName != null && typeof userName != 'undefined') {
             var existing = await User.findOne({ where: { UserName: userName } });
@@ -54,7 +55,6 @@ export class UserRepo implements IUserRepo {
         return null;
     };
 
-    
     create = async (userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
             var entity = {

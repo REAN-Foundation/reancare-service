@@ -8,11 +8,15 @@ import { ApiClientDomainModel, ApiClientVerificationDomainModel } from '../../da
 export class ApiClientInputValidator {
     static getDomainModel = async (body: any): Promise<ApiClientDomainModel> => {
 
+        
         var clientModel: ApiClientDomainModel = null;
         var obj = Helper.checkObj(body);
         if (obj == null) {
             return null;
         }
+        var d = new Date();
+        d.setFullYear(d.getFullYear() + 1);
+
         clientModel = {
             ClientName: body.ClientName ?? null,
             ClientCode: null,
@@ -20,6 +24,8 @@ export class ApiClientInputValidator {
             Phone: body.Phone ?? null,
             Email: body.Email ?? null,
             Password: body.Password ?? null,
+            ValidFrom: body.ValidFrom ? new Date(body.ValidFrom) : new Date(),
+            ValidTill: body.ValidTill ? new Date(body.ValidTill) : d
         };
         return clientModel;
     };
@@ -29,10 +35,10 @@ export class ApiClientInputValidator {
         response: express.Response
     ): Promise<ApiClientDomainModel> => {
 
-        await body('ClientName').exists().isLength({ min: 1 }).trim().escape().run(request);
+        await body('ClientName').exists().trim().escape().isLength({ min: 3 }).run(request);
         await body('Phone').exists().trim().escape().isLength({ min: 10 }).run(request);
         await body('Email').exists().trim().escape().isEmail().isLength({ min: 3 }).run(request);
-        await body('Password').exists().trim().escape().isLength({ min: 8 }).run(request);
+        await body('Password').exists().trim().escape().isLength({ min: 6 }).run(request);
         await body('ValidFrom').optional().trim().escape().isDate().run(request);
         await body('ValidTill').optional().trim().escape().isDate().run(request);
 
@@ -40,7 +46,7 @@ export class ApiClientInputValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return ApiClientInputValidator.getDomainModel(request);
+        return ApiClientInputValidator.getDomainModel(request.body);
     };
 
     static getOrRenewApiKey = async (

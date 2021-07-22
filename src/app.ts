@@ -1,7 +1,6 @@
 import "reflect-metadata"
 
 import express = require('express');
-import bodyParser = require("body-parser");
 import fileUpload = require('express-fileupload');
 import cors = require('cors');
 import helmet = require('helmet');
@@ -61,8 +60,7 @@ export default class Application {
 
         return new Promise((resolve, reject) => {
             try {
-                this._app.use(bodyParser.json());
-                this._app.use(bodyParser.urlencoded({ extended: true }));
+                this._app.use(express.urlencoded({extended: true}));
                 this._app.use(express.json());
                 this._app.use(helmet());
                 this._app.use(cors());

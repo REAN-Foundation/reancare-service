@@ -23,13 +23,11 @@ export class UserController {
 
     //#endregion
 
-
     getById = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'User.GetById';
-            if (!this._authorizer.authorize(request, response)) {
-                return false;
-            }
+            await this._authorizer.authorize(request, response);
+
             var id: string = await UserInputValidator.getById(request, response);
             const user = await this._service.getById(id);
             if (user == null) {
@@ -87,35 +85,16 @@ export class UserController {
             var accessToken = userDetails.accessToken;
             var message = `User '${user.Person.DisplayName}' logged in successfully!`;
             var data = {
-                accessToken: accessToken,
-                user: user,
+                AccessToken: accessToken,
+                User: user,
             };
 
             ResponseHandler.success(request, response, message, 200, data, true);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
-
-    // resetPassword = async (request: express.Request, response: express.Response) => {
-    //     try {
-    //         request.context = 'User.ResetPassword';
-    //         if (!this._authorizer.authorize(request, response)) {
-    //             return false;
-    //         }
-    //         var obj = UserInputValidator.resetPassword(request, response);
-    //         var details = await this._service.resetPassword(obj);
-    //         if (details == null) {
-    //             ResponseHandler.failure(request, response, 'Unable to reset password!', 404);
-    //             return;
-    //         }
-    //         ResponseHandler.success(request, response, `Password reset successfully!`, 200, {
-    //             details: details,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
 
     generateOtp = async (request: express.Request, response: express.Response) => {
         try {
@@ -141,46 +120,40 @@ export class UserController {
                 return;
             }
 
-            var user = userDetails.user;
+            var user: UserDetailsDto = userDetails.user;
             var accessToken = userDetails.accessToken;
-            var role = user.Role;
-            var roleTableId = user.RoleTableId;
-
-            if (roleTableId == null) {
-                ResponseHandler.failure(request, response, 'Login error : user role not found.', 404);
-                return;
-            }
-
-            var firstName = user.FirstName != null ? user.FirstName : '';
-            var lastName = user.LastName != null ? user.LastName : '';
-            var name = firstName + ' ' + lastName;
-
-            var entity = {
-                UserId: user.id,
-                RoleId: user.RoleTableId,
-                FirstName: user.FirstName,
-                LastName: user.LastName,
-                PhoneNumber: user.PhoneNumber,
-                Email: user.Email,
-                UserName: user.UserName,
-                DateCreated: user.created_at,
-                DateUpdated: user.updated_at,
+            var message = `User '${user.Person.DisplayName}' logged in successfully!`;
+            var data = {
+                AccessToken: accessToken,
+                User: user,
             };
 
-            ResponseHandler.success(
-                request,
-                response,
-                `User \'' ${name}+ '\' logged in successfully!`,
-                200,
-                {
-                    accessToken: accessToken,
-                    user: entity,
-                },
-                false
-            );
+            ResponseHandler.success(request, response, message, 200, data, true);
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    
+    // resetPassword = async (request: express.Request, response: express.Response) => {
+    //     try {
+    //         request.context = 'User.ResetPassword';
+    //         if (!this._authorizer.authorize(request, response)) {
+    //             return false;
+    //         }
+    //         var obj = UserInputValidator.resetPassword(request, response);
+    //         var details = await this._service.resetPassword(obj);
+    //         if (details == null) {
+    //             ResponseHandler.failure(request, response, 'Unable to reset password!', 404);
+    //             return;
+    //         }
+    //         ResponseHandler.success(request, response, `Password reset successfully!`, 200, {
+    //             details: details,
+    //         });
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // };
 
 }

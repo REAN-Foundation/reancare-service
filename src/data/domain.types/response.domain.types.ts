@@ -4,20 +4,25 @@ import { CurrentClient } from "./current.client"
 import { CurrentUser } from "./current.user"
 import express from 'express';
 
+export interface RequestDto {
+    Method: string;
+    Host: string;
+    Body: any;
+    Headers?: IncomingHttpHeaders;
+    Url: string;
+    Params: any;
+};
+
 export interface ResponseDto {
     Status: string;
     Message: string;
-    HttpErroCode: number;
-    Trace: string[];
+    HttpCode: number;
+    Data?: any;
+    Trace?: string[];
     Client: CurrentClient;
     User: CurrentUser;
     Context: string;
-    RequestMethod: string;
-    RequestHost: string;
-    RequestBody: any;
-    RequestHeaders: IncomingHttpHeaders;
-    RequestUrl: string;
-    RequestParams: any;
+    Request?: RequestDto;
     ClientIps: string[];
     APIVersion: string;
     ServiceVersion: string;

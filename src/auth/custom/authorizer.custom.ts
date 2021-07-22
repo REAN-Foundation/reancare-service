@@ -17,7 +17,6 @@ const execSync = require('child_process').execSync;
 //////////////////////////////////////////////////////////////
 
 export class Authorizer_custom implements IAuthorizer {
-
     _rolePrivilegeService: RolePrivilegeService = null;
     constructor() {
         this._rolePrivilegeService = Loader.container.resolve(RolePrivilegeService);
@@ -39,13 +38,14 @@ export class Authorizer_custom implements IAuthorizer {
             }
             var isResourceOwner = await this.isResourceOwner(currentUser, request);
             var hasConsent = await this.hasConsent(currentUser.CurrentRoleId, context);
-            if (hasConsent  || isResourceOwner) {
+            if (hasConsent || isResourceOwner) {
                 return true;
             }
             return false;
         } catch (error) {
-            throw new ApiError(401, 'Unauthorized access' + error.message);
+            Logger.instance().log(error.message);
         }
+        return false;
     };
 
     public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
@@ -64,23 +64,26 @@ export class Authorizer_custom implements IAuthorizer {
         if (rolePrivileges.length == 0) {
             return false;
         }
-        var privileges: string[] = rolePrivileges.map(x => { return x.Privilege.toLowerCase(); } );
+        var privileges: string[] = rolePrivileges.map((x) => {
+            return x.Privilege.toLowerCase();
+        });
         var contextLower = context.toLowerCase();
-        var found = privileges.find(x => { return x === contextLower; });
-        if(!found) {
+        var found = privileges.find((x) => {
+            return x === contextLower;
+        });
+        if (!found) {
             return false;
         }
         return true;
-    }
+    };
 
     private isResourceOwner = async (user: CurrentUser, request: express.Request): Promise<boolean> => {
         //for time being, return true always
         return true;
-    }
+    };
 
     private hasConsent = async (CurrentRoleId: number, context: string): Promise<boolean> => {
         //for time being, return true always
         return true;
-    }
-
+    };
 }

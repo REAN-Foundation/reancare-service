@@ -29,25 +29,32 @@ export class ResponseHandler {
         var responseObject: ResponseDto = {
             Status: 'failure',
             Message: msg,
-            HttpErroCode: httpErrorCode ? httpErrorCode : 500,
+            HttpCode: httpErrorCode ? httpErrorCode : 500,
             Trace: trace_path,
             Client: request ? request.currentClient: null,
             User: request ? request.currentUser : null,
             Context: request ? request.context : null,
-            RequestMethod: request ? request.method : null,
-            RequestHost: request ? request.hostname: null,
-            RequestBody: request ? request.body : null,
-            RequestHeaders: request ? request.headers : null,
-            RequestUrl: request ? request.originalUrl : null,
-            RequestParams: request ? request.params : null,
+            Request: {
+                Method: request ? request.method : null,
+                Host: request ? request.hostname: null,
+                Body: request ? request.body : null,
+                Headers: request ? request.headers : null,
+                Url: request ? request.originalUrl : null,
+                Params: request ? request.params : null,
+            },
             ClientIps: request && request.ips.length > 0 ? request.ips: ips,
             APIVersion: process.env.API_VERSION,
             ServiceVersion: process.env.SERVICE_VERSION,
         };
+        
         if (process.env.NODE_ENV != 'test') {
             Logger.instance().log(JSON.stringify(responseObject, null, 2));
         }
+
         ActivityRecorder.record(responseObject);
+
+        //Don't send request related info in response, only use it for logging
+        delete responseObject.Request;
         return response.status(httpErrorCode).send(responseObject);
     }
 
@@ -63,20 +70,23 @@ export class ResponseHandler {
             request.header('x-forwarded-for') || request.socket.remoteAddress
         ];
        
-        var responseObject = {
+        var responseObject: ResponseDto = {
             Status: 'success',
             Message: message,
-            HttpCode: httpCode,
-            DataObject: data ? data : null,
+            HttpCode: httpCode ?? 200,
+            Data: data ?? null,
+            Trace: null,
             Client: request ? request.currentClient: null,
             User: request ? request.currentUser : null,
             Context: request ? request.context : null,
-            RequestMethod: request ? request.method : null,
-            RequestHost: request ? request.hostname: null,
-            RequestBody: request ? request.body : null,
-            RequestHeaders: request ? request.headers : null,
-            RequestUrl: request ? request.originalUrl : null,
-            RequestParams: request ? request.params : null,
+            Request: {
+                Method: request ? request.method : null,
+                Host: request ? request.hostname: null,
+                Body: request ? request.body : null,
+                Headers: request ? request.headers : null,
+                Url: request ? request.originalUrl : null,
+                Params: request ? request.params : null,
+            },
             ClientIps: request && request.ips.length > 0 ? request.ips: ips,
             APIVersion: process.env.API_VERSION,
             ServiceVersion: process.env.SERVICE_VERSION,
@@ -84,11 +94,15 @@ export class ResponseHandler {
 
         if (process.env.NODE_ENV != 'test') {
             if (!logDataObject) {
-                responseObject.DataObject = null;
+                responseObject.Data = null;
             }
             Logger.instance().log(JSON.stringify(responseObject, null, 2));
         }
+       
         ActivityRecorder.record(responseObject);
+        
+        //Don't send request related info in response, only use it for logging
+        delete responseObject.Request;
         return response.status(httpCode).send(responseObject);
     }
 

@@ -17,6 +17,7 @@ import { ApiError } from '../../common/api.error';
 import { AddressDomainModel } from '../../data/domain.types/address.domain.types';
 import { AddressInputValidator } from '../input.validators/address.input.validator';
 import { AddressService } from '../../services/address.service';
+import { RoleService } from '../../services/role.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,12 +29,14 @@ export class PatientController {
     _userService: UserService = null;
     _personService: PersonService = null;
     _addressService: AddressService = null;
+    _roleService: RoleService = null;
     _authorizer: Authorizer = null;
 
     constructor() {
         this._service = Loader.container.resolve(PatientService);
         this._userService = Loader.container.resolve(UserService);
         this._personService = Loader.container.resolve(PersonService);
+        this._roleService = Loader.container.resolve(RoleService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -73,11 +76,18 @@ export class PatientController {
 
             //Create a person first
 
-            var person = await this._personService.create(personDomainModel);
-            if(person == null) {
-                throw new ApiError(400, 'Cannot create person!');
+            var person = await this._personService.getPersonWithPhone(patientDomainModel.User.Person.Phone);
+            if (person == null) {
+                person = await this._personService.create(personDomainModel);
+                if (person == null) {
+                    throw new ApiError(400, 'Cannot create person!');
+                }
             }
+
+            var role = await this._roleService.getByName(Roles.Patient);
             patientDomainModel.PersonId = person.id;
+            userDomainModel.Person.id = person.id;
+            userDomainModel.RoleId = role.id;
 
             var user = await this._userService.create(userDomainModel);
             if(user == null) {
@@ -108,7 +118,7 @@ export class PatientController {
     getByUserId = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Patient.GetByUserId';
-            this._authorizer.authorize(request, response);
+            await this._authorizer.authorize(request, response);
 
             var userId: string = await PatientInputValidator.getByUserId(request, response);
 
@@ -133,7 +143,7 @@ export class PatientController {
     search = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Patient.Search';
-            this._authorizer.authorize(request, response);
+            await this._authorizer.authorize(request, response);
 
             var filters = await PatientInputValidator.search(request, response);
 
@@ -160,9 +170,7 @@ export class PatientController {
     updateByUserId = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Patient.UpdateByUserId';
-            if (!this._authorizer.authorize(request, response)) {
-                return false;
-            }
+            await this._authorizer.authorize(request, response);
 
             var patientDomainModel = await PatientInputValidator.updateByUserId(request, response);
 
@@ -198,9 +206,7 @@ export class PatientController {
     delete = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Patient.DeleteByUserId';
-            if (!this._authorizer.authorize(request, response)) {
-                return false;
-            }
+            await this._authorizer.authorize(request, response);
 
             var userId: string = await PatientInputValidator.delete(request, response);
             const existingUser = await this._userService.getById(userId);
@@ -221,7 +227,10 @@ export class PatientController {
             ResponseHandler.handleError(request, response, error);
         }
     }
+    //#endregion
 
+    //#region Private methods
+    
     private async createOrUpdateAddress(request, patientDomainModel: PatientDomainModel) {
 
         var addressDomainModel: AddressDomainModel = null;

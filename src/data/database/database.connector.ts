@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { IDatabaseConnector } from '../database.connector.interface';
-import { injectable, inject } from "tsyringe";
+import { injectable, inject } from 'tsyringe';
 import { Logger } from '../../common/logger';
 
 ////////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@ export class DatabaseConnector {
                 await this._db.connect();
                 resolve(true);
             } catch (error) {
-                
+                Logger.instance().log('init database error: ' + error.message);
                 reject(error);
             }
         });
@@ -29,13 +29,13 @@ export class DatabaseConnector {
         } catch (error) {
             Logger.instance().log('Sync database error: ' + error.message);
             //reject(error);
-    }
+        }
     };
 
     public createDatabase = async (): Promise<boolean> => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                this._db.createDatabase();
+                await this._db.createDatabase();
                 resolve(true);
             } catch (error) {
                 Logger.instance().log('Create database error: ' + error.message);
@@ -45,20 +45,21 @@ export class DatabaseConnector {
     };
 
     public dropDatabase = async (): Promise<boolean> => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                this._db.dropDatabase();
+                await this._db.dropDatabase();
                 resolve(true);
             } catch (error) {
-                reject(error);
+                Logger.instance().log('Drop database error: ' + error.message);
+                //reject(error);
             }
         });
     };
 
     public migrate = async (): Promise<boolean> => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                this._db.migrate();
+                await this._db.migrate();
                 resolve(true);
             } catch (error) {
                 reject(error);
@@ -67,9 +68,9 @@ export class DatabaseConnector {
     };
 
     public executeQuery = async (query: string): Promise<boolean> => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
-                this._db.executeQuery(query);
+                await this._db.executeQuery(query);
                 resolve(true);
             } catch (error) {
                 reject(error);
@@ -77,7 +78,5 @@ export class DatabaseConnector {
         });
     };
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////

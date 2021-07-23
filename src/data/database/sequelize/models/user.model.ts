@@ -17,7 +17,7 @@ import {
     ForeignKey,
 } from 'sequelize-typescript';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import { hashSync } from 'bcryptjs';
 import Person from './person.model';
 import Role from './role.model';
@@ -37,7 +37,7 @@ export default class User extends Model {
     @Column({
         type: DataType.UUID,
         defaultValue: () => {
-            return uuid();
+            return v4();
         },
         allowNull: false,
     })

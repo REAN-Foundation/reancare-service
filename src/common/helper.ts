@@ -280,5 +280,15 @@ export class Helper {
         }
         return Promise.resolve();
     }
-
+    
+    public static sleep = (miliseconds) => {
+        return new Promise((resolve) => {
+            setTimeout(resolve, miliseconds);
+        });
+    }
+    
+    public static isEmptyObject = (obj) => {
+        return Object.keys(obj).length === 0 && obj.constructor === Object;
+    }
+    
 }

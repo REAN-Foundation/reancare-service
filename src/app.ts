@@ -26,12 +26,20 @@ export default class Application {
         return this._instance || (this._instance = new this());
     }
     
+    public app() {
+        return this._app;
+    }
+
     public start = async() => {
         try{
 
             //Load the modules
             await Loader.init();
 
+            if(process.env.NODE_ENV === 'test') {
+                await Loader.databaseConnector.dropDatabase();
+            }
+            
             //Connect with database
             await Loader.databaseConnector.init();
 

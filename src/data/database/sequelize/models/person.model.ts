@@ -17,7 +17,7 @@ import {
 } from 'sequelize-typescript';
 import { PersonIdentificationType } from '../../../domain.types/person.domain.types';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import User from './user.model';
 import Organization from './organization.model';
 
@@ -36,7 +36,7 @@ export default class Person extends Model {
     @Column({
         type: DataType.UUID,
         defaultValue: () => {
-            return uuid();
+            return v4();
         },
         allowNull: false,
     })

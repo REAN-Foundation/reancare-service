@@ -14,7 +14,7 @@ import {
     BelongsTo,
 } from 'sequelize-typescript';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import Person from './person.model';
 import User from './user.model';
 
@@ -33,7 +33,7 @@ export default class Patient extends Model {
     @Column({
         type: DataType.UUID,
         defaultValue: () => {
-            return uuid();
+            return v4();
         },
         allowNull: false,
     })

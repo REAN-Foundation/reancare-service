@@ -5,8 +5,8 @@ import { Logger } from '../../../common/logger';
 import { IDatabaseConnector } from '../../database.connector.interface';
 import { PostgresqlClient } from './dialect.clients/postgresql.client';
 import { MysqlClient } from './dialect.clients/mysql.client';
-
-const execSync = require('child_process').execSync;
+import { execSync } from 'child_process';
+//const execSync = require('child_process').execSync;
 
 //////////////////////////////////////////////////////////////
 

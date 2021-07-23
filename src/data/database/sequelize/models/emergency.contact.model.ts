@@ -12,7 +12,7 @@ import {
     Length,
     IsInt} from 'sequelize-typescript';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import Address from './address.model';
 import Organization from './organization.model';
 import Person from './person.model';
@@ -34,7 +34,7 @@ export default class EmergencyContact extends Model {
     @PrimaryKey
     @Column({
         type: DataType.UUID,
-        defaultValue: () => { return uuid(); },
+        defaultValue: () => { return v4(); },
         allowNull: false
     })
     id: string;

@@ -10,7 +10,7 @@ import {
     PrimaryKey,    
     ForeignKey} from 'sequelize-typescript';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import Person from './person.model';
 import User from './user.model';
 
@@ -29,7 +29,7 @@ export default class PatientInsurance extends Model {
     @PrimaryKey
     @Column({
         type: DataType.UUID,
-        defaultValue: () => { return uuid(); },
+        defaultValue: () => { return v4(); },
         allowNull: false
     })
     id: string;

@@ -1,34 +1,35 @@
 import { Loader } from "../startup/loader";
+import * as request from "supertest";
+import { Helper } from '../common/helper';
+var supertest = require("supertest");
+var request = supertest('http://localhost:' + process.env.PORT);
+import Application from '../app';
+////////////////////////////////////////////////////////////////////
 
+beforeAll(async (done) => {
 
+    await Helper.sleep(500);
+    done();
+});
 
-// describe('Patient resource: Storage, retrieval', () => {
-//     it('Given patient domain model, store patient resource to fhir interface, then returned patient details are valid.', async () => {
+afterAll(async (done) => {
+    await Helper.sleep(10);
+    done();
+});
 
-//         var model = PatientMapper.convertJsonObjectToDomainModel();
-//         var patientFhirId = await Loader.PatientStore.create(model);
-//         var patientFhirResource = await Loader.PatientStore.getById(patientFhirId);
+////////////////////////////////////////////////////////////////////
 
-//         //Assertions
-//         var extractedName = patientFhirResource.name[0].family;
-//         expect(extractedName).toEqual(model.LastName);
+describe('Health-check', () => {
 
-//         var extractedBirthdate = patientFhirResource.birthDate;
-//         expect(extractedBirthdate).toEqual(model.BirthDate);
+    var appInstance = Application.instance();
+    var app = appInstance.app();
 
-//         var extractedGender = patientFhirResource.gender;
-//         expect(extractedGender).toEqual(model.Gender.toLowerCase());
+    it('Service health-check', async (done) => {
+        //const result = await supertest(app).get('/');
+        const response = await request.get('/');
+        expect(response.body.message).toBeDefined();
+        expect(response.statusCode).toEqual(200);
+        done();
+    });
+});
 
-//         var phoneElement = patientFhirResource.telecom.find(function (e) {
-//             return e.system === 'phone';
-//         });
-//         var extractedPhone = phoneElement ? phoneElement.value : '';
-//         expect(extractedPhone).toEqual(model.Phone);
-
-//         var emailElement = patientFhirResource.telecom.find(function (e) {
-//             return e.system === 'email';
-//         });
-//         var extractedEmail = emailElement ? emailElement.value : '';
-//         expect(extractedEmail.toLowerCase()).toEqual(model.Email.toLowerCase());
-//     });
-// });

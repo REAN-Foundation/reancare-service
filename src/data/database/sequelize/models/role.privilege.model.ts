@@ -12,7 +12,7 @@ import {
     ForeignKey
     } from 'sequelize-typescript';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import Role from './role.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ export default class RolePrivilege extends Model {
     @PrimaryKey
     @Column({
         type: DataType.UUID,
-        defaultValue: () => { return uuid(); },
+        defaultValue: () => { return v4(); },
         allowNull: false
     })
     id: string;

@@ -13,7 +13,7 @@ import {
     IsEmail,
 } from 'sequelize-typescript';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import * as bcrypt from 'bcryptjs';
 
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ export default class ApiClient extends Model {
     @Column({
         type: DataType.UUID,
         defaultValue: () => {
-            return uuid();
+            return v4();
         },
         allowNull: false,
     })

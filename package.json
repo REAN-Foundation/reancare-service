@@ -46,8 +46,8 @@
     "stream-json": "^1.7.2",
     "tsyringe": "^4.5.0",
     "twilio": "^3.63.1",
-    "uuid-apikey": "^1.5.3",
-    "uuidv4": "^6.2.10"
+    "uuid": "^8.3.2",
+    "uuid-apikey": "^1.5.3"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.0",

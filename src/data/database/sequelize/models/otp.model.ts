@@ -20,7 +20,7 @@ import {
     ForeignKey
     } from 'sequelize-typescript';
 
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -37,7 +37,7 @@ export default class Otp extends Model {
     @PrimaryKey
     @Column({
         type: DataType.UUID,
-        defaultValue: () => { return uuid(); },
+        defaultValue: () => { return v4(); },
         allowNull: false
     })
     id: string;

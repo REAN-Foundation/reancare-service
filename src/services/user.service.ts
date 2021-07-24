@@ -8,13 +8,13 @@ import { UserDetailsDto, UserLoginDetails, UserDomainModel } from '../data/domai
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
-import { compareSync } from 'bcryptjs';
 import { CurrentUser } from '../data/domain.types/current.user';
 import { OtpPersistenceEntity } from '../data/domain.types/otp.domain.types';
 import { Roles } from '../data/domain.types/role.domain.types';
 import { generate} from 'generate-password';
 import { IPersonRepo } from '../data/repository.interfaces/person.repo.interface';
 import { PersonDetailsDto } from '../data/domain.types/person.domain.types';
+import { Helper } from '../common/helper';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +51,7 @@ export class UserService {
 
         var user: UserDetailsDto = await this.checkUserDetails(loginModel);
         var hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
-        var isPasswordValid = await compareSync(loginModel.Password, hashedPassword);
+        var isPasswordValid = Helper.compare(loginModel.Password, hashedPassword);
         if (!isPasswordValid) {
             throw new ApiError(401, 'Invalid password!');
         }

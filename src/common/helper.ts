@@ -4,7 +4,9 @@ import { InputValidationError } from './input.validation.error';
 import { Gender } from './system.types';
 import { generate} from 'generate-password';
 import { scryptSync, randomBytes } from 'crypto';
-import { CustomSanitizer, CustomValidator } from 'express-validator';
+import { hashSync, compareSync, genSaltSync } from 'bcryptjs';
+import * as crypto from 'crypto';
+
 ////////////////////////////////////////////////////////////////////////
 
 export class Helper {
@@ -248,12 +250,6 @@ export class Helper {
         return password;
     }
 
-    static _salt: string = randomBytes(16).toString('hex');
-    static createHash(str: string): string {
-        const hash = scryptSync(str, Helper._salt, 32).toString('hex');
-        return hash;
-    }
-
     static sanitizePhoneNumber(phoneNumber: string) {
         var temp = Helper.getDigitsOnly(phoneNumber);
         return temp;
@@ -280,15 +276,58 @@ export class Helper {
         }
         return Promise.resolve();
     }
-    
+
     public static sleep = (miliseconds) => {
         return new Promise((resolve) => {
             setTimeout(resolve, miliseconds);
         });
-    }
-    
+    };
+
     public static isEmptyObject = (obj) => {
         return Object.keys(obj).length === 0 && obj.constructor === Object;
+    };
+
+    public static encodeToBase64 = (str: string) => {
+        var buffer = Buffer.from(str, 'utf-8');
+        return buffer.toString('base64');
+    };
+
+    public static decodeFromBase64 = (str: string) => {
+        var buffer = Buffer.from(str, 'base64');
+        return buffer.toString('utf-8');
+    };
+
+    public static hash = (str: string) => {
+        var salt = genSaltSync(8);
+        var hashed = hashSync(str, salt);
+        return hashed;
+    };
+
+    public static compare = (str: string, hashed: string) => {
+        return compareSync(str, hashed);
+    };
+
+    //Reference: https://github.com/zishon89us/node-cheat/blob/master/stackoverflow_answers/crypto-create-cipheriv.js#L2
+
+    public static encrypt = (str: string) => {
+        const algorithm = 'aes-256-ctr';
+        const LENGTH = 16;
+        let iv = crypto.randomBytes(LENGTH);
+        let cipher = crypto.createCipheriv(algorithm, Buffer.from(process.env.CIPHER_SALT, 'hex'), iv);
+        let encrypted = cipher.update(str);
+        encrypted = Buffer.concat([encrypted, cipher.final()]);
+        return iv.toString('hex') + ':' + encrypted.toString('hex');
+    };
+
+    public static decrypt = (str: string) => {
+        const algorithm = 'aes-256-ctr';
+        let tokens = str.split(':');
+        let iv = Buffer.from(tokens.shift(), 'hex');
+        let encryptedText = Buffer.from(tokens.join(':'), 'hex');
+        let decipher = crypto.createDecipheriv(algorithm, Buffer.from(process.env.CIPHER_SALT, 'hex'), iv);
+        let decrypted = decipher.update(encryptedText);
+        decrypted = Buffer.concat([decrypted, decipher.final()]);
+        return decrypted.toString();
     }
-    
 }
+

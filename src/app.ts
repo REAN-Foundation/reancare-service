@@ -1,9 +1,9 @@
 import "reflect-metadata"
 
-import express = require('express');
-import fileUpload = require('express-fileupload');
-import cors = require('cors');
-import helmet = require('helmet');
+import express from 'express';
+import fileUpload from 'express-fileupload';
+import cors from 'cors';
+import helmet from 'helmet';
 
 import { Router } from './api/routes/router';
 import { Loader } from './startup/loader';

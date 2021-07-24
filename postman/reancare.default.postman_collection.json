@@ -1,12 +1,12 @@
 {
 	"info": {
 		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
-		"name": "Service-X",
+		"name": "reancare.default",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Service health-check",
+			"name": "service health-check",
 			"item": [
 				{
 					"name": "Health-check",
@@ -47,7 +47,7 @@
 			]
 		},
 		{
-			"name": "System admin",
+			"name": "system admin",
 			"item": [
 				{
 					"name": "Admin log-in",
@@ -58,7 +58,7 @@
 								"exec": [
 									"try {\r",
 									"    var jsonRes = pm.response.json();\r",
-									"    pm.environment.set(\"ADMIN_USER_JWT\", jsonRes.Data.accessToken);\r",
+									"    pm.environment.set(\"ADMIN_USER_JWT\", jsonRes.Data.AccessToken);\r",
 									"}\r",
 									"catch (error) {\r",
 									"    console.log(error.message);\r",
@@ -115,7 +115,7 @@
 			]
 		},
 		{
-			"name": "Api Client",
+			"name": "Api clients",
 			"item": [
 				{
 					"name": "Create an API client",
@@ -139,7 +139,7 @@
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
 									"\r",
-									"pm.test(\"Client is created\", function () {\r",
+									"pm.test(\"Api client is created\", function () {\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Data).to.have.property('Client');\r",
 									"    pm.expect(jsonRes.Data.Client).to.not.be.empty;\r",
@@ -147,6 +147,17 @@
 									"    pm.expect(jsonRes.Data.Client).to.have.property('ClientCode');\r",
 									"    pm.expect(jsonRes.Data.Client.ClientCode).to.not.be.null;\r",
 									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var password = \"Client-Test@123\";\r",
+									"pm.environment.set(\"API_CLIENT_PASSWORD\", password);\r",
 									""
 								],
 								"type": "text/javascript"
@@ -174,7 +185,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"ClientName\": \"My health app\",\r\n    \"Password\": \"my-password\",\r\n    \"Phone\": \"+91 9876543219\",\r\n    \"Email\": \"dev@excell-medicos.com\"\r\n}",
+							"raw": "{\r\n    \"ClientName\": \"My health app\",\r\n    \"Password\": \"{{API_CLIENT_PASSWORD}}\",\r\n    \"Phone\": \"+91 9876543219\",\r\n    \"Email\": \"dev@excell-medicos.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -215,7 +226,7 @@
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
 									"\r",
-									"pm.test(\"Client is created\", function () {\r",
+									"pm.test(\"Api client is created\", function () {\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Data).to.have.property('Client');\r",
 									"    pm.expect(jsonRes.Data.Client).to.not.be.empty;\r",
@@ -223,6 +234,17 @@
 									"    pm.expect(jsonRes.Data.Client).to.have.property('ClientCode');\r",
 									"    pm.expect(jsonRes.Data.Client.ClientCode).to.not.be.null;\r",
 									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var password = \"Client-Test@123\";\r",
+									"pm.environment.set(\"API_CLIENT_PASSWORD\", password);\r",
 									""
 								],
 								"type": "text/javascript"
@@ -250,7 +272,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"ClientName\": \"Excellent Medicos\",\r\n    \"Password\": \"my-password\",\r\n    \"Phone\": \"+91 9876543219\",\r\n    \"Email\": \"dev@excell-medicos.com\",\r\n    \"ValidFrom\": \"2021-07-21\",\r\n    \"ValidTill\": \"2024-07-20\"\r\n}",
+							"raw": "{\r\n    \"ClientName\": \"Excellent Medicos\",\r\n    \"Password\": \"{{API_CLIENT_PASSWORD}}\",\r\n    \"Phone\": \"+91 9876543219\",\r\n    \"Email\": \"dev@excell-medicos.com\",\r\n    \"ValidFrom\": \"2021-07-21\",\r\n    \"ValidTill\": \"2024-07-20\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -278,8 +300,8 @@
 								"exec": [
 									"try {\r",
 									"    var jsonRes = pm.response.json();\r",
-									"    pm.environment.set(\"API_CLIENT_ID\", jsonRes.DataObject.Client.id);\r",
-									"    pm.environment.set(\"API_CLIENT_CODE\", jsonRes.DataObject.Client.ClientCode);\r",
+									"    pm.environment.set(\"API_CLIENT_ID\", jsonRes.Data.Client.id);\r",
+									"    pm.environment.set(\"API_CLIENT_CODE\", jsonRes.Data.Client.ClientCode);\r",
 									"}\r",
 									"catch (error) {\r",
 									"    console.log(error.message);\r",
@@ -291,13 +313,13 @@
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
 									"\r",
-									"pm.test(\"Client is returned\", function () {\r",
+									"pm.test(\"Api client is returned\", function () {\r",
 									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.DataObject).to.have.property('Client');\r",
-									"    pm.expect(jsonRes.DataObject.Client).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.DataObject.Client).to.have.property('id');\r",
-									"    pm.expect(jsonRes.DataObject.Client).to.have.property('ClientCode');\r",
-									"    pm.expect(jsonRes.DataObject.Client.ClientCode).to.not.be.null;\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Client');\r",
+									"    pm.expect(jsonRes.Data.Client).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Client).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Client).to.have.property('ClientCode');\r",
+									"    pm.expect(jsonRes.Data.Client.ClientCode).to.not.be.null;\r",
 									"});\r",
 									""
 								],
@@ -336,14 +358,9 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Patient",
-			"item": [
+				},
 				{
-					"name": "Register patient : with only a phone number",
+					"name": "Update API client by id",
 					"event": [
 						{
 							"listen": "test",
@@ -351,29 +368,206 @@
 								"exec": [
 									"try {\r",
 									"    var jsonRes = pm.response.json();\r",
-									"    pm.environment.set(\"PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
-									"    pm.environment.set(\"PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+									"    pm.environment.set(\"API_CLIENT_ID\", jsonRes.Data.Client.id);\r",
+									"    pm.environment.set(\"API_CLIENT_CODE\", jsonRes.Data.Client.ClientCode);\r",
 									"}\r",
 									"catch (error) {\r",
 									"    console.log(error.message);\r",
 									"}\r",
 									"\r",
 									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
+									"    pm.response.to.have.status(200);\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
 									"\r",
-									"pm.test(\"Client is created\", function () {\r",
+									"pm.test(\"Updated api client is returned\", function () {\r",
+									"\r",
+									"    var expectedClientName = pm.environment.get(\"API_CLIENT_NEW_NAME\");\r",
+									"    var expectedClientPhone = pm.environment.get(\"API_CLIENT_NEW_PHONE\");\r",
+									"    var expectedClientEmail = pm.environment.get(\"API_CLIENT_NEW_EMAIL\");\r",
+									"\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Data).to.have.property('Client');\r",
-									"    pm.expect(jsonRes.Data.Patient).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Patient).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Patient).to.have.property('User');\r",
-									"    pm.expect(jsonRes.Data.Patient.User).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Patient.User).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Patient.User.Person).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Client).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Client).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Client).to.have.property('ClientCode');\r",
+									"    pm.expect(jsonRes.Data.Client.ClientCode).to.not.be.null;\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.Client.ClientName).equals(expectedClientName);\r",
+									"    pm.expect(jsonRes.Data.Client.Phone).equals(expectedClientPhone);\r",
+									"    pm.expect(jsonRes.Data.Client.Email).equals(expectedClientEmail);\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var password = \"New-Client-Test@123\";\r",
+									"pm.environment.set(\"API_CLIENT_PASSWORD\", password);\r",
+									"\r",
+									"pm.environment.set(\"API_CLIENT_NEW_NAME\", \"My health app - New name\");\r",
+									"pm.environment.set(\"API_CLIENT_NEW_PHONE\", \"+91 4444455555\");\r",
+									"pm.environment.set(\"API_CLIENT_NEW_EMAIL\", \"new.client.email@client.com\");\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ClientName\": \"{{API_CLIENT_NEW_NAME}}\",\r\n    \"Password\": \"{{API_CLIENT_PASSWORD}}\",\r\n    \"Phone\": \"{{API_CLIENT_NEW_PHONE}}\",\r\n    \"Email\": \"{{API_CLIENT_NEW_EMAIL}}\"\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api-clients/{{API_CLIENT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api-clients",
+								"{{API_CLIENT_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get current API key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"API_KEY\", jsonRes.Data.ApiKeyDetails.ApiKey);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Api key is returned\", function () {\r",
+									"\r",
+									"    var expectedClientCode = pm.environment.get(\"API_CLIENT_CODE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('ApiKeyDetails');\r",
+									"    pm.expect(jsonRes.Data.ApiKeyDetails).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.ApiKeyDetails).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.ApiKeyDetails).to.have.property('ClientCode');\r",
+									"    pm.expect(jsonRes.Data.ApiKeyDetails.ClientCode).equals(expectedClientCode);\r",
+									"    pm.expect(jsonRes.Data.ApiKeyDetails.ApiKey).to.not.be.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{API_CLIENT_PASSWORD}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_CLIENT_CODE}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/api-clients/{{API_CLIENT_CODE}}/current-api-key",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"api-clients",
+								"{{API_CLIENT_CODE}}",
+								"current-api-key"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Renew API key",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"New api key is returned\", function () {\r",
+									"\r",
+									"    var currentApiKey = pm.environment.get(\"API_KEY\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('ApiKeyDetails');\r",
+									"    pm.expect(jsonRes.Data.ApiKeyDetails).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.ApiKeyDetails).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.ApiKeyDetails).to.have.property('ClientCode');\r",
+									"    pm.expect(jsonRes.Data.ApiKeyDetails.ApiKey).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.ApiKeyDetails.ApiKey).not.equals(currentApiKey);\r",
+									"    \r",
+									"    //set the new key to env\r",
+									"    pm.environment.set(\"API_KEY\", jsonRes.Data.ApiKeyDetails.ApiKey);\r",
 									"});\r",
 									""
 								],
@@ -382,30 +576,42 @@
 						}
 					],
 					"request": {
-						"method": "POST",
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{API_CLIENT_PASSWORD}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_CLIENT_CODE}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json",
 								"type": "text"
-							},
-							{
-								"key": "x-api-key",
-								"value": "{{API_CLIENT_INTERNAL_KEY}}",
-								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"PhoneCountryCode\": \"+91\",\r\n    \"PhoneNumber\": \"99701320165\"\r\n}"
+							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/patients",
+							"raw": "{{BASE_URL}}/api-clients/{{API_CLIENT_CODE}}/renew-api-key",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"patients"
+								"api-clients",
+								"{{API_CLIENT_CODE}}",
+								"renew-api-key"
 							]
 						}
 					},
@@ -414,7 +620,7 @@
 			]
 		},
 		{
-			"name": "Roles",
+			"name": "roles",
 			"item": [
 				{
 					"name": "Get existing roles",
@@ -432,6 +638,182 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "users / persons",
+			"item": [
+				{
+					"name": "patient",
+					"item": [
+						{
+							"name": "Register patient- with only a phone number",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+											"    pm.environment.set(\"PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient is created\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Patient');\r",
+											"    pm.expect(jsonRes.Data.Patient).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.Patient).to.have.property('User');\r",
+											"    pm.expect(jsonRes.Data.Patient.User).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient.User).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient.User.Person).to.have.property('id');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"//Randomly generated user details\r",
+											"\r",
+											"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
+											"\r",
+											"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
+											"\r",
+											"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
+											"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
+											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+											"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
+											"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
+											"var password = \"Test@123\";\r",
+											"\r",
+											"pm.environment.set(\"FIRST_NAME\", first);\r",
+											"pm.environment.set(\"LAST_NAME\", last);\r",
+											"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+											"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");\r",
+											"pm.environment.set(\"EMAIL\", email);\r",
+											"pm.environment.set(\"PASSWORD\", password);\r",
+											"\r",
+											"//Profile images\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PhoneCountryCode\": \"{{PHONE_COUNTRY_CODE}}\",\r\n    \"PhoneNumber\": \"{{PHONE_NUMBER}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register patient- with same phone number - should fail",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+											"    pm.environment.set(\"PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Response should be failure\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('failure');\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PhoneCountryCode\": \"+91\",\r\n    \"PhoneNumber\": \"99701320165\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}

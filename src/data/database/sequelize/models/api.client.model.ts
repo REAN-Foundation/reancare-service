@@ -11,10 +11,11 @@ import {
     Length,
     BeforeCreate,
     IsEmail,
+    BeforeUpdate,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import * as bcrypt from 'bcryptjs';
+import { Helper } from '../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -119,7 +120,8 @@ export default class ApiClient extends Model {
     DeletedAt: Date;
 
     @BeforeCreate
+    @BeforeUpdate
     static encryptPassword(client) {
-        client.Password = bcrypt.hashSync(client.Password, bcrypt.genSaltSync(8));
+        client.Password = Helper.hash(client.Password);
     }
 }

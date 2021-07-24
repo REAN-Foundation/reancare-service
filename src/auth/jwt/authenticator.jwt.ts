@@ -1,11 +1,7 @@
-import fs = require('fs');
-import path = require('path');
 import express from 'express';
-import { Sequelize, Dialect } from 'sequelize';
-import jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 import { Logger } from '../../common/logger';
-import { ResponseHandler } from '../../common/response.handler';
 import { IAuthenticator } from '../authenticator.interface';
 import { ApiClientService } from '../../services/api.client.service';
 import { Loader } from '../../startup/loader';

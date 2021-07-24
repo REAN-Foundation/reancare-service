@@ -14,8 +14,6 @@ export class ApiClientInputValidator {
         if (obj == null) {
             return null;
         }
-        var d = new Date();
-        d.setFullYear(d.getFullYear() + 1);
 
         clientModel = {
             ClientName: body.ClientName ?? null,
@@ -24,8 +22,8 @@ export class ApiClientInputValidator {
             Phone: body.Phone ?? null,
             Email: body.Email ?? null,
             Password: body.Password ?? null,
-            ValidFrom: body.ValidFrom ? new Date(body.ValidFrom) : new Date(),
-            ValidTill: body.ValidTill ? new Date(body.ValidTill) : d
+            ValidFrom: body.ValidFrom ?? null,
+            ValidTill: body.ValidTill ?? null,
         };
         return clientModel;
     };
@@ -54,8 +52,22 @@ export class ApiClientInputValidator {
         response: express.Response
     ): Promise<ApiClientVerificationDomainModel> => {
 
-        await body('ClientCode').exists().trim().isLength({ min: 8, max: 8 }).escape().run(request);
-        await body('Password').exists().trim().escape().run(request);
+        var authHeader = request.headers['authorization'].toString();
+        var tokens = authHeader.split(' ');
+        if(tokens.length < 2) {
+            throw new Error("Invalid authorization header.");
+        }
+        if(tokens[0].toLowerCase() !== 'basic'){
+            throw new Error('Invalid auth header formatting. Should be basic authorization.');
+        }
+        var load = Helper.decodeFromBase64(tokens[1]);
+        tokens = load.split(':');
+        if(tokens.length < 2) {
+            throw new Error("Basic auth formatting error.");
+        }
+        var clientCode = tokens[0].trim();
+        var password = tokens[1].trim();
+
         await body('ValidFrom').optional().trim().escape().isDate().run(request);
         await body('ValidTill').optional().trim().escape().isDate().run(request);
 
@@ -63,18 +75,18 @@ export class ApiClientInputValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return ApiClientInputValidator.getVerificationDomainModel(request);
+        return ApiClientInputValidator.getVerificationDomainModel(request.body, clientCode, password);
     };
 
-    static getVerificationDomainModel = async (body: any): Promise<ApiClientVerificationDomainModel> => {
+    static getVerificationDomainModel = async (body: any, clientCode: string, password: string): Promise<ApiClientVerificationDomainModel> => {
         var model: ApiClientVerificationDomainModel = null;
         var obj = Helper.checkObj(body);
         if (obj == null) {
             return null;
         }
         model = {
-            ClientCode: body.ClientCode,
-            Password: body.Password,
+            ClientCode: clientCode,
+            Password: password,
             ValidFrom: body.ValidFrom ?? null,
             ValidTill: body.ValidTill ?? null,
         };

@@ -7,7 +7,6 @@ export const register = (app: express.Application) => {
 
     const router = require('express').Router();
     const authenticator = Loader.authenticator;
-    const authorizer = Loader.authorizer;
     const controller = new ApiClientController();
 
     router.post('/', authenticator.authenticateUser, controller.create);
@@ -15,7 +14,8 @@ export const register = (app: express.Application) => {
     router.put('/:id', authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateUser, controller.delete);
 
-    router.get('/:clientCode/apiKey', controller.getApiKey);
+    router.get('/:clientCode/current-api-key', controller.getCurrentApiKey);
+    router.put('/:clientCode/renew-api-key', controller.renewApiKey);
 
     app.use('/api/v1/api-clients', router);
 };

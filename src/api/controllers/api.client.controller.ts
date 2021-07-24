@@ -4,7 +4,6 @@ import { ApiClientService } from '../../services/api.client.service';
 import { ResponseHandler } from '../../common/response.handler';
 import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
-import { ApiClientDomainModel, ApiClientVerificationDomainModel } from '../../data/domain.types/api.client.domain.types';
 import { ApiClientInputValidator } from '../input.validators/api.client.input.validator';
 import { ApiError } from '../../common/api.error';
 
@@ -29,6 +28,7 @@ export class ApiClientController {
             await this._authorizer.authorize(request, response);
 
             var clientDomainModel = await ApiClientInputValidator.create(request, response);
+
             const client = await this._service.create(clientDomainModel);
             if (client == null) {
                 throw new ApiError(400, 'Unable to create client.');
@@ -92,10 +92,10 @@ export class ApiClientController {
         }
     };
 
-    getApiKey = async (request: express.Request, response: express.Response) => {
+    getCurrentApiKey = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Client.GetApiKey';
-            await this._authorizer.authorize(request, response);
+            //await this._authorizer.authorize(request, response);
 
             var verificationModel = await ApiClientInputValidator.getOrRenewApiKey(request, response);
 
@@ -114,11 +114,16 @@ export class ApiClientController {
     renewApiKey = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Client.RenewApiKey';
-            await this._authorizer.authorize(request, response);
+            //await this._authorizer.authorize(request, response);
 
             var verificationModel = await ApiClientInputValidator.getOrRenewApiKey(request, response);
             if(verificationModel.ValidFrom == null) {
                 verificationModel.ValidFrom = new Date();
+            }
+            if(verificationModel.ValidTill == null) {   
+                var d = new Date();
+                d.setFullYear(d.getFullYear() + 1);
+                verificationModel.ValidTill = d;    
             }
             const apiKeyDto = await this._service.renewApiKey(verificationModel);
             if (apiKeyDto == null) {

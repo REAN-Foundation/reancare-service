@@ -12,13 +12,12 @@ import {
     Length,
     BeforeCreate,
     BeforeUpdate,
-    BeforeSave,
     IsDate,
     ForeignKey,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import { hashSync } from 'bcryptjs';
+import { Helper } from '../../../../common/helper';
 import Person from './person.model';
 import Role from './role.model';
 
@@ -119,7 +118,7 @@ export default class User extends Model {
     @BeforeUpdate
     static encryptPassword(user) {
         if (user.Password != null) {
-            user.Password = hashSync(user.Password, 8);
+            user.Password = Helper.hash(user.Password);
         }
     }
 }

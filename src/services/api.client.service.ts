@@ -4,7 +4,6 @@ import { ApiClientDomainModel, ApiClientDto, ApiClientVerificationDomainModel, C
 import { IApiClientRepo } from "../data/repository.interfaces/api.client.repo.interface";
 import { generate} from 'generate-password';
 import { Helper } from "../common/helper";
-import { compareSync } from 'bcryptjs';
 import { CurrentClient } from "../data/domain.types/current.client";
 const uuidAPIKey = require('uuid-apikey');
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -18,13 +17,20 @@ export class ApiClientService {
         clientDomainModel.ClientCode = clientDomainModel.ClientCode ?? clientCode;
         var key = uuidAPIKey.create();
         clientDomainModel.ApiKey = clientDomainModel.ApiKey?? key.apiKey;
+
+        var d = new Date();
+        d.setFullYear(d.getFullYear() + 1);
+        clientDomainModel.ValidFrom =  clientDomainModel.ValidFrom ?? new Date();
+        clientDomainModel.ValidTill = clientDomainModel.ValidTill ?? d
+
         return await this._clientRepo.create(clientDomainModel);
     };
 
     createInternalClients = async (clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         var clientCode = await this.getClientCode(clientDomainModel.ClientName);
         clientDomainModel.ClientCode = clientCode;
-        clientDomainModel.ApiKey = uuidAPIKey.create();
+        var key = uuidAPIKey.create();
+        clientDomainModel.ApiKey = key.apiKey;
         return await this._clientRepo.create(clientDomainModel);
     };
 
@@ -43,7 +49,7 @@ export class ApiClientService {
             throw new ApiError(404, message);
         }
         var hashedPassword = await this._clientRepo.getClientHashedPassword(client.id);
-        var isPasswordValid = await compareSync(verificationModel.Password, hashedPassword);
+        var isPasswordValid = Helper.compare(verificationModel.Password, hashedPassword);
         if (!isPasswordValid) {
             throw new ApiError(401, 'Invalid password!');
         }
@@ -59,15 +65,15 @@ export class ApiClientService {
         }
 
         var hashedPassword = await this._clientRepo.getClientHashedPassword(client.id);
-        var isPasswordValid = await compareSync(verificationModel.Password, hashedPassword);
+        var isPasswordValid = Helper.compare(verificationModel.Password, hashedPassword);
         if (!isPasswordValid) {
             throw new ApiError(401, 'Invalid password!');
         }
 
-        var apiKey = uuidAPIKey.create();
+        var key = uuidAPIKey.create();
         var clientApiKeyDto = await this._clientRepo.setApiKey(
             client.id,
-            apiKey,
+            key.apiKey,
             verificationModel.ValidFrom,
             verificationModel.ValidTill
         );

@@ -24,3 +24,39 @@ The following are the goals of the current design of the system.
     * Testability of individual components
 
 3. __Extensible core functionalities__ - with emphasis on customization.
+   As an example, with care plan module, you can define your own care plan template around a particular patient condition. This template can be defined as a JSON file. 
+
+# Where does REANCare service fit?
+REANCare service is central core service which has following major responsibilities. It provides a set of APIs to -
+1. Stakeholders management: For multiple stake-holders such as patients, doctors, labs, clinics, pharmacies, etc.
+2. Patient EHR data management: Add/update/retrieve patient EHR data through a controlled access (through proper authentication, authorisation and consent management).
+3. Core infrastructure: To handle patient's health management tasks, such as
+   1. Medications
+   2. Appointments with doctors and labs
+   3. Custom health goals
+   4. Nutrition
+   5. Stress management
+   6. Physical activity
+4. Template engine to define/create/schedule custom care plans 
+5. Template engine for define/create/manage emergency protocols
+
+Following figure shows the current communication layout of the REAN foundation software components.
+  <img src="./logical-architecture-layout.png" width="600">
+
+# Internals
+
+The following figure depicts the internals of the service showing the path of request processing.
+
+  <img src="./request-processing-pipeline.png" width="600">
+
+  1. Incoming request is processed through standard set of middlewares.
+  2. Client and user are authenticated.
+  3. Validators and sanitizers process the request input and convert it to domain models.
+  4. Authorization layer performs RBAC authorization, ownership authorization and consent validation.
+  5. Controllers accept domain models and calls one or more services based on business logic.
+  6. Services pass the domain models to database repository interfaces as well as to FHIR interfaces.
+  7. Database repository interfaces convert domain models to database models and perform relevant actions.
+  8. FHIR interfaces convert domain models to FHIR resource format.
+  9. The database models returned by database ORM will be converted by repository interfaces into DTOs.
+  10. Controllers embed DTOs into the response.
+  11. Response is served.

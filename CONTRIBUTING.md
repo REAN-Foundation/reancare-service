@@ -23,34 +23,33 @@ Before you begin:
   6. Spreading the word!
 
   - [:beetle: Add an issue](#beetle-issues)
-    - Issues are used to track the tasks. If you find any problem, a behaviour to be updated, or a new feature to be added, search the issue list if it already has been reported by somebody else. If not, open the issue using the template. You can track the progress on the issue or the discuss details in the conversation.
+    - Issues are used to track the tasks. If you find any problem, a behaviour to be updated, or a new feature to be added, search the issue list if it already has been reported by somebody else. If not, open the issue using the issue template. You can track the progress on the issue or the discuss details in the conversation.
   
   - [:hammer_and_wrench: Fix the bug/Implement a feature/Create Pull requests](#hammer_and_wrench-pull-requests)
     - If you find any open issues which you think you can contribute to, pick the issue. 
-    - Create a new branch and clone the repository. you can also fork the repo. See [here](docs/development.md) to see how to set-up development environment on your local machine.
+    - Create a new branch and clone the repository. You can also fork the repo. See [here](docs/development.md) to see how to set-up development environment on your local machine.
     - Start working on the issue on your machine. 
     - Once the issue is resolved locally or a new feature is implemented, test it locally. 
     - Perform a self review. Here is the checklist for the self-review.
-      - [ ] Pull the latest from the branch against into you are going to merge the coide.
-      - [ ] Confirm the changes meet the resolution criteria and nothing else.
-      - [ ] Do not try to solve multiple major issues through a single pull request.
-      - [ ] Make sure you have all the tests locally to check that you have not introduced any new regression.
-      - [ ] You following coding and styling guidelines.
+      - [ ] Pull the latest code from the branch against which you are going to merge your the code. This will avoid merging issues later.
+      - [ ] Confirm that the changes made by you meet the resolution criteria and nothing else.
+      - [ ] Do not try to solve multiple major issues through a single pull request. Keep it simple, one issue-one pull request.
+      - [ ] Make sure you have run all the tests locally to check that you have not introduced any new regression.
+      - [ ] Make sure you are following coding and styling guidelines.
       - [ ] Make sure that you change is not overly complex, unreadable and unnecessarily smart. Simplicity wins!
       - [ ] Make sure the comments are not too verbose and not to cryptic.
       - [ ] If there are any failing tests, fix them first.
-      - [ ] If there are database schema changes, please make sure that incremental schema changes/migrations are tested locally.
-      - [ ] Make sure you have updated -
-        - [ ] Documentation if necessary
-        - [ ] Tests/test data if necessary
-        - [ ] Postman collection if necessary
-        - [ ] Version if necessary
-        - [ ] Grammer if necessary
-      - [ ] Make sure the code metrics are not deteriorated
-    - Once satisfied, create a pull request. 
+      - [ ] If there are database schema changes, please make sure that incremental schema changes/migrations are tested locally. Submit your migrations as part of the pull request.
+      - [ ] Make sure the code metrics are not deteriorated.
+      - [ ] Make sure you have updated (if necessary)-
+        - [ ] Documentation
+        - [ ] Tests/test data
+        - [ ] Postman collection
+        - [ ] Version
+    - Once satisfied, create a pull request from your branch to designated featue branch. 
     - Fill out all the fields in the pull request as per the template. This will help the reviewers to understand your changes.
     - If the reviewer suggests some changes and asks for the clarification, you have to complete those changes.
-    - Once the review is satisfactory, the reviewer will merge your changes. If there are again some merge conflicts, you have to resolve those merge conflicts first locally and again pushing your changes to your branch/repo.
+    - Once the review is satisfactory, the reviewer will merge your changes. If there are again some merge conflicts during merging, you have to resolve those merge conflicts first locally and again push your changes.
 
   - [:memo: Documenting the API](#hammer_and_wrench-pull-requests)
-    - REANCare service API is currently documented through Postman as a part of collection. If you feel that there is a need to update the documentation, open the Postman collection on your machine, update the documentation and save the Postman collection to postman folder.
+    - REANCare service API is currently documented through Postman as a part of request collection. If you feel that there is a need to update the documentation, open the Postman collection on your machine, update the documentation and save the updated Postman collection.

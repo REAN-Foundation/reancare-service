@@ -53,4 +53,4 @@ Before you begin:
     - Once the review is satisfactory, the reviewer will merge your changes. If there are again some merge conflicts, you have to resolve those merge conflicts first locally and again pushing your changes to your branch/repo.
 
   - [:memo: Documenting the API](#hammer_and_wrench-pull-requests)
-  - REANCare service API is currently documented through Postman as a part of collection. If you feel that there is a need to update the documentation, open the Postman collection on your machine, update the documentation and save the Postman collection to postman folder.
+    - REANCare service API is currently documented through Postman as a part of collection. If you feel that there is a need to update the documentation, open the Postman collection on your machine, update the documentation and save the Postman collection to postman folder.

@@ -19,7 +19,7 @@ Before you begin:
   2. Raising an [issue here](https://github.com/REAN-Foundation/reancare-service/issues)- for a problem you have encountered or for a new feature request.
   3. Fixing the bug or implementing a new feature/part of the feature
   4. Adding Postman requests and test cases.
-  5. Documentation and transaltion. REANCare service API is currently documented through Postman as a part of collection.
+  5. Documentation and transaltion. 
   6. Spreading the word!
 
   - [:beetle: Add an issue](#beetle-issues)
@@ -53,4 +53,4 @@ Before you begin:
     - Once the review is satisfactory, the reviewer will merge your changes. If there are again some merge conflicts, you have to resolve those merge conflicts first locally and again pushing your changes to your branch/repo.
 
   - [:memo: Documenting the API](#hammer_and_wrench-pull-requests)
-  If you feel that there is a need to update the documentation, open the Postman collection on your machine, update the documentation and save the Postman collection to postman folder.
+  REANCare service API is currently documented through Postman as a part of collection. If you feel that there is a need to update the documentation, open the Postman collection on your machine, update the documentation and save the Postman collection to postman folder.

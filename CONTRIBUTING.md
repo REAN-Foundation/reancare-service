@@ -2,13 +2,12 @@
 
 ## Getting started <!-- omit in toc -->
 
-Before you begin:
-- Check the [technology stack](docs/development.md#technology-stack).
+Before you begin
 - Have you read the [code of conduct](CODE_OF_CONDUCT.md)?
+- Check the [technology stack](docs/development.md#technology-stack).
 - Check the [different ways](#Various-ways-to-contribute) you can contribute.
 - Check out the [existing issues](https://github.com/REAN-Foundation/reancare-service/issues).
 
-**Learn more about contributing:**
 
 ## Various ways to contribute
 
@@ -16,10 +15,10 @@ Before you begin:
 
   You can contribute to the repo by - 
   1. Testing the repository and add additional test cases.
-  2. Raising an [issue here](https://github.com/REAN-Foundation/reancare-service/issues)- for a problem you have encountered or for a new feature request.
+  2. Raising an [issue](https://github.com/REAN-Foundation/reancare-service/issues)- for a problem you have encountered or for a new feature you want to have.
   3. Fixing the bug or implementing a new feature/part of the feature
   4. Adding Postman requests and test cases.
-  5. Documentation and transaltion. 
+  5. Documentation and translation. 
   6. Spreading the word!
 
   - :beetle: **Add an issue**
@@ -51,8 +50,8 @@ Before you begin:
     - If the reviewer suggests some changes and asks for the clarification, you have to complete those changes.
     - Once the review is satisfactory, the reviewer will merge your changes. If there are again some merge conflicts during merging, you have to resolve those merge conflicts first locally and again push your changes.
   
-For more information, check [Coding Style and Guidelines](coding-style-and-guidelines.md) and [Checklist to add new API or model](checklist-to-add-api.md).
+For more information, check [Coding Style and Guidelines](docs/coding-style-and-guidelines.md) and [Checklist to add new API or model](docs/checklist-to-add-api.md).
 
-  - :memo: **Documenting the API**
+  - :memo: **Document the API**
     - REANCare service API is currently documented through Postman as a part of request collection. If you feel that there is a need to update the documentation, open the Postman collection on your machine, update the documentation and save the updated Postman collection.
     - For more information about documenting an API in Postman, please refer [Documenting your API](https://learning.postman.com/docs/publishing-your-api/documenting-your-api/).

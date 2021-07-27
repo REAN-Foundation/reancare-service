@@ -12,6 +12,7 @@ __We encourage forking and welcome contributions to this code base.__
 * [Design considerations](docs/design.md) for the service
 * [Learn how to contribute](./CONTRIBUTING.md)
 * [Code of Conduct](./CODE_OF_CONDUCT.md)
+* [Coding Style and Guidelines](docs/coding-style-and-guidelines.md)
 
 ### Releases and Roadmap
 * Current release - version 0.1.0

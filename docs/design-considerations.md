@@ -41,13 +41,13 @@ REANCare service is central core service which has following major responsibilit
 5. Template engine for define/create/manage emergency protocols
 
 Following figure shows the current communication layout of the REAN foundation software components.
-  <img src="./logical-architecture-layout.png" width="600">
+  <img src="./logical-architecture-layout.png" width="1300">
 
 # Internals
 
 The following figure depicts the internals of the service showing the path of request processing.
 
-  <img src="./request-processing-pipeline.png" width="600">
+  <img src="./request-processing-pipeline.png" width="1100">
 
   1. Incoming request is processed through standard set of middlewares.
   2. Client and user are authenticated.

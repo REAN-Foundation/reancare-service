@@ -4,7 +4,9 @@ While adding or updating a feature/model, please check that following artefacts 
 
 It is recommended that you follow these in sequence starting with writing the tests. This will help you to make sure your implementation follows TDD and does not deviate too much from the requirements.
 
- Since we use [Postman/Newman](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/) for our API testing, we need to start with writing Postman requests and tests for the API. Having API tests in Postman also helps us in maintaining API documentation, workflow mocking at the same place.
+ Since we use [Postman/Newman](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/) for our API testing, we need to start with writing Postman requests and tests for the API. Having API tests in Postman also helps us in maintaining tests, API documentation, workflow mocking at the same place.
+
+Here is the itemized checklist you should use whenever you are adding a new API, new entity model with CRUD API or updating the existing ones.
 
  - [ ]  **Postman requests**
    - [ ]  Add requests to the Postman collection with all input parameters.

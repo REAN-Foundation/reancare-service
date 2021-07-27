@@ -5,9 +5,9 @@ For general TypeScript coding style guidelines, you can refer [Google's TypeScri
 In addition to these, here are naming conventions we follow for this project.
 
 1. All statements should end with semicolons. This is a must! e.g. `_authorizer: Authorizer = null;`. Statements without semicolons are discouraged.
-2. It is recommended that you specify the Typescript type always for variable declaration and passing the arguments, etc. e.g. `async (request: express.Request, response: express.Response)`
+2. It is recommended that you always specify the Typescript type for variable declaration and passing the arguments. e.g. `async (request: express.Request, response: express.Response)`
 3. Use comments sparingly. Add comments only when absolutely needed. 
-4. Do not add comments for method signatures. Method signature nomenclature (method-name and argument-names) should be clear enough to understand its purpose. Don't mention the obvious.
+4. Do not add comments for method signatures. Method signature nomenclature (method-name and argument-names) should be clear enough. Don't mention the obvious.
 5. All folders be named in lower-case letters. If there are multiple words in folder name, separate those words by dot ('.'). For example, 'input.validators'.
 6. All code files (i.e. Typescript files with '.ts' extension, JSON files with .json extension, etc.) be named in lower-case letters. If there are multiple words in the file name, separate those words by dor ('.'). For example, `api.client.controller.ts`.
 7. Please follow this naming convention for various file types.

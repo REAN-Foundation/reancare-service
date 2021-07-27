@@ -13,7 +13,7 @@ __We encourage forking and welcome contributions to this code base.__
 * [Learn how to contribute](./CONTRIBUTING.md)
 * [Code of Conduct](./CODE_OF_CONDUCT.md)
 * [Coding Style and Guidelines](docs/coding-style-and-guidelines.md)
-* [Checklist to add/update new API/model](docs/checklist-to-add-api.md)
+* [Checklist to add/update API](docs/checklist-to-add-api.md)
 
 Please check our [release roadmap](docs/roadmap.md).
 

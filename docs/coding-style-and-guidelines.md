@@ -4,12 +4,14 @@ For general TypeScript coding style guidelines, you can refer [Google's TypeScri
 
 In addition to these, here are naming conventions we follow for this project.
 
-1. All folders be named in lower-case letters. If there are multiple words in folder name, separate those words by dot ('.'). For example, 'input.validators'.
-2. All code files (i.e. Typescript files with '.ts' extension, JSON files with .json extension, etc.) be named in lower-case letters. If there are multiple words in the file name, separate those words by dor ('.'). For example, 'api.client.controller.ts'
-3. Please follow this naming convention for various file types.
+1. All statements should end with semicolons. This is a must! e.g. `_authorizer: Authorizer = null;`. Statements without semicolons are discouraged.
+2. It is recommended that you specify the Typescript type always for variable declaration, argument passing, etc. e.g. `async (request: express.Request, response: express.Response)`
+3. All folders be named in lower-case letters. If there are multiple words in folder name, separate those words by dot ('.'). For example, 'input.validators'.
+4. All code files (i.e. Typescript files with '.ts' extension, JSON files with .json extension, etc.) be named in lower-case letters. If there are multiple words in the file name, separate those words by dor ('.'). For example, `api.client.controller.ts`.
+5. Please follow this naming convention for various file types.
    - Controllers - `*.controller.ts`
-   - Input validators/sanitizers - `*.validator.ts`
-   - Routes - `*.validator.ts`
+   - Input validators/sanitizers - `*.input.validator.ts`
+   - Routes - `*.routes.ts`
    - Interfaces - `*.interface.ts`
    - Repository interfaces - `*.repo.interface.ts`
    - Services - `*.service.ts`
@@ -17,15 +19,15 @@ In addition to these, here are naming conventions we follow for this project.
    - Repositories - `*.repo.ts`
    - Models - `*.model.ts`
    - FHIR JSON schema - `*.fhir.json`
-4. All class names, interface names, type names, enum names should follow PascalCase, which is camelCase with capitalized first letter. e.g. `export class PatientController {`.
-5. Interfaces which are only used for enforcing the method signature contracts should start with 'I'. For example, `IPatientRepo`.
-6. All variable names should follow camelCase. e.g. `var myVariable = 'xyz'`.
-7. All class member variables should be camelCase prefixed by underscore ('_'). e.g. `_myClassVariable`
-8. All method/function names should follow camelCase. e.g. `getByUserId = async (request: express.Request, response: express.Response)`.
-9. All method/function argument names should follow camelCase.
-10. All database model/table column-names should follow pascal case except primary key parameter, which is `'id'`. e.g. `'PersonRole'`
-11. All database table/document collection names should be lowercase with every word separated by underscore ('_'). The name of the tables should indicate plural version. e.g. `'person_roles',`
-12. For code files, file content demarcation is only allowed between imports area and code area. 
+6. All class names, interface names, type names, enum names should follow PascalCase, which is camelCase with capitalized first letter. e.g. `export class PatientController {`.
+7. Interfaces which are only used for enforcing the method signature contracts should start with 'I'. For example, `IPatientRepo`.
+8. All variable names should follow camelCase. e.g. `var myVariable = 'xyz'`.
+9. All class member variables should be camelCase prefixed by underscore ('_'). e.g. `_myClassVariable`
+10. All method/function names should follow camelCase. e.g. `getByUserId = async (request: express.Request, response: express.Response)`.
+11. All method/function argument names should follow camelCase.
+12. All database model/table column-names should follow pascal case except primary key parameter, which is `'id'`. e.g. `'PersonRole'`
+13. All database table/document collection names should be lowercase with every word separated by underscore ('_'). The name of the tables should indicate plural version. e.g. `'person_roles',`
+14. For code files, file content demarcation is only allowed between imports area and code area. 
     e.g. 
 ```javascript
 import { AddressDomainModel } from '../../data/domain.types/address.domain.types';

@@ -1,10 +1,10 @@
 ## General checklist to add new API/feature/model
 
-While adding or updating a feature/model, please check that following items are implemented.
+While adding or updating a feature/model, please check that following artefacts are implemented/updated.
 
-For any new API with CRUD operations, please make sure you implement the following artefacts. It is recommended that you follow these in sequence starting with writing the tests. This will help you to make sure your implementation follows TDD and does not deviate too much from requirements.
+It is recommended that you follow these in sequence starting with writing the tests. This will help you to make sure your implementation follows TDD and does not deviate too much from the requirements.
 
- Writing Postman requests and tests helps us in creating API documentation, mocking the workflow, writing down the tests.
+ Since we use [Postman/Newman](https://learning.postman.com/docs/running-collections/using-newman-cli/command-line-integration-with-newman/) for our API testing, we need to start with writing Postman requests and tests for the API. Having API tests in Postman also helps us in maintaining API documentation, workflow mocking at the same place.
 
  - [ ]  **Postman requests**
    - [ ]  Add requests to the Postman collection with all input parameters.
@@ -43,4 +43,4 @@ For any new API with CRUD operations, please make sure you implement the followi
    - [ ]  **Tests** - At this moment, we are only enforcing only FHIR resource unit tests. API tests are currently enforced through Postman runner/Newmann tests.
      - [ ]  **FHIR unit tests** - You should add your FHIR specific unit tests if you have added/updated a FHIR resource. The location of test will be `/src/tests/fhir.tests/<ehr-resource>.resource.test.ts`.
 
-Please have a look at the existing implementation to understand the pattern of development of individual artefact types. Any deviation from this is discouraged unless it is absolutely necessary.
+Please have a look at the existing implementation to understand the pattern of development of individual artefact types. Any deviation from this is discouraged unless it is absolutely necessary and approved.

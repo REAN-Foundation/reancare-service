@@ -11,9 +11,7 @@ Before you begin
 
 ## Various ways to contribute
 
-  [Types of contributions :memo:](#types-of-contributions-memo)
-
-  You can contribute to the repo by - 
+  You can contribute to the REANCare service by - 
   1. Testing the repository and add additional test cases.
   2. Raising an [issue](https://github.com/REAN-Foundation/reancare-service/issues)- for a problem you have encountered or for a new feature you want to have.
   3. Fixing the bug or implementing a new feature/part of the feature

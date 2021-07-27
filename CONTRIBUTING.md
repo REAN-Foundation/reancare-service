@@ -22,10 +22,10 @@ Before you begin:
   5. Documentation and transaltion. 
   6. Spreading the word!
 
-  - [:beetle: Add an issue](#beetle-issues)
+  - :beetle: **Add an issue**
     - Issues are used to track the tasks. If you find any problem, a behaviour to be updated, or a new feature to be added, search the issue list if it already has been reported by somebody else. If not, open the issue using the issue template. You can track the progress on the issue or the discuss details in the conversation.
   
-  - [:hammer_and_wrench: Fix the bug/Implement a feature/Create Pull requests](#hammer_and_wrench-pull-requests)
+  - :hammer_and_wrench: **Fix the bug/Implement a feature/Create Pull requests**
     - If you find any open issues which you think you can contribute to, pick the issue. 
     - Create a new branch and clone the repository. You can also fork the repo. See [here](docs/development.md) to see how to set-up development environment on your local machine.
     - Start working on the issue on your machine. 
@@ -50,6 +50,9 @@ Before you begin:
     - Fill out all the fields in the pull request as per the template. This will help the reviewers to understand your changes.
     - If the reviewer suggests some changes and asks for the clarification, you have to complete those changes.
     - Once the review is satisfactory, the reviewer will merge your changes. If there are again some merge conflicts during merging, you have to resolve those merge conflicts first locally and again push your changes.
+  
+For more information, check [Coding Style and Guidelines](coding-style-and-guidelines.md) and [Checklist to add new API or model](checklist-to-add-api.md).
 
-  - [:memo: Documenting the API](#hammer_and_wrench-pull-requests)
+  - :memo: **Documenting the API**
     - REANCare service API is currently documented through Postman as a part of request collection. If you feel that there is a need to update the documentation, open the Postman collection on your machine, update the documentation and save the updated Postman collection.
+    - For more information about documenting an API in Postman, please refer [Documenting your API](https://learning.postman.com/docs/publishing-your-api/documenting-your-api/).

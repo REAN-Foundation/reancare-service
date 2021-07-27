@@ -1,13 +1,19 @@
+# Releases and Roadmap
+
+* Current release - version 0.1.0
+  * This release is the first opensource release of reancare-backend-api service with a switch from Javascript to TypeScript with enhanced open architecture. The existing version of reancare-backend-api *(a pure javascript codebase which is internally maintained at the moment)* will be incrementally transformed/refactored/pulled into this opensource repository by the end of 2021 *(Hopefully, much earlier than that!)*. 
+
+
 # Roadmap
 
-### Release 1.0
+### Planned release 1.0
 s | Work items | Status |Tentative date
 | :--- | :--- | :--- | :---:
 1  | :zap: Pull in all the existing features from old JS repo| In-progress | Oct, 2021
 2  | :fire: Add FHIR storage support for existing resource types| In-progress | Sept, 2021
 3  | :speaker: Integration of clinical NLP service | Pending | Sept, 2021
 
-### Release 2.0
+### Planned release 2.0
 
 s | Work items | Status |Tentative date
 | :--- | :--- | :--- | :---:

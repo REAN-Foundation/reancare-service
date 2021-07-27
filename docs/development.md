@@ -41,7 +41,7 @@ __Steps to run the default postman collection requests__
 3. Select the imported environment in Postman.
 4. When you are starting, it is advisable to execute the requests in sequential order from top-to-bottom.
 
-Refer our [Coding Style and Guidelines](coding-style-and-guidelines.md) here.
+Please refer our [Coding Style and Guidelines](coding-style-and-guidelines.md).
 
-Refer [Checklist to add new API or model](checklist-checklist-to-add-api.md) here.
+Want to add a new feature/API/Model CRUD API? please refer [Checklist to add new API or model](checklist-to-add-api.md).
 

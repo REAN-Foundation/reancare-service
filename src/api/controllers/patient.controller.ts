@@ -7,15 +7,14 @@ import { Helper } from '../../common/helper';
 import { ResponseHandler } from '../../common/response.handler';
 import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
-import { PatientInputValidator } from '../input.validators/patient.input.validator';
+import { PatientValidator } from '../validators/patient.validator';
 import { PatientDetailsDto, PatientDomainModel } from '../../data/domain.types/patient.domain.types';
 
 import { Roles } from '../../data/domain.types/role.domain.types';
-import { PatientMapper } from '../../data/database/sequelize/mappers/patient.mapper';
 import { UserDomainModel } from '../../data/domain.types/user.domain.types';
 import { ApiError } from '../../common/api.error';
 import { AddressDomainModel } from '../../data/domain.types/address.domain.types';
-import { AddressInputValidator } from '../input.validators/address.input.validator';
+import { AddressValidator } from '../validators/address.validator';
 import { AddressService } from '../../services/address.service';
 import { RoleService } from '../../services/role.service';
 
@@ -48,7 +47,7 @@ export class PatientController {
         try {
             request.context = 'Patient.Create';
 
-            var patientDomainModel = await PatientInputValidator.create(request, response);
+            var patientDomainModel = await PatientValidator.create(request, response);
 
             //Throw an error if patient with same name and phone number exists
             var existingPatientCountSharingPhone = await this._service.checkforDuplicatePatients(patientDomainModel);
@@ -118,9 +117,10 @@ export class PatientController {
     getByUserId = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Patient.GetByUserId';
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            var userId: string = await PatientInputValidator.getByUserId(request, response);
+            var userId: string = await PatientValidator.getByUserId(request, response);
 
             const existingUser = await this._userService.getById(userId);
             if(existingUser == null){
@@ -145,7 +145,7 @@ export class PatientController {
             request.context = 'Patient.Search';
             await this._authorizer.authorize(request, response);
 
-            var filters = await PatientInputValidator.search(request, response);
+            var filters = await PatientValidator.search(request, response);
 
             var extractFull: boolean =
                 request.query.fullDetails != 'undefined' && typeof request.query.fullDetails == 'boolean'
@@ -172,9 +172,9 @@ export class PatientController {
             request.context = 'Patient.UpdateByUserId';
             await this._authorizer.authorize(request, response);
 
-            var patientDomainModel = await PatientInputValidator.updateByUserId(request, response);
+            var patientDomainModel = await PatientValidator.updateByUserId(request, response);
 
-            var userId: string = await PatientInputValidator.getByUserId(request, response);
+            var userId: string = await PatientValidator.getByUserId(request, response);
             const existingUser = await this._userService.getById(userId);
             if(existingUser == null){
                 throw new ApiError(404, 'User not found.');
@@ -208,7 +208,7 @@ export class PatientController {
             request.context = 'Patient.DeleteByUserId';
             await this._authorizer.authorize(request, response);
 
-            var userId: string = await PatientInputValidator.delete(request, response);
+            var userId: string = await PatientValidator.delete(request, response);
             const existingUser = await this._userService.getById(userId);
             if(existingUser == null){
                 throw new ApiError(404, 'User not found.');
@@ -237,7 +237,7 @@ export class PatientController {
         var addressBody = request.body.Address ?? null;
 
         if (addressBody != null) {
-            addressDomainModel = await AddressInputValidator.getDomainModel(addressBody);
+            addressDomainModel = await AddressValidator.getDomainModel(addressBody);
             //get existing address to update
             var existingAddress = await this._addressService.getByUserId(patientDomainModel.UserId);
             if (existingAddress == null) {
@@ -263,7 +263,7 @@ export class PatientController {
         var addressDomainModel: AddressDomainModel = null;
         var addressBody = request.body.Address ?? null;
         if (addressBody != null) {
-            addressDomainModel = await AddressInputValidator.getDomainModel(addressBody);
+            addressDomainModel = await AddressValidator.getDomainModel(addressBody);
             addressDomainModel.UserId = patient.User.id;
             var address = await this._addressService.create(addressDomainModel);
             if (address == null) {

@@ -6,7 +6,7 @@ import { AddressDomainModel } from '../../data/domain.types/address.domain.types
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PatientInputValidator {
+export class PatientValidator {
     static getDomainModel = async (request: express.Request): Promise<PatientDomainModel> => {
         var addressModel: AddressDomainModel = null;
 
@@ -41,7 +41,7 @@ export class PatientInputValidator {
                 ? new Date(Date.parse(request.body.BirthDate))
                 : null;
 
-        var phone = request.body.PhoneCountryCode + request.body.PhoneNumber;
+        var phone = request.body.Phone;
 
         var entity: PatientDomainModel = {
             User: {
@@ -55,6 +55,7 @@ export class PatientInputValidator {
                     BirthDate: birthdate,
                     ImageResourceId: request.body.ImageResourceId ?? null,
                 },
+                Password: request.body.Password ?? null,
                 DefaultTimeZone: request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone: request.body.DefaultTimeZone ?? null,
                 GenerateLoginOTP: request.body.DefaultTimeZone ?? null,
@@ -72,50 +73,32 @@ export class PatientInputValidator {
         response: express.Response
     ): Promise<PatientDomainModel> => {
 
-        await body('PhoneCountryCode')
+        await body('Phone')
             .exists()
             .notEmpty()
             .trim()
             .escape()
-            .customSanitizer(Helper.sanitizePhoneCountryCode)
-            .custom(Helper.validatePhoneCountryCode)
+            .customSanitizer(Helper.sanitizePhone)
+            .custom(Helper.validatePhone)
             .run(request);
 
-        await body('PhoneNumber')
-            .exists()
-            .notEmpty()
-            .trim()
-            .escape()
-            .customSanitizer(Helper.sanitizePhoneNumber)
-            .custom(Helper.validatePhoneNumber)
-            .run(request);
-        
         await body('Email').optional().trim().isEmail().escape().normalizeEmail().run(request);
         await body('FirstName').optional().trim().escape().run(request);
         await body('LastName').optional().trim().escape().run(request);
-
-        // await oneOf([
-        //     body('FirstName').optional().trim().escape(),
-        //     body('LastName').optional().trim().escape(),
-        // ]).run(request);
-        // await oneOf([
-        //     body('Phone').optional().trim().escape(),
-        //     body('Email').optional().trim().isEmail().escape()
-        // ]).run(request);
-
         await body('Prefix').optional().trim().escape().run(request);
         await body('Gender').optional().trim().escape().run(request);
         await body('BirthDate').optional().trim().escape().isDate().run(request);
         await body('ImageResourceId').optional().trim().escape().isUUID().run(request);
-        await body('LocationCoordsLongitude').optional().trim().escape().isDecimal().run(request);
-        await body('LocationCoordsLattitude').optional().trim().escape().isDecimal().run(request);
-        await body('Address').optional().trim().escape().run(request);
+        
+        // await body('LocationCoordsLongitude').optional().trim().escape().isDecimal().run(request);
+        // await body('LocationCoordsLattitude').optional().trim().escape().isDecimal().run(request);
+        // await body('Address').optional().trim().escape().run(request);
 
         const result = validationResult(request);
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return PatientInputValidator.getDomainModel(request);
+        return PatientValidator.getDomainModel(request);
     };
 
     static getByUserId = async (request: express.Request, response: express.Response): Promise<string> => {
@@ -159,7 +142,7 @@ export class PatientInputValidator {
             Helper.handleValidationError(result);
         }
 
-        return PatientInputValidator.getFilter(request);
+        return PatientValidator.getFilter(request);
     };
 
     private static getFilter(request): PatientSearchFilters {
@@ -192,22 +175,32 @@ export class PatientInputValidator {
         request: express.Request,
         response: express.Response
     ): Promise<PatientDomainModel> => {
+
+        await body('Phone')
+            .exists()
+            .notEmpty()
+            .trim()
+            .escape()
+            .customSanitizer(Helper.sanitizePhone)
+            .custom(Helper.validatePhone)
+            .run(request);
+
+        await body('Email').optional().trim().isEmail().escape().normalizeEmail().run(request);
         await body('FirstName').optional().trim().escape().run(request);
         await body('LastName').optional().trim().escape().run(request);
-        await body('Phone').optional().trim().escape().run(request);
-        await body('Email').optional().trim().escape().isEmail().run(request);
         await body('Prefix').optional().trim().escape().run(request);
         await body('Gender').optional().trim().escape().run(request);
         await body('BirthDate').optional().trim().escape().isDate().run(request);
         await body('ImageResourceId').optional().trim().escape().isUUID().run(request);
-        await body('LocationCoordsLongitude').optional().trim().escape().isDecimal().run(request);
-        await body('LocationCoordsLattitude').optional().trim().escape().isDecimal().run(request);
-        await body('Address').optional().trim().escape().run(request);
+        
+        // await body('LocationCoordsLongitude').optional().trim().escape().isDecimal().run(request);
+        // await body('LocationCoordsLattitude').optional().trim().escape().isDecimal().run(request);
+        // await body('Address').optional().trim().escape().run(request);
 
         const result = validationResult(request);
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return PatientInputValidator.getDomainModel(request.body);
+        return PatientValidator.getDomainModel(request.body);
     };
 }

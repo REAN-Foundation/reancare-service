@@ -5,10 +5,9 @@ import { ApiClientDomainModel, ApiClientVerificationDomainModel } from '../../da
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ApiClientInputValidator {
+export class ApiClientValidator {
     static getDomainModel = async (body: any): Promise<ApiClientDomainModel> => {
 
-        
         var clientModel: ApiClientDomainModel = null;
         var obj = Helper.checkObj(body);
         if (obj == null) {
@@ -44,7 +43,7 @@ export class ApiClientInputValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return ApiClientInputValidator.getDomainModel(request.body);
+        return ApiClientValidator.getDomainModel(request.body);
     };
 
     static getOrRenewApiKey = async (
@@ -75,7 +74,7 @@ export class ApiClientInputValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return ApiClientInputValidator.getVerificationDomainModel(request.body, clientCode, password);
+        return ApiClientValidator.getVerificationDomainModel(request.body, clientCode, password);
     };
 
     static getVerificationDomainModel = async (body: any, clientCode: string, password: string): Promise<ApiClientVerificationDomainModel> => {
@@ -115,6 +114,6 @@ export class ApiClientInputValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return ApiClientInputValidator.getDomainModel(request.body);
+        return ApiClientValidator.getDomainModel(request.body);
     };
 }

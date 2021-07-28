@@ -6,7 +6,7 @@ import { UserSearchFilters, UserLoginDetails } from '../../data/domain.types/use
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserInputValidator {
+export class UserValidator {
 
         static getById = async (request: express.Request, response: express.Response): Promise<string> => {
             await param('id').trim().escape().isUUID().run(request);
@@ -43,7 +43,7 @@ export class UserInputValidator {
                     Helper.handleValidationError(result);
                 }
 
-                return UserInputValidator.getFilter(request);
+                return UserValidator.getFilter(request);
             } catch (error) {
                 ResponseHandler.handleError(request, response, error);
             }
@@ -94,7 +94,7 @@ export class UserInputValidator {
                     UserName: null,
                     Password: request.body.Password,
                     Otp: null,
-                    LoginRoleId: request.body.LoginRoleId,
+                    LoginRoleId: parseInt(request.body.LoginRoleId, 10)
                 };
                 if (typeof request.body.Phone != 'undefined') {
                     loginDetails.Phone = request.body.Phone;

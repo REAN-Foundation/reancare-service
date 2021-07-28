@@ -7,6 +7,7 @@ declare global{
             currentUser: CurrentUser,
             currentClient: CurrentClient
             context: string,
+            resourceOwnerUserId: string
         }
     }
 }

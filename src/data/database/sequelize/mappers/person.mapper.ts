@@ -14,11 +14,12 @@ export class PersonMapper {
             return null;
         }
 
-        const displayName: string = Helper.constructPersonDisplayName(
+        var displayName: string = Helper.constructPersonDisplayName(
             person.Prefix,
             person.FirstName,
             person.LastName
         );
+
         const age = Helper.getAgeFromBirthDate(person.BirthDate);
 
         var personRoleRepo = new PersonRoleRepo();

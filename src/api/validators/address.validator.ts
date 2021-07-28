@@ -3,7 +3,7 @@ import { AddressDomainModel } from '../../data/domain.types/address.domain.types
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AddressInputValidator {
+export class AddressValidator {
 
     static getDomainModel = async (addressBody: any): Promise<AddressDomainModel> => {
 

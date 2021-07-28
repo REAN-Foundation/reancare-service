@@ -73,8 +73,10 @@ export class Authorizer_custom implements IAuthorizer {
     };
 
     private isResourceOwner = async (user: CurrentUser, request: express.Request): Promise<boolean> => {
-        //for time being, return true always
-        return true;
+        if(request.resourceOwnerUserId === user.UserId) {
+            return true;
+        }
+        return false;
     };
 
     private hasConsent = async (CurrentRoleId: number, context: string): Promise<boolean> => {

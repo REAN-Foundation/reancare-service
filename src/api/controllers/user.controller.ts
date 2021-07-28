@@ -5,7 +5,7 @@ import { ResponseHandler } from '../../common/response.handler';
 import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
 import { UserDetailsDto } from '../../data/domain.types/user.domain.types';
-import { UserInputValidator } from '../input.validators/user.input.validator';
+import { UserValidator } from '../validators/user.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +28,7 @@ export class UserController {
             request.context = 'User.GetById';
             await this._authorizer.authorize(request, response);
 
-            var id: string = await UserInputValidator.getById(request, response);
+            var id: string = await UserValidator.getById(request, response);
             const user = await this._service.getById(id);
             if (user == null) {
                 ResponseHandler.failure(request, response, 'User not found.', 404);
@@ -74,7 +74,7 @@ export class UserController {
         try {
             request.context = 'User.LoginWithPassword';
 
-            var loginObject = await UserInputValidator.loginWithPassword(request, response);
+            var loginObject = await UserValidator.loginWithPassword(request, response);
             var userDetails = await this._service.loginWithPassword(loginObject);
             if (userDetails == null) {
                 ResponseHandler.failure(request, response, 'User not found!', 404);
@@ -99,7 +99,7 @@ export class UserController {
     generateOtp = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'User.GenerateOtp';
-            var obj = UserInputValidator.generateOtp(request, response);
+            var obj = UserValidator.generateOtp(request, response);
             var entity = await this._service.generateOtp(obj);
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {
                 entity: entity,
@@ -113,7 +113,7 @@ export class UserController {
         try {
             request.context = 'User.LoginWithPassword';
 
-            var loginObject = await UserInputValidator.loginWithOtp(request, response);
+            var loginObject = await UserValidator.loginWithOtp(request, response);
             var userDetails = await this._service.loginWithOtp(loginObject);
             if (userDetails == null) {
                 ResponseHandler.failure(request, response, 'User not found!', 404);

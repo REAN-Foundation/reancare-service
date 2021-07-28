@@ -180,9 +180,6 @@ export class PatientController {
                 throw new ApiError(404, 'User not found.');
             }
 
-            //This throws an error if the duplicate patient being added
-            await this._service.checkforDuplicatePatients(patientDomainModel);
-
             var userDomainModel: UserDomainModel = patientDomainModel.User;
             var updatedUser = await this._userService.update(patientDomainModel.UserId, userDomainModel);
             if(!updatedUser) {

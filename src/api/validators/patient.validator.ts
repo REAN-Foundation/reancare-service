@@ -177,7 +177,7 @@ export class PatientValidator {
     ): Promise<PatientDomainModel> => {
 
         await body('Phone')
-            .exists()
+            .optional()
             .notEmpty()
             .trim()
             .escape()
@@ -201,6 +201,6 @@ export class PatientValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return PatientValidator.getDomainModel(request.body);
+        return PatientValidator.getDomainModel(request);
     };
 }

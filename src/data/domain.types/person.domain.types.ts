@@ -22,7 +22,7 @@ export interface PersonDomainModel {
     MiddleName?: string;
     LastName?: string;
     DisplayName?: string;
-    Phone: string;
+    Phone?: string;
     Email?: string;
     Gender?: Gender;
     BirthDate?: Date;

@@ -620,10 +620,10 @@
 			]
 		},
 		{
-			"name": "users / persons",
+			"name": "Users",
 			"item": [
 				{
-					"name": "patient",
+					"name": "Patients",
 					"item": [
 						{
 							"name": "Register patient- with only a phone number Copy",
@@ -1042,8 +1042,773 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Update patient details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient is created\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Patient');\r",
+											"    pm.expect(jsonRes.Data.Patient).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.Patient).to.have.property('User');\r",
+											"    pm.expect(jsonRes.Data.Patient.User).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient.User).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient.User.Person).to.have.property('id');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"John\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"Doe\",\r\n    \"Email\": \"john.doe@gmail.com\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1970-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients",
+										"{{PATIENT_USER_ID}}"
+									]
+								}
+							},
+							"response": []
 						}
 					]
+				}
+			],
+			"description": "## APIs to manage users\n\nThese set of APIs are meant to add/retrieve/update/delete/search users for different types, such as patients' doctors, lab-users and pharmacists."
+		},
+		{
+			"name": "Address",
+			"item": [
+				{
+					"name": "Add an address",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// var types = ['Home', 'Communication', 'Official'];\r",
+									"\r",
+									"// var addressLines = [\r",
+									"//     '89/88, Sembudoss St, Parrys',\r",
+									"//     '228, Commerce House, Nagindas Master Rd, Fort',\r",
+									"//     '19, Shanti Sadan 2nd Flr, 11 Th Road, Khar (west)',\r",
+									"//     '99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli',\r",
+									"//     '249-a, Shop No.4, Ganesh Co Ophsg Soc, N M Joshi Marg, Opp Mafatlal Mill No3, Lower Parel (west)',\r",
+									"//     '8081 Manor Drive Piqua, OH 45356'];\r",
+									"\r",
+									"// var cities = [\r",
+									"//     \"Chennai\",\r",
+									"//     \"Mumbai\",\r",
+									"//     \"Banglore\"\r",
+									"// ];\r",
+									"\r",
+									"// var states = [\r",
+									"//     \"Tamilnadu\",\r",
+									"//     \"Maharashtra\",\r",
+									"//     \"Karnataka\"\r",
+									"// ];\r",
+									"\r",
+									"// var countries = [\"India\",\r",
+									"//     \"Thailand\",\r",
+									"//     \"Russia\",\r",
+									"//     \"USA\",\r",
+									"//     \"UK\",\r",
+									"//     \"Germany\",\r",
+									"//     \"France\",\r",
+									"//     \"Mexico\"];\r",
+									"\r",
+									"// var postalCodes = [\r",
+									"//     \"400023\",\r",
+									"//     \"400052\",\r",
+									"//     \"560068\",\r",
+									"//     \"400013\"\r",
+									"// ];\r",
+									"\r",
+									"// //Reference: https://stackoverflow.com/a/6878845\r",
+									"// function getRandomInRange(from, to, fixed) {\r",
+									"//     return (Math.random() * (to - from) + from).toFixed(fixed) * 1;\r",
+									"//     // .toFixed() returns string, so ' * 1' is a trick to convert to number\r",
+									"// }\r",
+									"\r",
+									"// var type = types[Math.floor(Math.random() * types.length)];\r",
+									"// var addressLine = addressLines[Math.floor(Math.random() * addressLines.length)];\r",
+									"// var city = cities[Math.floor(Math.random() * cities.length)];\r",
+									"// var state = states[Math.floor(Math.random() * states.length)];\r",
+									"// var country = countries[Math.floor(Math.random() * countries.length)];\r",
+									"// var postalCode = postalCodes[Math.floor(Math.random() * postalCodes.length)];\r",
+									"// var longitude = getRandomInRange(-180, 180, 6);\r",
+									"// var lattitude = getRandomInRange(-180, 180, 6);\r",
+									"\r",
+									"// console.log(type + '\\n');\r",
+									"// console.log(addressLine + '\\n');\r",
+									"// console.log(city + '\\n');\r",
+									"// console.log(state + '\\n');\r",
+									"// console.log(country + '\\n');\r",
+									"// console.log(postalCode + '\\n');\r",
+									"// console.log(longitude + '\\n');\r",
+									"// console.log(lattitude + '\\n');\r",
+									"\r",
+									"pm.environment.set(\"ADDRESS_TYPE\", 'Home');\r",
+									"pm.environment.set(\"ADDRESS_LINE\", '89/88, Sembudoss St, Parrys');\r",
+									"pm.environment.set(\"ADDRESS_CITY\", 'Pune');\r",
+									"pm.environment.set(\"ADDRESS_DISTRICT\", 'Greater Pune');\r",
+									"pm.environment.set(\"ADDRESS_STATE\", 'Maharashtra');\r",
+									"pm.environment.set(\"ADDRESS_COUNTRY\", 'India');\r",
+									"pm.environment.set(\"ADDRESS_POSTAL_CODE\", '411001');\r",
+									"pm.environment.set(\"ADDRESS_LONGITUDE\", 36.732324);\r",
+									"pm.environment.set(\"ADDRESS_LATTITUDE\", 6.611966);\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"ADDRESS_ID\", jsonRes.Data.Address.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"New address is created\", function () {\r",
+									"\r",
+									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
+									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
+									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+									"\r",
+									"    console.log(expectedType + '\\n');\r",
+									"    console.log(expectedAddressLine + '\\n');\r",
+									"    console.log(expectedCity + '\\n');\r",
+									"    console.log(expectedDistrict + '\\n');\r",
+									"    console.log(expectedState + '\\n');\r",
+									"    console.log(expectedCountry + '\\n');\r",
+									"    console.log(expectedPostalCode + '\\n');\r",
+									"    console.log(expectedLongitude + '\\n');\r",
+									"    console.log(expectedLattitude + '\\n');\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
+									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLongitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLattitude');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
+									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
+									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
+									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
+									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
+									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
+									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
+									"    pm.expect(jsonRes.Data.Address.LocationCoordsLongitude).equals(expectedLongitude);\r",
+									"    pm.expect(jsonRes.Data.Address.LocationCoordsLattitude).equals(expectedLattitude);\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"LocationCoordsLongitude\": {{ADDRESS_LONGITUDE}},\r\n    \"LocationCoordsLattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/addresses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"addresses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get address by id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Updated api client is returned\", function () {\r",
+									"\r",
+									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
+									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
+									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
+									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLongitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLattitude');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
+									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
+									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
+									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
+									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
+									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
+									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
+									"    pm.expect(jsonRes.Data.Address.LocationCoordsLongitude).equals(expectedLongitude);\r",
+									"    pm.expect(jsonRes.Data.Address.LocationCoordsLattitude).equals(expectedLattitude);\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"OrganizationId\": null,\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"LocationCoordsLongitude\": {{ADDRESS_LONGITUDE}},\r\n    \"LocationCoordsLattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/addresses/{{ADDRESS_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"addresses",
+								"{{ADDRESS_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update address",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var types = ['Home', 'Communication', 'Official'];\r",
+									"\r",
+									"var addressLines = [\r",
+									"    '89/88, Sembudoss St, Parrys',\r",
+									"    '228, Commerce House, Nagindas Master Rd, Fort',\r",
+									"    '19, Shanti Sadan 2nd Flr, 11 Th Road, Khar (west)',\r",
+									"    '99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli',\r",
+									"    '249-a, Shop No.4, Ganesh Co Ophsg Soc, N M Joshi Marg, Opp Mafatlal Mill No3, Lower Parel (west)',\r",
+									"    '8081 Manor Drive Piqua, OH 45356'];\r",
+									"\r",
+									"var cities = [\r",
+									"    \"Chennai\",\r",
+									"    \"Mumbai\",\r",
+									"    \"Banglore\"\r",
+									"];\r",
+									"\r",
+									"var states = [\r",
+									"    \"Tamilnadu\",\r",
+									"    \"Maharashtra\",\r",
+									"    \"Karnataka\"\r",
+									"];\r",
+									"\r",
+									"var countries = [\"India\",\r",
+									"    \"Thailand\",\r",
+									"    \"Russia\",\r",
+									"    \"USA\",\r",
+									"    \"UK\",\r",
+									"    \"Germany\",\r",
+									"    \"France\",\r",
+									"    \"Mexico\"];\r",
+									"\r",
+									"var postalCodes = [\r",
+									"    \"400023\",\r",
+									"    \"400052\",\r",
+									"    \"560068\",\r",
+									"    \"400013\"\r",
+									"];\r",
+									"\r",
+									"//Reference: https://stackoverflow.com/a/6878845\r",
+									"function getRandomInRange(from, to, fixed) {\r",
+									"    return (Math.random() * (to - from) + from).toFixed(fixed) * 1;\r",
+									"    // .toFixed() returns string, so ' * 1' is a trick to convert to number\r",
+									"}\r",
+									"\r",
+									"var type = types[Math.floor(Math.random() * types.length)];\r",
+									"var addressLine = addressLines[Math.floor(Math.random() * addressLines.length)];\r",
+									"var city = cities[Math.floor(Math.random() * cities.length)];\r",
+									"var state = states[Math.floor(Math.random() * states.length)];\r",
+									"var country = countries[Math.floor(Math.random() * countries.length)];\r",
+									"var postalCode = postalCodes[Math.floor(Math.random() * postalCodes.length)];\r",
+									"var longitude = getRandomInRange(-180, 180, 6);\r",
+									"var lattitude = getRandomInRange(-180, 180, 6);\r",
+									"\r",
+									"pm.environment.set(\"ADDRESS_TYPE\", type);\r",
+									"pm.environment.set(\"ADDRESS_LINE\", addressLine);\r",
+									"pm.environment.set(\"ADDRESS_CITY\", city);\r",
+									"pm.environment.set(\"ADDRESS_DISTRICT\", 'Greater ' + city);\r",
+									"pm.environment.set(\"ADDRESS_STATE\", state);\r",
+									"pm.environment.set(\"ADDRESS_COUNTRY\", country);\r",
+									"pm.environment.set(\"ADDRESS_POSTAL_CODE\", postalCode);\r",
+									"pm.environment.set(\"ADDRESS_LONGITUDE\", longitude);\r",
+									"pm.environment.set(\"ADDRESS_LATTITUDE\", lattitude);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Updated api client is returned\", function () {\r",
+									"\r",
+									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
+									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
+									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
+									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLongitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLattitude');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
+									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
+									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
+									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
+									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
+									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
+									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
+									"    pm.expect(jsonRes.Data.Address.LocationCoordsLongitude).equals(expectedLongitude);\r",
+									"    pm.expect(jsonRes.Data.Address.LocationCoordsLattitude).equals(expectedLattitude);\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"OrganizationId\": null,\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"LocationCoordsLongitude\": {{ADDRESS_LONGITUDE}},\r\n    \"LocationCoordsLattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/addresses/{{ADDRESS_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"addresses",
+								"{{ADDRESS_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search address",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var str = '';\r",
+									"var search = '';\r",
+									"var num = 0.0;\r",
+									"\r",
+									"str = pm.environment.get(\"ADDRESS_LINE\");\r",
+									"search = str.substring(0, 3).toLowerCase();\r",
+									"pm.environment.set(\"ADDRESS_LINE_SEARCH_STRING\", search);\r",
+									"\r",
+									"str = pm.environment.get(\"ADDRESS_CITY\");\r",
+									"search = str.substring(0, 3).toLowerCase();\r",
+									"pm.environment.set(\"ADDRESS_CITY_SEARCH_STRING\", search);\r",
+									"\r",
+									"str = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+									"search = str.substring(0, 3).toLowerCase();\r",
+									"pm.environment.set(\"ADDRESS_DISTRICT_SEARCH_STRING\", search);\r",
+									"\r",
+									"str = pm.environment.get(\"ADDRESS_STATE\");\r",
+									"search = str.substring(0, 3).toLowerCase();\r",
+									"pm.environment.set(\"ADDRESS_STATE_SEARCH_STRING\", search);\r",
+									"\r",
+									"str = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+									"search = str.substring(0, 3).toLowerCase();\r",
+									"pm.environment.set(\"ADDRESS_COUNTRY_SEARCH_STRING\", search);\r",
+									"\r",
+									"str = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+									"search = str.substring(0, 3).toLowerCase();\r",
+									"pm.environment.set(\"ADDRESS_POSTAL_CODE_SEARCH_STRING\", search);\r",
+									"\r",
+									"num = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+									"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_FROM\", num - 1);\r",
+									"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_TO\", num + 1);\r",
+									"\r",
+									"num = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+									"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_FROM\", num - 1);\r",
+									"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_TO\", num + 1);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Updated api client is returned\", function () {\r",
+									"\r",
+									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
+									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
+									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
+									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLongitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLattitude');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
+									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
+									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
+									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
+									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
+									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
+									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
+									"    pm.expect(jsonRes.Data.Address.LocationCoordsLongitude).equals(expectedLongitude);\r",
+									"    pm.expect(jsonRes.Data.Address.LocationCoordsLattitude).equals(expectedLattitude);\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "Session token (JWT) for the user",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API client secret key",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"OrganizationId\": null,\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"LocationCoordsLongitude\": {{ADDRESS_LONGITUDE}},\r\n    \"LocationCoordsLattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/addresses/search?type={{ADDRESS_TYPE}}&addressLine={{ADDRESS_LINE_SEARCH_STRING}}&city={{ADDRESS_CITY_SEARCH_STRING}}&district={{ADDRESS_DISTRICT_SEARCH_STRING}}&state={{ADDRESS_STATE_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&postalCode={{ADDRESS_POSTAL_CODE_SEARCH_STRING}}&longitudeFrom={{ADDRESS_LONGITUDE_SEARCH_FROM}}&longitudeTo={{ADDRESS_LONGITUDE_SEARCH_TO}}&lattitudeFrom={{ADDRESS_LATTITUDE_SEARCH_FROM}}&lattitudeTo={{ADDRESS_LATTITUDE_SEARCH_TO}}&createdDateFrom=2021-05-01&createdDateTo=2021-05-12&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"addresses",
+								"search"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "{{ADDRESS_TYPE}}",
+									"description": "Type of the address"
+								},
+								{
+									"key": "addressLine",
+									"value": "{{ADDRESS_LINE_SEARCH_STRING}}",
+									"description": "Search string to match address line"
+								},
+								{
+									"key": "city",
+									"value": "{{ADDRESS_CITY_SEARCH_STRING}}",
+									"description": "Search string for city"
+								},
+								{
+									"key": "district",
+									"value": "{{ADDRESS_DISTRICT_SEARCH_STRING}}",
+									"description": "Search string for district"
+								},
+								{
+									"key": "state",
+									"value": "{{ADDRESS_STATE_SEARCH_STRING}}",
+									"description": "Search string for state"
+								},
+								{
+									"key": "country",
+									"value": "{{ADDRESS_COUNTRY_SEARCH_STRING}}",
+									"description": "Search string for country"
+								},
+								{
+									"key": "postalCode",
+									"value": "{{ADDRESS_POSTAL_CODE_SEARCH_STRING}}",
+									"description": "Search string for "
+								},
+								{
+									"key": "longitudeFrom",
+									"value": "{{ADDRESS_LONGITUDE_SEARCH_FROM}}",
+									"description": "Start of the range for longitude based search"
+								},
+								{
+									"key": "longitudeTo",
+									"value": "{{ADDRESS_LONGITUDE_SEARCH_TO}}",
+									"description": "End of the range for longitude based search"
+								},
+								{
+									"key": "lattitudeFrom",
+									"value": "{{ADDRESS_LATTITUDE_SEARCH_FROM}}",
+									"description": "Start of the range for lattitude based search"
+								},
+								{
+									"key": "lattitudeTo",
+									"value": "{{ADDRESS_LATTITUDE_SEARCH_TO}}",
+									"description": "End of the range for lattitude based search"
+								},
+								{
+									"key": "createdDateFrom",
+									"value": "2021-05-01",
+									"description": "Start of the range for creation date based search"
+								},
+								{
+									"key": "createdDateTo",
+									"value": "2021-05-12",
+									"description": "End of the range for creation date based search"
+								},
+								{
+									"key": "orderBy",
+									"value": "City",
+									"description": "Order by Param"
+								},
+								{
+									"key": "order",
+									"value": "ascending",
+									"description": "'ascending' or 'descending'"
+								},
+								{
+									"key": "pageIndex",
+									"value": "0",
+									"description": "Page index for pagination"
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "25",
+									"description": "Items per page"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

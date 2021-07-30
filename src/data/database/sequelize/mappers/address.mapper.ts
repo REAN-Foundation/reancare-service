@@ -12,7 +12,7 @@ export class AddressMapper {
         var dto: AddressDto = {
             id: address.id,
             Type: address.Type,
-            UserId: address.UserId,
+            PersonId: address.PersonId,
             OrganizationId: address.OrganizationId,
             AddressLine: address.AddressLine,
             City: address.City,

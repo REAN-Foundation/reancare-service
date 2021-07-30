@@ -55,11 +55,13 @@ export class PatientValidator {
                     BirthDate: birthdate,
                     ImageResourceId: request.body.ImageResourceId ?? null,
                 },
+                id: request.params.userId,
                 Password: request.body.Password ?? null,
                 DefaultTimeZone: request.body.DefaultTimeZone ?? null,
                 CurrentTimeZone: request.body.DefaultTimeZone ?? null,
                 GenerateLoginOTP: request.body.DefaultTimeZone ?? null,
             },
+            UserId: request.params.userId,
             Address: addressModel,
         };
         if (entity.User.Person.Gender != null && entity.User.Person.Prefix == null) {

@@ -41,6 +41,18 @@ export class UserRepo implements IUserRepo {
         return false;
     };
 
+    userExistsWithPhone = async (phone: string): Promise<boolean> => {
+        if (phone == null || typeof phone != 'undefined') {
+            return false;
+        }
+        var user = await User.findOne({ where: { Phone: phone, IsActive: true } });
+        if(user == null) {
+            var phoneTemp: string = phone;
+            phoneTemp = phoneTemp.replace(' ', '');
+        }
+        return user != null;
+    };
+
     getUserWithUserName = async (userName: string): Promise<UserDetailsDto> => {
         if (userName != null && typeof userName != 'undefined') {
             var user = await User.findOne({

@@ -20,14 +20,14 @@ export class PatientMapper {
         const user = await userRepo.getById(patient.UserId);
 
         var addressRepo = new AddressRepo();
-        const address = await addressRepo.getByUserId(user.id);
+        const addresses = await addressRepo.getByPersonId(user.Person.id);
 
         var dto: PatientDetailsDto = {
             id: patient.id,
             User: user,
             DisplayId: patient.DisplayId,
             EhrId: patient.EhrId,
-            Address: address,
+            Addresses: addresses,
             MedicalProfile: null, //PatientMedicalProfileDto;
             Insurances: [], //PatientInsuranceDto[];
             EmergencyContacts: [], // PatientEmergencyContactDto[];

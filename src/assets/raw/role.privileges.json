@@ -27,7 +27,12 @@
             "User.LoginWithPassword",
             "Patient.GetByUserId",
             "Patient.UpdateByUserId",
-            "Patient.DeleteByUserId"
+            "Patient.DeleteByUserId",
+            "Address.Create",
+            "Address.GetById",
+            "Address.Search",
+            "Address.Update",
+            "Address.Delete"
         ]
     },
     {
@@ -41,7 +46,12 @@
             "User.LoginWithPassword",
             "Patient.Search",
             "Patient.GetByUserId",
-            "Patient.UpdateByUserId"
+            "Patient.UpdateByUserId",
+            "Address.Create",
+            "Address.GetById",
+            "Address.Search",
+            "Address.Update",
+            "Address.Delete"
         ]
     },
     {
@@ -54,7 +64,12 @@
             "User.GenerateOtp",
             "User.LoginWithPassword",
             "Patient.Search",
-            "Patient.GetByUserId"
+            "Patient.GetByUserId",
+            "Address.Create",
+            "Address.GetById",
+            "Address.Search",
+            "Address.Update",
+            "Address.Delete"
         ]
     },
     {
@@ -67,7 +82,12 @@
             "User.GenerateOtp",
             "User.LoginWithPassword",
             "Patient.Search",
-            "Patient.GetByUserId"
+            "Patient.GetByUserId",
+            "Address.Create",
+            "Address.GetById",
+            "Address.Search",
+            "Address.Update",
+            "Address.Delete"
         ]
     }
 ]

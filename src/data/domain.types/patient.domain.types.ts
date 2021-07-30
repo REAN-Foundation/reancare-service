@@ -83,7 +83,7 @@ export interface PatientDetailsDto {
     MedicalProfile?: MedicalProfileDto;
     Insurances?: PatientInsuranceDto[];
     EmergencyContacts?: EmergencyContactDto[];
-    Address?: AddressDto;
+    Addresses?: AddressDto[];
 };
 
 export interface MedicalProfileDto {

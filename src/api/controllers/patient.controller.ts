@@ -17,6 +17,7 @@ import { AddressDomainModel } from '../../data/domain.types/address.domain.types
 import { AddressValidator } from '../validators/address.validator';
 import { AddressService } from '../../services/address.service';
 import { RoleService } from '../../services/role.service';
+import { PersonDomainModel } from '../../data/domain.types/person.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -185,6 +186,12 @@ export class PatientController {
             if(!updatedUser) {
                 throw new ApiError(400, 'Unable to update user!');
             }
+            var personDomainModel: PersonDomainModel = patientDomainModel.User.Person;
+            personDomainModel.id = updatedUser.Person.id;
+            var updatedPerson = await this._personService.update(personDomainModel.id, personDomainModel);
+            if(!updatedPerson) {
+                throw new ApiError(400, 'Unable to update person!');
+            }
             const updatedPatient = await this._service.updateByUserId(patientDomainModel.UserId, patientDomainModel);
             if (updatedPatient == null) {
                 throw new ApiError(400, 'Unable to update patient record!');
@@ -224,6 +231,7 @@ export class PatientController {
             ResponseHandler.handleError(request, response, error);
         }
     }
+    
     //#endregion
 
     //#region Private methods
@@ -234,19 +242,21 @@ export class PatientController {
         var addressBody = request.body.Address ?? null;
 
         if (addressBody != null) {
+
             addressDomainModel = await AddressValidator.getDomainModel(addressBody);
+
             //get existing address to update
-            var existingAddress = await this._addressService.getByUserId(patientDomainModel.UserId);
-            if (existingAddress == null) {
-                addressDomainModel.UserId = patientDomainModel.UserId;
+            var existingAddresses = await this._addressService.getByPersonId(patientDomainModel.PersonId);
+            if (existingAddresses.length < 1) {
+                addressDomainModel.PersonId = patientDomainModel.PersonId;
                 var address = await this._addressService.create(addressDomainModel);
                 if (address == null) {
                     throw new ApiError(400, 'Cannot create address!');
                 }
             }
-            else {
+            else if(existingAddresses.length == 1) {
                 const updatedAddress = await this._addressService.update(
-                    existingAddress.id,
+                    existingAddresses[0].id,
                     addressDomainModel
                 );
                 if (updatedAddress == null) {
@@ -261,7 +271,7 @@ export class PatientController {
         var addressBody = request.body.Address ?? null;
         if (addressBody != null) {
             addressDomainModel = await AddressValidator.getDomainModel(addressBody);
-            addressDomainModel.UserId = patient.User.id;
+            addressDomainModel.PersonId = patient.User.id;
             var address = await this._addressService.create(addressDomainModel);
             if (address == null) {
                 throw new ApiError(400, 'Cannot create address!');

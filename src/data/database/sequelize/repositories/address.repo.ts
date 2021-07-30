@@ -1,7 +1,7 @@
 import { IAddressRepo } from '../../../repository.interfaces/address.repo.interface';
 import Address from '../models/address.model';
 import { Op, Sequelize } from 'sequelize';
-import { AddressDomainModel, AddressDto } from '../../../domain.types/address.domain.types';
+import { AddressDomainModel, AddressDto, AddressSearchFilters } from '../../../domain.types/address.domain.types';
 import { AddressMapper } from '../mappers/address.mapper';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
@@ -14,7 +14,7 @@ export class AddressRepo implements IAddressRepo {
         try {
             var entity = {
                 Type: addressDomainModel.Type,
-                UserId: addressDomainModel.UserId ?? null,
+                UserId: addressDomainModel.PersonId ?? null,
                 OrganizationId: addressDomainModel.OrganizationId ?? null,
                 AddressLine: addressDomainModel.AddressLine ?? null,
                 City: addressDomainModel.City ?? null,
@@ -45,11 +45,31 @@ export class AddressRepo implements IAddressRepo {
         }
     };
 
-    getByUserId = async (userId: string): Promise<AddressDto> => {
+    getByPersonId = async (personId: string): Promise<AddressDto[]> => {
         try {
-            var address = await Address.findOne({where:{UserId: userId}});
-            var dto = await AddressMapper.toDto(address);
-            return dto;
+            var dtos = [];
+            var addresses = await Address.findAll({ where: { id: personId, IsActive: true } });
+            for(var address of addresses) {
+                var dto = await AddressMapper.toDto(address);
+                dtos.push(dto);
+            }
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    search = async (filters: AddressSearchFilters): Promise<AddressDto[]> => {
+        try {
+            var dtos = [];
+            var search = {};
+            var addresses = await Address.findAll(search);
+            for(var address of addresses) {
+                var dto = await AddressMapper.toDto(address);
+                dtos.push(dto);
+            }
+            return dtos;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -63,8 +83,8 @@ export class AddressRepo implements IAddressRepo {
             if(addressDomainModel.Type != null) {
                 address.Type = addressDomainModel.Type;
             }
-            if(addressDomainModel.UserId != null) {
-                address.UserId = addressDomainModel.UserId;
+            if(addressDomainModel.PersonId != null) {
+                address.PersonId = addressDomainModel.PersonId;
             }
             if(addressDomainModel.OrganizationId != null) {
                 address.OrganizationId = addressDomainModel.OrganizationId;

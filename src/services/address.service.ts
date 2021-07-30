@@ -1,7 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { Logger } from '../common/logger';
-import { ApiError } from '../common/api.error';
-import { AddressDomainModel, AddressDto } from "../data/domain.types/address.domain.types";
+import { AddressDomainModel, AddressDto, AddressSearchFilters } from "../data/domain.types/address.domain.types";
 import { IAddressRepo } from "../data/repository.interfaces/address.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -21,8 +19,12 @@ export class AddressService {
         return await this._addressRepo.getById(id);
     };
 
-    getByUserId = async (userId: string): Promise<AddressDto> => {
-        return await this._addressRepo.getByUserId(userId);
+    getByPersonId = async (personId: string): Promise<AddressDto[]> => {
+        return await this._addressRepo.getByPersonId(personId);
+    };
+
+    search = async (filters: AddressSearchFilters): Promise<AddressDto[]> => {
+        return await this._addressRepo.search(filters);
     };
 
     update = async (id: string, addressDomainModel: AddressDomainModel): Promise<AddressDto> => {

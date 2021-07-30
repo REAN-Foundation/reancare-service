@@ -37,7 +37,7 @@ export default class Address extends Model {
         type:  DataType.UUID,
         allowNull: true,
     })
-    UserId: string;
+    PersonId: string;
 
     @IsUUID(4)
     @Column({
@@ -107,6 +107,13 @@ export default class Address extends Model {
         allowNull: true,
     })
     LocationCoordsLattitude: number;
+
+    @Column({
+        type: DataType.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+    })
+    IsActive: boolean;
 
     @Column
     @CreatedAt

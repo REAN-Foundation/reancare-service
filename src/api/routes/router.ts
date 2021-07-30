@@ -1,8 +1,9 @@
 import { register as registerUserRoutes } from "./user.routes";
 import { register as registerClientRoutes } from "./api.client.routes";
+import { register as registerAddressRoutes } from "./address.routes";
 import { register as registerPatientRoutes } from "./patient.routes";
 
-
+////////////////////////////////////////////////////////////////////////////////////
 
 export class Router {
     private _app = null;
@@ -22,6 +23,7 @@ export class Router {
                 });
 
                 registerUserRoutes(this._app);
+                registerAddressRoutes(this._app);
                 registerClientRoutes(this._app);
                 registerPatientRoutes(this._app);
 

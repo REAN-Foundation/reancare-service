@@ -1,7 +1,7 @@
 import { IAddressRepo } from '../../../repository.interfaces/address.repo.interface';
 import Address from '../models/address.model';
 import { Op, Sequelize } from 'sequelize';
-import { AddressDomainModel, AddressDto, AddressSearchFilters } from '../../../domain.types/address.domain.types';
+import { AddressDomainModel, AddressDto, AddressSearchFilters, AddressSearchResults } from '../../../domain.types/address.domain.types';
 import { AddressMapper } from '../mappers/address.mapper';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
@@ -22,8 +22,8 @@ export class AddressRepo implements IAddressRepo {
                 State: addressDomainModel.State ?? null,
                 Country: addressDomainModel.Country ?? null,
                 PostalCode: addressDomainModel.PostalCode ?? null,
-                LocationCoordsLongitude: addressDomainModel.LocationCoordsLongitude ?? null,
-                LocationCoordsLattitude: addressDomainModel.LocationCoordsLattitude ?? null,
+                Longitude: addressDomainModel.Longitude ?? null,
+                Lattitude: addressDomainModel.Lattitude ?? null,
             };
             var address = await Address.create(entity);
             var dto = await AddressMapper.toDto(address);
@@ -48,7 +48,7 @@ export class AddressRepo implements IAddressRepo {
     getByPersonId = async (personId: string): Promise<AddressDto[]> => {
         try {
             var dtos = [];
-            var addresses = await Address.findAll({ where: { id: personId, IsActive: true } });
+            var addresses = await Address.findAll({ where: { id: personId } });
             for(var address of addresses) {
                 var dto = await AddressMapper.toDto(address);
                 dtos.push(dto);
@@ -60,16 +60,112 @@ export class AddressRepo implements IAddressRepo {
         }
     };
 
-    search = async (filters: AddressSearchFilters): Promise<AddressDto[]> => {
+    search = async (filters: AddressSearchFilters): Promise<AddressSearchResults> => {
         try {
-            var dtos = [];
-            var search = {};
-            var addresses = await Address.findAll(search);
-            for(var address of addresses) {
+
+            var search = { where: { } };
+
+            if(filters.Type != null) {
+                search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
+            }
+            if(filters.PersonId != null) {
+                search.where['PersonId'] = filters.PersonId;
+            }
+            if(filters.OrganizationId != null) {
+                search.where['OrganizationId'] = filters.OrganizationId;
+            }
+            if(filters.AddressLine != null) {
+                search.where['AddressLine'] = { [Op.like]: '%' + filters.AddressLine + '%' };
+            }
+            if(filters.City != null) {
+                search.where['City'] = { [Op.like]: '%' + filters.City + '%' };
+            }            
+            if(filters.District != null) {
+                search.where['District'] = { [Op.like]: '%' + filters.District + '%' };
+            }
+            if(filters.State != null) {
+                search.where['State'] = { [Op.like]: '%' + filters.State + '%' };
+            }
+            if(filters.Country != null) {
+                search.where['Country'] = { [Op.like]: '%' + filters.Country + '%' };
+            }
+            if(filters.PostalCode != null) {
+                search.where['PostalCode'] = { [Op.like]: '%' + filters.PostalCode + '%' };
+            }
+            if(filters.LongitudeFrom != null && filters.LongitudeTo != null) {
+                search.where['Longitude'] = { 
+                    [Op.gte]: filters.LongitudeFrom,
+                    [Op.lte]: filters.LongitudeTo,
+                };
+            }
+            if(filters.LattitudeFrom != null && filters.LattitudeTo != null) {
+                search.where['Lattitude'] = { 
+                    [Op.gte]: filters.LattitudeFrom,
+                    [Op.lte]: filters.LattitudeTo,
+                };
+            }
+            if(filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
+                search.where['CreatedAt'] = { 
+                    [Op.gte]: filters.CreatedDateFrom,
+                    [Op.lte]: filters.CreatedDateTo,
+                };
+            }
+            else if(filters.CreatedDateFrom == null && filters.CreatedDateTo != null) {
+                search.where['CreatedAt'] = { 
+                    [Op.lte]: filters.CreatedDateTo,
+                };
+            }
+            else if(filters.CreatedDateFrom != null && filters.CreatedDateTo == null) {
+                search.where['CreatedAt'] = { 
+                    [Op.gte]: filters.CreatedDateFrom,
+                };
+            }
+            if(filters.PostalCode != null) {
+                search.where['PostalCode'] = { [Op.like]: '%' + filters.PostalCode + '%' };
+            }
+
+            var orderByColum = 'AddressLine';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            var order = 'ASC';
+            if (filters.Order == 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+
+            var limit = 25;
+            if(filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            var offset = 0;
+            var pageIndex = 0;
+            if(filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            var foundResults = await Address.findAndCountAll(search);
+            
+            var dtos: AddressDto[] = [];
+            for(var address of foundResults.rows) {
                 var dto = await AddressMapper.toDto(address);
                 dtos.push(dto);
             }
-            return dtos;
+
+            var searchResults: AddressSearchResults = {
+                TotalCount: foundResults.count,
+                PageIndex: pageIndex,
+                ItemsPerPage: limit,
+                Order: order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy: orderByColum,
+                Items: dtos
+            }
+            
+            return searchResults;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -107,11 +203,11 @@ export class AddressRepo implements IAddressRepo {
             if(addressDomainModel.PostalCode != null) {
                 address.PostalCode = addressDomainModel.PostalCode;
             }
-            if(addressDomainModel.LocationCoordsLongitude != null) {
-                address.LocationCoordsLongitude = addressDomainModel.LocationCoordsLongitude;
+            if(addressDomainModel.Longitude != null) {
+                address.Longitude = addressDomainModel.Longitude;
             }
-            if(addressDomainModel.LocationCoordsLattitude != null) {
-                address.LocationCoordsLattitude = addressDomainModel.LocationCoordsLattitude;
+            if(addressDomainModel.Lattitude != null) {
+                address.Lattitude = addressDomainModel.Lattitude;
             }
             await address.save();
 

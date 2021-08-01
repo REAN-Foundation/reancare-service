@@ -102,16 +102,9 @@ export default class ApiClient extends Model {
     })
     ValidTill: Date;
 
-    @Column({
-        type: DataType.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-    })
-    IsActive: boolean;
-
     @Column
     @CreatedAt
-    CreateAt: Date;
+    CreatedAt: Date;
 
     @UpdatedAt
     UpdatedAt: Date;

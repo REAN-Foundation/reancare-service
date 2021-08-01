@@ -1119,7 +1119,7 @@
 			"name": "Address",
 			"item": [
 				{
-					"name": "Add an address",
+					"name": "Add an address associated with person",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -1255,8 +1255,8 @@
 									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
 									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
 									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLongitude');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLattitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Longitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Lattitude');\r",
 									"\r",
 									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
 									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
@@ -1265,8 +1265,12 @@
 									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
 									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
 									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
-									"    pm.expect(jsonRes.Data.Address.LocationCoordsLongitude).equals(expectedLongitude);\r",
-									"    pm.expect(jsonRes.Data.Address.LocationCoordsLattitude).equals(expectedLattitude);\r",
+									"\r",
+									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
+									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
+									"\r",
+									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
+									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
 									"\r",
 									"});\r",
 									"\r",
@@ -1297,7 +1301,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"LocationCoordsLongitude\": {{ADDRESS_LONGITUDE}},\r\n    \"LocationCoordsLattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
+							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"PersonId\": \"{{PATIENT_PERSON_ID}}\",\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"Longitude\": {{ADDRESS_LONGITUDE}},\r\n    \"Lattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/addresses",
@@ -1333,7 +1337,7 @@
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
 									"\r",
-									"pm.test(\"Updated api client is returned\", function () {\r",
+									"pm.test(\"Address is returned\", function () {\r",
 									"\r",
 									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
 									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
@@ -1356,8 +1360,8 @@
 									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
 									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
 									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLongitude');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLattitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Longitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Lattitude');\r",
 									"\r",
 									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
 									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
@@ -1366,8 +1370,13 @@
 									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
 									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
 									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
-									"    pm.expect(jsonRes.Data.Address.LocationCoordsLongitude).equals(expectedLongitude);\r",
-									"    pm.expect(jsonRes.Data.Address.LocationCoordsLattitude).equals(expectedLattitude);\r",
+									"\r",
+									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
+									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
+									"\r",
+									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
+									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
+									"\r",
 									"\r",
 									"});\r",
 									"\r",
@@ -1401,7 +1410,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"OrganizationId\": null,\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"LocationCoordsLongitude\": {{ADDRESS_LONGITUDE}},\r\n    \"LocationCoordsLattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
+							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"OrganizationId\": null,\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"Longitude\": {{ADDRESS_LONGITUDE}},\r\n    \"Lattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/addresses/{{ADDRESS_ID}}",
@@ -1423,68 +1432,6 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"var types = ['Home', 'Communication', 'Official'];\r",
-									"\r",
-									"var addressLines = [\r",
-									"    '89/88, Sembudoss St, Parrys',\r",
-									"    '228, Commerce House, Nagindas Master Rd, Fort',\r",
-									"    '19, Shanti Sadan 2nd Flr, 11 Th Road, Khar (west)',\r",
-									"    '99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli',\r",
-									"    '249-a, Shop No.4, Ganesh Co Ophsg Soc, N M Joshi Marg, Opp Mafatlal Mill No3, Lower Parel (west)',\r",
-									"    '8081 Manor Drive Piqua, OH 45356'];\r",
-									"\r",
-									"var cities = [\r",
-									"    \"Chennai\",\r",
-									"    \"Mumbai\",\r",
-									"    \"Banglore\"\r",
-									"];\r",
-									"\r",
-									"var states = [\r",
-									"    \"Tamilnadu\",\r",
-									"    \"Maharashtra\",\r",
-									"    \"Karnataka\"\r",
-									"];\r",
-									"\r",
-									"var countries = [\"India\",\r",
-									"    \"Thailand\",\r",
-									"    \"Russia\",\r",
-									"    \"USA\",\r",
-									"    \"UK\",\r",
-									"    \"Germany\",\r",
-									"    \"France\",\r",
-									"    \"Mexico\"];\r",
-									"\r",
-									"var postalCodes = [\r",
-									"    \"400023\",\r",
-									"    \"400052\",\r",
-									"    \"560068\",\r",
-									"    \"400013\"\r",
-									"];\r",
-									"\r",
-									"//Reference: https://stackoverflow.com/a/6878845\r",
-									"function getRandomInRange(from, to, fixed) {\r",
-									"    return (Math.random() * (to - from) + from).toFixed(fixed) * 1;\r",
-									"    // .toFixed() returns string, so ' * 1' is a trick to convert to number\r",
-									"}\r",
-									"\r",
-									"var type = types[Math.floor(Math.random() * types.length)];\r",
-									"var addressLine = addressLines[Math.floor(Math.random() * addressLines.length)];\r",
-									"var city = cities[Math.floor(Math.random() * cities.length)];\r",
-									"var state = states[Math.floor(Math.random() * states.length)];\r",
-									"var country = countries[Math.floor(Math.random() * countries.length)];\r",
-									"var postalCode = postalCodes[Math.floor(Math.random() * postalCodes.length)];\r",
-									"var longitude = getRandomInRange(-180, 180, 6);\r",
-									"var lattitude = getRandomInRange(-180, 180, 6);\r",
-									"\r",
-									"pm.environment.set(\"ADDRESS_TYPE\", type);\r",
-									"pm.environment.set(\"ADDRESS_LINE\", addressLine);\r",
-									"pm.environment.set(\"ADDRESS_CITY\", city);\r",
-									"pm.environment.set(\"ADDRESS_DISTRICT\", 'Greater ' + city);\r",
-									"pm.environment.set(\"ADDRESS_STATE\", state);\r",
-									"pm.environment.set(\"ADDRESS_COUNTRY\", country);\r",
-									"pm.environment.set(\"ADDRESS_POSTAL_CODE\", postalCode);\r",
-									"pm.environment.set(\"ADDRESS_LONGITUDE\", longitude);\r",
-									"pm.environment.set(\"ADDRESS_LATTITUDE\", lattitude);\r",
 									""
 								],
 								"type": "text/javascript"
@@ -1500,17 +1447,17 @@
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
 									"\r",
-									"pm.test(\"Updated api client is returned\", function () {\r",
+									"pm.test(\"Updated address is returned\", function () {\r",
 									"\r",
-									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
-									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
-									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
-									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
-									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+									"    var expectedType = \"Official\";\r",
+									"    var expectedAddressLine = \"99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli\";\r",
+									"    var expectedCity = \"Mumbai\";\r",
+									"    var expectedDistrict = \"Greater Mumbai\";\r",
+									"    var expectedState = \"Maharashtra\";\r",
+									"    var expectedCountry = \"India\";\r",
+									"    var expectedPostalCode = \"412407\";\r",
+									"    var expectedLongitude = 23.45545;\r",
+									"    var expectedLattitude = 54.65466;\r",
 									"\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
@@ -1523,8 +1470,8 @@
 									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
 									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
 									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLongitude');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLattitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Longitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Lattitude');\r",
 									"\r",
 									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
 									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
@@ -1533,8 +1480,14 @@
 									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
 									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
 									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
-									"    pm.expect(jsonRes.Data.Address.LocationCoordsLongitude).equals(expectedLongitude);\r",
-									"    pm.expect(jsonRes.Data.Address.LocationCoordsLattitude).equals(expectedLattitude);\r",
+									"\r",
+									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
+									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
+									"\r",
+									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
+									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
+									"\r",
+									"\r",
 									"\r",
 									"});\r",
 									"\r",
@@ -1565,7 +1518,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"OrganizationId\": null,\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"LocationCoordsLongitude\": {{ADDRESS_LONGITUDE}},\r\n    \"LocationCoordsLattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
+							"raw": "{\r\n    \"Type\": \"Official\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"AddressLine\": \"99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli\",\r\n    \"City\": \"Mumbai\",\r\n    \"District\": \"Greater Mumbai\",\r\n    \"State\": \"Maharashtra\",\r\n    \"Country\": \"India\",\r\n    \"PostalCode\": \"412407\",\r\n    \"Longitude\": 23.45545,\r\n    \"Lattitude\": 54.65466\r\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/addresses/{{ADDRESS_ID}}",
@@ -1581,7 +1534,7 @@
 					"response": []
 				},
 				{
-					"name": "Search address",
+					"name": "Search addresses",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -1590,6 +1543,16 @@
 									"var str = '';\r",
 									"var search = '';\r",
 									"var num = 0.0;\r",
+									"\r",
+									"var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+									"var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
+									"var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
+									"var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+									"var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+									"var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+									"var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+									"var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+									"var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
 									"\r",
 									"str = pm.environment.get(\"ADDRESS_LINE\");\r",
 									"search = str.substring(0, 3).toLowerCase();\r",
@@ -1638,41 +1601,11 @@
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
 									"\r",
-									"pm.test(\"Updated api client is returned\", function () {\r",
-									"\r",
-									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
-									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
-									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
-									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
-									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+									"pm.test(\"List of addresses are returned\", function () {\r",
 									"\r",
 									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
-									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLongitude');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('LocationCoordsLattitude');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
-									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
-									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
-									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
-									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
-									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
-									"    pm.expect(jsonRes.Data.Address.LocationCoordsLongitude).equals(expectedLongitude);\r",
-									"    pm.expect(jsonRes.Data.Address.LocationCoordsLattitude).equals(expectedLattitude);\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Addresses');\r",
+									"    pm.expect(jsonRes.Data.Addresses.Items.length).to.be.greaterThan(0);\r",
 									"\r",
 									"});\r",
 									"\r",
@@ -1708,10 +1641,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"OrganizationId\": null,\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"LocationCoordsLongitude\": {{ADDRESS_LONGITUDE}},\r\n    \"LocationCoordsLattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
+							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/addresses/search?type={{ADDRESS_TYPE}}&addressLine={{ADDRESS_LINE_SEARCH_STRING}}&city={{ADDRESS_CITY_SEARCH_STRING}}&district={{ADDRESS_DISTRICT_SEARCH_STRING}}&state={{ADDRESS_STATE_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&postalCode={{ADDRESS_POSTAL_CODE_SEARCH_STRING}}&longitudeFrom={{ADDRESS_LONGITUDE_SEARCH_FROM}}&longitudeTo={{ADDRESS_LONGITUDE_SEARCH_TO}}&lattitudeFrom={{ADDRESS_LATTITUDE_SEARCH_FROM}}&lattitudeTo={{ADDRESS_LATTITUDE_SEARCH_TO}}&createdDateFrom=2021-05-01&createdDateTo=2021-05-12&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25",
+							"raw": "{{BASE_URL}}/addresses/search?district={{ADDRESS_DISTRICT_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1723,17 +1656,20 @@
 								{
 									"key": "type",
 									"value": "{{ADDRESS_TYPE}}",
-									"description": "Type of the address"
+									"description": "Type of the address",
+									"disabled": true
 								},
 								{
 									"key": "addressLine",
 									"value": "{{ADDRESS_LINE_SEARCH_STRING}}",
-									"description": "Search string to match address line"
+									"description": "Search string to match address line",
+									"disabled": true
 								},
 								{
 									"key": "city",
 									"value": "{{ADDRESS_CITY_SEARCH_STRING}}",
-									"description": "Search string for city"
+									"description": "Search string for city",
+									"disabled": true
 								},
 								{
 									"key": "district",
@@ -1743,7 +1679,8 @@
 								{
 									"key": "state",
 									"value": "{{ADDRESS_STATE_SEARCH_STRING}}",
-									"description": "Search string for state"
+									"description": "Search string for state",
+									"disabled": true
 								},
 								{
 									"key": "country",
@@ -1753,27 +1690,32 @@
 								{
 									"key": "postalCode",
 									"value": "{{ADDRESS_POSTAL_CODE_SEARCH_STRING}}",
-									"description": "Search string for "
+									"description": "Search string for ",
+									"disabled": true
 								},
 								{
 									"key": "longitudeFrom",
 									"value": "{{ADDRESS_LONGITUDE_SEARCH_FROM}}",
-									"description": "Start of the range for longitude based search"
+									"description": "Start of the range for longitude based search",
+									"disabled": true
 								},
 								{
 									"key": "longitudeTo",
 									"value": "{{ADDRESS_LONGITUDE_SEARCH_TO}}",
-									"description": "End of the range for longitude based search"
+									"description": "End of the range for longitude based search",
+									"disabled": true
 								},
 								{
 									"key": "lattitudeFrom",
 									"value": "{{ADDRESS_LATTITUDE_SEARCH_FROM}}",
-									"description": "Start of the range for lattitude based search"
+									"description": "Start of the range for lattitude based search",
+									"disabled": true
 								},
 								{
 									"key": "lattitudeTo",
 									"value": "{{ADDRESS_LATTITUDE_SEARCH_TO}}",
-									"description": "End of the range for lattitude based search"
+									"description": "End of the range for lattitude based search",
+									"disabled": true
 								},
 								{
 									"key": "createdDateFrom",
@@ -1782,13 +1724,13 @@
 								},
 								{
 									"key": "createdDateTo",
-									"value": "2021-05-12",
+									"value": "2021-12-12",
 									"description": "End of the range for creation date based search"
 								},
 								{
 									"key": "orderBy",
 									"value": "City",
-									"description": "Order by Param"
+									"description": "The name of the Parameter to order by"
 								},
 								{
 									"key": "order",

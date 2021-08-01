@@ -112,6 +112,7 @@ export default class Person extends Model {
     @Column({
         type: DataType.STRING(64),
         allowNull: true,
+        unique: true
     })
     NationalId: string;
 
@@ -122,13 +123,6 @@ export default class Person extends Model {
         defaultValue: PersonIdentificationType.Aadhar
     })
     NationalIdType: string;
-
-    @Column({
-        type: DataType.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-    })
-    IsActive: boolean;
 
     @IsUUID(4)
     @ForeignKey(() => Organization)
@@ -143,7 +137,7 @@ export default class Person extends Model {
 
     @Column
     @CreatedAt
-    CreateAt: Date;
+    CreatedAt: Date;
 
     @UpdatedAt
     UpdatedAt: Date;

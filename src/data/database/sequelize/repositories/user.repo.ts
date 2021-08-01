@@ -22,7 +22,7 @@ export class UserRepo implements IUserRepo {
 
     getUserByPersonIdAndRole = async (personId: string, roleId: number): Promise<UserDetailsDto> => {
         if (Helper.isStr(personId) && Helper.isNum(roleId)) {
-            var user = await User.findOne({ where: { PersonId: personId, RoleId: roleId, IsActive: true } });
+            var user = await User.findOne({ where: { PersonId: personId, RoleId: roleId } });
             return await UserMapper.toDetailsDto(user);
         }
         return null;
@@ -32,8 +32,7 @@ export class UserRepo implements IUserRepo {
         if (userName != null && typeof userName != 'undefined') {
             var existing = await User.findOne({
                 where: {
-                    UserName: { [Op.like]: '%' + userName + '%' },
-                    IsActive: true,
+                    UserName: { [Op.like]: '%' + userName + '%' }
                 },
             });
             return existing != null;
@@ -45,7 +44,7 @@ export class UserRepo implements IUserRepo {
         if (phone == null || typeof phone != 'undefined') {
             return false;
         }
-        var user = await User.findOne({ where: { Phone: phone, IsActive: true } });
+        var user = await User.findOne({ where: { Phone: phone } });
         if(user == null) {
             var phoneTemp: string = phone;
             phoneTemp = phoneTemp.replace(' ', '');
@@ -57,8 +56,7 @@ export class UserRepo implements IUserRepo {
         if (userName != null && typeof userName != 'undefined') {
             var user = await User.findOne({
                 where: {
-                    UserName: { [Op.like]: '%' + userName + '%' },
-                    IsActive: true,
+                    UserName: { [Op.like]: '%' + userName + '%' }
                 },
             });
             var dto = await UserMapper.toDetailsDto(user);
@@ -88,7 +86,7 @@ export class UserRepo implements IUserRepo {
 
     getById = async (id: string): Promise<UserDetailsDto> => {
         try {
-            var user = await User.findOne({ where: { id: id, IsActive: true } });
+            var user = await User.findByPk(id);
             var dto = await UserMapper.toDetailsDto(user);
             return dto;
         } catch (error) {
@@ -99,7 +97,7 @@ export class UserRepo implements IUserRepo {
 
     update = async (id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
-            var user = await User.findOne({ where: { id: id, IsActive: true } });
+            var user = await User.findByPk(id);
 
             if (userDomainModel.DefaultTimeZone != null) {
                 user.DefaultTimeZone = userDomainModel.DefaultTimeZone;
@@ -127,7 +125,7 @@ export class UserRepo implements IUserRepo {
     };
 
     getUserHashedPassword = async (id: string): Promise<string> => {
-        var user = await User.findOne({ where: { id: id, IsActive: true } });
+        var user = await User.findByPk(id);
         if (user == null) {
             return null;
         }

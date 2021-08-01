@@ -61,6 +61,7 @@ export default class User extends Model {
     @Column({
         type: DataType.STRING(10),
         allowNull: true,
+        unique: true
     })
     UserName: string;
 
@@ -94,19 +95,12 @@ export default class User extends Model {
     })
     CurrentTimeZone: string;
 
-    @Column({
-        type: DataType.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-    })
-    IsActive: boolean;
-
     @BelongsTo(() => Person)
     Person: Person;
 
     @Column
     @CreatedAt
-    CreateAt: Date;
+    CreatedAt: Date;
 
     @UpdatedAt
     UpdatedAt: Date;

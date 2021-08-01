@@ -86,7 +86,7 @@ export default class Otp extends Model {
 
     @Column
     @CreatedAt
-    CreateAt: Date;
+    CreatedAt: Date;
 
     @UpdatedAt
     UpdatedAt: Date;

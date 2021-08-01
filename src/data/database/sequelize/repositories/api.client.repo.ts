@@ -151,10 +151,8 @@ export class ApiClientRepo implements IApiClientRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            var client = await ApiClient.findOne({ where: { id: id, IsActive: true } });
-            client.IsActive = false;
-            await client.save();
-            return true;
+            var result = await ApiClient.destroy({ where: { id: id } });
+            return result == 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

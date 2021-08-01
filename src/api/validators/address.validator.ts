@@ -13,7 +13,7 @@ export class AddressValidator {
         var address = Helper.checkObj(request.body);
         if (address != null) {
             addressModel = {
-                Type: 'Home',
+                Type: request.body.Type ?? 'Home',
                 PersonId: request.body.PersonId ?? null,
                 OrganizationId: request.body.OrganizationId ?? null,
                 AddressLine: request.body.AddressLine,
@@ -22,8 +22,8 @@ export class AddressValidator {
                 State: request.body.State ?? null,
                 Country: request.body.Country ?? null,
                 PostalCode: request.body.PostalCode ?? null,
-                LocationCoordsLongitude: request.body.LocationCoordsLongitude ?? null,
-                LocationCoordsLattitude: request.body.LocationCoordsLattitude ?? null,
+                Longitude: request.body.Longitude ?? null,
+                Lattitude: request.body.Lattitude ?? null,
             };
         }
         
@@ -54,7 +54,7 @@ export class AddressValidator {
         await query('personId').optional().trim().escape().isUUID().run(request);
         await query('organizationId').optional().trim().escape().isUUID().run(request);
         await query('type').optional().trim().escape().run(request);
-        await query('addressLine').exists().trim().escape().run(request);
+        await query('addressLine').optional().trim().run(request);
         await query('city').optional().trim().escape().run(request);
         await query('district').optional().trim().escape().run(request);
         await query('state').optional().trim().escape().run(request);
@@ -64,8 +64,8 @@ export class AddressValidator {
         await query('longitudeTo').optional().trim().escape().isDecimal().run(request);
         await query('lattitudeFrom').optional().trim().escape().isDecimal().run(request);
         await query('lattitudeTo').optional().trim().escape().isDecimal().run(request);
-        await query('createdDateFrom').optional().trim().escape().toDate().isDate().run(request);
-        await query('createdDateTo').optional().trim().escape().toDate().isDate().run(request);
+        await query('createdDateFrom').optional().trim().escape().toDate().run(request);
+        await query('createdDateTo').optional().trim().escape().toDate().run(request);
         await query('orderBy').optional().trim().escape().run(request);
         await query('order').optional().trim().escape().run(request);
         await query('pageIndex').optional().trim().escape().isInt().run(request);
@@ -90,8 +90,8 @@ export class AddressValidator {
         await body('State').optional().trim().escape().run(request);
         await body('Country').optional().trim().escape().run(request);
         await body('PostalCode').optional().trim().escape().run(request);
-        await body('LocationCoordsLongitude').optional().trim().escape().isDecimal().run(request);
-        await body('LocationCoordsLattitude').optional().trim().escape().isDecimal().run(request);
+        await body('Longitude').optional().trim().escape().isDecimal().run(request);
+        await body('Lattitude').optional().trim().escape().isDecimal().run(request);
 
         const result = validationResult(request);
         if (!result.isEmpty()) {
@@ -124,7 +124,7 @@ export class AddressValidator {
             LattitudeTo: request.query.lattitudeTo ?? null,
             CreatedDateFrom: request.query.createdDateFrom ?? null,
             CreatedDateTo: request.query.createdDateTo ?? null,
-            OrderBy: request.query.orderBy ?? 'CreateAt',
+            OrderBy: request.query.orderBy ?? 'CreatedAt',
             Order: request.query.order ?? 'descending',
             PageIndex: pageIndex,
             ItemsPerPage: itemsPerPage,

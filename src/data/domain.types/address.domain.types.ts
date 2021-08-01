@@ -10,8 +10,8 @@ export interface AddressDomainModel {
     State?: string;
     Country?: string;
     PostalCode?: string;
-    LocationCoordsLongitude?: number;
-    LocationCoordsLattitude?: number;
+    Longitude?: number;
+    Lattitude?: number;
 };
 
 export interface AddressDto {
@@ -25,8 +25,8 @@ export interface AddressDto {
     State: string;
     Country: string;
     PostalCode: string;
-    LocationCoordsLongitude: number;
-    LocationCoordsLattitude: number;
+    Longitude: number;
+    Lattitude: number;
 };
 
 export interface AddressSearchFilters {
@@ -51,3 +51,11 @@ export interface AddressSearchFilters {
     ItemsPerPage: number;
 }
 
+export interface AddressSearchResults {
+    TotalCount: number;
+    PageIndex: number;
+    ItemsPerPage: number;
+    Order: string;
+    OrderedBy: string;
+    Items: AddressDto[];
+}

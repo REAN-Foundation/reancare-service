@@ -9,6 +9,9 @@ export class AddressMapper {
         if(address == null){
             return null;
         }
+        var longitude: string = address.Longitude ? address.Longitude.toString() : null;
+        var lattitude: string = address.Lattitude ? address.Lattitude.toString() : null;
+
         var dto: AddressDto = {
             id: address.id,
             Type: address.Type,
@@ -20,8 +23,8 @@ export class AddressMapper {
             State: address.State,
             Country: address.Country,
             PostalCode: address.PostalCode,
-            LocationCoordsLongitude: address.LocationCoordsLongitude,
-            LocationCoordsLattitude: address.LocationCoordsLattitude,
+            Longitude: longitude ? parseFloat(longitude) : null,
+            Lattitude: lattitude ? parseFloat(lattitude) : null,
         };
         return dto;
     }

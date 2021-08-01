@@ -42,14 +42,14 @@ export class AddressController {
 
             if (domainModel.PersonId != null) {
                 var person = await this._personService.getById(domainModel.PersonId);
-                if (person != null) {
+                if (person == null) {
                     throw new ApiError(404, `Person with an id ${domainModel.PersonId} cannot be found.`);
                 }
             }
 
             // if(domainModel.OrganizationId != null) {
             //     var organization = await this._organizationService.getById(domainModel.OrganizationId);
-            //     if(organization != null) {
+            //     if(organization == null) {
             //         throw new ApiError(404, `Organization with an id ${domainModel.OrganizationId} cannot be found.`)
             //     }
             // }
@@ -95,14 +95,14 @@ export class AddressController {
 
             var filters = await AddressValidator.search(request, response);
 
-            const addresses = await this._service.search(filters);
-            if (addresses != null) {
-                var count = addresses.length;
+            const searchResults = await this._service.search(filters);
+            if (searchResults.Items.length != 0) {
+                var count = searchResults.Items.length;
                 var message =
                     count == 0
                         ? 'No records found!'
                         : `Total ${count} address records retrieved successfully!`;
-                ResponseHandler.success(request, response, message, 200, { Addresses: addresses });
+                ResponseHandler.success(request, response, message, 200, { Addresses: searchResults });
                 return;
             }
         } catch (error) {
@@ -128,7 +128,7 @@ export class AddressController {
                 throw new ApiError(400, 'Unable to update address record!');
             }
 
-            ResponseHandler.success(request, response, 'Address record updated successfully!', 201, {
+            ResponseHandler.success(request, response, 'Address record updated successfully!', 200, {
                 Address: updated,
             });
         } catch (error) {

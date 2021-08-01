@@ -116,7 +116,7 @@ export default class EmergencyContact extends Model {
 
     @Column
     @CreatedAt
-    CreateAt: Date;
+    CreatedAt: Date;
 
     @UpdatedAt
     UpdatedAt: Date;

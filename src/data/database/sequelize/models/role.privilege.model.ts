@@ -51,7 +51,7 @@ export default class RolePrivilege extends Model {
 
     @Column
     @CreatedAt
-    CreateAt: Date;
+    CreatedAt: Date;
 
     @UpdatedAt
     UpdatedAt: Date;

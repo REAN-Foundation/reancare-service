@@ -132,19 +132,12 @@ export default class Organization extends Model {
     })
     NationalHealthFacilityRegistryId: string;
 
-    @Column({
-        type: DataType.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-    })
-    IsActive: boolean;
-
     @HasMany(() => Person)
     Persons: Person[];
 
     @Column
     @CreatedAt
-    CreateAt: Date;
+    CreatedAt: Date;
 
     @UpdatedAt
     UpdatedAt: Date;

@@ -38,8 +38,7 @@ export class PersonMapper {
             Phone: person.Phone,
             Email: person.Email,
             ImageResourceId: person.ImageResourceId,
-            ActiveSince: person.CreateAt,
-            IsActive: person.IsActive,
+            ActiveSince: person.CreatedAt,
             Roles: personRoles
         };
         return dto;

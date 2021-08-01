@@ -54,7 +54,7 @@ export default class PersonRole extends Model {
 
     @Column
     @CreatedAt
-    CreateAt: Date;
+    CreatedAt: Date;
 
     @UpdatedAt
     UpdatedAt: Date;

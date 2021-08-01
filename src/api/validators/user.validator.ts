@@ -62,7 +62,7 @@ export class UserValidator {
                 BirthdateTo: request.query.birthdateTo ?? null,
                 CreatedDateFrom: request.query.createdDateFrom ?? null,
                 CreatedDateTo: request.query.createdDateTo ?? null,
-                OrderBy: request.query.orderBy ?? 'CreateAt',
+                OrderBy: request.query.orderBy ?? 'CreatedAt',
                 Order: request.query.order ?? 'descending',
                 PageIndex: pageIndex,
                 ItemsPerPage: itemsPerPage,

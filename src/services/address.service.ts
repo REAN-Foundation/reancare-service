@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { AddressDomainModel, AddressDto, AddressSearchFilters } from "../data/domain.types/address.domain.types";
+import { AddressDomainModel, AddressDto, AddressSearchFilters, AddressSearchResults } from "../data/domain.types/address.domain.types";
 import { IAddressRepo } from "../data/repository.interfaces/address.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ export class AddressService {
         return await this._addressRepo.getByPersonId(personId);
     };
 
-    search = async (filters: AddressSearchFilters): Promise<AddressDto[]> => {
+    search = async (filters: AddressSearchFilters): Promise<AddressSearchResults> => {
         return await this._addressRepo.search(filters);
     };
 

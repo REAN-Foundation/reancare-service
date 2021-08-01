@@ -9,13 +9,17 @@ export class ClientMapper {
         if(client == null){
             return null;
         }
+        var active = false;
+        if(client.ValidFrom < new Date() && client.ValidTill > new Date()) {
+            active = true;
+        }
         var dto: ApiClientDto = {
             id: client.id,
             ClientName: client.ClientName,
             ClientCode: client.ClientCode,
             Phone: client.Phone,
             Email: client.Email,
-            IsActive: client.IsActive
+            IsActive: active
         };
         return dto;
     }

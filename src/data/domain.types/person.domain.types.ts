@@ -46,7 +46,6 @@ export interface PersonDetailsDto {
     Age: string;
     ImageResourceId: string;
     Roles: PersonRoleDto[];
-    IsActive: boolean;
     ActiveSince: Date;
 };
 

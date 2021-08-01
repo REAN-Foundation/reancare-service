@@ -20,8 +20,8 @@ export class PatientValidator {
                 State: request.body.Address.State ?? null,
                 Country: request.body.Address.Country ?? null,
                 PostalCode: request.body.Address.PostalCode ?? null,
-                LocationCoordsLongitude: request.body.Address.LocationCoordsLongitude ?? null,
-                LocationCoordsLattitude: request.body.Address.LocationCoordsLattitude ?? null,
+                Longitude: request.body.Address.Longitude ?? null,
+                Lattitude: request.body.Address.Lattitude ?? null,
             };
         }
 
@@ -92,8 +92,8 @@ export class PatientValidator {
         await body('BirthDate').optional().trim().escape().isDate().run(request);
         await body('ImageResourceId').optional().trim().escape().isUUID().run(request);
         
-        // await body('LocationCoordsLongitude').optional().trim().escape().isDecimal().run(request);
-        // await body('LocationCoordsLattitude').optional().trim().escape().isDecimal().run(request);
+        // await body('Longitude').optional().trim().escape().isDecimal().run(request);
+        // await body('Lattitude').optional().trim().escape().isDecimal().run(request);
         // await body('Address').optional().trim().escape().run(request);
 
         const result = validationResult(request);
@@ -165,7 +165,7 @@ export class PatientValidator {
             BirthdateTo: request.query.birthdateTo ?? null,
             CreatedDateFrom: request.query.createdDateFrom ?? null,
             CreatedDateTo: request.query.createdDateTo ?? null,
-            OrderBy: request.query.orderBy ?? 'CreateAt',
+            OrderBy: request.query.orderBy ?? 'CreatedAt',
             Order: request.query.order ?? 'descending',
             PageIndex: pageIndex,
             ItemsPerPage: itemsPerPage,
@@ -195,8 +195,8 @@ export class PatientValidator {
         await body('BirthDate').optional().trim().escape().isDate().run(request);
         await body('ImageResourceId').optional().trim().escape().isUUID().run(request);
         
-        // await body('LocationCoordsLongitude').optional().trim().escape().isDecimal().run(request);
-        // await body('LocationCoordsLattitude').optional().trim().escape().isDecimal().run(request);
+        // await body('Longitude').optional().trim().escape().isDecimal().run(request);
+        // await body('Lattitude').optional().trim().escape().isDecimal().run(request);
         // await body('Address').optional().trim().escape().run(request);
 
         const result = validationResult(request);

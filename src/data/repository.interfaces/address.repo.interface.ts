@@ -1,4 +1,4 @@
-import { AddressDomainModel, AddressDto, AddressSearchFilters } from '../domain.types/address.domain.types';
+import { AddressDomainModel, AddressDto, AddressSearchFilters, AddressSearchResults } from '../domain.types/address.domain.types';
 
 export interface IAddressRepo {
 
@@ -8,7 +8,7 @@ export interface IAddressRepo {
 
     getByPersonId(personId: string): Promise<AddressDto[]>;
 
-    search(filters: AddressSearchFilters): Promise<AddressDto[]>;
+    search(filters: AddressSearchFilters): Promise<AddressSearchResults>;
 
     update(id: string, addressDomainModel: AddressDomainModel): Promise<AddressDto>;
 

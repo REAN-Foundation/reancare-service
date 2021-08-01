@@ -21,7 +21,7 @@ export class PersonRepo implements IPersonRepo {
 
     personExistsWithPhone = async (phone: string): Promise<boolean> => {
         if (phone != null && typeof phone != 'undefined') {
-            var existing = await Person.findOne({ where: { Phone: phone, IsActive: true } });
+            var existing = await Person.findOne({ where: { Phone: phone } });
             return existing != null;
         }
         return false;
@@ -29,7 +29,7 @@ export class PersonRepo implements IPersonRepo {
 
     getPersonWithPhone = async (phone: string): Promise<PersonDetailsDto> => {
         if (phone != null && typeof phone != 'undefined') {
-            var person = await Person.findOne({ where: { Phone: phone, IsActive: true } });
+            var person = await Person.findOne({ where: { Phone: phone } });
             return await PersonMapper.toDetailsDto(person);
         }
         return null;
@@ -40,7 +40,7 @@ export class PersonRepo implements IPersonRepo {
             //KK: To be optimized with associations
 
             var personsWithRole: PersonDetailsDto[] = [];
-            var persons = await Person.findAll({ where: { Phone: phone, IsActive: true } });
+            var persons = await Person.findAll({ where: { Phone: phone } });
             for await (var person of persons) {
                 var withRole = await PersonRole.findOne({ where: { PersonId: person.id, RoleId: roleId } });
                 if (withRole != null) {
@@ -55,7 +55,7 @@ export class PersonRepo implements IPersonRepo {
 
     personExistsWithEmail = async (email: string): Promise<boolean> => {
         if (email != null && typeof email != 'undefined') {
-            var existing = await Person.findOne({ where: { Email: email, IsActive: true } });
+            var existing = await Person.findOne({ where: { Email: email } });
             return existing != null;
         }
         return false;
@@ -63,7 +63,7 @@ export class PersonRepo implements IPersonRepo {
 
     getPersonWithEmail = async (email: string): Promise<PersonDetailsDto> => {
         if (email != null && typeof email != 'undefined') {
-            var person = await Person.findOne({ where: { Email: email, IsActive: true } });
+            var person = await Person.findOne({ where: { Email: email } });
             return await PersonMapper.toDetailsDto(person);
         }
         return null;
@@ -73,8 +73,7 @@ export class PersonRepo implements IPersonRepo {
         if (personName != null && typeof personName != 'undefined') {
             var existing = await Person.findOne({
                 where: {
-                    PersonName: { [Op.like]: '%' + personName + '%' },
-                    IsActive: true,
+                    PersonName: { [Op.like]: '%' + personName + '%' }
                 },
             });
             return existing != null;
@@ -106,7 +105,7 @@ export class PersonRepo implements IPersonRepo {
 
     getById = async (id: string): Promise<PersonDetailsDto> => {
         try {
-            var person = await Person.findOne({ where: { id: id, IsActive: true } });
+            var person = await Person.findOne({ where: { id: id } });
             var dto = await PersonMapper.toDetailsDto(person);
             return dto;
         } catch (error) {
@@ -117,7 +116,7 @@ export class PersonRepo implements IPersonRepo {
 
     exists = async (id: string): Promise<boolean> => {
         try {
-            var person = await Person.findOne({ where: { id: id, IsActive: true } });
+            var person = await Person.findOne({ where: { id: id } });
             return person != null;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -127,7 +126,7 @@ export class PersonRepo implements IPersonRepo {
 
     update = async (id: string, personDomainModel: PersonDomainModel): Promise<PersonDetailsDto> => {
         try {
-            var person = await Person.findOne({ where: { id: id, IsActive: true } });
+            var person = await Person.findOne({ where: { id: id } });
 
             if (personDomainModel.Prefix != null) {
                 person.Prefix = personDomainModel.Prefix;
@@ -165,10 +164,8 @@ export class PersonRepo implements IPersonRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            var person = await Person.findOne({ where: { id: id, IsActive: true } });
-            person.IsActive = false;
-            await person.save();
-            return true;
+            var result = await Person.destroy({ where: { id: id }});
+            return result == 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

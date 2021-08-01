@@ -100,24 +100,17 @@ export default class Address extends Model {
         type: DataType.FLOAT,
         allowNull: true,
     })
-    LocationCoordsLongitude: number;
+    Longitude: number;
 
     @Column({
         type: DataType.FLOAT,
         allowNull: true,
     })
-    LocationCoordsLattitude: number;
-
-    @Column({
-        type: DataType.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-    })
-    IsActive: boolean;
+    Lattitude: number;
 
     @Column
     @CreatedAt
-    CreateAt: Date;
+    CreatedAt: Date;
 
     @UpdatedAt
     UpdatedAt: Date;

@@ -1110,6 +1110,192 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Search patients",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var str = '';\r",
+											"var search = '';\r",
+											"var num = 0.0;\r",
+											"\r",
+											"var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+											"var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
+											"var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
+											"var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+											"var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+											"var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+											"var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+											"var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+											"var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_LINE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_LINE_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_CITY\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_CITY_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_DISTRICT_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_STATE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_STATE_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_COUNTRY_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_POSTAL_CODE_SEARCH_STRING\", search);\r",
+											"\r",
+											"num = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+											"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_FROM\", num - 1);\r",
+											"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_TO\", num + 1);\r",
+											"\r",
+											"num = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+											"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_FROM\", num - 1);\r",
+											"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_TO\", num + 1);\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of addresses are returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Addresses');\r",
+											"    pm.expect(jsonRes.Data.Addresses.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{ADMIN_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients/search?phone={{PHONE_NUMBER}}&email={{EMAIL}}&name={{FIRST_NAME}}&gender=Male&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=CreatedAt&order=ascending&pageIndex=0&itemsPerPage=25",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients",
+										"search"
+									],
+									"query": [
+										{
+											"key": "phone",
+											"value": "{{PHONE_NUMBER}}",
+											"description": "Search by patient phone"
+										},
+										{
+											"key": "email",
+											"value": "{{EMAIL}}",
+											"description": "Search by patient email"
+										},
+										{
+											"key": "name",
+											"value": "{{FIRST_NAME}}",
+											"description": "Search by name"
+										},
+										{
+											"key": "gender",
+											"value": "Male",
+											"description": "Search by patient gender"
+										},
+										{
+											"key": "birthdateFrom",
+											"value": "1975-01-01",
+											"description": "Date in format: YYYY-MM-DD. Start of the range for birthdate based search"
+										},
+										{
+											"key": "birthdateTo",
+											"value": "2021-12-12",
+											"description": "Date in format: YYYY-MM-DD. End of the range for birthdate based search"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-05-01",
+											"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-12-12",
+											"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
+										},
+										{
+											"key": "orderBy",
+											"value": "CreatedAt",
+											"description": "The name of the parameter to order by"
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"description": "'ascending' or 'descending'"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"description": "Page index for pagination"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"description": "Items per page"
+										}
+									]
+								},
+								"description": "Search addresses using query parameters."
+							},
+							"response": []
 						}
 					]
 				}
@@ -1886,7 +2072,7 @@
 					]
 				},
 				{
-					"name": "Search addresses",
+					"name": "Search patients",
 					"event": [
 						{
 							"listen": "prerequest",

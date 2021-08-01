@@ -5,7 +5,7 @@ import { IPersonRoleRepo } from '../data/repository.interfaces/person.role.repo.
 import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { PatientDomainModel, PatientDetailsDto, PatientDto, PatientSearchFilters } from '../data/domain.types/patient.domain.types';
+import { PatientDomainModel, PatientDetailsDto, PatientDto, PatientSearchFilters, PatientDetailsSearchResults, PatientSearchResults } from '../data/domain.types/patient.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { ApiError } from '../common/api.error';
 import { Roles } from '../data/domain.types/role.domain.types';
@@ -52,7 +52,7 @@ export class PatientService {
     public search = async (
         filters: PatientSearchFilters,
         full: boolean = false
-    ): Promise<PatientDetailsDto[] | PatientDto[]> => {
+    ): Promise<PatientDetailsSearchResults | PatientSearchResults> => {
         if (full) {
             return await this._patientRepo.searchFull(filters);
         } else {

@@ -153,13 +153,13 @@ export class PatientController {
                     ? request.query.fullDetails
                     : false;
 
-            const users = await this._service.search(filters, extractFull);
-            if (users != null) {
-                var count = users.length;
+            const searchResults = await this._service.search(filters, extractFull);
+            if (searchResults.Items.length != 0) {
+                var count = searchResults.Items.length;
                 var message =
-                    count == 0 ? 'No records found!' : `Total ${count} user records retrieved successfully!`;
+                    count == 0 ? 'No records found!' : `Total ${count} patient records retrieved successfully!`;
                 ResponseHandler.success(request, response, message, 200, {
-                    users: users,
+                    Patients: searchResults,
                 });
                 return;
             }

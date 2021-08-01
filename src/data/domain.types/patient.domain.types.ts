@@ -149,7 +149,7 @@ export interface PatientDto {
 
 //#endregion
 
-//#region  Search filters
+//#region Search
 
 export interface PatientSearchFilters {
     Phone: string;
@@ -165,5 +165,23 @@ export interface PatientSearchFilters {
     PageIndex: number;
     ItemsPerPage: number;
 };
+
+export interface PatientSearchResults {
+    TotalCount: number;
+    PageIndex: number;
+    ItemsPerPage: number;
+    Order: string;
+    OrderedBy: string;
+    Items: PatientDto[];
+}
+
+export interface PatientDetailsSearchResults {
+    TotalCount: number;
+    PageIndex: number;
+    ItemsPerPage: number;
+    Order: string;
+    OrderedBy: string;
+    Items: PatientDetailsDto[];
+}
 
 //#endregion

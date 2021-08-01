@@ -13,7 +13,8 @@
             "User.LoginWithPassword",
             "User.ResetPassword",
             "User.GenerateOtp",
-            "User.LoginWithPassword"
+            "User.LoginWithPassword",
+            "Patient.Search"
         ]
     },
     {

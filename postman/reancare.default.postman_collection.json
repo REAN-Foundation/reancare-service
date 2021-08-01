@@ -44,7 +44,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "API to check the health of the service."
 		},
 		{
 			"name": "system admin",
@@ -1286,11 +1287,13 @@
 							{
 								"key": "Authorization",
 								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
 								"type": "text"
 							},
 							{
 								"key": "x-api-key",
 								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
 								"type": "text"
 							},
 							{
@@ -1311,9 +1314,124 @@
 							"path": [
 								"addresses"
 							]
-						}
+						},
+						"description": "Add an address."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Add an address associated with person",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"PersonId\": \"{{PATIENT_PERSON_ID}}\",\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"Longitude\": {{ADDRESS_LONGITUDE}},\r\n    \"Lattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/addresses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"addresses"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "Expect-CT",
+									"value": "max-age=0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=15552000; includeSubDomains"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "588"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"24c-a1YYrTy43i30lP79P6VFyqIYrNc\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 01 Aug 2021 08:47:07 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Address created successfully!\",\n    \"HttpCode\": 201,\n    \"Data\": {\n        \"Address\": {\n            \"id\": \"80eb4c8b-f302-4612-9fe9-f832c6eb401f\",\n            \"Type\": \"Home\",\n            \"PersonId\": \"d9ebd6b3-3c27-45d4-92e5-d442eb3f0a70\",\n            \"OrganizationId\": null,\n            \"AddressLine\": \"89/88, Sembudoss St, Parrys\",\n            \"City\": \"Pune\",\n            \"District\": \"Greater Pune\",\n            \"State\": \"Maharashtra\",\n            \"Country\": \"India\",\n            \"PostalCode\": \"411001\",\n            \"Longitude\": 36.732324,\n            \"Lattitude\": 6.611966\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"Context\": \"Address.Create\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+						}
+					]
 				},
 				{
 					"name": "Get address by id",
@@ -1395,11 +1513,13 @@
 							{
 								"key": "Authorization",
 								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
 								"type": "text"
 							},
 							{
 								"key": "x-api-key",
 								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
 								"type": "text"
 							},
 							{
@@ -1410,7 +1530,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"OrganizationId\": null,\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"Longitude\": {{ADDRESS_LONGITUDE}},\r\n    \"Lattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
+							"raw": ""
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/addresses/{{ADDRESS_ID}}",
@@ -1421,12 +1541,128 @@
 								"addresses",
 								"{{ADDRESS_ID}}"
 							]
-						}
+						},
+						"description": "Get an address by address id."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Get address by id",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/addresses/{{ADDRESS_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"addresses",
+										"{{ADDRESS_ID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "Expect-CT",
+									"value": "max-age=0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=15552000; includeSubDomains"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "783"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"30f-t6I6OBgCVPUwyKvwaZeckd+TAsM\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 01 Aug 2021 08:49:03 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Address retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Address\": {\n            \"id\": \"80eb4c8b-f302-4612-9fe9-f832c6eb401f\",\n            \"Type\": \"Home\",\n            \"PersonId\": \"d9ebd6b3-3c27-45d4-92e5-d442eb3f0a70\",\n            \"OrganizationId\": null,\n            \"AddressLine\": \"89/88, Sembudoss St, Parrys\",\n            \"City\": \"Pune\",\n            \"District\": \"Greater Pune\",\n            \"State\": \"Maharashtra\",\n            \"Country\": \"India\",\n            \"PostalCode\": \"411001\",\n            \"Longitude\": 36.7323,\n            \"Lattitude\": 6.61197\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"b138e355-bb72-4f22-bbb1-21fffe33a9a3\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-1713925165\",\n        \"Email\": null,\n        \"UserName\": \"rlehyo7120\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627800887,\n        \"exp\": 1635576887\n    },\n    \"Context\": \"Address.GetById\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+						}
+					]
 				},
 				{
-					"name": "Update address",
+					"name": "Update an address by id",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -1503,11 +1739,13 @@
 							{
 								"key": "Authorization",
 								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
 								"type": "text"
 							},
 							{
 								"key": "x-api-key",
 								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
 								"type": "text"
 							},
 							{
@@ -1529,9 +1767,123 @@
 								"addresses",
 								"{{ADDRESS_ID}}"
 							]
-						}
+						},
+						"description": "Update the details for an address."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Update an address by id",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Type\": \"Official\",\r\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"AddressLine\": \"99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli\",\r\n    \"City\": \"Mumbai\",\r\n    \"District\": \"Greater Mumbai\",\r\n    \"State\": \"Maharashtra\",\r\n    \"Country\": \"India\",\r\n    \"PostalCode\": \"412407\",\r\n    \"Longitude\": 23.45545,\r\n    \"Lattitude\": 54.65466\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/addresses/{{ADDRESS_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"addresses",
+										"{{ADDRESS_ID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "Expect-CT",
+									"value": "max-age=0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=15552000; includeSubDomains"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "820"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"334-5lypVQS4p0DMd3VjNzTdSe/p+YM\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 01 Aug 2021 08:58:38 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Address record updated successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Address\": {\n            \"id\": \"80eb4c8b-f302-4612-9fe9-f832c6eb401f\",\n            \"Type\": \"Official\",\n            \"PersonId\": \"d9ebd6b3-3c27-45d4-92e5-d442eb3f0a70\",\n            \"OrganizationId\": null,\n            \"AddressLine\": \"99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli\",\n            \"City\": \"Mumbai\",\n            \"District\": \"Greater Mumbai\",\n            \"State\": \"Maharashtra\",\n            \"Country\": \"India\",\n            \"PostalCode\": \"412407\",\n            \"Longitude\": 23.45545,\n            \"Lattitude\": 54.65466\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"b138e355-bb72-4f22-bbb1-21fffe33a9a3\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-1713925165\",\n        \"Email\": null,\n        \"UserName\": \"rlehyo7120\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627800887,\n        \"exp\": 1635576887\n    },\n    \"Context\": \"Address.Update\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+						}
+					]
 				},
 				{
 					"name": "Search addresses",
@@ -1644,7 +1996,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/addresses/search?district={{ADDRESS_DISTRICT_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25",
+							"raw": "{{BASE_URL}}/addresses/search?type={{ADDRESS_TYPE}}&addressLine={{ADDRESS_LINE_SEARCH_STRING}}&city={{ADDRESS_CITY_SEARCH_STRING}}&district={{ADDRESS_DISTRICT_SEARCH_STRING}}&state={{ADDRESS_STATE_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&postalCode={{ADDRESS_POSTAL_CODE_SEARCH_STRING}}&longitudeFrom={{ADDRESS_LONGITUDE_SEARCH_FROM}}&longitudeTo={{ADDRESS_LONGITUDE_SEARCH_TO}}&lattitudeFrom={{ADDRESS_LATTITUDE_SEARCH_FROM}}&lattitudeTo={{ADDRESS_LATTITUDE_SEARCH_TO}}&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1656,20 +2008,17 @@
 								{
 									"key": "type",
 									"value": "{{ADDRESS_TYPE}}",
-									"description": "Type of the address",
-									"disabled": true
+									"description": "Type of the address"
 								},
 								{
 									"key": "addressLine",
 									"value": "{{ADDRESS_LINE_SEARCH_STRING}}",
-									"description": "Search string to match address line",
-									"disabled": true
+									"description": "Search string to match address line"
 								},
 								{
 									"key": "city",
 									"value": "{{ADDRESS_CITY_SEARCH_STRING}}",
-									"description": "Search string for city",
-									"disabled": true
+									"description": "Search string for city"
 								},
 								{
 									"key": "district",
@@ -1679,8 +2028,7 @@
 								{
 									"key": "state",
 									"value": "{{ADDRESS_STATE_SEARCH_STRING}}",
-									"description": "Search string for state",
-									"disabled": true
+									"description": "Search string for state"
 								},
 								{
 									"key": "country",
@@ -1690,42 +2038,37 @@
 								{
 									"key": "postalCode",
 									"value": "{{ADDRESS_POSTAL_CODE_SEARCH_STRING}}",
-									"description": "Search string for ",
-									"disabled": true
+									"description": "Search string for "
 								},
 								{
 									"key": "longitudeFrom",
 									"value": "{{ADDRESS_LONGITUDE_SEARCH_FROM}}",
-									"description": "Start of the range for longitude based search",
-									"disabled": true
+									"description": "Format: float value. \nStart of the range for longitude based search"
 								},
 								{
 									"key": "longitudeTo",
 									"value": "{{ADDRESS_LONGITUDE_SEARCH_TO}}",
-									"description": "End of the range for longitude based search",
-									"disabled": true
+									"description": "Format: float value. \nEnd of the range for longitude based search"
 								},
 								{
 									"key": "lattitudeFrom",
 									"value": "{{ADDRESS_LATTITUDE_SEARCH_FROM}}",
-									"description": "Start of the range for lattitude based search",
-									"disabled": true
+									"description": "Format: float value.\nStart of the range for lattitude based search"
 								},
 								{
 									"key": "lattitudeTo",
 									"value": "{{ADDRESS_LATTITUDE_SEARCH_TO}}",
-									"description": "End of the range for lattitude based search",
-									"disabled": true
+									"description": "Format: float value.\nEnd of the range for lattitude based search"
 								},
 								{
 									"key": "createdDateFrom",
 									"value": "2021-05-01",
-									"description": "Start of the range for creation date based search"
+									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
 								},
 								{
 									"key": "createdDateTo",
 									"value": "2021-12-12",
-									"description": "End of the range for creation date based search"
+									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
 								},
 								{
 									"key": "orderBy",
@@ -1748,11 +2091,215 @@
 									"description": "Items per page"
 								}
 							]
-						}
+						},
+						"description": "Search addresses using query parameters."
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Search addresses",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/addresses/search?type={{ADDRESS_TYPE}}&addressLine={{ADDRESS_LINE_SEARCH_STRING}}&city={{ADDRESS_CITY_SEARCH_STRING}}&district={{ADDRESS_DISTRICT_SEARCH_STRING}}&state={{ADDRESS_STATE_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&postalCode={{ADDRESS_POSTAL_CODE_SEARCH_STRING}}&longitudeFrom={{ADDRESS_LONGITUDE_SEARCH_FROM}}&longitudeTo={{ADDRESS_LONGITUDE_SEARCH_TO}}&lattitudeFrom={{ADDRESS_LATTITUDE_SEARCH_FROM}}&lattitudeTo={{ADDRESS_LATTITUDE_SEARCH_TO}}&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"addresses",
+										"search"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{ADDRESS_TYPE}}",
+											"description": "Type of the address"
+										},
+										{
+											"key": "addressLine",
+											"value": "{{ADDRESS_LINE_SEARCH_STRING}}",
+											"description": "Search string to match address line"
+										},
+										{
+											"key": "city",
+											"value": "{{ADDRESS_CITY_SEARCH_STRING}}",
+											"description": "Search string for city"
+										},
+										{
+											"key": "district",
+											"value": "{{ADDRESS_DISTRICT_SEARCH_STRING}}",
+											"description": "Search string for district"
+										},
+										{
+											"key": "state",
+											"value": "{{ADDRESS_STATE_SEARCH_STRING}}",
+											"description": "Search string for state"
+										},
+										{
+											"key": "country",
+											"value": "{{ADDRESS_COUNTRY_SEARCH_STRING}}",
+											"description": "Search string for country"
+										},
+										{
+											"key": "postalCode",
+											"value": "{{ADDRESS_POSTAL_CODE_SEARCH_STRING}}",
+											"description": "Search string for "
+										},
+										{
+											"key": "longitudeFrom",
+											"value": "{{ADDRESS_LONGITUDE_SEARCH_FROM}}",
+											"description": "Format: float value. \nStart of the range for longitude based search"
+										},
+										{
+											"key": "longitudeTo",
+											"value": "{{ADDRESS_LONGITUDE_SEARCH_TO}}",
+											"description": "Format: float value. \nEnd of the range for longitude based search"
+										},
+										{
+											"key": "lattitudeFrom",
+											"value": "{{ADDRESS_LATTITUDE_SEARCH_FROM}}",
+											"description": "Format: float value.\nStart of the range for lattitude based search"
+										},
+										{
+											"key": "lattitudeTo",
+											"value": "{{ADDRESS_LATTITUDE_SEARCH_TO}}",
+											"description": "Format: float value.\nEnd of the range for lattitude based search"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-05-01",
+											"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-12-12",
+											"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
+										},
+										{
+											"key": "orderBy",
+											"value": "City",
+											"description": "The name of the Parameter to order by"
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"description": "'ascending' or 'descending'"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"description": "Page index for pagination"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"description": "Items per page"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "Expect-CT",
+									"value": "max-age=0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=15552000; includeSubDomains"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1432"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"598-u6jmMOGD/Z8z6VYkrfNl81GC8Ig\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 01 Aug 2021 09:04:14 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Total 3 address records retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Addresses\": {\n            \"TotalCount\": 3,\n            \"PageIndex\": 0,\n            \"ItemsPerPage\": 25,\n            \"Order\": \"ascending\",\n            \"OrderedBy\": \"City\",\n            \"Items\": [\n                {\n                    \"id\": \"02f6e9bf-2653-449d-9d74-e3dcfa79940f\",\n                    \"Type\": \"Home\",\n                    \"PersonId\": null,\n                    \"OrganizationId\": null,\n                    \"AddressLine\": \"89/88, Sembudoss St, Parrys\",\n                    \"City\": \"Pune\",\n                    \"District\": \"Greater Pune\",\n                    \"State\": \"Maharashtra\",\n                    \"Country\": \"India\",\n                    \"PostalCode\": \"411001\",\n                    \"Longitude\": 36.7323,\n                    \"Lattitude\": 6.61197\n                },\n                {\n                    \"id\": \"8db1eada-3733-4b52-81fb-b0452dafca54\",\n                    \"Type\": \"Home\",\n                    \"PersonId\": null,\n                    \"OrganizationId\": null,\n                    \"AddressLine\": \"89/88, Sembudoss St, Parrys\",\n                    \"City\": \"Pune\",\n                    \"District\": \"Greater Pune\",\n                    \"State\": \"Maharashtra\",\n                    \"Country\": \"India\",\n                    \"PostalCode\": \"411001\",\n                    \"Longitude\": 36.7323,\n                    \"Lattitude\": 6.61197\n                },\n                {\n                    \"id\": \"b00e774b-8a9c-4bd9-ad2a-60b6f6e64dc0\",\n                    \"Type\": \"Home\",\n                    \"PersonId\": null,\n                    \"OrganizationId\": null,\n                    \"AddressLine\": \"89/88, Sembudoss St, Parrys\",\n                    \"City\": \"Pune\",\n                    \"District\": \"Greater Pune\",\n                    \"State\": \"Maharashtra\",\n                    \"Country\": \"India\",\n                    \"PostalCode\": \"411001\",\n                    \"Longitude\": 36.7323,\n                    \"Lattitude\": 6.61197\n                }\n            ]\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"b138e355-bb72-4f22-bbb1-21fffe33a9a3\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-1713925165\",\n        \"Email\": null,\n        \"UserName\": \"rlehyo7120\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627800887,\n        \"exp\": 1635576887\n    },\n    \"Context\": \"Address.Search\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+						}
+					]
 				}
-			]
+			],
+			"description": "## APIs to manage addresses\n\nThese set of APIs are used to manage addresses belonging to persons or organizations."
 		},
 		{
 			"name": "roles",

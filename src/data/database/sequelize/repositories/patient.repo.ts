@@ -44,9 +44,7 @@ export class PatientRepo implements IPatientRepo {
     updateByUserId = async (userId: string, patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
         try {
             var patient = await Patient.findOne({where: {UserId: userId}});
-            if(patientDomainModel.User.Person.Prefix != null) {
-                patient.NationalHealthId = patientDomainModel.NationalHealthId;
-            }            
+        
             var dto = await PatientMapper.toDetailsDto(patient);
             return dto;
         } catch (error) {
@@ -58,47 +56,53 @@ export class PatientRepo implements IPatientRepo {
     search = async (filters: PatientSearchFilters): Promise<PatientSearchResults> => {
         try {
 
-            var search: any = { where: { } };
-            // var includes = {
-            //     include: [
-            //         {
-            //             model: Person,
-            //             where: { 
-            //                 Phone: { [Op.like]: '%' + filters.Phone + '%' },
-            //             },
-            //         },
-            //     ],
-            // };
+            var search: any = { where: {}, include: [] };
 
-            // if(filters.Phone != null) {
-            //     search.where['Person']['Phone'] = { [Op.like]: '%' + filters.Phone + '%' };
-            // }
-            // if(filters.Email != null) {
-            //     search.where['Person']['Email'] = { [Op.like]: '%' + filters.Email + '%' };
-            // }
-            // if(filters.Name != null) {
-            //     search.where['Person']['FirstName'] = { [Op.like]: '%' + filters.Name + '%' };
-            //     search.where['Person']['LastName'] = { [Op.like]: '%' + filters.Name + '%' };
-            // }
-            // if(filters.Gender != null) {
-            //     search.where['Person']['Gender'] = { [Op.like]: '%' + filters.Gender + '%' };
-            // }
-            // if(filters.BirthdateFrom != null && filters.BirthdateTo != null) {
-            //     search.where['Person']['BirthDate'] = { 
-            //         [Op.gte]: filters.BirthdateFrom,
-            //         [Op.lte]: filters.BirthdateTo,
-            //     };
-            // }
-            // else if(filters.BirthdateFrom == null && filters.BirthdateTo != null) {
-            //     search.where['Person']['BirthDate'] = { 
-            //         [Op.lte]: filters.BirthdateTo,
-            //     };
-            // }
-            // else if(filters.BirthdateFrom != null && filters.BirthdateTo == null) {
-            //     search.where['Person']['BirthDate'] = { 
-            //         [Op.gte]: filters.BirthdateFrom,
-            //     };
-            // }
+            var includesObj = 
+            {
+                model: Person,
+                required: true,
+                where: { 
+                },
+            };
+
+            if(filters.Phone != null) {
+                includesObj.where['Phone'] = { [Op.like]: '%' + filters.Phone + '%' };
+            }
+            if(filters.Email != null) {
+                includesObj.where['Email'] = { [Op.like]: '%' + filters.Email + '%' };
+            }
+            if(filters.Gender != null) {
+                includesObj.where['Gender'] = filters.Gender; //This should be exact. Either Male / Female / Other / Unknown.
+            }
+            if (filters.Name != null) {
+                includesObj.where[Op.or] = [
+                    {
+                        FirstName: { [Op.like]: '%' + filters.Name + '%' },
+                    },
+                    {
+                        LastName: { [Op.like]: '%' + filters.Name + '%' },
+                    },
+                ]
+            }
+
+            if (filters.BirthdateFrom != null && filters.BirthdateTo != null) {
+                includesObj.where['BirthDate'] = {
+                    [Op.gte]: filters.BirthdateFrom,
+                    [Op.lte]: filters.BirthdateTo,
+                };
+            } 
+            else if (filters.BirthdateFrom == null && filters.BirthdateTo != null) {
+                includesObj.where['BirthDate'] = {
+                    [Op.lte]: filters.BirthdateTo,
+                };
+            } 
+            else if (filters.BirthdateFrom != null && filters.BirthdateTo == null) {
+                includesObj.where['BirthDate'] = {
+                    [Op.gte]: filters.BirthdateFrom,
+                };
+            }
+
             if(filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
                 search.where['CreatedAt'] = { 
                     [Op.gte]: filters.CreatedDateFrom,
@@ -115,15 +119,23 @@ export class PatientRepo implements IPatientRepo {
                     [Op.gte]: filters.CreatedDateFrom,
                 };
             }
+
+            search.include.push(includesObj);
+
+            //Reference: https://sequelize.org/v5/manual/querying.html#ordering
             var orderByColum = 'CreatedAt';
-            // if (filters.OrderBy) {
-            //     orderByColum = filters.OrderBy;
-            // }
             var order = 'ASC';
             if (filters.Order == 'descending') {
                 order = 'DESC';
             }
             search['order'] = [[orderByColum, order]];
+            if (filters.OrderBy) {
+                var personAttributes = ['FirstName', 'LastName', 'BirthDate', 'Gender', 'Phone', 'Email'];
+                var isPersonColumn = personAttributes.includes(filters.OrderBy);
+                if(isPersonColumn) {
+                    search['order'] = [[ 'Person', filters.OrderBy, order]];
+                }
+            }
 
             var limit = 25;
             if(filters.ItemsPerPage) {
@@ -141,13 +153,14 @@ export class PatientRepo implements IPatientRepo {
             var foundResults = await Patient.findAndCountAll(search);
             
             var dtos: PatientDto[] = [];
-            for(var address of foundResults.rows) {
-                var dto = await PatientMapper.toDto(address);
+            for(var patient of foundResults.rows) {
+                var dto = await PatientMapper.toDto(patient);
                 dtos.push(dto);
             }
 
             var searchResults: PatientSearchResults = {
                 TotalCount: foundResults.count,
+                RetrievedCount: dtos.length,
                 PageIndex: pageIndex,
                 ItemsPerPage: limit,
                 Order: order === 'DESC' ? 'descending' : 'ascending',

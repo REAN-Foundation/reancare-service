@@ -53,6 +53,7 @@ export interface AddressSearchFilters {
 
 export interface AddressSearchResults {
     TotalCount: number;
+    RetrievedCount: number;
     PageIndex: number;
     ItemsPerPage: number;
     Order: string;

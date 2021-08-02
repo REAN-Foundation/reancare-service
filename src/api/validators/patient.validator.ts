@@ -25,17 +25,6 @@ export class PatientValidator {
             };
         }
 
-        if (
-            request.body.Gender !== 'Male' &&
-            request.body.Gender !== 'Female' &&
-            request.body.Gender !== 'male' &&
-            request.body.Gender !== 'female' &&
-            request.body.Gender !== 'Other' &&
-            request.body.Gender !== 'other'
-        ) {
-            request.body.Gender = 'Unknown';
-        }
-
         var birthdate =
             request.body.BirthDate != null && typeof request.body.BirthDate != undefined
                 ? new Date(Date.parse(request.body.BirthDate))
@@ -125,7 +114,7 @@ export class PatientValidator {
         request: express.Request,
         response: express.Response
     ): Promise<PatientSearchFilters> => {
-        await query('phone').optional().trim().escape().run(request);
+        await query('phone').optional().trim().run(request);
         await query('email').optional().trim().escape().run(request);
         await query('name').optional().trim().escape().run(request);
         await query('gender').optional().isAlpha().trim().escape().run(request);

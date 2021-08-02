@@ -22,7 +22,6 @@ import { PersonDomainModel } from '../../data/domain.types/person.domain.types';
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class PatientController {
-
     //#region member variables and constructors
 
     _service: PatientService = null;
@@ -51,21 +50,26 @@ export class PatientController {
             var patientDomainModel = await PatientValidator.create(request, response);
 
             //Throw an error if patient with same name and phone number exists
-            var existingPatientCountSharingPhone = await this._service.checkforDuplicatePatients(patientDomainModel);
+            var existingPatientCountSharingPhone = await this._service.checkforDuplicatePatients(
+                patientDomainModel
+            );
 
             var userName = await this._userService.generateUserName(
-                patientDomainModel.User.Person.FirstName, 
-                patientDomainModel.User.Person.LastName);
+                patientDomainModel.User.Person.FirstName,
+                patientDomainModel.User.Person.LastName
+            );
 
             var displayId = await this._userService.generateUserDisplayId(
-                Roles.Patient, 
-                patientDomainModel.User.Person.Phone, 
-                existingPatientCountSharingPhone);
+                Roles.Patient,
+                patientDomainModel.User.Person.Phone,
+                existingPatientCountSharingPhone
+            );
 
             var displayName = Helper.constructPersonDisplayName(
-                patientDomainModel.User.Person.Prefix, 
-                patientDomainModel.User.Person.FirstName, 
-                patientDomainModel.User.Person.LastName);
+                patientDomainModel.User.Person.Prefix,
+                patientDomainModel.User.Person.FirstName,
+                patientDomainModel.User.Person.LastName
+            );
 
             patientDomainModel.User.Person.DisplayName = displayName;
             patientDomainModel.User.UserName = userName;
@@ -90,7 +94,7 @@ export class PatientController {
             userDomainModel.RoleId = role.id;
 
             var user = await this._userService.create(userDomainModel);
-            if(user == null) {
+            if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }
             patientDomainModel.UserId = user.id;
@@ -101,14 +105,15 @@ export class PatientController {
 
             patientDomainModel.DisplayId = displayId;
             var patient = await this._service.create(patientDomainModel);
-            if(user == null) {
+            if (user == null) {
                 throw new ApiError(400, 'Cannot create patient!');
             }
 
             await this.createAddress(request, patient);
 
-            ResponseHandler.success(request, response, 'Patient created successfully!', 201, {Patient: patient});
-
+            ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
+                Patient: patient,
+            });
         } catch (error) {
             //KK: Todo: Add rollback in case of mid-way exception
             ResponseHandler.handleError(request, response, error);
@@ -124,7 +129,7 @@ export class PatientController {
             var userId: string = await PatientValidator.getByUserId(request, response);
 
             const existingUser = await this._userService.getById(userId);
-            if(existingUser == null){
+            if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
 
@@ -154,20 +159,19 @@ export class PatientController {
                     : false;
 
             const searchResults = await this._service.search(filters, extractFull);
-            if (searchResults.Items.length != 0) {
-                var count = searchResults.Items.length;
-                var message =
-                    count == 0 ? 'No records found!' : `Total ${count} patient records retrieved successfully!`;
-                ResponseHandler.success(request, response, message, 200, {
-                    Patients: searchResults,
-                });
-                return;
-            }
+            var count = searchResults.Items.length;
+            var message =
+                count == 0 ? 'No records found!' : `Total ${count} patient records retrieved successfully!`;
+                
+            ResponseHandler.success(request, response, message, 200, {
+                Patients: searchResults,
+            });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
     updateByUserId = async (request: express.Request, response: express.Response) => {
         try {
             request.context = 'Patient.UpdateByUserId';
@@ -177,22 +181,25 @@ export class PatientController {
 
             var userId: string = await PatientValidator.getByUserId(request, response);
             const existingUser = await this._userService.getById(userId);
-            if(existingUser == null){
+            if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
 
             var userDomainModel: UserDomainModel = patientDomainModel.User;
             var updatedUser = await this._userService.update(patientDomainModel.UserId, userDomainModel);
-            if(!updatedUser) {
+            if (!updatedUser) {
                 throw new ApiError(400, 'Unable to update user!');
             }
             var personDomainModel: PersonDomainModel = patientDomainModel.User.Person;
             personDomainModel.id = updatedUser.Person.id;
             var updatedPerson = await this._personService.update(personDomainModel.id, personDomainModel);
-            if(!updatedPerson) {
+            if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
             }
-            const updatedPatient = await this._service.updateByUserId(patientDomainModel.UserId, patientDomainModel);
+            const updatedPatient = await this._service.updateByUserId(
+                patientDomainModel.UserId,
+                patientDomainModel
+            );
             if (updatedPatient == null) {
                 throw new ApiError(400, 'Unable to update patient record!');
             }
@@ -214,35 +221,32 @@ export class PatientController {
 
             var userId: string = await PatientValidator.delete(request, response);
             const existingUser = await this._userService.getById(userId);
-            if(existingUser == null){
+            if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
 
             const deleted = await this._personService.delete(userId);
-            if(!deleted) {
+            if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
 
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
                 Deleted: true,
             });
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
-    
+    };
+
     //#endregion
 
     //#region Private methods
-    
-    private async createOrUpdateAddress(request, patientDomainModel: PatientDomainModel) {
 
+    private async createOrUpdateAddress(request, patientDomainModel: PatientDomainModel) {
         var addressDomainModel: AddressDomainModel = null;
         var addressBody = request.body.Address ?? null;
 
         if (addressBody != null) {
-
             addressDomainModel = await AddressValidator.getDomainModel(addressBody);
 
             //get existing address to update
@@ -253,8 +257,7 @@ export class PatientController {
                 if (address == null) {
                     throw new ApiError(400, 'Cannot create address!');
                 }
-            }
-            else if(existingAddresses.length == 1) {
+            } else if (existingAddresses.length == 1) {
                 const updatedAddress = await this._addressService.update(
                     existingAddresses[0].id,
                     addressDomainModel

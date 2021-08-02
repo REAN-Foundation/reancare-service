@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
 		"name": "reancare.default",
+		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -109,11 +110,13 @@
 								"users",
 								"login-with-password"
 							]
-						}
+						},
+						"description": "User login with username/phone/email and password.\n\n'LoginRoleId' is the role id through which user wants to log into the system provided the user has the role."
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "User login with username/phone/email and password.\nIn this example, system admin logs in.\n\nSystem admin can perform multiple admin tasks such as - \n1. Add/remove/update api clients.\n2. Renew the API keys for the api clients.\n3. Perform monitoring and admin tasks through selected set of APIs only accessible to system-admin role."
 		},
 		{
 			"name": "Api clients",
@@ -171,11 +174,13 @@
 							{
 								"key": "Authorization",
 								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"description": "Admin user login session token (JWT). Format : Bearer JWT_TOKEN",
 								"type": "text"
 							},
 							{
 								"key": "x-api-key",
 								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "Default API key for internal clients.",
 								"type": "text"
 							},
 							{
@@ -201,7 +206,8 @@
 							"path": [
 								"api-clients"
 							]
-						}
+						},
+						"description": "Register an API client.\n\nThis API will register a new API client and returns the generated 'client code' and 'api-key'. The API key has finite lifetime. By default, it is 1 year from the date of the registration."
 					},
 					"response": []
 				},
@@ -258,11 +264,13 @@
 							{
 								"key": "Authorization",
 								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"description": "Admin user login session token (JWT). Format : Bearer JWT_TOKEN",
 								"type": "text"
 							},
 							{
 								"key": "x-api-key",
 								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "Default API key for internal clients.",
 								"type": "text"
 							},
 							{
@@ -288,7 +296,8 @@
 							"path": [
 								"api-clients"
 							]
-						}
+						},
+						"description": "Register an API client. This example shows how you can set custom validity period for the API key. This API will register a new API client and returns generated 'client code' and 'api-key'."
 					},
 					"response": []
 				},
@@ -334,11 +343,13 @@
 							{
 								"key": "Authorization",
 								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"description": "Admin user login session token (JWT). Format : Bearer JWT_TOKEN",
 								"type": "text"
 							},
 							{
 								"key": "x-api-key",
 								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "Default API key for internal clients.",
 								"type": "text"
 							},
 							{
@@ -356,7 +367,8 @@
 								"api-clients",
 								"{{API_CLIENT_ID}}"
 							]
-						}
+						},
+						"description": "Retrieve an API client info by client id."
 					},
 					"response": []
 				},
@@ -427,11 +439,13 @@
 							{
 								"key": "Authorization",
 								"value": "Bearer {{ADMIN_USER_JWT}}",
+								"description": "Admin user login session token (JWT). Format : Bearer JWT_TOKEN",
 								"type": "text"
 							},
 							{
 								"key": "x-api-key",
 								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "Default API key for internal clients.",
 								"type": "text"
 							},
 							{
@@ -453,7 +467,8 @@
 								"api-clients",
 								"{{API_CLIENT_ID}}"
 							]
-						}
+						},
+						"description": "Update an API client info by client id."
 					},
 					"response": []
 				},
@@ -537,7 +552,8 @@
 								"{{API_CLIENT_CODE}}",
 								"current-api-key"
 							]
-						}
+						},
+						"description": "Get the current valid API key for a given client. \n\nThis API uses basic authentication with Username and Password. As a username, one has to add 'Client code' generated during the registration."
 					},
 					"response": []
 				},
@@ -602,7 +618,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "{\r\n    \"ValidFrom\": \"2021-07-21\",\r\n    \"ValidTill\": \"2024-07-20\"\r\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/api-clients/{{API_CLIENT_CODE}}/renew-api-key",
@@ -614,11 +630,13 @@
 								"{{API_CLIENT_CODE}}",
 								"renew-api-key"
 							]
-						}
+						},
+						"description": "Renew API key with a given validity period. If not added, the key will be valid for 1 year.\n\nThis API uses basic authentication with Username and Password. As a username, one has to add 'Client code' generated during the registration."
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "Management of API clients. \n\nAPI clients may include mobile/web apps, other customized API services such as chat-bot service."
 		},
 		{
 			"name": "Users",
@@ -627,7 +645,7 @@
 					"name": "Patients",
 					"item": [
 						{
-							"name": "Register patient- with only a phone number Copy",
+							"name": "Register patient- with only a phone number",
 							"event": [
 								{
 									"listen": "test",
@@ -706,7 +724,8 @@
 									{
 										"key": "x-api-key",
 										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
+										"type": "text",
+										"description": "API key for client app authentication"
 									}
 								],
 								"body": {
@@ -721,9 +740,117 @@
 									"path": [
 										"patients"
 									]
-								}
+								},
+								"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
 							},
-							"response": []
+							"response": [
+								{
+									"name": "Register patient- with only a phone number",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\"\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/patients",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"patients"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "904"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"388-ZkB5OKUvnee2O8d2F/CCLl1RRgQ\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 02 Aug 2021 07:38:31 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Patient created successfully!\",\n    \"HttpCode\": 201,\n    \"Data\": {\n        \"Patient\": {\n            \"id\": \"d365387c-e297-4a0f-b722-1e7f6a7c33dc\",\n            \"User\": {\n                \"id\": \"32a16f4b-3e65-4353-9297-65308a56d8da\",\n                \"UserName\": \"amseta1420\",\n                \"Person\": {\n                    \"id\": \"6fc754e4-f557-451c-bd8e-cf18e34fa919\",\n                    \"Prefix\": \"\",\n                    \"FirstName\": null,\n                    \"MiddleName\": null,\n                    \"LastName\": null,\n                    \"DisplayName\": \"unknown\",\n                    \"Gender\": \"Unknown\",\n                    \"BirthDate\": null,\n                    \"Age\": \"\",\n                    \"Phone\": \"+91-1423755609\",\n                    \"Email\": null,\n                    \"ImageResourceId\": null,\n                    \"ActiveSince\": \"2021-08-02T07:38:31.000Z\",\n                    \"Roles\": []\n                },\n                \"LastLogin\": null,\n                \"DefaultTimeZone\": \"+05:30\",\n                \"CurrentTimeZone\": \"+05:30\",\n                \"Role\": {\n                    \"id\": 2,\n                    \"RoleName\": \"Patient\"\n                }\n            },\n            \"DisplayId\": \"PT#1-1423755609\",\n            \"Addresses\": [],\n            \"MedicalProfile\": null,\n            \"Insurances\": [],\n            \"EmergencyContacts\": []\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"Context\": \"Patient.Create\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
 						},
 						{
 							"name": "Register patient- with same phone number - should fail",
@@ -771,6 +898,7 @@
 									{
 										"key": "x-api-key",
 										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
 										"type": "text"
 									}
 								],
@@ -870,6 +998,7 @@
 									{
 										"key": "x-api-key",
 										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
 										"type": "text"
 									}
 								],
@@ -887,7 +1016,114 @@
 									]
 								}
 							},
-							"response": []
+							"response": [
+								{
+									"name": "Register patient- with phone and password",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\"\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/patients",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"patients"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "904"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"388-+QstBHEhnm7bio7FIB8nk3HOmY0\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 02 Aug 2021 07:48:11 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Patient created successfully!\",\n    \"HttpCode\": 201,\n    \"Data\": {\n        \"Patient\": {\n            \"id\": \"c7e4a0c4-0410-47a4-b40f-e3bca222ac2d\",\n            \"User\": {\n                \"id\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n                \"UserName\": \"tnkert2002\",\n                \"Person\": {\n                    \"id\": \"0663bf1a-d169-4db5-a087-1c6dc456e4e9\",\n                    \"Prefix\": \"\",\n                    \"FirstName\": null,\n                    \"MiddleName\": null,\n                    \"LastName\": null,\n                    \"DisplayName\": \"unknown\",\n                    \"Gender\": \"Unknown\",\n                    \"BirthDate\": null,\n                    \"Age\": \"\",\n                    \"Phone\": \"+91-8126671387\",\n                    \"Email\": null,\n                    \"ImageResourceId\": null,\n                    \"ActiveSince\": \"2021-08-02T07:48:11.000Z\",\n                    \"Roles\": []\n                },\n                \"LastLogin\": null,\n                \"DefaultTimeZone\": \"+05:30\",\n                \"CurrentTimeZone\": \"+05:30\",\n                \"Role\": {\n                    \"id\": 2,\n                    \"RoleName\": \"Patient\"\n                }\n            },\n            \"DisplayId\": \"PT#1-8126671387\",\n            \"Addresses\": [],\n            \"MedicalProfile\": null,\n            \"Insurances\": [],\n            \"EmergencyContacts\": []\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"Context\": \"Patient.Create\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
 						},
 						{
 							"name": "Patient log-in with password",
@@ -932,6 +1168,7 @@
 									{
 										"key": "x-api-key",
 										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
 										"type": "text"
 									}
 								],
@@ -950,7 +1187,115 @@
 									]
 								}
 							},
-							"response": []
+							"response": [
+								{
+									"name": "Patient log-in with password",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/users/login-with-password",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"users",
+												"login-with-password"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1234"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"4d2-pHha66gNIOAPmG3hY3eezjeWyEQ\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 02 Aug 2021 07:48:17 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"User 'unknown' logged in successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"AccessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiJmOWYyYmFhZC04YWFjLTQwNTUtYThmMS02NzVlODYzMDNhM2EiLCJEaXNwbGF5TmFtZSI6InVua25vd24iLCJQaG9uZSI6Iis5MS04MTI2NjcxMzg3IiwiRW1haWwiOm51bGwsIlVzZXJOYW1lIjoidG5rZXJ0MjAwMiIsIkN1cnJlbnRSb2xlSWQiOjIsImlhdCI6MTYyNzg5MDQ5NywiZXhwIjoxNjM1NjY2NDk3fQ.n9ps_cuOLSwZcgEkDg59LwkeX9k0YuEcttFKNHFKDz0\",\n        \"User\": {\n            \"id\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n            \"UserName\": \"tnkert2002\",\n            \"Person\": {\n                \"id\": \"0663bf1a-d169-4db5-a087-1c6dc456e4e9\",\n                \"Prefix\": \"\",\n                \"FirstName\": null,\n                \"MiddleName\": null,\n                \"LastName\": null,\n                \"DisplayName\": \"unknown\",\n                \"Gender\": \"Unknown\",\n                \"BirthDate\": null,\n                \"Age\": \"\",\n                \"Phone\": \"+91-8126671387\",\n                \"Email\": null,\n                \"ImageResourceId\": null,\n                \"ActiveSince\": \"2021-08-02T07:48:11.000Z\",\n                \"Roles\": [\n                    {\n                        \"id\": \"01742aba-5212-430d-9200-6ab492fdca1e\",\n                        \"PersonId\": \"0663bf1a-d169-4db5-a087-1c6dc456e4e9\",\n                        \"RoleId\": 2,\n                        \"RoleName\": \"Patient\"\n                    }\n                ]\n            },\n            \"LastLogin\": null,\n            \"DefaultTimeZone\": \"+05:30\",\n            \"CurrentTimeZone\": \"+05:30\",\n            \"Role\": {\n                \"id\": 2,\n                \"RoleName\": \"Patient\"\n            }\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"Context\": \"User.LoginWithPassword\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
 						},
 						{
 							"name": "Get patient by user id",
@@ -1009,11 +1354,13 @@
 									{
 										"key": "Authorization",
 										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
 										"type": "text"
 									},
 									{
 										"key": "x-api-key",
 										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
 										"type": "text"
 									},
 									{
@@ -1042,7 +1389,125 @@
 									]
 								}
 							},
-							"response": []
+							"response": [
+								{
+									"name": "Get patient by user id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"patients",
+												"{{PATIENT_USER_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1246"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"4de-vtd/lNY4h4WU1eZaAJBoB38Ssx4\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 02 Aug 2021 07:46:36 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Patient retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Patient\": {\n            \"id\": \"e66f8dda-a724-4ebe-b904-bcec548cf782\",\n            \"User\": {\n                \"id\": \"e291b0a2-6bec-4af9-b05f-29f9acefca41\",\n                \"UserName\": \"xvylkb7136\",\n                \"Person\": {\n                    \"id\": \"2ee6a612-cd50-4177-878c-09d4a3472e6c\",\n                    \"Prefix\": \"\",\n                    \"FirstName\": null,\n                    \"MiddleName\": null,\n                    \"LastName\": null,\n                    \"DisplayName\": \"unknown\",\n                    \"Gender\": \"Unknown\",\n                    \"BirthDate\": null,\n                    \"Age\": \"\",\n                    \"Phone\": \"+91-3283072998\",\n                    \"Email\": null,\n                    \"ImageResourceId\": null,\n                    \"ActiveSince\": \"2021-08-02T07:46:29.000Z\",\n                    \"Roles\": [\n                        {\n                            \"id\": \"43329a2b-7f0d-4b61-9a2b-a52412fdd911\",\n                            \"PersonId\": \"2ee6a612-cd50-4177-878c-09d4a3472e6c\",\n                            \"RoleId\": 2,\n                            \"RoleName\": \"Patient\"\n                        }\n                    ]\n                },\n                \"LastLogin\": null,\n                \"DefaultTimeZone\": \"+05:30\",\n                \"CurrentTimeZone\": \"+05:30\",\n                \"Role\": {\n                    \"id\": 2,\n                    \"RoleName\": \"Patient\"\n                }\n            },\n            \"DisplayId\": \"PT#1-3283072998\",\n            \"EhrId\": null,\n            \"Addresses\": [],\n            \"MedicalProfile\": null,\n            \"Insurances\": [],\n            \"EmergencyContacts\": []\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"1c353c97-437a-489c-ad00-c83d6e07ebd8\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-6238056610\",\n        \"Email\": null,\n        \"UserName\": \"cbixyx9006\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627844993,\n        \"exp\": 1635620993\n    },\n    \"Context\": \"Patient.GetByUserId\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
 						},
 						{
 							"name": "Update patient details",
@@ -1051,6 +1516,23 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PATIENT_FIRST_NAME\", jsonRes.Data.Patient.User.Person.FirstName);\r",
+											"    pm.environment.set(\"PATIENT_PHONE\", jsonRes.Data.Patient.User.Person.Phone);\r",
+											"    pm.environment.set(\"PATIENT_GENDER\", jsonRes.Data.Patient.User.Person.Gender);\r",
+											"    pm.environment.set(\"PATIENT_EMAIL\", jsonRes.Data.Patient.User.Person.Email);\r",
+											"\r",
+											"    var phone = jsonRes.Data.Patient.User.Person.Phone;\r",
+											"    var tokens = phone.split('-');\r",
+											"    var phoneNumber = tokens[1];\r",
+											"\r",
+											"    pm.environment.set(\"PATIENT_PHONE_NUMBER\", phoneNumber);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
 											"\r",
 											"pm.test(\"Request is successfull\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
@@ -1081,11 +1563,13 @@
 									{
 										"key": "Authorization",
 										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
 										"type": "text"
 									},
 									{
 										"key": "x-api-key",
 										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
 										"type": "text"
 									},
 									{
@@ -1096,7 +1580,184 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"John\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"Doe\",\r\n    \"Email\": \"john.doe@gmail.com\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1970-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\r\n}"
+									"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"John\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"Doe\",\r\n    \"Email\": \"john.doe@gmail.com\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients",
+										"{{PATIENT_USER_ID}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Update patient details",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"John\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"Doe\",\r\n    \"Email\": \"john.doe@gmail.com\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"patients",
+												"{{PATIENT_USER_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1355"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"54b-oMCmX5zwQTpqqYuaNKZfRH2Rk8M\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 02 Aug 2021 06:29:32 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Patient records updated successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Patient\": {\n            \"id\": \"4e8a8e80-72f2-4a83-87c2-1159c74e6c98\",\n            \"User\": {\n                \"id\": \"c60d6508-5002-4748-adfe-b81bf60e3b92\",\n                \"UserName\": \"mgihsm9697\",\n                \"Person\": {\n                    \"id\": \"e88266d4-b5af-499f-b1e4-b237b999becb\",\n                    \"Prefix\": \"Mr.\",\n                    \"FirstName\": \"John\",\n                    \"MiddleName\": null,\n                    \"LastName\": \"Doe\",\n                    \"DisplayName\": \"Mr. John Doe\",\n                    \"Gender\": \"Male\",\n                    \"BirthDate\": \"1979-01-01T00:00:00.000Z\",\n                    \"Age\": \"42 years and 7 months\",\n                    \"Phone\": \"+91-8125681676\",\n                    \"Email\": \"johndoe@gmail.com\",\n                    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\",\n                    \"ActiveSince\": \"2021-08-02T05:14:04.000Z\",\n                    \"Roles\": [\n                        {\n                            \"id\": \"255cf801-a0ef-454d-a5d0-6c2c73c2160c\",\n                            \"PersonId\": \"e88266d4-b5af-499f-b1e4-b237b999becb\",\n                            \"RoleId\": 2,\n                            \"RoleName\": \"Patient\"\n                        }\n                    ]\n                },\n                \"LastLogin\": null,\n                \"DefaultTimeZone\": \"+05:30\",\n                \"CurrentTimeZone\": \"+05:30\",\n                \"Role\": {\n                    \"id\": 2,\n                    \"RoleName\": \"Patient\"\n                }\n            },\n            \"DisplayId\": \"PT#1-8125681676\",\n            \"EhrId\": null,\n            \"Addresses\": [],\n            \"MedicalProfile\": null,\n            \"Insurances\": [],\n            \"EmergencyContacts\": []\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"1c353c97-437a-489c-ad00-c83d6e07ebd8\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-6238056610\",\n        \"Email\": null,\n        \"UserName\": \"cbixyx9006\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627844993,\n        \"exp\": 1635620993\n    },\n    \"Context\": \"Patient.UpdateByUserId\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Update patient details - only email and first name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PATIENT_FIRST_NAME\", jsonRes.Data.Patient.User.Person.FirstName);\r",
+											"    pm.environment.set(\"PATIENT_EMAIL\", jsonRes.Data.Patient.User.Person.Email);\r",
+											"\r",
+											"    var phone = jsonRes.Data.Patient.User.Person.Phone;\r",
+											"    var tokens = phone.split('-');\r",
+											"    var phoneNumber = tokens[1];\r",
+											"\r",
+											"    pm.environment.set(\"PATIENT_PHONE_NUMBER\", phoneNumber);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"FirstName\": \"Anand\",\r\n    \"Email\": \"Anand.doe@gmail.com\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
@@ -1118,52 +1779,6 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"var str = '';\r",
-											"var search = '';\r",
-											"var num = 0.0;\r",
-											"\r",
-											"var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
-											"var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
-											"var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
-											"var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-											"var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
-											"var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-											"var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-											"var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-											"var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
-											"\r",
-											"str = pm.environment.get(\"ADDRESS_LINE\");\r",
-											"search = str.substring(0, 3).toLowerCase();\r",
-											"pm.environment.set(\"ADDRESS_LINE_SEARCH_STRING\", search);\r",
-											"\r",
-											"str = pm.environment.get(\"ADDRESS_CITY\");\r",
-											"search = str.substring(0, 3).toLowerCase();\r",
-											"pm.environment.set(\"ADDRESS_CITY_SEARCH_STRING\", search);\r",
-											"\r",
-											"str = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-											"search = str.substring(0, 3).toLowerCase();\r",
-											"pm.environment.set(\"ADDRESS_DISTRICT_SEARCH_STRING\", search);\r",
-											"\r",
-											"str = pm.environment.get(\"ADDRESS_STATE\");\r",
-											"search = str.substring(0, 3).toLowerCase();\r",
-											"pm.environment.set(\"ADDRESS_STATE_SEARCH_STRING\", search);\r",
-											"\r",
-											"str = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-											"search = str.substring(0, 3).toLowerCase();\r",
-											"pm.environment.set(\"ADDRESS_COUNTRY_SEARCH_STRING\", search);\r",
-											"\r",
-											"str = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-											"search = str.substring(0, 3).toLowerCase();\r",
-											"pm.environment.set(\"ADDRESS_POSTAL_CODE_SEARCH_STRING\", search);\r",
-											"\r",
-											"num = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-											"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_FROM\", num - 1);\r",
-											"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_TO\", num + 1);\r",
-											"\r",
-											"num = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
-											"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_FROM\", num - 1);\r",
-											"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_TO\", num + 1);\r",
-											"\r",
 											""
 										],
 										"type": "text/javascript"
@@ -1179,11 +1794,11 @@
 											"    pm.expect(jsonRes.Status).to.eql('success');\r",
 											"});\r",
 											"\r",
-											"pm.test(\"List of addresses are returned\", function () {\r",
+											"pm.test(\"List of patients is returned\", function () {\r",
 											"\r",
 											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Addresses');\r",
-											"    pm.expect(jsonRes.Data.Addresses.Items.length).to.be.greaterThan(0);\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Patients');\r",
+											"    pm.expect(jsonRes.Data.Patients.Items.length).to.be.greaterThan(0);\r",
 											"\r",
 											"});\r",
 											"\r",
@@ -1202,13 +1817,13 @@
 									{
 										"key": "Authorization",
 										"value": "Bearer {{ADMIN_USER_JWT}}",
-										"description": "Session token (JWT) for the user",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
 										"type": "text"
 									},
 									{
 										"key": "x-api-key",
 										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"description": "API client secret key",
+										"description": "API key for client app authentication",
 										"type": "text"
 									},
 									{
@@ -1222,7 +1837,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/patients/search?phone={{PHONE_NUMBER}}&email={{EMAIL}}&name={{FIRST_NAME}}&gender=Male&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=CreatedAt&order=ascending&pageIndex=0&itemsPerPage=25",
+									"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE_NUMBER}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -1233,22 +1848,22 @@
 									"query": [
 										{
 											"key": "phone",
-											"value": "{{PHONE_NUMBER}}",
+											"value": "{{PATIENT_PHONE_NUMBER}}",
 											"description": "Search by patient phone"
 										},
 										{
 											"key": "email",
-											"value": "{{EMAIL}}",
+											"value": "{{PATIENT_EMAIL}}",
 											"description": "Search by patient email"
 										},
 										{
 											"key": "name",
-											"value": "{{FIRST_NAME}}",
+											"value": "{{PATIENT_FIRST_NAME}}",
 											"description": "Search by name"
 										},
 										{
 											"key": "gender",
-											"value": "Male",
+											"value": "{{PATIENT_GENDER}}",
 											"description": "Search by patient gender"
 										},
 										{
@@ -1273,7 +1888,7 @@
 										},
 										{
 											"key": "orderBy",
-											"value": "CreatedAt",
+											"value": "Email",
 											"description": "The name of the parameter to order by"
 										},
 										{
@@ -1295,7 +1910,184 @@
 								},
 								"description": "Search addresses using query parameters."
 							},
-							"response": []
+							"response": [
+								{
+									"name": "Search patients",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{ADMIN_USER_JWT}}",
+												"description": "Session token (JWT) for the user",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"description": "API client secret key",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"patients",
+												"search"
+											],
+											"query": [
+												{
+													"key": "phone",
+													"value": "{{PATIENT_PHONE}}",
+													"description": "Search by patient phone"
+												},
+												{
+													"key": "email",
+													"value": "{{PATIENT_EMAIL}}",
+													"description": "Search by patient email"
+												},
+												{
+													"key": "name",
+													"value": "{{PATIENT_FIRST_NAME}}",
+													"description": "Search by name"
+												},
+												{
+													"key": "gender",
+													"value": "{{PATIENT_GENDER}}",
+													"description": "Search by patient gender"
+												},
+												{
+													"key": "birthdateFrom",
+													"value": "1975-01-01",
+													"description": "Date in format: YYYY-MM-DD. Start of the range for birthdate based search"
+												},
+												{
+													"key": "birthdateTo",
+													"value": "2021-12-12",
+													"description": "Date in format: YYYY-MM-DD. End of the range for birthdate based search"
+												},
+												{
+													"key": "createdDateFrom",
+													"value": "2021-05-01",
+													"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
+												},
+												{
+													"key": "createdDateTo",
+													"value": "2021-12-12",
+													"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
+												},
+												{
+													"key": "orderBy",
+													"value": "Email",
+													"description": "The name of the parameter to order by"
+												},
+												{
+													"key": "order",
+													"value": "ascending",
+													"description": "'ascending' or 'descending'"
+												},
+												{
+													"key": "pageIndex",
+													"value": "0",
+													"description": "Page index for pagination"
+												},
+												{
+													"key": "itemsPerPage",
+													"value": "25",
+													"description": "Items per page"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1248"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"4e0-dkGE75qDjZcJyZ0HRRb9+L73wtw\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 02 Aug 2021 07:45:13 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Total 2 patient records retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Patients\": {\n            \"TotalCount\": 2,\n            \"PageIndex\": 0,\n            \"ItemsPerPage\": 25,\n            \"Order\": \"ascending\",\n            \"OrderedBy\": \"CreatedAt\",\n            \"Items\": [\n                {\n                    \"id\": \"4e8a8e80-72f2-4a83-87c2-1159c74e6c98\",\n                    \"UserId\": \"c60d6508-5002-4748-adfe-b81bf60e3b92\",\n                    \"DisplayId\": \"PT#1-8125681676\",\n                    \"EhrId\": null,\n                    \"DisplayName\": \"Mr. John Doe\",\n                    \"UserName\": \"mgihsm9697\",\n                    \"Phone\": \"+91-8125681676\",\n                    \"Email\": \"johndoe@gmail.com\",\n                    \"Gender\": \"Male\",\n                    \"BirthDate\": \"1979-01-01T00:00:00.000Z\",\n                    \"Age\": \"42 years and 7 months\"\n                },\n                {\n                    \"id\": \"d365387c-e297-4a0f-b722-1e7f6a7c33dc\",\n                    \"UserId\": \"32a16f4b-3e65-4353-9297-65308a56d8da\",\n                    \"DisplayId\": \"PT#1-1423755609\",\n                    \"EhrId\": null,\n                    \"DisplayName\": \"Mr. Anand Tendulkar\",\n                    \"UserName\": \"amseta1420\",\n                    \"Phone\": \"+91-1423755609\",\n                    \"Email\": \"ananddoe@gmail.com\",\n                    \"Gender\": \"Male\",\n                    \"BirthDate\": \"1978-01-12T00:00:00.000Z\",\n                    \"Age\": \"43 years and 7 months\"\n                }\n            ]\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"ab84bbf7-0189-4344-9fbe-7cf20e48d746\",\n        \"DisplayName\": \"system-admin\",\n        \"Phone\": \"+91 0000000000\",\n        \"Email\": null,\n        \"UserName\": \"admin\",\n        \"CurrentRoleId\": 1,\n        \"iat\": 1627844992,\n        \"exp\": 1635620992\n    },\n    \"Context\": \"Patient.Search\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
 						}
 					]
 				}
@@ -2139,14 +2931,13 @@
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
 									"\r",
-									"pm.test(\"List of addresses are returned\", function () {\r",
+									"pm.test(\"List of addresses is returned\", function () {\r",
 									"\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Data).to.have.property('Addresses');\r",
 									"    pm.expect(jsonRes.Data.Addresses.Items.length).to.be.greaterThan(0);\r",
 									"\r",
 									"});\r",
-									"\r",
 									""
 								],
 								"type": "text/javascript"

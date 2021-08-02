@@ -157,6 +157,7 @@ export class AddressRepo implements IAddressRepo {
 
             var searchResults: AddressSearchResults = {
                 TotalCount: foundResults.count,
+                RetrievedCount: dtos.length,
                 PageIndex: pageIndex,
                 ItemsPerPage: limit,
                 Order: order === 'DESC' ? 'descending' : 'ascending',

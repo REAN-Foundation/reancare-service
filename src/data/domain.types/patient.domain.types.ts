@@ -168,6 +168,7 @@ export interface PatientSearchFilters {
 
 export interface PatientSearchResults {
     TotalCount: number;
+    RetrievedCount: number;
     PageIndex: number;
     ItemsPerPage: number;
     Order: string;
@@ -177,6 +178,7 @@ export interface PatientSearchResults {
 
 export interface PatientDetailsSearchResults {
     TotalCount: number;
+    RetrievedCount: number;
     PageIndex: number;
     ItemsPerPage: number;
     Order: string;

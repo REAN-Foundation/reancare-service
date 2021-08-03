@@ -29,6 +29,5 @@ export class ConfigurationManager {
     public static MaxUploadFileSize = (): number => {
         return ConfigurationManager._config.MaxUploadFileSize;
     };
-    static ConfigurationManager: {};
  
 }

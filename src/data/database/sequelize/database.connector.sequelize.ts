@@ -106,7 +106,9 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
     public migrate = async () => {
         try {
             const output = execSync('npx sequelize-cli db:migrate');
-            Logger.instance().log('Database migrated successfully!\n');
+            const str = output.toString();
+            Logger.instance().log('Database migrated successfully!');
+            Logger.instance().log(str);
             return true;
         } catch (error) {
             Logger.instance().log(error.message);

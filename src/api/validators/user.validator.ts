@@ -102,8 +102,8 @@ export class UserValidator {
     };
 
     private static getFilter(request): UserSearchFilters {
-        const pageIndex = request.query.pageIndex != 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
-        const itemsPerPage = request.query.itemsPerPage != 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
+        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
+        const itemsPerPage = request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
         const filters: UserSearchFilters = {
             Phone           : request.query.phone ?? null,
             Email           : request.query.email ?? null,

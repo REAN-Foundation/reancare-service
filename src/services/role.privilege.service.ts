@@ -26,4 +26,5 @@ export class RolePrivilegeService {
     delete = async (id: string): Promise<boolean> => {
         return await this._rolePrivilegeRepo.delete(id);
     };
+
 }

@@ -1,9 +1,6 @@
 import { IRolePrivilegeRepo } from '../../../repository.interfaces/role.privilege.repo.interface';
-import Role from '../models/role.model';
 import RolePrivilege from '../models/role.privilege.model';
-import { Op, Sequelize } from 'sequelize';
-import { RoleDto, RolePrivilegeDto } from '../../../domain.types/role.domain.types';
-import { RoleMapper } from '../mappers/role.mapper';
+import { RolePrivilegeDto } from '../../../domain.types/role.domain.types';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
 
@@ -13,15 +10,15 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
     
     create = async (object: any): Promise<RolePrivilegeDto> => {
         try {
-            var entity = {
-                RoleId: object.RoleId,
-                Privilege: object.Privilege,
+            const entity = {
+                RoleId    : object.RoleId,
+                Privilege : object.Privilege,
             };
-            var rolePrivilege = await RolePrivilege.create(entity);
-            var dto: RolePrivilegeDto = {
-                id: rolePrivilege.id,
-                RoleId: rolePrivilege.RoleId,
-                Privilege: rolePrivilege.Privilege
+            const rolePrivilege = await RolePrivilege.create(entity);
+            const dto: RolePrivilegeDto = {
+                id        : rolePrivilege.id,
+                RoleId    : rolePrivilege.RoleId,
+                Privilege : rolePrivilege.Privilege
             }
             return dto;
         } catch (error) {
@@ -32,11 +29,11 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
 
     getById = async (id: string): Promise<RolePrivilegeDto> => {
         try {
-            var rolePrivilege = await RolePrivilege.findByPk(id);
-            var dto: RolePrivilegeDto = {
-                id: rolePrivilege.id,
-                RoleId: rolePrivilege.RoleId,
-                Privilege: rolePrivilege.Privilege
+            const rolePrivilege = await RolePrivilege.findByPk(id);
+            const dto: RolePrivilegeDto = {
+                id        : rolePrivilege.id,
+                RoleId    : rolePrivilege.RoleId,
+                Privilege : rolePrivilege.Privilege
             }
             return dto;
         } catch (error) {
@@ -47,15 +44,15 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
 
     search = async (): Promise<RolePrivilegeDto[]> => {
         try {
-            var rolePrivileges = await RolePrivilege.findAll();
-            var dtos: RolePrivilegeDto[] = [];
-            for(var i = 0; i < rolePrivileges.length; i++)
+            const rolePrivileges = await RolePrivilege.findAll();
+            const dtos: RolePrivilegeDto[] = [];
+            for (let i = 0; i < rolePrivileges.length; i++)
             {
-                var rp = rolePrivileges[i];
-                var dto: RolePrivilegeDto = {
-                    id: rp.id,
-                    RoleId: rp.RoleId,
-                    Privilege: rp.Privilege
+                const rp = rolePrivileges[i];
+                const dto: RolePrivilegeDto = {
+                    id        : rp.id,
+                    RoleId    : rp.RoleId,
+                    Privilege : rp.Privilege
                 }
                 dtos.push(dto);
             }
@@ -68,19 +65,19 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
 
     getPrivilegesForRole = async (roleId: number): Promise<RolePrivilegeDto[]> => {
         try {
-            var rolePrivileges = await RolePrivilege.findAll({
-                where: {
-                    RoleId: roleId
+            const rolePrivileges = await RolePrivilege.findAll({
+                where : {
+                    RoleId : roleId
                 }
             });
-            var dtos: RolePrivilegeDto[] = [];
-            for(var i = 0; i < rolePrivileges.length; i++)
+            const dtos: RolePrivilegeDto[] = [];
+            for (let i = 0; i < rolePrivileges.length; i++)
             {
-                var rp = rolePrivileges[i];
-                var dto: RolePrivilegeDto = {
-                    id: rp.id,
-                    RoleId: rp.RoleId,
-                    Privilege: rp.Privilege
+                const rp = rolePrivileges[i];
+                const dto: RolePrivilegeDto = {
+                    id        : rp.id,
+                    RoleId    : rp.RoleId,
+                    Privilege : rp.Privilege
                 }
                 dtos.push(dto);
             }

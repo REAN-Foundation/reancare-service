@@ -1,28 +1,28 @@
-import { PatientDomainModel, PatientDetailsDto, PatientDto, PatientSearchFilters, PatientSearchResults, PatientDetailsSearchResults } from "../../../domain.types/patient.domain.types";
+import { PatientDomainModel, PatientDetailsDto, PatientDto, PatientSearchFilters, PatientSearchResults } from "../../../domain.types/patient.domain.types";
 import { IPatientRepo } from "../../../repository.interfaces/patient.repo.interface";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import Patient from "../models/patient.model";
 import { PatientMapper } from "../mappers/patient.mapper";
-import User from "../models/user.model";
-import { Op, Sequelize } from 'sequelize';
+import { Op } from 'sequelize';
 import Person from "../models/person.model";
+
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class PatientRepo implements IPatientRepo {
 
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
         try {
-            var entity = {
-                UserId: patientDomainModel.UserId,
-                PersonId: patientDomainModel.PersonId,
-                DisplayId: patientDomainModel.DisplayId,
-                NationalHealthId: patientDomainModel.NationalHealthId,
-                MedicalProfileId: patientDomainModel.MedicalProfileId,
-                EhrId: patientDomainModel.EhrId
+            const entity = {
+                UserId           : patientDomainModel.UserId,
+                PersonId         : patientDomainModel.PersonId,
+                DisplayId        : patientDomainModel.DisplayId,
+                NationalHealthId : patientDomainModel.NationalHealthId,
+                MedicalProfileId : patientDomainModel.MedicalProfileId,
+                EhrId            : patientDomainModel.EhrId
             };
-            var patient = await Patient.create(entity);
-            var dto = await PatientMapper.toDetailsDto(patient);
+            const patient = await Patient.create(entity);
+            const dto = await PatientMapper.toDetailsDto(patient);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -32,8 +32,8 @@ export class PatientRepo implements IPatientRepo {
 
     getByUserId = async (userId: string): Promise<PatientDetailsDto> => {
         try {
-            var patient = await Patient.findOne({where: {UserId: userId}});
-            var dto = await PatientMapper.toDetailsDto(patient);
+            const patient = await Patient.findOne({ where: { UserId: userId } });
+            const dto = await PatientMapper.toDetailsDto(patient);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -41,13 +41,12 @@ export class PatientRepo implements IPatientRepo {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     updateByUserId = async (userId: string, patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
         try {
-            var patient = await Patient.findOne({where: {UserId: userId}});
-            if(patientDomainModel.User.Person.Prefix != null) {
-                patient.NationalHealthId = patientDomainModel.NationalHealthId;
-            }            
-            var dto = await PatientMapper.toDetailsDto(patient);
+            const patient = await Patient.findOne({ where: { UserId: userId } });
+            
+            const dto = await PatientMapper.toDetailsDto(patient);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -58,101 +57,116 @@ export class PatientRepo implements IPatientRepo {
     search = async (filters: PatientSearchFilters): Promise<PatientSearchResults> => {
         try {
 
-            var search: any = { where: { } };
-            // var includes = {
-            //     include: [
-            //         {
-            //             model: Person,
-            //             where: { 
-            //                 Phone: { [Op.like]: '%' + filters.Phone + '%' },
-            //             },
-            //         },
-            //     ],
-            // };
+            const search: any = { where: {}, include: [] };
 
-            // if(filters.Phone != null) {
-            //     search.where['Person']['Phone'] = { [Op.like]: '%' + filters.Phone + '%' };
-            // }
-            // if(filters.Email != null) {
-            //     search.where['Person']['Email'] = { [Op.like]: '%' + filters.Email + '%' };
-            // }
-            // if(filters.Name != null) {
-            //     search.where['Person']['FirstName'] = { [Op.like]: '%' + filters.Name + '%' };
-            //     search.where['Person']['LastName'] = { [Op.like]: '%' + filters.Name + '%' };
-            // }
-            // if(filters.Gender != null) {
-            //     search.where['Person']['Gender'] = { [Op.like]: '%' + filters.Gender + '%' };
-            // }
-            // if(filters.BirthdateFrom != null && filters.BirthdateTo != null) {
-            //     search.where['Person']['BirthDate'] = { 
-            //         [Op.gte]: filters.BirthdateFrom,
-            //         [Op.lte]: filters.BirthdateTo,
-            //     };
-            // }
-            // else if(filters.BirthdateFrom == null && filters.BirthdateTo != null) {
-            //     search.where['Person']['BirthDate'] = { 
-            //         [Op.lte]: filters.BirthdateTo,
-            //     };
-            // }
-            // else if(filters.BirthdateFrom != null && filters.BirthdateTo == null) {
-            //     search.where['Person']['BirthDate'] = { 
-            //         [Op.gte]: filters.BirthdateFrom,
-            //     };
-            // }
-            if(filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
-                search.where['CreatedAt'] = { 
-                    [Op.gte]: filters.CreatedDateFrom,
-                    [Op.lte]: filters.CreatedDateTo,
+            const includesObj =
+            {
+                model    : Person,
+                required : true,
+                where    : {
+                },
+            };
+
+            if (filters.Phone != null) {
+                includesObj.where['Phone'] = { [Op.like]: '%' + filters.Phone + '%' };
+            }
+            if (filters.Email != null) {
+                includesObj.where['Email'] = { [Op.like]: '%' + filters.Email + '%' };
+            }
+            if (filters.Gender != null) {
+                includesObj.where['Gender'] = filters.Gender; //This should be exact. Either Male / Female / Other / Unknown.
+            }
+            if (filters.Name != null) {
+                includesObj.where[Op.or] = [
+                    {
+                        FirstName : { [Op.like]: '%' + filters.Name + '%' },
+                    },
+                    {
+                        LastName : { [Op.like]: '%' + filters.Name + '%' },
+                    },
+                ]
+            }
+
+            if (filters.BirthdateFrom != null && filters.BirthdateTo != null) {
+                includesObj.where['BirthDate'] = {
+                    [Op.gte] : filters.BirthdateFrom,
+                    [Op.lte] : filters.BirthdateTo,
                 };
             }
-            else if(filters.CreatedDateFrom == null && filters.CreatedDateTo != null) {
-                search.where['CreatedAt'] = { 
-                    [Op.lte]: filters.CreatedDateTo,
+            else if (filters.BirthdateFrom == null && filters.BirthdateTo != null) {
+                includesObj.where['BirthDate'] = {
+                    [Op.lte] : filters.BirthdateTo,
                 };
             }
-            else if(filters.CreatedDateFrom != null && filters.CreatedDateTo == null) {
-                search.where['CreatedAt'] = { 
-                    [Op.gte]: filters.CreatedDateFrom,
+            else if (filters.BirthdateFrom != null && filters.BirthdateTo == null) {
+                includesObj.where['BirthDate'] = {
+                    [Op.gte] : filters.BirthdateFrom,
                 };
             }
-            var orderByColum = 'CreatedAt';
-            // if (filters.OrderBy) {
-            //     orderByColum = filters.OrderBy;
-            // }
-            var order = 'ASC';
-            if (filters.Order == 'descending') {
+
+            if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
+                search.where['CreatedAt'] = {
+                    [Op.gte] : filters.CreatedDateFrom,
+                    [Op.lte] : filters.CreatedDateTo,
+                };
+            }
+            else if (filters.CreatedDateFrom == null && filters.CreatedDateTo != null) {
+                search.where['CreatedAt'] = {
+                    [Op.lte] : filters.CreatedDateTo,
+                };
+            }
+            else if (filters.CreatedDateFrom != null && filters.CreatedDateTo == null) {
+                search.where['CreatedAt'] = {
+                    [Op.gte] : filters.CreatedDateFrom,
+                };
+            }
+
+            search.include.push(includesObj);
+
+            //Reference: https://sequelize.org/v5/manual/querying.html#ordering
+            const orderByColum = 'CreatedAt';
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
                 order = 'DESC';
             }
             search['order'] = [[orderByColum, order]];
+            if (filters.OrderBy) {
+                const personAttributes = ['FirstName', 'LastName', 'BirthDate', 'Gender', 'Phone', 'Email'];
+                const isPersonColumn = personAttributes.includes(filters.OrderBy);
+                if (isPersonColumn) {
+                    search['order'] = [[ 'Person', filters.OrderBy, order]];
+                }
+            }
 
-            var limit = 25;
-            if(filters.ItemsPerPage) {
+            let limit = 25;
+            if (filters.ItemsPerPage) {
                 limit = filters.ItemsPerPage;
             }
-            var offset = 0;
-            var pageIndex = 0;
-            if(filters.PageIndex) {
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
                 pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
                 offset = pageIndex * limit;
             }
             search['limit'] = limit;
             search['offset'] = offset;
 
-            var foundResults = await Patient.findAndCountAll(search);
+            const foundResults = await Patient.findAndCountAll(search);
             
-            var dtos: PatientDto[] = [];
-            for(var address of foundResults.rows) {
-                var dto = await PatientMapper.toDto(address);
+            const dtos: PatientDto[] = [];
+            for (const patient of foundResults.rows) {
+                const dto = await PatientMapper.toDto(patient);
                 dtos.push(dto);
             }
 
-            var searchResults: PatientSearchResults = {
-                TotalCount: foundResults.count,
-                PageIndex: pageIndex,
-                ItemsPerPage: limit,
-                Order: order === 'DESC' ? 'descending' : 'ascending',
-                OrderedBy: orderByColum,
-                Items: dtos
+            const searchResults: PatientSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos
             }
             
             return searchResults;
@@ -163,8 +177,4 @@ export class PatientRepo implements IPatientRepo {
         }
     }
     
-    searchFull(filters: PatientSearchFilters): Promise<PatientDetailsSearchResults> {
-        throw new Error("Method not implemented.");
-    }
-
 }

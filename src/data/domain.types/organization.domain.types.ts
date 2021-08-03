@@ -49,7 +49,7 @@ export interface OrganizationDetailsDto {
     LogoImageResourceId?: string;
     IsHealthFacility?: boolean;
     NationalHealthFacilityRegistryId?: string;
-};
+}
 
 export interface OrganizationDto {
     id: string;
@@ -59,7 +59,7 @@ export interface OrganizationDto {
     ContactEmail?: string;
     AboutUs?: string;
     OperationalSince?: string;
-};
+}
 
 //#endregion
 
@@ -78,6 +78,6 @@ export interface OrganizationSearchFilters {
     Order: string;
     PageIndex: number;
     ItemsPerPage: number;
-};
+}
 
 //#endregion

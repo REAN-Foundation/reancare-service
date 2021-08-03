@@ -47,4 +47,5 @@ export class Injector {
         EhrInjector.registerInjections(container);
 
     }
+
 }

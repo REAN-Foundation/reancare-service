@@ -3,7 +3,6 @@ import {
     Column,
     Model,
     DataType,
-    HasOne,
     CreatedAt,
     UpdatedAt,
     DeletedAt,
@@ -21,64 +20,65 @@ import User from './user.model';
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
-    timestamps: true,
-    modelName: 'Patient',
-    tableName: 'patients',
-    paranoid: true,
-    freezeTableName: true,
+    timestamps      : true,
+    modelName       : 'Patient',
+    tableName       : 'patients',
+    paranoid        : true,
+    freezeTableName : true,
 })
 export default class Patient extends Model {
+
     @IsUUID(4)
     @PrimaryKey
     @Column({
-        type: DataType.UUID,
-        defaultValue: () => {
+        type         : DataType.UUID,
+        defaultValue : () => {
             return v4();
         },
-        allowNull: false,
+        allowNull : false,
     })
     id: string;
 
     @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
-        type: DataType.UUID,
-        allowNull: false,
+        type      : DataType.UUID,
+        allowNull : false,
     })
     UserId: string;
 
     @IsUUID(4)
     @ForeignKey(() => Person)
     @Column({
-        type: DataType.UUID,
-        allowNull: false,
+        type      : DataType.UUID,
+        allowNull : false,
     })
     PersonId: string;
 
     @Length({ min: 4, max: 16 })
     @Column({
-        type: DataType.STRING(16),
-        allowNull: false,
+        type      : DataType.STRING(16),
+        allowNull : false,
     })
     DisplayId: string;
 
     // @Length({ min: 4, max: 16})
     @Column({
-        type: DataType.STRING(32),
-        allowNull: true,
+        type      : DataType.STRING(32),
+        allowNull : true,
     })
     NationalHealthId: string;
 
     @IsUUID(4)
     @Column({
-        type: DataType.UUID,
-        allowNull: true,
+        type      : DataType.UUID,
+        allowNull : true,
     })
     MedicalProfileId: string;
 
     @Column({
-        type: DataType.STRING(256),
-        allowNull: true,
+        type      : DataType.STRING(256),
+        allowNull : true,
     })
     EhrId: string;
 
@@ -97,4 +97,5 @@ export default class Patient extends Model {
 
     @DeletedAt
     DeletedAt: Date;
+
 }

@@ -14,6 +14,7 @@ export class UserController {
     //#region member variables and constructors
 
     _service: UserService = null;
+
     _authorizer: Authorizer = null;
 
     constructor() {
@@ -23,26 +24,26 @@ export class UserController {
 
     //#endregion
 
-    getById = async (request: express.Request, response: express.Response) => {
+    getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.GetById';
             await this._authorizer.authorize(request, response);
 
-            var id: string = await UserValidator.getById(request, response);
+            const id: string = await UserValidator.getById(request);
             const user = await this._service.getById(id);
             if (user == null) {
                 ResponseHandler.failure(request, response, 'User not found.', 404);
                 return;
             }
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
-                user: user,
+                user : user,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    // search = async (request: express.Request, response: express.Response) => {
+    // search = async (request: express.Request, response: express.Response): Promise<void> => {
     //     try {
     //         request.context = 'User.Search';
     //         if (!this._authorizer.authorize(request, response)) {
@@ -70,23 +71,23 @@ export class UserController {
     //     }
     // };
 
-    loginWithPassword = async (request: express.Request, response: express.Response) => {
+    loginWithPassword = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.LoginWithPassword';
 
-            var loginObject = await UserValidator.loginWithPassword(request, response);
-            var userDetails = await this._service.loginWithPassword(loginObject);
+            const loginObject = await UserValidator.loginWithPassword(request, response);
+            const userDetails = await this._service.loginWithPassword(loginObject);
             if (userDetails == null) {
                 ResponseHandler.failure(request, response, 'User not found!', 404);
                 return;
             }
 
-            var user: UserDetailsDto = userDetails.user;
-            var accessToken = userDetails.accessToken;
-            var message = `User '${user.Person.DisplayName}' logged in successfully!`;
-            var data = {
-                AccessToken: accessToken,
-                User: user,
+            const user: UserDetailsDto = userDetails.user;
+            const accessToken = userDetails.accessToken;
+            const message = `User '${user.Person.DisplayName}' logged in successfully!`;
+            const data = {
+                AccessToken : accessToken,
+                User        : user,
             };
 
             ResponseHandler.success(request, response, message, 200, data, true);
@@ -96,36 +97,36 @@ export class UserController {
         }
     };
 
-    generateOtp = async (request: express.Request, response: express.Response) => {
+    generateOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.GenerateOtp';
-            var obj = UserValidator.generateOtp(request, response);
-            var entity = await this._service.generateOtp(obj);
+            const obj = UserValidator.generateOtp(request, response);
+            const entity = await this._service.generateOtp(obj);
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {
-                entity: entity,
+                entity : entity,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    loginWithOtp = async (request: express.Request, response: express.Response) => {
+    loginWithOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.LoginWithPassword';
 
-            var loginObject = await UserValidator.loginWithOtp(request, response);
-            var userDetails = await this._service.loginWithOtp(loginObject);
+            const loginObject = await UserValidator.loginWithOtp(request, response);
+            const userDetails = await this._service.loginWithOtp(loginObject);
             if (userDetails == null) {
                 ResponseHandler.failure(request, response, 'User not found!', 404);
                 return;
             }
 
-            var user: UserDetailsDto = userDetails.user;
-            var accessToken = userDetails.accessToken;
-            var message = `User '${user.Person.DisplayName}' logged in successfully!`;
-            var data = {
-                AccessToken: accessToken,
-                User: user,
+            const user: UserDetailsDto = userDetails.user;
+            const accessToken = userDetails.accessToken;
+            const message = `User '${user.Person.DisplayName}' logged in successfully!`;
+            const data = {
+                AccessToken : accessToken,
+                User        : user,
             };
 
             ResponseHandler.success(request, response, message, 200, data, true);
@@ -134,9 +135,8 @@ export class UserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-
     
-    // resetPassword = async (request: express.Request, response: express.Response) => {
+    // resetPassword = async (request: express.Request, response: express.Response): Promise<void> => {
     //     try {
     //         request.context = 'User.ResetPassword';
     //         if (!this._authorizer.authorize(request, response)) {

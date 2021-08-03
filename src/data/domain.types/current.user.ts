@@ -6,5 +6,5 @@ export interface CurrentUser {
     Email: string;
     UserName: string;
     CurrentRoleId: number;
-};
+}
 

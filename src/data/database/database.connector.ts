@@ -11,15 +11,13 @@ export class DatabaseConnector {
     constructor(@inject('IDatabaseConnector') private _db: IDatabaseConnector) {}
 
     public init = async (): Promise<boolean> => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await this._db.connect();
-                resolve(true);
-            } catch (error) {
-                Logger.instance().log('init database error: ' + error.message);
-                reject(error);
-            }
-        });
+        try {
+            await this._db.connect();
+            return true;
+        } catch (error) {
+            Logger.instance().log('Create database error: ' + error.message);
+            return false;
+        }
     };
 
     public sync = async (): Promise<boolean> => {
@@ -28,55 +26,50 @@ export class DatabaseConnector {
             return true;
         } catch (error) {
             Logger.instance().log('Sync database error: ' + error.message);
-            //reject(error);
+            return false;
         }
     };
 
     public createDatabase = async (): Promise<boolean> => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await this._db.createDatabase();
-                resolve(true);
-            } catch (error) {
-                Logger.instance().log('Create database error: ' + error.message);
-                //reject(error);
-            }
-        });
+        try {
+            await this._db.createDatabase();
+            return true;
+        } catch (error) {
+            Logger.instance().log('Create database error: ' + error.message);
+            return false;
+        }
     };
 
     public dropDatabase = async (): Promise<boolean> => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await this._db.dropDatabase();
-                resolve(true);
-            } catch (error) {
-                Logger.instance().log('Drop database error: ' + error.message);
-                //reject(error);
-            }
-        });
+        try {
+            await this._db.dropDatabase();
+            return true;
+        } catch (error) {
+            Logger.instance().log('Drop database error: ' + error.message);
+            return false;
+        }
     };
 
     public migrate = async (): Promise<boolean> => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await this._db.migrate();
-                resolve(true);
-            } catch (error) {
-                reject(error);
-            }
-        });
+        try {
+            await this._db.migrate();
+            return true;
+        } catch (error) {
+            Logger.instance().log('Migrate database error: ' + error.message);
+            return false;
+        }
     };
 
     public executeQuery = async (query: string): Promise<boolean> => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await this._db.executeQuery(query);
-                resolve(true);
-            } catch (error) {
-                reject(error);
-            }
-        });
+        try {
+            await this._db.executeQuery(query);
+            return true;
+        } catch (error) {
+            Logger.instance().log('Database query execution error: ' + error.message);
+            return false;
+        }
     };
+
 }
 
 ////////////////////////////////////////////////////////////////////////

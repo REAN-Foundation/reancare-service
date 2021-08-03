@@ -1,5 +1,4 @@
 
-
 export interface IDatabaseConnector {
 
     connect(): Promise<boolean>;

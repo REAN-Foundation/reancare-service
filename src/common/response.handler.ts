@@ -16,38 +16,38 @@ export class ResponseHandler {
         httpErrorCode?: number,
         error?: Error
     ) {
-        var ips = [
+        const ips = [
             request.header('x-forwarded-for') || request.socket.remoteAddress
         ];
         
-        var msg = error? error.message : (message? message : 'An error has occurred.');
+        const msg = error ? error.message : (message ? message : 'An error has occurred.');
 
-        var errorStack = error ? error.stack : '';
-        var tmp = errorStack.split('\n');
-        var trace_path = tmp.map(x => x.trim());
+        const errorStack = error ? error.stack : '';
+        const tmp = errorStack.split('\n');
+        const trace_path = tmp.map(x => x.trim());
 
-        var responseObject: ResponseDto = {
-            Status: 'failure',
-            Message: msg,
-            HttpCode: httpErrorCode ? httpErrorCode : 500,
-            Trace: trace_path,
-            Client: request ? request.currentClient: null,
-            User: request ? request.currentUser : null,
-            Context: request ? request.context : null,
-            Request: {
-                Method: request ? request.method : null,
-                Host: request ? request.hostname: null,
-                Body: request ? request.body : null,
-                Headers: request ? request.headers : null,
-                Url: request ? request.originalUrl : null,
-                Params: request ? request.params : null,
+        const responseObject: ResponseDto = {
+            Status   : 'failure',
+            Message  : msg,
+            HttpCode : httpErrorCode ? httpErrorCode : 500,
+            Trace    : trace_path,
+            Client   : request ? request.currentClient : null,
+            User     : request ? request.currentUser : null,
+            Context  : request ? request.context : null,
+            Request  : {
+                Method  : request ? request.method : null,
+                Host    : request ? request.hostname : null,
+                Body    : request ? request.body : null,
+                Headers : request ? request.headers : null,
+                Url     : request ? request.originalUrl : null,
+                Params  : request ? request.params : null,
             },
-            ClientIps: request && request.ips.length > 0 ? request.ips: ips,
-            APIVersion: process.env.API_VERSION,
-            ServiceVersion: process.env.SERVICE_VERSION,
+            ClientIps      : request && request.ips.length > 0 ? request.ips : ips,
+            APIVersion     : process.env.API_VERSION,
+            ServiceVersion : process.env.SERVICE_VERSION,
         };
         
-        if (process.env.NODE_ENV != 'test') {
+        if (process.env.NODE_ENV !== 'test') {
             Logger.instance().log(JSON.stringify(responseObject, null, 2));
         }
 
@@ -60,39 +60,39 @@ export class ResponseHandler {
 
     public static success(
         request: express.Request,
-        response: express.Response, 
-        message:string, 
+        response: express.Response,
+        message:string,
         httpCode: number,
         data?: any,
-        logDataObject: boolean = true) {
+        logDataObject = true) {
 
-        var ips = [
+        const ips = [
             request.header('x-forwarded-for') || request.socket.remoteAddress
         ];
        
-        var responseObject: ResponseDto = {
-            Status: 'success',
-            Message: message,
-            HttpCode: httpCode ?? 200,
-            Data: data ?? null,
-            Trace: null,
-            Client: request ? request.currentClient: null,
-            User: request ? request.currentUser : null,
-            Context: request ? request.context : null,
-            Request: {
-                Method: request ? request.method : null,
-                Host: request ? request.hostname: null,
-                Body: request ? request.body : null,
-                Headers: request ? request.headers : null,
-                Url: request ? request.originalUrl : null,
-                Params: request ? request.params : null,
+        const responseObject: ResponseDto = {
+            Status   : 'success',
+            Message  : message,
+            HttpCode : httpCode ?? 200,
+            Data     : data ?? null,
+            Trace    : null,
+            Client   : request ? request.currentClient : null,
+            User     : request ? request.currentUser : null,
+            Context  : request ? request.context : null,
+            Request  : {
+                Method  : request ? request.method : null,
+                Host    : request ? request.hostname : null,
+                Body    : request ? request.body : null,
+                Headers : request ? request.headers : null,
+                Url     : request ? request.originalUrl : null,
+                Params  : request ? request.params : null,
             },
-            ClientIps: request && request.ips.length > 0 ? request.ips: ips,
-            APIVersion: process.env.API_VERSION,
-            ServiceVersion: process.env.SERVICE_VERSION,
+            ClientIps      : request && request.ips.length > 0 ? request.ips : ips,
+            APIVersion     : process.env.API_VERSION,
+            ServiceVersion : process.env.SERVICE_VERSION,
         };
 
-        if (process.env.NODE_ENV != 'test') {
+        if (process.env.NODE_ENV !== 'test') {
             if (!logDataObject) {
                 responseObject.Data = null;
             }
@@ -112,7 +112,7 @@ export class ResponseHandler {
         error: Error) {
 
         if (error instanceof InputValidationError) {
-            var validationError = error as InputValidationError;
+            const validationError = error as InputValidationError;
             ResponseHandler.failure(request, response, validationError.message, validationError.httpErrorCode, error);
         }
         else {

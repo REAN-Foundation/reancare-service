@@ -1,6 +1,6 @@
 import { IApiClientRepo } from '../../../repository.interfaces/api.client.repo.interface';
 import ApiClient from '../models/api.client.model';
-import { Op, Sequelize } from 'sequelize';
+import { Op } from 'sequelize';
 import { ApiClientDomainModel, ApiClientDto, ClientApiKeyDto } from '../../../domain.types/api.client.domain.types';
 import { ClientMapper } from '../mappers/client.mapper';
 import { Logger } from '../../../../common/logger';
@@ -13,18 +13,18 @@ export class ApiClientRepo implements IApiClientRepo {
 
     create = async (clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         try {
-            var entity = {
-                ClientName: clientDomainModel.ClientName,
-                ClientCode: clientDomainModel.ClientCode,
-                Phone: clientDomainModel.Phone,
-                Email: clientDomainModel.Email,
-                Password: clientDomainModel.Password ?? null,
-                ApiKey: clientDomainModel.ApiKey ?? null,
-                ValidFrom: clientDomainModel.ValidFrom ?? null,
-                ValidTill: clientDomainModel.ValidTill ?? null,
+            const entity = {
+                ClientName : clientDomainModel.ClientName,
+                ClientCode : clientDomainModel.ClientCode,
+                Phone      : clientDomainModel.Phone,
+                Email      : clientDomainModel.Email,
+                Password   : clientDomainModel.Password ?? null,
+                ApiKey     : clientDomainModel.ApiKey ?? null,
+                ValidFrom  : clientDomainModel.ValidFrom ?? null,
+                ValidTill  : clientDomainModel.ValidTill ?? null,
             };
-            var client = await ApiClient.create(entity);
-            var dto = await ClientMapper.toDto(client);
+            const client = await ApiClient.create(entity);
+            const dto = await ClientMapper.toDto(client);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -34,8 +34,8 @@ export class ApiClientRepo implements IApiClientRepo {
 
     getById = async (id: string): Promise<ApiClientDto> => {
         try {
-            var client = await ApiClient.findByPk(id);
-            var dto = await ClientMapper.toDto(client);
+            const client = await ApiClient.findByPk(id);
+            const dto = await ClientMapper.toDto(client);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -45,12 +45,12 @@ export class ApiClientRepo implements IApiClientRepo {
 
     getByClientCode = async (clientCode: string): Promise<ApiClientDto> =>{
         try {
-            var client = await ApiClient.findOne({
-                where:{
-                    ClientCode: clientCode
+            const client = await ApiClient.findOne({
+                where : {
+                    ClientCode : clientCode
                 }
             });
-            var dto = await ClientMapper.toDto(client);
+            const dto = await ClientMapper.toDto(client);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -60,7 +60,7 @@ export class ApiClientRepo implements IApiClientRepo {
 
     getClientHashedPassword = async(id: string): Promise<string> => {
         try {
-            var client = await ApiClient.findByPk(id);
+            const client = await ApiClient.findByPk(id);
             return client.Password;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -70,8 +70,8 @@ export class ApiClientRepo implements IApiClientRepo {
 
     getApiKey = async(id: string): Promise<ClientApiKeyDto> => {
         try {
-            var client = await ApiClient.findByPk(id);
-            var dto = await ClientMapper.toClientSecretsDto(client);
+            const client = await ApiClient.findByPk(id);
+            const dto = await ClientMapper.toClientSecretsDto(client);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -81,12 +81,12 @@ export class ApiClientRepo implements IApiClientRepo {
     
     setApiKey = async(id: string, apiKey: string, validFrom: Date, validTill: Date): Promise<ClientApiKeyDto> => {
         try {
-            var client = await ApiClient.findByPk(id);
+            const client = await ApiClient.findByPk(id);
             client.ApiKey = apiKey;
             client.ValidFrom = validFrom;
             client.ValidTill = validTill;
             await client.save();
-            var dto = await ClientMapper.toClientSecretsDto(client);
+            const dto = await ClientMapper.toClientSecretsDto(client);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -96,19 +96,19 @@ export class ApiClientRepo implements IApiClientRepo {
     
     isApiKeyValid = async (apiKey: string): Promise<CurrentClient> => {
         try {
-            var client = await ApiClient.findOne({
-                where:{
-                    ApiKey: apiKey,
-                    ValidFrom: { [Op.lte]: new Date() },
-                    ValidTill: { [Op.gte]: new Date() }
+            const client = await ApiClient.findOne({
+                where : {
+                    ApiKey    : apiKey,
+                    ValidFrom : { [Op.lte]: new Date() },
+                    ValidTill : { [Op.gte]: new Date() }
                 }
             });
-            if(client == null){
+            if (client == null){
                 return null;
             }
-            var currentClient: CurrentClient = {
-                ClientName: client.ClientName,
-                ClientCode: client.ClientCode
+            const currentClient: CurrentClient = {
+                ClientName : client.ClientName,
+                ClientCode : client.ClientCode
             };
             return currentClient;
         } catch (error) {
@@ -119,29 +119,29 @@ export class ApiClientRepo implements IApiClientRepo {
     
     update = async (id: string, clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         try {
-            var client = await ApiClient.findByPk(id);
+            const client = await ApiClient.findByPk(id);
 
             //Client code is not modifiable
             //Use renew key to update ApiKey, ValidFrom and ValidTill
             
-            if(clientDomainModel.ClientName != null) {
+            if (clientDomainModel.ClientName != null) {
                 client.ClientName = clientDomainModel.ClientName;
             }
-            if(clientDomainModel.Password != null) {
+            if (clientDomainModel.Password != null) {
                 client.Password = clientDomainModel.Password;
             }
-            if(clientDomainModel.Phone != null) {
+            if (clientDomainModel.Phone != null) {
                 client.Phone = clientDomainModel.Phone;
             }
-            if(clientDomainModel.Email != null) {
+            if (clientDomainModel.Email != null) {
                 client.Email = clientDomainModel.Email;
             }
-            if(clientDomainModel.ValidTill != null) {
+            if (clientDomainModel.ValidTill != null) {
                 client.ValidTill = clientDomainModel.ValidTill;
             }
             await client.save();
 
-            var dto = await ClientMapper.toDto(client);
+            const dto = await ClientMapper.toDto(client);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -151,8 +151,8 @@ export class ApiClientRepo implements IApiClientRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            var result = await ApiClient.destroy({ where: { id: id } });
-            return result == 1;
+            const result = await ApiClient.destroy({ where: { id: id } });
+            return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

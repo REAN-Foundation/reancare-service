@@ -24,111 +24,112 @@ import Organization from './organization.model';
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
-    timestamps: true,
-    modelName: 'Person',
-    tableName: 'persons',
-    paranoid: true,
-    freezeTableName: true,
+    timestamps      : true,
+    modelName       : 'Person',
+    tableName       : 'persons',
+    paranoid        : true,
+    freezeTableName : true,
 })
 export default class Person extends Model {
+
     @IsUUID(4)
     @PrimaryKey
     @Column({
-        type: DataType.UUID,
-        defaultValue: () => {
+        type         : DataType.UUID,
+        defaultValue : () => {
             return v4();
         },
-        allowNull: false,
+        allowNull : false,
     })
     id: string;
 
     @Length({ max: 16 })
     @Column({
-        type: DataType.STRING(16),
-        allowNull: true,
+        type      : DataType.STRING(16),
+        allowNull : true,
     })
     Prefix: string;
 
     @Length({ max: 70 })
     @Column({
-        type: DataType.STRING(70),
-        allowNull: true,
+        type      : DataType.STRING(70),
+        allowNull : true,
     })
     FirstName: string;
 
     @Length({ max: 70 })
     @Column({
-        type: DataType.STRING(70),
-        allowNull: true,
+        type      : DataType.STRING(70),
+        allowNull : true,
     })
     MiddleName: string;
 
     @Length({ max: 70 })
     @Column({
-        type: DataType.STRING(70),
-        allowNull: true,
+        type      : DataType.STRING(70),
+        allowNull : true,
     })
     LastName: string;
 
     @Index
     @Length({ max: 24 })
     @Column({
-        type: DataType.STRING(24),
-        allowNull: false,
+        type      : DataType.STRING(24),
+        allowNull : false,
     })
     Phone: string;
 
     @Length({ max: 128 })
     @IsEmail
     @Column({
-        type: DataType.STRING(128),
-        allowNull: true,
+        type      : DataType.STRING(128),
+        allowNull : true,
     })
     Email: string;
 
     @Column({
-        type: DataType.ENUM,
-        values: ['Male', 'Female', 'Other', 'Unknown'],
-        defaultValue: 'Male',
-        allowNull: false,
+        type         : DataType.ENUM,
+        values       : ['Male', 'Female', 'Other', 'Unknown'],
+        defaultValue : 'Male',
+        allowNull    : false,
     })
     Gender: string;
 
     @IsDate
     @Column({
-        type: DataType.DATE,
-        allowNull: true,
+        type      : DataType.DATE,
+        allowNull : true,
     })
     BirthDate: Date;
 
     @IsUUID(4)
     @Column({
-        type: DataType.UUID,
-        allowNull: true,
+        type      : DataType.UUID,
+        allowNull : true,
     })
     ImageResourceId: string;
 
     @Length({ max: 64 })
     @Column({
-        type: DataType.STRING(64),
-        allowNull: true,
-        unique: true
+        type      : DataType.STRING(64),
+        allowNull : true,
+        unique    : true
     })
     NationalId: string;
 
     @Length({ max: 32 })
     @Column({
-        type: DataType.STRING(32),
-        allowNull: false,
-        defaultValue: PersonIdentificationType.Aadhar
+        type         : DataType.STRING(32),
+        allowNull    : false,
+        defaultValue : PersonIdentificationType.Aadhar
     })
     NationalIdType: string;
 
     @IsUUID(4)
     @ForeignKey(() => Organization)
     @Column({
-        type: DataType.UUID,
-        allowNull: true,
+        type      : DataType.UUID,
+        allowNull : true,
     })
     OrganizationId: string;
 
@@ -144,4 +145,5 @@ export default class Person extends Model {
 
     @DeletedAt
     DeletedAt: Date;
+
 }

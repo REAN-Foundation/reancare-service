@@ -2,10 +2,9 @@ import express from 'express';
 import { ApiClientController } from '../controllers/api.client.controller';
 import { Loader } from '../../startup/loader';
 
+export const register = (app: express.Application): void => {
 
-export const register = (app: express.Application) => {
-
-    const router = require('express').Router();
+    const router = express.Router();
     const authenticator = Loader.authenticator;
     const controller = new ApiClientController();
 

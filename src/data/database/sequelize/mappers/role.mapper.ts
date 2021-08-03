@@ -6,12 +6,12 @@ import { RoleDto } from "../../../domain.types/role.domain.types";
 export class RoleMapper {
 
     static toDto = (role: Role): RoleDto => {
-        if(role == null){
+        if (role == null){
             return null;
         }
-        var dto: RoleDto = {
-            id: role.id,
-            RoleName: role.RoleName
+        const dto: RoleDto = {
+            id       : role.id,
+            RoleName : role.RoleName
         };
         return dto;
     }

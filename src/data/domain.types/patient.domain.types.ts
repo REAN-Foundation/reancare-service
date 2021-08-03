@@ -21,7 +21,7 @@ export interface PatientDomainModel {
     InsuranceIds?: string[];
     EmergencyContactIds?: string[];
     Address: AddressDomainModel;
-};
+}
 
 export interface MedicalProfileDomainModel {
     id?: string;
@@ -46,7 +46,7 @@ export interface MedicalProfileDomainModel {
     ProcedureHistory?: string;
     ObstetricHistory?: string;
     OtherInformation?: string;
-};
+}
 
 export interface PatientInsuranceDomainModel {
     id?: string;
@@ -54,7 +54,7 @@ export interface PatientInsuranceDomainModel {
     InsurancePolicyCode?: string;
     ValidFrom?: string;
     ValidTill?: string;
-};
+}
  
 export interface EmergencyContactDomainModel {
     id?: string;
@@ -68,7 +68,7 @@ export interface EmergencyContactDomainModel {
     TimeOfAvailability?: string;
     Description?: string;
     AdditionalPhoneNumbers?: string;
-};
+}
 
 //#endregion
 
@@ -84,7 +84,7 @@ export interface PatientDetailsDto {
     Insurances?: PatientInsuranceDto[];
     EmergencyContacts?: EmergencyContactDto[];
     Addresses?: AddressDto[];
-};
+}
 
 export interface MedicalProfileDto {
     id: string;
@@ -109,7 +109,7 @@ export interface MedicalProfileDto {
     ProcedureHistory?: string;
     ObstetricHistory?: string;
     OtherInformation?: string;
-};
+}
 
 export interface PatientInsuranceDto {
     id?: string;
@@ -117,7 +117,7 @@ export interface PatientInsuranceDto {
     InsurancePolicyCode?: string;
     ValidFrom?: string;
     ValidTill?: string;
-};
+}
  
 export interface EmergencyContactDto {
     id?: string;
@@ -131,7 +131,7 @@ export interface EmergencyContactDto {
     TimeOfAvailability?: string;
     Description?: string;
     AdditionalPhoneNumbers?: string;
-};
+}
 
 export interface PatientDto {
     id: string;
@@ -145,7 +145,7 @@ export interface PatientDto {
     Gender: Gender;
     BirthDate: Date;
     Age: string;
-};
+}
 
 //#endregion
 
@@ -164,10 +164,11 @@ export interface PatientSearchFilters {
     Order: string;
     PageIndex: number;
     ItemsPerPage: number;
-};
+}
 
 export interface PatientSearchResults {
     TotalCount: number;
+    RetrievedCount: number;
     PageIndex: number;
     ItemsPerPage: number;
     Order: string;
@@ -177,6 +178,7 @@ export interface PatientSearchResults {
 
 export interface PatientDetailsSearchResults {
     TotalCount: number;
+    RetrievedCount: number;
     PageIndex: number;
     ItemsPerPage: number;
     Order: string;

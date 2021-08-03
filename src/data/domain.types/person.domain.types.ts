@@ -47,7 +47,7 @@ export interface PersonDetailsDto {
     ImageResourceId: string;
     Roles: PersonRoleDto[];
     ActiveSince: Date;
-};
+}
 
 export interface PersonDto {
     id: string;
@@ -56,7 +56,7 @@ export interface PersonDto {
     Email: string;
     Gender: Gender;
     BirthDate: Date;
-};
+}
 
 //#endregion
 
@@ -75,6 +75,6 @@ export interface PersonSearchFilters {
     Order: string;
     PageIndex: number;
     ItemsPerPage: number;
-};
+}
 
 //#endregion

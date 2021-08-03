@@ -1,5 +1,4 @@
-import { UserDetailsDto, UserDomainModel, UserDto } from '../domain.types/user.domain.types';
-
+import { UserDetailsDto, UserDomainModel } from '../domain.types/user.domain.types';
 
 export interface IUserRepo {
 
@@ -9,7 +8,7 @@ export interface IUserRepo {
 
     getUserByPersonIdAndRole(personId: string, loginRoleId: number): Promise<UserDetailsDto>;
 
-    userNameExists(userName: string): Promise<Boolean>;
+    userNameExists(userName: string): Promise<boolean>;
 
     userExistsWithUsername(userName: string): Promise<boolean>;
 

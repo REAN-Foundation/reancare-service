@@ -1,20 +1,19 @@
-import { UserDetailsDto, UserDomainModel, UserDto } from "../../../domain.types/user.domain.types";
+import { UserDetailsDto, UserDomainModel } from "../../../domain.types/user.domain.types";
 import { IUserRepo } from "../../../repository.interfaces/user.repo.interface";
 import User from '../models/user.model';
 import { UserMapper } from "../mappers/user.mapper";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { Op } from 'sequelize';
-import PersonRole from "../models/person.role.model";
 import { Helper } from "../../../../common/helper";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserRepo implements IUserRepo {
 
-    userNameExists = async (userName: string): Promise<Boolean> => {
-        if (userName != null && typeof userName != 'undefined') {
-            var existing = await User.findOne({ where: { UserName: userName } });
+    userNameExists = async (userName: string): Promise<boolean> => {
+        if (userName != null && typeof userName !== 'undefined') {
+            const existing = await User.findOne({ where: { UserName: userName } });
             return existing != null;
         }
         return false;
@@ -22,17 +21,17 @@ export class UserRepo implements IUserRepo {
 
     getUserByPersonIdAndRole = async (personId: string, roleId: number): Promise<UserDetailsDto> => {
         if (Helper.isStr(personId) && Helper.isNum(roleId)) {
-            var user = await User.findOne({ where: { PersonId: personId, RoleId: roleId } });
+            const user = await User.findOne({ where: { PersonId: personId, RoleId: roleId } });
             return await UserMapper.toDetailsDto(user);
         }
         return null;
     };
 
     userExistsWithUsername = async (userName: string): Promise<boolean> => {
-        if (userName != null && typeof userName != 'undefined') {
-            var existing = await User.findOne({
-                where: {
-                    UserName: { [Op.like]: '%' + userName + '%' }
+        if (userName != null && typeof userName !== 'undefined') {
+            const existing = await User.findOne({
+                where : {
+                    UserName : { [Op.like]: '%' + userName + '%' }
                 },
             });
             return existing != null;
@@ -41,25 +40,27 @@ export class UserRepo implements IUserRepo {
     };
 
     userExistsWithPhone = async (phone: string): Promise<boolean> => {
-        if (phone == null || typeof phone != 'undefined') {
+        if (phone == null || typeof phone !== 'undefined') {
             return false;
         }
-        var user = await User.findOne({ where: { Phone: phone } });
-        if(user == null) {
-            var phoneTemp: string = phone;
-            phoneTemp = phoneTemp.replace(' ', '');
-        }
+        const user = await User.findOne({ where: { Phone: phone } });
+
+        // if (user == null) {
+        //     let phoneTemp: string = phone;
+        //     phoneTemp = phoneTemp.replace(' ', '');
+        // }
+        
         return user != null;
     };
 
     getUserWithUserName = async (userName: string): Promise<UserDetailsDto> => {
-        if (userName != null && typeof userName != 'undefined') {
-            var user = await User.findOne({
-                where: {
-                    UserName: { [Op.like]: '%' + userName + '%' }
+        if (userName != null && typeof userName !== 'undefined') {
+            const user = await User.findOne({
+                where : {
+                    UserName : { [Op.like]: '%' + userName + '%' }
                 },
             });
-            var dto = await UserMapper.toDetailsDto(user);
+            const dto = await UserMapper.toDetailsDto(user);
             return dto;
         }
         return null;
@@ -67,16 +68,16 @@ export class UserRepo implements IUserRepo {
 
     create = async (userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
-            var entity = {
-                PersonId: userDomainModel.Person.id,
-                RoleId: userDomainModel.RoleId ?? null,
-                UserName: userDomainModel.UserName,
-                Password: userDomainModel.Password ?? null,
-                DefaultTimeZone: userDomainModel.DefaultTimeZone ?? '+05:30',
-                CurrentTimeZone: userDomainModel.DefaultTimeZone ?? '+05:30',
+            const entity = {
+                PersonId        : userDomainModel.Person.id,
+                RoleId          : userDomainModel.RoleId ?? null,
+                UserName        : userDomainModel.UserName,
+                Password        : userDomainModel.Password ?? null,
+                DefaultTimeZone : userDomainModel.DefaultTimeZone ?? '+05:30',
+                CurrentTimeZone : userDomainModel.DefaultTimeZone ?? '+05:30',
             };
-            var user = await User.create(entity);
-            var dto = await UserMapper.toDetailsDto(user);
+            const user = await User.create(entity);
+            const dto = await UserMapper.toDetailsDto(user);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -86,8 +87,8 @@ export class UserRepo implements IUserRepo {
 
     getById = async (id: string): Promise<UserDetailsDto> => {
         try {
-            var user = await User.findByPk(id);
-            var dto = await UserMapper.toDetailsDto(user);
+            const user = await User.findByPk(id);
+            const dto = await UserMapper.toDetailsDto(user);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -97,7 +98,7 @@ export class UserRepo implements IUserRepo {
 
     update = async (id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
-            var user = await User.findByPk(id);
+            const user = await User.findByPk(id);
 
             if (userDomainModel.DefaultTimeZone != null) {
                 user.DefaultTimeZone = userDomainModel.DefaultTimeZone;
@@ -116,7 +117,7 @@ export class UserRepo implements IUserRepo {
             }
             await user.save();
 
-            var dto = await UserMapper.toDetailsDto(user);
+            const dto = await UserMapper.toDetailsDto(user);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -125,10 +126,11 @@ export class UserRepo implements IUserRepo {
     };
 
     getUserHashedPassword = async (id: string): Promise<string> => {
-        var user = await User.findByPk(id);
+        const user = await User.findByPk(id);
         if (user == null) {
             return null;
         }
         return user.Password;
     };
+
 }

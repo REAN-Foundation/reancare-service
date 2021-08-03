@@ -1,10 +1,8 @@
 import {
     PatientDetailsDto,
-    PatientDto,
     PatientDomainModel,
     PatientSearchFilters,
     PatientSearchResults,
-    PatientDetailsSearchResults,
 } from '../domain.types/patient.domain.types';
 
 export interface IPatientRepo {
@@ -16,5 +14,5 @@ export interface IPatientRepo {
 
     search(filters: PatientSearchFilters): Promise<PatientSearchResults>;
 
-    searchFull(filters: PatientSearchFilters): Promise<PatientDetailsSearchResults>;
+    // searchFull(filters: PatientSearchFilters): Promise<PatientDetailsSearchResults>;
 }

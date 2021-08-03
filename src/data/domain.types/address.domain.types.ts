@@ -12,7 +12,7 @@ export interface AddressDomainModel {
     PostalCode?: string;
     Longitude?: number;
     Lattitude?: number;
-};
+}
 
 export interface AddressDto {
     id: string;
@@ -27,7 +27,7 @@ export interface AddressDto {
     PostalCode: string;
     Longitude: number;
     Lattitude: number;
-};
+}
 
 export interface AddressSearchFilters {
     Type: string;
@@ -53,6 +53,7 @@ export interface AddressSearchFilters {
 
 export interface AddressSearchResults {
     TotalCount: number;
+    RetrievedCount: number;
     PageIndex: number;
     ItemsPerPage: number;
     Order: string;

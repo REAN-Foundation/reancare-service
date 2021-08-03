@@ -1,110 +1,110 @@
-import { 
-    Table, 
-    Column, 
+import {
+    Table,
+    Column,
     Model,
     DataType,
-    CreatedAt, 
-    UpdatedAt, 
-    DeletedAt, 
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
     IsUUID,
     PrimaryKey,
-    Length    } from 'sequelize-typescript';
+    Length } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
-    timestamps: true,
-    modelName: 'Address',
-    tableName: 'addresses',
-    paranoid: true,
-    freezeTableName: true
+    timestamps      : true,
+    modelName       : 'Address',
+    tableName       : 'addresses',
+    paranoid        : true,
+    freezeTableName : true
 })
 export default class Address extends Model {
 
     @IsUUID(4)
     @PrimaryKey
     @Column({
-        type: DataType.UUID,
-        defaultValue: () => { return v4(); },
-        allowNull: false
+        type         : DataType.UUID,
+        defaultValue : () => { return v4(); },
+        allowNull    : false
     })
     id: string;
 
     @IsUUID(4)
     @Column({
-        type:  DataType.UUID,
-        allowNull: true,
+        type      : DataType.UUID,
+        allowNull : true,
     })
     PersonId: string;
 
     @IsUUID(4)
     @Column({
-        type:  DataType.UUID,
-        allowNull: true,
+        type      : DataType.UUID,
+        allowNull : true,
     })
-    OrganizationId: string;   
+    OrganizationId: string;
 
-    @Length({ min: 2, max: 16})
+    @Length({ min: 2, max: 16 })
     @Column({
-        type: DataType.STRING(16),
-        allowNull: false,
-        defaultValue: 'Work'
+        type         : DataType.STRING(16),
+        allowNull    : false,
+        defaultValue : 'Work'
     })
     Type: string;
 
-    @Length({ max: 64})
+    @Length({ max: 64 })
     @Column({
-        type:  DataType.STRING(64),
-        allowNull: true,
+        type      : DataType.STRING(64),
+        allowNull : true,
     })
     AddressLine: string;
 
-    @Length({ min: 2, max: 32})
+    @Length({ min: 2, max: 32 })
     @Column({
-        type: DataType.STRING(32),
-        allowNull: true
+        type      : DataType.STRING(32),
+        allowNull : true
     })
     City: string;
 
-    @Length({ min: 2, max: 32})
+    @Length({ min: 2, max: 32 })
     @Column({
-        type: DataType.STRING(32),
-        allowNull: true
+        type      : DataType.STRING(32),
+        allowNull : true
     })
     District: string;
 
-    @Length({ min: 2, max: 32})
+    @Length({ min: 2, max: 32 })
     @Column({
-        type: DataType.STRING(32),
-        allowNull: true
+        type      : DataType.STRING(32),
+        allowNull : true
     })
     State: string;
 
-    @Length({ min: 2, max: 32})
+    @Length({ min: 2, max: 32 })
     @Column({
-        type: DataType.STRING(32),
-        allowNull: true
+        type      : DataType.STRING(32),
+        allowNull : true
     })
     Country: string;
 
-    @Length({ min: 2, max: 16})
+    @Length({ min: 2, max: 16 })
     @Column({
-        type: DataType.STRING(16),
-        allowNull: true
+        type      : DataType.STRING(16),
+        allowNull : true
     })
     PostalCode: string;
 
     @Column({
-        type: DataType.FLOAT,
-        allowNull: true,
+        type      : DataType.FLOAT,
+        allowNull : true,
     })
     Longitude: number;
 
     @Column({
-        type: DataType.FLOAT,
-        allowNull: true,
+        type      : DataType.FLOAT,
+        allowNull : true,
     })
     Lattitude: number;
 
@@ -118,4 +118,4 @@ export default class Address extends Model {
     @DeletedAt
     DeletedAt: Date;
 
-};
+}

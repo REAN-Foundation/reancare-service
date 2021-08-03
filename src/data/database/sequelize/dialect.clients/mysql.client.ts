@@ -1,4 +1,5 @@
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const mysql = require('mysql2');
 import { Logger } from '../../../../common/logger';
 import { DbConfig } from '../database.config';
@@ -31,6 +32,7 @@ export class MysqlClient {
 
     public static executeQuery = (query): Promise<boolean> => {
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return new Promise((resolve, reject) => {
             try {
                 const config = DbConfig.config;
@@ -50,6 +52,7 @@ export class MysqlClient {
                     connection.query(query, function (err, result) {
                         if (err) {
                             Logger.instance().log(err.message);
+                            Logger.instance().log(result.toString());
 
                             //throw err;
                         }
@@ -59,8 +62,6 @@ export class MysqlClient {
 
             } catch (error) {
                 Logger.instance().log(error.message);
-
-                //reject(false);
             }
         });
         

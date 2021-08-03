@@ -16,7 +16,7 @@ export class Test_EHR {
             container.register('IStorageService', GcpStorageService);
             const storeService = container.resolve(StorageService);
             const initialized = await storeService.init();
-            if(initialized) {
+            if (initialized) {
                 Logger.instance().log('FHIR storage service initialized.');
             }
         } catch (error) {

@@ -11,40 +11,41 @@ import PersonRole from "../models/person.role.model";
 
 export class PersonRepo implements IPersonRepo {
 
-    personNameExists = async (personName: string): Promise<Boolean> => {
-        if (personName != null && typeof personName != 'undefined') {
-            var existing = await Person.findOne({ where: { PersonName: personName } });
+    personNameExists = async (personName: string): Promise<boolean> => {
+        if (personName != null && typeof personName !== 'undefined') {
+            const existing = await Person.findOne({ where: { PersonName: personName } });
             return existing != null;
         }
         return false;
     }
 
     personExistsWithPhone = async (phone: string): Promise<boolean> => {
-        if (phone != null && typeof phone != 'undefined') {
-            var existing = await Person.findOne({ where: { Phone: phone } });
+        if (phone != null && typeof phone !== 'undefined') {
+            const existing = await Person.findOne({ where: { Phone: phone } });
             return existing != null;
         }
         return false;
     };
 
     getPersonWithPhone = async (phone: string): Promise<PersonDetailsDto> => {
-        if (phone != null && typeof phone != 'undefined') {
-            var person = await Person.findOne({ where: { Phone: phone } });
+        if (phone != null && typeof phone !== 'undefined') {
+            const person = await Person.findOne({ where: { Phone: phone } });
             return await PersonMapper.toDetailsDto(person);
         }
         return null;
     };
 
     getAllPersonsWithPhoneAndRole = async (phone: string, roleId: number): Promise<PersonDetailsDto[]> => {
-        if (phone != null && typeof phone != 'undefined') {
+        if (phone != null && typeof phone !== 'undefined') {
+
             //KK: To be optimized with associations
 
-            var personsWithRole: PersonDetailsDto[] = [];
-            var persons = await Person.findAll({ where: { Phone: phone } });
-            for await (var person of persons) {
-                var withRole = await PersonRole.findOne({ where: { PersonId: person.id, RoleId: roleId } });
+            const personsWithRole: PersonDetailsDto[] = [];
+            const persons = await Person.findAll({ where: { Phone: phone } });
+            for await (const person of persons) {
+                const withRole = await PersonRole.findOne({ where: { PersonId: person.id, RoleId: roleId } });
                 if (withRole != null) {
-                    var dto = await PersonMapper.toDetailsDto(person);
+                    const dto = await PersonMapper.toDetailsDto(person);
                     personsWithRole.push(dto);
                 }
             }
@@ -54,26 +55,26 @@ export class PersonRepo implements IPersonRepo {
     };
 
     personExistsWithEmail = async (email: string): Promise<boolean> => {
-        if (email != null && typeof email != 'undefined') {
-            var existing = await Person.findOne({ where: { Email: email } });
+        if (email != null && typeof email !== 'undefined') {
+            const existing = await Person.findOne({ where: { Email: email } });
             return existing != null;
         }
         return false;
     };
 
     getPersonWithEmail = async (email: string): Promise<PersonDetailsDto> => {
-        if (email != null && typeof email != 'undefined') {
-            var person = await Person.findOne({ where: { Email: email } });
+        if (email != null && typeof email !== 'undefined') {
+            const person = await Person.findOne({ where: { Email: email } });
             return await PersonMapper.toDetailsDto(person);
         }
         return null;
     };
 
     personExistsWithPersonname = async (personName: string): Promise<boolean> => {
-        if (personName != null && typeof personName != 'undefined') {
-            var existing = await Person.findOne({
-                where: {
-                    PersonName: { [Op.like]: '%' + personName + '%' }
+        if (personName != null && typeof personName !== 'undefined') {
+            const existing = await Person.findOne({
+                where : {
+                    PersonName : { [Op.like]: '%' + personName + '%' }
                 },
             });
             return existing != null;
@@ -83,19 +84,19 @@ export class PersonRepo implements IPersonRepo {
 
     create = async (personDomainModel: PersonDomainModel): Promise<PersonDetailsDto> => {
         try {
-            var entity = {
-                Prefix: personDomainModel.Prefix ?? '',
-                FirstName: personDomainModel.FirstName,
-                MiddleName: personDomainModel.MiddleName ?? null,
-                LastName: personDomainModel.LastName,
-                Phone: personDomainModel.Phone,
-                Email: personDomainModel.Email ?? null,
-                Gender: personDomainModel.Gender ?? 'Unknown',
-                BirthDate: personDomainModel.BirthDate ?? null,
-                ImageResourceId: personDomainModel.ImageResourceId ?? null,
+            const entity = {
+                Prefix          : personDomainModel.Prefix ?? '',
+                FirstName       : personDomainModel.FirstName,
+                MiddleName      : personDomainModel.MiddleName ?? null,
+                LastName        : personDomainModel.LastName,
+                Phone           : personDomainModel.Phone,
+                Email           : personDomainModel.Email ?? null,
+                Gender          : personDomainModel.Gender ?? 'Unknown',
+                BirthDate       : personDomainModel.BirthDate ?? null,
+                ImageResourceId : personDomainModel.ImageResourceId ?? null,
             };
-            var person = await Person.create(entity);
-            var dto = await PersonMapper.toDetailsDto(person);
+            const person = await Person.create(entity);
+            const dto = await PersonMapper.toDetailsDto(person);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -105,8 +106,8 @@ export class PersonRepo implements IPersonRepo {
 
     getById = async (id: string): Promise<PersonDetailsDto> => {
         try {
-            var person = await Person.findOne({ where: { id: id } });
-            var dto = await PersonMapper.toDetailsDto(person);
+            const person = await Person.findOne({ where: { id: id } });
+            const dto = await PersonMapper.toDetailsDto(person);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -116,7 +117,7 @@ export class PersonRepo implements IPersonRepo {
 
     exists = async (id: string): Promise<boolean> => {
         try {
-            var person = await Person.findOne({ where: { id: id } });
+            const person = await Person.findOne({ where: { id: id } });
             return person != null;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -126,7 +127,7 @@ export class PersonRepo implements IPersonRepo {
 
     update = async (id: string, personDomainModel: PersonDomainModel): Promise<PersonDetailsDto> => {
         try {
-            var person = await Person.findOne({ where: { id: id } });
+            const person = await Person.findOne({ where: { id: id } });
 
             if (personDomainModel.Prefix != null) {
                 person.Prefix = personDomainModel.Prefix;
@@ -154,7 +155,7 @@ export class PersonRepo implements IPersonRepo {
             }
             await person.save();
 
-            var dto = await PersonMapper.toDetailsDto(person);
+            const dto = await PersonMapper.toDetailsDto(person);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -164,21 +165,17 @@ export class PersonRepo implements IPersonRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            var result = await Person.destroy({ where: { id: id }});
-            return result == 1;
+            const result = await Person.destroy({ where: { id: id } });
+            return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     search(filters: any): Promise<PersonDto[]> {
         throw new Error('Method not implemented.');
     }
-
-    searchFull(filters: any): Promise<PersonDetailsDto[]> {
-        throw new Error('Method not implemented.');
-    }
-
 
 }

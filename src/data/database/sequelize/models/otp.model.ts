@@ -1,86 +1,77 @@
-import { 
-    Table, 
-    Column, 
+import {
+    Table,
+    Column,
     Model,
     DataType,
-    HasMany,
-    HasOne,
-    BelongsTo,
-    BelongsToMany,
-    CreatedAt, 
-    UpdatedAt, 
-    DeletedAt, 
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
     IsUUID,
     PrimaryKey,
     Length,
-    BeforeCreate,
-    IsEmail,
-    IsDate,
-    IsInt,
-    ForeignKey
-    } from 'sequelize-typescript';
+    IsDate    } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
-    timestamps: true,
-    modelName: 'Otp',
-    tableName: 'otp',
-    paranoid: true,
-    freezeTableName: true
+    timestamps      : true,
+    modelName       : 'Otp',
+    tableName       : 'otp',
+    paranoid        : true,
+    freezeTableName : true
 })
 export default class Otp extends Model {
 
     @IsUUID(4)
     @PrimaryKey
     @Column({
-        type: DataType.UUID,
-        defaultValue: () => { return v4(); },
-        allowNull: false
+        type         : DataType.UUID,
+        defaultValue : () => { return v4(); },
+        allowNull    : false
     })
     id: string;
 
     @IsUUID(4)
     @Column({
-        type: DataType.UUID,
-        allowNull: false,
+        type      : DataType.UUID,
+        allowNull : false,
     })
     UserId: string;
 
-    @Length({ min: 1, max: 64})
+    @Length({ min: 1, max: 64 })
     @Column({
-        type: DataType.STRING(64),
-        allowNull: true,
+        type      : DataType.STRING(64),
+        allowNull : true,
     })
     Purpose: string;
 
-    @Length({ min: 6, max: 6})
+    @Length({ min: 6, max: 6 })
     @Column({
-        type: DataType.STRING(8),
-        allowNull: true,
+        type      : DataType.STRING(8),
+        allowNull : true,
     })
     Otp: string;
 
     @IsDate
     @Column({
-        type: DataType.DATE,
-        allowNull: false
+        type      : DataType.DATE,
+        allowNull : false
     })
     ValidFrom: Date;
 
     @IsDate
     @Column({
-        type: DataType.DATE,
-        allowNull: false
+        type      : DataType.DATE,
+        allowNull : false
     })
     ValidTill: Date;
 
     @Column({
-        type: DataType.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false
     })
     Utilized: boolean;
 
@@ -94,4 +85,4 @@ export default class Otp extends Model {
     @DeletedAt
     DeletedAt: Date;
 
-};
+}

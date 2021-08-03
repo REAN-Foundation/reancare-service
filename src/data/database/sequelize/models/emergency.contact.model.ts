@@ -1,16 +1,16 @@
-import { 
-    Table, 
-    Column, 
+import {
+    Table,
+    Column,
     Model,
     DataType,
-    CreatedAt, 
-    UpdatedAt, 
-    DeletedAt, 
+    CreatedAt,
+    UpdatedAt,
+    DeletedAt,
     IsUUID,
-    PrimaryKey,    
+    PrimaryKey,
     ForeignKey,
     Length,
-    IsInt} from 'sequelize-typescript';
+    IsInt } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import Address from './address.model';
@@ -22,95 +22,95 @@ import User from './user.model';
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
-    timestamps: true,
-    modelName: 'EmergencyContact',
-    tableName: 'emergency_contacts',
-    paranoid: true,
-    freezeTableName: true
+    timestamps      : true,
+    modelName       : 'EmergencyContact',
+    tableName       : 'emergency_contacts',
+    paranoid        : true,
+    freezeTableName : true
 })
 export default class EmergencyContact extends Model {
 
     @IsUUID(4)
     @PrimaryKey
     @Column({
-        type: DataType.UUID,
-        defaultValue: () => { return v4(); },
-        allowNull: false
+        type         : DataType.UUID,
+        defaultValue : () => { return v4(); },
+        allowNull    : false
     })
     id: string;
 
     @IsUUID(4)
     @ForeignKey(() => Person)
     @Column({
-        type:  DataType.UUID,
-        allowNull: false,
+        type      : DataType.UUID,
+        allowNull : false,
     })
     PersonId: string;
 
     @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
-        type:  DataType.UUID,
-        allowNull: false,
+        type      : DataType.UUID,
+        allowNull : false,
     })
     PatientUserId: string;
 
     @IsUUID(4)
     @ForeignKey(() => Address)
     @Column({
-        type:  DataType.UUID,
-        allowNull: true,
+        type      : DataType.UUID,
+        allowNull : true,
     })
     AddressId: string;
 
     @IsUUID(4)
     @ForeignKey(() => Organization)
     @Column({
-        type:  DataType.UUID,
-        allowNull: true,
+        type      : DataType.UUID,
+        allowNull : true,
     })
     OrganizationId: string;
 
     @Column({
-        type: DataType.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
     })
     IsAvailableForEmergency: boolean;
 
     @IsInt
     @ForeignKey(() => Role)
     @Column({
-        type: DataType.INTEGER,
-        allowNull: true,
+        type      : DataType.INTEGER,
+        allowNull : true,
     })
     RoleId: string;
     
     @Length({ max: 32 })
     @Column({
-        type: DataType.STRING(32),
-        allowNull: true,
+        type      : DataType.STRING(32),
+        allowNull : true,
     })
     Relation: string;
 
     @Length({ max: 256 })
     @Column({
-        type: DataType.STRING(256),
-        allowNull: true,
+        type      : DataType.STRING(256),
+        allowNull : true,
     })
     TimeOfAvailability: string;
 
     @Length({ max: 256 })
     @Column({
-        type: DataType.STRING(256),
-        allowNull: true,
+        type      : DataType.STRING(256),
+        allowNull : true,
     })
     Description: string;
 
     @Length({ max: 64 })
     @Column({
-        type: DataType.STRING(64),
-        allowNull: true,
+        type      : DataType.STRING(64),
+        allowNull : true,
     })
     AdditionalPhoneNumbers: string;
 
@@ -124,4 +124,4 @@ export default class EmergencyContact extends Model {
     @DeletedAt
     DeletedAt: Date;
 
-};
+}

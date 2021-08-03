@@ -5,7 +5,7 @@ import { IPersonRoleRepo } from '../data/repository.interfaces/person.role.repo.
 import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { PatientDomainModel, PatientDetailsDto, PatientDto, PatientSearchFilters, PatientDetailsSearchResults, PatientSearchResults } from '../data/domain.types/patient.domain.types';
+import { PatientDomainModel, PatientDetailsDto, PatientSearchFilters, PatientDetailsSearchResults, PatientSearchResults } from '../data/domain.types/patient.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { ApiError } from '../common/api.error';
 import { Roles } from '../data/domain.types/role.domain.types';
@@ -17,6 +17,7 @@ import { Helper } from '../common/helper';
 
 @injectable()
 export class PatientService {
+
     _ehrPatientStore: PatientStore = null;
 
     constructor(
@@ -33,14 +34,12 @@ export class PatientService {
 
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
         
-        if (process.env.USE_FHIR_STORAGE == 'Yes') {
-            var ehrId = await this._ehrPatientStore.create(patientDomainModel);
-            patientDomainModel.EhrId = ehrId;
-        }
+        const ehrId = await this._ehrPatientStore.create(patientDomainModel);
+        patientDomainModel.EhrId = ehrId;
 
-        var patientDto = await this._patientRepo.create(patientDomainModel);
-        var role = await this._roleRepo.getByName(Roles.Patient);
-        var personRole = await this._personRoleRepo.addPersonRole(patientDto.User.Person.id, role.id);
+        const patientDto = await this._patientRepo.create(patientDomainModel);
+        const role = await this._roleRepo.getByName(Roles.Patient);
+        await this._personRoleRepo.addPersonRole(patientDto.User.Person.id, role.id);
 
         return patientDto;
     };
@@ -50,14 +49,9 @@ export class PatientService {
     };
 
     public search = async (
-        filters: PatientSearchFilters,
-        full: boolean = false
+        filters: PatientSearchFilters
     ): Promise<PatientDetailsSearchResults | PatientSearchResults> => {
-        if (full) {
-            return await this._patientRepo.searchFull(filters);
-        } else {
-            return await this._patientRepo.search(filters);
-        }
+        return await this._patientRepo.search(filters);
     };
 
     public updateByUserId = async (
@@ -68,16 +62,16 @@ export class PatientService {
     };
 
     public checkforDuplicatePatients = async (domainModel: PatientDomainModel): Promise<number> => {
-        var role = await this._roleRepo.getByName(Roles.Patient);
+        const role = await this._roleRepo.getByName(Roles.Patient);
         if (role == null) {
             throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');
         }
-        var persons = await this._personRepo.getAllPersonsWithPhoneAndRole(
+        const persons = await this._personRepo.getAllPersonsWithPhoneAndRole(
             domainModel.User.Person.Phone,
             role.id
         );
 
-        var displayName = Helper.constructPersonDisplayName(
+        let displayName = Helper.constructPersonDisplayName(
             domainModel.User.Person.Prefix,
             domainModel.User.Person.FirstName,
             domainModel.User.Person.LastName
@@ -85,8 +79,8 @@ export class PatientService {
         displayName = displayName.toLowerCase();
 
         //compare display name with all users sharing same phone number
-        for (var person of persons) {
-            var name = person.DisplayName.toLowerCase();
+        for (const person of persons) {
+            const name = person.DisplayName.toLowerCase();
             if (name === displayName) {
                 throw new ApiError(409, 'Patient with same name and phone number exists!');
             }

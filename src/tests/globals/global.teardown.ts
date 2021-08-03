@@ -1,11 +1,12 @@
+import { Logger } from "../../common/logger";
 
 
 export default async () => {
     try {
-        console.log("Tearing down...");
+        Logger.instance().log("Tearing down...");
     }
     catch (error) {
-        console.log('Problem in tearing down the tests! -> ' + error.message);
+        Logger.instance().log('Problem in tearing down the tests! -> ' + error.message);
     }
 };
 

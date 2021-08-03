@@ -11,6 +11,5 @@ export class StorageService {
     init = async (): Promise<boolean> => {
         return await this._service.init();
     };
-};
 
-////////////////////////////////////////////////////////////////////////
+}

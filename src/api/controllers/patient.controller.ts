@@ -22,13 +22,19 @@ import { PersonDomainModel } from '../../data/domain.types/person.domain.types';
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class PatientController {
+
     //#region member variables and constructors
 
     _service: PatientService = null;
+
     _userService: UserService = null;
+
     _personService: PersonService = null;
+
     _addressService: AddressService = null;
+
     _roleService: RoleService = null;
+
     _authorizer: Authorizer = null;
 
     constructor() {
@@ -43,29 +49,29 @@ export class PatientController {
 
     //#region Action methods
 
-    create = async (request: express.Request, response: express.Response) => {
+    create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Patient.Create';
 
-            var patientDomainModel = await PatientValidator.create(request, response);
+            const patientDomainModel = await PatientValidator.create(request);
 
             //Throw an error if patient with same name and phone number exists
-            var existingPatientCountSharingPhone = await this._service.checkforDuplicatePatients(
+            const existingPatientCountSharingPhone = await this._service.checkforDuplicatePatients(
                 patientDomainModel
             );
 
-            var userName = await this._userService.generateUserName(
+            const userName = await this._userService.generateUserName(
                 patientDomainModel.User.Person.FirstName,
                 patientDomainModel.User.Person.LastName
             );
 
-            var displayId = await this._userService.generateUserDisplayId(
+            const displayId = await this._userService.generateUserDisplayId(
                 Roles.Patient,
                 patientDomainModel.User.Person.Phone,
                 existingPatientCountSharingPhone
             );
 
-            var displayName = Helper.constructPersonDisplayName(
+            const displayName = Helper.constructPersonDisplayName(
                 patientDomainModel.User.Person.Prefix,
                 patientDomainModel.User.Person.FirstName,
                 patientDomainModel.User.Person.LastName
@@ -75,12 +81,12 @@ export class PatientController {
             patientDomainModel.User.UserName = userName;
             patientDomainModel.DisplayId = displayId;
 
-            var userDomainModel = patientDomainModel.User;
-            var personDomainModel = userDomainModel.Person;
+            const userDomainModel = patientDomainModel.User;
+            const personDomainModel = userDomainModel.Person;
 
             //Create a person first
 
-            var person = await this._personService.getPersonWithPhone(patientDomainModel.User.Person.Phone);
+            let person = await this._personService.getPersonWithPhone(patientDomainModel.User.Person.Phone);
             if (person == null) {
                 person = await this._personService.create(personDomainModel);
                 if (person == null) {
@@ -88,12 +94,12 @@ export class PatientController {
                 }
             }
 
-            var role = await this._roleService.getByName(Roles.Patient);
+            const role = await this._roleService.getByName(Roles.Patient);
             patientDomainModel.PersonId = person.id;
             userDomainModel.Person.id = person.id;
             userDomainModel.RoleId = role.id;
 
-            var user = await this._userService.create(userDomainModel);
+            const user = await this._userService.create(userDomainModel);
             if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }
@@ -104,7 +110,7 @@ export class PatientController {
             // var customer = await this._appointmentService.createCustomer(appointmentCustomerModel);
 
             patientDomainModel.DisplayId = displayId;
-            var patient = await this._service.create(patientDomainModel);
+            const patient = await this._service.create(patientDomainModel);
             if (user == null) {
                 throw new ApiError(400, 'Cannot create patient!');
             }
@@ -112,21 +118,22 @@ export class PatientController {
             await this.createAddress(request, patient);
 
             ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
-                Patient: patient,
+                Patient : patient,
             });
         } catch (error) {
+
             //KK: Todo: Add rollback in case of mid-way exception
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    getByUserId = async (request: express.Request, response: express.Response) => {
+    getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Patient.GetByUserId';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            var userId: string = await PatientValidator.getByUserId(request, response);
+            const userId: string = await PatientValidator.getByUserId(request);
 
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
@@ -139,32 +146,32 @@ export class PatientController {
             }
 
             ResponseHandler.success(request, response, 'Patient retrieved successfully!', 200, {
-                Patient: patient,
+                Patient : patient,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    search = async (request: express.Request, response: express.Response) => {
+    search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Patient.Search';
             await this._authorizer.authorize(request, response);
 
-            var filters = await PatientValidator.search(request, response);
+            const filters = await PatientValidator.search(request);
 
-            var extractFull: boolean =
-                request.query.fullDetails != 'undefined' && typeof request.query.fullDetails == 'boolean'
-                    ? request.query.fullDetails
-                    : false;
+            // const extractFull: boolean =
+            //     request.query.fullDetails !== 'undefined' && typeof request.query.fullDetails === 'boolean'
+            //         ? request.query.fullDetails
+            //         : false;
 
-            const searchResults = await this._service.search(filters, extractFull);
-            var count = searchResults.Items.length;
-            var message =
-                count == 0 ? 'No records found!' : `Total ${count} patient records retrieved successfully!`;
+            const searchResults = await this._service.search(filters);
+            const count = searchResults.Items.length;
+            const message =
+                count === 0 ? 'No records found!' : `Total ${count} patient records retrieved successfully!`;
                 
             ResponseHandler.success(request, response, message, 200, {
-                Patients: searchResults,
+                Patients : searchResults,
             });
 
         } catch (error) {
@@ -172,27 +179,27 @@ export class PatientController {
         }
     };
 
-    updateByUserId = async (request: express.Request, response: express.Response) => {
+    updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Patient.UpdateByUserId';
             await this._authorizer.authorize(request, response);
 
-            var patientDomainModel = await PatientValidator.updateByUserId(request, response);
+            const patientDomainModel = await PatientValidator.updateByUserId(request);
 
-            var userId: string = await PatientValidator.getByUserId(request, response);
+            const userId: string = await PatientValidator.getByUserId(request);
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
 
-            var userDomainModel: UserDomainModel = patientDomainModel.User;
-            var updatedUser = await this._userService.update(patientDomainModel.UserId, userDomainModel);
+            const userDomainModel: UserDomainModel = patientDomainModel.User;
+            const updatedUser = await this._userService.update(patientDomainModel.UserId, userDomainModel);
             if (!updatedUser) {
                 throw new ApiError(400, 'Unable to update user!');
             }
-            var personDomainModel: PersonDomainModel = patientDomainModel.User.Person;
+            const personDomainModel: PersonDomainModel = patientDomainModel.User.Person;
             personDomainModel.id = updatedUser.Person.id;
-            var updatedPerson = await this._personService.update(personDomainModel.id, personDomainModel);
+            const updatedPerson = await this._personService.update(personDomainModel.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
             }
@@ -207,19 +214,19 @@ export class PatientController {
             await this.createOrUpdateAddress(request, patientDomainModel);
 
             ResponseHandler.success(request, response, 'Patient records updated successfully!', 200, {
-                Patient: updatedPatient,
+                Patient : updatedPatient,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    delete = async (request: express.Request, response: express.Response) => {
+    delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Patient.DeleteByUserId';
             await this._authorizer.authorize(request, response);
 
-            var userId: string = await PatientValidator.delete(request, response);
+            const userId: string = await PatientValidator.delete(request);
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
@@ -231,7 +238,7 @@ export class PatientController {
             }
 
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
-                Deleted: true,
+                Deleted : true,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -242,22 +249,23 @@ export class PatientController {
 
     //#region Private methods
 
-    private async createOrUpdateAddress(request, patientDomainModel: PatientDomainModel) {
-        var addressDomainModel: AddressDomainModel = null;
-        var addressBody = request.body.Address ?? null;
+    private async createOrUpdateAddress(request, patientDomainModel: PatientDomainModel): Promise<void> {
+
+        let addressDomainModel: AddressDomainModel = null;
+        const addressBody = request.body.Address ?? null;
 
         if (addressBody != null) {
             addressDomainModel = await AddressValidator.getDomainModel(addressBody);
 
             //get existing address to update
-            var existingAddresses = await this._addressService.getByPersonId(patientDomainModel.PersonId);
+            const existingAddresses = await this._addressService.getByPersonId(patientDomainModel.PersonId);
             if (existingAddresses.length < 1) {
                 addressDomainModel.PersonId = patientDomainModel.PersonId;
-                var address = await this._addressService.create(addressDomainModel);
+                const address = await this._addressService.create(addressDomainModel);
                 if (address == null) {
                     throw new ApiError(400, 'Cannot create address!');
                 }
-            } else if (existingAddresses.length == 1) {
+            } else if (existingAddresses.length === 1) {
                 const updatedAddress = await this._addressService.update(
                     existingAddresses[0].id,
                     addressDomainModel
@@ -269,13 +277,14 @@ export class PatientController {
         }
     }
 
-    private async createAddress(request, patient: PatientDetailsDto) {
-        var addressDomainModel: AddressDomainModel = null;
-        var addressBody = request.body.Address ?? null;
+    private async createAddress(request, patient: PatientDetailsDto): Promise<void> {
+        
+        let addressDomainModel: AddressDomainModel = null;
+        const addressBody = request.body.Address ?? null;
         if (addressBody != null) {
             addressDomainModel = await AddressValidator.getDomainModel(addressBody);
             addressDomainModel.PersonId = patient.User.id;
-            var address = await this._addressService.create(addressDomainModel);
+            const address = await this._addressService.create(addressDomainModel);
             if (address == null) {
                 throw new ApiError(400, 'Cannot create address!');
             }
@@ -283,4 +292,5 @@ export class PatientController {
     }
 
     //#endregion
-};
+
+}

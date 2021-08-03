@@ -5,7 +5,6 @@
         "es2021": true
     },
     "extends": [
-        "prettier/@typescript-eslint",
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended"
@@ -19,5 +18,123 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "no-console": "error",
+        "eqeqeq": ["warn", "always", {"null": "ignore"}],
+        // "no-magic-numbers": [
+        //     "warn",
+        //     {
+        //         "ignoreArrayIndexes": true,
+        //         "ignoreDefaultValues": true
+        //     }
+        // ],
+        "init-declarations": [
+            "warn",
+            "always"
+        ],
+        "eol-last": [
+            "warn",
+            "always"
+        ],
+        "block-spacing": [
+            "warn",
+            "always"
+        ],
+        "object-curly-spacing": [
+            "warn",
+            "always"
+        ],
+        "space-infix-ops": "warn",
+        "key-spacing": [
+            "warn",
+            {
+                "singleLine": {
+                    "beforeColon": false,
+                    "afterColon": true
+                },
+                "multiLine": {
+                    "beforeColon": true,
+                    "afterColon": true,
+                    "align": "colon"
+                }
+            }
+        ],
+        // "no-multi-spaces": [
+        //     "warn",
+        //     {
+        //         "ignoreEOLComments": true,
+        //         "exceptions": {
+        //             "Property": true,
+        //             "VariableDeclarator": true
+        //         }
+        //     }
+        // ],
+        "keyword-spacing": [
+            "error",
+            {
+                "overrides": {
+                    "if": {
+                        "after": true
+                    },
+                    "for": {
+                        "after": true
+                    },
+                    "while": {
+                        "after": true
+                    }
+                }
+            }
+        ],
+        "func-call-spacing": [
+            "warn",
+            "never"
+        ],
+        "lines-between-class-members": [
+            "warn",
+            "always"
+        ],
+        "linebreak-style": [
+            "warn",
+            "unix"
+        ],
+        "max-len": [
+            "warn",
+            {
+                "code": 120,
+                "tabWidth": 4,
+                "ignoreTrailingComments": true,
+                "ignoreTemplateLiterals": true,
+                "ignoreStrings": true
+            }
+        ],
+        "newline-per-chained-call": [
+            "warn",
+            {
+                "ignoreChainWithDepth": 2
+            }
+        ],
+        "max-statements-per-line": [
+            "error",
+            {
+                "max": 1
+            }
+        ],
+        "lines-around-comment": [
+            "warn",
+            {
+                "beforeBlockComment": true,
+                "beforeLineComment": true
+            }
+        ],
+        "no-multi-assign": "error",
+        "no-multiple-empty-lines": ["warn", { "max": 1, "maxEOF": 1 }],
+        "no-tabs": "error",
+        "no-trailing-spaces": [ "warn", { "skipBlankLines": true }],
+        "padded-blocks": [ "warn", { "classes": "always" }],
+        "no-empty-function": "off",
+        "@typescript-eslint/no-empty-function": ["error", { "allow": ["private-constructors"] }],
+        "@typescript-eslint/explicit-module-boundary-types": ["off"],
+        "@typescript-eslint/no-explicit-any": ["off"],
+        "no-var": ["off"]
+
     }
 }

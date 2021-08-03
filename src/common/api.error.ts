@@ -1,7 +1,8 @@
 export class ApiError extends Error {
 
-    _errorMessage: string = 'An unexpected error has occurred.';
-    _httpErrorCode: number = 500;
+    _errorMessage = 'An unexpected error has occurred.';
+
+    _httpErrorCode = 500;
 
     constructor(httpErrorCode: number, errorMessage: string){
         super();
@@ -17,4 +18,5 @@ export class ApiError extends Error {
     public get httpErrorCode() {
         return this._httpErrorCode;
     }
+
 }

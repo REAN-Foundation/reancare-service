@@ -1,15 +1,16 @@
 
 import { Client } from 'pg';
 import { Logger } from '../../../../common/logger';
-import { DbConfig } from '../../../../configs/db.config';
+import { DbConfig } from '../database.config';
 
 ////////////////////////////////////////////////////////////////
 
 export class PostgresqlClient {
+
     public static createDb = async () => {
         try {
             const config = DbConfig.config;
-            var query = `CREATE DATABASE ${config.database}`;
+            const query = `CREATE DATABASE ${config.database}`;
             await PostgresqlClient.executeQuery(query);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -19,7 +20,7 @@ export class PostgresqlClient {
     public static dropDb = async () => {
         try {
             const config = DbConfig.config;
-            var query = `DROP DATABASE IF EXISTS ${config.database}`;
+            const query = `DROP DATABASE IF EXISTS ${config.database}`;
             await PostgresqlClient.executeQuery(query);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -30,10 +31,10 @@ export class PostgresqlClient {
         try {
             const config = DbConfig.config;
             const client = new Client({
-                user: config.username,
-                host: config.host,
-                password: config.password,
-                port: 5432,
+                user     : config.username,
+                host     : config.host,
+                password : config.password,
+                port     : 5432,
             });
             await client.connect();
             await client.query(query);
@@ -42,5 +43,6 @@ export class PostgresqlClient {
             Logger.instance().log(error.message);
         }
     };
+
 }
 

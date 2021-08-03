@@ -26,4 +26,5 @@ export class RoleService {
     delete = async (id: number): Promise<boolean> => {
         return await this._roleRepo.delete(id);
     };
+
 }

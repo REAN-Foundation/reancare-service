@@ -1,6 +1,7 @@
-import * as dotenv from "dotenv";
+//import * as dotenv from "dotenv";
 import * as path from 'path';
 import Application from '../../app';
+import { Logger } from "../../common/logger";
 
 // const envPath = path.join(process.cwd(), '.env');
 //dotenv.config();
@@ -12,6 +13,6 @@ export default async () => {
         await appInstance.start();
     }
     catch (error) {
-        console.log('Problem in setting up the tests! -> ' + error.message);
+        Logger.instance().log('Problem in setting up the tests! -> ' + error.message);
     }
 };

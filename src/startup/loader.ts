@@ -7,19 +7,27 @@ import { Authorizer } from '../auth/authorizer';
 import { Injector } from './injector';
 import { Seeder } from './seeder';
 import { StorageService } from '../modules/ehr/services/storage.service';
+import { Logger } from '../common/logger';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+
 //Register injections here...
 Injector.registerInjections(container);
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class Loader {
 
     private static _authorizer: Authorizer = null;
+
     private static _authenticator: Authenticator = null;
+
     private static _databaseConnector: DatabaseConnector = null;
+
     private static _seeder: Seeder = null;
+
     private static _ehrStore: StorageService = null;
+
     private static _container: DependencyContainer = container;
 
     public static get authenticator() {
@@ -46,26 +54,23 @@ export class Loader {
         return Loader._container;
     }
 
-    public static init = async () => {
-        return new Promise(async (resolve, reject) => {
-            try {
+    public static init = async (): Promise<boolean> => {
+        try {
 
-                Loader._databaseConnector = container.resolve(DatabaseConnector);
-                Loader._authenticator = container.resolve(Authenticator);
-                Loader._authorizer = container.resolve(Authorizer);
-                Loader._seeder = container.resolve(Seeder);
-                
-                if(process.env.USE_FHIR_STORAGE == 'Yes') {
-                    Loader._ehrStore = container.resolve(StorageService);
-                    await Loader._ehrStore.init();
-                }
+            Loader._databaseConnector = container.resolve(DatabaseConnector);
+            Loader._authenticator = container.resolve(Authenticator);
+            Loader._authorizer = container.resolve(Authorizer);
+            Loader._seeder = container.resolve(Seeder);
+            
+            Loader._ehrStore = container.resolve(StorageService);
+            await Loader._ehrStore.init();
 
-                resolve(true);
+            return true;
 
-            } catch (error) {
-                reject(error);
-            }
-        });
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return false;
+        }
     };
-}
 
+}

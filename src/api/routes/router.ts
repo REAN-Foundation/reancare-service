@@ -1,24 +1,28 @@
+import express from "express";
 import { register as registerUserRoutes } from "./user.routes";
 import { register as registerClientRoutes } from "./api.client.routes";
 import { register as registerAddressRoutes } from "./address.routes";
 import { register as registerPatientRoutes } from "./patient.routes";
+import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////
 
 export class Router {
+
     private _app = null;
 
-    constructor(app) {
+    constructor(app: express.Application) {
         this._app = app;
     }
 
-    public init = async () => {
+    public init = async (): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             try {
+
                 //Handling the base route
                 this._app.get('/api/v1/', (req, res) => {
                     res.send({
-                        message: `REANCare API [Version ${process.env.API_VERSION}]`,
+                        message : `REANCare API [Version ${process.env.API_VERSION}]`,
                     });
                 });
 
@@ -30,8 +34,10 @@ export class Router {
                 resolve(true);
 
             } catch (error) {
-                reject(error);
+                Logger.instance().log('Error initializing the router: ' + error.message);
+                reject(false);
             }
         });
     };
+
 }

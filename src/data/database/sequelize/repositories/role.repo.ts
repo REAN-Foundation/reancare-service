@@ -1,6 +1,6 @@
 import { IRoleRepo } from '../../../repository.interfaces/role.repo.interface';
 import Role from '../models/role.model';
-import { Op, Sequelize } from 'sequelize';
+import { Op } from 'sequelize';
 import { RoleDto } from '../../../domain.types/role.domain.types';
 import { RoleMapper } from '../mappers/role.mapper';
 import { Logger } from '../../../../common/logger';
@@ -12,12 +12,12 @@ export class RoleRepo implements IRoleRepo {
     
     create = async (roleEntity: any): Promise<RoleDto> => {
         try {
-            var entity = {
-                RoleName: roleEntity.RoleName,
-                Description: roleEntity.Description,
+            const entity = {
+                RoleName    : roleEntity.RoleName,
+                Description : roleEntity.Description,
             };
-            var role = await Role.create(entity);
-            var dto = RoleMapper.toDto(role);
+            const role = await Role.create(entity);
+            const dto = RoleMapper.toDto(role);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -27,8 +27,8 @@ export class RoleRepo implements IRoleRepo {
 
     getById = async (id: number): Promise<RoleDto> => {
         try {
-            var role = await Role.findByPk(id);
-            var dto = await RoleMapper.toDto(role);
+            const role = await Role.findByPk(id);
+            const dto = await RoleMapper.toDto(role);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -38,8 +38,8 @@ export class RoleRepo implements IRoleRepo {
 
     getByName = async (name: string): Promise<RoleDto> => {
         try {
-            var role = await Role.findOne({where:{RoleName: { [Op.like]: '%' + name + '%' }}});
-            var dto = await RoleMapper.toDto(role);
+            const role = await Role.findOne({ where: { RoleName: { [Op.like]: '%' + name + '%' } } });
+            const dto = await RoleMapper.toDto(role);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -59,16 +59,16 @@ export class RoleRepo implements IRoleRepo {
 
     search = async (name?: string): Promise<RoleDto[]> => {
         try {
-            var filter = { where: {} };
-            if (name != null && name != 'undefined') {
+            let filter = { where: {} };
+            if (name != null && name !== 'undefined') {
                 filter = {
-                    where: {
-                        RoleName: { [Op.like]: '%' + name + '%' },
+                    where : {
+                        RoleName : { [Op.like]: '%' + name + '%' },
                     },
                 };
             }
-            var roles = await Role.findAll(filter);
-            var dtos = roles.map((x) => {
+            const roles = await Role.findAll(filter);
+            const dtos = roles.map((x) => {
                 return RoleMapper.toDto(x);
             });
             return dtos;
@@ -77,4 +77,5 @@ export class RoleRepo implements IRoleRepo {
             throw new ApiError(500, error.message);
         }
     };
+
 }

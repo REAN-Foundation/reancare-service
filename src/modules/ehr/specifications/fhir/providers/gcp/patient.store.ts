@@ -1,6 +1,5 @@
-/// <reference path = "../../types/patient.types.ts" />
-
 import { Helper } from '../../../../../../common/helper';
+import { Logger } from '../../../../../../common/logger';
 import { PatientDomainModel } from '../../../../../../data/domain.types/patient.domain.types';
 import { IPatientStore } from '../../../../interfaces/patient.store.interface';
 import { GcpStorageService as g } from './storage.service';
@@ -11,18 +10,18 @@ export class PatientStoreGCP implements IPatientStore {
 
     create = async (model: PatientDomainModel): Promise<any> => {
         try {
-            var body = this.createPatientFhirResource(model);
+            const body = this.createPatientFhirResource(model);
             const parent = `projects/${g.projectId}/locations/${g.cloudRegion}/datasets/${g.datasetId}/fhirStores/${g.fhirStoreId}`;
             const request = { parent, type: 'Patient', requestBody: body };
             const resource = await g.healthcare.projects.locations.datasets.fhirStores.fhir.create(
                 request
             );
-            var data: any = resource.data;
-            var resourceStr = JSON.stringify(data, null, 2);
-            console.log(`Created FHIR resource ${resourceStr}`);
+            const data: any = resource.data;
+            const resourceStr = JSON.stringify(data, null, 2);
+            Logger.instance().log(`Created FHIR resource ${resourceStr}`);
             return data.id;
         } catch (error) {
-            console.log(error.message);
+            Logger.instance().log(error.message);
             throw error;
         }
     };
@@ -34,80 +33,88 @@ export class PatientStoreGCP implements IPatientStore {
             const resource = await g.healthcare.projects.locations.datasets.fhirStores.fhir.read(
                 { name: parent }
             );
-            var data: any = resource.data;
-            var resourceStr = JSON.stringify(data, null, 2);
-            console.log(`Created FHIR resource ${resourceStr}`);
+            const data: any = resource.data;
+            const resourceStr = JSON.stringify(data, null, 2);
+            Logger.instance().log(`Created FHIR resource ${resourceStr}`);
             return data;
         } catch (error) {
-            console.log(error.message);
+            Logger.instance().log(error.message);
             throw error;
         }
     };
     
-    search = async (filter: any): Promise<any> => {};
+    search = async (filter: any): Promise<any> => {
+        var str = JSON.stringify(filter, null, 2);
+        Logger.instance().log(str);
+    };
 
-    update = async (updates: any): Promise<any> => {};
+    update = async (updates: any): Promise<any> => {
+        var str = JSON.stringify(updates, null, 2);
+        Logger.instance().log(str);
+    };
 
-    delete = async (id: string): Promise<any> => {};
+    delete = async (id: string): Promise<any> => {
+        Logger.instance().log(id);
+    };
 
      //#region Private methods
 
     private createPatientFhirResource(model: PatientDomainModel): any {
 
-        var givenNames = [];
-        if(model.User.Person.FirstName != null) {
+        const givenNames = [];
+        if (model.User.Person.FirstName != null) {
             givenNames.push(model.User.Person.FirstName);
         }
-        if(model.User.Person.MiddleName != null) {
+        if (model.User.Person.MiddleName != null) {
             givenNames.push(model.User.Person.MiddleName);
         }
-        var faamilyName = model.User.Person.LastName != null ? model.User.Person.LastName : '';
-        var prefixes = [];
-        if(model.User.Person.Prefix != null) {
+        const faamilyName = model.User.Person.LastName != null ? model.User.Person.LastName : '';
+        const prefixes = [];
+        if (model.User.Person.Prefix != null) {
             prefixes.push(model.User.Person.Prefix);
         }
 
-        var resource = {
+        const resource = {
             resourceType : "Patient",
-            name: [
+            name         : [
                 {
-                    use: "official",
-                    given: givenNames,
-                    family: faamilyName,
-                    prefix: prefixes
+                    use    : "official",
+                    given  : givenNames,
+                    family : faamilyName,
+                    prefix : prefixes
                 }
             ],
-            gender: model.User.Person.Gender != null ? model.User.Person.Gender.toLowerCase() : 'unknown',
-            telecom: [],
-            address: []
+            gender  : model.User.Person.Gender != null ? model.User.Person.Gender.toLowerCase() : 'unknown',
+            telecom : [],
+            address : []
         }
         
-        if(model.User.Person.BirthDate != null) {
-            var str = Helper.formatDate(model.User.Person.BirthDate);
+        if (model.User.Person.BirthDate != null) {
+            const str = Helper.formatDate(model.User.Person.BirthDate);
             resource['birthDate'] = str;
         }
 
-        if(model.User.Person.Phone != null) {
+        if (model.User.Person.Phone != null) {
             resource.telecom.push({
-                system: "phone",
-                use: "mobile",
-                value: model.User.Person.Phone
+                system : "phone",
+                use    : "mobile",
+                value  : model.User.Person.Phone
             });
         }
-        if(model.User.Person.Email != null) {
+        if (model.User.Person.Email != null) {
             resource.telecom.push({
-                system: "email",
-                value: model.User.Person.Email
+                system : "email",
+                value  : model.User.Person.Email
             });
         }
-        if(model.Address != null) {
-            var address = {
-                line: [],
-                city: model.Address.City ?? '',
-                district: model.Address.District ?? '',
-                postalCode: model.Address.PostalCode ?? ''
+        if (model.Address != null) {
+            const address = {
+                line       : [],
+                city       : model.Address.City ?? '',
+                district   : model.Address.District ?? '',
+                postalCode : model.Address.PostalCode ?? ''
             };
-            if(model.Address.AddressLine != null) {
+            if (model.Address.AddressLine != null) {
                 address.line.push(model.Address.AddressLine);
             }
             resource.address.push(address);
@@ -116,5 +123,6 @@ export class PatientStoreGCP implements IPatientStore {
     }
 
      //#endregion
+
 }
 

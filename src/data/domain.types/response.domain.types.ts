@@ -2,7 +2,6 @@
 import { IncomingHttpHeaders } from "http2"
 import { CurrentClient } from "./current.client"
 import { CurrentUser } from "./current.user"
-import express from 'express';
 
 export interface RequestDto {
     Method: string;
@@ -11,7 +10,7 @@ export interface RequestDto {
     Headers?: IncomingHttpHeaders;
     Url: string;
     Params: any;
-};
+}
 
 export interface ResponseDto {
     Status: string;

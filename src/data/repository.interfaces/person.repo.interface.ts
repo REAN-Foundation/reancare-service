@@ -1,6 +1,5 @@
 import { PersonDetailsDto, PersonDomainModel, PersonDto } from '../domain.types/person.domain.types';
 
-
 export interface IPersonRepo {
 
     create(personDomainModel: PersonDomainModel): Promise<PersonDetailsDto>;
@@ -23,7 +22,7 @@ export interface IPersonRepo {
 
     search(filters: any): Promise<PersonDto[]>;
 
-    searchFull(filters: any): Promise<PersonDetailsDto[]>;
+    // searchFull(filters: any): Promise<PersonDetailsDto[]>;
 
     update(id: string, personDomainModel: PersonDomainModel): Promise<PersonDetailsDto>;
 

@@ -25,7 +25,7 @@ export interface UserLoginDetails {
     Password?: string,
     Otp?: string,
     LoginRoleId: number
-};
+}
 
 //#endregion
 
@@ -39,14 +39,14 @@ export interface UserDetailsDto {
     DefaultTimeZone:string;
     CurrentTimeZone:string;
     LastLogin: Date;
-};
+}
 
 export interface UserDto {
     id: string;
     Person: PersonDto;
     DefaultTimeZone:string;
     CurrentTimeZone:string;
-};
+}
 
 //#endregion
 
@@ -65,6 +65,6 @@ export interface UserSearchFilters {
     Order: string;
     PageIndex: number;
     ItemsPerPage: number;
-};
+}
 
 //#endregion

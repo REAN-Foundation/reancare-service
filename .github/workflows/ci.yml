@@ -26,12 +26,6 @@ jobs:
     #   pull-requests: write
 
     steps:
-      - name: Add lables if PR
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/labeler@v2
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-
       - uses: actions/setup-node@v2
         with:
           node-version: 12.14.1

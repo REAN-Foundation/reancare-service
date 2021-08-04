@@ -6,8 +6,9 @@
   "scripts": {
     "build": "tsc --w",
     "start": "tsc && ts-node --files ./src/index.ts",
-    "lint": "eslint ./src/**",
-    "lint:fix": "eslint ./src/** --fix"
+    "lint": "eslint --ext .ts,.tsx src",
+    "lint:fix": "eslint --fix --ext .ts,.tsx src",
+    "lint:report": "eslint --ext .ts,.tsx --output-file eslint_report.json --format json src"
   },
   "repository": {
     "type": "git",

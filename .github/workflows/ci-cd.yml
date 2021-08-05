@@ -5,7 +5,7 @@
 # file with configuration.  For more information, see:
 # https://github.com/actions/labeler
 
-name: CI
+name: CI-CD
 
 # Controls when the workflow will run
 on:
@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  CI-Job:
+  Code-Linting:
     runs-on: ubuntu-latest
     # permissions:
     #   contents: read

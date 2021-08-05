@@ -52,8 +52,9 @@ jobs:
         env:
           CI: TRUE
 
-      - name: Lint Code Base Using GitHub SuperLinter
+      - name: Lint Code Base
         uses: github/super-linter@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINTER_RULES_PATH: /
           JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json

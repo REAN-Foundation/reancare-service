@@ -8,7 +8,7 @@
     "start": "tsc && ts-node --files ./src/index.ts",
     "lint": "eslint --ext .ts,.tsx src",
     "lint:fix": "eslint --fix --ext .ts,.tsx src",
-    "lint:report": "eslint --ext .ts,.tsx --output-file eslint_report.json --format json src"
+    "lint:github": "docker run -e RUN_LOCAL=true -e LINTER_RULES_PATH=/ -e JAVASCRIPT_ES_CONFIG_FILE=.eslintrc.json -v $(pwd):/tmp/lint github/super-linter"
   },
   "repository": {
     "type": "git",

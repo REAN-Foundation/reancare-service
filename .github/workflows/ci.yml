@@ -56,9 +56,11 @@ jobs:
         uses: github/super-linter@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
 
       - name: Test Code Linting
         run: npm run lint
+        continue-on-error: true
 
       - name: Save Code Linting Report JSON
         # npm script for ESLint

@@ -52,15 +52,15 @@ jobs:
         env:
           CI: TRUE
 
-      - name: Lint Code Base
+      - name: Lint Code Base Using GitHub SuperLinter
         uses: github/super-linter@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
+        if: ${{ always() }}
 
-      - name: Test Code Linting
+      - name: Lint Code Base Using ESLint
         run: npm run lint
-        continue-on-error: true
+        if: ${{ always() }}
 
       - name: Save Code Linting Report JSON
         # npm script for ESLint
@@ -68,7 +68,7 @@ jobs:
         # See https://eslint.org/docs/user-guide/command-line-interface#options
         run: npm run lint:report
         # Continue to the next step even if this fails
-        continue-on-error: true
+        if: ${{ always() }}
 
       - name: Annotate Code Linting Results
         uses: ataylorme/eslint-annotate-action@1.2.0

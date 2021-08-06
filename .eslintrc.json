@@ -19,14 +19,13 @@
     ],
     "rules": {
         "no-console": "error",
-        "eqeqeq": ["warn", "always", {"null": "ignore"}],
-        // "no-magic-numbers": [
-        //     "warn",
-        //     {
-        //         "ignoreArrayIndexes": true,
-        //         "ignoreDefaultValues": true
-        //     }
-        // ],
+        "eqeqeq": [
+            "warn",
+            "always",
+            {
+                "null": "ignore"
+            }
+        ],
         "init-declarations": [
             "warn",
             "always"
@@ -58,16 +57,6 @@
                 }
             }
         ],
-        // "no-multi-spaces": [
-        //     "warn",
-        //     {
-        //         "ignoreEOLComments": true,
-        //         "exceptions": {
-        //             "Property": true,
-        //             "VariableDeclarator": true
-        //         }
-        //     }
-        // ],
         "keyword-spacing": [
             "error",
             {
@@ -126,15 +115,43 @@
             }
         ],
         "no-multi-assign": "error",
-        "no-multiple-empty-lines": ["warn", { "max": 1, "maxEOF": 1 }],
+        "no-multiple-empty-lines": [
+            "warn",
+            {
+                "max": 1,
+                "maxEOF": 1
+            }
+        ],
         "no-tabs": "error",
-        "no-trailing-spaces": [ "warn", { "skipBlankLines": true }],
-        "padded-blocks": [ "warn", { "classes": "always" }],
+        "no-trailing-spaces": [
+            "warn",
+            {
+                "skipBlankLines": true
+            }
+        ],
+        "padded-blocks": [
+            "warn",
+            {
+                "classes": "always"
+            }
+        ],
         "no-empty-function": "off",
-        "@typescript-eslint/no-empty-function": ["error", { "allow": ["private-constructors"] }],
-        "@typescript-eslint/explicit-module-boundary-types": ["off"],
-        "@typescript-eslint/no-explicit-any": ["off"],
-        "no-var": ["off"]
-
+        "@typescript-eslint/no-empty-function": [
+            "error",
+            {
+                "allow": [
+                    "private-constructors"
+                ]
+            }
+        ],
+        "@typescript-eslint/explicit-module-boundary-types": [
+            "off"
+        ],
+        "@typescript-eslint/no-explicit-any": [
+            "off"
+        ],
+        "no-var": [
+            "off"
+        ]
     }
 }

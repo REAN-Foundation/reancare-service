@@ -53,7 +53,7 @@ export class MysqlClient {
                         if (err) {
                             Logger.instance().log(err.message);
                             Logger.instance().log(result.toString());
-                            
+
                             //throw err;
                         }
                         resolve(true);

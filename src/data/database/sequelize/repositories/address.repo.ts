@@ -53,7 +53,22 @@ export class AddressRepo implements IAddressRepo {
     getByPersonId = async (personId: string): Promise<AddressDto[]> => {
         try {
             const dtos = [];
-            const addresses = await Address.findAll({ where: { id: personId } });
+            const addresses = await Address.findAll({ where: { PersonId: personId } });
+            for (const address of addresses) {
+                const dto = await AddressMapper.toDto(address);
+                dtos.push(dto);
+            }
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getByOrganizationId = async (organizationId: string): Promise<AddressDto[]> => {
+        try {
+            const dtos = [];
+            const addresses = await Address.findAll({ where: { OrganizationId: organizationId } });
             for (const address of addresses) {
                 const dto = await AddressMapper.toDto(address);
                 dtos.push(dto);

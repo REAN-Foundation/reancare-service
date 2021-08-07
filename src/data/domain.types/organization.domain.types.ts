@@ -1,5 +1,5 @@
-import { Gender } from '../../common/system.types';
-import { AddressDomainModel, AddressDto } from './address.domain.types';
+import { AddressDto } from './address.domain.types';
+import { UserDto } from './user.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,15 +19,17 @@ export enum OrganizationTypes {
 //#region Domain models
 
 export interface OrganizationDomainModel {
+    id?: string,
     Type: string;
     Name: string;
+    ContactUserId?: string;
     ContactPhone?: string;
     ContactEmail?: string;
-    AboutUs?: string;
-    OperationalSince?: string;
     ParentOrganizationId?: string;
-    MainAddress?: AddressDomainModel;
-    LogoImageResourceId?: string;
+    About?: string;
+    OperationalSince?: Date;
+    AddressId?: string;
+    ImageResourceId?: string;
     IsHealthFacility?: boolean;
     NationalHealthFacilityRegistryId?: string;
 }
@@ -36,40 +38,32 @@ export interface OrganizationDomainModel {
 
 //#region DTOs
 
-export interface OrganizationDetailsDto {
-    id: string;
-    Type: string;
-    Name: string;
-    ContactPhone?: string;
-    ContactEmail?: string;
-    AboutUs?: string;
-    OperationalSince?: string;
-    ParentOrganizationId?: OrganizationDetailsDto;
-    MainAddress?: AddressDto;
-    LogoImageResourceId?: string;
-    IsHealthFacility?: boolean;
-    NationalHealthFacilityRegistryId?: string;
-}
-
 export interface OrganizationDto {
     id: string;
     Type: string;
     Name: string;
+    ContactUser?: UserDto;
     ContactPhone?: string;
     ContactEmail?: string;
-    AboutUs?: string;
-    OperationalSince?: string;
+    ParentOrganization?: OrganizationDto;
+    About?: string;
+    OperationalSince?: Date;
+    Address?: AddressDto;
+    ImageResourceId?: string;
+    IsHealthFacility?: boolean;
+    NationalHealthFacilityRegistryId?: string;
 }
 
 //#endregion
 
-//#region Search filters
+//#region Search
 
 export interface OrganizationSearchFilters {
+    Type?: string;
+    Name?: string;
+    ContactUserId?: string;
     ContactPhone?: string;
     ContactEmail?: string;
-    Name?: string;
-    Gender: Gender;
     OperationalSinceFrom: Date;
     OperationalSinceTo: Date;
     CreatedDateFrom: Date;
@@ -78,6 +72,16 @@ export interface OrganizationSearchFilters {
     Order: string;
     PageIndex: number;
     ItemsPerPage: number;
+}
+
+export interface OrganizationSearchResults {
+    TotalCount: number;
+    RetrievedCount: number;
+    PageIndex: number;
+    ItemsPerPage: number;
+    Order: string;
+    OrderedBy: string;
+    Items: OrganizationDto[];
 }
 
 //#endregion

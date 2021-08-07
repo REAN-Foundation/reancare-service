@@ -6,11 +6,11 @@ import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
 import { PersonService } from '../../services/person.service';
 
-//import { OrganizationService } from '../../services/organization.service';
 import { ApiError } from '../../common/api.error';
 import { AddressValidator } from '../validators/address.validator';
 import { AddressService } from '../../services/address.service';
 import { RoleService } from '../../services/role.service';
+import { OrganizationService } from '../../services/organization.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,15 +24,15 @@ export class AddressController {
 
     _personService: PersonService = null;
 
-    //_organizationService: OrganizationService = null;
+    _organizationService: OrganizationService = null;
+
     _authorizer: Authorizer = null;
 
     constructor() {
         this._service = Loader.container.resolve(AddressService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);
-
-        //this._organizationService = Loader.container.resolve(OrganizationService);
+        this._organizationService = Loader.container.resolve(OrganizationService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -53,12 +53,12 @@ export class AddressController {
                 }
             }
 
-            // if(domainModel.OrganizationId != null) {
-            //     var organization = await this._organizationService.getById(domainModel.OrganizationId);
-            //     if(organization == null) {
-            //         throw new ApiError(404, `Organization with an id ${domainModel.OrganizationId} cannot be found.`)
-            //     }
-            // }
+            if (domainModel.OrganizationId != null) {
+                var organization = await this._organizationService.getById(domainModel.OrganizationId);
+                if (organization == null) {
+                    throw new ApiError(404, `Organization with an id ${domainModel.OrganizationId} cannot be found.`)
+                }
+            }
 
             const address = await this._service.create(domainModel);
             if (address == null) {
@@ -94,6 +94,48 @@ export class AddressController {
         }
     };
 
+    getByPersonId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Address.GetByPersonId';
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            await this._authorizer.authorize(request, response);
+
+            const personId: string = await AddressValidator.getByPersonId(request);
+
+            const address = await this._service.getByPersonId(personId);
+            if (address == null) {
+                throw new ApiError(404, 'Address not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Address retrieved successfully!', 200, {
+                Address : address,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getByOrganizationId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Address.GetByOrganizationId';
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            await this._authorizer.authorize(request, response);
+
+            const organizationId: string = await AddressValidator.getByOrganizationId(request);
+
+            const address = await this._service.getByOrganizationId(organizationId);
+            if (address == null) {
+                throw new ApiError(404, 'Address not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Address retrieved successfully!', 200, {
+                Address : address,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Address.Search';
@@ -102,15 +144,15 @@ export class AddressController {
             const filters = await AddressValidator.search(request);
 
             const searchResults = await this._service.search(filters);
-            if (searchResults.Items.length !== 0) {
-                const count = searchResults.Items.length;
-                const message =
-                    count === 0
-                        ? 'No records found!'
-                        : `Total ${count} address records retrieved successfully!`;
-                ResponseHandler.success(request, response, message, 200, { Addresses: searchResults });
-                return;
-            }
+
+            const count = searchResults.Items.length;
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} address records retrieved successfully!`;
+                    
+            ResponseHandler.success(request, response, message, 200, { Addresses: searchResults });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

@@ -10,17 +10,20 @@ export class PatientValidator {
 
         static getDomainModel = async (request: express.Request): Promise<PatientDomainModel> => {
                 
-                const addressModel: AddressDomainModel = {
-                        Type        : 'Home',
-                        AddressLine : request.body.Address.AddressLine ?? null,
-                        City        : request.body.Address.City ?? null,
-                        District    : request.body.Address.District ?? null,
-                        State       : request.body.Address.State ?? null,
-                        Country     : request.body.Address.Country ?? null,
-                        PostalCode  : request.body.Address.PostalCode ?? null,
-                        Longitude   : request.body.Address.Longitude ?? null,
-                        Lattitude   : request.body.Address.Lattitude ?? null,
-                };
+                var addressModel: AddressDomainModel = null;
+                if (request.body.Address) {
+                        addressModel = {
+                                Type        : 'Home',
+                                AddressLine : request.body.Address.AddressLine ?? null,
+                                City        : request.body.Address.City ?? null,
+                                District    : request.body.Address.District ?? null,
+                                State       : request.body.Address.State ?? null,
+                                Country     : request.body.Address.Country ?? null,
+                                PostalCode  : request.body.Address.PostalCode ?? null,
+                                Longitude   : request.body.Address.Longitude ?? null,
+                                Lattitude   : request.body.Address.Lattitude ?? null,
+                        };
+                }
 
                 const birthdate =
                         request.body.BirthDate != null && typeof request.body.BirthDate !== undefined
@@ -74,28 +77,34 @@ export class PatientValidator {
                         .isEmail()
                         .escape()
                         .normalizeEmail()
-                        .run(request);
+                    .run(request);
+
                 await body('FirstName').optional()
                         .trim()
                         .escape()
-                        .run(request);
+                    .run(request);
+
                 await body('LastName').optional()
                         .trim()
                         .escape()
-                        .run(request);
+                    .run(request);
+
                 await body('Prefix').optional()
                         .trim()
                         .escape()
-                        .run(request);
+                    .run(request);
+
                 await body('Gender').optional()
                         .trim()
                         .escape()
-                        .run(request);
+                    .run(request);
+
                 await body('BirthDate').optional()
                         .trim()
                         .escape()
                         .isDate()
-                        .run(request);
+                    .run(request);
+
                 await body('ImageResourceId').optional()
                         .trim()
                         .escape()
@@ -251,36 +260,38 @@ export class PatientValidator {
                         .escape()
                         .normalizeEmail()
                         .run(request);
+
                 await body('FirstName').optional()
                         .trim()
                         .escape()
                         .run(request);
+
                 await body('LastName').optional()
                         .trim()
                         .escape()
                         .run(request);
+
                 await body('Prefix').optional()
                         .trim()
                         .escape()
                         .run(request);
+
                 await body('Gender').optional()
                         .trim()
                         .escape()
                         .run(request);
+
                 await body('BirthDate').optional()
                         .trim()
                         .escape()
                         .isDate()
                         .run(request);
+
                 await body('ImageResourceId').optional()
                         .trim()
                         .escape()
                         .isUUID()
                         .run(request);
-
-                // await body('Longitude').optional().trim().escape().isDecimal().run(request);
-                // await body('Lattitude').optional().trim().escape().isDecimal().run(request);
-                // await body('Address').optional().trim().escape().run(request);
 
                 const result = validationResult(request);
                 if (!result.isEmpty()) {

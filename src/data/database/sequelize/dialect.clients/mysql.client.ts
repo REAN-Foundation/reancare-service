@@ -52,9 +52,10 @@ export class MysqlClient {
                     connection.query(query, function (err, result) {
                         if (err) {
                             Logger.instance().log(err.message);
-                            Logger.instance().log(result.toString());
-
-                            //throw err;
+                            var str = result ? result.toString() : null;
+                            if (str != null){
+                                Logger.instance().log(str);
+                            }
                         }
                         resolve(true);
                     });

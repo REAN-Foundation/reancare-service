@@ -14,6 +14,7 @@ import { ApiClientRepo } from '../data/database/sequelize/repositories/api.clien
 import { AddressRepo } from '../data/database/sequelize/repositories/address.repo';
 import { PatientRepo } from '../data/database/sequelize/repositories/patient.repo';
 import { RolePrivilegeRepo } from '../data/database/sequelize/repositories/role.privilege.repo';
+import { OrganizationRepo } from '../data/database/sequelize/repositories/organization.repo';
 
 import { TwilioMessagingService } from '../modules/communication/providers/twilio.messaging.service';
 import { EhrInjector } from '../modules/ehr/ehr.injector';
@@ -39,6 +40,7 @@ export class Injector {
         container.register('IPatientRepo', PatientRepo);
         container.register('IAddressRepo', AddressRepo);
         container.register('IRolePrivilegeRepo', RolePrivilegeRepo);
+        container.register('IOrganizationRepo', OrganizationRepo);
 
         //Modules
         container.register('IMessagingService', TwilioMessagingService);

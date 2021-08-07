@@ -8,6 +8,8 @@ export interface IAddressRepo {
 
     getByPersonId(personId: string): Promise<AddressDto[]>;
 
+    getByOrganizationId(organizationId: string): Promise<AddressDto[]>;
+
     search(filters: AddressSearchFilters): Promise<AddressSearchResults>;
 
     update(id: string, addressDomainModel: AddressDomainModel): Promise<AddressDto>;

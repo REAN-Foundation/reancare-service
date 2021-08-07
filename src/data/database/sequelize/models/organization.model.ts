@@ -66,6 +66,13 @@ export default class Organization extends Model {
     })
     Type: string;
 
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    ContactUserId: string;
+
     @Index
     @Length({ min: 10, max: 16 })
     @Column({
@@ -83,12 +90,18 @@ export default class Organization extends Model {
     ContactEmail: string;
 
     @Length({ min: 12, max: 512 })
-    @IsEmail
     @Column({
         type      : DataType.STRING(512),
         allowNull : true,
     })
-    AboutUs: string;
+    About: string;
+
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    ParentOrganizationId: string;
 
     @IsDate
     @Column({
@@ -98,26 +111,19 @@ export default class Organization extends Model {
     OperationalSince: Date;
 
     @IsUUID(4)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    ParentOrganizationId: string;
-
-    @IsUUID(4)
     @ForeignKey(() => Address)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    MainAddressId: string;
+    AddressId: string;
 
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    LogoImageResourceId: string;
+    ImageResourceId: string;
 
     @Column({
         type         : DataType.BOOLEAN,

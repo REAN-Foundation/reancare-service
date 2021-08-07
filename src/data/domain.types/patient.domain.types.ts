@@ -1,6 +1,6 @@
 import { Gender } from '../../common/system.types';
 import { AddressDomainModel, AddressDto } from './address.domain.types';
-import { OrganizationDetailsDto } from './organization.domain.types';
+import { OrganizationDto } from './organization.domain.types';
 import { PersonDetailsDto } from './person.domain.types';
 import { RoleDto } from './role.domain.types';
 import { UserDomainModel, UserDto } from './user.domain.types';
@@ -124,7 +124,7 @@ export interface EmergencyContactDto {
     Person: PersonDetailsDto;
     PatientUserId: string;
     Address?: AddressDto;
-    Organization?: OrganizationDetailsDto;
+    Organization?: OrganizationDto;
     IsAvailableForEmergency?: boolean;
     Role: RoleDto;
     Relation?: string;

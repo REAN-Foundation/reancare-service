@@ -1,0 +1,66 @@
+{
+    "resourceType": "Practitioner",
+    "identifier": [
+        {
+            "use": "official",
+            "value": "official_value"
+        },
+        {
+            "use": "usual",
+            "value": "usual_value"
+        }
+    ],
+    "name": [
+        {
+            "use": "official",
+            "given": ["pharmacist_first_name", "pharmacist_middle_name"],
+            "family": "pharmacist_last_name",
+            "prefix": ["pharmacist_prefix"]
+            
+        }
+    ],
+    "gender": "unknown",
+    "birthDate": "1234-12-12",
+    "telecom": [
+        {
+            "system": "phone",
+            "use": "work",
+            "value": "pharmacist_phone_number"
+        },
+        {
+            "system": "email",
+            "use": "work",
+            "value": "pharmacist_email"
+        },
+        {
+            "system": "fax",
+            "use": "work",
+            "value": "pharmacist_fax_number"
+        }
+    ],
+    "address": [
+        {
+            "use": "work",
+            "line": [
+                "pharmacist_address_first_line",
+                "pharmacist_address_second_line"
+            ],
+            "city": "pharmacist_address_city",
+            "district": "pharmacist_address_district",
+            "postalCode": "pharmacist_address_postal_code"
+        }
+    ],
+    "qualification": [
+        {
+            "code": {
+                "coding": [
+                    {
+                        "system": "pharmacist_system",
+                        "code": "pharmacist_code",
+                        "display": "pharmacist_code_display"
+                    }
+                ]
+            }
+        }
+    ]
+} 

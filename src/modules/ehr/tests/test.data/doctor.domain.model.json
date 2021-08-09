@@ -1,0 +1,66 @@
+{
+    "Prefix": "Dr.",
+    "FirstName": "John",
+    "LastName": "Clark",
+    "Phone": "7231164961",
+    "Email": "John.23798.Clark@gmail.com",
+    "Gender": "Male",
+    "BirthDate": "1955-06-07T00:00:00.000Z",
+    "ImageURL": "https://reancare-api-dev.services.reanfoundation.org//resources/download-public/42a66c3e-68a5-44f8-8eae-e801d62c653c",
+    "Qualification": "LLB, MBBS, MCH. (NEUROSURGERY), FACS, FICS",
+    "Specialities": "Neurosurgery",
+    "AboutMe": "Dr. John Clark is one of the finest neuro surgeons in India.",
+    "ProfessionalHighlights": "* He has 14 awards to his credit and 103 scientific publications.",
+    "PractisingSince": "2015-06-07T00:00:00.000Z",
+    "Organizations": [
+        {
+            "Type": "Hospital",
+            "Name": "Woodlands Multispeciality Hospital, Pune",
+            "ContactPhone": "1233232343",
+            "ContactEmail": "patient.support.woodlands@wmh.com"
+        }
+    ],
+    "Locality": "Pune",
+    "Address": {
+        "Type": "Official",
+        "AddressLine": "Sky Loft, Creaticity Mall, Off, Airport Rd, opposite Golf Course, Shastrinagar, Yerawada",
+        "City": "Pune",
+        "District": "Pune",
+        "State": "Maharashtra",
+        "Country": "India",
+        "PostalCode": "411006",
+        "Location": {
+            "LocationCoords_Longitude": "73.894522",
+            "LocationCoords_Lattitude": "18.556303"
+        }
+    },
+    "AppointmentDetails": {
+        "AppointmentSlotDuration": "15m",
+        "OperationalTimeZone": "+05:30",
+        "SendReminder": true,
+        "ReminderType": "IN-APP",
+        "RemindClientBefore": "2h",
+        "CanBookBefore": "2h",
+        "AllowCancellation": true,
+        "CanCancelBefore": "2h",
+        "EnableLoyaltyProgram": true,
+        "AllowWalkiInAppointments": true,
+        "CanBookForNext": "30d",
+        "WorkingHours": [
+            "MON 02:00 PM - 10:00 PM",
+            "TUE 09:00 AM - 10:00 PM",
+            "WED 09:00 AM - 10:00 PM",
+            "THU 02:00 PM - 10:00 PM",
+            "FRI 04:00 PM - 10:00 PM",
+            "SAT 04:00 PM - 10:00 PM"
+        ],
+        "PaymentDetails": {
+            "Fee": 500,
+            "IsTaxable": true,
+            "TaxRate": 10,
+            "PaymentRequiredBeforeBooking": true,
+            "PaymentPercentage": 30,
+            "CancellationCharges": 0
+        }
+    }
+}

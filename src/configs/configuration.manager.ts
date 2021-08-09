@@ -1,4 +1,4 @@
-import * as configuration from './rc.config.json';
+import * as configuration from '../../reancare.config.json';
 import { Configurations, EHRProvider, EHRSpecification } from './configs';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

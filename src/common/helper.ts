@@ -6,6 +6,7 @@ import { generate } from 'generate-password';
 import { hashSync, compareSync, genSaltSync } from 'bcryptjs';
 import * as crypto from 'crypto';
 import express from 'express';
+import path from 'path';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -27,6 +28,21 @@ export class Helper {
     static dumpJson(obj, filename) {
         const txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);
+    }
+    
+    static jsonToObj = (jsonPath) => {
+
+        if (!fs.existsSync(jsonPath)) {
+            return null;
+        }
+
+        const rawdata = fs.readFileSync(jsonPath, {
+            encoding : 'utf8',
+            flag     : 'r',
+        });
+
+        const obj = JSON.parse(rawdata);
+        return obj;
     }
 
     static executeCommand = (command: string): Promise<string> => {

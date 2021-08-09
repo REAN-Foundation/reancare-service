@@ -1,0 +1,16 @@
+{
+    "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "PatientEhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "DisplayId": "",
+    "AllyMRN": "",
+    "CarePlanName": "",
+    "CarePlanCode": "",
+    "EnrollmentBeginDate": "",
+    "EnrollmentEndDate": "",
+    "DurationInWeeks": "",
+    "EndEnrollmentAfterDays": "",
+    "IsStopped": true,
+    "StoppedDate": "",
+    "EnrolledOn": "",
+    "IsActive": false
+}

@@ -1,0 +1,10 @@
+{
+    "PathologyTestInstanceId": "0b6ff6e4-201f-4554-98dc-310a802db5c1",
+    "PathologyTestInstanceEhrId": "0b6ff6e4-201f-4554-98dc-310a802db5c1",
+    "ParameterName": "WBC Count",
+    "ResultValue": 12000,
+    "RangeMin": 8000,
+    "RangeMax": 18000,
+    "Interpretation": 1,
+    "Remarks": "Well within limits"
+}

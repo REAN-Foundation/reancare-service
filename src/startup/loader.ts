@@ -11,11 +11,6 @@ import { Logger } from '../common/logger';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-//Register injections here...
-Injector.registerInjections(container);
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
 export class Loader {
 
     private static _authorizer: Authorizer = null;
@@ -56,6 +51,9 @@ export class Loader {
 
     public static init = async (): Promise<boolean> => {
         try {
+
+            //Register injections here...
+            Injector.registerInjections(container);
 
             Loader._databaseConnector = container.resolve(DatabaseConnector);
             Loader._authenticator = container.resolve(Authenticator);

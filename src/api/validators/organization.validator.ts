@@ -10,25 +10,25 @@ export class OrganizationValidator {
     static getDomainModel = (request: express.Request): OrganizationDomainModel => {
 
         const organizationModel: OrganizationDomainModel = {
-                Type                             : request.body.Type ?? 'Unknown',
-                Name                             : request.body.Name ?? null,
-                ContactUserId                    : request.body.ContactUserId ?? null,
-                ContactPhone                     : request.body.ContactPhone ?? null,
-                ContactEmail                     : request.body.ContactEmail ?? null,
-                About                            : request.body.About ?? null,
-                OperationalSince                 : request.body.OperationalSince ?? null,
-                ParentOrganizationId             : request.body.ParentOrganizationId ?? null,
-                AddressId                        : request.body.AddressId ?? null,
-                ImageResourceId                  : request.body.ImageResourceId ?? null,
-                IsHealthFacility                 : request.body.IsHealthFacility ?? null,
-                NationalHealthFacilityRegistryId : request.body.NationalHealthFacilityRegistryId ?? null,
-            };
+            Type                             : request.body.Type ?? 'Unknown',
+            Name                             : request.body.Name ?? null,
+            ContactUserId                    : request.body.ContactUserId ?? null,
+            ContactPhone                     : request.body.ContactPhone ?? null,
+            ContactEmail                     : request.body.ContactEmail ?? null,
+            About                            : request.body.About ?? null,
+            OperationalSince                 : request.body.OperationalSince ?? null,
+            ParentOrganizationId             : request.body.ParentOrganizationId ?? null,
+            AddressId                        : request.body.AddressId ?? null,
+            ImageResourceId                  : request.body.ImageResourceId ?? null,
+            IsHealthFacility                 : request.body.IsHealthFacility ?? null,
+            NationalHealthFacilityRegistryId : request.body.NationalHealthFacilityRegistryId ?? null,
+        };
 
         return organizationModel;
     };
 
     static create = async (request: express.Request): Promise<OrganizationDomainModel> => {
-        await OrganizationValidator.validateBody(request);
+        await OrganizationValidator.validateBody(request, true);
         return OrganizationValidator.getDomainModel(request);
     };
 
@@ -43,14 +43,14 @@ export class OrganizationValidator {
     static search = async (request: express.Request): Promise<OrganizationSearchFilters> => {
 
         await query('type').optional()
-        .trim()
-        .escape()
-        .run(request);
+            .trim()
+            .escape()
+            .run(request);
 
         await query('name').optional()
-        .trim()
-        .escape()
-        .run(request);
+            .trim()
+            .escape()
+            .run(request);
 
         await query('contactUserId').optional()
             .trim()
@@ -245,7 +245,7 @@ export class OrganizationValidator {
     private static getFilter(request): OrganizationSearchFilters {
 
         const pageIndex = request.query.pageIndex !== 'undefined' ?
-                          parseInt(request.query.pageIndex as string, 10) : 0;
+            parseInt(request.query.pageIndex as string, 10) : 0;
 
         const itemsPerPage =
             request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;

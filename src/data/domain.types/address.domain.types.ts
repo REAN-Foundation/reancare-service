@@ -30,7 +30,7 @@ export interface AddressDto {
 }
 
 export interface AddressSearchFilters {
-    Type: string;
+    Type?: string;
     PersonId?: string;
     OrganizationId?: string;
     AddressLine?: string;

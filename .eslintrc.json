@@ -73,6 +73,7 @@
                 }
             }
         ],
+        "indent": 2,
         "func-call-spacing": [
             "warn",
             "never"

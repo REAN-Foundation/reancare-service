@@ -10,18 +10,18 @@ export class AddressValidator {
     static getDomainModel = (request: express.Request): AddressDomainModel => {
 
         const addressModel: AddressDomainModel = {
-                Type           : request.body.Type ?? 'Home',
-                PersonId       : request.body.PersonId ?? null,
-                OrganizationId : request.body.OrganizationId ?? null,
-                AddressLine    : request.body.AddressLine,
-                City           : request.body.City ?? null,
-                District       : request.body.District ?? null,
-                State          : request.body.State ?? null,
-                Country        : request.body.Country ?? null,
-                PostalCode     : request.body.PostalCode ?? null,
-                Longitude      : request.body.Longitude ?? null,
-                Lattitude      : request.body.Lattitude ?? null,
-            };
+            Type           : request.body.Type ?? 'Home',
+            PersonId       : request.body.PersonId ?? null,
+            OrganizationId : request.body.OrganizationId ?? null,
+            AddressLine    : request.body.AddressLine,
+            City           : request.body.City ?? null,
+            District       : request.body.District ?? null,
+            State          : request.body.State ?? null,
+            Country        : request.body.Country ?? null,
+            PostalCode     : request.body.PostalCode ?? null,
+            Longitude      : request.body.Longitude ?? null,
+            Lattitude      : request.body.Lattitude ?? null,
+        };
 
         return addressModel;
     };
@@ -186,10 +186,13 @@ export class AddressValidator {
     };
 
     static update = async (request: express.Request): Promise<AddressDomainModel> => {
+
         const id = await AddressValidator.getParamId(request);
         await AddressValidator.validateBody(request);
+
         const domainModel = AddressValidator.getDomainModel(request);
         domainModel.id = id;
+
         return domainModel;
     };
 

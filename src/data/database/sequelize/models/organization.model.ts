@@ -3,7 +3,7 @@ import {
     Column,
     Model,
     DataType,
-    HasMany,
+    BelongsToMany,
     CreatedAt,
     UpdatedAt,
     DeletedAt,
@@ -13,6 +13,7 @@ import {
     IsEmail,
     IsDate,
     Index,
+    HasMany,
     ForeignKey,
 } from 'sequelize-typescript';
 import { OrganizationTypes } from '../../../domain.types/organization.domain.types';
@@ -20,6 +21,8 @@ import { OrganizationTypes } from '../../../domain.types/organization.domain.typ
 import { v4 } from 'uuid';
 import Address from './address.model';
 import Person from './person.model';
+import OrganizationPersons from './organization.persons.model';
+import User from './user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -67,6 +70,7 @@ export default class Organization extends Model {
     Type: string;
 
     @IsUUID(4)
+    @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
@@ -111,14 +115,6 @@ export default class Organization extends Model {
     OperationalSince: Date;
 
     @IsUUID(4)
-    @ForeignKey(() => Address)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    AddressId: string;
-
-    @IsUUID(4)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
@@ -139,8 +135,13 @@ export default class Organization extends Model {
     })
     NationalHealthFacilityRegistryId: string;
 
-    @HasMany(() => Person)
-    Persons: Person[];
+    // @BelongsToMany(() => Person, { through: 'OrganizationPersons' })
+    // Persons: Person[];
+    @BelongsToMany(() => Person, () => OrganizationPersons)
+    Persons: Array<Person & { OrganizationPersons: OrganizationPersons }>;
+
+    @HasMany(() => Address)
+    Addresses: Address[];
 
     @Column
     @CreatedAt
@@ -153,3 +154,5 @@ export default class Organization extends Model {
     DeletedAt: Date;
 
 }
+
+Organization.hasMany(OrganizationPersons);

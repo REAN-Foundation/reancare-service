@@ -1,4 +1,5 @@
 import { Gender } from '../../common/system.types';
+import { AddressDto } from './address.domain.types';
 import { PersonRoleDto } from './role.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -27,6 +28,7 @@ export interface PersonDomainModel {
     Gender?: Gender;
     BirthDate?: Date;
     ImageResourceId?: string;
+    AddressIds?: string[];
 }
 
 //#endregion
@@ -47,6 +49,7 @@ export interface PersonDetailsDto {
     ImageResourceId: string;
     Roles: PersonRoleDto[];
     ActiveSince: Date;
+    Addresses: AddressDto[];
 }
 
 export interface PersonDto {

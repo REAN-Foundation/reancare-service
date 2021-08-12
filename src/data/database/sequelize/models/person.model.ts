@@ -13,13 +13,16 @@ import {
     IsEmail,
     IsDate,
     Index,
-    ForeignKey,
+    BelongsToMany,
 } from 'sequelize-typescript';
+
 import { PersonIdentificationType } from '../../../domain.types/person.domain.types';
 
 import { v4 } from 'uuid';
 import User from './user.model';
 import Organization from './organization.model';
+import OrganizationPersons from './organization.persons.model';
+import Address from './address.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -125,13 +128,11 @@ export default class Person extends Model {
     })
     NationalIdType: string;
 
-    @IsUUID(4)
-    @ForeignKey(() => Organization)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    OrganizationId: string;
+    @BelongsToMany(() => Organization, () => OrganizationPersons)
+    Organizations: Array<Organization & { OrganizationPersons: OrganizationPersons }>;
+
+    @HasMany(() => Address)
+    Addresses: Address[]
 
     @HasMany(() => User)
     Users: User[];
@@ -147,3 +148,5 @@ export default class Person extends Model {
     DeletedAt: Date;
 
 }
+
+Person.hasMany(OrganizationPersons);

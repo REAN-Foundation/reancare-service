@@ -23,6 +23,10 @@ export class OrganizationService {
         return await this._organizationRepo.getByContactUserId(contactUserId);
     };
 
+    getByPersonId = async (personId: string): Promise<OrganizationDto[]> => {
+        return await this._organizationRepo.getByPersonId(personId);
+    };
+
     search = async (filters: OrganizationSearchFilters): Promise<OrganizationSearchResults> => {
         return await this._organizationRepo.search(filters);
     };
@@ -34,5 +38,13 @@ export class OrganizationService {
     delete = async (id: string): Promise<boolean> => {
         return await this._organizationRepo.delete(id);
     };
+
+    addAddress = async (id: string, addressId: string): Promise<boolean> => {
+        return await this._organizationRepo.addAddress(id, addressId);
+    }
+
+    removeAddress = async (id: string, addressId: string): Promise<boolean> => {
+        return await this._organizationRepo.removeAddress(id, addressId);
+    }
 
 }

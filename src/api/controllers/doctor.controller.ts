@@ -56,9 +56,10 @@ export class DoctorController {
             const doctorDomainModel = await DoctorValidator.create(request);
 
             //Throw an error if doctor with same name and phone number exists
-            const existingDoctorCountSharingPhone = await this._service.checkforDuplicateDoctors(
-                doctorDomainModel
-            );
+            const doctorExists = await this._service.doctorExists(doctorDomainModel);
+            if (doctorExists) {
+                throw new ApiError(400, 'Cannot create doctor! Doctor with same phone number exists.');
+            }
 
             const userName = await this._userService.generateUserName(
                 doctorDomainModel.User.Person.FirstName,
@@ -67,8 +68,7 @@ export class DoctorController {
 
             const displayId = await this._userService.generateUserDisplayId(
                 Roles.Doctor,
-                doctorDomainModel.User.Person.Phone,
-                existingDoctorCountSharingPhone
+                doctorDomainModel.User.Person.Phone
             );
 
             const displayName = Helper.constructPersonDisplayName(
@@ -106,8 +106,6 @@ export class DoctorController {
             doctorDomainModel.UserId = user.id;
 
             //KK: Note - Please add user to appointment service here...
-            // var appointmentCustomerModel = DoctorMapper.ToAppointmentCustomerDomainModel(userDomainModel);
-            // var customer = await this._appointmentService.createCustomer(appointmentCustomerModel);
 
             doctorDomainModel.DisplayId = displayId;
             const doctor = await this._service.create(doctorDomainModel);
@@ -120,6 +118,7 @@ export class DoctorController {
             ResponseHandler.success(request, response, 'Doctor created successfully!', 201, {
                 Doctor : doctor,
             });
+            
         } catch (error) {
 
             //KK: Todo: Add rollback in case of mid-way exception

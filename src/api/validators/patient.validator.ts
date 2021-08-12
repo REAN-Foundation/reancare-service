@@ -2,28 +2,12 @@ import express from 'express';
 import { query, body, validationResult, param } from 'express-validator';
 import { Helper } from '../../common/helper';
 import { PatientDomainModel, PatientSearchFilters } from '../../data/domain.types/patient.domain.types';
-import { AddressDomainModel } from '../../data/domain.types/address.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class PatientValidator {
 
         static getDomainModel = async (request: express.Request): Promise<PatientDomainModel> => {
-                
-            var addressModel: AddressDomainModel = null;
-            if (request.body.Address) {
-                addressModel = {
-                    Type        : 'Home',
-                    AddressLine : request.body.Address.AddressLine ?? null,
-                    City        : request.body.Address.City ?? null,
-                    District    : request.body.Address.District ?? null,
-                    State       : request.body.Address.State ?? null,
-                    Country     : request.body.Address.Country ?? null,
-                    PostalCode  : request.body.Address.PostalCode ?? null,
-                    Longitude   : request.body.Address.Longitude ?? null,
-                    Lattitude   : request.body.Address.Lattitude ?? null,
-                };
-            }
 
             const birthdate =
                         request.body.BirthDate != null && typeof request.body.BirthDate !== undefined
@@ -50,8 +34,8 @@ export class PatientValidator {
                     CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
                     GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
                 },
-                UserId  : request.params.userId,
-                Address : addressModel,
+                UserId     : request.params.userId ?? null,
+                AddressIds : request.body.AddressIds ?? [],
             };
             if (entity.User.Person.Gender != null && entity.User.Person.Prefix == null) {
                 entity.User.Person.Prefix = Helper.guessPrefixByGender(entity.User.Person.Gender);
@@ -62,59 +46,7 @@ export class PatientValidator {
         static create = async (
             request: express.Request
         ): Promise<PatientDomainModel> => {
-
-            await body('Phone')
-                .exists()
-                .notEmpty()
-                .trim()
-                .escape()
-                .customSanitizer(Helper.sanitizePhone)
-                .custom(Helper.validatePhone)
-                .run(request);
-
-            await body('Email').optional()
-                .trim()
-                .isEmail()
-                .escape()
-                .normalizeEmail()
-                .run(request);
-
-            await body('FirstName').optional()
-                .trim()
-                .escape()
-                .run(request);
-
-            await body('LastName').optional()
-                .trim()
-                .escape()
-                .run(request);
-
-            await body('Prefix').optional()
-                .trim()
-                .escape()
-                .run(request);
-
-            await body('Gender').optional()
-                .trim()
-                .escape()
-                .run(request);
-
-            await body('BirthDate').optional()
-                .trim()
-                .escape()
-                .isDate()
-                .run(request);
-
-            await body('ImageResourceId').optional()
-                .trim()
-                .escape()
-                .isUUID()
-                .run(request);
-
-            const result = validationResult(request);
-            if (!result.isEmpty()) {
-                Helper.handleValidationError(result);
-            }
+            await PatientValidator.validateBody(request, true);
             return PatientValidator.getDomainModel(request);
         };
 
@@ -145,60 +77,73 @@ export class PatientValidator {
         static search = async (
             request: express.Request
         ): Promise<PatientSearchFilters> => {
+
             await query('phone').optional()
                 .trim()
                 .run(request);
+
             await query('email').optional()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('name').optional()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('gender').optional()
                 .isAlpha()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('birthdateFrom').optional()
                 .isDate()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('birthdateTo').optional()
                 .isDate()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('createdDateFrom').optional()
                 .isDate()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('createdDateTo').optional()
                 .isDate()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('orderBy').optional()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('order').optional()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('pageIndex').optional()
                 .isInt()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('itemsPerPage').optional()
                 .isInt()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('fullDetails').optional()
                 .isBoolean()
                 .run(request);
@@ -212,6 +157,7 @@ export class PatientValidator {
         };
 
         private static getFilter(request): PatientSearchFilters {
+
             const pageIndex =
                         request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
 
@@ -241,14 +187,32 @@ export class PatientValidator {
             request: express.Request
         ): Promise<PatientDomainModel> => {
 
-            await body('Phone')
-                .optional()
-                .notEmpty()
-                .trim()
-                .escape()
-                .customSanitizer(Helper.sanitizePhone)
-                .custom(Helper.validatePhone)
-                .run(request);
+            await PatientValidator.validateBody(request, false);
+            return PatientValidator.getDomainModel(request);
+        };
+
+        private static async validateBody(request: express.Request, create = true): Promise<void> {
+
+            if (create) {
+                await body('Phone')
+                    .exists()
+                    .notEmpty()
+                    .trim()
+                    .escape()
+                    .customSanitizer(Helper.sanitizePhone)
+                    .custom(Helper.validatePhone)
+                    .run(request);
+            }
+            else {
+                await body('Phone')
+                    .optional()
+                    .notEmpty()
+                    .trim()
+                    .escape()
+                    .customSanitizer(Helper.sanitizePhone)
+                    .custom(Helper.validatePhone)
+                    .run(request);
+            }
 
             await body('Email').optional()
                 .trim()
@@ -289,11 +253,16 @@ export class PatientValidator {
                 .isUUID()
                 .run(request);
 
+            await body('AddressIds').optional()
+                .isArray()
+                .toArray()
+                .run(request);
+
             const result = validationResult(request);
             if (!result.isEmpty()) {
                 Helper.handleValidationError(result);
             }
-            return PatientValidator.getDomainModel(request);
-        };
+
+        }
 
 }

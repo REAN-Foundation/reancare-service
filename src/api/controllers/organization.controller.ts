@@ -104,6 +104,27 @@ export class OrganizationController {
         }
     };
 
+    getByPersonId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Organization.getByPersonId';
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            await this._authorizer.authorize(request, response);
+
+            const personId: string = await OrganizationValidator.getByPersonId(request);
+
+            const organizations = await this._service.getByPersonId(personId);
+            if (organizations == null || organizations.length === 0) {
+                throw new ApiError(404, 'Organization not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Organizations retrieved successfully!', 200, {
+                Organizations : organizations,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Organization.Search';
@@ -169,6 +190,54 @@ export class OrganizationController {
 
             ResponseHandler.success(request, response, 'Organization record deleted successfully!', 200, {
                 Deleted : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    addAddress = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Organization.AddAddress';
+            await this._authorizer.authorize(request, response);
+
+            const { id, addressId } = await OrganizationValidator.addOrRemoveAddress(request);
+            const existingOrganization = await this._service.getById(id);
+            if (existingOrganization == null) {
+                throw new ApiError(404, 'Organization not found.');
+            }
+
+            const added = await this._service.addAddress(id, addressId);
+            if (!added) {
+                throw new ApiError(400, 'Organization address cannot be added.');
+            }
+
+            ResponseHandler.success(request, response, 'Organization address record added successfully!', 200, {
+                Added : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    removeAddress = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Organization.RemoveAddress';
+            await this._authorizer.authorize(request, response);
+
+            const { id, addressId } = await OrganizationValidator.addOrRemoveAddress(request);
+            const existingOrganization = await this._service.getById(id);
+            if (existingOrganization == null) {
+                throw new ApiError(404, 'Organization not found.');
+            }
+
+            const removed = await this._service.removeAddress(id, addressId);
+            if (!removed) {
+                throw new ApiError(400, 'Organization address cannot be removed.');
+            }
+
+            ResponseHandler.success(request, response, 'Organization address record removed successfully!', 200, {
+                Removed : true,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

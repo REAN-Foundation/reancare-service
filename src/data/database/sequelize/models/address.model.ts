@@ -1,3 +1,4 @@
+import { Organizations } from 'aws-sdk';
 import {
     Table,
     Column,
@@ -8,9 +9,14 @@ import {
     DeletedAt,
     IsUUID,
     PrimaryKey,
-    Length } from 'sequelize-typescript';
+    Length, 
+    ForeignKey,
+    HasOne,
+    BelongsTo} from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
+import Organization from './organization.model';
+import Person from './person.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -33,18 +39,26 @@ export default class Address extends Model {
     id: string;
 
     @IsUUID(4)
+    @ForeignKey(() => Person)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
     PersonId: string;
 
+    @BelongsTo(() => Person)
+    Person: Person;
+
     @IsUUID(4)
+    @ForeignKey(() => Organization)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
     OrganizationId: string;
+
+    @BelongsTo(() => Organization)
+    Organization: Organization;
 
     @Length({ min: 2, max: 16 })
     @Column({

@@ -8,7 +8,6 @@ import { OrganizationDomainModel, OrganizationSearchFilters } from '../../data/d
 export class OrganizationValidator {
 
     static getDomainModel = (request: express.Request): OrganizationDomainModel => {
-
         const organizationModel: OrganizationDomainModel = {
             Type                             : request.body.Type ?? 'Unknown',
             Name                             : request.body.Name ?? null,
@@ -18,7 +17,7 @@ export class OrganizationValidator {
             About                            : request.body.About ?? null,
             OperationalSince                 : request.body.OperationalSince ?? null,
             ParentOrganizationId             : request.body.ParentOrganizationId ?? null,
-            AddressId                        : request.body.AddressId ?? null,
+            AddressIds                       : request.body.AddressIds ?? null,
             ImageResourceId                  : request.body.ImageResourceId ?? null,
             IsHealthFacility                 : request.body.IsHealthFacility ?? null,
             NationalHealthFacilityRegistryId : request.body.NationalHealthFacilityRegistryId ?? null,
@@ -41,7 +40,6 @@ export class OrganizationValidator {
     };
 
     static search = async (request: express.Request): Promise<OrganizationSearchFilters> => {
-
         await query('type').optional()
             .trim()
             .escape()
@@ -150,7 +148,6 @@ export class OrganizationValidator {
     };
 
     private static async validateBody(request, create = true) {
-
         await body('Type').optional()
             .trim()
             .escape()
@@ -176,8 +173,7 @@ export class OrganizationValidator {
                 .customSanitizer(Helper.sanitizePhone)
                 .custom(Helper.validatePhone)
                 .run(request);
-        }
-        else {
+        } else {
             await body('ContactPhone')
                 .optional()
                 .notEmpty()
@@ -243,9 +239,8 @@ export class OrganizationValidator {
     }
 
     private static getFilter(request): OrganizationSearchFilters {
-
-        const pageIndex = request.query.pageIndex !== 'undefined' ?
-            parseInt(request.query.pageIndex as string, 10) : 0;
+        
+        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
 
         const itemsPerPage =
             request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
@@ -276,7 +271,6 @@ export class OrganizationValidator {
     };
 
     static getByContactUserId = async (request: express.Request) => {
-
         await param('contactUserId').trim()
             .escape()
             .isUUID()
@@ -288,10 +282,9 @@ export class OrganizationValidator {
             Helper.handleValidationError(result);
         }
         return request.params.contactUserId;
-    }
+    };
 
     private static async getParamId(request) {
-
         await param('id').trim()
             .escape()
             .isUUID()
@@ -304,5 +297,43 @@ export class OrganizationValidator {
         }
         return request.params.id;
     }
+
+    static getByPersonId = async (request: express.Request): Promise<string> => {
+        await param('personId').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+        return request.params.personId;
+    };
+
+    static addOrRemoveAddress = async (request: express.Request): Promise<{ id: string; addressId: string }> => {
+
+        await param('id').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await param('addressId').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        const id = request.params.id;
+        const addressId = request.params.addressId;
+
+        return { id, addressId };
+    };
 
 }

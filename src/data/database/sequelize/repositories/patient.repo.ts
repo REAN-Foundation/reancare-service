@@ -42,12 +42,23 @@ export class PatientRepo implements IPatientRepo {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    updateByUserId = async (userId: string, patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
+    updateByUserId = async (userId: string, model: PatientDomainModel): Promise<PatientDetailsDto> => {
         try {
             const patient = await Patient.findOne({ where: { UserId: userId } });
             
+            if (model.NationalHealthId != null) {
+                patient.NationalHealthId = model.NationalHealthId;
+            }
+            if (model.EhrId != null) {
+                patient.EhrId = model.EhrId;
+            }
+
+            await patient.save();
+
             const dto = await PatientMapper.toDetailsDto(patient);
+
             return dto;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

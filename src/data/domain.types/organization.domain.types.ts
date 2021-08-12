@@ -28,7 +28,7 @@ export interface OrganizationDomainModel {
     ParentOrganizationId?: string;
     About?: string;
     OperationalSince?: Date;
-    AddressId?: string;
+    AddressIds?: string[];
     ImageResourceId?: string;
     IsHealthFacility?: boolean;
     NationalHealthFacilityRegistryId?: string;
@@ -48,7 +48,7 @@ export interface OrganizationDto {
     ParentOrganization?: OrganizationDto;
     About?: string;
     OperationalSince?: Date;
-    Address?: AddressDto;
+    Addresses?: AddressDto[];
     ImageResourceId?: string;
     IsHealthFacility?: boolean;
     NationalHealthFacilityRegistryId?: string;

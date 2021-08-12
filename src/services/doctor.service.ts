@@ -61,7 +61,8 @@ export class DoctorService {
         return await this._doctorRepo.updateByUserId(id, updateModel);
     };
 
-    public checkforDuplicateDoctors = async (domainModel: DoctorDomainModel): Promise<number> => {
+    public doctorExists = async (domainModel: DoctorDomainModel): Promise<boolean> => {
+
         const role = await this._roleRepo.getByName(Roles.Doctor);
         if (role == null) {
             throw new ApiError(404, 'Role- ' + Roles.Doctor + ' does not exist!');
@@ -70,22 +71,10 @@ export class DoctorService {
             domainModel.User.Person.Phone,
             role.id
         );
-
-        let displayName = Helper.constructPersonDisplayName(
-            domainModel.User.Person.Prefix,
-            domainModel.User.Person.FirstName,
-            domainModel.User.Person.LastName
-        );
-        displayName = displayName.toLowerCase();
-
-        //compare display name with all users sharing same phone number
-        for (const person of persons) {
-            const name = person.DisplayName.toLowerCase();
-            if (name === displayName) {
-                throw new ApiError(409, 'Doctor with same name and phone number exists!');
-            }
+        if (persons.length > 0) {
+            return true;
         }
-        return persons.length;
+        return false;
     };
 
 }

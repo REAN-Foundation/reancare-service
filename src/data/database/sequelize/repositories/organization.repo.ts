@@ -10,33 +10,49 @@ import {
 import { OrganizationMapper } from '../mappers/organization.mapper';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
+import Address from '../models/address.model';
+import OrganizationPersons from '../models/organization.persons.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 export class OrganizationRepo implements IOrganizationRepo {
 
-    create = async (organizationDomainModel: OrganizationDomainModel): Promise<OrganizationDto> => {
+    create = async (model: OrganizationDomainModel): Promise<OrganizationDto> => {
         try {
             const entity = {
-                Type                             : organizationDomainModel.Type,
-                Name                             : organizationDomainModel.Name ?? null,
-                ContactUserId                    : organizationDomainModel.ContactUserId ?? null,
-                ContactPhone                     : organizationDomainModel.ContactPhone ?? null,
-                ContactEmail                     : organizationDomainModel.ContactEmail ?? null,
-                ParentOrganizationId             : organizationDomainModel.ParentOrganizationId ?? null,
-                About                            : organizationDomainModel.About ?? null,
-                OperationalSince                 : organizationDomainModel.OperationalSince ?? null,
-                AddressId                        : organizationDomainModel.AddressId ?? null,
-                ImageResourceId                  : organizationDomainModel.ImageResourceId ?? null,
-                IsHealthFacility                 : organizationDomainModel.IsHealthFacility ?? null,
-                NationalHealthFacilityRegistryId : organizationDomainModel.NationalHealthFacilityRegistryId ?? null,
+                Type                             : model.Type,
+                Name                             : model.Name ?? null,
+                ContactUserId                    : model.ContactUserId ?? null,
+                ContactPhone                     : model.ContactPhone ?? null,
+                ContactEmail                     : model.ContactEmail ?? null,
+                ParentOrganizationId             : model.ParentOrganizationId ?? null,
+                About                            : model.About ?? null,
+                OperationalSince                 : model.OperationalSince ?? null,
+                ImageResourceId                  : model.ImageResourceId ?? null,
+                IsHealthFacility                 : model.IsHealthFacility ?? null,
+                NationalHealthFacilityRegistryId : model.NationalHealthFacilityRegistryId ?? null,
             };
             const organization = await Organization.create(entity);
+            await this.addAddresses(organization.id, model.AddressIds);
+
             const dto = await OrganizationMapper.toDto(organization);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    private addAddresses = async (organizationId, addressIds) => {
+        if (addressIds !== null && addressIds.length > 0) {
+            for await (var addressId of addressIds) {
+                var address = await Address.findByPk(addressId);
+                if (address === null) {
+                    continue;
+                }
+                address.OrganizationId = organizationId;
+                await address.save();
+            }
         }
     };
 
@@ -54,8 +70,10 @@ export class OrganizationRepo implements IOrganizationRepo {
     getByContactUserId = async (contactUserId: string): Promise<OrganizationDto[]> => {
         try {
             const dtos = [];
-            const organizationes = await Organization.findAll({ where: { ContactUserId: contactUserId } });
-            for (const organization of organizationes) {
+            const organizations = await Organization.findAll({
+                where : { ContactUserId: contactUserId },
+            });
+            for (const organization of organizations) {
                 const dto = await OrganizationMapper.toDto(organization);
                 dtos.push(dto);
             }
@@ -65,6 +83,29 @@ export class OrganizationRepo implements IOrganizationRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    getByPersonId = async (personId: string): Promise<OrganizationDto[]> => {
+        try {
+            const dtos = [];
+            const organizationPersons = await OrganizationPersons.findAll({
+                where   : { PersonId: personId },
+                include : [
+                    {
+                        model : Organization
+                    }
+                ]
+            });
+            var organizations = organizationPersons.map(x => x.Organization);
+            for (const organization of organizations) {
+                const dto = await OrganizationMapper.toDto(organization);
+                dtos.push(dto);
+            }
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
     search = async (filters: OrganizationSearchFilters): Promise<OrganizationSearchResults> => {
         try {
@@ -80,10 +121,14 @@ export class OrganizationRepo implements IOrganizationRepo {
                 search.where['ContactUserId'] = filters.ContactUserId;
             }
             if (filters.ContactPhone != null) {
-                search.where['ContactPhone'] = { [Op.like]: '%' + filters.ContactPhone + '%' };
+                search.where['ContactPhone'] = {
+                    [Op.like] : '%' + filters.ContactPhone + '%',
+                };
             }
             if (filters.ContactEmail != null) {
-                search.where['ContactEmail'] = { [Op.like]: '%' + filters.ContactEmail + '%' };
+                search.where['ContactEmail'] = {
+                    [Op.like] : '%' + filters.ContactEmail + '%',
+                };
             }
             if (filters.OperationalSinceFrom != null && filters.OperationalSinceTo != null) {
                 search.where['OperationalSince'] = {
@@ -153,48 +198,46 @@ export class OrganizationRepo implements IOrganizationRepo {
         }
     };
 
-    update = async (id: string, organizationDomainModel: OrganizationDomainModel): Promise<OrganizationDto> => {
+    update = async (id: string, model: OrganizationDomainModel): Promise<OrganizationDto> => {
         try {
             const organization = await Organization.findByPk(id);
 
-            if (organizationDomainModel.Type != null) {
-                organization.Type = organizationDomainModel.Type;
+            if (model.Type != null) {
+                organization.Type = model.Type;
             }
-            if (organizationDomainModel.Name != null) {
-                organization.Name = organizationDomainModel.Name;
+            if (model.Name != null) {
+                organization.Name = model.Name;
             }
-            if (organizationDomainModel.ContactUserId != null) {
-                organization.ContactUserId = organizationDomainModel.ContactUserId;
+            if (model.ContactUserId != null) {
+                organization.ContactUserId = model.ContactUserId;
             }
-            if (organizationDomainModel.ContactPhone != null) {
-                organization.ContactPhone = organizationDomainModel.ContactPhone;
+            if (model.ContactPhone != null) {
+                organization.ContactPhone = model.ContactPhone;
             }
-            if (organizationDomainModel.ContactEmail != null) {
-                organization.ContactEmail = organizationDomainModel.ContactEmail;
+            if (model.ContactEmail != null) {
+                organization.ContactEmail = model.ContactEmail;
             }
-            if (organizationDomainModel.ParentOrganizationId != null) {
-                organization.ParentOrganizationId = organizationDomainModel.ParentOrganizationId;
+            if (model.ParentOrganizationId != null) {
+                organization.ParentOrganizationId = model.ParentOrganizationId;
             }
-            if (organizationDomainModel.About != null) {
-                organization.About = organizationDomainModel.About;
+            if (model.About != null) {
+                organization.About = model.About;
             }
-            if (organizationDomainModel.OperationalSince != null) {
-                organization.OperationalSince = organizationDomainModel.OperationalSince;
+            if (model.OperationalSince != null) {
+                organization.OperationalSince = model.OperationalSince;
             }
-            if (organizationDomainModel.AddressId != null) {
-                organization.AddressId = organizationDomainModel.AddressId;
+            if (model.ImageResourceId != null) {
+                organization.ImageResourceId = model.ImageResourceId;
             }
-            if (organizationDomainModel.ImageResourceId != null) {
-                organization.ImageResourceId = organizationDomainModel.ImageResourceId;
+            if (model.IsHealthFacility != null) {
+                organization.IsHealthFacility = model.IsHealthFacility;
             }
-            if (organizationDomainModel.IsHealthFacility != null) {
-                organization.IsHealthFacility = organizationDomainModel.IsHealthFacility;
-            }
-            if (organizationDomainModel.NationalHealthFacilityRegistryId != null) {
-                organization.NationalHealthFacilityRegistryId =
-                    organizationDomainModel.NationalHealthFacilityRegistryId;
+            if (model.NationalHealthFacilityRegistryId != null) {
+                organization.NationalHealthFacilityRegistryId = model.NationalHealthFacilityRegistryId;
             }
             await organization.save();
+
+            await this.addAddresses(organization.id, model.AddressIds);
 
             const dto = await OrganizationMapper.toDto(organization);
             return dto;
@@ -202,6 +245,39 @@ export class OrganizationRepo implements IOrganizationRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    };
+
+    addAddress = async (id: string, addressId: string): Promise<boolean> => {
+        var address = await Address.findByPk(addressId);
+        if (address === null) {
+            return false;
+        }
+        var organization = await Organization.findByPk(id);
+        if (organization === null) {
+            return false;
+        }
+        address.OrganizationId = id;
+        await address.save();
+
+        return true;
+    };
+
+    removeAddress = async (id: string, addressId: string): Promise<boolean> => {
+        var address = await Address.findByPk(addressId);
+        if (address === null) {
+            return false;
+        }
+        var organization = await Organization.findByPk(id);
+        if (organization === null) {
+            return false;
+        }
+        if (address.OrganizationId !== organization.id) {
+            return false;
+        }
+        address.OrganizationId = null;
+        await address.save();
+
+        return true;
     };
 
     delete = async (id: string): Promise<boolean> => {

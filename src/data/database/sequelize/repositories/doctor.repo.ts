@@ -12,17 +12,34 @@ import Person from "../models/person.model";
 export class DoctorRepo implements IDoctorRepo {
 
     create = async (doctorDomainModel: DoctorDomainModel): Promise<DoctorDetailsDto> => {
+
+        var specialities = doctorDomainModel.Specialities.length > 0 ?
+            JSON.stringify(doctorDomainModel.Specialities) : '[]';
+
+        var professionalHighlights = doctorDomainModel.ProfessionalHighlights.length > 0 ?
+            JSON.stringify(doctorDomainModel.ProfessionalHighlights) : '[]';
+
         try {
             const entity = {
-                UserId           : doctorDomainModel.UserId,
-                PersonId         : doctorDomainModel.PersonId,
-                DisplayId        : doctorDomainModel.DisplayId,
-                NationalHealthId : doctorDomainModel.NationalDigiDoctorId,
-                EhrId            : doctorDomainModel.EhrId
+                UserId                 : doctorDomainModel.UserId,
+                PersonId               : doctorDomainModel.PersonId,
+                DisplayId              : doctorDomainModel.DisplayId,
+                NationalDigiDoctorId   : doctorDomainModel.NationalDigiDoctorId,
+                EhrId                  : doctorDomainModel.EhrId,
+                About                  : doctorDomainModel.About,
+                Locality               : doctorDomainModel.Locality,
+                Qualifications         : doctorDomainModel.Qualifications,
+                PractisingSince        : doctorDomainModel.PractisingSince,
+                Specialities           : specialities,
+                ProfessionalHighlights : professionalHighlights,
+                ConsultationFee        : doctorDomainModel.ConsultationFee
             };
+
             const doctor = await Doctor.create(entity);
             const dto = await DoctorMapper.toDetailsDto(doctor);
+
             return dto;
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -41,12 +58,52 @@ export class DoctorRepo implements IDoctorRepo {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    updateByUserId = async (userId: string, doctorDomainModel: DoctorDomainModel): Promise<DoctorDetailsDto> => {
+    updateByUserId = async (userId: string, model: DoctorDomainModel): Promise<DoctorDetailsDto> => {
         try {
             const doctor = await Doctor.findOne({ where: { UserId: userId } });
             
+            if (model.NationalDigiDoctorId != null) {
+                doctor.NationalDigiDoctorId = model.NationalDigiDoctorId;
+            }
+            if (model.EhrId != null) {
+                doctor.EhrId = model.EhrId;
+            }
+            if (model.About != null) {
+                doctor.About = model.About;
+            }
+            if (model.Locality != null) {
+                doctor.Locality = model.Locality;
+            }
+            if (model.Qualifications != null) {
+                doctor.Qualifications = model.Qualifications;
+            }
+            if (model.PractisingSince != null) {
+                doctor.PractisingSince = model.PractisingSince;
+            }
+            if (model.Specialities != null && model.Specialities.length > 0) {
+
+                var specialities = model.Specialities.length > 0 ?
+                    JSON.stringify(model.Specialities) : '[]';
+
+                doctor.Specialities = specialities;
+            }
+            if (model.ProfessionalHighlights != null && model.ProfessionalHighlights.length > 0) {
+
+                var professionalHighlights = model.ProfessionalHighlights.length > 0 ?
+                    JSON.stringify(model.ProfessionalHighlights) : '[]';
+    
+                doctor.ProfessionalHighlights = professionalHighlights;
+            }
+            if (model.ConsultationFee != null) {
+                doctor.ConsultationFee = model.ConsultationFee;
+            }
+
+            await doctor.save();
+
             const dto = await DoctorMapper.toDetailsDto(doctor);
+
             return dto;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

@@ -14,4 +14,10 @@ export interface IOrganizationRepo {
 
     delete(id: string): Promise<boolean>;
 
+    getByPersonId(personId: string): Promise<OrganizationDto[]>;
+
+    addAddress(id: string, addressId: string): Promise<boolean>;
+
+    removeAddress(id: string, addressId: string): Promise<boolean>;
+
 }

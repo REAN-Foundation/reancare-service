@@ -2,12 +2,12 @@ import 'reflect-metadata';
 import { container, DependencyContainer } from 'tsyringe';
 import { StorageService } from '../services/storage.service';
 import { PatientStore } from '../services/patient.store';
+import { DoctorStore } from '../services/doctor.store';
 import { Logger } from '../../../common/logger';
 import { ConfigurationManager } from '../../../configs/configuration.manager';
 
 // import { ClinicOrganizationStore } from '../services/clinic.organization.store';
 // import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
-// import { DoctorStore } from '../services/doctor.store';
 // import { PharmacistStore } from '../services/pharmacist.store';
 // import { BloodPressureStore } from '../services/blood.pressure.store';
 // import { BiometricsWeightStore } from '../services/biometrics.weight.store';
@@ -33,9 +33,10 @@ export class TestLoader {
 
     private static _patientStore: PatientStore = container.resolve(PatientStore);
 
+    private static _doctorStore: DoctorStore = container.resolve(DoctorStore);
+
     // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
     // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
-    // private static _doctorStore: DoctorStore = container.resolve(DoctorStore);
     // private static _pharmacistStore: PharmacistStore = container.resolve(PharmacistStore);
     // private static _bloodPressureStore: BloodPressureStore = container.resolve(BloodPressureStore);
     // private static _biometricsWeightStore: BiometricsWeightStore = container.resolve(BiometricsWeightStore);
@@ -56,12 +57,12 @@ export class TestLoader {
         return TestLoader._patientStore;
     }
 
+    public static get DoctorStore() {
+        return TestLoader._doctorStore;
+    }
+
     // public static get DiagnosticLabUserStore() {
     //     return TestLoader._diagnosticlabuserStore;
-    // }
-
-    // public static get DoctorStore() {
-    //     return TestLoader._doctorStore;
     // }
 
     // public static get PharmacistStore() {
@@ -96,13 +97,13 @@ export class TestLoader {
             TestLoader._storageService = container.resolve(StorageService);
 
             TestLoader._patientStore = container.resolve(PatientStore);
+            TestLoader._doctorStore = container.resolve(DoctorStore);
 
             // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
             // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
             // TestLoader._bloodPressureStore = container.resolve(BloodPressureStore);
             // TestLoader._bloodSugarStore = container.resolve(BloodSugarStore);
             // TestLoader._biometricsHeightStore = container.resolve(BiometricsHeightStore);
-            // TestLoader._doctorStore = container.resolve(DoctorStore);
             // TestLoader._pharmacistStore = container.resolve(PharmacistStore);
             // TestLoader._biometricsWeightStore = container.resolve(BiometricsWeightStore);
 

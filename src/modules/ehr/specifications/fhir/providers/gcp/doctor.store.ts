@@ -1,25 +1,24 @@
 import { Helper } from '../../../../../../common/helper';
 import { Logger } from '../../../../../../common/logger';
-import { PatientDomainModel, PatientSearchFilters } from '../../../../../../data/domain.types/patient.domain.types';
-import { PersonDomainModel } from '../../../../../../data/domain.types/person.domain.types';
-import { IPatientStore } from '../../../../interfaces/patient.store.interface';
+import { DoctorDomainModel, DoctorSearchFilters } from '../../../../../../data/domain.types/doctor.domain.types';
+import { IDoctorStore } from '../../../../interfaces/doctor.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { FhirHelper } from '../../fhir.helper';
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export class GcpPatientStore implements IPatientStore {
+export class GcpDoctorStore implements IDoctorStore {
 
-    create = async (model: PatientDomainModel): Promise<any> => {
+    create = async (model: DoctorDomainModel): Promise<any> => {
         try {
 
             var g = await GcpHelper.getGcpClient();
             const c = GcpHelper.getGcpFhirConfig();
 
-            var body = this.createPatientFhirResource(model);
+            var body = this.createDoctorFhirResource(model);
             const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}`;
-            const request = { parent, type: 'Patient', requestBody: body };
+            const request = { parent, type: 'Practitioner', requestBody: body };
             const resource = await g.projects.locations.datasets.fhirStores.fhir.create(
                 request
             );
@@ -41,8 +40,8 @@ export class GcpPatientStore implements IPatientStore {
 
             var g = await GcpHelper.getGcpClient();
             const c = GcpHelper.getGcpFhirConfig();
-
-            const resourceType = 'Patient';
+            
+            const resourceType = 'Practitioner';
             const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
             const resource = await g.projects.locations.datasets.fhirStores.fhir.read(
                 { name: parent }
@@ -68,17 +67,17 @@ export class GcpPatientStore implements IPatientStore {
         }
     };
     
-    search = async (filter: PatientSearchFilters): Promise<any> => {
+    search = async (filter: DoctorSearchFilters): Promise<any> => {
         var str = JSON.stringify(filter, null, 2);
         Logger.instance().log(`Created FHIR resource ${str}`);
     };
 
-    update = async (resourceId:string, updates: PatientDomainModel): Promise<any> => {
+    update = async (resourceId:string, updates: DoctorDomainModel): Promise<any> => {
 
         var g = await GcpHelper.getGcpClient();
         const c = GcpHelper.getGcpFhirConfig();
 
-        const resourceType = 'Patient';
+        const resourceType = 'Practitioner';
 
         //Get the existing resource
         const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
@@ -90,7 +89,7 @@ export class GcpPatientStore implements IPatientStore {
         //delete data.id; //Remove id from the resource
         
         //Construct updated body
-        const body: healthcare_v1.Schema$HttpBody = this.updatePatientFhirResource(updates, data);
+        const body: healthcare_v1.Schema$HttpBody = this.updateDoctorFhirResource(updates, data);
         const updatedResource = await g.projects.locations.datasets.fhirStores.fhir.update({
             name        : parent,
             requestBody : body,
@@ -103,9 +102,11 @@ export class GcpPatientStore implements IPatientStore {
     };
 
     delete = async (resourceId: string): Promise<any> => {
+
         var g = await GcpHelper.getGcpClient();
         const c = GcpHelper.getGcpFhirConfig();
-        const resourceType = 'Patient';
+
+        const resourceType = 'Practitioner';
 
         //Get the existing resource
         const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
@@ -116,12 +117,12 @@ export class GcpPatientStore implements IPatientStore {
 
     //#region Private methods
 
-    private createPatientFhirResource(model: PatientDomainModel): any {
+    private createDoctorFhirResource(model: DoctorDomainModel): any {
 
         var nameObj = FhirHelper.getPersonFhirName(model.User.Person);
 
         var resource = {
-            resourceType : "Patient",
+            resourceType : "Practitioner",
             name         : [nameObj],
             gender       : model.User.Person.Gender != null ? model.User.Person.Gender.toLowerCase() : 'unknown',
             telecom      : [],
@@ -163,9 +164,9 @@ export class GcpPatientStore implements IPatientStore {
         return resource;
     }
 
-    private updatePatientFhirResource(updates: PatientDomainModel, existingResource: any): any {
+    private updateDoctorFhirResource(updates: DoctorDomainModel, existingResource: any): any {
 
-        existingResource.resourceType = "Patient";
+        existingResource.resourceType = "Practitioner";
 
         if (existingResource.name.length === 0) {
             existingResource.name = FhirHelper.getPersonFhirName(updates.User.Person);
@@ -233,7 +234,7 @@ export class GcpPatientStore implements IPatientStore {
             }
             existingResource.address.push(address);
         }
-        
+
         return existingResource;
     }
 

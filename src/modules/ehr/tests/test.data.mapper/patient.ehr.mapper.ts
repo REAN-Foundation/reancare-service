@@ -15,14 +15,15 @@ export class PatientMapper {
         const jsonPath = path.join(cwd, 'src/modules/ehr/tests/test.data/', 'patient.domain.model.json');
         var obj = Helper.jsonToObj(jsonPath);
 
+        var a = obj.Addresses[0];
         var address: AddressDomainModel = {
-            Type        : obj.Address.Type != null ? obj.Address.Type.toLowerCase() : 'official',
-            AddressLine : obj.Address.AddressLine ?? '',
-            City        : obj.Address.City ?? '',
-            District    : obj.Address.District ?? '',
-            State       : obj.Address.State ?? '',
-            Country     : obj.Address.Country ?? '',
-            PostalCode  : obj.Address.PostalCode ?? ''
+            Type        : a.Type ? a.Type.toLowerCase() : 'official',
+            AddressLine : a.AddressLine ?? '',
+            City        : a.City ?? '',
+            District    : a.District ?? '',
+            State       : a.State ?? '',
+            Country     : a.Country ?? '',
+            PostalCode  : a.PostalCode ?? ''
         };
 
         var person: PersonDomainModel = {
@@ -40,9 +41,10 @@ export class PatientMapper {
             Person : person
         };
 
-        var model: PatientDomainModel = {
-            User    : user,
-            Address : address
+        var model : PatientDomainModel = {
+            User       : user,
+            Addresses  : [address],
+            AddressIds : []
         }
 
         return model;

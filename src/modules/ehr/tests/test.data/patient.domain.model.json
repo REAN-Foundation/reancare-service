@@ -11,13 +11,15 @@
             "BirthDate": "1970-06-25"
         }
     },
-    "Address": {
-        "Type": "Official",
-        "AddressLine": "1129 Hurry Street",
-        "City": "Fredericksburg",
-        "District": "",
-        "State": "Virginia",
-        "Country": "United States",
-        "PostalCode": "22401"
-    }
+    "Addresses": [
+        {
+            "Type": "Official",
+            "AddressLine": "1129 Hurry Street",
+            "City": "Fredericksburg",
+            "District": "",
+            "State": "Virginia",
+            "Country": "United States",
+            "PostalCode": "22401"
+        }
+    ]
 }

@@ -1,44 +1,44 @@
 import { TestLoader } from "../test.loader";
-import { PatientMapper } from '../test.data.mapper/patient.ehr.mapper';
+import { DoctorMapper } from '../test.data.mapper/doctor.ehr.mapper';
 
 //import { Logger } from "../../../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////
 
-describe('Patient resource: Storage, retrieval', () => {
-    it('Given patient domain model, store resource to fhir interface, then returned patient details are valid.', async () => {
+describe('Doctor resource: Storage, retrieval', () => {
+    it('Given doctor domain model, store resource to fhir interface, then returned doctor details are valid.', async () => {
 
-        var model = PatientMapper.convertJsonObjectToDomainModel();
-        var patientFhirId = await TestLoader.PatientStore.create(model);
-        var patientFhirResource = await TestLoader.PatientStore.getById(patientFhirId);
+        var model = DoctorMapper.convertJsonObjectToDomainModel();
+        var doctorFhirId = await TestLoader.DoctorStore.create(model);
+        var doctorFhirResource = await TestLoader.DoctorStore.getById(doctorFhirId);
 
         //Assertions
-        var extractedName = patientFhirResource.name[0].family;
+        var extractedName = doctorFhirResource.name[0].family;
         expect(extractedName).toEqual(model.User.Person.LastName);
 
-        var extractedBirthdate = patientFhirResource.birthDate;
+        var extractedBirthdate = doctorFhirResource.birthDate;
         expect(extractedBirthdate).toEqual((model.User.Person.BirthDate));
 
-        var extractedGender = patientFhirResource.gender;
+        var extractedGender = doctorFhirResource.gender;
         expect(extractedGender).toEqual((model.User.Person.Gender.toLowerCase()));
 
-        var phoneElement = patientFhirResource.telecom.find(function (e) {
+        var phoneElement = doctorFhirResource.telecom.find(function (e) {
             return e.system === 'phone';
         });
         var extractedPhone = phoneElement ? phoneElement.value : '';
         expect(extractedPhone).toEqual((model.User.Person.Phone));
 
-        var emailElement = patientFhirResource.telecom.find(function (e) {
+        var emailElement = doctorFhirResource.telecom.find(function (e) {
             return e.system === 'email';
         });
         var extractedEmail = emailElement ? emailElement.value : '';
         expect(extractedEmail.toLowerCase()).toEqual(model.User.Person.Email.toLowerCase());
     });
 
-    it('Update patient resource, then updated patient details are returned.', async () => {
+    it('Update doctor resource, then updated doctor details are returned.', async () => {
 
-        var model = PatientMapper.convertJsonObjectToDomainModel();
-        var patientFhirId = await TestLoader.PatientStore.create(model);
+        var model = DoctorMapper.convertJsonObjectToDomainModel();
+        var doctorFhirId = await TestLoader.DoctorStore.create(model);
 
         var expectedBirthDate = '1999-01-03';
         model.User.Person.BirthDate = new Date(expectedBirthDate);
@@ -46,7 +46,7 @@ describe('Patient resource: Storage, retrieval', () => {
         model.User.Person.LastName = "Mhetre";
         model.User.Person.Email = "Ajinkya.Mhetre@microsoft.com";
 
-        var updatedResource = await TestLoader.PatientStore.update(patientFhirId, model);
+        var updatedResource = await TestLoader.DoctorStore.update(doctorFhirId, model);
 
         // const str = JSON.stringify(updatedResource, null, 2);
         // Logger.instance().log(str);
@@ -68,23 +68,23 @@ describe('Patient resource: Storage, retrieval', () => {
         expect(extractedEmail.toLowerCase()).toEqual(model.User.Person.Email.toLowerCase());
     });
 
-    it('Delete patient resource, then empty resource is returned for next query.', async () => {
+    it('Delete doctor resource, then empty resource is returned for next query.', async () => {
 
-        var model = PatientMapper.convertJsonObjectToDomainModel();
-        var patientFhirId = await TestLoader.PatientStore.create(model);
-        var patientFhirResource = await TestLoader.PatientStore.getById(patientFhirId);
+        var model = DoctorMapper.convertJsonObjectToDomainModel();
+        var doctorFhirId = await TestLoader.DoctorStore.create(model);
+        var doctorFhirResource = await TestLoader.DoctorStore.getById(doctorFhirId);
 
         //Before deletetion
-        expect(patientFhirResource).toBeTruthy();
+        expect(doctorFhirResource).toBeTruthy();
 
         //Delete
-        await TestLoader.PatientStore.delete(patientFhirId);
+        await TestLoader.DoctorStore.delete(doctorFhirId);
 
         //Query after deletion
-        var deletedPatientFhirResource = await TestLoader.PatientStore.getById(patientFhirId);
+        var deletedDoctorFhirResource = await TestLoader.DoctorStore.getById(doctorFhirId);
 
         //Assertions
-        expect(deletedPatientFhirResource).toBeFalsy();
+        expect(deletedDoctorFhirResource).toBeFalsy();
 
     });
 

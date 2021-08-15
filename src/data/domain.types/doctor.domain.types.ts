@@ -1,5 +1,5 @@
 import { Gender } from '../../common/system.types';
-import { AddressDto } from './address.domain.types';
+import { AddressDomainModel, AddressDto } from './address.domain.types';
 import { HealthcareServiceSchedule } from './healthcare.service.domain.types';
 import { OrganizationDto } from './organization.domain.types';
 import { UserDomainModel, UserDto } from './user.domain.types';
@@ -25,6 +25,7 @@ export interface DoctorDomainModel {
     AvailabilitySchedule?: HealthcareServiceSchedule;
     ConsultationFee?: number;
     AddressIds?: string[];
+    Addresses?: AddressDomainModel[];
     OrganizationIds?: string[];
 }
 

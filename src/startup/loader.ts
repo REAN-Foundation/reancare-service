@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { container, DependencyContainer } from 'tsyringe';
 
-import { DatabaseConnector } from '../data/database/database.connector';
+import { DatabaseConnector } from '../database/database.connector';
 import { Authenticator } from '../auth/authenticator';
 import { Authorizer } from '../auth/authorizer';
 import { Injector } from './injector';

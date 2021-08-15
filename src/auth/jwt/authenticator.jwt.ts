@@ -5,8 +5,8 @@ import { Logger } from '../../common/logger';
 import { IAuthenticator } from '../authenticator.interface';
 import { ApiClientService } from '../../services/api.client.service';
 import { Loader } from '../../startup/loader';
-import { CurrentClient } from '../../data/domain.types/current.client';
-import { AuthenticationResult } from '../../data/domain.types/auth.domain.types';
+import { CurrentClient } from '../../domain.types/current.client';
+import { AuthenticationResult } from '../../domain.types/auth.domain.types';
 
 //////////////////////////////////////////////////////////////
 

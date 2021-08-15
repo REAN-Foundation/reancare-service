@@ -1,10 +1,10 @@
 import { inject, injectable } from "tsyringe";
 import { ApiError } from '../common/api.error';
-import { ApiClientDomainModel, ApiClientDto, ApiClientVerificationDomainModel, ClientApiKeyDto } from "../data/domain.types/api.client.domain.types";
-import { IApiClientRepo } from "../data/repository.interfaces/api.client.repo.interface";
+import { ApiClientDomainModel, ApiClientDto, ApiClientVerificationDomainModel, ClientApiKeyDto } from "../domain.types/api.client.domain.types";
+import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
 import { generate } from 'generate-password';
 import { Helper } from "../common/helper";
-import { CurrentClient } from "../data/domain.types/current.client";
+import { CurrentClient } from "../domain.types/current.client";
 import * as apikeyGenerator from 'uuid-apikey';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

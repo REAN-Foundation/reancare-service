@@ -2,7 +2,7 @@ import express from 'express';
 import { query, body, oneOf, validationResult, param } from 'express-validator';
 import { ResponseHandler } from '../../common/response.handler';
 import { Helper } from '../../common/helper';
-import { UserSearchFilters, UserLoginDetails } from '../../data/domain.types/user.domain.types';
+import { UserSearchFilters, UserLoginDetails } from '../../domain.types/user.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

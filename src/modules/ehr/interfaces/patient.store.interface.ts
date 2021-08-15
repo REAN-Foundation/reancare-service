@@ -1,5 +1,5 @@
 
-import { PatientDomainModel, PatientSearchFilters } from '../../../data/domain.types/patient.domain.types';
+import { PatientDomainModel, PatientSearchFilters } from '../../../domain.types/patient.domain.types';
 
 export interface IPatientStore {
     create(patientDomainModel: PatientDomainModel): Promise<any>;

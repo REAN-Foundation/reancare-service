@@ -1,19 +1,19 @@
 import { Loader } from '../startup/loader';
-import { IUserRepo } from '../data/repository.interfaces/user.repo.interface';
-import { IPersonRoleRepo } from '../data/repository.interfaces/person.role.repo.interface';
-import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
-import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
+import { IUserRepo } from '../database/repository.interfaces/user.repo.interface';
+import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
+import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
+import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserDetailsDto, UserLoginDetails, UserDomainModel } from '../data/domain.types/user.domain.types';
+import { UserDetailsDto, UserLoginDetails, UserDomainModel } from '../domain.types/user.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
-import { CurrentUser } from '../data/domain.types/current.user';
-import { OtpPersistenceEntity } from '../data/domain.types/otp.domain.types';
-import { Roles } from '../data/domain.types/role.domain.types';
+import { CurrentUser } from '../domain.types/current.user';
+import { OtpPersistenceEntity } from '../domain.types/otp.domain.types';
+import { Roles } from '../domain.types/role.domain.types';
 import { generate } from 'generate-password';
-import { IPersonRepo } from '../data/repository.interfaces/person.repo.interface';
-import { PersonDetailsDto } from '../data/domain.types/person.domain.types';
+import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
+import { PersonDetailsDto } from '../domain.types/person.domain.types';
 import { Helper } from '../common/helper';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,8 +164,9 @@ export class UserService {
     }
     
     private constructUserName(firstName: string, lastName: string) {
-        const rand = Math.random().toString(10)
-.substr(2, 4);
+        const rand = Math.random()
+            .toString(10)
+            .substr(2, 4);
         let userName = firstName.substr(0, 3) + lastName.substr(0, 3) + rand;
         userName = userName.toLowerCase();
         return userName;

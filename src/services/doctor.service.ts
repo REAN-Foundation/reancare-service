@@ -1,17 +1,16 @@
 import { Loader } from '../startup/loader';
-import { IDoctorRepo } from '../data/repository.interfaces/doctor.repo.interface';
-import { IUserRepo } from '../data/repository.interfaces/user.repo.interface';
-import { IPersonRoleRepo } from '../data/repository.interfaces/person.role.repo.interface';
-import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
-import { IOtpRepo } from '../data/repository.interfaces/otp.repo.interface';
+import { IDoctorRepo } from '../database/repository.interfaces/doctor.repo.interface';
+import { IUserRepo } from '../database/repository.interfaces/user.repo.interface';
+import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
+import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
+import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { DoctorDomainModel, DoctorDetailsDto, DoctorSearchFilters, DoctorDetailsSearchResults, DoctorSearchResults } from '../data/domain.types/doctor.domain.types';
+import { DoctorDomainModel, DoctorDetailsDto, DoctorSearchFilters, DoctorDetailsSearchResults, DoctorSearchResults } from '../domain.types/doctor.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { ApiError } from '../common/api.error';
-import { Roles } from '../data/domain.types/role.domain.types';
+import { Roles } from '../domain.types/role.domain.types';
 import { DoctorStore } from '../modules/ehr/services/doctor.store';
-import { IPersonRepo } from '../data/repository.interfaces/person.repo.interface';
-import { Helper } from '../common/helper';
+import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

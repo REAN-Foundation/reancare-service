@@ -1,7 +1,7 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 import { Helper } from '../../common/helper';
-import { AddressDomainModel, AddressSearchFilters } from '../../data/domain.types/address.domain.types';
+import { AddressDomainModel, AddressSearchFilters } from '../../domain.types/address.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import { OrganizationDomainModel, OrganizationDto, OrganizationSearchFilters, OrganizationSearchResults } from "../data/domain.types/organization.domain.types";
-import { IOrganizationRepo } from "../data/repository.interfaces/organization.repo.interface";
+import { OrganizationDomainModel, OrganizationDto, OrganizationSearchFilters, OrganizationSearchResults } from "../domain.types/organization.domain.types";
+import { IOrganizationRepo } from "../database/repository.interfaces/organization.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,18 +1,18 @@
-import { Roles } from "../data/domain.types/role.domain.types";
+import { Roles } from "../domain.types/role.domain.types";
 import { injectable, inject } from "tsyringe";
-import { IRoleRepo } from "../data/repository.interfaces/role.repo.interface";
-import { IRolePrivilegeRepo } from "../data/repository.interfaces/role.privilege.repo.interface";
-import { IApiClientRepo } from "../data/repository.interfaces/api.client.repo.interface";
+import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
+import { IRolePrivilegeRepo } from "../database/repository.interfaces/role.privilege.repo.interface";
+import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
 import { ApiClientService } from "../services/api.client.service";
-import { IUserRepo } from "../data/repository.interfaces/user.repo.interface";
-import { IPersonRepo } from "../data/repository.interfaces/person.repo.interface";
+import { IUserRepo } from "../database/repository.interfaces/user.repo.interface";
+import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
 import { Logger } from "../common/logger";
-import { UserDomainModel } from "../data/domain.types/user.domain.types";
-import { ApiClientDomainModel } from "../data/domain.types/api.client.domain.types";
+import { UserDomainModel } from "../domain.types/user.domain.types";
+import { ApiClientDomainModel } from "../domain.types/api.client.domain.types";
 import { Helper } from "../common/helper";
 import { Loader } from "./loader";
 import * as RolePrivilegesList from '../assets/raw/role.privileges.json';
-import { IPersonRoleRepo } from "../data/repository.interfaces/person.role.repo.interface";
+import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
 
 //////////////////////////////////////////////////////////////////////////////
 

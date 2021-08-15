@@ -4,7 +4,7 @@ import { Helper } from '../../common/helper';
 import {
     DoctorDomainModel,
     DoctorSearchFilters,
-} from '../../data/domain.types/doctor.domain.types';
+} from '../../domain.types/doctor.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

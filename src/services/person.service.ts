@@ -1,7 +1,7 @@
-import { IPersonRepo } from '../data/repository.interfaces/person.repo.interface';
-import { IPersonRoleRepo } from '../data/repository.interfaces/person.role.repo.interface';
-import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
-import { PersonDomainModel, PersonDetailsDto, PersonDto, PersonSearchFilters } from '../data/domain.types/person.domain.types';
+import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
+import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
+import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
+import { PersonDomainModel, PersonDetailsDto, PersonDto, PersonSearchFilters } from '../domain.types/person.domain.types';
 import { injectable, inject } from 'tsyringe';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

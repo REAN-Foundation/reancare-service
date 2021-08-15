@@ -1,7 +1,7 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 import { Helper } from '../../common/helper';
-import { OrganizationDomainModel, OrganizationSearchFilters } from '../../data/domain.types/organization.domain.types';
+import { OrganizationDomainModel, OrganizationSearchFilters } from '../../domain.types/organization.domain.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

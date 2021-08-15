@@ -1,6 +1,6 @@
 import { IDoctorStore } from '../interfaces/doctor.store.interface';
 import { injectable, inject } from "tsyringe";
-import { DoctorDomainModel, DoctorSearchFilters } from '../../../data/domain.types/doctor.domain.types';
+import { DoctorDomainModel, DoctorSearchFilters } from '../../../domain.types/doctor.domain.types';
 
 ///////////////////////////////////////////////////////////////////
 

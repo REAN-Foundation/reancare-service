@@ -1,5 +1,5 @@
 
-import { DoctorDomainModel, DoctorSearchFilters } from '../../../data/domain.types/doctor.domain.types';
+import { DoctorDomainModel, DoctorSearchFilters } from '../../../domain.types/doctor.domain.types';
 
 export interface IDoctorStore {
     create(doctorDomainModel: DoctorDomainModel): Promise<any>;

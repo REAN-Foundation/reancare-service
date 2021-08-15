@@ -9,7 +9,6 @@ import {
     IsUUID,
     PrimaryKey,
     ForeignKey,
-    HasOne,
     BelongsTo,
 } from 'sequelize-typescript';
 

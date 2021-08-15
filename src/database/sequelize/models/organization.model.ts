@@ -62,6 +62,15 @@ export default class Organization extends Model {
             OrganizationTypes.DiagnosticLab,
             OrganizationTypes.Pharmacy,
             OrganizationTypes.AmbulanceService,
+            OrganizationTypes.GovernmentPrimaryHealthCareCentre,
+            OrganizationTypes.GovernmentNodalHospital,
+            OrganizationTypes.GovernmentDistrictHospital,
+            OrganizationTypes.MunicipalHospital,
+            OrganizationTypes.MunicipalHospital,
+            OrganizationTypes.BloodBank,
+            OrganizationTypes.NursingHome,
+            OrganizationTypes.SpecializedCareCentre,
+            OrganizationTypes.AmbulatoryProcedureCentre,
             OrganizationTypes.Unknown,
         ],
         defaultValue : 'Unknown',
@@ -154,5 +163,3 @@ export default class Organization extends Model {
     DeletedAt: Date;
 
 }
-
-

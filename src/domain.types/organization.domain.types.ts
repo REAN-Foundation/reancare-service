@@ -8,9 +8,19 @@ import { UserDto } from './user.domain.types';
 export enum OrganizationTypes {
     Clinic = 'Clinic',
     Hospital = 'Hospital',
-    DiagnosticLab = 'DiagnosticLab',
+    DiagnosticLab = 'Diagnostic Lab',
+    DiagnosticLab_Pathology = 'Diagnostic Lab - Pathology',
+    DiagnosticLab_Imaging = 'Diagnostic Lab - Imaging',
     Pharmacy = 'Pharmacy',
-    AmbulanceService = 'AmbulanceService',
+    AmbulanceService = 'Ambulance Service',
+    GovernmentPrimaryHealthCareCentre = 'Government Primary Health Care Centre',
+    GovernmentNodalHospital = 'Government Nodal Hospital',
+    GovernmentDistrictHospital = 'Government District Hospital',
+    MunicipalHospital = 'Municipal Hospital',
+    BloodBank = 'Blood Bank',
+    NursingHome = 'Nursing Home',
+    SpecializedCareCentre = 'Specialized Care Centre',
+    AmbulatoryProcedureCentre = 'Ambulatory Procedure Centre',
     Unknown = 'Unknown'
 }
 

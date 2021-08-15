@@ -642,7 +642,7 @@
 			"name": "Types",
 			"item": [
 				{
-					"name": "Get existing person-roles",
+					"name": "Get person-roles",
 					"event": [
 						{
 							"listen": "test",
@@ -650,12 +650,12 @@
 								"exec": [
 									"try {\r",
 									"    var jsonRes = pm.response.json();\r",
-									"    var personRoles = jsonRes.Data.PersonRoles;\r",
+									"    var personRoles = jsonRes.Data.PersonRoleTypes;\r",
 									"    for(var i = 0; i < personRoles.length; i++) {\r",
 									"        var r = personRoles[i];\r",
 									"        var name = r.Name;\r",
 									"        var id = r.id;\r",
-									"        var str = \"ROLE_ID_\" + name.toUpperCase();\r",
+									"        var str = \"ROLE_\" + name.toUpperCase();\r",
 									"        pm.environment.set(str, id);\r",
 									"    }\r",
 									"}\r",
@@ -698,9 +698,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{BASIC_URL}}/types/person-roles",
+							"raw": "{{BASE_URL}}/types/person-roles",
 							"host": [
-								"{{BASIC_URL}}"
+								"{{BASE_URL}}"
 							],
 							"path": [
 								"types",
@@ -711,7 +711,7 @@
 					"response": []
 				},
 				{
-					"name": "Get existing organization types",
+					"name": "Get organization types",
 					"event": [
 						{
 							"listen": "test",
@@ -724,7 +724,7 @@
 									"        var r = organizationTypes[i];\r",
 									"        var name = r.Name;\r",
 									"        var id = r.id;\r",
-									"        var str = \"ORGANIZATION_TYPE_ID_\" + name.toUpperCase();\r",
+									"        var str = \"ORGANIZATION_TYPE_\" + name.toUpperCase();\r",
 									"        pm.environment.set(str, id);\r",
 									"    }\r",
 									"}\r",
@@ -767,13 +767,82 @@
 							}
 						],
 						"url": {
-							"raw": "{{BASIC_URL}}/types/organization-types",
+							"raw": "{{BASE_URL}}/types/organizations",
 							"host": [
-								"{{BASIC_URL}}"
+								"{{BASE_URL}}"
 							],
 							"path": [
 								"types",
-								"organization-types"
+								"organizations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get gender types",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    var organizationTypes = jsonRes.Data.GenderTypes;\r",
+									"    for(var i = 0; i < organizationTypes.length; i++) {\r",
+									"        var r = organizationTypes[i];\r",
+									"        var name = r.Name;\r",
+									"        var id = r.id;\r",
+									"        var str = \"GENDER_TYPE_\" + name.toUpperCase();\r",
+									"        pm.environment.set(str, id);\r",
+									"    }\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Organization types are retrieved\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('OrganizationTypes');\r",
+									"    pm.expect(jsonRes.Data.OrganizationTypes).to.not.be.empty;\r",
+									"    var count = jsonRes.Data.OrganizationTypes.length;\r",
+									"    pm.expect(count).greaterThan(0);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/types/genders",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"types",
+								"genders"
 							]
 						}
 					},
@@ -1340,7 +1409,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/organizations/search?orderBy=Name&order=ascending&pageIndex=0&itemsPerPage=25",
+							"raw": "{{BASE_URL}}/organizations/search?name=shr&operationalSinceFrom=1975-01-01&operationalSinceTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Name&order=ascending&pageIndex=0&itemsPerPage=25",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1358,8 +1427,7 @@
 								{
 									"key": "name",
 									"value": "shr",
-									"description": "Search by organization name",
-									"disabled": true
+									"description": "Search by organization name"
 								},
 								{
 									"key": "contactPhone",
@@ -1376,26 +1444,22 @@
 								{
 									"key": "operationalSinceFrom",
 									"value": "1975-01-01",
-									"description": "Date in format: YYYY-MM-DD. Start of the range for operational since date based search",
-									"disabled": true
+									"description": "Date in format: YYYY-MM-DD. Start of the range for operational since date based search"
 								},
 								{
 									"key": "operationalSinceTo",
 									"value": "2021-12-12",
-									"description": "Date in format: YYYY-MM-DD. End of the range for operational since date based search",
-									"disabled": true
+									"description": "Date in format: YYYY-MM-DD. End of the range for operational since date based search"
 								},
 								{
 									"key": "createdDateFrom",
 									"value": "2021-05-01",
-									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
-									"disabled": true
+									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
 								},
 								{
 									"key": "createdDateTo",
 									"value": "2021-12-12",
-									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
-									"disabled": true
+									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
 								},
 								{
 									"key": "orderBy",

@@ -24,6 +24,25 @@ export enum OrganizationTypes {
     Unknown = 'Unknown'
 }
 
+export const OrganizationTypeList: OrganizationTypes [] = [
+    OrganizationTypes.Clinic,
+    OrganizationTypes.Hospital,
+    OrganizationTypes.DiagnosticLab,
+    OrganizationTypes.DiagnosticLab_Pathology,
+    OrganizationTypes.DiagnosticLab_Imaging,
+    OrganizationTypes.Pharmacy,
+    OrganizationTypes.AmbulanceService,
+    OrganizationTypes.GovernmentPrimaryHealthCareCentre,
+    OrganizationTypes.GovernmentNodalHospital,
+    OrganizationTypes.GovernmentDistrictHospital,
+    OrganizationTypes.MunicipalHospital,
+    OrganizationTypes.BloodBank,
+    OrganizationTypes.NursingHome,
+    OrganizationTypes.SpecializedCareCentre,
+    OrganizationTypes.AmbulatoryProcedureCentre,
+    OrganizationTypes.Unknown,
+];
+
 //#endregion
 
 //#region Domain models

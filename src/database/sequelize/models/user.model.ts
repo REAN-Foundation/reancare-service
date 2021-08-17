@@ -108,13 +108,5 @@ export default class User extends Model {
 
     @DeletedAt
     DeletedAt: Date;
-
-    @BeforeCreate
-    @BeforeUpdate
-    static encryptPassword(user) {
-        if (user.Password != null) {
-            user.Password = Helper.hash(user.Password);
-        }
-    }
-
+    
 }

@@ -192,7 +192,7 @@ export class DoctorController {
             }
 
             const userDomainModel: UserDomainModel = doctorDomainModel.User;
-            const updatedUser = await this._userService.update(doctorDomainModel.UserId, userDomainModel);
+            const updatedUser = await this._userService.update(doctorDomainModel.User.id, userDomainModel);
             if (!updatedUser) {
                 throw new ApiError(400, 'Unable to update user!');
             }

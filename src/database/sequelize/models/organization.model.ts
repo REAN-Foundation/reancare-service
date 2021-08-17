@@ -16,7 +16,7 @@ import {
     HasMany,
     ForeignKey,
 } from 'sequelize-typescript';
-import { OrganizationTypes } from '../../../domain.types/organization.domain.types';
+import { OrganizationTypeList } from '../../../domain.types/organization.domain.types';
 
 import { v4 } from 'uuid';
 import Address from './address.model';
@@ -55,24 +55,8 @@ export default class Organization extends Model {
     Name: string;
 
     @Column({
-        type   : DataType.ENUM,
-        values : [
-            OrganizationTypes.Clinic,
-            OrganizationTypes.Hospital,
-            OrganizationTypes.DiagnosticLab,
-            OrganizationTypes.Pharmacy,
-            OrganizationTypes.AmbulanceService,
-            OrganizationTypes.GovernmentPrimaryHealthCareCentre,
-            OrganizationTypes.GovernmentNodalHospital,
-            OrganizationTypes.GovernmentDistrictHospital,
-            OrganizationTypes.MunicipalHospital,
-            OrganizationTypes.MunicipalHospital,
-            OrganizationTypes.BloodBank,
-            OrganizationTypes.NursingHome,
-            OrganizationTypes.SpecializedCareCentre,
-            OrganizationTypes.AmbulatoryProcedureCentre,
-            OrganizationTypes.Unknown,
-        ],
+        type         : DataType.ENUM,
+        values       : OrganizationTypeList,
         defaultValue : 'Unknown',
         allowNull    : false,
     })

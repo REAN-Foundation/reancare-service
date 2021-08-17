@@ -28,7 +28,9 @@
             "Address.Update",
             "Address.Delete",
             "Address.GetByPersonId",
-            "Address.GetByOrganizationId"
+            "Address.GetByOrganizationId",
+            "Doctor.Search",
+            "Doctor.GetByUserId"
         ]
     },
     {
@@ -53,7 +55,9 @@
             "Address.Update",
             "Address.Delete",
             "Address.GetByPersonId",
-            "Address.GetByOrganizationId"
+            "Address.GetByOrganizationId",
+            "Doctor.Search",
+            "Doctor.GetByUserId"
         ]
     },
     {
@@ -81,7 +85,10 @@
             "Address.Update",
             "Address.Delete",
             "Address.GetByPersonId",
-            "Address.GetByOrganizationId"
+            "Address.GetByOrganizationId",
+            "Doctor.Search",
+            "Doctor.GetByUserId",
+            "Doctor.UpdateByUserId"
         ]
     },
     {
@@ -108,7 +115,9 @@
             "Address.Update",
             "Address.Delete",
             "Address.GetByPersonId",
-            "Address.GetByOrganizationId"
+            "Address.GetByOrganizationId",
+            "Doctor.Search",
+            "Doctor.GetByUserId"
         ]
     },
     {
@@ -135,7 +144,9 @@
             "Address.Update",
             "Address.Delete",
             "Address.GetByPersonId",
-            "Address.GetByOrganizationId"
+            "Address.GetByOrganizationId",
+            "Doctor.Search",
+            "Doctor.GetByUserId"
         ]
     }
 ]

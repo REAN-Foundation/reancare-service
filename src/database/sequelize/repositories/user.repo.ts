@@ -72,7 +72,7 @@ export class UserRepo implements IUserRepo {
                 PersonId        : userDomainModel.Person.id,
                 RoleId          : userDomainModel.RoleId ?? null,
                 UserName        : userDomainModel.UserName,
-                Password        : userDomainModel.Password ?? null,
+                Password        : userDomainModel.Password ? Helper.hash(userDomainModel.Password) : null,
                 DefaultTimeZone : userDomainModel.DefaultTimeZone ?? '+05:30',
                 CurrentTimeZone : userDomainModel.DefaultTimeZone ?? '+05:30',
             };
@@ -110,7 +110,7 @@ export class UserRepo implements IUserRepo {
                 user.UserName = userDomainModel.UserName;
             }
             if (userDomainModel.Password != null) {
-                user.Password = userDomainModel.Password;
+                user.Password = Helper.hash(userDomainModel.Password);
             }
             if (userDomainModel.LastLogin != null) {
                 user.LastLogin = userDomainModel.LastLogin;

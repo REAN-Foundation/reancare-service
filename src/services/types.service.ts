@@ -1,4 +1,4 @@
-import { OrganizationTypes } from "../domain.types/organization.domain.types";
+import { OrganizationTypeList } from "../domain.types/organization.domain.types";
 import { inject, injectable } from "tsyringe";
 
 import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
@@ -21,23 +21,7 @@ export class TypesService {
         
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return new Promise((resolve, reject) => {
-            resolve([
-                OrganizationTypes.Clinic,
-                OrganizationTypes.Hospital,
-                OrganizationTypes.DiagnosticLab,
-                OrganizationTypes.Pharmacy,
-                OrganizationTypes.AmbulanceService,
-                OrganizationTypes.GovernmentPrimaryHealthCareCentre,
-                OrganizationTypes.GovernmentNodalHospital,
-                OrganizationTypes.GovernmentDistrictHospital,
-                OrganizationTypes.MunicipalHospital,
-                OrganizationTypes.MunicipalHospital,
-                OrganizationTypes.BloodBank,
-                OrganizationTypes.NursingHome,
-                OrganizationTypes.SpecializedCareCentre,
-                OrganizationTypes.AmbulatoryProcedureCentre,
-                OrganizationTypes.Unknown,
-            ]);
+            resolve(OrganizationTypeList);
         });
     };
 

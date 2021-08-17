@@ -13,10 +13,11 @@ export class DoctorRepo implements IDoctorRepo {
 
     create = async (doctorDomainModel: DoctorDomainModel): Promise<DoctorDetailsDto> => {
 
-        var specialities = doctorDomainModel.Specialities.length > 0 ?
+        var specialities = doctorDomainModel.Specialities && doctorDomainModel.Specialities.length > 0 ?
             JSON.stringify(doctorDomainModel.Specialities) : '[]';
 
-        var professionalHighlights = doctorDomainModel.ProfessionalHighlights.length > 0 ?
+        var professionalHighlights = doctorDomainModel.ProfessionalHighlights &&
+            doctorDomainModel.ProfessionalHighlights.length > 0 ?
             JSON.stringify(doctorDomainModel.ProfessionalHighlights) : '[]';
 
         try {

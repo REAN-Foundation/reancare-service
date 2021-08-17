@@ -10,14 +10,11 @@ import {
 
 export class DoctorValidator {
 
-    static getDomainModel = async (
-        request: express.Request
-    ): Promise<DoctorDomainModel> => {
-        const birthdate =
-            request.body.BirthDate != null &&
-            typeof request.body.BirthDate !== undefined
-                ? new Date(Date.parse(request.body.BirthDate))
-                : null;
+    static getDomainModel = (request: express.Request): DoctorDomainModel => {
+
+        const birthdate = request.body.BirthDate != null && typeof request.body.BirthDate !== undefined
+            ? new Date(Date.parse(request.body.BirthDate))
+            : null;
 
         const phone = request.body.Phone;
 
@@ -392,7 +389,7 @@ export class DoctorValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return request.params.id;
+        return request.params.userId;
     }
 
     static updateByUserId = async (request: express.Request): Promise<DoctorDomainModel> => {
@@ -400,8 +397,8 @@ export class DoctorValidator {
         const userId = await DoctorValidator.getParamUserId(request);
         await DoctorValidator.validateBody(request, false);
 
-        const domainModel = DoctorValidator.getDomainModel(request);
-        (await domainModel).UserId = userId;
+        var domainModel = DoctorValidator.getDomainModel(request);
+        domainModel.UserId = userId;
 
         return domainModel;
     };

@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import { IRoleRepo } from "../data/repository.interfaces/role.repo.interface";
-import { RoleDto } from "../data/domain.types/role.domain.types";
+import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
+import { RoleDto } from "../domain.types/role.domain.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,4 +26,5 @@ export class RoleService {
     delete = async (id: number): Promise<boolean> => {
         return await this._roleRepo.delete(id);
     };
+
 }

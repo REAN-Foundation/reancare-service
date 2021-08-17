@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 
 export class Logger {
     
@@ -6,26 +7,27 @@ export class Logger {
     private constructor() {
     }
 
-    public static instance() {
+    public static instance(): Logger {
         return this._instance || (this._instance = new this());
     }
     
-    public log = (message) => {
+    public log = (message: string): void => {
         const dateTime = new Date().toISOString();
-        var temp_str = dateTime + '> ' + message;
+        const temp_str = dateTime + '> ' + message;
         console.log(' ');
         console.log(temp_str);
     }
     
-    public error = (message, code, details) => {
+    public error = (message: string, code: number, details: unknown): void => {
         const dateTime = new Date().toISOString();
-        var err = {
-            message: message,
-            code: code,
-            details: details
+        const err = {
+            message : message,
+            code    : code,
+            details : details
         };
-        var temp_str = dateTime + '> ' + JSON.stringify(err, null, '    ');
+        const temp_str = dateTime + '> ' + JSON.stringify(err, null, '    ');
         console.log(' ');
         console.log(temp_str);
     }
+
 }

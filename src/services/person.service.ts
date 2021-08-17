@@ -1,7 +1,7 @@
-import { IPersonRepo } from '../data/repository.interfaces/person.repo.interface';
-import { IPersonRoleRepo } from '../data/repository.interfaces/person.role.repo.interface';
-import { IRoleRepo } from '../data/repository.interfaces/role.repo.interface';
-import { PersonDomainModel, PersonDetailsDto, PersonDto, PersonSearchFilters } from '../data/domain.types/person.domain.types';
+import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
+import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
+import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
+import { PersonDomainModel, PersonDetailsDto, PersonDto, PersonSearchFilters } from '../domain.types/person.domain.types';
 import { injectable, inject } from 'tsyringe';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -15,9 +15,9 @@ export class PersonService {
         @inject('IRoleRepo') private _roleRepo: IRoleRepo
     ) {}
 
-    create = async (personDomainModel: PersonDomainModel) => {
+    create = async (personDomainModel: PersonDomainModel): Promise<PersonDetailsDto> => {
 
-        var person = await this._personRepo.create(personDomainModel);
+        const person = await this._personRepo.create(personDomainModel);
         if (person == null) {
             return null;
         }
@@ -33,14 +33,9 @@ export class PersonService {
     };
 
     public search = async (
-        filters: PersonSearchFilters,
-        full: boolean = false
+        filters: PersonSearchFilters
     ): Promise<PersonDetailsDto[] | PersonDto[]> => {
-        if (full) {
-            return await this._personRepo.searchFull(filters);
-        } else {
-            return await this._personRepo.search(filters);
-        }
+        return await this._personRepo.search(filters);
     };
 
     public update = async (id: string, personDomainModel: PersonDomainModel): Promise<PersonDetailsDto> => {
@@ -54,6 +49,5 @@ export class PersonService {
     getPersonWithPhone = async (phone: string): Promise<PersonDetailsDto> => {
         return await this._personRepo.getPersonWithPhone(phone);
     };
-
 
 }

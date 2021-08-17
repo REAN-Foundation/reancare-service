@@ -4,7 +4,7 @@
             "fileMatch": [
                 "*.fhir.json"
             ],
-            "url": "./src/modules/ehr/standards/fhir/schema/fhir.schema.json"
+            "url": "./src/modules/ehr/specifications/fhir/schema/fhir.schema.json"
         }
     ]
 }

@@ -1,0 +1,9 @@
+{
+    "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "PatientEhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "Name": "Apple",
+    "Description": "",
+    "ConsumedCalories": 50,
+    "StartTime": "2021-07-14T01:30:00.000Z",
+    "EndTime": "2021-07-14T01:40:00.000Z"
+}

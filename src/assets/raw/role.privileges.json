@@ -14,7 +14,23 @@
             "User.ResetPassword",
             "User.GenerateOtp",
             "User.LoginWithPassword",
-            "Patient.Search"
+            "Patient.Search",
+            "Organization.Create",
+            "Organization.GetById",
+            "Organization.GetByContactUserId",
+            "Organization.Search",
+            "Organization.Update",
+            "Organization.Delete",
+            "Organization.GetById",
+            "Address.Create",
+            "Address.GetById",
+            "Address.Search",
+            "Address.Update",
+            "Address.Delete",
+            "Address.GetByPersonId",
+            "Address.GetByOrganizationId",
+            "Doctor.Search",
+            "Doctor.GetByUserId"
         ]
     },
     {
@@ -29,11 +45,19 @@
             "Patient.GetByUserId",
             "Patient.UpdateByUserId",
             "Patient.DeleteByUserId",
+            "Organization.GetById",
+            "Organization.GetByContactUserId",
+            "Organization.Search",
+            "Organization.GetById",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
             "Address.Update",
-            "Address.Delete"
+            "Address.Delete",
+            "Address.GetByPersonId",
+            "Address.GetByOrganizationId",
+            "Doctor.Search",
+            "Doctor.GetByUserId"
         ]
     },
     {
@@ -48,11 +72,23 @@
             "Patient.Search",
             "Patient.GetByUserId",
             "Patient.UpdateByUserId",
+            "Organization.Create",
+            "Organization.GetById",
+            "Organization.GetByContactUserId",
+            "Organization.Search",
+            "Organization.Update",
+            "Organization.Delete",
+            "Organization.GetById",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
             "Address.Update",
-            "Address.Delete"
+            "Address.Delete",
+            "Address.GetByPersonId",
+            "Address.GetByOrganizationId",
+            "Doctor.Search",
+            "Doctor.GetByUserId",
+            "Doctor.UpdateByUserId"
         ]
     },
     {
@@ -66,11 +102,22 @@
             "User.LoginWithPassword",
             "Patient.Search",
             "Patient.GetByUserId",
+            "Organization.Create",
+            "Organization.GetById",
+            "Organization.GetByContactUserId",
+            "Organization.Search",
+            "Organization.Update",
+            "Organization.Delete",
+            "Organization.GetById",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
             "Address.Update",
-            "Address.Delete"
+            "Address.Delete",
+            "Address.GetByPersonId",
+            "Address.GetByOrganizationId",
+            "Doctor.Search",
+            "Doctor.GetByUserId"
         ]
     },
     {
@@ -84,11 +131,22 @@
             "User.LoginWithPassword",
             "Patient.Search",
             "Patient.GetByUserId",
+            "Organization.Create",
+            "Organization.GetById",
+            "Organization.GetByContactUserId",
+            "Organization.Search",
+            "Organization.Update",
+            "Organization.Delete",
+            "Organization.GetById",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
             "Address.Update",
-            "Address.Delete"
+            "Address.Delete",
+            "Address.GetByPersonId",
+            "Address.GetByOrganizationId",
+            "Doctor.Search",
+            "Doctor.GetByUserId"
         ]
     }
 ]

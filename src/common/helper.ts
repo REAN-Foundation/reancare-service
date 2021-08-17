@@ -2,31 +2,46 @@ import * as fs from 'fs';
 import child_process from 'child_process';
 import { InputValidationError } from './input.validation.error';
 import { Gender } from './system.types';
-import { generate} from 'generate-password';
-import { scryptSync, randomBytes } from 'crypto';
+import { generate } from 'generate-password';
 import { hashSync, compareSync, genSaltSync } from 'bcryptjs';
 import * as crypto from 'crypto';
 import express from 'express';
+
 ////////////////////////////////////////////////////////////////////////
 
 export class Helper {
 
     static getResourceOwner = (request: express.Request): string => {
-        if(request.params.userId) {
+        if (request.params.userId) {
             return request.params.userId;
         }
-        if(request.params.patientUserId) {
+        if (request.params.patientUserId) {
             return request.params.patientUserId;
         }
-        if(request.params.doctorUserId) {
+        if (request.params.doctorUserId) {
             request.params.doctorUserId;
         }
         return null;
     }
 
     static dumpJson(obj, filename) {
-        var txt = JSON.stringify(obj, null, '    ');
+        const txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);
+    }
+    
+    static jsonToObj = (jsonPath) => {
+
+        if (!fs.existsSync(jsonPath)) {
+            return null;
+        }
+
+        const rawdata = fs.readFileSync(jsonPath, {
+            encoding : 'utf8',
+            flag     : 'r',
+        });
+
+        const obj = JSON.parse(rawdata);
+        return obj;
     }
 
     static executeCommand = (command: string): Promise<string> => {
@@ -50,20 +65,20 @@ export class Helper {
 
     static getSessionHeaders = (token: string) => {
         return {
-            'Content-Type': 'application/json; charset=utf-8',
-            Accept: '*/*',
-            'Cache-Control': 'no-cache',
-            'Accept-Encoding': 'gzip, deflate, br',
-            Connection: 'keep-alive',
-            Authorization: 'Bearer ' + token,
+            'Content-Type'    : 'application/json; charset=utf-8',
+            Accept            : '*/*',
+            'Cache-Control'   : 'no-cache',
+            'Accept-Encoding' : 'gzip, deflate, br',
+            Connection        : 'keep-alive',
+            Authorization     : 'Bearer ' + token,
         };
     };
 
     static getNeedleOptions = (headers) => {
         return {
-            headers: headers,
-            compressed: true,
-            json: true,
+            headers    : headers,
+            compressed : true,
+            json       : true,
         };
     };
 
@@ -71,12 +86,12 @@ export class Helper {
         function onlyUnique(value, index, self) {
             return self.indexOf(value) === index;
         }
-        var unique = arr.filter(onlyUnique);
+        const unique = arr.filter(onlyUnique);
         return unique;
     }
 
     static areStringsOverlapping = (firstStr: string, secondStr: string) => {
-        if (firstStr.indexOf(secondStr) != -1 || secondStr.indexOf(firstStr) != -1) {
+        if (firstStr.indexOf(secondStr) !== -1 || secondStr.indexOf(firstStr) !== -1) {
             return true;
         }
         return false;
@@ -100,32 +115,32 @@ export class Helper {
     };
 
     static handleValidationError = (result) => {
-        var index = 1;
-        var errorMessages = [];
-        for (var er of result.errors) {
+        let index = 1;
+        const errorMessages = [];
+        for (const er of result.errors) {
             errorMessages.push(` ${index}. ${er.msg} - <${er.value}> for <${er.param}> in ${er.location}`);
             index++;
         }
         throw new InputValidationError(errorMessages);
     };
 
-    static getAgeFromBirthDate = (birthdate: Date, onlyYears: boolean = false): string => {
+    static getAgeFromBirthDate = (birthdate: Date, onlyYears = false): string => {
         if (birthdate === null) {
             return '';
         }
-        var bd = birthdate.getTime();
-        var milsecs = Date.now() - bd;
+        const bd = birthdate.getTime();
+        const milsecs = Date.now() - bd;
 
         const milsecInYear = 365 * 24 * 3600 * 1000;
         const milsecsInMonth = 30 * 24 * 3600 * 1000;
 
-        var years = Math.floor(milsecs / milsecInYear);
-        var remainder = milsecs % milsecInYear;
-        var months = Math.floor(remainder / milsecsInMonth);
+        const years = Math.floor(milsecs / milsecInYear);
+        const remainder = milsecs % milsecInYear;
+        const months = Math.floor(remainder / milsecsInMonth);
 
-        var age = years > 0 ? years.toString() + ' years' : '';
+        let age = years > 0 ? years.toString() + ' years' : '';
         if (onlyYears) {
-            if (age.length == 0) {
+            if (age.length === 0) {
                 return '0 years';
             }
             return age;
@@ -135,10 +150,10 @@ export class Helper {
     };
 
     static guessPrefixByGender = (gender: Gender) => {
-        if (gender == 'Male' || gender == 'male') {
+        if (gender === 'Male' || gender === 'male') {
             return 'Mr.';
         }
-        if (gender == 'Female' || gender == 'female') {
+        if (gender === 'Female' || gender === 'female') {
             return 'Miss.';
         }
         return ''; //Return empty prefix
@@ -152,9 +167,9 @@ export class Helper {
         var prefix = Helper.checkStr(prefix) ? prefix + ' ' : '';
         var firstName = Helper.checkStr(firstName) ? firstName + ' ' : '';
         var lastName = Helper.isStr(lastName) ? lastName : '';
-        var displayName: string = prefix + firstName + lastName;
+        let displayName: string = prefix + firstName + lastName;
         displayName = displayName.trim();
-        if(displayName.length === 0) {
+        if (displayName.length === 0) {
             displayName = 'unknown';
         }
         return displayName;
@@ -162,12 +177,12 @@ export class Helper {
 
     static getGender = (str: string): Gender => {
         if (
-            str != 'Male' &&
-            str != 'Female' &&
-            str != 'male' &&
-            str != 'female' &&
-            str != 'Other' &&
-            str != 'other'
+            str !== 'Male' &&
+            str !== 'Female' &&
+            str !== 'male' &&
+            str !== 'female' &&
+            str !== 'Other' &&
+            str !== 'other'
         ) {
             return 'Unknown';
         }
@@ -175,26 +190,26 @@ export class Helper {
     };
 
     static formatDate = (date) => {
-        var d = new Date(date);
-        var month = ('00' + (d.getMonth() + 1).toString()).slice(-2);
-        var day = ('00' + d.getDate().toString()).slice(-2);
-        var year = d.getFullYear();
+        const d = new Date(date);
+        const month = ('00' + (d.getMonth() + 1).toString()).slice(-2);
+        const day = ('00' + d.getDate().toString()).slice(-2);
+        const year = d.getFullYear();
         return [year, month, day].join('-');
     };
 
     static isAlpha = (c) => {
-        var alphas = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        return alphas.indexOf(c) != -1;
+        const alphas = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        return alphas.indexOf(c) !== -1;
     };
 
     static isAlphaVowel = (c) => {
-        var alphas = 'aeiouAEIOU';
-        return alphas.indexOf(c) != -1;
+        const alphas = 'aeiouAEIOU';
+        return alphas.indexOf(c) !== -1;
     };
 
     static isDigit = (c) => {
-        var digits = '0123456789';
-        return digits.indexOf(c) != -1;
+        const digits = '0123456789';
+        return digits.indexOf(c) !== -1;
     };
 
     static isAlphaNum = (c) => {
@@ -202,7 +217,7 @@ export class Helper {
     };
 
     static hasAlpha = (str: string) => {
-        for (var c of str) {
+        for (const c of str) {
             if (Helper.isAlpha(c)) {
                 return true;
             }
@@ -211,9 +226,9 @@ export class Helper {
     };
 
     static getDigitsOnly = (str: string): string => {
-        var temp: string = '';
-        for (var x = 0; x < str.length; x++) {
-            var c = str.charAt(x);
+        let temp = '';
+        for (let x = 0; x < str.length; x++) {
+            const c = str.charAt(x);
             if (Helper.isDigit(c)) {
                 temp += c;
             }
@@ -249,43 +264,37 @@ export class Helper {
         return true;
     }
 
-    static checkObj(val: any): object {
-        if (val === null || typeof val === 'undefined' || typeof val !== 'object') {
-            return null;
-        }
-        return val;
-    }
-
     static generatePassword(): string {
-        var password = generate({
-            length: 8,
-            numbers: true,
-            lowercase: true,
-            uppercase: true,
-            symbols: true,
+        const password = generate({
+            length    : 8,
+            numbers   : true,
+            lowercase : true,
+            uppercase : true,
+            symbols   : true,
         });
         return password;
     }
 
     static sanitizePhone(phone: string) {
-        var tokens = phone.split('-');
-        var countryCode = tokens[0];
-        var phoneNumber = tokens.length > 2 ? tokens.slice(1, ).join() : tokens[1];
+        const tokens = phone.split('-');
+        let countryCode = tokens[0];
+        let phoneNumber = tokens.length > 2 ? tokens.slice(1, ).join() : tokens[1];
         countryCode = '+' + Helper.getDigitsOnly(countryCode);
         phoneNumber = Helper.getDigitsOnly(phoneNumber);
         return countryCode + '-' + phoneNumber;
     }
 
     static validatePhone(phone: string) {
-        var tokens = phone.split('-');
-        var countryCode = tokens[0];
-        var phoneNumber = tokens[1];
-        var validCountryCode = Helper.isStr(countryCode) && countryCode.length > 0;
+        const tokens = phone.split('-');
+        const countryCode = tokens[0];
+        const phoneNumber = tokens[1];
+        const validCountryCode = Helper.isStr(countryCode) && countryCode.length > 0;
         if (!validCountryCode) {
             return Promise.reject('Invalid country code');
         }
-        var validPhoneNumber = Helper.isStr(phoneNumber) && phoneNumber.length > 9;
+        const validPhoneNumber = Helper.isStr(phoneNumber) && phoneNumber.length > 9;
         if (!validPhoneNumber) {
+
             //throw new InputValidationError(['Invalid phone number']);
             return Promise.reject('Invalid phone number');
         }
@@ -303,18 +312,18 @@ export class Helper {
     };
 
     public static encodeToBase64 = (str: string) => {
-        var buffer = Buffer.from(str, 'utf-8');
+        const buffer = Buffer.from(str, 'utf-8');
         return buffer.toString('base64');
     };
 
     public static decodeFromBase64 = (str: string) => {
-        var buffer = Buffer.from(str, 'base64');
+        const buffer = Buffer.from(str, 'base64');
         return buffer.toString('utf-8');
     };
 
     public static hash = (str: string) => {
-        var salt = genSaltSync(8);
-        var hashed = hashSync(str, salt);
+        const salt = genSaltSync(8);
+        const hashed = hashSync(str, salt);
         return hashed;
     };
 
@@ -327,8 +336,8 @@ export class Helper {
     public static encrypt = (str: string) => {
         const algorithm = 'aes-256-ctr';
         const LENGTH = 16;
-        let iv = crypto.randomBytes(LENGTH);
-        let cipher = crypto.createCipheriv(algorithm, Buffer.from(process.env.CIPHER_SALT, 'hex'), iv);
+        const iv = crypto.randomBytes(LENGTH);
+        const cipher = crypto.createCipheriv(algorithm, Buffer.from(process.env.CIPHER_SALT, 'hex'), iv);
         let encrypted = cipher.update(str);
         encrypted = Buffer.concat([encrypted, cipher.final()]);
         return iv.toString('hex') + ':' + encrypted.toString('hex');
@@ -336,13 +345,14 @@ export class Helper {
 
     public static decrypt = (str: string) => {
         const algorithm = 'aes-256-ctr';
-        let tokens = str.split(':');
-        let iv = Buffer.from(tokens.shift(), 'hex');
-        let encryptedText = Buffer.from(tokens.join(':'), 'hex');
-        let decipher = crypto.createDecipheriv(algorithm, Buffer.from(process.env.CIPHER_SALT, 'hex'), iv);
+        const tokens = str.split(':');
+        const iv = Buffer.from(tokens.shift(), 'hex');
+        const encryptedText = Buffer.from(tokens.join(':'), 'hex');
+        const decipher = crypto.createDecipheriv(algorithm, Buffer.from(process.env.CIPHER_SALT, 'hex'), iv);
         let decrypted = decipher.update(encryptedText);
         decrypted = Buffer.concat([decrypted, decipher.final()]);
         return decrypted.toString();
     }
+
 }
 

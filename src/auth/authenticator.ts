@@ -4,7 +4,7 @@ import { IAuthenticator } from './authenticator.interface';
 import { injectable, inject } from "tsyringe";
 
 import { ResponseHandler } from '../common/response.handler';
-import {Logger } from '../common/logger';
+import { Logger } from '../common/logger';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -19,10 +19,10 @@ export class Authenticator {
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
-    ) => {
+    ): Promise<boolean> => {
         try {
-            var authResult = await this._authenticator.authenticateUser(request, response);
-            if(authResult.Result == false){
+            const authResult = await this._authenticator.authenticateUser(request, response);
+            if (authResult.Result === false){
                 ResponseHandler.failure(request, response, authResult.Message, authResult.HttpErrorCode);
                 return false;
             }
@@ -37,10 +37,10 @@ export class Authenticator {
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
-    ) => {
+    ): Promise<boolean> => {
         try {
-            var authResult = await this._authenticator.authenticateClient(request, response);
-            if(authResult.Result == false){
+            const authResult = await this._authenticator.authenticateClient(request, response);
+            if (authResult.Result === false){
                 ResponseHandler.failure(request, response, authResult.Message, authResult.HttpErrorCode);
                 return false;
             }
@@ -50,7 +50,7 @@ export class Authenticator {
             ResponseHandler.failure(request, response, 'Client authentication error: ' + error.message, 401);
         }
     };
-}
 
+}
 
 ////////////////////////////////////////////////////////////////////////

@@ -244,6 +244,54 @@ export class OrganizationController {
         }
     };
 
+    addPerson = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Organization.AddPerson';
+            await this._authorizer.authorize(request, response);
+
+            const { id, personId } = await OrganizationValidator.addOrRemovePerson(request);
+            const existingOrganization = await this._service.getById(id);
+            if (existingOrganization == null) {
+                throw new ApiError(404, 'Organization not found.');
+            }
+
+            const added = await this._service.addPerson(id, personId);
+            if (!added) {
+                throw new ApiError(400, 'Person cannot be added to the organization.');
+            }
+
+            ResponseHandler.success(request, response, 'Person added to organization successfully!', 200, {
+                Added : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    removePerson = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Organization.RemovePerson';
+            await this._authorizer.authorize(request, response);
+
+            const { id, personId } = await OrganizationValidator.addOrRemovePerson(request);
+            const existingOrganization = await this._service.getById(id);
+            if (existingOrganization == null) {
+                throw new ApiError(404, 'Organization not found.');
+            }
+
+            const removed = await this._service.removePerson(id, personId);
+            if (!removed) {
+                throw new ApiError(400, 'Person cannot be removed from the organization..');
+            }
+
+            ResponseHandler.success(request, response, 'Person removed from organization successfully!', 200, {
+                Removed : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

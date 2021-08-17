@@ -336,4 +336,28 @@ export class OrganizationValidator {
         return { id, addressId };
     };
 
+    static addOrRemovePerson = async (request: express.Request): Promise<{ id: string; personId: string }> => {
+
+        await param('id').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await param('personId').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        const id = request.params.id;
+        const personId = request.params.personId;
+
+        return { id, personId };
+    };
+
 }

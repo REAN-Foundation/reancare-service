@@ -47,4 +47,12 @@ export class OrganizationService {
         return await this._organizationRepo.removeAddress(id, addressId);
     }
 
+    addPerson = async (id: string, personId: string): Promise<boolean> => {
+        return await this._organizationRepo.addPerson(id, personId);
+    }
+
+    removePerson = async (id: string, personId: string): Promise<boolean> => {
+        return await this._organizationRepo.removePerson(id, personId);
+    }
+
 }

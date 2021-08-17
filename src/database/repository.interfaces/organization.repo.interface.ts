@@ -20,4 +20,8 @@ export interface IOrganizationRepo {
 
     removeAddress(id: string, addressId: string): Promise<boolean>;
 
+    addPerson(id: string, personId: string): Promise<boolean>;
+
+    removePerson(id: string, personId: string): Promise<boolean>;
+
 }

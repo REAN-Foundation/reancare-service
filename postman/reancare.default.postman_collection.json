@@ -3351,7 +3351,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"value": "Bearer {{DOCTOR_USER_JWT}}",
 										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
 										"type": "text"
 									},
@@ -4075,234 +4075,6 @@
 					]
 				},
 				{
-					"name": "Get address by person id",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Status).to.eql('success');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Address is returned\", function () {\r",
-									"\r",
-									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
-									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
-									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
-									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
-									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
-									"\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
-									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Longitude');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Lattitude');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
-									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
-									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
-									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
-									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
-									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
-									"\r",
-									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"\r",
-									"});\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{PATIENT_USER_JWT}}",
-								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-								"type": "text"
-							},
-							{
-								"key": "x-api-key",
-								"value": "{{API_CLIENT_INTERNAL_KEY}}",
-								"description": "API key for client authentication",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{BASE_URL}}/addresses/by-person/{{PATIENT_USER_ID}}",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"addresses",
-								"by-person",
-								"{{PATIENT_USER_ID}}"
-							]
-						},
-						"description": "Get an address by address id."
-					},
-					"response": []
-				},
-				{
-					"name": "Get address by organization id",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Status).to.eql('success');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Address is returned\", function () {\r",
-									"\r",
-									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
-									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
-									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
-									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
-									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
-									"\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
-									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Longitude');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Lattitude');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
-									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
-									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
-									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
-									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
-									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
-									"\r",
-									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"\r",
-									"});\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{PATIENT_USER_JWT}}",
-								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-								"type": "text"
-							},
-							{
-								"key": "x-api-key",
-								"value": "{{API_CLIENT_INTERNAL_KEY}}",
-								"description": "API key for client authentication",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{BASE_URL}}/addresses/by-organization/{{ORGANIZATION_ID}}",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"addresses",
-								"by-organization",
-								"{{ORGANIZATION_ID}}"
-							]
-						},
-						"description": "Get an address by address id."
-					},
-					"response": []
-				},
-				{
 					"name": "Update an address",
 					"event": [
 						{
@@ -4945,6 +4717,67 @@
 			"name": "Relationships",
 			"item": [
 				{
+					"name": "Add person to organization (Doctor-to-Clinic)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Person removed from organization\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Removed');\r",
+									"    pm.expect(jsonRes.Data.Removed).to.eql(true);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{DOCTOR_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/organizations/{{ORGANIZATION_ID}}/remove-person/{{DOCTOR_PERSON_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"organizations",
+								"{{ORGANIZATION_ID}}",
+								"remove-person",
+								"{{DOCTOR_PERSON_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get organizations by person id",
 					"event": [
 						{
@@ -5060,6 +4893,67 @@
 							]
 						},
 						"description": "Get an address by address id."
+					},
+					"response": []
+				},
+				{
+					"name": "Remove person from organization (Doctor-from-Clinic) Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Person added to organization\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Added');\r",
+									"    pm.expect(jsonRes.Data.Added).to.eql(true);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{DOCTOR_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/organizations/{{ORGANIZATION_ID}}/add-person/{{DOCTOR_PERSON_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"organizations",
+								"{{ORGANIZATION_ID}}",
+								"add-person",
+								"{{DOCTOR_PERSON_ID}}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -5288,6 +5182,234 @@
 							],
 							"path": [
 								"organizations",
+								"{{ORGANIZATION_ID}}"
+							]
+						},
+						"description": "Get an address by address id."
+					},
+					"response": []
+				},
+				{
+					"name": "Get address by person id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Address is returned\", function () {\r",
+									"\r",
+									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
+									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
+									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
+									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Longitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Lattitude');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
+									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
+									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
+									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
+									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
+									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
+									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
+									"\r",
+									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
+									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
+									"\r",
+									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
+									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
+									"\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/addresses/by-person/{{PATIENT_USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"addresses",
+								"by-person",
+								"{{PATIENT_USER_ID}}"
+							]
+						},
+						"description": "Get an address by address id."
+					},
+					"response": []
+				},
+				{
+					"name": "Get address by organization id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Address is returned\", function () {\r",
+									"\r",
+									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
+									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
+									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
+									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Longitude');\r",
+									"    pm.expect(jsonRes.Data.Address).to.have.property('Lattitude');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
+									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
+									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
+									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
+									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
+									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
+									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
+									"\r",
+									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
+									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
+									"\r",
+									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
+									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
+									"\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/addresses/by-organization/{{ORGANIZATION_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"addresses",
+								"by-organization",
 								"{{ORGANIZATION_ID}}"
 							]
 						},

@@ -10,14 +10,11 @@ import {
     IsUUID,
     PrimaryKey,
     Length,
-    BeforeCreate,
-    BeforeUpdate,
     IsDate,
     ForeignKey,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import { Helper } from '../../../common/helper';
 import Person from './person.model';
 import Role from './role.model';
 

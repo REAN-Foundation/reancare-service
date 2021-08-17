@@ -1,7 +1,6 @@
 import { Helper } from '../../../../../../common/helper';
 import { Logger } from '../../../../../../common/logger';
 import { PatientDomainModel, PatientSearchFilters } from '../../../../../../domain.types/patient.domain.types';
-import { PersonDomainModel } from '../../../../../../domain.types/person.domain.types';
 import { IPatientStore } from '../../../../interfaces/patient.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';

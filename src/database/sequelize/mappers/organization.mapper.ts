@@ -38,22 +38,23 @@ export class OrganizationMapper {
         }
 
         const dto: OrganizationDto = {
-            id: organization.id,
-            Type: organization.Type,
-            Name: organization.Name,
-            ContactUser: contactUser,
-            ContactPhone: organization.ContactPhone,
-            ContactEmail: organization.ContactEmail,
-            ParentOrganization: parentOrganization,
-            About: organization.About,
-            OperationalSince: organization.OperationalSince,
-            Addresses: addresses,
-            ImageResourceId: organization.ImageResourceId,
-            IsHealthFacility: organization.IsHealthFacility,
-            NationalHealthFacilityRegistryId: organization.NationalHealthFacilityRegistryId,
+            id                               : organization.id,
+            Type                             : organization.Type,
+            Name                             : organization.Name,
+            ContactUser                      : contactUser,
+            ContactPhone                     : organization.ContactPhone,
+            ContactEmail                     : organization.ContactEmail,
+            ParentOrganization               : parentOrganization,
+            About                            : organization.About,
+            OperationalSince                 : organization.OperationalSince,
+            Addresses                        : addresses,
+            ImageResourceId                  : organization.ImageResourceId,
+            IsHealthFacility                 : organization.IsHealthFacility,
+            NationalHealthFacilityRegistryId : organization.NationalHealthFacilityRegistryId,
         };
 
         return dto;
     };
+    
 }
 

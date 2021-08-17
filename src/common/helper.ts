@@ -6,7 +6,6 @@ import { generate } from 'generate-password';
 import { hashSync, compareSync, genSaltSync } from 'bcryptjs';
 import * as crypto from 'crypto';
 import express from 'express';
-import path from 'path';
 
 ////////////////////////////////////////////////////////////////////////
 

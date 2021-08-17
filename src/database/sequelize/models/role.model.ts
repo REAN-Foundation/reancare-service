@@ -9,7 +9,7 @@ import {
     PrimaryKey,
     Length,
     IsInt
-    } from 'sequelize-typescript';
+} from 'sequelize-typescript';
 
 ///////////////////////////////////////////////////////////////////////
 

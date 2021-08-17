@@ -10,7 +10,7 @@ import {
     PrimaryKey,
     IsInt,
     ForeignKey
-    } from 'sequelize-typescript';
+} from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import Role from './role.model';

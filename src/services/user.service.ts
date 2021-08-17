@@ -81,7 +81,7 @@ export class UserService {
                 throw new ApiError(404, message);
             }
         } else if (otpDetails.Email) {
-            person = await this._personRepo.getPersonWithPhone(otpDetails.Email);
+            person = await this._personRepo.getPersonWithEmail(otpDetails.Email);
             if (person == null) {
                 const message = 'User does not exist with email(' + otpDetails.Email + ')';
                 throw new ApiError(404, message);

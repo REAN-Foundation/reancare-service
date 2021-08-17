@@ -1,4 +1,3 @@
-import { Organizations } from 'aws-sdk';
 import {
     Table,
     Column,
@@ -9,10 +8,9 @@ import {
     DeletedAt,
     IsUUID,
     PrimaryKey,
-    Length, 
+    Length,
     ForeignKey,
-    HasOne,
-    BelongsTo} from 'sequelize-typescript';
+    BelongsTo } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import Organization from './organization.model';

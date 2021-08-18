@@ -9,7 +9,7 @@ export class OrganizationValidator {
 
     static getDomainModel = (request: express.Request): OrganizationDomainModel => {
         const organizationModel: OrganizationDomainModel = {
-            Type                             : request.body.Type ?? 'Unknown',
+            Type                             : request.body.Type ?? null,
             Name                             : request.body.Name ?? null,
             ContactUserId                    : request.body.ContactUserId ?? null,
             ContactPhone                     : request.body.ContactPhone ?? null,

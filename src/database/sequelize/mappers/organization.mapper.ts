@@ -1,7 +1,6 @@
 import Organization from '../models/organization.model';
 import { OrganizationDto } from "../../../domain.types/organization.domain.types";
 import { UserRepo } from "../repositories/user.repo";
-import { OrganizationRepo } from "../repositories/organization.repo";
 import { AddressRepo } from "../repositories/address.repo";
 import { AddressDto } from '../../../domain.types/address.domain.types';
 
@@ -11,7 +10,7 @@ export class OrganizationMapper {
 
     static toDto = async (
         organization: Organization,
-        addParent = true,
+        parentOrganization = null,
         addAddresses = true
     ): Promise<OrganizationDto> => {
         
@@ -23,12 +22,6 @@ export class OrganizationMapper {
         if (organization.ContactUserId != null) {
             const userRepo = new UserRepo();
             contactUser = await userRepo.getById(organization.ContactUserId);
-        }
-
-        var parentOrganization = null;
-        if (organization.ParentOrganizationId !== null && addParent) {
-            const organizationRepo = new OrganizationRepo();
-            parentOrganization = await organizationRepo.getById(organization.ParentOrganizationId);
         }
 
         var addresses: AddressDto[] = [];

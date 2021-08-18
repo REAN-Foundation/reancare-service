@@ -865,17 +865,11 @@
 									"\r",
 									"pm.environment.set(\"ORGANIZATION_TYPE\", 'Clinic');\r",
 									"pm.environment.set(\"ORGANIZATION_NAME\", 'Shree Clinic');\r",
-									"pm.environment.set(\"CONTACT_USER_ID\", null);\r",
 									"pm.environment.set(\"CONTACT_ORGANIZATION_PHONE\", '+91-1234567890');\r",
 									"pm.environment.set(\"CONTACT_ORGANIZATION_EMAIL\", 'xyz@gmail.com');\r",
-									"pm.environment.set(\"PARENT_ORGANIZATION_ID\", null);\r",
 									"pm.environment.set(\"ABOUT_ORGANIZATION\", 'Shree Gastroenterology & Endoscopy Clinic');\r",
 									"pm.environment.set(\"ORGANIZATION_OPERATIONAL_SINCE\", '2017-05-08');\r",
 									"pm.environment.set(\"ORGANIZATION_IMAGE_RESOURCE_ID\", '80eb4c8b-f302-4612-9fe9-f832c6eb401f');\r",
-									"\r",
-									"\r",
-									"\r",
-									"\r",
 									""
 								],
 								"type": "text/javascript"
@@ -889,6 +883,7 @@
 									"\r",
 									"try {\r",
 									"    pm.environment.set(\"ORGANIZATION_ID\", jsonRes.Data.Organization.id);\r",
+									"    pm.environment.set(\"PARENT_ORGANIZATION_ID\", jsonRes.Data.Organization.id);\r",
 									"}\r",
 									"catch (error) {\r",
 									"    console.log(error.message);\r",
@@ -1117,6 +1112,9 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"pm.environment.set(\"ORGANIZATION_NAME\", 'Shree Hospital');\r",
+									"pm.environment.get(\"ORGANIZATION_TYPE\", \"Hospital\");\r",
+									"\r",
 									"\r",
 									"pm.test(\"Request is successfull\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -1126,8 +1124,6 @@
 									"\r",
 									"pm.test(\"Organization is updated\", function () {\r",
 									"\r",
-									"    var expectedType = pm.environment.get(\"ORGANIZATION_TYPE\");\r",
-									"    var expectedName = pm.environment.get(\"ORGANIZATION_NAME\");\r",
 									"    var expectedContactPhone = pm.environment.get(\"CONTACT_ORGANIZATION_PHONE\");\r",
 									"    var expectedContactEmail = pm.environment.get(\"CONTACT_ORGANIZATION_EMAIL\");\r",
 									"    var expectedOperationalSince = pm.environment.get(\"ORGANIZATION_OPERATIONAL_SINCE\");\r",
@@ -1267,7 +1263,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/organizations/search?type=Clinic&name=shr&operationalSinceFrom=1975-01-01&operationalSinceTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Name&order=ascending&pageIndex=0&itemsPerPage=25",
+							"raw": "{{BASE_URL}}/organizations/search?type=Hospital&name=shr&operationalSinceFrom=1975-01-01&operationalSinceTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Name&order=ascending&pageIndex=0&itemsPerPage=25",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1278,7 +1274,7 @@
 							"query": [
 								{
 									"key": "type",
-									"value": "Clinic",
+									"value": "Hospital",
 									"description": "Search by type of organization"
 								},
 								{
@@ -2993,6 +2989,7 @@
 											"    pm.environment.set(\"DOCTOR_USER_ID\", jsonRes.Data.Doctor.User.id);\r",
 											"    pm.environment.set(\"DOCTOR_PERSON_ID\", jsonRes.Data.Doctor.User.Person.id);\r",
 											"    pm.environment.set(\"PERSON_ID\", jsonRes.Data.Doctor.User.Person.id);\r",
+											"    pm.environment.set(\"CONTACT_USER_ID\", jsonRes.Data.Doctor.User.id);\r",
 											"}\r",
 											"catch (error) {\r",
 											"    console.log(error.message);\r",
@@ -3331,7 +3328,8 @@
 											"    var jsonRes = pm.response.json();\r",
 											"    pm.environment.set(\"DOCTOR_FIRST_NAME\", jsonRes.Data.Doctor.User.Person.FirstName);\r",
 											"    pm.environment.set(\"DOCTOR_EMAIL\", jsonRes.Data.Doctor.User.Person.Email);\r",
-											"\r",
+											"    pm.environment.set(\"CONTACT_USER_ID\", jsonRes.Data.Doctor.User.id);\r",
+											"    \r",
 											"    var phone = jsonRes.Data.Doctor.User.Person.Phone;\r",
 											"    var tokens = phone.split('-');\r",
 											"    var phoneNumber = tokens[1];\r",
@@ -4408,7 +4406,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/addresses/search?type={{ADDRESS_TYPE}}&addressLine={{ADDRESS_LINE_SEARCH_STRING}}&city={{ADDRESS_CITY_SEARCH_STRING}}&district={{ADDRESS_DISTRICT_SEARCH_STRING}}&state={{ADDRESS_STATE_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&postalCode={{ADDRESS_POSTAL_CODE_SEARCH_STRING}}&longitudeFrom={{ADDRESS_LONGITUDE_SEARCH_FROM}}&longitudeTo={{ADDRESS_LONGITUDE_SEARCH_TO}}&lattitudeFrom={{ADDRESS_LATTITUDE_SEARCH_FROM}}&lattitudeTo={{ADDRESS_LATTITUDE_SEARCH_TO}}&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25",
+							"raw": "{{BASE_URL}}/addresses/search?type=Official&city=Mum&district={{ADDRESS_DISTRICT_SEARCH_STRING}}&state={{ADDRESS_STATE_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&postalCode=412&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -4419,17 +4417,18 @@
 							"query": [
 								{
 									"key": "type",
-									"value": "{{ADDRESS_TYPE}}",
+									"value": "Official",
 									"description": "Type of the address"
 								},
 								{
 									"key": "addressLine",
 									"value": "{{ADDRESS_LINE_SEARCH_STRING}}",
-									"description": "Search string to match address line"
+									"description": "Search string to match address line",
+									"disabled": true
 								},
 								{
 									"key": "city",
-									"value": "{{ADDRESS_CITY_SEARCH_STRING}}",
+									"value": "Mum",
 									"description": "Search string for city"
 								},
 								{
@@ -4449,28 +4448,32 @@
 								},
 								{
 									"key": "postalCode",
-									"value": "{{ADDRESS_POSTAL_CODE_SEARCH_STRING}}",
+									"value": "412",
 									"description": "Search string for "
 								},
 								{
 									"key": "longitudeFrom",
 									"value": "{{ADDRESS_LONGITUDE_SEARCH_FROM}}",
-									"description": "Format: float value. \nStart of the range for longitude based search"
+									"description": "Format: float value. \nStart of the range for longitude based search",
+									"disabled": true
 								},
 								{
 									"key": "longitudeTo",
 									"value": "{{ADDRESS_LONGITUDE_SEARCH_TO}}",
-									"description": "Format: float value. \nEnd of the range for longitude based search"
+									"description": "Format: float value. \nEnd of the range for longitude based search",
+									"disabled": true
 								},
 								{
 									"key": "lattitudeFrom",
 									"value": "{{ADDRESS_LATTITUDE_SEARCH_FROM}}",
-									"description": "Format: float value.\nStart of the range for lattitude based search"
+									"description": "Format: float value.\nStart of the range for lattitude based search",
+									"disabled": true
 								},
 								{
 									"key": "lattitudeTo",
 									"value": "{{ADDRESS_LATTITUDE_SEARCH_TO}}",
-									"description": "Format: float value.\nEnd of the range for lattitude based search"
+									"description": "Format: float value.\nEnd of the range for lattitude based search",
+									"disabled": true
 								},
 								{
 									"key": "createdDateFrom",
@@ -4730,6 +4733,158 @@
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
 									"\r",
+									"pm.test(\"Person added to organization\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Added');\r",
+									"    pm.expect(jsonRes.Data.Added).to.eql(true);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{DOCTOR_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/organizations/{{ORGANIZATION_ID}}/add-person/{{DOCTOR_PERSON_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"organizations",
+								"{{ORGANIZATION_ID}}",
+								"add-person",
+								"{{DOCTOR_PERSON_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get organizations by person id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Organizations for person are returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Organizations');\r",
+									"    pm.expect(jsonRes.Data.Organizations).to.not.be.empty;\r",
+									"\r",
+									"    var count = jsonRes.Data.Organizations.length;\r",
+									"    pm.expect(count).to.be.greaterThan(0);\r",
+									"    pm.expect(jsonRes.Data.Organizations[0]).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Organizations[0]).to.have.property('Type');\r",
+									"    pm.expect(jsonRes.Data.Organizations[0]).to.have.property('Name');\r",
+									"    pm.expect(jsonRes.Data.Organizations[0]).to.have.property('ContactEmail');\r",
+									"    pm.expect(jsonRes.Data.Organizations[0]).to.have.property('ContactPhone');\r",
+									"    pm.expect(jsonRes.Data.Organizations[0]).to.have.property('OperationalSince');\r",
+									"    pm.expect(jsonRes.Data.Organizations[0]).to.have.property('IsHealthFacility');\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{DOCTOR_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/organizations/by-person/{{DOCTOR_PERSON_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"organizations",
+								"by-person",
+								"{{DOCTOR_PERSON_ID}}"
+							]
+						},
+						"description": "Get an address by address id."
+					},
+					"response": []
+				},
+				{
+					"name": "Remove person from organization (Doctor-from-Clinic) Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
 									"pm.test(\"Person removed from organization\", function () {\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Data).to.have.property('Removed');\r",
@@ -4778,12 +4933,24 @@
 					"response": []
 				},
 				{
-					"name": "Get organizations by person id",
+					"name": "Create a new Organization",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
 								"exec": [
+									"\r",
+									"pm.environment.set(\"ORGANIZATION_TYPE\", 'Clinic');\r",
+									"pm.environment.set(\"ORGANIZATION_NAME\", 'Shree Clinic');\r",
+									"pm.environment.set(\"CONTACT_ORGANIZATION_PHONE\", '+91-1234567890');\r",
+									"pm.environment.set(\"CONTACT_ORGANIZATION_EMAIL\", 'xyz@gmail.com');\r",
+									"pm.environment.set(\"ABOUT_ORGANIZATION\", 'Shree Gastroenterology & Endoscopy Clinic');\r",
+									"pm.environment.set(\"ORGANIZATION_OPERATIONAL_SINCE\", '2017-05-08');\r",
+									"pm.environment.set(\"ORGANIZATION_IMAGE_RESOURCE_ID\", '80eb4c8b-f302-4612-9fe9-f832c6eb401f');\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
 									""
 								],
 								"type": "text/javascript"
@@ -4793,72 +4960,28 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"ORGANIZATION_ID\", jsonRes.Data.Organization.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
 									"\r",
 									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.have.status(201);\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
-									"\r",
-									"pm.test(\"New organization is created\", function () {\r",
-									"\r",
-									"    var expectedType = pm.environment.get(\"ORGANIZATION_TYPE\");\r",
-									"    var expectedName = pm.environment.get(\"ORGANIZATION_NAME\");\r",
-									"    var expectedContactUserId = pm.environment.get(\"CONTACT_USER_ID\");\r",
-									"    var expectedContactOrganizationPhone = pm.environment.get(\"CONTACT_ORGANIZATION_PHONE\");\r",
-									"    var expectedContactOrganizationEmail = pm.environment.get(\"CONTACT_ORGANIZATION_EMAIL\");\r",
-									"    var expectedParentOrganizationId = pm.environment.get(\"PARENT_ORGANIZATION_ID\");\r",
-									"    var expectedAbout = pm.environment.get(\"ABOUT_ORGANIZATION\");\r",
-									"    var expectedOperationalSince = pm.environment.get(\"ORGANIZATION_OPERATIONAL_SINCE\");\r",
-									"    var expectedImageResourceId = pm.environment.get(\"ORGANIZATION_IMAGE_RESOURCE_ID\");\r",
-									"    var expectedAddressId = pm.environment.get('ORGANIZATION_ADDRESS_ID');\r",
-									"    var expectedIsHealthFacility = true;\r",
-									"    var expectedNationalRegistryId = null;\r",
-									"\r",
-									"    console.log(expectedType + '\\n');\r",
-									"    console.log(expectedName + '\\n');\r",
-									"    console.log(expectedContactUserId + '\\n');\r",
-									"    console.log(expectedContactOrganizationPhone + '\\n');\r",
-									"    console.log(expectedContactOrganizationEmail + '\\n');\r",
-									"    console.log(expectedParentOrganizationId + '\\n');\r",
-									"    console.log(expectedAbout + '\\n');\r",
-									"    console.log(expectedOperationalSince + '\\n');\r",
-									"    console.log(expectedImageResourceId + '\\n');\r",
-									"    console.log(expectedAddressId + '\\n');\r",
-									"    console.log(expectedIsHealthFacility + '\\n');\r",
-									"    console.log(expectedNationalRegistryId + '\\n');\r",
-									"\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Organizations');\r",
-									"    pm.expect(jsonRes.Data.Organizations).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('Name');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('ContactEmail');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('ContactPhone');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('OperationalSince');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('IsHealthFacility');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.Organization.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Organization.Name).equals(expectedName);\r",
-									"    pm.expect(jsonRes.Data.Organization.ContactEmail).equals(expectedContactEmail);\r",
-									"    pm.expect(jsonRes.Data.Organization.ContactPhone).equals(expectedContactPhone);\r",
-									"    pm.expect(jsonRes.Data.Organization.OperationalSince).equals(expectedOperationalSince);\r",
-									"    pm.expect(jsonRes.Data.Organization.IsHealthFacility).equals(expectedIsHealthFacility);\r",
-									"\r",
-									"});\r",
-									"\r",
 									""
 								],
 								"type": "text/javascript"
 							}
 						}
 					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
@@ -4880,85 +5003,23 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "{\r\n    \"Type\": \"Diagnostic Lab\",\r\n    \"Name\": \"Diagnostica Labs\",\r\n    \"ContactPhone\": \"{{CONTACT_ORGANIZATION_PHONE}}\",\r\n    \"ContactEmail\": \"{{CONTACT_ORGANIZATION_EMAIL}}\",\r\n    \"IsHealthFacility\": true\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/organizations/{{PERSON_ID}}",
+							"raw": "{{BASE_URL}}/organizations",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"organizations",
-								"{{PERSON_ID}}"
+								"organizations"
 							]
 						},
-						"description": "Get an address by address id."
+						"description": "Add an address."
 					},
 					"response": []
 				},
 				{
-					"name": "Remove person from organization (Doctor-from-Clinic) Copy",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"\r",
-									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Status).to.eql('success');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Person added to organization\", function () {\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Added');\r",
-									"    pm.expect(jsonRes.Data.Added).to.eql(true);\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "x-api-key",
-								"value": "{{API_CLIENT_INTERNAL_KEY}}",
-								"description": "API key for client app authentication",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{DOCTOR_USER_JWT}}",
-								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{BASE_URL}}/organizations/{{ORGANIZATION_ID}}/add-person/{{DOCTOR_PERSON_ID}}",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"organizations",
-								"{{ORGANIZATION_ID}}",
-								"add-person",
-								"{{DOCTOR_PERSON_ID}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Set contact user to organization",
+					"name": "Set parent organization to organization",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -4975,57 +5036,22 @@
 								"exec": [
 									"\r",
 									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
+									"    pm.response.to.have.status(200);\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
 									"\r",
-									"pm.test(\"New organization is created\", function () {\r",
+									"pm.test(\"Parent organization is set\", function () {\r",
 									"\r",
-									"    var expectedType = pm.environment.get(\"ORGANIZATION_TYPE\");\r",
-									"    var expectedName = pm.environment.get(\"ORGANIZATION_NAME\");\r",
-									"    var expectedContactUserId = pm.environment.get(\"CONTACT_USER_ID\");\r",
-									"    var expectedContactOrganizationPhone = pm.environment.get(\"CONTACT_ORGANIZATION_PHONE\");\r",
-									"    var expectedContactOrganizationEmail = pm.environment.get(\"CONTACT_ORGANIZATION_EMAIL\");\r",
 									"    var expectedParentOrganizationId = pm.environment.get(\"PARENT_ORGANIZATION_ID\");\r",
-									"    var expectedAbout = pm.environment.get(\"ABOUT_ORGANIZATION\");\r",
-									"    var expectedOperationalSince = pm.environment.get(\"ORGANIZATION_OPERATIONAL_SINCE\");\r",
-									"    var expectedImageResourceId = pm.environment.get(\"ORGANIZATION_IMAGE_RESOURCE_ID\");\r",
-									"    var expectedAddressId = pm.environment.get('ORGANIZATION_ADDRESS_ID');\r",
-									"    var expectedIsHealthFacility = true;\r",
-									"    var expectedNationalRegistryId = null;\r",
-									"\r",
-									"    console.log(expectedType + '\\n');\r",
-									"    console.log(expectedName + '\\n');\r",
-									"    console.log(expectedContactUserId + '\\n');\r",
-									"    console.log(expectedContactOrganizationPhone + '\\n');\r",
-									"    console.log(expectedContactOrganizationEmail + '\\n');\r",
-									"    console.log(expectedParentOrganizationId + '\\n');\r",
-									"    console.log(expectedAbout + '\\n');\r",
-									"    console.log(expectedOperationalSince + '\\n');\r",
-									"    console.log(expectedImageResourceId + '\\n');\r",
-									"    console.log(expectedAddressId + '\\n');\r",
-									"    console.log(expectedIsHealthFacility + '\\n');\r",
-									"    console.log(expectedNationalRegistryId + '\\n');\r",
 									"\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Data).to.have.property('Organization');\r",
 									"    pm.expect(jsonRes.Data.Organization).to.not.be.empty;\r",
 									"    pm.expect(jsonRes.Data.Organization).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('Name');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('ContactEmail');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('ContactPhone');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('OperationalSince');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('IsHealthFacility');\r",
+									"    pm.expect(jsonRes.Data.Organization).to.have.property('ParentOrganization');\r",
 									"\r",
-									"    pm.expect(jsonRes.Data.Organization.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Organization.Name).equals(expectedName);\r",
-									"    pm.expect(jsonRes.Data.Organization.ContactEmail).equals(expectedContactEmail);\r",
-									"    pm.expect(jsonRes.Data.Organization.ContactPhone).equals(expectedContactPhone);\r",
-									"    pm.expect(jsonRes.Data.Organization.OperationalSince).equals(expectedOperationalSince);\r",
-									"    pm.expect(jsonRes.Data.Organization.IsHealthFacility).equals(expectedIsHealthFacility);\r",
-									"\r",
+									"    pm.expect(jsonRes.Data.Organization.ParentOrganization.id).equals(expectedParentOrganizationId);\r",
 									"});\r",
 									"\r",
 									""
@@ -5074,7 +5100,7 @@
 					"response": []
 				},
 				{
-					"name": "Set parent organization to organization",
+					"name": "Set contact user to organization",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -5091,59 +5117,20 @@
 								"exec": [
 									"\r",
 									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
+									"    pm.response.to.have.status(200);\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Status).to.eql('success');\r",
 									"});\r",
 									"\r",
-									"pm.test(\"New organization is created\", function () {\r",
+									"pm.test(\"Contact user id for the organization is updated\", function () {\r",
 									"\r",
-									"    var expectedType = pm.environment.get(\"ORGANIZATION_TYPE\");\r",
-									"    var expectedName = pm.environment.get(\"ORGANIZATION_NAME\");\r",
 									"    var expectedContactUserId = pm.environment.get(\"CONTACT_USER_ID\");\r",
-									"    var expectedContactOrganizationPhone = pm.environment.get(\"CONTACT_ORGANIZATION_PHONE\");\r",
-									"    var expectedContactOrganizationEmail = pm.environment.get(\"CONTACT_ORGANIZATION_EMAIL\");\r",
-									"    var expectedParentOrganizationId = pm.environment.get(\"PARENT_ORGANIZATION_ID\");\r",
-									"    var expectedAbout = pm.environment.get(\"ABOUT_ORGANIZATION\");\r",
-									"    var expectedOperationalSince = pm.environment.get(\"ORGANIZATION_OPERATIONAL_SINCE\");\r",
-									"    var expectedImageResourceId = pm.environment.get(\"ORGANIZATION_IMAGE_RESOURCE_ID\");\r",
-									"    var expectedAddressId = pm.environment.get('ORGANIZATION_ADDRESS_ID');\r",
-									"    var expectedIsHealthFacility = true;\r",
-									"    var expectedNationalRegistryId = null;\r",
-									"\r",
-									"    console.log(expectedType + '\\n');\r",
-									"    console.log(expectedName + '\\n');\r",
-									"    console.log(expectedContactUserId + '\\n');\r",
-									"    console.log(expectedContactOrganizationPhone + '\\n');\r",
-									"    console.log(expectedContactOrganizationEmail + '\\n');\r",
-									"    console.log(expectedParentOrganizationId + '\\n');\r",
-									"    console.log(expectedAbout + '\\n');\r",
-									"    console.log(expectedOperationalSince + '\\n');\r",
-									"    console.log(expectedImageResourceId + '\\n');\r",
-									"    console.log(expectedAddressId + '\\n');\r",
-									"    console.log(expectedIsHealthFacility + '\\n');\r",
-									"    console.log(expectedNationalRegistryId + '\\n');\r",
-									"\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Data).to.have.property('Organization');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('Name');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('ContactEmail');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('ContactPhone');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('OperationalSince');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('IsHealthFacility');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.Organization.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Organization.Name).equals(expectedName);\r",
-									"    pm.expect(jsonRes.Data.Organization.ContactEmail).equals(expectedContactEmail);\r",
-									"    pm.expect(jsonRes.Data.Organization.ContactPhone).equals(expectedContactPhone);\r",
-									"    pm.expect(jsonRes.Data.Organization.OperationalSince).equals(expectedOperationalSince);\r",
-									"    pm.expect(jsonRes.Data.Organization.IsHealthFacility).equals(expectedIsHealthFacility);\r",
+									"    pm.expect(jsonRes.Data.Organization).to.have.property('ContactUser');\r",
+									"    pm.expect(jsonRes.Data.Organization.ContactUser.id).equals(expectedContactUserId);\r",
 									"\r",
 									"});\r",
-									"\r",
 									""
 								],
 								"type": "text/javascript"
@@ -5173,7 +5160,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Type\": \"Hospital\",\r\n    \"Name\": \"Shree Hospital\",\r\n    \"ContactUserId\": \"{{CONTACT_USER_ID}}\",\r\n    \"ContactPhone\": \"{{CONTACT_ORGANIZATION_PHONE}}\",\r\n    \"ContactEmail\": \"{{CONTACT_ORGANIZATION_EMAIL}}\",\r\n    \"ParentOrganizationId\": \"{{PARENT_ORGANIZATION_ID}}\",\r\n    \"OperationalSince\": \"{{ORGANIZATION_OPERATIONAL_SINCE}}\",\r\n    \"ImageResourceId\": \"{{ORGANIZATION_IMAGE_RESOURCE_ID}}\"\r\n}"
+							"raw": "{\r\n    \"ContactUserId\": \"{{CONTACT_USER_ID}}\"\r\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/organizations/{{ORGANIZATION_ID}}",

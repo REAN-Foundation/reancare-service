@@ -11,7 +11,7 @@ export class OrganizationMapper {
 
     static toDto = async (
         organization: Organization,
-        addParent = true,
+        parentOrganization = null,
         addAddresses = true
     ): Promise<OrganizationDto> => {
         

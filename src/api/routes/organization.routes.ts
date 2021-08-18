@@ -26,11 +26,15 @@ export const register = (app: express.Application): void => {
 
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 
+    //Addresses
     router.post('/:id/add-address/:addressId', authenticator.authenticateClient, authenticator.authenticateUser, controller.addAddress);
 
     router.post('/:id/remove-address/:addressId', authenticator.authenticateClient, authenticator.authenticateUser, controller.removeAddress);
 
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    //Persons
+    router.post('/:id/add-person/:personId', authenticator.authenticateClient, authenticator.authenticateUser, controller.addPerson);
+    
+    router.post('/:id/remove-person/:personId', authenticator.authenticateClient, authenticator.authenticateUser, controller.removePerson);
 
     app.use('/api/v1/organizations', router);
 };

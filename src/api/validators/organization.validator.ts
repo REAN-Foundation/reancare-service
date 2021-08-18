@@ -9,7 +9,7 @@ export class OrganizationValidator {
 
     static getDomainModel = (request: express.Request): OrganizationDomainModel => {
         const organizationModel: OrganizationDomainModel = {
-            Type                             : request.body.Type ?? 'Unknown',
+            Type                             : request.body.Type ?? null,
             Name                             : request.body.Name ?? null,
             ContactUserId                    : request.body.ContactUserId ?? null,
             ContactPhone                     : request.body.ContactPhone ?? null,
@@ -334,6 +334,30 @@ export class OrganizationValidator {
         const addressId = request.params.addressId;
 
         return { id, addressId };
+    };
+
+    static addOrRemovePerson = async (request: express.Request): Promise<{ id: string; personId: string }> => {
+
+        await param('id').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await param('personId').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        const id = request.params.id;
+        const personId = request.params.personId;
+
+        return { id, personId };
     };
 
 }

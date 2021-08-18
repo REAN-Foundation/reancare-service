@@ -35,8 +35,14 @@ export class OrganizationRepo implements IOrganizationRepo {
             const organization = await Organization.create(entity);
             await this.addAddresses(organization.id, model.AddressIds);
 
-            const dto = await OrganizationMapper.toDto(organization);
+            var parentOrganization = null;
+            if (organization.ParentOrganizationId != null) {
+                parentOrganization = await Organization.findByPk(organization.ParentOrganizationId);
+            }
+
+            const dto = await OrganizationMapper.toDto(organization, parentOrganization);
             return dto;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -59,8 +65,15 @@ export class OrganizationRepo implements IOrganizationRepo {
     getById = async (id: string): Promise<OrganizationDto> => {
         try {
             const organization = await Organization.findByPk(id);
-            const dto = await OrganizationMapper.toDto(organization);
+
+            var parentOrganization = null;
+            if (organization.ParentOrganizationId != null) {
+                parentOrganization = await Organization.findByPk(organization.ParentOrganizationId);
+            }
+
+            const dto = await OrganizationMapper.toDto(organization, parentOrganization);
             return dto;
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -239,8 +252,24 @@ export class OrganizationRepo implements IOrganizationRepo {
 
             await this.addAddresses(organization.id, model.AddressIds);
 
-            const dto = await OrganizationMapper.toDto(organization);
+            var parentOrganization = null;
+            if (organization.ParentOrganizationId != null) {
+                parentOrganization = await Organization.findByPk(organization.ParentOrganizationId);
+            }
+
+            const dto = await OrganizationMapper.toDto(organization, parentOrganization);
             return dto;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    delete = async (id: string): Promise<boolean> => {
+        try {
+            await Organization.destroy({ where: { id: id } });
+            return true;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -280,14 +309,43 @@ export class OrganizationRepo implements IOrganizationRepo {
         return true;
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    addPerson = async (id: string, personId: string): Promise<boolean> => {
+
         try {
-            await Organization.destroy({ where: { id: id } });
-            return true;
+            const organizationPersons = await OrganizationPersons.findAll({
+                where : {
+                    OrganizationId : id,
+                    PersonId       : personId
+                }
+            });
+            if (organizationPersons.length > 0) {
+                return true;
+            }
+            var op = await OrganizationPersons.create({
+                OrganizationId : id,
+                PersonId       : personId
+            });
+            if (op != null) {
+                return true;
+            }
+            return false;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    };
+
+    removePerson = async (id: string, personId: string): Promise<boolean> => {
+
+        const result = await OrganizationPersons.destroy({
+            where : {
+                OrganizationId : id,
+                PersonId       : personId
+            }
+        });
+
+        return result > 0;
     };
 
 }

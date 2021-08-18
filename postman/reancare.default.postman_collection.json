@@ -865,17 +865,11 @@
 									"\r",
 									"pm.environment.set(\"ORGANIZATION_TYPE\", 'Clinic');\r",
 									"pm.environment.set(\"ORGANIZATION_NAME\", 'Shree Clinic');\r",
-									"pm.environment.set(\"CONTACT_USER_ID\", null);\r",
 									"pm.environment.set(\"CONTACT_ORGANIZATION_PHONE\", '+91-1234567890');\r",
 									"pm.environment.set(\"CONTACT_ORGANIZATION_EMAIL\", 'xyz@gmail.com');\r",
-									"pm.environment.set(\"PARENT_ORGANIZATION_ID\", null);\r",
 									"pm.environment.set(\"ABOUT_ORGANIZATION\", 'Shree Gastroenterology & Endoscopy Clinic');\r",
 									"pm.environment.set(\"ORGANIZATION_OPERATIONAL_SINCE\", '2017-05-08');\r",
 									"pm.environment.set(\"ORGANIZATION_IMAGE_RESOURCE_ID\", '80eb4c8b-f302-4612-9fe9-f832c6eb401f');\r",
-									"\r",
-									"\r",
-									"\r",
-									"\r",
 									""
 								],
 								"type": "text/javascript"
@@ -889,6 +883,7 @@
 									"\r",
 									"try {\r",
 									"    pm.environment.set(\"ORGANIZATION_ID\", jsonRes.Data.Organization.id);\r",
+									"    pm.environment.set(\"PARENT_ORGANIZATION_ID\", jsonRes.Data.Organization.id);\r",
 									"}\r",
 									"catch (error) {\r",
 									"    console.log(error.message);\r",
@@ -1117,6 +1112,9 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"pm.environment.set(\"ORGANIZATION_NAME\", 'Shree Hospital');\r",
+									"pm.environment.get(\"ORGANIZATION_TYPE\", \"Hospital\");\r",
+									"\r",
 									"\r",
 									"pm.test(\"Request is successfull\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -1126,8 +1124,6 @@
 									"\r",
 									"pm.test(\"Organization is updated\", function () {\r",
 									"\r",
-									"    var expectedType = pm.environment.get(\"ORGANIZATION_TYPE\");\r",
-									"    var expectedName = pm.environment.get(\"ORGANIZATION_NAME\");\r",
 									"    var expectedContactPhone = pm.environment.get(\"CONTACT_ORGANIZATION_PHONE\");\r",
 									"    var expectedContactEmail = pm.environment.get(\"CONTACT_ORGANIZATION_EMAIL\");\r",
 									"    var expectedOperationalSince = pm.environment.get(\"ORGANIZATION_OPERATIONAL_SINCE\");\r",
@@ -1267,7 +1263,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/organizations/search?type=Clinic&name=shr&operationalSinceFrom=1975-01-01&operationalSinceTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Name&order=ascending&pageIndex=0&itemsPerPage=25",
+							"raw": "{{BASE_URL}}/organizations/search?type=Hospital&name=shr&operationalSinceFrom=1975-01-01&operationalSinceTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Name&order=ascending&pageIndex=0&itemsPerPage=25",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -1278,7 +1274,7 @@
 							"query": [
 								{
 									"key": "type",
-									"value": "Clinic",
+									"value": "Hospital",
 									"description": "Search by type of organization"
 								},
 								{
@@ -2243,6 +2239,17 @@
 											"}\r",
 											"\r",
 											"\r",
+											"    var phone = jsonRes.Data.Patient.User.Person.Phone;\r",
+											"    var tokens = phone.split('-');\r",
+											"    var phoneNumber = tokens[1];\r",
+											"\r",
+											"    pm.environment.set(\"PATIENT_PHONE_NUMBER\", phoneNumber);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"\r",
 											"pm.test(\"Request is successfull\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"    var jsonRes = pm.response.json();\r",
@@ -2466,7 +2473,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"FirstName\": \"Anand\",\r\n    \"Email\": \"Anand.doe@gmail.com\"\r\n}"
+									"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"John\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"Doe\",\r\n    \"Email\": \"john.doe@gmail.com\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1970-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
@@ -2845,552 +2852,52 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"//Randomly generated user details\r",
+											"var str = '';\r",
+											"var search = '';\r",
+											"var num = 0.0;\r",
 											"\r",
-											"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
+											"var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+											"var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
+											"var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
+											"var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+											"var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+											"var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+											"var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+											"var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+											"var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
 											"\r",
-											"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
+											"str = pm.environment.get(\"ADDRESS_LINE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_LINE_SEARCH_STRING\", search);\r",
 											"\r",
-											"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
-											"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
-											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
-											"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
-											"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
-											"var password = \"Test@123\";\r",
+											"str = pm.environment.get(\"ADDRESS_CITY\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_CITY_SEARCH_STRING\", search);\r",
 											"\r",
-											"pm.environment.set(\"FIRST_NAME\", first);\r",
-											"pm.environment.set(\"LAST_NAME\", last);\r",
-											"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
-											"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");\r",
-											"pm.environment.set(\"EMAIL\", email);\r",
-											"pm.environment.set(\"PASSWORD\", password);\r",
+											"str = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_DISTRICT_SEARCH_STRING\", search);\r",
 											"\r",
-											"//Profile images\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text",
-										"description": "API key for client app authentication"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\"\r\n}"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/doctors",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"doctors"
-									]
-								},
-								"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
-							},
-							"response": []
-						},
-						{
-							"name": "Register doctor- with same phone number - should fail",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
+											"str = pm.environment.get(\"ADDRESS_STATE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_STATE_SEARCH_STRING\", search);\r",
 											"\r",
-											"pm.test(\"Request is failure\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
+											"str = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_COUNTRY_SEARCH_STRING\", search);\r",
 											"\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"var password = \"Client-Test@123\";\r",
-											"pm.environment.set(\"API_CLIENT_PASSWORD\", password);\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"description": "API key for client app authentication",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/doctors/{{DOCTOR_USER_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"doctors",
-										"{{DOCTOR_USER_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Register doctor- with phone and password",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.environment.set(\"DOCTOR_USER_ID\", jsonRes.Data.Doctor.User.id);\r",
-											"    pm.environment.set(\"DOCTOR_PERSON_ID\", jsonRes.Data.Doctor.User.Person.id);\r",
-											"    pm.environment.set(\"PERSON_ID\", jsonRes.Data.Doctor.User.Person.id);\r",
-											"}\r",
-											"catch (error) {\r",
-											"    console.log(error.message);\r",
-											"}\r",
+											"str = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_POSTAL_CODE_SEARCH_STRING\", search);\r",
 											"\r",
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(201);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
+											"num = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+											"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_FROM\", num - 1);\r",
+											"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_TO\", num + 1);\r",
 											"\r",
-											"pm.test(\"Doctor is created\", function () {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Doctor');\r",
-											"    pm.expect(jsonRes.Data.Doctor).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Doctor).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Doctor).to.have.property('User');\r",
-											"    pm.expect(jsonRes.Data.Doctor.User).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Doctor.User).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Doctor.User.Person).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Doctor.User.Person).to.have.property('id');\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"//Randomly generated user details\r",
+											"num = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+											"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_FROM\", num - 1);\r",
+											"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_TO\", num + 1);\r",
 											"\r",
-											"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
-											"\r",
-											"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
-											"\r",
-											"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
-											"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
-											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
-											"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
-											"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
-											"var password = \"Test@123\";\r",
-											"\r",
-											"pm.environment.set(\"FIRST_NAME\", first);\r",
-											"pm.environment.set(\"LAST_NAME\", last);\r",
-											"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
-											"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");\r",
-											"pm.environment.set(\"EMAIL\", email);\r",
-											"pm.environment.set(\"PASSWORD\", password);\r",
-											"\r",
-											"//Profile images\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"description": "API key for client app authentication",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\"\r\n}"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/doctors",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"doctors"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Doctor log-in with password",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.environment.set(\"DOCTOR_USER_JWT\", jsonRes.Data.AccessToken);\r",
-											"}\r",
-											"catch (error) {\r",
-											"    console.log(error.message);\r",
-											"}\r",
-											"\r",
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Doctor login: Access token is returned\", function () {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
-											"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"description": "API key for client app authentication",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{ROLE_DOCTOR}}\r\n}\r\n"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/users/login-with-password",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"users",
-										"login-with-password"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get doctor by user id",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"\r",
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Doctor is created\", function () {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Doctor');\r",
-											"    pm.expect(jsonRes.Data.Doctor).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Doctor).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Doctor).to.have.property('User');\r",
-											"    pm.expect(jsonRes.Data.Doctor.User).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Doctor.User).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Doctor.User.Person).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Doctor.User.Person).to.have.property('id');\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"var password = \"Client-Test@123\";\r",
-											"pm.environment.set(\"API_CLIENT_PASSWORD\", password);\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{DOCTOR_USER_JWT}}",
-										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"description": "API key for client app authentication",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/doctors/{{DOCTOR_USER_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"doctors",
-										"{{DOCTOR_USER_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update doctor details",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.environment.set(\"DOCTOR_FIRST_NAME\", jsonRes.Data.Doctor.User.Person.FirstName);\r",
-											"    pm.environment.set(\"DOCTOR_PHONE\", jsonRes.Data.Doctor.User.Person.Phone);\r",
-											"    pm.environment.set(\"DOCTOR_GENDER\", jsonRes.Data.Doctor.User.Person.Gender);\r",
-											"    pm.environment.set(\"DOCTOR_EMAIL\", jsonRes.Data.Doctor.User.Person.Email);\r",
-											"\r",
-											"    var phone = jsonRes.Data.Doctor.User.Person.Phone;\r",
-											"    var tokens = phone.split('-');\r",
-											"    var phoneNumber = tokens[1];\r",
-											"\r",
-											"    pm.environment.set(\"DOCTOR_PHONE_NUMBER\", phoneNumber);\r",
-											"}\r",
-											"catch (error) {\r",
-											"    console.log(error.message);\r",
-											"}\r",
-											"\r",
-											"\r",
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Doctor details are updated\", function () {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Doctor');\r",
-											"    pm.expect(jsonRes.Data.Doctor).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Doctor).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Doctor).to.have.property('User');\r",
-											"    pm.expect(jsonRes.Data.Doctor.User).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Doctor.User).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Doctor.User.Person).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Doctor.User.Person).to.have.property('id');\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{DOCTOR_USER_JWT}}",
-										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"description": "API key for client app authentication",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"John\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"Doe\",\r\n    \"Email\": \"john.doe@gmail.com\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\r\n}"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/doctors/{{DOCTOR_USER_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"doctors",
-										"{{DOCTOR_USER_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update doctor details - only email and first name",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.environment.set(\"DOCTOR_FIRST_NAME\", jsonRes.Data.Doctor.User.Person.FirstName);\r",
-											"    pm.environment.set(\"DOCTOR_EMAIL\", jsonRes.Data.Doctor.User.Person.Email);\r",
-											"\r",
-											"    var phone = jsonRes.Data.Doctor.User.Person.Phone;\r",
-											"    var tokens = phone.split('-');\r",
-											"    var phoneNumber = tokens[1];\r",
-											"\r",
-											"    pm.environment.set(\"DOCTOR_PHONE_NUMBER\", phoneNumber);\r",
-											"}\r",
-											"catch (error) {\r",
-											"    console.log(error.message);\r",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"description": "API key for client app authentication",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"FirstName\": \"Anand\",\r\n    \"Email\": \"Anand.doe@gmail.com\"\r\n}"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/doctors/{{DOCTOR_USER_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"doctors",
-										"{{DOCTOR_USER_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search doctors",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
 											""
 										],
 										"type": "text/javascript"
@@ -4075,235 +3582,7 @@
 					]
 				},
 				{
-					"name": "Get address by person id",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Status).to.eql('success');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Address is returned\", function () {\r",
-									"\r",
-									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
-									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
-									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
-									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
-									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
-									"\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
-									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Longitude');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Lattitude');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
-									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
-									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
-									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
-									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
-									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
-									"\r",
-									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"\r",
-									"});\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{PATIENT_USER_JWT}}",
-								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-								"type": "text"
-							},
-							{
-								"key": "x-api-key",
-								"value": "{{API_CLIENT_INTERNAL_KEY}}",
-								"description": "API key for client authentication",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{BASE_URL}}/addresses/by-person/{{PATIENT_USER_ID}}",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"addresses",
-								"by-person",
-								"{{PATIENT_USER_ID}}"
-							]
-						},
-						"description": "Get an address by address id."
-					},
-					"response": []
-				},
-				{
-					"name": "Get address by organization id",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Status).to.eql('success');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Address is returned\", function () {\r",
-									"\r",
-									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
-									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
-									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
-									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
-									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
-									"\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
-									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Longitude');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Lattitude');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
-									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
-									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
-									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
-									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
-									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
-									"\r",
-									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"\r",
-									"});\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{PATIENT_USER_JWT}}",
-								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-								"type": "text"
-							},
-							{
-								"key": "x-api-key",
-								"value": "{{API_CLIENT_INTERNAL_KEY}}",
-								"description": "API key for client authentication",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{BASE_URL}}/addresses/by-organization/{{ORGANIZATION_ID}}",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"addresses",
-								"by-organization",
-								"{{ORGANIZATION_ID}}"
-							]
-						},
-						"description": "Get an address by address id."
-					},
-					"response": []
-				},
-				{
-					"name": "Update an address",
+					"name": "Update an address by id",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -4636,7 +3915,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/addresses/search?type={{ADDRESS_TYPE}}&addressLine={{ADDRESS_LINE_SEARCH_STRING}}&city={{ADDRESS_CITY_SEARCH_STRING}}&district={{ADDRESS_DISTRICT_SEARCH_STRING}}&state={{ADDRESS_STATE_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&postalCode={{ADDRESS_POSTAL_CODE_SEARCH_STRING}}&longitudeFrom={{ADDRESS_LONGITUDE_SEARCH_FROM}}&longitudeTo={{ADDRESS_LONGITUDE_SEARCH_TO}}&lattitudeFrom={{ADDRESS_LATTITUDE_SEARCH_FROM}}&lattitudeTo={{ADDRESS_LATTITUDE_SEARCH_TO}}&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25",
+							"raw": "{{BASE_URL}}/addresses/search?type=Official&city=Mum&district={{ADDRESS_DISTRICT_SEARCH_STRING}}&state={{ADDRESS_STATE_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&postalCode=412&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -4647,17 +3926,18 @@
 							"query": [
 								{
 									"key": "type",
-									"value": "{{ADDRESS_TYPE}}",
+									"value": "Official",
 									"description": "Type of the address"
 								},
 								{
 									"key": "addressLine",
 									"value": "{{ADDRESS_LINE_SEARCH_STRING}}",
-									"description": "Search string to match address line"
+									"description": "Search string to match address line",
+									"disabled": true
 								},
 								{
 									"key": "city",
-									"value": "{{ADDRESS_CITY_SEARCH_STRING}}",
+									"value": "Mum",
 									"description": "Search string for city"
 								},
 								{
@@ -4677,28 +3957,32 @@
 								},
 								{
 									"key": "postalCode",
-									"value": "{{ADDRESS_POSTAL_CODE_SEARCH_STRING}}",
+									"value": "412",
 									"description": "Search string for "
 								},
 								{
 									"key": "longitudeFrom",
 									"value": "{{ADDRESS_LONGITUDE_SEARCH_FROM}}",
-									"description": "Format: float value. \nStart of the range for longitude based search"
+									"description": "Format: float value. \nStart of the range for longitude based search",
+									"disabled": true
 								},
 								{
 									"key": "longitudeTo",
 									"value": "{{ADDRESS_LONGITUDE_SEARCH_TO}}",
-									"description": "Format: float value. \nEnd of the range for longitude based search"
+									"description": "Format: float value. \nEnd of the range for longitude based search",
+									"disabled": true
 								},
 								{
 									"key": "lattitudeFrom",
 									"value": "{{ADDRESS_LATTITUDE_SEARCH_FROM}}",
-									"description": "Format: float value.\nStart of the range for lattitude based search"
+									"description": "Format: float value.\nStart of the range for lattitude based search",
+									"disabled": true
 								},
 								{
 									"key": "lattitudeTo",
 									"value": "{{ADDRESS_LATTITUDE_SEARCH_TO}}",
-									"description": "Format: float value.\nEnd of the range for lattitude based search"
+									"description": "Format: float value.\nEnd of the range for lattitude based search",
+									"disabled": true
 								},
 								{
 									"key": "createdDateFrom",
@@ -4945,234 +4229,17 @@
 			"name": "Relationships",
 			"item": [
 				{
-					"name": "Get organizations by person id",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"\r",
-									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Status).to.eql('success');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"New organization is created\", function () {\r",
-									"\r",
-									"    var expectedType = pm.environment.get(\"ORGANIZATION_TYPE\");\r",
-									"    var expectedName = pm.environment.get(\"ORGANIZATION_NAME\");\r",
-									"    var expectedContactUserId = pm.environment.get(\"CONTACT_USER_ID\");\r",
-									"    var expectedContactOrganizationPhone = pm.environment.get(\"CONTACT_ORGANIZATION_PHONE\");\r",
-									"    var expectedContactOrganizationEmail = pm.environment.get(\"CONTACT_ORGANIZATION_EMAIL\");\r",
-									"    var expectedParentOrganizationId = pm.environment.get(\"PARENT_ORGANIZATION_ID\");\r",
-									"    var expectedAbout = pm.environment.get(\"ABOUT_ORGANIZATION\");\r",
-									"    var expectedOperationalSince = pm.environment.get(\"ORGANIZATION_OPERATIONAL_SINCE\");\r",
-									"    var expectedImageResourceId = pm.environment.get(\"ORGANIZATION_IMAGE_RESOURCE_ID\");\r",
-									"    var expectedAddressId = pm.environment.get('ORGANIZATION_ADDRESS_ID');\r",
-									"    var expectedIsHealthFacility = true;\r",
-									"    var expectedNationalRegistryId = null;\r",
-									"\r",
-									"    console.log(expectedType + '\\n');\r",
-									"    console.log(expectedName + '\\n');\r",
-									"    console.log(expectedContactUserId + '\\n');\r",
-									"    console.log(expectedContactOrganizationPhone + '\\n');\r",
-									"    console.log(expectedContactOrganizationEmail + '\\n');\r",
-									"    console.log(expectedParentOrganizationId + '\\n');\r",
-									"    console.log(expectedAbout + '\\n');\r",
-									"    console.log(expectedOperationalSince + '\\n');\r",
-									"    console.log(expectedImageResourceId + '\\n');\r",
-									"    console.log(expectedAddressId + '\\n');\r",
-									"    console.log(expectedIsHealthFacility + '\\n');\r",
-									"    console.log(expectedNationalRegistryId + '\\n');\r",
-									"\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Organizations');\r",
-									"    pm.expect(jsonRes.Data.Organizations).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('Name');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('ContactEmail');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('ContactPhone');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('OperationalSince');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('IsHealthFacility');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.Organization.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Organization.Name).equals(expectedName);\r",
-									"    pm.expect(jsonRes.Data.Organization.ContactEmail).equals(expectedContactEmail);\r",
-									"    pm.expect(jsonRes.Data.Organization.ContactPhone).equals(expectedContactPhone);\r",
-									"    pm.expect(jsonRes.Data.Organization.OperationalSince).equals(expectedOperationalSince);\r",
-									"    pm.expect(jsonRes.Data.Organization.IsHealthFacility).equals(expectedIsHealthFacility);\r",
-									"\r",
-									"});\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "Get existing roles",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{PATIENT_USER_JWT}}",
-								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-								"type": "text"
-							},
-							{
-								"key": "x-api-key",
-								"value": "{{API_CLIENT_INTERNAL_KEY}}",
-								"description": "API key for client authentication",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/organizations/{{PERSON_ID}}",
+							"raw": "{{BASIC_URL}}/",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"organizations",
-								"{{PERSON_ID}}"
-							]
-						},
-						"description": "Get an address by address id."
-					},
-					"response": []
-				},
-				{
-					"name": "Set contact user to organization",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"\r",
-									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Status).to.eql('success');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"New organization is created\", function () {\r",
-									"\r",
-									"    var expectedType = pm.environment.get(\"ORGANIZATION_TYPE\");\r",
-									"    var expectedName = pm.environment.get(\"ORGANIZATION_NAME\");\r",
-									"    var expectedContactUserId = pm.environment.get(\"CONTACT_USER_ID\");\r",
-									"    var expectedContactOrganizationPhone = pm.environment.get(\"CONTACT_ORGANIZATION_PHONE\");\r",
-									"    var expectedContactOrganizationEmail = pm.environment.get(\"CONTACT_ORGANIZATION_EMAIL\");\r",
-									"    var expectedParentOrganizationId = pm.environment.get(\"PARENT_ORGANIZATION_ID\");\r",
-									"    var expectedAbout = pm.environment.get(\"ABOUT_ORGANIZATION\");\r",
-									"    var expectedOperationalSince = pm.environment.get(\"ORGANIZATION_OPERATIONAL_SINCE\");\r",
-									"    var expectedImageResourceId = pm.environment.get(\"ORGANIZATION_IMAGE_RESOURCE_ID\");\r",
-									"    var expectedAddressId = pm.environment.get('ORGANIZATION_ADDRESS_ID');\r",
-									"    var expectedIsHealthFacility = true;\r",
-									"    var expectedNationalRegistryId = null;\r",
-									"\r",
-									"    console.log(expectedType + '\\n');\r",
-									"    console.log(expectedName + '\\n');\r",
-									"    console.log(expectedContactUserId + '\\n');\r",
-									"    console.log(expectedContactOrganizationPhone + '\\n');\r",
-									"    console.log(expectedContactOrganizationEmail + '\\n');\r",
-									"    console.log(expectedParentOrganizationId + '\\n');\r",
-									"    console.log(expectedAbout + '\\n');\r",
-									"    console.log(expectedOperationalSince + '\\n');\r",
-									"    console.log(expectedImageResourceId + '\\n');\r",
-									"    console.log(expectedAddressId + '\\n');\r",
-									"    console.log(expectedIsHealthFacility + '\\n');\r",
-									"    console.log(expectedNationalRegistryId + '\\n');\r",
-									"\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Organization');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('Name');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('ContactEmail');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('ContactPhone');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('OperationalSince');\r",
-									"    pm.expect(jsonRes.Data.Organization).to.have.property('IsHealthFacility');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.Organization.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Organization.Name).equals(expectedName);\r",
-									"    pm.expect(jsonRes.Data.Organization.ContactEmail).equals(expectedContactEmail);\r",
-									"    pm.expect(jsonRes.Data.Organization.ContactPhone).equals(expectedContactPhone);\r",
-									"    pm.expect(jsonRes.Data.Organization.OperationalSince).equals(expectedOperationalSince);\r",
-									"    pm.expect(jsonRes.Data.Organization.IsHealthFacility).equals(expectedIsHealthFacility);\r",
-									"\r",
-									"});\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{ADMIN_USER_JWT}}",
-								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-								"type": "text"
-							},
-							{
-								"key": "x-api-key",
-								"value": "{{API_CLIENT_INTERNAL_KEY}}",
-								"description": "API key for client authentication",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"ParentOrganizationId\": \"{{PARENT_ORGANIZATION_ID}}\"\r\n}"
-						},
-						"url": {
-							"raw": "{{BASE_URL}}/organizations/{{ORGANIZATION_ID}}",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"organizations",
-								"{{ORGANIZATION_ID}}"
+								""
 							]
 						},
 						"description": "Get an address by address id."
@@ -5296,212 +4363,6 @@
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "Patient medical profile",
-			"item": [
-				{
-					"name": "Update medical profile for patient",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"// var types = ['Home', 'Communication', 'Official'];\r",
-									"\r",
-									"// var addressLines = [\r",
-									"//     '89/88, Sembudoss St, Parrys',\r",
-									"//     '228, Commerce House, Nagindas Master Rd, Fort',\r",
-									"//     '19, Shanti Sadan 2nd Flr, 11 Th Road, Khar (west)',\r",
-									"//     '99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli',\r",
-									"//     '249-a, Shop No.4, Ganesh Co Ophsg Soc, N M Joshi Marg, Opp Mafatlal Mill No3, Lower Parel (west)',\r",
-									"//     '8081 Manor Drive Piqua, OH 45356'];\r",
-									"\r",
-									"// var cities = [\r",
-									"//     \"Chennai\",\r",
-									"//     \"Mumbai\",\r",
-									"//     \"Banglore\"\r",
-									"// ];\r",
-									"\r",
-									"// var states = [\r",
-									"//     \"Tamilnadu\",\r",
-									"//     \"Maharashtra\",\r",
-									"//     \"Karnataka\"\r",
-									"// ];\r",
-									"\r",
-									"// var countries = [\"India\",\r",
-									"//     \"Thailand\",\r",
-									"//     \"Russia\",\r",
-									"//     \"USA\",\r",
-									"//     \"UK\",\r",
-									"//     \"Germany\",\r",
-									"//     \"France\",\r",
-									"//     \"Mexico\"];\r",
-									"\r",
-									"// var postalCodes = [\r",
-									"//     \"400023\",\r",
-									"//     \"400052\",\r",
-									"//     \"560068\",\r",
-									"//     \"400013\"\r",
-									"// ];\r",
-									"\r",
-									"// //Reference: https://stackoverflow.com/a/6878845\r",
-									"// function getRandomInRange(from, to, fixed) {\r",
-									"//     return (Math.random() * (to - from) + from).toFixed(fixed) * 1;\r",
-									"//     // .toFixed() returns string, so ' * 1' is a trick to convert to number\r",
-									"// }\r",
-									"\r",
-									"// var type = types[Math.floor(Math.random() * types.length)];\r",
-									"// var addressLine = addressLines[Math.floor(Math.random() * addressLines.length)];\r",
-									"// var city = cities[Math.floor(Math.random() * cities.length)];\r",
-									"// var state = states[Math.floor(Math.random() * states.length)];\r",
-									"// var country = countries[Math.floor(Math.random() * countries.length)];\r",
-									"// var postalCode = postalCodes[Math.floor(Math.random() * postalCodes.length)];\r",
-									"// var longitude = getRandomInRange(-180, 180, 6);\r",
-									"// var lattitude = getRandomInRange(-180, 180, 6);\r",
-									"\r",
-									"// console.log(type + '\\n');\r",
-									"// console.log(addressLine + '\\n');\r",
-									"// console.log(city + '\\n');\r",
-									"// console.log(state + '\\n');\r",
-									"// console.log(country + '\\n');\r",
-									"// console.log(postalCode + '\\n');\r",
-									"// console.log(longitude + '\\n');\r",
-									"// console.log(lattitude + '\\n');\r",
-									"\r",
-									"pm.environment.set(\"ADDRESS_TYPE\", 'Home');\r",
-									"pm.environment.set(\"ADDRESS_LINE\", '89/88, Sembudoss St, Parrys');\r",
-									"pm.environment.set(\"ADDRESS_CITY\", 'Pune');\r",
-									"pm.environment.set(\"ADDRESS_DISTRICT\", 'Greater Pune');\r",
-									"pm.environment.set(\"ADDRESS_STATE\", 'Maharashtra');\r",
-									"pm.environment.set(\"ADDRESS_COUNTRY\", 'India');\r",
-									"pm.environment.set(\"ADDRESS_POSTAL_CODE\", '411001');\r",
-									"pm.environment.set(\"ADDRESS_LONGITUDE\", 36.732324);\r",
-									"pm.environment.set(\"ADDRESS_LATTITUDE\", 6.611966);\r",
-									"\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonRes = pm.response.json();\r",
-									"\r",
-									"try {\r",
-									"    pm.environment.set(\"ADDRESS_ID\", jsonRes.Data.Address.id);\r",
-									"}\r",
-									"catch (error) {\r",
-									"    console.log(error.message);\r",
-									"}\r",
-									"\r",
-									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Status).to.eql('success');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"New address is created\", function () {\r",
-									"\r",
-									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
-									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
-									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
-									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
-									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
-									"\r",
-									"    console.log(expectedType + '\\n');\r",
-									"    console.log(expectedAddressLine + '\\n');\r",
-									"    console.log(expectedCity + '\\n');\r",
-									"    console.log(expectedDistrict + '\\n');\r",
-									"    console.log(expectedState + '\\n');\r",
-									"    console.log(expectedCountry + '\\n');\r",
-									"    console.log(expectedPostalCode + '\\n');\r",
-									"    console.log(expectedLongitude + '\\n');\r",
-									"    console.log(expectedLattitude + '\\n');\r",
-									"\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
-									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Longitude');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Lattitude');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
-									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
-									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
-									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
-									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
-									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
-									"\r",
-									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"});\r",
-									"\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{PATIENT_USER_JWT}}",
-								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-								"type": "text"
-							},
-							{
-								"key": "x-api-key",
-								"value": "{{API_CLIENT_INTERNAL_KEY}}",
-								"description": "API key for client authentication",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"PersonId\": \"{{PATIENT_PERSON_ID}}\",\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"Longitude\": {{ADDRESS_LONGITUDE}},\r\n    \"Lattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
-						},
-						"url": {
-							"raw": "{{BASE_URL}}/patient-medical-profiles",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"patient-medical-profiles"
-							]
-						},
-						"description": "Add an address."
-					},
-					"response": []
-				}
-			],
-			"description": "## APIs to manage addresses\n\nThese set of APIs are used to manage addresses belonging to persons or organizations."
 		}
 	]
 }

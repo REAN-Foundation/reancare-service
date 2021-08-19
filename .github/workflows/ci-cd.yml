@@ -75,21 +75,21 @@ jobs:
         run: |
             echo "TASK_DEFINTION_NAME=duploservices-dev-reancare-api" >> $GITHUB_ENV
             echo "DUPLO_ID=1b25fb90-59d2-4a35-8d69-98e604e7206d" >> $GITHUB_ENV
-            echo "SERVICE_NAME=duploservices-dev-reancare-api" >> $GITHUB_ENV
+            echo "SERVICE_NAME=reancare-api" >> $GITHUB_ENV
 
       - name: Set the uat environment variables
         if: ${{ env.TENANT_SELECTED == 'uat' }}
         run: |
             echo "TASK_DEFINTION_NAME=duploservices-dev-reancare-api" >> $GITHUB_ENV
             echo "DUPLO_ID=1b25fb90-59d2-4a35-8d69-98e604e7206d" >> $GITHUB_ENV
-            echo "SERVICE_NAME=duploservices-dev-reancare-api" >> $GITHUB_ENV
+            echo "SERVICE_NAME=reancare-api" >> $GITHUB_ENV
 
       - name: Set the prod environment variables
         if: ${{ env.TENANT_SELECTED == 'prod' }}
         run: |
             echo "TASK_DEFINTION_NAME=duploservices-dev-reancare-api" >> $GITHUB_ENV
             echo "DUPLO_ID=1b25fb90-59d2-4a35-8d69-98e604e7206d" >> $GITHUB_ENV
-            echo "SERVICE_NAME=duploservices-dev-reancare-api" >> $GITHUB_ENV
+            echo "SERVICE_NAME=reancare-api" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v2

@@ -63,7 +63,7 @@ jobs:
   #         LINTER_RULES_PATH: /
   #         JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
 
-  ECS Deployment:
+  ECS_Deployment:
     runs-on: ubuntu-latest
 
     env:

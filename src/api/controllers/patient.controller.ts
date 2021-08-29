@@ -8,16 +8,17 @@ import { ResponseHandler } from '../../common/response.handler';
 import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
 import { PatientValidator } from '../validators/patient.validator';
-import { PatientDetailsDto, PatientDomainModel } from '../../domain.types/patient.domain.types';
+import { PatientDomainModel } from '../../domain.types/patient/patient.domain.model';
 
-import { Roles } from '../../domain.types/role.domain.types';
-import { UserDomainModel } from '../../domain.types/user.domain.types';
+import { Roles } from '../../domain.types/role/role.types';
+import { UserDomainModel } from '../../domain.types/user/user.domain.model';
 import { ApiError } from '../../common/api.error';
-import { AddressDomainModel } from '../../domain.types/address.domain.types';
+import { AddressDomainModel } from '../../domain.types/address/address.domain.model';
 import { AddressValidator } from '../validators/address.validator';
 import { AddressService } from '../../services/address.service';
 import { RoleService } from '../../services/role.service';
-import { PersonDomainModel } from '../../domain.types/person.domain.types';
+import { PersonDomainModel } from '../../domain.types/person/person.domain.model';
+import { PatientDetailsDto } from '../../domain.types/patient/patient.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

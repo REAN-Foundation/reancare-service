@@ -5,12 +5,14 @@ import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.r
 import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { DoctorDomainModel, DoctorDetailsDto, DoctorSearchFilters, DoctorDetailsSearchResults, DoctorSearchResults } from '../domain.types/doctor.domain.types';
 import { injectable, inject } from 'tsyringe';
 import { ApiError } from '../common/api.error';
-import { Roles } from '../domain.types/role.domain.types';
+import { Roles } from '../domain.types/role/role.types';
 import { DoctorStore } from '../modules/ehr/services/doctor.store';
 import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
+import { DoctorDomainModel } from '../domain.types/doctor/doctor.domain.model';
+import { DoctorDetailsDto } from '../domain.types/doctor/doctor.dto';
+import { DoctorSearchFilters, DoctorDetailsSearchResults, DoctorSearchResults } from '../domain.types/doctor/doctor.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,8 +1,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-//#region Domain models
-
 export interface TimeSlot {
     id?: string;
     StartTime: Date;
@@ -30,5 +28,3 @@ export interface HealthcareServiceSchedule {
 
     DaySchedules?: DaySchedule[];
 }
-
-//#endregion

@@ -1,7 +1,7 @@
 
 import { IPersonRoleRepo } from "../../repository.interfaces/person.role.repo.interface";
 import PersonRole from '../models/person.role.model';
-import { PersonRoleDto } from "../../../domain.types/role.domain.types";
+import { PersonRoleDto } from "../../../domain.types/role/person.role.dto";
 import { PersonRoleMapper } from '../mappers/person.role.mapper';
 import { Logger } from "../../../common/logger";
 import { ApiError } from "../../../common/api.error";

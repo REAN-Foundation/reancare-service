@@ -1,10 +1,11 @@
 import { Helper } from '../../../../../../common/helper';
 import { Logger } from '../../../../../../common/logger';
-import { DoctorDomainModel, DoctorSearchFilters } from '../../../../../../domain.types/doctor.domain.types';
+import { DoctorDomainModel } from '../../../../../../domain.types/doctor/doctor.domain.model';
 import { IDoctorStore } from '../../../../interfaces/doctor.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { FhirHelper } from '../../fhir.helper';
+import { DoctorSearchFilters } from '../../../../../../domain.types/doctor/doctor.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////
 

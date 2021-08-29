@@ -1,5 +1,5 @@
 import ApiClient from '../models/api.client.model';
-import { ApiClientDto, ClientApiKeyDto } from "../../../domain.types/api.client.domain.types";
+import { ApiClientDto, ClientApiKeyDto } from '../../../domain.types/api.client/api.client.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -40,4 +40,3 @@ export class ClientMapper {
     }
 
 }
-

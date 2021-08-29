@@ -1,9 +1,9 @@
 import Organization from '../models/organization.model';
-import { OrganizationDto } from "../../../domain.types/organization.domain.types";
 import { UserRepo } from "../repositories/user.repo";
 import { OrganizationRepo } from "../repositories/organization.repo";
 import { AddressRepo } from "../repositories/address.repo";
-import { AddressDto } from '../../../domain.types/address.domain.types';
+import { OrganizationDto } from '../../../domain.types/organization/organization.dto';
+import { AddressDto } from '../../../domain.types/address/address.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -26,7 +26,7 @@ export class OrganizationMapper {
         }
 
         var parentOrganization = null;
-        if (organization.ParentOrganizationId !== null && addParent) {
+        if (organization.ParentOrganizationId !== null) {
             const organizationRepo = new OrganizationRepo();
             parentOrganization = await organizationRepo.getById(organization.ParentOrganizationId);
         }
@@ -57,4 +57,3 @@ export class OrganizationMapper {
     };
     
 }
-

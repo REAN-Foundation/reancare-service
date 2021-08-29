@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import child_process from 'child_process';
 import { InputValidationError } from './input.validation.error';
-import { Gender } from './system.types';
+import { Gender } from '../domain.types/miscellaneous/system.types';
 import { generate } from 'generate-password';
 import { hashSync, compareSync, genSaltSync } from 'bcryptjs';
 import * as crypto from 'crypto';
@@ -355,4 +355,3 @@ export class Helper {
     }
 
 }
-

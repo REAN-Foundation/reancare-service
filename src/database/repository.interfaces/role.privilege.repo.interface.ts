@@ -1,4 +1,4 @@
-import { RolePrivilegeDto } from '../../domain.types/role.domain.types';
+import { RolePrivilegeDto } from "../../domain.types/role/role.privilege.dto";
 
 export interface IRolePrivilegeRepo {
 

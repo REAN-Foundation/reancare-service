@@ -1,4 +1,4 @@
-import { RoleDto } from '../../domain.types/role.domain.types';
+import { RoleDto } from '../../domain.types/role/role.dto';
 
 export interface IRoleRepo {
 

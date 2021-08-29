@@ -1,5 +1,5 @@
-import { CurrentUser } from "../../domain.types/current.user";
-import { CurrentClient } from "../../domain.types/current.client";
+import { CurrentUser } from "../../domain.types/miscellaneous/current.user";
+import { CurrentClient } from "../../domain.types/miscellaneous/current.client";
 
 declare global{
     namespace Express {
@@ -11,4 +11,3 @@ declare global{
         }
     }
 }
-

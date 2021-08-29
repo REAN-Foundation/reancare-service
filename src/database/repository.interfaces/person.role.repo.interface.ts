@@ -1,4 +1,4 @@
-import { PersonRoleDto } from '../../domain.types/role.domain.types';
+import { PersonRoleDto } from "../../domain.types/role/person.role.dto";
 
 export interface IPersonRoleRepo {
 

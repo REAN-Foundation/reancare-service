@@ -1,4 +1,6 @@
-import { AddressDomainModel, AddressDto, AddressSearchFilters, AddressSearchResults } from '../../domain.types/address.domain.types';
+import { AddressDomainModel } from "../../domain.types/address/address.domain.model";
+import { AddressDto } from "../../domain.types/address/address.dto";
+import { AddressSearchFilters, AddressSearchResults } from "../../domain.types/address/address.search.types";
 
 export interface IAddressRepo {
 

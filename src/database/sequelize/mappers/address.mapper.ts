@@ -1,5 +1,5 @@
 import Address from '../models/address.model';
-import { AddressDto } from "../../../domain.types/address.domain.types";
+import { AddressDto } from '../../../domain.types/address/address.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -30,4 +30,3 @@ export class AddressMapper {
     }
 
 }
-

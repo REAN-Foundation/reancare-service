@@ -1,4 +1,6 @@
-import { OrganizationDomainModel, OrganizationDto, OrganizationSearchFilters, OrganizationSearchResults } from '../../domain.types/organization.domain.types';
+import { OrganizationDto } from '../../domain.types/organization/organization.dto';
+import { OrganizationSearchFilters, OrganizationSearchResults } from '../../domain.types/organization/organization.search.types';
+import { OrganizationDomainModel } from '../../domain.types/organization/organization.domain.model';
 
 export interface IOrganizationRepo {
 

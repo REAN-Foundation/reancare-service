@@ -1,8 +1,10 @@
 import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
 import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
-import { PersonDomainModel, PersonDetailsDto, PersonDto, PersonSearchFilters } from '../domain.types/person.domain.types';
 import { injectable, inject } from 'tsyringe';
+import { PersonDomainModel } from '../domain.types/person/person.domain.model';
+import { PersonDetailsDto, PersonDto } from '../domain.types/person/person.dto';
+import { PersonSearchFilters } from '../domain.types/person/patient.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

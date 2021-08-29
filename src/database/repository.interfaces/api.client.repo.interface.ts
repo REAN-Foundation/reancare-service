@@ -1,5 +1,7 @@
-import { ApiClientDomainModel, ApiClientDto, ClientApiKeyDto } from '../../domain.types/api.client.domain.types';
-import { CurrentClient } from '../../domain.types/current.client';
+import { ClientApiKeyDto } from '../../domain.types/api.client/api.client.dto';
+import { ApiClientDto } from '../../domain.types/api.client/api.client.dto';
+import { ApiClientDomainModel } from '../../domain.types/api.client/api.client.domain.model';
+import { CurrentClient } from '../../domain.types/miscellaneous/current.client';
 
 export interface IApiClientRepo {
 

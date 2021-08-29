@@ -1,8 +1,8 @@
 import { UserRepo } from "../repositories/user.repo";
 import Doctor from '../models/doctor.model';
-import { DoctorDetailsDto, DoctorDto } from "../../../domain.types/doctor.domain.types";
 import { AddressRepo } from "../repositories/address.repo";
 import { OrganizationRepo } from "../repositories/organization.repo";
+import { DoctorDetailsDto, DoctorDto } from '../../../domain.types/doctor/doctor.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

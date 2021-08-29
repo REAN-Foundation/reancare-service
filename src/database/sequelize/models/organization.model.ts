@@ -16,8 +16,8 @@ import {
     HasMany,
     ForeignKey,
 } from 'sequelize-typescript';
-import { OrganizationTypeList } from '../../../domain.types/organization.domain.types';
 
+import { OrganizationTypeList } from '../../../domain.types/organization/organization.types';
 import { v4 } from 'uuid';
 import Address from './address.model';
 import Person from './person.model';

@@ -1,9 +1,6 @@
-import {
-    PatientDetailsDto,
-    PatientDomainModel,
-    PatientSearchFilters,
-    PatientSearchResults,
-} from '../../domain.types/patient.domain.types';
+import { PatientDomainModel } from '../../domain.types/patient/patient.domain.model';
+import { PatientSearchFilters, PatientSearchResults } from '../../domain.types/patient/patient.search.types';
+import { PatientDetailsDto } from '../../domain.types/patient/patient.dto';
 
 export interface IPatientRepo {
     create(entity: PatientDomainModel): Promise<PatientDetailsDto>;

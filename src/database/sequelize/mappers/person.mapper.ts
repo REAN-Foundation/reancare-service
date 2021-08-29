@@ -1,4 +1,4 @@
-import { PersonDetailsDto, PersonDto } from "../../../domain.types/person.domain.types";
+import { PersonDetailsDto, PersonDto } from "../../../domain.types/person/person.dto";
 import { PersonRoleRepo } from "../repositories/person.role.repo";
 import Person from '../models/person.model';
 import { Helper } from '../../../common/helper';

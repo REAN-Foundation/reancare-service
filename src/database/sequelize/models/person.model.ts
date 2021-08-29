@@ -16,7 +16,7 @@ import {
     BelongsToMany,
 } from 'sequelize-typescript';
 
-import { PersonIdentificationType } from '../../../domain.types/person.domain.types';
+import { PersonIdentificationType } from '../../../domain.types/person/person.types';
 
 import { v4 } from 'uuid';
 import User from './user.model';

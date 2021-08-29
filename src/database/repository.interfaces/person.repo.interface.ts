@@ -1,4 +1,5 @@
-import { PersonDetailsDto, PersonDomainModel, PersonDto } from '../../domain.types/person.domain.types';
+import { PersonDomainModel } from "../../domain.types/person/person.domain.model";
+import { PersonDetailsDto, PersonDto } from "../../domain.types/person/person.dto";
 
 export interface IPersonRepo {
 

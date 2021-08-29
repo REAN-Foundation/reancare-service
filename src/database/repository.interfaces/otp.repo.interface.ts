@@ -1,4 +1,5 @@
-import { OtpDto, OtpPersistenceEntity } from '../../domain.types/otp.domain.types';
+import { OtpDto } from '../../domain.types/otp/otp.dto';
+import { OtpPersistenceEntity } from '../../domain.types/otp/otp.domain.types';
 
 export interface IOtpRepo {
 

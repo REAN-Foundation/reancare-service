@@ -4,17 +4,18 @@ import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.r
 import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserDetailsDto, UserLoginDetails, UserDomainModel } from '../domain.types/user.domain.types';
+import { UserLoginDetails, UserDomainModel } from '../domain.types/user/user.domain.model';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
-import { CurrentUser } from '../domain.types/current.user';
-import { OtpPersistenceEntity } from '../domain.types/otp.domain.types';
-import { Roles } from '../domain.types/role.domain.types';
+import { CurrentUser } from '../domain.types/miscellaneous/current.user';
+import { OtpPersistenceEntity } from '../domain.types/otp/otp.domain.types';
+import { Roles } from '../domain.types/role/role.types';
 import { generate } from 'generate-password';
 import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
-import { PersonDetailsDto } from '../domain.types/person.domain.types';
+import { PersonDetailsDto } from '../domain.types/person/person.dto';
 import { Helper } from '../common/helper';
+import { UserDetailsDto } from '../domain.types/user/user.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

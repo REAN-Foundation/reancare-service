@@ -1,7 +1,8 @@
 import express from 'express';
 import { query, body, validationResult, param } from 'express-validator';
 import { Helper } from '../../common/helper';
-import { PatientDomainModel, PatientSearchFilters } from '../../domain.types/patient.domain.types';
+import { PatientDomainModel } from '../../domain.types/patient/patient.domain.model';
+import { PatientSearchFilters } from '../../domain.types/patient/patient.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

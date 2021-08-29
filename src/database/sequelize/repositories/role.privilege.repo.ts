@@ -1,6 +1,6 @@
 import { IRolePrivilegeRepo } from '../../repository.interfaces/role.privilege.repo.interface';
 import RolePrivilege from '../models/role.privilege.model';
-import { RolePrivilegeDto } from '../../../domain.types/role.domain.types';
+import { RolePrivilegeDto } from '../../../domain.types/role/role.privilege.dto';
 import { Logger } from '../../../common/logger';
 import { ApiError } from '../../../common/api.error';
 

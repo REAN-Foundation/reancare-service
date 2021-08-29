@@ -2,7 +2,8 @@ import express from 'express';
 import { query, body, oneOf, validationResult, param } from 'express-validator';
 import { ResponseHandler } from '../../common/response.handler';
 import { Helper } from '../../common/helper';
-import { UserSearchFilters, UserLoginDetails } from '../../domain.types/user.domain.types';
+import { UserLoginDetails } from '../../domain.types/user/user.domain.model';
+import { UserSearchFilters } from '../../domain.types/user/user.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -331,4 +332,3 @@ export class UserValidator {
     };
 
 }
-

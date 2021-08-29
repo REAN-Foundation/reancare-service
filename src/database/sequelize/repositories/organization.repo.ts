@@ -1,17 +1,14 @@
 import { IOrganizationRepo } from '../../repository.interfaces/organization.repo.interface';
 import Organization from '../models/organization.model';
 import { Op } from 'sequelize';
-import {
-    OrganizationDomainModel,
-    OrganizationDto,
-    OrganizationSearchFilters,
-    OrganizationSearchResults,
-} from '../../../domain.types/organization.domain.types';
 import { OrganizationMapper } from '../mappers/organization.mapper';
 import { Logger } from '../../../common/logger';
 import { ApiError } from '../../../common/api.error';
 import Address from '../models/address.model';
 import OrganizationPersons from '../models/organization.persons.model';
+import { OrganizationDomainModel } from '../../../domain.types/organization/organization.domain.model';
+import { OrganizationDto } from '../../../domain.types/organization/organization.dto';
+import { OrganizationSearchFilters, OrganizationSearchResults } from '../../../domain.types/organization/organization.search.types';
 
 ///////////////////////////////////////////////////////////////////////
 

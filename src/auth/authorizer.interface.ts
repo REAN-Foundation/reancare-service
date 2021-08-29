@@ -1,5 +1,5 @@
 import express from 'express';
-import { CurrentUser } from '../domain.types/current.user';
+import { CurrentUser } from '../domain.types/miscellaneous/current.user';
 
 ////////////////////////////////////////////////////////////////////////
 

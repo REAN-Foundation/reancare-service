@@ -1,16 +1,6 @@
-
-import { IncomingHttpHeaders } from "http2"
-import { CurrentClient } from "./current.client"
-import { CurrentUser } from "./current.user"
-
-export interface RequestDto {
-    Method: string;
-    Host: string;
-    Body: any;
-    Headers?: IncomingHttpHeaders;
-    Url: string;
-    Params: any;
-}
+import { CurrentClient } from "./current.client";
+import { CurrentUser } from "./current.user";
+import { RequestDto } from "./request.dto";
 
 export interface ResponseDto {
     Status: string;
@@ -26,4 +16,3 @@ export interface ResponseDto {
     APIVersion: string;
     ServiceVersion: string;
 }
-

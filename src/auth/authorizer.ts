@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import express from 'express';
 import { IAuthorizer } from './authorizer.interface';
 import { injectable, inject } from "tsyringe";
-import { CurrentUser } from '../domain.types/current.user';
+import { CurrentUser } from '../domain.types/miscellaneous/current.user';
 import { ApiError } from '../common/api.error';
 
 ////////////////////////////////////////////////////////////////////////

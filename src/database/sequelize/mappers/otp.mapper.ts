@@ -1,4 +1,4 @@
-import { OtpDto } from "../../../domain.types/otp.domain.types";
+import { OtpDto } from "../../../domain.types/otp/otp.dto";
 import Otp from "../models/otp.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -22,4 +22,3 @@ export class OtpMapper {
     }
 
 }
-

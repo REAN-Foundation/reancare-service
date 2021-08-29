@@ -1,4 +1,4 @@
-import { Roles } from "../domain.types/role.domain.types";
+import { Roles } from "../domain.types/role/role.types";
 import { injectable, inject } from "tsyringe";
 import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
 import { IRolePrivilegeRepo } from "../database/repository.interfaces/role.privilege.repo.interface";
@@ -7,8 +7,8 @@ import { ApiClientService } from "../services/api.client.service";
 import { IUserRepo } from "../database/repository.interfaces/user.repo.interface";
 import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
 import { Logger } from "../common/logger";
-import { UserDomainModel } from "../domain.types/user.domain.types";
-import { ApiClientDomainModel } from "../domain.types/api.client.domain.types";
+import { UserDomainModel } from "../domain.types/user/user.domain.model";
+import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
 import { Helper } from "../common/helper";
 import { Loader } from "./loader";
 import * as RolePrivilegesList from '../assets/raw/role.privileges.json';

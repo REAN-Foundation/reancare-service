@@ -1,9 +1,9 @@
-import { UserDetailsDto, UserDto } from "../../../domain.types/user.domain.types";
 import { RoleRepo } from "../repositories/role.repo";
 import { PersonRepo } from '../repositories/person.repo'
 import User from '../models/user.model';
-import { PersonDetailsDto, PersonDto } from "../../../domain.types/person.domain.types";
-import { RoleDto } from "../../../domain.types/role.domain.types";
+import { PersonDetailsDto, PersonDto } from '../../../domain.types/person/person.dto';
+import { UserDetailsDto, UserDto } from '../../../domain.types/user/user.dto';
+import { RoleDto } from '../../../domain.types/role/role.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

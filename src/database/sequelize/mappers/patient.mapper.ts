@@ -1,6 +1,6 @@
 import { UserRepo } from "../repositories/user.repo";
 import Patient from '../models/patient.model';
-import { PatientDetailsDto, PatientDto } from "../../../domain.types/patient.domain.types";
+import { PatientDetailsDto, PatientDto } from "../../../domain.types/patient/patient.dto";
 import { AddressRepo } from "../repositories/address.repo";
 
 ///////////////////////////////////////////////////////////////////////////////////

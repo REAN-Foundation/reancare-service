@@ -1,7 +1,7 @@
 import express from 'express';
 import { body, validationResult, param } from 'express-validator';
 import { Helper } from '../../common/helper';
-import { ApiClientDomainModel, ApiClientVerificationDomainModel } from '../../domain.types/api.client.domain.types';
+import { ApiClientDomainModel, ApiClientVerificationDomainModel } from '../../domain.types/api.client/api.client.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

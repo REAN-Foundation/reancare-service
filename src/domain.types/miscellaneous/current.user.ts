@@ -7,4 +7,3 @@ export interface CurrentUser {
     UserName: string;
     CurrentRoleId: number;
 }
-

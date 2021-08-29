@@ -1,33 +1,4 @@
-
-export interface AddressDomainModel {
-    id?: string;
-    Type: string;
-    PersonId?: string;
-    OrganizationId?: string;
-    AddressLine?: string;
-    City?: string;
-    District?: string;
-    State?: string;
-    Country?: string;
-    PostalCode?: string;
-    Longitude?: number;
-    Lattitude?: number;
-}
-
-export interface AddressDto {
-    id: string;
-    Type: string;
-    PersonId?: string;
-    OrganizationId?: string;
-    AddressLine: string;
-    City: string;
-    District: string;
-    State: string;
-    Country: string;
-    PostalCode: string;
-    Longitude: number;
-    Lattitude: number;
-}
+import { AddressDto } from "./address.dto";
 
 export interface AddressSearchFilters {
     Type?: string;

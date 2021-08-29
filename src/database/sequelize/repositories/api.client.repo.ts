@@ -1,11 +1,12 @@
 import { IApiClientRepo } from '../../repository.interfaces/api.client.repo.interface';
 import ApiClient from '../models/api.client.model';
 import { Op } from 'sequelize';
-import { ApiClientDomainModel, ApiClientDto, ClientApiKeyDto } from '../../../domain.types/api.client.domain.types';
+import { ApiClientDomainModel } from '../../../domain.types/api.client/api.client.domain.model';
 import { ClientMapper } from '../mappers/client.mapper';
 import { Logger } from '../../../common/logger';
 import { ApiError } from '../../../common/api.error';
-import { CurrentClient } from '../../../domain.types/current.client';
+import { CurrentClient } from '../../../domain.types/miscellaneous/current.client';
+import { ApiClientDto, ClientApiKeyDto } from '../../../domain.types/api.client/api.client.dto';
 
 ///////////////////////////////////////////////////////////////////////
 

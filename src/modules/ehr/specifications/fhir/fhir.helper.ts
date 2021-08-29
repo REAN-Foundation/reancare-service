@@ -1,4 +1,4 @@
-import { PersonDomainModel } from '../../../../domain.types/person.domain.types';
+import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 
 ////////////////////////////////////////////////////////////////////////
 

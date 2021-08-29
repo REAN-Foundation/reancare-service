@@ -5,4 +5,3 @@ export interface CurrentClient {
 
     // ClientApiKey: string;
 }
-

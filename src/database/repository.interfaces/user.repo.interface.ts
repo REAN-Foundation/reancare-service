@@ -1,4 +1,5 @@
-import { UserDetailsDto, UserDomainModel } from '../../domain.types/user.domain.types';
+import { UserDetailsDto } from '../../domain.types/user/user.dto';
+import { UserDomainModel } from '../../domain.types/user/user.domain.model';
 
 export interface IUserRepo {
 

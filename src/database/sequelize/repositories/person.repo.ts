@@ -1,4 +1,4 @@
-import { PersonDetailsDto, PersonDomainModel, PersonDto } from "../../../domain.types/person.domain.types";
+import { PersonDomainModel } from "../../../domain.types/person/person.domain.model";
 import { IPersonRepo } from "../../repository.interfaces/person.repo.interface";
 import Person from '../models/person.model';
 import { PersonMapper } from "../mappers/person.mapper";
@@ -6,6 +6,7 @@ import { Logger } from "../../../common/logger";
 import { ApiError } from "../../../common/api.error";
 import { Op } from 'sequelize';
 import PersonRole from "../models/person.role.model";
+import { PersonDetailsDto, PersonDto } from "../../../domain.types/person/person.dto";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

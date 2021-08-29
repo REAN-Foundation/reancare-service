@@ -1,4 +1,3 @@
-import { DoctorDomainModel, DoctorDetailsDto, DoctorDto, DoctorSearchFilters, DoctorSearchResults } from "../../../domain.types/doctor.domain.types";
 import { IDoctorRepo } from "../../repository.interfaces/doctor.repo.interface";
 import { Logger } from "../../../common/logger";
 import { ApiError } from "../../../common/api.error";
@@ -6,6 +5,9 @@ import Doctor from "../models/doctor.model";
 import { DoctorMapper } from "../mappers/doctor.mapper";
 import { Op } from 'sequelize';
 import Person from "../models/person.model";
+import { DoctorDetailsDto, DoctorDto } from '../../../domain.types/doctor/doctor.dto';
+import { DoctorDomainModel } from '../../../domain.types/doctor/doctor.domain.model';
+import { DoctorSearchFilters, DoctorSearchResults } from '../../../domain.types/doctor/doctor.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

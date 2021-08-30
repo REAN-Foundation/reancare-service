@@ -4,6 +4,7 @@ import { IUserRepo } from '../database/repository.interfaces/user.repo.interface
 import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
+import { IAddressRepo } from '../database/repository.interfaces/address.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
 import { injectable, inject } from 'tsyringe';
 import { ApiError } from '../common/api.error';
@@ -12,7 +13,7 @@ import { PatientStore } from '../modules/ehr/services/patient.store';
 import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
 import { Helper } from '../common/helper';
 import { PatientDomainModel } from '../domain.types/patient/patient.domain.model';
-import { PatientDetailsDto } from '../domain.types/patient/patient.dto';
+import { PatientDetailsDto, PatientDto } from '../domain.types/patient/patient.dto';
 import { PatientSearchFilters, PatientDetailsSearchResults, PatientSearchResults } from '../domain.types/patient/patient.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,38 +30,49 @@ export class PatientService {
         @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IOtpRepo') private _otpRepo: IOtpRepo,
+        @inject('IAddressRepo') private _addressRepo: IAddressRepo,
         @inject('IMessagingService') private _messagingService: IMessagingService
     ) {
         this._ehrPatientStore = Loader.container.resolve(PatientStore);
     }
 
+    //#region Publics
+    
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
-        
         const ehrId = await this._ehrPatientStore.create(patientDomainModel);
         patientDomainModel.EhrId = ehrId;
 
-        const patientDto = await this._patientRepo.create(patientDomainModel);
+        var dto = await this._patientRepo.create(patientDomainModel);
+        dto = await this.updateDetailsDto(dto);
         const role = await this._roleRepo.getByName(Roles.Patient);
-        await this._personRoleRepo.addPersonRole(patientDto.User.Person.id, role.id);
+        await this._personRoleRepo.addPersonRole(dto.User.Person.id, role.id);
 
-        return patientDto;
+        return dto;
     };
 
     public getByUserId = async (id: string): Promise<PatientDetailsDto> => {
-        return await this._patientRepo.getByUserId(id);
+        var dto = await this._patientRepo.getByUserId(id);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
     };
 
     public search = async (
         filters: PatientSearchFilters
     ): Promise<PatientDetailsSearchResults | PatientSearchResults> => {
-        return await this._patientRepo.search(filters);
+        var items = [];
+        var results = await this._patientRepo.search(filters);
+        for await (var dto of results.Items) {
+            dto = await this.updateDto(dto);
+            items.push(dto);
+        }
+        results.Items = items;
+        return results;
     };
 
-    public updateByUserId = async (
-        id: string,
-        updateModel: PatientDomainModel
-    ): Promise<PatientDetailsDto> => {
-        return await this._patientRepo.updateByUserId(id, updateModel);
+    public updateByUserId = async (id: string, updateModel: PatientDomainModel): Promise<PatientDetailsDto> => {
+        var dto = await this._patientRepo.updateByUserId(id, updateModel);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
     };
 
     public checkforDuplicatePatients = async (domainModel: PatientDomainModel): Promise<number> => {
@@ -68,10 +80,7 @@ export class PatientService {
         if (role == null) {
             throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');
         }
-        const persons = await this._personRepo.getAllPersonsWithPhoneAndRole(
-            domainModel.User.Person.Phone,
-            role.id
-        );
+        const persons = await this._personRepo.getAllPersonsWithPhoneAndRole(domainModel.User.Person.Phone, role.id);
 
         let displayName = Helper.constructPersonDisplayName(
             domainModel.User.Person.Prefix,
@@ -89,5 +98,31 @@ export class PatientService {
         }
         return persons.length;
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private updateDetailsDto = async (dto: PatientDetailsDto): Promise<PatientDetailsDto> => {
+        const user = await this._userRepo.getById(dto.UserId);
+        const addresses = await this._addressRepo.getByPersonId(user.Person.id);
+        dto.User = user;
+        dto.Addresses = addresses;
+        return dto;
+    };
+
+    private updateDto = async (dto: PatientDto): Promise<PatientDto> => {
+        const user = await this._userRepo.getById(dto.UserId);
+        dto.DisplayName = user.Person.DisplayName;
+        dto.UserName = user.UserName;
+        dto.Phone = user.Person.Phone;
+        dto.Email = user.Person.Email;
+        dto.Gender = user.Person.Gender;
+        dto.BirthDate = user.Person.BirthDate;
+        dto.Age = user.Person.Age;
+        return dto;
+    };
+
+    //#endregion
 
 }

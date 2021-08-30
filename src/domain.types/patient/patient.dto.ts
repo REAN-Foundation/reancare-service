@@ -23,6 +23,7 @@ export interface PatientDto {
 
 export interface PatientDetailsDto {
     id: string;
+    UserId: string;
     User: UserDto;
     DisplayId: string,
     EhrId?: string;

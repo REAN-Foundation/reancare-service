@@ -95,22 +95,19 @@ export class OrganizationService {
 
     private updateDto = async (dto: OrganizationDto): Promise<OrganizationDto> => {
 
-        var contactUser = null;
         if (dto.ContactUserId != null) {
-            contactUser = await this._userRepo.getById(dto.ContactUserId);
+            var contactUser = await this._userRepo.getById(dto.ContactUserId);
+            dto.ContactUser = contactUser;
         }
 
-        var parentOrganization = null;
         if (dto.ParentOrganizationId !== null && dto.ParentOrganization == null) {
-            parentOrganization = this._organizationRepo.getById(dto.ParentOrganizationId);
+            var parentOrganization = await this._organizationRepo.getById(dto.ParentOrganizationId);
+            dto.ParentOrganization = parentOrganization;
         }
 
         var addresses: AddressDto[] = await this._addressRepo.getByOrganizationId(dto.id);
-
-        dto.ContactUser = contactUser;
         dto.Addresses = addresses;
-        dto.ParentOrganization = parentOrganization;
-
+        
         return dto;
     };
 

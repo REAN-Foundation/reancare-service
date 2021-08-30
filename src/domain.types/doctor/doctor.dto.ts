@@ -10,6 +10,7 @@ export interface DoctorDetailsDto {
     id: string;
     DisplayId: string,
     EhrId?: string;
+    UserId?: string;
     NationalDigiDoctorId?:string;
     User: UserDto;
     Locality?: string;

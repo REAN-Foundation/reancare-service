@@ -1,7 +1,4 @@
-import { UserRepo } from "../repositories/user.repo";
 import Doctor from '../models/doctor.model';
-import { AddressRepo } from "../repositories/address.repo";
-import { OrganizationRepo } from "../repositories/organization.repo";
 import { DoctorDetailsDto, DoctorDto } from '../../../domain.types/doctor/doctor.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -13,15 +10,6 @@ export class DoctorMapper {
         if (doctor == null){
             return null;
         }
-
-        const userRepo = new UserRepo();
-        const user = await userRepo.getById(doctor.UserId);
-
-        const addressRepo = new AddressRepo();
-        const addresses = await addressRepo.getByPersonId(user.Person.id);
-
-        const organizationRepo = new OrganizationRepo();
-        const organizations = await organizationRepo.getByPersonId(user.Person.id);
 
         var specialities = [];
         if (doctor.Specialities !== null && doctor.Specialities.length > 2) {
@@ -35,7 +23,8 @@ export class DoctorMapper {
         
         const dto: DoctorDetailsDto = {
             id                     : doctor.id,
-            User                   : user,
+            UserId                 : doctor.UserId,
+            User                   : null,
             DisplayId              : doctor.DisplayId,
             EhrId                  : doctor.EhrId,
             NationalDigiDoctorId   : doctor.NationalDigiDoctorId,
@@ -46,8 +35,8 @@ export class DoctorMapper {
             Specialities           : specialities,
             ProfessionalHighlights : professionalHighlights,
             ConsultationFee        : doctor.ConsultationFee,
-            Addresses              : addresses,
-            Organizations          : organizations
+            Addresses              : [],
+            Organizations          : []
         };
         return dto;
     }
@@ -58,22 +47,19 @@ export class DoctorMapper {
             return null;
         }
 
-        const userRepo = new UserRepo();
-        const user = await userRepo.getById(doctor.UserId);
-
         const dto: DoctorDto = {
             id                   : doctor.id,
-            UserId               : user.id,
+            UserId               : doctor.UserId,
             DisplayId            : doctor.DisplayId,
             EhrId                : doctor.EhrId,
-            DisplayName          : user.Person.DisplayName,
-            UserName             : user.UserName,
+            DisplayName          : null,
+            UserName             : null,
             NationalDigiDoctorId : doctor.NationalDigiDoctorId,
-            Phone                : user.Person.Phone,
-            Email                : user.Person.Email,
-            Gender               : user.Person.Gender,
-            BirthDate            : user.Person.BirthDate,
-            Age                  : user.Person.Age,
+            Phone                : null,
+            Email                : null,
+            Gender               : null,
+            BirthDate            : null,
+            Age                  : null,
         };
         return dto;
     }

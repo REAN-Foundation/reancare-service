@@ -10,8 +10,10 @@ import { ApiError } from '../common/api.error';
 import { Roles } from '../domain.types/role/role.types';
 import { DoctorStore } from '../modules/ehr/services/doctor.store';
 import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
+import { IAddressRepo } from '../database/repository.interfaces/address.repo.interface';
+import { IOrganizationRepo } from '../database/repository.interfaces/organization.repo.interface';
 import { DoctorDomainModel } from '../domain.types/doctor/doctor.domain.model';
-import { DoctorDetailsDto } from '../domain.types/doctor/doctor.dto';
+import { DoctorDetailsDto, DoctorDto } from '../domain.types/doctor/doctor.dto';
 import { DoctorSearchFilters, DoctorDetailsSearchResults, DoctorSearchResults } from '../domain.types/doctor/doctor.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,38 +30,54 @@ export class DoctorService {
         @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IOtpRepo') private _otpRepo: IOtpRepo,
+        @inject('IAddressRepo') private _addressRepo: IAddressRepo,
+        @inject('IOrganizationRepo') private _organizationRepo: IOrganizationRepo,
         @inject('IMessagingService') private _messagingService: IMessagingService
     ) {
         this._ehrDoctorStore = Loader.container.resolve(DoctorStore);
     }
+
+    //#region Publics
 
     create = async (doctorDomainModel: DoctorDomainModel): Promise<DoctorDetailsDto> => {
         
         const ehrId = await this._ehrDoctorStore.create(doctorDomainModel);
         doctorDomainModel.EhrId = ehrId;
 
-        const doctorDto = await this._doctorRepo.create(doctorDomainModel);
+        var dto = await this._doctorRepo.create(doctorDomainModel);
+        dto = await this.updateDetailsDto(dto);
         const role = await this._roleRepo.getByName(Roles.Doctor);
-        await this._personRoleRepo.addPersonRole(doctorDto.User.Person.id, role.id);
+        await this._personRoleRepo.addPersonRole(dto.User.Person.id, role.id);
 
-        return doctorDto;
+        return dto;
     };
 
     public getByUserId = async (id: string): Promise<DoctorDetailsDto> => {
-        return await this._doctorRepo.getByUserId(id);
+        var dto = await this._doctorRepo.getByUserId(id);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
     };
 
     public search = async (
         filters: DoctorSearchFilters
     ): Promise<DoctorDetailsSearchResults | DoctorSearchResults> => {
-        return await this._doctorRepo.search(filters);
+        var items = [];
+        var results = await this._doctorRepo.search(filters);
+        for await (var dto of results.Items) {
+            dto = await this.updateDto(dto);
+            items.push(dto);
+        }
+        results.Items = items;
+        return results;
     };
 
     public updateByUserId = async (
         id: string,
         updateModel: DoctorDomainModel
     ): Promise<DoctorDetailsDto> => {
-        return await this._doctorRepo.updateByUserId(id, updateModel);
+        var dto = await this._doctorRepo.updateByUserId(id, updateModel);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
     };
 
     public doctorExists = async (domainModel: DoctorDomainModel): Promise<boolean> => {
@@ -77,5 +95,35 @@ export class DoctorService {
         }
         return false;
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private updateDetailsDto = async (dto: DoctorDetailsDto): Promise<DoctorDetailsDto> => {
+
+        const user = await this._userRepo.getById(dto.UserId);
+        const addresses = await this._addressRepo.getByPersonId(user.Person.id);
+        const organizations = await this._organizationRepo.getByPersonId(user.Person.id);
+        dto.User = user;
+        dto.Addresses = addresses;
+        dto.Organizations = organizations;
+        return dto;
+    }
+
+    private updateDto = async (dto: DoctorDto): Promise<DoctorDto> => {
+
+        const user = await this._userRepo.getById(dto.UserId);
+        dto.DisplayName = user.Person.DisplayName;
+        dto.UserName = user.UserName;
+        dto.Phone = user.Person.Phone;
+        dto.Email = user.Person.Email;
+        dto.Gender = user.Person.Gender;
+        dto.BirthDate = user.Person.BirthDate;
+        dto.Age = user.Person.Age;
+        return dto;
+    }
+
+    //#endregion
 
 }

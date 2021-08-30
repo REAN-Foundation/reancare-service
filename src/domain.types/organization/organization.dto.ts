@@ -5,9 +5,11 @@ export interface OrganizationDto {
     id: string;
     Type: string;
     Name: string;
+    ContactUserId?: string;
     ContactUser?: UserDto;
     ContactPhone?: string;
     ContactEmail?: string;
+    ParentOrganizationId?: string;
     ParentOrganization?: OrganizationDto;
     About?: string;
     OperationalSince?: Date;

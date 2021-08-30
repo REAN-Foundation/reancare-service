@@ -94,7 +94,9 @@ export class OrganizationService {
     //#region Privates
 
     private updateDto = async (dto: OrganizationDto): Promise<OrganizationDto> => {
-
+        if (dto == null) {
+            return null;
+        }
         if (dto.ContactUserId != null) {
             var contactUser = await this._userRepo.getById(dto.ContactUserId);
             dto.ContactUser = contactUser;

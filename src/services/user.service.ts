@@ -15,7 +15,7 @@ import { generate } from 'generate-password';
 import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
 import { PersonDetailsDto } from '../domain.types/person/person.dto';
 import { Helper } from '../common/helper';
-import { UserDetailsDto } from '../domain.types/user/user.dto';
+import { UserDetailsDto, UserDto } from '../domain.types/user/user.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,20 +32,25 @@ export class UserService {
     ) {}
 
     create = async (userDomainModel: UserDomainModel) => {
-        const user = await this._userRepo.create(userDomainModel);
-        if (user == null) {
+        var dto = await this._userRepo.create(userDomainModel);
+        if (dto == null) {
             return null;
         }
-        await this.generateLoginOtp(userDomainModel, user);
-        return user;
+        dto = await this.updateDetailsDto(dto);
+        await this.generateLoginOtp(userDomainModel, dto);
+        return dto;
     };
 
     public getById = async (id: string): Promise<UserDetailsDto> => {
-        return await this._userRepo.getById(id);
+        var dto = await this._userRepo.getById(id);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
     };
 
     public update = async (id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
-        return await this._userRepo.update(id, userDomainModel);
+        var dto = await this._userRepo.update(id, userDomainModel);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
     };
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
@@ -94,7 +99,8 @@ export class UserService {
 
         //Now check if that person is an user with a given role
         const personId = person.id;
-        const user: UserDetailsDto = await this._userRepo.getUserByPersonIdAndRole(personId, otpDetails.RoleId);
+        var user: UserDetailsDto = await this._userRepo.getUserByPersonIdAndRole(personId, otpDetails.RoleId);
+        user = await this.updateDetailsDto(user);
         if (person == null) {
             throw new ApiError(404, 'Cannot find user with the given role.');
         }
@@ -238,6 +244,7 @@ export class UserService {
             }
         } else if (loginModel.UserName) {
             user = await this._userRepo.getUserWithUserName(loginModel.UserName);
+            user = await this.updateDetailsDto(user);
             if (user == null) {
                 const message = 'User does not exist with username (' + loginModel.UserName + ')';
                 throw new ApiError(404, message);
@@ -252,6 +259,7 @@ export class UserService {
         const personId = person.id;
         if (user == null) {
             user = await this._userRepo.getUserByPersonIdAndRole(personId, loginModel.LoginRoleId);
+            user = await this.updateDetailsDto(user);
             if (user == null) {
                 throw new ApiError(404, 'Cannot find user with the given role.');
             }
@@ -280,5 +288,35 @@ export class UserService {
     // public resetPassword = async (obj: any): Promise<boolean> => {
     //     return true;
     // };
+
+    //#region Privates
+
+    private updateDetailsDto = async (dto: UserDetailsDto): Promise<UserDetailsDto> => {
+        if (dto == null) {
+            return null;
+        }
+        if (dto.Person == null) {
+            var person = await this._personRepo.getById(dto.PersonId);
+            dto.Person = person;
+        }
+        if (dto.Role == null) {
+            var role = await this._roleRepo.getById(dto.RoleId);
+            dto.Role = role;
+        }
+        return dto;
+    };
+
+    private updateDto = async (dto: UserDto): Promise<UserDto> => {
+        if (dto == null) {
+            return null;
+        }
+        if (dto.Person == null) {
+            var person = await this._personRepo.getById(dto.PersonId);
+            dto.Person = person;
+        }
+        return dto;
+    };
+
+    //#endregion
 
 }

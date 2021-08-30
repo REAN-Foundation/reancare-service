@@ -1,11 +1,11 @@
 
 import { IPersonRoleRepo } from "../../repository.interfaces/person.role.repo.interface";
 import PersonRole from '../models/person.role.model';
+import Role from "../models/role.model";
 import { PersonRoleDto } from "../../../domain.types/role/person.role.dto";
 import { PersonRoleMapper } from '../mappers/person.role.mapper';
 import { Logger } from "../../../common/logger";
 import { ApiError } from "../../../common/api.error";
-import { RoleRepo } from "./role.repo";
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -28,10 +28,16 @@ export class PersonRoleRepo implements IPersonRoleRepo {
 
     addPersonRole = async (personId: string, roleId: number): Promise<PersonRoleDto> => {
         try {
+            const role = await Role.findByPk(roleId);
+            if (!role){
+                throw new Error('Role does not exist.');
+            }
             const entity = {
                 PersonId : personId,
                 RoleId   : roleId,
+                RoleName : role.RoleName
             };
+
             const personRole = await PersonRole.create(entity);
             const dto = await PersonRoleMapper.toDto(personRole);
             return dto;
@@ -54,8 +60,7 @@ export class PersonRoleRepo implements IPersonRoleRepo {
     getPersonCountByRoles = async (): Promise<any> => {
         try {
             const personCountForRoles = {};
-            const roleRepo = new RoleRepo();
-            const allRoles = await roleRepo.search();
+            const allRoles = await Role.findAll();
             for await (const r of allRoles) {
                 const roleCount = await PersonRole.count({
                     where : {

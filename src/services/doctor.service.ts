@@ -101,8 +101,13 @@ export class DoctorService {
     //#region Privates
 
     private updateDetailsDto = async (dto: DoctorDetailsDto): Promise<DoctorDetailsDto> => {
-
-        const user = await this._userRepo.getById(dto.UserId);
+        if (dto == null) {
+            return null;
+        }
+        var user = await this._userRepo.getById(dto.UserId);
+        if (user.Person == null) {
+            user.Person = await this._personRepo.getById(user.PersonId);
+        }
         const addresses = await this._addressRepo.getByPersonId(user.Person.id);
         const organizations = await this._organizationRepo.getByPersonId(user.Person.id);
         dto.User = user;
@@ -112,8 +117,13 @@ export class DoctorService {
     }
 
     private updateDto = async (dto: DoctorDto): Promise<DoctorDto> => {
-
+        if (dto == null) {
+            return null;
+        }
         const user = await this._userRepo.getById(dto.UserId);
+        if (user.Person == null) {
+            user.Person = await this._personRepo.getById(user.PersonId);
+        }
         dto.DisplayName = user.Person.DisplayName;
         dto.UserName = user.UserName;
         dto.Phone = user.Person.Phone;

@@ -17,17 +17,19 @@ export class PersonService {
         @inject('IRoleRepo') private _roleRepo: IRoleRepo
     ) {}
 
+    //#region Publics
+
     create = async (personDomainModel: PersonDomainModel): Promise<PersonDetailsDto> => {
 
-        const person = await this._personRepo.create(personDomainModel);
-        if (person == null) {
-            return null;
-        }
-        return person;
+        var dto = await this._personRepo.create(personDomainModel);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
     };
 
     public getById = async (id: string): Promise<PersonDetailsDto> => {
-        return await this._personRepo.getById(id);
+        var dto = await this._personRepo.getById(id);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
     };
 
     public exists = async (id: string): Promise<boolean> => {
@@ -37,11 +39,20 @@ export class PersonService {
     public search = async (
         filters: PersonSearchFilters
     ): Promise<PersonDetailsDto[] | PersonDto[]> => {
-        return await this._personRepo.search(filters);
+        var items = [];
+        var dtos = await this._personRepo.search(filters);
+        for await (var dto of dtos) {
+            dto = await this.updateDto(dto);
+            items.push(dto);
+        }
+        dtos = items;
+        return dtos;
     };
 
     public update = async (id: string, personDomainModel: PersonDomainModel): Promise<PersonDetailsDto> => {
-        return await this._personRepo.update(id, personDomainModel);
+        var dto = await this._personRepo.update(id, personDomainModel);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
     };
 
     public delete = async (id: string): Promise<boolean> => {
@@ -49,7 +60,28 @@ export class PersonService {
     };
 
     getPersonWithPhone = async (phone: string): Promise<PersonDetailsDto> => {
-        return await this._personRepo.getPersonWithPhone(phone);
+        var dto = await this._personRepo.getPersonWithPhone(phone);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private updateDetailsDto = async (dto: PersonDetailsDto): Promise<PersonDetailsDto> => {
+        if (dto == null) {
+            return null;
+        }
+        const personRoles = await this._personRoleRepo.getPersonRoles(dto.id);
+        dto.Roles = personRoles;
+        return dto;
+    };
+
+    private updateDto = async (dto: PersonDto): Promise<PersonDto> => {
+        return dto;
+    };
+
+    //#endregion
 
 }

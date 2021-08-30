@@ -1,5 +1,4 @@
 import { PersonDetailsDto, PersonDto } from "../../../domain.types/person/person.dto";
-import { PersonRoleRepo } from "../repositories/person.role.repo";
 import Person from '../models/person.model';
 import { Helper } from '../../../common/helper';
 
@@ -21,9 +20,6 @@ export class PersonMapper {
 
         const age = Helper.getAgeFromBirthDate(person.BirthDate);
 
-        const personRoleRepo = new PersonRoleRepo();
-        const personRoles = await personRoleRepo.getPersonRoles(person.id);
-
         const dto: PersonDetailsDto = {
             id              : person.id,
             Prefix          : person.Prefix,
@@ -38,7 +34,7 @@ export class PersonMapper {
             Email           : person.Email,
             ImageResourceId : person.ImageResourceId,
             ActiveSince     : person.CreatedAt,
-            Roles           : personRoles,
+            Roles           : [],
             Addresses       : []
         };
         return dto;

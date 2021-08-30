@@ -3,7 +3,9 @@ import { RoleDto } from "../role/role.dto";
 
 export interface UserDetailsDto {
     id: string;
+    PersonId: string;
     Person: PersonDetailsDto;
+    RoleId: number;
     Role: RoleDto;
     UserName: string;
     DefaultTimeZone:string;
@@ -13,6 +15,7 @@ export interface UserDetailsDto {
 
 export interface UserDto {
     id: string;
+    PersonId: string;
     Person: PersonDto;
     DefaultTimeZone:string;
     CurrentTimeZone:string;

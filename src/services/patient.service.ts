@@ -3,9 +3,7 @@ import { IPatientRepo } from '../database/repository.interfaces/patient.repo.int
 import { IUserRepo } from '../database/repository.interfaces/user.repo.interface';
 import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
-import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
 import { IAddressRepo } from '../database/repository.interfaces/address.repo.interface';
-import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
 import { injectable, inject } from 'tsyringe';
 import { ApiError } from '../common/api.error';
 import { Roles } from '../domain.types/role/role.types';
@@ -29,9 +27,7 @@ export class PatientService {
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
-        @inject('IOtpRepo') private _otpRepo: IOtpRepo,
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
-        @inject('IMessagingService') private _messagingService: IMessagingService
     ) {
         this._ehrPatientStore = Loader.container.resolve(PatientStore);
     }
@@ -104,15 +100,27 @@ export class PatientService {
     //#region Privates
 
     private updateDetailsDto = async (dto: PatientDetailsDto): Promise<PatientDetailsDto> => {
-        const user = await this._userRepo.getById(dto.UserId);
-        const addresses = await this._addressRepo.getByPersonId(user.Person.id);
+        if (dto == null) {
+            return null;
+        }
+        var user = await this._userRepo.getById(dto.UserId);
+        if (user.Person == null) {
+            user.Person = await this._personRepo.getById(user.PersonId);
+        }
+        const addresses = await this._addressRepo.getByPersonId(user.PersonId);
         dto.User = user;
         dto.Addresses = addresses;
         return dto;
     };
 
     private updateDto = async (dto: PatientDto): Promise<PatientDto> => {
+        if (dto == null) {
+            return null;
+        }
         const user = await this._userRepo.getById(dto.UserId);
+        if (user.Person == null) {
+            user.Person = await this._personRepo.getById(user.PersonId);
+        }
         dto.DisplayName = user.Person.DisplayName;
         dto.UserName = user.UserName;
         dto.Phone = user.Person.Phone;

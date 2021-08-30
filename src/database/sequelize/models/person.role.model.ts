@@ -9,7 +9,8 @@ import {
     IsUUID,
     PrimaryKey,
     IsInt,
-    ForeignKey
+    ForeignKey,
+    Length
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
@@ -51,6 +52,13 @@ export default class PersonRole extends Model {
         allowNull : false,
     })
     RoleId: number;
+
+    @Length({ min: 1, max: 32 })
+    @Column({
+        type      : DataType.STRING(32),
+        allowNull : true
+    })
+    RoleName: string;
 
     @Column
     @CreatedAt

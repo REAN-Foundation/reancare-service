@@ -86,6 +86,7 @@ export class PatientValidator {
             await query('email').optional()
                 .trim()
                 .escape()
+                .isEmail()
                 .run(request);
 
             await query('name').optional()

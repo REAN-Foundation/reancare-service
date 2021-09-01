@@ -43,7 +43,8 @@ export class AddressController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Address.Create';
-
+            await this._authorizer.authorize(request, response);
+            
             const domainModel = await AddressValidator.create(request);
 
             if (domainModel.PersonId != null) {

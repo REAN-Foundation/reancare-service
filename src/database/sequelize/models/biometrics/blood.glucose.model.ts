@@ -16,18 +16,18 @@ import {
 
 import { v4 } from 'uuid';
 import User from '../user.model';
-import Person from './../person.model';
+import Person from '../person.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'BloodOxygenSaturation',
-    tableName       : 'biometrics_blood_oxygen_saturation',
+    modelName       : 'BloodGlucose',
+    tableName       : 'biometrics_blood_glucose',
     paranoid        : true,
     freezeTableName : true
 })
-export default class BloodOxygenSaturation extends Model {
+export default class BloodGlucose extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -78,16 +78,16 @@ export default class BloodOxygenSaturation extends Model {
         allowNull : false,
         validate  : {
             min : 10,
-            max : 100
+            max : 1000
         }
     })
-    BloodOxygenSaturation: number;
+    BloodGlucose: number;
 
     @Length({ max: 8 })
     @Column({
         type         : DataType.STRING(8),
         allowNull    : false,
-        defaultValue : '%s'
+        defaultValue : 'mg/dL'
     })
     Unit: string;
 

@@ -12,8 +12,7 @@ import {
     ForeignKey,
     BelongsTo,
     IsDecimal,
-    IsDate, 
-    IsInt} from 'sequelize-typescript';
+    IsDate } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import User from '../user.model';
@@ -23,12 +22,12 @@ import Person from '../person.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'Pulse',
-    tableName       : 'biometrics_pulse',
+    modelName       : 'BodyTemperature',
+    tableName       : 'biometrics_body_temperature',
     paranoid        : true,
     freezeTableName : true
 })
-export default class Pulse extends Model {
+export default class BodyTemperature extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -73,22 +72,18 @@ export default class Pulse extends Model {
     // })
     // EncounterId: string;
 
-    @IsInt
+    @IsDecimal
     @Column({
-        type      : DataType.INTEGER,
+        type      : DataType.FLOAT,
         allowNull : false,
-        validate  : {
-            min : 10,
-            max : 250
-        }
     })
-    Pulse: number;
+    BodyTemperature: number;
 
     @Length({ max: 8 })
     @Column({
         type         : DataType.STRING(8),
         allowNull    : false,
-        defaultValue : 'bpm'
+        defaultValue : '°F'
     })
     Unit: string;
 

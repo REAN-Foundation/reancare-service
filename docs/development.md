@@ -9,9 +9,9 @@
 
 ## Recommended Tools on Development Machine
 1. Visual Studio Code with following extensions
-  - ESLint by Dirk Baeumer
-  - DotENV by mikestead
-  - Prettier Code Formatter by Prettier
+    - ESLint by Dirk Baeumer
+    - DotENV by mikestead
+    - Prettier Code Formatter by Prettier
 2. MySQL Workbench
 3. Postman
 

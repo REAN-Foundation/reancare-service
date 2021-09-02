@@ -17,8 +17,10 @@ Here is the itemized checklist you should use whenever you are adding a new API,
    - [ ]  Create `<api/entity>.routes.ts` file in `/src/api/routes` folder. Please make sure the routes added here match the ones in Postman collection.
    - [ ]  Add client and user authentication middleware calls as per the requirement of the routes.
    - [ ]  Add an entry of the routes in `/src/api/routes/router.ts` file.
- - [ ]  **Domain Model**
-   - [ ]  Add interface definitions for your domain models, DTOs, search filter interfaces in file `/src/domain.types/<api/entity>.domain.types.ts`.
+ - [ ]  **Domain Types**
+   - [ ]  Add interface definitions for your domain models, DTOs, search filter interfaces in file `/src/domain.types/<api/entity>/<api.entity>.domain.model.ts`.
+   - [ ]  Add DTOs in file `/src/domain.types/<api/entity>/<api.entity>.dto.ts`.
+   - [ ]  Add search filter interfaces in file `/src/domain.types/<api/entity>/<api.entity>.search.types.ts`.
  - [ ]  **Input validator**
    - [ ]  Add input validator class in `/src/api/input.validators/<api/entity>.input.validator.ts` and add validation and domain model creation methods for each of the route.
  - [ ]  **Controller**

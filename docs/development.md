@@ -8,11 +8,10 @@
 5. Optional: If you want to use FHIR service, user the one using version R4. Default is [GCP FHIR](https://cloud.google.com/healthcare/docs/concepts/fhir) for which you have enable the GCP API for FHIR and set the creds.
 
 ## Recommended Tools on Development Machine
-1. Visual Studio Code 
-  - Extensions
-    a. ESLint by Dirk Baeumer
-    b. DotENV by mikestead
-    c. Prettier Code Formatter by Prettier
+1. Visual Studio Code with following extensions
+  a. ESLint by Dirk Baeumer
+  b. DotENV by mikestead
+  c. Prettier Code Formatter by Prettier
 2. MySQL Workbench
 3. Postman
 

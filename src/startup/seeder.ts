@@ -9,10 +9,11 @@ import { IPersonRepo } from "../database/repository.interfaces/person.repo.inter
 import { Logger } from "../common/logger";
 import { UserDomainModel } from "../domain.types/user/user.domain.model";
 import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
-import { Helper } from "../common/helper";
 import { Loader } from "./loader";
-import * as RolePrivilegesList from '../assets/raw/role.privileges.json';
+import * as RolePrivilegesList from '../assets/seed.data/role.privileges.json';
 import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
+import * as SeededInternalClients from '../assets/seed.data/internal.clients.seed.json';
+import * as SeededSystemAdmin from '../assets/seed.data/system.admin.seed.json';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -73,122 +74,58 @@ export class Seeder {
     };
 
     private seedSystemAdmin = async () => {
+
         const exists = await this._userRepo.userNameExists('admin');
         if (exists) {
             return;
         }
+
         const role = await this._roleRepo.getByName(Roles.SystemAdmin);
+       
         const userDomainModel: UserDomainModel = {
             Person : {
-                Phone     : '+91 0000000000',
-                FirstName : 'system-admin',
+                Phone     : SeededSystemAdmin.Phone,
+                FirstName : SeededSystemAdmin.FirstName,
             },
-            UserName        : 'admin',
-            Password        : 'rean-foundation', //Helper.generatePassword(),
-            DefaultTimeZone : '+05:30',
-            CurrentTimeZone : '+05:30',
+            UserName        : SeededSystemAdmin.UserName,
+            Password        : SeededSystemAdmin.Password,
+            DefaultTimeZone : SeededSystemAdmin.DefaultTimeZone,
+            CurrentTimeZone : SeededSystemAdmin.CurrentTimeZone,
             RoleId          : role.id,
         };
+
         const person = await this._personRepo.create(userDomainModel.Person);
         userDomainModel.Person.id = person.id;
         await this._userRepo.create(userDomainModel);
         await this._personRoleRepo.addPersonRole(person.id, role.id);
+
         Logger.instance().log('Seeded admin user successfully!');
     };
 
     private seedInternalClients = async () => {
 
-        //Check for internal API client
-        let clientCode = 'REANINTR';
-        let client = await this._apiClientService.getByClientCode(clientCode);
-        if (client == null) {
-            const model: ApiClientDomainModel = {
-                ClientName : 'REAN Foundation - Internal API client',
-                ClientCode : clientCode,
-                Email      : 'kiran.kharade@reanfoundation.org',
-                Password   : Helper.generatePassword(),
-                ValidFrom  : new Date(),
-                ValidTill  : new Date(2030, 12, 31),
-                ApiKey     : process.env.API_CLIENT_INTERNAL,
-            };
-            client = await this._apiClientService.create(model);
-        }
-        
-        let str = JSON.stringify(client, null, '  ');
-        Logger.instance().log(str);
+        Logger.instance().log('Seeding internal clients...');
 
-        //Check for REAN patient app
-        clientCode = 'REANPTNT';
-        client = await this._apiClientService.getByClientCode(clientCode);
-        if (client == null) {
-            const model: ApiClientDomainModel = {
-                ClientName : 'REAN Foundation - Patient App',
-                ClientCode : clientCode,
-                Email      : 'tushar.katakdound@reanfoundation.org',
-                Password   : Helper.generatePassword(),
-                ValidFrom  : new Date(),
-                ValidTill  : new Date(2030, 12, 31),
-                ApiKey     : process.env.API_CLIENT_INTERNAL_PATIENT_APP,
-            };
-            client = await this._apiClientService.create(model);
+        const arr = SeededInternalClients['default'];
+        for (let i = 0; i < arr.length; i++) {
+            var c = arr[i];
+            let client = await this._apiClientService.getByClientCode(c.ClientCode);
+            if (client == null) {
+                const model: ApiClientDomainModel = {
+                    ClientName : c['ClientName'],
+                    ClientCode : c['ClientCode'],
+                    Email      : c['Email'],
+                    Password   : c['Password'],
+                    ValidFrom  : new Date(),
+                    ValidTill  : new Date(2030, 12, 31),
+                    ApiKey     : c['ApiKey'],
+                };
+                client = await this._apiClientService.create(model);
+                var str = JSON.stringify(client, null, '  ');
+                Logger.instance().log(str);
+            }
         }
-        str = JSON.stringify(client, null, '  ');
-        Logger.instance().log(str);
 
-        //Check for REAN patient app
-        clientCode = 'REANDCTR';
-        client = await this._apiClientService.getByClientCode(clientCode);
-        if (client == null) {
-            const model: ApiClientDomainModel = {
-                ClientName : 'REAN Foundation - Doctor App',
-                ClientCode : clientCode,
-                Email      : 'tushar.katakdound@reanfoundation.org',
-                Password   : Helper.generatePassword(),
-                ValidFrom  : new Date(),
-                ValidTill  : new Date(2030, 12, 31),
-                ApiKey     : process.env.API_CLIENT_INTERNAL_DOCTOR_APP,
-            };
-            client = await this._apiClientService.create(model);
-        }
-        str = JSON.stringify(client, null, '  ');
-        Logger.instance().log(str);
-
-        //Check for REAN patient app
-        clientCode = 'REANALAB';
-        client = await this._apiClientService.getByClientCode(clientCode);
-        if (client == null) {
-            const model: ApiClientDomainModel = {
-                ClientName : 'REAN Foundation - Lab App',
-                ClientCode : clientCode,
-                Email      : 'tushar.katakdound@reanfoundation.org',
-                Password   : Helper.generatePassword(),
-                ValidFrom  : new Date(),
-                ValidTill  : new Date(2030, 12, 31),
-                ApiKey     : process.env.API_CLIENT_INTERNAL_LAB_APP,
-            };
-            client = await this._apiClientService.create(model);
-        }
-        str = JSON.stringify(client, null, '  ');
-        Logger.instance().log(str);
-
-        //Check for REAN patient app
-        clientCode = 'REANPHRM';
-        client = await this._apiClientService.getByClientCode(clientCode);
-        if (client == null) {
-            const model: ApiClientDomainModel = {
-                ClientName : 'REAN Foundation - Pharmacy App',
-                ClientCode : clientCode,
-                Email      : 'tushar.katakdound@reanfoundation.org',
-                Password   : Helper.generatePassword(),
-                ValidFrom  : new Date(),
-                ValidTill  : new Date(2030, 12, 31),
-                ApiKey     : process.env.API_CLIENT_INTERNAL_PHARMACY_APP,
-            };
-            client = await this._apiClientService.create(model);
-        }
-        str = JSON.stringify(client, null, '  ');
-        Logger.instance().log(str);
-        Logger.instance().log('Seeded internal clients successfully!');
     };
 
     private seedDefaultRoles = async () => {

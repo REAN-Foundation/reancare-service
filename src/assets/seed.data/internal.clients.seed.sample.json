@@ -1,0 +1,9 @@
+[
+    {
+        "ClientCode": "MYCLIENT",
+        "ClientName": "My internal client",
+        "Email": "abc.pqr@xyz.com",
+        "Password": "<your-client-password>",
+        "ApiKey": "<Your-api-key>"
+    }
+]

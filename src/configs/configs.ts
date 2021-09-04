@@ -15,6 +15,7 @@ export interface AuthConfig {
     Authentication: AuthenticationType;
     Authorization: AuthorizationType;
 }
+
 export interface DatabaseConfig {
     Type: DatabaseType;
     ORM: DatabaseORM;

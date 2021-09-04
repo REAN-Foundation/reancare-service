@@ -1,0 +1,50 @@
+import Patient from '../models/patient.model';
+import { PatientDetailsDto, PatientDto } from "../../../../domain.types/patient/patient.dto";
+
+///////////////////////////////////////////////////////////////////////////////////
+
+export class PatientMapper {
+
+    static toDetailsDto = async (patient: Patient): Promise<PatientDetailsDto> => {
+
+        if (patient == null){
+            return null;
+        }
+
+        const dto: PatientDetailsDto = {
+            id                : patient.id,
+            UserId            : patient.UserId,
+            User              : null,
+            DisplayId         : patient.DisplayId,
+            EhrId             : patient.EhrId,
+            Addresses         : [],
+            MedicalProfile    : null, //PatientMedicalProfileDto;
+            Insurances        : [], //PatientInsuranceDto[];
+            EmergencyContacts : [], // PatientEmergencyContactDto[];
+        };
+        return dto;
+    }
+
+    static toDto = async (patient: Patient): Promise<PatientDto> => {
+
+        if (patient == null){
+            return null;
+        }
+
+        const dto: PatientDto = {
+            id          : patient.id,
+            UserId      : patient.UserId,
+            DisplayId   : patient.DisplayId,
+            EhrId       : patient.EhrId,
+            DisplayName : null,
+            UserName    : null,
+            Phone       : null,
+            Email       : null,
+            Gender      : null,
+            BirthDate   : null,
+            Age         : null,
+        };
+        return dto;
+    }
+
+}

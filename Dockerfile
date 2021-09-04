@@ -28,7 +28,7 @@
 
 # Run on the server
 
-FROM ubuntu:20.04
+FROM ubuntu:18.04
 RUN apt-get clean
 RUN apt-get update --fix-missing
 RUN apt-get install -y curl

@@ -98,7 +98,7 @@ export class ResponseHandler {
             }
             Logger.instance().log(JSON.stringify(responseObject, null, 2));
         }
-       
+        
         ActivityRecorder.record(responseObject);
         
         //Don't send request related info in response, only use it for logging

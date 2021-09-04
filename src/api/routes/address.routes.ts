@@ -10,7 +10,7 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new AddressController();
 
-    router.post('/', authenticator.authenticateClient, controller.create);
+    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/by-person/:personId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByPersonId);
     router.get('/by-organization/:organizationId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByOrganizationId);

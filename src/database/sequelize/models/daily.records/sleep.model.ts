@@ -22,12 +22,12 @@ import Person from '../person.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'Pulse',
-    tableName       : 'biometrics_pulse',
+    modelName       : 'Sleep',
+    tableName       : 'daily_records_sleep',
     paranoid        : true,
     freezeTableName : true
 })
-export default class Pulse extends Model {
+export default class DailyRecordsSleep extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -37,13 +37,6 @@ export default class Pulse extends Model {
         allowNull    : false
     })
     id: string;
-
-    @Length({ min: 2, max: 128 })
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
-    })
-    EhrId: string;
 
     @IsUUID(4)
     @ForeignKey(() => Person)
@@ -64,30 +57,22 @@ export default class Pulse extends Model {
     })
     PatientUserId: string;
 
-    // @IsUUID(4)
-    // @ForeignKey(() => Encounter)
-    // @Column({
-    //     type      : DataType.UUID,
-    //     allowNull : true,
-    // })
-    // EncounterId: string;
-
     @IsInt
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : false,
-        validate  : {
-            min : 10,
-            max : 250
+        type         : DataType.INTEGER,
+        allowNull    : false,
+        defaultValue : 0,
+        validate     : {
+            min : 0
         }
     })
-    Pulse: number;
+    SleepDuration: number;
 
-    @Length({ max: 8 })
+    @Length({ max: 16 })
     @Column({
         type         : DataType.STRING(8),
         allowNull    : false,
-        defaultValue : 'bpm'
+        defaultValue : 'minutes'
     })
     Unit: string;
 
@@ -97,14 +82,6 @@ export default class Pulse extends Model {
         allowNull : true
     })
     RecordDate: Date;
-
-    @IsUUID(4)
-    @ForeignKey(() => User)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    RecordedByUserId: string;
 
     @Column
     @CreatedAt

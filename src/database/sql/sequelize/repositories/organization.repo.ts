@@ -9,6 +9,11 @@ import OrganizationPersons from '../models/organization.persons.model';
 import { OrganizationDomainModel } from '../../../../domain.types/organization/organization.domain.model';
 import { OrganizationDto } from '../../../../domain.types/organization/organization.dto';
 import { OrganizationSearchFilters, OrganizationSearchResults } from '../../../../domain.types/organization/organization.search.types';
+import OrganizationAddresses from '../models/organization.addresses.model';
+import { PersonDto } from '../../../../domain.types/person/person.dto';
+import { PersonMapper } from '../mappers/person.mapper';
+import { AddressMapper } from '../mappers/address.mapper';
+import { AddressDto } from '../../../../domain.types/address/address.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -274,36 +279,58 @@ export class OrganizationRepo implements IOrganizationRepo {
     };
 
     addAddress = async (id: string, addressId: string): Promise<boolean> => {
-        var address = await Address.findByPk(addressId);
-        if (address === null) {
-            return false;
+        try {
+            const organizationAddresses = await OrganizationAddresses.findAll({
+                where : {
+                    AddressId      : addressId,
+                    OrganizationId : id
+                }
+            });
+            if (organizationAddresses.length > 0) {
+                return false;
+            }
+            var entity = await OrganizationAddresses.create({
+                addressId      : addressId,
+                OrganizationId : id
+            });
+            return entity != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
         }
-        var organization = await Organization.findByPk(id);
-        if (organization === null) {
-            return false;
-        }
-        address.OrganizationId = id;
-        await address.save();
-
-        return true;
-    };
-
+    }
+    
     removeAddress = async (id: string, addressId: string): Promise<boolean> => {
-        var address = await Address.findByPk(addressId);
-        if (address === null) {
-            return false;
+        try {
+            var result = await OrganizationAddresses.destroy({
+                where : {
+                    AddressId      : addressId,
+                    OrganizationId : id
+                }
+            });
+            return result === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
         }
-        var organization = await Organization.findByPk(id);
-        if (organization === null) {
-            return false;
-        }
-        if (address.OrganizationId !== organization.id) {
-            return false;
-        }
-        address.OrganizationId = null;
-        await address.save();
+    }
 
-        return true;
+    getAddresses = async (id: string): Promise<AddressDto[]> => {
+
+        try {
+            const organizationAddresses = await OrganizationAddresses.findAll({
+                where : {
+                    OrganizationId : id
+                }
+            });
+            var list = organizationAddresses.map(x => x.Address);
+            var addresses = list.map(y => AddressMapper.toDto(y));
+            return addresses;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
     addPerson = async (id: string, personId: string): Promise<boolean> => {
@@ -343,6 +370,24 @@ export class OrganizationRepo implements IOrganizationRepo {
         });
 
         return result > 0;
+    };
+
+    getPersons = async (id: string): Promise<PersonDto[]> => {
+
+        try {
+            const organizationPersons = await OrganizationPersons.findAll({
+                where : {
+                    OrganizationId : id
+                }
+            });
+            var list = organizationPersons.map(x => x.Person);
+            var persons = list.map(y => PersonMapper.toDto(y));
+            return persons;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
 }

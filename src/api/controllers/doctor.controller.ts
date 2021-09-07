@@ -249,7 +249,7 @@ export class DoctorController {
 
     //#region Private methods
 
-    private async createOrUpdateAddress(request, doctorDomainModel: DoctorDomainModel): Promise<void> {
+    private async createOrUpdateAddress(request, domainModel: DoctorDomainModel): Promise<void> {
 
         let addressDomainModel: AddressDomainModel = null;
         const addressBody = request.body.Address ?? null;
@@ -258,9 +258,9 @@ export class DoctorController {
             addressDomainModel = await AddressValidator.getDomainModel(addressBody);
 
             //get existing address to update
-            const existingAddresses = await this._addressService.getByPersonId(doctorDomainModel.PersonId);
+            const existingAddresses = await this._personService.getAddresses(domainModel.PersonId);
             if (existingAddresses.length < 1) {
-                addressDomainModel.PersonId = doctorDomainModel.PersonId;
+                addressDomainModel.PersonId = domainModel.PersonId;
                 const address = await this._addressService.create(addressDomainModel);
                 if (address == null) {
                     throw new ApiError(400, 'Cannot create address!');

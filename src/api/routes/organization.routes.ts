@@ -16,7 +16,10 @@ export const register = (app: express.Application): void => {
 
     router.get('/by-contact-user/:contactUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByContactUserId);
     router.get('/by-person/:personId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByPersonId);
+    router.get('/:id/addresses', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAddresses);
+    router.get('/:id/persons', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPersons);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
+
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 

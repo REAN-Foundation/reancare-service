@@ -15,17 +15,15 @@ export class AddressRepo implements IAddressRepo {
     create = async (addressDomainModel: AddressDomainModel): Promise<AddressDto> => {
         try {
             const entity = {
-                Type           : addressDomainModel.Type,
-                PersonId       : addressDomainModel.PersonId ?? null,
-                OrganizationId : addressDomainModel.OrganizationId ?? null,
-                AddressLine    : addressDomainModel.AddressLine ?? null,
-                City           : addressDomainModel.City ?? null,
-                District       : addressDomainModel.District ?? null,
-                State          : addressDomainModel.State ?? null,
-                Country        : addressDomainModel.Country ?? null,
-                PostalCode     : addressDomainModel.PostalCode ?? null,
-                Longitude      : addressDomainModel.Longitude ?? null,
-                Lattitude      : addressDomainModel.Lattitude ?? null,
+                Type        : addressDomainModel.Type,
+                AddressLine : addressDomainModel.AddressLine ?? null,
+                City        : addressDomainModel.City ?? null,
+                District    : addressDomainModel.District ?? null,
+                State       : addressDomainModel.State ?? null,
+                Country     : addressDomainModel.Country ?? null,
+                PostalCode  : addressDomainModel.PostalCode ?? null,
+                Longitude   : addressDomainModel.Longitude ?? null,
+                Lattitude   : addressDomainModel.Lattitude ?? null,
             };
             const address = await Address.create(entity);
             const dto = await AddressMapper.toDto(address);
@@ -47,48 +45,12 @@ export class AddressRepo implements IAddressRepo {
         }
     };
 
-    getByPersonId = async (personId: string): Promise<AddressDto[]> => {
-        try {
-            const dtos = [];
-            const addresses = await Address.findAll({ where: { PersonId: personId } });
-            for (const address of addresses) {
-                const dto = await AddressMapper.toDto(address);
-                dtos.push(dto);
-            }
-            return dtos;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    getByOrganizationId = async (organizationId: string): Promise<AddressDto[]> => {
-        try {
-            const dtos = [];
-            const addresses = await Address.findAll({ where: { OrganizationId: organizationId } });
-            for (const address of addresses) {
-                const dto = await AddressMapper.toDto(address);
-                dtos.push(dto);
-            }
-            return dtos;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
     search = async (filters: AddressSearchFilters): Promise<AddressSearchResults> => {
         try {
             const search = { where: {} };
 
             if (filters.Type != null) {
                 search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
-            }
-            if (filters.PersonId != null) {
-                search.where['PersonId'] = filters.PersonId;
-            }
-            if (filters.OrganizationId != null) {
-                search.where['OrganizationId'] = filters.OrganizationId;
             }
             if (filters.AddressLine != null) {
                 search.where['AddressLine'] = { [Op.like]: '%' + filters.AddressLine + '%' };
@@ -192,12 +154,6 @@ export class AddressRepo implements IAddressRepo {
 
             if (addressDomainModel.Type != null) {
                 address.Type = addressDomainModel.Type;
-            }
-            if (addressDomainModel.PersonId != null) {
-                address.PersonId = addressDomainModel.PersonId;
-            }
-            if (addressDomainModel.OrganizationId != null) {
-                address.OrganizationId = addressDomainModel.OrganizationId;
             }
             if (addressDomainModel.AddressLine != null) {
                 address.AddressLine = addressDomainModel.AddressLine;

@@ -13,22 +13,22 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
+import Address from './address.model';
 import Organization from './organization.model';
-import Person from './person.model';
 
 ///////////////////////////////////////////////////////////////////////
 //This is a junction table model representing many-to-many association
-//between person and organizations
+//between organization and address.
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'OrganizationPersons',
-    tableName       : 'organization_persons',
+    modelName       : 'OrganizationAddresses',
+    tableName       : 'organization_addresses',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class OrganizationPersons extends Model {
+export default class OrganizationAddresses extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -42,17 +42,6 @@ export default class OrganizationPersons extends Model {
     id: string;
 
     @IsUUID(4)
-    @ForeignKey(() => Person)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : false,
-    })
-    PersonId: string;
-
-    @BelongsTo(() => Person)
-    Person: Person;
-
-    @IsUUID(4)
     @ForeignKey(() => Organization)
     @Column({
         type      : DataType.UUID,
@@ -63,11 +52,22 @@ export default class OrganizationPersons extends Model {
     @BelongsTo(() => Organization)
     Organization: Organization;
 
+    @IsUUID(4)
+    @ForeignKey(() => Address)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    AddressId: string;
+
+    @BelongsTo(() => Address)
+    Address: Address;
+
     @Column({
         type      : DataType.STRING(32),
         allowNull : true
     })
-    AssociationAs: string;
+    AddressType: string;
 
     @Column
     @CreatedAt
@@ -80,10 +80,3 @@ export default class OrganizationPersons extends Model {
     DeletedAt: Date;
 
 }
-
-// Organization.belongsToMany(Person, { through: OrganizationPersons });
-// Person.belongsToMany(Organization, { through: OrganizationPersons });
-// Organization.hasMany(OrganizationPersons);
-// Person.hasMany(OrganizationPersons);
-// OrganizationPersons.belongsTo(Organization);
-// OrganizationPersons.belongsTo(Person);

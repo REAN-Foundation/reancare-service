@@ -5,6 +5,8 @@ import { injectable, inject } from 'tsyringe';
 import { PersonDomainModel } from '../domain.types/person/person.domain.model';
 import { PersonDetailsDto, PersonDto } from '../domain.types/person/person.dto';
 import { PersonSearchFilters } from '../domain.types/person/patient.search.types';
+import { OrganizationDto } from '../domain.types/organization/organization.dto';
+import { AddressDto } from '../domain.types/address/address.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,6 +66,22 @@ export class PersonService {
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
+
+    getOrganizations = async (id: string): Promise<OrganizationDto[]> => {
+        return await this._personRepo.getOrganizations(id);
+    }
+
+    addAddress = async (id: string, addressId: string): Promise<boolean> => {
+        return await this._personRepo.addAddress(id, addressId);
+    }
+    
+    removeAddress = async (id: string, addressId: string): Promise<boolean> => {
+        return await this._personRepo.removeAddress(id, addressId);
+    }
+
+    getAddresses = async (id: string): Promise<AddressDto[]> => {
+        return await this._personRepo.getAddresses(id);
+    }
 
     //#endregion
 

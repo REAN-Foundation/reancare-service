@@ -285,7 +285,7 @@ export class OrganizationValidator {
         return request.params.contactUserId;
     };
 
-    private static async getParamId(request) {
+    public static async getParamId(request) {
         await param('id').trim()
             .escape()
             .isUUID()

@@ -5,10 +5,10 @@ import { OrganizationDto } from '../../../../domain.types/organization/organizat
 
 export class OrganizationMapper {
 
-    static toDto = async (
+    static toDto = (
         organization: Organization,
         parentOrganization = null
-    ): Promise<OrganizationDto> => {
+    ): OrganizationDto => {
         
         if (organization == null) {
             return null;

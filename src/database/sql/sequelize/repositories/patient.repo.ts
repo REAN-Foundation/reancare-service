@@ -97,7 +97,7 @@ export class PatientRepo implements IPatientRepo {
                     {
                         LastName : { [Op.like]: '%' + filters.Name + '%' },
                     },
-                ]
+                ];
             }
 
             if (filters.BirthdateFrom != null && filters.BirthdateTo != null) {
@@ -180,7 +180,7 @@ export class PatientRepo implements IPatientRepo {
                 Order          : order === 'DESC' ? 'descending' : 'ascending',
                 OrderedBy      : orderByColum,
                 Items          : dtos
-            }
+            };
             
             return searchResults;
 

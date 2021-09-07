@@ -21,14 +21,6 @@ export class AddressService {
         return await this._addressRepo.getById(id);
     };
 
-    getByPersonId = async (personId: string): Promise<AddressDto[]> => {
-        return await this._addressRepo.getByPersonId(personId);
-    };
-
-    getByOrganizationId = async (organizationId: string): Promise<AddressDto[]> => {
-        return await this._addressRepo.getByOrganizationId(organizationId);
-    };
-
     search = async (filters: AddressSearchFilters): Promise<AddressSearchResults> => {
         return await this._addressRepo.search(filters);
     };

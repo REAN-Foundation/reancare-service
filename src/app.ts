@@ -1,4 +1,4 @@
-import "reflect-metadata"
+import "reflect-metadata";
 
 import express from 'express';
 import fileUpload from 'express-fileupload';

@@ -13,22 +13,22 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import Organization from './organization.model';
+import Address from './address.model';
 import Person from './person.model';
 
 ///////////////////////////////////////////////////////////////////////
 //This is a junction table model representing many-to-many association
-//between person and organizations
+//between person and address.
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'OrganizationPersons',
-    tableName       : 'organization_persons',
+    modelName       : 'PersonAddresses',
+    tableName       : 'person_addresses',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class OrganizationPersons extends Model {
+export default class PersonAddresses extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -53,21 +53,21 @@ export default class OrganizationPersons extends Model {
     Person: Person;
 
     @IsUUID(4)
-    @ForeignKey(() => Organization)
+    @ForeignKey(() => Address)
     @Column({
         type      : DataType.UUID,
         allowNull : false,
     })
-    OrganizationId: string;
+    AddressId: string;
 
-    @BelongsTo(() => Organization)
-    Organization: Organization;
+    @BelongsTo(() => Address)
+    Address: Address;
 
     @Column({
         type      : DataType.STRING(32),
         allowNull : true
     })
-    AssociationAs: string;
+    AddressType: string;
 
     @Column
     @CreatedAt
@@ -80,10 +80,3 @@ export default class OrganizationPersons extends Model {
     DeletedAt: Date;
 
 }
-
-// Organization.belongsToMany(Person, { through: OrganizationPersons });
-// Person.belongsToMany(Organization, { through: OrganizationPersons });
-// Organization.hasMany(OrganizationPersons);
-// Person.hasMany(OrganizationPersons);
-// OrganizationPersons.belongsTo(Organization);
-// OrganizationPersons.belongsTo(Person);

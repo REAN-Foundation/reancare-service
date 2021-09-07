@@ -106,7 +106,7 @@ export class OrganizationController {
 
     getByPersonId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Organization.getByPersonId';
+            request.context = 'Organization.GetByPersonId';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
@@ -244,6 +244,26 @@ export class OrganizationController {
         }
     };
 
+    getAddresses = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Organization.GetAddresses';
+            await this._authorizer.authorize(request, response);
+
+            const id: string = await OrganizationValidator.getParamId(request);
+
+            const addresses = await this._service.getAddresses(id);
+            if (addresses == null || addresses.length === 0) {
+                throw new ApiError(404, 'Addresses not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Addresses retrieved successfully!', 200, {
+                Addresses : addresses,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     addPerson = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Organization.AddPerson';
@@ -286,6 +306,26 @@ export class OrganizationController {
 
             ResponseHandler.success(request, response, 'Person removed from organization successfully!', 200, {
                 Removed : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getPersons = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Organization.GetPersons';
+            await this._authorizer.authorize(request, response);
+
+            const id: string = await OrganizationValidator.getParamId(request);
+
+            const persons = await this._service.getPersons(id);
+            if (persons == null || persons.length === 0) {
+                throw new ApiError(404, 'Persons not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Persons retrieved successfully!', 200, {
+                Persons : persons,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

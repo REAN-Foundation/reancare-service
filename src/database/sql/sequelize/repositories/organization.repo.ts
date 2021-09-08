@@ -43,7 +43,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 parentOrganization = await Organization.findByPk(organization.ParentOrganizationId);
             }
 
-            const dto = await OrganizationMapper.toDto(organization, parentOrganization);
+            const dto = OrganizationMapper.toDto(organization, parentOrganization);
             return dto;
 
         } catch (error) {
@@ -74,7 +74,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 parentOrganization = await Organization.findByPk(organization.ParentOrganizationId);
             }
 
-            const dto = await OrganizationMapper.toDto(organization, parentOrganization);
+            const dto = OrganizationMapper.toDto(organization, parentOrganization);
             return dto;
             
         } catch (error) {
@@ -90,7 +90,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 where : { ContactUserId: contactUserId },
             });
             for (const organization of organizations) {
-                const dto = await OrganizationMapper.toDto(organization);
+                const dto = OrganizationMapper.toDto(organization);
                 dtos.push(dto);
             }
             return dtos;
@@ -170,7 +170,7 @@ export class OrganizationRepo implements IOrganizationRepo {
 
             const dtos: OrganizationDto[] = [];
             for (const organization of foundResults.rows) {
-                const dto = await OrganizationMapper.toDto(organization);
+                const dto = OrganizationMapper.toDto(organization);
                 dtos.push(dto);
             }
 
@@ -237,7 +237,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 parentOrganization = await Organization.findByPk(organization.ParentOrganizationId);
             }
 
-            const dto = await OrganizationMapper.toDto(organization, parentOrganization);
+            const dto = OrganizationMapper.toDto(organization, parentOrganization);
             return dto;
 
         } catch (error) {
@@ -307,8 +307,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 ]
             });
             var list = organizationAddresses.map(x => x.Address);
-            var addresses = list.map(y => AddressMapper.toDto(y));
-            return addresses;
+            return list.map(y => AddressMapper.toDto(y));
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -369,8 +368,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 ]
             });
             var list = organizationPersons.map(x => x.Person);
-            var persons = list.map(y => PersonMapper.toDto(y));
-            return persons;
+            return list.map(y => PersonMapper.toDto(y));
 
         } catch (error) {
             Logger.instance().log(error.message);

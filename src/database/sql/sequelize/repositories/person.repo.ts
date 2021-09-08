@@ -200,8 +200,8 @@ export class PersonRepo implements IPersonRepo {
                 ]
             });
             const list = organizationPersons.map(x => x.Organization);
-            const organizations = list.map(y => OrganizationMapper.toDto(y));
-            return organizations;
+            return list.map(y => OrganizationMapper.toDto(y));
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -258,8 +258,8 @@ export class PersonRepo implements IPersonRepo {
                 ]
             });
             var list = personAddresses.map(x => x.Address);
-            var addresses = list.map(y => AddressMapper.toDto(y));
-            return addresses;
+            return list.map(y => AddressMapper.toDto(y));
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

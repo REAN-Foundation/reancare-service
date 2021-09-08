@@ -80,10 +80,3 @@ export default class OrganizationPersons extends Model {
     DeletedAt: Date;
 
 }
-
-// Organization.belongsToMany(Person, { through: OrganizationPersons });
-// Person.belongsToMany(Organization, { through: OrganizationPersons });
-// Organization.hasMany(OrganizationPersons);
-// Person.hasMany(OrganizationPersons);
-// OrganizationPersons.belongsTo(Organization);
-// OrganizationPersons.belongsTo(Person);

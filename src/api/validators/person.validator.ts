@@ -10,7 +10,8 @@ export class PersonValidator {
         return await PersonValidator.getParamId(request);
     };
 
-    private static async getParamId(request) {
+    private static async getParamId(request): Promise<string> {
+
         await param('id').trim()
             .escape()
             .isUUID()

@@ -115,7 +115,7 @@ export class UserService {
             Otp       : otp,
             ValidFrom : new Date(),
             ValidTill : validTill
-        }
+        };
 
         const otpDto = await this._otpRepo.create(otpEntity);
         const message = `Hello ${user.Person.DisplayName}, ${otp} is OTP for your REANCare account and will expire in 5 minutes. If you have not requested this OTP, please contact REANCare support.`;

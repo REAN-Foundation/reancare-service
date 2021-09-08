@@ -107,7 +107,7 @@ export class PatientService {
         if (user.Person == null) {
             user.Person = await this._personRepo.getById(user.PersonId);
         }
-        const addresses = await this._addressRepo.getByPersonId(user.PersonId);
+        const addresses = await this._personRepo.getAddresses(user.PersonId);
         dto.User = user;
         dto.Addresses = addresses;
         return dto;

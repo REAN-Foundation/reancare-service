@@ -4,11 +4,17 @@ import { Op } from 'sequelize';
 import { OrganizationMapper } from '../mappers/organization.mapper';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
-import Address from '../models/address.model';
-import OrganizationPersons from '../models/organization.persons.model';
+import { PersonDto } from '../../../../domain.types/person/person.dto';
+import { PersonMapper } from '../mappers/person.mapper';
+import { AddressMapper } from '../mappers/address.mapper';
+import { AddressDto } from '../../../../domain.types/address/address.dto';
 import { OrganizationDomainModel } from '../../../../domain.types/organization/organization.domain.model';
 import { OrganizationDto } from '../../../../domain.types/organization/organization.dto';
 import { OrganizationSearchFilters, OrganizationSearchResults } from '../../../../domain.types/organization/organization.search.types';
+import Person from '../models/person.model';
+import Address from '../models/address.model';
+import OrganizationPersons from '../models/organization.persons.model';
+import OrganizationAddresses from '../models/organization.addresses.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -37,7 +43,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 parentOrganization = await Organization.findByPk(organization.ParentOrganizationId);
             }
 
-            const dto = await OrganizationMapper.toDto(organization, parentOrganization);
+            const dto = OrganizationMapper.toDto(organization, parentOrganization);
             return dto;
 
         } catch (error) {
@@ -68,7 +74,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 parentOrganization = await Organization.findByPk(organization.ParentOrganizationId);
             }
 
-            const dto = await OrganizationMapper.toDto(organization, parentOrganization);
+            const dto = OrganizationMapper.toDto(organization, parentOrganization);
             return dto;
             
         } catch (error) {
@@ -84,7 +90,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 where : { ContactUserId: contactUserId },
             });
             for (const organization of organizations) {
-                const dto = await OrganizationMapper.toDto(organization);
+                const dto = OrganizationMapper.toDto(organization);
                 dtos.push(dto);
             }
             return dtos;
@@ -93,29 +99,6 @@ export class OrganizationRepo implements IOrganizationRepo {
             throw new ApiError(500, error.message);
         }
     };
-
-    getByPersonId = async (personId: string): Promise<OrganizationDto[]> => {
-        try {
-            const dtos = [];
-            const organizationPersons = await OrganizationPersons.findAll({
-                where   : { PersonId: personId },
-                include : [
-                    {
-                        model : Organization
-                    }
-                ]
-            });
-            var organizations = organizationPersons.map(x => x.Organization);
-            for (const organization of organizations) {
-                const dto = await OrganizationMapper.toDto(organization);
-                dtos.push(dto);
-            }
-            return dtos;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    }
 
     search = async (filters: OrganizationSearchFilters): Promise<OrganizationSearchResults> => {
         try {
@@ -187,7 +170,7 @@ export class OrganizationRepo implements IOrganizationRepo {
 
             const dtos: OrganizationDto[] = [];
             for (const organization of foundResults.rows) {
-                const dto = await OrganizationMapper.toDto(organization);
+                const dto = OrganizationMapper.toDto(organization);
                 dtos.push(dto);
             }
 
@@ -254,7 +237,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 parentOrganization = await Organization.findByPk(organization.ParentOrganizationId);
             }
 
-            const dto = await OrganizationMapper.toDto(organization, parentOrganization);
+            const dto = OrganizationMapper.toDto(organization, parentOrganization);
             return dto;
 
         } catch (error) {
@@ -274,36 +257,62 @@ export class OrganizationRepo implements IOrganizationRepo {
     };
 
     addAddress = async (id: string, addressId: string): Promise<boolean> => {
-        var address = await Address.findByPk(addressId);
-        if (address === null) {
-            return false;
+        try {
+            const organizationAddresses = await OrganizationAddresses.findAll({
+                where : {
+                    AddressId      : addressId,
+                    OrganizationId : id
+                }
+            });
+            if (organizationAddresses.length > 0) {
+                return false;
+            }
+            var entity = await OrganizationAddresses.create({
+                AddressId      : addressId,
+                OrganizationId : id
+            });
+            return entity != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
         }
-        var organization = await Organization.findByPk(id);
-        if (organization === null) {
-            return false;
-        }
-        address.OrganizationId = id;
-        await address.save();
-
-        return true;
-    };
-
+    }
+    
     removeAddress = async (id: string, addressId: string): Promise<boolean> => {
-        var address = await Address.findByPk(addressId);
-        if (address === null) {
-            return false;
+        try {
+            var result = await OrganizationAddresses.destroy({
+                where : {
+                    AddressId      : addressId,
+                    OrganizationId : id
+                }
+            });
+            return result === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
         }
-        var organization = await Organization.findByPk(id);
-        if (organization === null) {
-            return false;
-        }
-        if (address.OrganizationId !== organization.id) {
-            return false;
-        }
-        address.OrganizationId = null;
-        await address.save();
+    }
 
-        return true;
+    getAddresses = async (id: string): Promise<AddressDto[]> => {
+
+        try {
+            const organizationAddresses = await OrganizationAddresses.findAll({
+                where : {
+                    OrganizationId : id
+                },
+                include : [
+                    {
+                        model : Address
+                    }
+                ]
+            });
+            var list = organizationAddresses.map(x => x.Address);
+            return list.map(y => AddressMapper.toDto(y));
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
     addPerson = async (id: string, personId: string): Promise<boolean> => {
@@ -343,6 +352,28 @@ export class OrganizationRepo implements IOrganizationRepo {
         });
 
         return result > 0;
+    };
+
+    getPersons = async (id: string): Promise<PersonDto[]> => {
+
+        try {
+            const organizationPersons = await OrganizationPersons.findAll({
+                where : {
+                    OrganizationId : id
+                },
+                include : [
+                    {
+                        model : Person
+                    }
+                ]
+            });
+            var list = organizationPersons.map(x => x.Person);
+            return list.map(y => PersonMapper.toDto(y));
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
 }

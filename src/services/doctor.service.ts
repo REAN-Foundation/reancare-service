@@ -108,8 +108,8 @@ export class DoctorService {
         if (user.Person == null) {
             user.Person = await this._personRepo.getById(user.PersonId);
         }
-        const addresses = await this._addressRepo.getByPersonId(user.Person.id);
-        const organizations = await this._organizationRepo.getByPersonId(user.Person.id);
+        const addresses = await this._organizationRepo.getAddresses(user.Person.id);
+        const organizations = await this._personRepo.getOrganizations(user.Person.id);
         dto.User = user;
         dto.Addresses = addresses;
         dto.Organizations = organizations;

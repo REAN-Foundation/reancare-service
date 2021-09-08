@@ -14,10 +14,6 @@ export class SQLInjector
         if (databaseORM === 'Sequelize') {
             SequelizeInjector.registerInjections(container);
         }
-        
-        // else if (databaseType === 'NoSQL') {
-        //     NoSQLInjector.registerInjections(container);
-        // }
 
     }
 

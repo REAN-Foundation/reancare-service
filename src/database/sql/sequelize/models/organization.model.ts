@@ -3,7 +3,6 @@ import {
     Column,
     Model,
     DataType,
-    BelongsToMany,
     CreatedAt,
     UpdatedAt,
     DeletedAt,
@@ -20,8 +19,6 @@ import {
 import { OrganizationTypeList } from '../../../../domain.types/organization/organization.types';
 import { v4 } from 'uuid';
 import Address from './address.model';
-import Person from './person.model';
-import OrganizationPersons from './organization.persons.model';
 import User from './user.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -127,11 +124,6 @@ export default class Organization extends Model {
         allowNull : true,
     })
     NationalHealthFacilityRegistryId: string;
-
-    // @BelongsToMany(() => Person, { through: 'OrganizationPersons' })
-    // Persons: Person[];
-    @BelongsToMany(() => Person, () => OrganizationPersons)
-    Persons: Array<Person & { OrganizationPersons: OrganizationPersons }>;
 
     @HasMany(() => Address)
     Addresses: Address[];

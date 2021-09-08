@@ -143,7 +143,7 @@ export class DoctorRepo implements IDoctorRepo {
                     {
                         LastName : { [Op.like]: '%' + filters.Name + '%' },
                     },
-                ]
+                ];
             }
             if (filters.Locality != null) {
                 includesObj.where['Locality'] = { [Op.like]: '%' + filters.Locality + '%' };
@@ -255,7 +255,7 @@ export class DoctorRepo implements IDoctorRepo {
                 Order          : order === 'DESC' ? 'descending' : 'ascending',
                 OrderedBy      : orderByColum,
                 Items          : dtos
-            }
+            };
             
             return searchResults;
 

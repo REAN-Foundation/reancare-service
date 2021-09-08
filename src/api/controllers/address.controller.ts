@@ -57,7 +57,7 @@ export class AddressController {
             if (domainModel.OrganizationId != null) {
                 var organization = await this._organizationService.getById(domainModel.OrganizationId);
                 if (organization == null) {
-                    throw new ApiError(404, `Organization with an id ${domainModel.OrganizationId} cannot be found.`)
+                    throw new ApiError(404, `Organization with an id ${domainModel.OrganizationId} cannot be found.`);
                 }
             }
 
@@ -83,48 +83,6 @@ export class AddressController {
             const id: string = await AddressValidator.getById(request);
 
             const address = await this._service.getById(id);
-            if (address == null) {
-                throw new ApiError(404, 'Address not found.');
-            }
-
-            ResponseHandler.success(request, response, 'Address retrieved successfully!', 200, {
-                Address : address,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    getByPersonId = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'Address.GetByPersonId';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
-            await this._authorizer.authorize(request, response);
-
-            const personId: string = await AddressValidator.getByPersonId(request);
-
-            const address = await this._service.getByPersonId(personId);
-            if (address == null) {
-                throw new ApiError(404, 'Address not found.');
-            }
-
-            ResponseHandler.success(request, response, 'Address retrieved successfully!', 200, {
-                Address : address,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    getByOrganizationId = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'Address.GetByOrganizationId';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
-            await this._authorizer.authorize(request, response);
-
-            const organizationId: string = await AddressValidator.getByOrganizationId(request);
-
-            const address = await this._service.getByOrganizationId(organizationId);
             if (address == null) {
                 throw new ApiError(404, 'Address not found.');
             }

@@ -259,7 +259,7 @@ export class PatientController {
             addressDomainModel = await AddressValidator.getDomainModel(addressBody);
 
             //get existing address to update
-            const existingAddresses = await this._addressService.getByPersonId(patientDomainModel.PersonId);
+            const existingAddresses = await this._personService.getAddresses(patientDomainModel.PersonId);
             if (existingAddresses.length < 1) {
                 addressDomainModel.PersonId = patientDomainModel.PersonId;
                 const address = await this._addressService.create(addressDomainModel);

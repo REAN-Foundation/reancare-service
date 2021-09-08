@@ -7,6 +7,14 @@ import { ApiError } from "../../../../common/api.error";
 import { Op } from 'sequelize';
 import PersonRole from "../models/person.role.model";
 import { PersonDetailsDto, PersonDto } from "../../../../domain.types/person/person.dto";
+import { OrganizationDto } from "../../../../domain.types/organization/organization.dto";
+import { AddressDto } from "../../../../domain.types/address/address.dto";
+import OrganizationPersons from "../models/organization.persons.model";
+import { OrganizationMapper } from "../mappers/organization.mapper";
+import { AddressMapper } from "../mappers/address.mapper";
+import PersonAddresses from "../models/person.addresses.model";
+import Organization from "../models/organization.model";
+import Address from "../models/address.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -177,6 +185,85 @@ export class PersonRepo implements IPersonRepo {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     search(filters: any): Promise<PersonDto[]> {
         throw new Error('Method not implemented.');
+    }
+
+    getOrganizations = async (id: string): Promise<OrganizationDto[]> => {
+        try {
+            const organizationPersons = await OrganizationPersons.findAll({
+                where : {
+                    PersonId : id
+                },
+                include : [
+                    {
+                        model : Organization
+                    }
+                ]
+            });
+            const list = organizationPersons.map(x => x.Organization);
+            return list.map(y => OrganizationMapper.toDto(y));
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    addAddress = async (id: string, addressId: string): Promise<boolean> => {
+        try {
+            const personAddresses = await PersonAddresses.findAll({
+                where : {
+                    AddressId : addressId,
+                    PersonId  : id
+                }
+            });
+            if (personAddresses.length > 0) {
+                return false;
+            }
+            var entity = await PersonAddresses.create({
+                AddressId : addressId,
+                PersonId  : id
+            });
+            return entity != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+    
+    removeAddress = async (id: string, addressId: string): Promise<boolean> => {
+        try {
+            var result = await PersonAddresses.destroy({
+                where : {
+                    AddressId : addressId,
+                    PersonId  : id
+                }
+            });
+            return result === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    getAddresses = async (id: string): Promise<AddressDto[]> => {
+        try {
+            var personAddresses = await PersonAddresses.findAll({
+                where : {
+                    PersonId : id
+                },
+                include : [
+                    {
+                        model : Address
+                    }
+                ]
+            });
+            var list = personAddresses.map(x => x.Address);
+            return list.map(y => AddressMapper.toDto(y));
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
 }

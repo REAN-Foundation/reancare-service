@@ -126,7 +126,7 @@ export class GcpPatientStore implements IPatientStore {
             gender       : model.User.Person.Gender != null ? model.User.Person.Gender.toLowerCase() : 'unknown',
             telecom      : [],
             address      : []
-        }
+        };
         
         if (model.User.Person.BirthDate != null) {
             var str = Helper.formatDate(model.User.Person.BirthDate);

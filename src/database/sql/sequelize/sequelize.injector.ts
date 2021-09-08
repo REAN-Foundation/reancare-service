@@ -3,6 +3,7 @@ import { DependencyContainer } from 'tsyringe';
 import { DatabaseConnector_Sequelize } from './database.connector.sequelize';
 import { AddressRepo } from './repositories/address.repo';
 import { ApiClientRepo } from './repositories/api.client.repo';
+import { BloodOxygenSaturationRepo } from './repositories/biometrics/blood.oxygen.saturation.repo';
 import { DoctorRepo } from './repositories/doctor.repo';
 import { OrganizationRepo } from './repositories/organization.repo';
 import { OtpRepo } from './repositories/otp.repo';
@@ -32,6 +33,7 @@ export class SequelizeInjector {
         container.register('IRolePrivilegeRepo', RolePrivilegeRepo);
         container.register('IOrganizationRepo', OrganizationRepo);
         container.register('IDoctorRepo', DoctorRepo);
+        container.register('IBloodOxygenSaturationRepo', BloodOxygenSaturationRepo);
 
     }
 

@@ -10,20 +10,18 @@ import {
     PrimaryKey,
     Length,
     ForeignKey,
-    BelongsTo,
-    IsDecimal,
-    IsDate } from 'sequelize-typescript';
+    IsDate,
+} from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import User from '../user.model';
-import Person from '../person.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
     modelName       : 'BloodOxygenSaturation',
-    tableName       : 'biometrics_blood_oxygen_saturation',
+    tableName       : 'blood_oxygen_saturation',
     paranoid        : true,
     freezeTableName : true
 })
@@ -38,71 +36,40 @@ export default class BloodOxygenSaturation extends Model {
     })
     id: string;
 
-    @Length({ min: 2, max: 128 })
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
-    })
-    EhrId: string;
-
-    @IsUUID(4)
-    @ForeignKey(() => Person)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    PersonId: string;
-
-    @BelongsTo(() => Person)
-    Person: Person;
-
     @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : true,
+        allowNull : false,
     })
     PatientUserId: string;
 
-    // @IsUUID(4)
-    // @ForeignKey(() => Encounter)
-    // @Column({
-    //     type      : DataType.UUID,
-    //     allowNull : true,
-    // })
-    // EncounterId: string;
-
-    @IsDecimal
+    @Length({ max: 64 })
     @Column({
-        type      : DataType.FLOAT,
+        type      : DataType.INTEGER,
         allowNull : false,
-        validate  : {
-            min : 10,
-            max : 100
-        }
     })
     BloodOxygenSaturation: number;
 
-    @Length({ max: 8 })
+    @Length({ min: 1, max: 32 })
     @Column({
-        type         : DataType.STRING(8),
+        type         : DataType.STRING(32),
         allowNull    : false,
-        defaultValue : '%s'
+        defaultValue : '%'
     })
     Unit: string;
 
     @IsDate
     @Column({
-        type      : DataType.DATE,
+        type      : DataType.DATE(),
         allowNull : true
     })
     RecordDate: Date;
 
     @IsUUID(4)
-    @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : true,
+        allowNull : true
     })
     RecordedByUserId: string;
 
@@ -115,5 +82,9 @@ export default class BloodOxygenSaturation extends Model {
 
     @DeletedAt
     DeletedAt: Date;
+
+    EhrId: string;
+
+    PatientId: string;
 
 }

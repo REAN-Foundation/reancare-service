@@ -35,7 +35,12 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Biometric.BloodOxygenSaturation.Create",
+            "Biometric.BloodOxygenSaturation.GetById",
+            "Biometric.BloodOxygenSaturation.Update",
+            "Biometric.BloodOxygenSaturation.Delete",
+            "Biometric.BloodOxygenSaturation.Search"
         ]
     },
     {
@@ -63,7 +68,12 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Biometric.BloodOxygenSaturation.Create",
+            "Biometric.BloodOxygenSaturation.GetById",
+            "Biometric.BloodOxygenSaturation.Update",
+            "Biometric.BloodOxygenSaturation.Delete",
+            "Biometric.BloodOxygenSaturation.Search"
         ]
     },
     {
@@ -99,7 +109,12 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
-            "Doctor.UpdateByUserId"
+            "Doctor.UpdateByUserId",
+            "Biometric.BloodOxygenSaturation.Create",
+            "Biometric.BloodOxygenSaturation.GetById",
+            "Biometric.BloodOxygenSaturation.Update",
+            "Biometric.BloodOxygenSaturation.Delete",
+            "Biometric.BloodOxygenSaturation.Search"
         ]
     },
     {
@@ -133,7 +148,11 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Biometric.BloodOxygenSaturation.GetById",
+            "Biometric.BloodOxygenSaturation.Update",
+            "Biometric.BloodOxygenSaturation.Delete",
+            "Biometric.BloodOxygenSaturation.Search"
         ]
     },
     {
@@ -167,7 +186,11 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Biometric.BloodOxygenSaturation.GetById",
+            "Biometric.BloodOxygenSaturation.Update",
+            "Biometric.BloodOxygenSaturation.Delete",
+            "Biometric.BloodOxygenSaturation.Search"
         ]
     }
 ]

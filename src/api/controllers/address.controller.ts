@@ -57,7 +57,7 @@ export class AddressController {
             if (domainModel.OrganizationId != null) {
                 var organization = await this._organizationService.getById(domainModel.OrganizationId);
                 if (organization == null) {
-                    throw new ApiError(404, `Organization with an id ${domainModel.OrganizationId} cannot be found.`)
+                    throw new ApiError(404, `Organization with an id ${domainModel.OrganizationId} cannot be found.`);
                 }
             }
 

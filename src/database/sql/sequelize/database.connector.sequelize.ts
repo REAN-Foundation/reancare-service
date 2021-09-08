@@ -36,6 +36,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
             };
 
             const sequelize = new Sequelize(config.database, config.username, config.password, options);
+            sequelize.addModels([__dirname + '/models/biometrics'])
             this._sequelize = sequelize;
 
             Logger.instance().log(`Connecting to database '${config.database}' ...`);

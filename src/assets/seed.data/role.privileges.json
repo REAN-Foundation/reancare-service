@@ -27,6 +27,8 @@
             "Organization.RemovePerson",
             "Organization.AddAddress",
             "Organization.RemoveAddress",
+            "Organization.GetAddresses",
+            "Organization.GetPersons",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
@@ -35,7 +37,11 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress"
         ]
     },
     {
@@ -55,6 +61,8 @@
             "Organization.GetByPersonId",
             "Organization.Search",
             "Organization.GetById",
+            "Organization.GetAddresses",
+            "Organization.GetPersons",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
@@ -63,7 +71,11 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress"
         ]
     },
     {
@@ -90,6 +102,8 @@
             "Organization.RemovePerson",
             "Organization.AddAddress",
             "Organization.RemoveAddress",
+            "Organization.GetAddresses",
+            "Organization.GetPersons",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
@@ -99,7 +113,11 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
-            "Doctor.UpdateByUserId"
+            "Doctor.UpdateByUserId",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress"
         ]
     },
     {
@@ -125,6 +143,8 @@
             "Organization.RemovePerson",
             "Organization.AddAddress",
             "Organization.RemoveAddress",
+            "Organization.GetAddresses",
+            "Organization.GetPersons",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
@@ -133,7 +153,11 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress"
         ]
     },
     {
@@ -159,6 +183,8 @@
             "Organization.RemovePerson",
             "Organization.AddAddress",
             "Organization.RemoveAddress",
+            "Organization.GetAddresses",
+            "Organization.GetPersons",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
@@ -167,7 +193,11 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress"
         ]
     }
 ]

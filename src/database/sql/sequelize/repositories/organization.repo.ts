@@ -4,16 +4,17 @@ import { Op } from 'sequelize';
 import { OrganizationMapper } from '../mappers/organization.mapper';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
-import Address from '../models/address.model';
-import OrganizationPersons from '../models/organization.persons.model';
-import { OrganizationDomainModel } from '../../../../domain.types/organization/organization.domain.model';
-import { OrganizationDto } from '../../../../domain.types/organization/organization.dto';
-import { OrganizationSearchFilters, OrganizationSearchResults } from '../../../../domain.types/organization/organization.search.types';
-import OrganizationAddresses from '../models/organization.addresses.model';
 import { PersonDto } from '../../../../domain.types/person/person.dto';
 import { PersonMapper } from '../mappers/person.mapper';
 import { AddressMapper } from '../mappers/address.mapper';
 import { AddressDto } from '../../../../domain.types/address/address.dto';
+import { OrganizationDomainModel } from '../../../../domain.types/organization/organization.domain.model';
+import { OrganizationDto } from '../../../../domain.types/organization/organization.dto';
+import { OrganizationSearchFilters, OrganizationSearchResults } from '../../../../domain.types/organization/organization.search.types';
+import Person from '../models/person.model';
+import Address from '../models/address.model';
+import OrganizationPersons from '../models/organization.persons.model';
+import OrganizationAddresses from '../models/organization.addresses.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -98,29 +99,6 @@ export class OrganizationRepo implements IOrganizationRepo {
             throw new ApiError(500, error.message);
         }
     };
-
-    getByPersonId = async (personId: string): Promise<OrganizationDto[]> => {
-        try {
-            const dtos = [];
-            const organizationPersons = await OrganizationPersons.findAll({
-                where   : { PersonId: personId },
-                include : [
-                    {
-                        model : Organization
-                    }
-                ]
-            });
-            var organizations = organizationPersons.map(x => x.Organization);
-            for (const organization of organizations) {
-                const dto = await OrganizationMapper.toDto(organization);
-                dtos.push(dto);
-            }
-            return dtos;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    }
 
     search = async (filters: OrganizationSearchFilters): Promise<OrganizationSearchResults> => {
         try {
@@ -290,7 +268,7 @@ export class OrganizationRepo implements IOrganizationRepo {
                 return false;
             }
             var entity = await OrganizationAddresses.create({
-                addressId      : addressId,
+                AddressId      : addressId,
                 OrganizationId : id
             });
             return entity != null;
@@ -321,7 +299,12 @@ export class OrganizationRepo implements IOrganizationRepo {
             const organizationAddresses = await OrganizationAddresses.findAll({
                 where : {
                     OrganizationId : id
-                }
+                },
+                include : [
+                    {
+                        model : Address
+                    }
+                ]
             });
             var list = organizationAddresses.map(x => x.Address);
             var addresses = list.map(y => AddressMapper.toDto(y));
@@ -378,7 +361,12 @@ export class OrganizationRepo implements IOrganizationRepo {
             const organizationPersons = await OrganizationPersons.findAll({
                 where : {
                     OrganizationId : id
-                }
+                },
+                include : [
+                    {
+                        model : Person
+                    }
+                ]
             });
             var list = organizationPersons.map(x => x.Person);
             var persons = list.map(y => PersonMapper.toDto(y));

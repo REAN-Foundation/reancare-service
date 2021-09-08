@@ -104,27 +104,6 @@ export class OrganizationController {
         }
     };
 
-    getByPersonId = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'Organization.GetByPersonId';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
-            await this._authorizer.authorize(request, response);
-
-            const personId: string = await OrganizationValidator.getByPersonId(request);
-
-            const organizations = await this._service.getByPersonId(personId);
-            if (organizations == null || organizations.length === 0) {
-                throw new ApiError(404, 'Organization not found.');
-            }
-
-            ResponseHandler.success(request, response, 'Organizations retrieved successfully!', 200, {
-                Organizations : organizations,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Organization.Search';

@@ -137,7 +137,7 @@ export class PersonController {
                 return;
             }
             ResponseHandler.success(request, response, 'Addresses for person retrieved successfully!', 200, {
-                Organizations : addresses,
+                Addresses : addresses,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

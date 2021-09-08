@@ -299,20 +299,6 @@ export class OrganizationValidator {
         return request.params.id;
     }
 
-    static getByPersonId = async (request: express.Request): Promise<string> => {
-        await param('personId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.personId;
-    };
-
     static addOrRemoveAddress = async (request: express.Request): Promise<{ id: string; addressId: string }> => {
 
         await param('id').trim()

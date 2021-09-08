@@ -13,6 +13,8 @@ import OrganizationPersons from "../models/organization.persons.model";
 import { OrganizationMapper } from "../mappers/organization.mapper";
 import { AddressMapper } from "../mappers/address.mapper";
 import PersonAddresses from "../models/person.addresses.model";
+import Organization from "../models/organization.model";
+import Address from "../models/address.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -190,7 +192,12 @@ export class PersonRepo implements IPersonRepo {
             const organizationPersons = await OrganizationPersons.findAll({
                 where : {
                     PersonId : id
-                }
+                },
+                include : [
+                    {
+                        model : Organization
+                    }
+                ]
             });
             const list = organizationPersons.map(x => x.Organization);
             const organizations = list.map(y => OrganizationMapper.toDto(y));
@@ -213,7 +220,7 @@ export class PersonRepo implements IPersonRepo {
                 return false;
             }
             var entity = await PersonAddresses.create({
-                addressId : addressId,
+                AddressId : addressId,
                 PersonId  : id
             });
             return entity != null;
@@ -243,7 +250,12 @@ export class PersonRepo implements IPersonRepo {
             var personAddresses = await PersonAddresses.findAll({
                 where : {
                     PersonId : id
-                }
+                },
+                include : [
+                    {
+                        model : Address
+                    }
+                ]
             });
             var list = personAddresses.map(x => x.Address);
             var addresses = list.map(y => AddressMapper.toDto(y));

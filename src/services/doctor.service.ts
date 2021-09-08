@@ -109,7 +109,7 @@ export class DoctorService {
             user.Person = await this._personRepo.getById(user.PersonId);
         }
         const addresses = await this._organizationRepo.getAddresses(user.Person.id);
-        const organizations = await this._organizationRepo.getByPersonId(user.Person.id);
+        const organizations = await this._personRepo.getOrganizations(user.Person.id);
         dto.User = user;
         dto.Addresses = addresses;
         dto.Organizations = organizations;

@@ -1,5 +1,5 @@
 import { IBodyHeightRepo } from '../../../../repository.interfaces/biometrics/body.height.repo.interface';
-import BodyHeight from '../../models/body.height.model';
+import BodyHeight from '../../models/biometrics/body.height.model';
 import { Op } from 'sequelize';
 import { BodyHeightMapper } from '../../mappers/biometrics/body.height.mapper';
 import { Logger } from '../../../../../common/logger';

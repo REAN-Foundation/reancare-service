@@ -1,4 +1,4 @@
-import BodyHeight from '../../models/body.height.model';
+import BodyHeight from '../../models/biometrics/body.height.model';
 import { BodyHeightDto } from '../../../../../domain.types/biometrics/body.height/body.height.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////

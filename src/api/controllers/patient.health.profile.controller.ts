@@ -48,7 +48,7 @@ export class PatientHealthProfileController {
             }
 
             ResponseHandler.success(request, response, 'Patient health profile retrieved successfully!', 200, {
-                HealthProfile : healthProfile,
+                PatientHealthProfile : healthProfile,
             });
             
         } catch (error) {
@@ -70,13 +70,13 @@ export class PatientHealthProfileController {
                 throw new ApiError(404, 'Patient health profile not found.');
             }
 
-            const updated = await this._service.updateByPatientUserId(domainModel.id, domainModel);
+            const updated = await this._service.updateByPatientUserId(patientUserId, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update Patient health profile record!');
             }
 
             ResponseHandler.success(request, response, 'Patient health profile record updated successfully!', 200, {
-                HealthProfile : updated,
+                PatientHealthProfile : updated,
             });
 
         } catch (error) {

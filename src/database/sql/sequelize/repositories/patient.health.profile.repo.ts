@@ -45,9 +45,13 @@ export class PatientHealthProfileRepo implements IPatientHealthProfileRepo {
         }
     };
 
-    getByPatientUserId = async (id: string): Promise<PatientHealthProfileDto> => {
+    getByPatientUserId = async (patientUserId: string): Promise<PatientHealthProfileDto> => {
         try {
-            const patientHealthProfile = await PatientHealthProfile.findByPk(id);
+            const patientHealthProfile = await PatientHealthProfile.findOne({
+                where : {
+                    PatientUserId : patientUserId
+                }
+            });
             const dto = await PatientHealthProfileMapper.toDto(patientHealthProfile);
             return dto;
         } catch (error) {

@@ -50,7 +50,7 @@ export class PatientHealthProfileValidator {
             Helper.handleValidationError(result);
         }
 
-        return request.params.id;
+        return request.params.patientUserId;
 
     };
 

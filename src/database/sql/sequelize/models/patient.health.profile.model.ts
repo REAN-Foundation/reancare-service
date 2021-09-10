@@ -14,19 +14,18 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import Person from './person.model';
 import User from './user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'MedicalProfile',
-    tableName       : 'medical_profiles',
+    modelName       : 'PatientHealthProfile',
+    tableName       : 'patient_health_profiles',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class MedicalProfile extends Model {
+export default class PatientHealthProfile extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -47,14 +46,6 @@ export default class MedicalProfile extends Model {
     })
     PatientUserId: string;
 
-    @IsUUID(4)
-    @ForeignKey(() => Person)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : false,
-    })
-    PatientPersonId: string;
-
     @Length({ min: 2, max: 16 })
     @Column({
         type      : DataType.STRING(16),
@@ -69,9 +60,9 @@ export default class MedicalProfile extends Model {
     })
     MajorAilment: string;
 
-    @Length({ max: 256 })
+    @Length({ max: 512 })
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.STRING(512),
         allowNull : true,
     })
     OtherConditions: string;
@@ -92,7 +83,7 @@ export default class MedicalProfile extends Model {
 
     @Column({
         type         : DataType.ENUM,
-        values       : ['Single', 'Married', 'Divorced', 'Widowed', 'Live-in', 'Other', 'Unknown'],
+        values       : ['Single', 'Married', 'Widowed', 'Divorcee', 'Live-in', 'Other', 'Unknown'],
         defaultValue : 'Unknown',
         allowNull    : false,
     })
@@ -135,8 +126,8 @@ export default class MedicalProfile extends Model {
 
     @Column({
         type         : DataType.ENUM,
-        values       : ['Occasional', 'Moderate', 'High', 'Chain-smoker', 'Unknown'],
-        defaultValue : 'Unknown',
+        values       : ['Low', 'Medium', 'High', 'Critical'],
+        defaultValue : 'Low',
         allowNull    : false,
     })
     SmokingSeverity: string;
@@ -157,8 +148,8 @@ export default class MedicalProfile extends Model {
 
     @Column({
         type         : DataType.ENUM,
-        values       : ['Occasional', 'Moderate', 'High', 'Addicted', 'Unknown'],
-        defaultValue : 'Unknown',
+        values       : ['Low', 'Medium', 'High', 'Critical'],
+        defaultValue : 'Low',
         allowNull    : false,
     })
     DrinkingSeverity: string;
@@ -177,23 +168,23 @@ export default class MedicalProfile extends Model {
     })
     SubstanceAbuse: boolean;
 
-    @Length({ max: 256 })
+    @Length({ max: 512 })
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.STRING(512),
         allowNull : true,
     })
     ProcedureHistory: string;
 
-    @Length({ max: 256 })
+    @Length({ max: 512 })
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.STRING(512),
         allowNull : true,
     })
     ObstetricHistory: string;
 
-    @Length({ max: 256 })
+    @Length({ max: 512 })
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.STRING(512),
         allowNull : true,
     })
     OtherInformation: string;

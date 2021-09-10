@@ -75,7 +75,14 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Doctor.GetByUserId",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress",
+            "HealthProfile.GetByPatientUserId",
+            "HealthProfile.UpdateByPatientUserId"
         ]
     },
     {
@@ -117,7 +124,14 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Doctor.UpdateByUserId",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress",
+            "HealthProfile.GetByPatientUserId",
+            "HealthProfile.UpdateByPatientUserId"
         ]
     },
     {

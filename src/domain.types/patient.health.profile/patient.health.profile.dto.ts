@@ -1,4 +1,4 @@
-export interface HealthProfileDto {
+export interface PatientHealthProfileDto {
     id: string;
     PatientUserId?: string;
     BloodGroup?: string;

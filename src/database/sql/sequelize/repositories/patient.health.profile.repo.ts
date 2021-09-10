@@ -37,8 +37,7 @@ export class PatientHealthProfileRepo implements IPatientHealthProfileRepo {
                 OtherInformation   : patientHealthProfileDomainModel.OtherInformation ?? null,
             };
             const patientHealthProfile = await PatientHealthProfile.create(entity);
-            const dto = await PatientHealthProfileMapper.toDto(patientHealthProfile);
-            return dto;
+            return PatientHealthProfileMapper.toDto(patientHealthProfile);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -52,8 +51,7 @@ export class PatientHealthProfileRepo implements IPatientHealthProfileRepo {
                     PatientUserId : patientUserId
                 }
             });
-            const dto = await PatientHealthProfileMapper.toDto(patientHealthProfile);
-            return dto;
+            return PatientHealthProfileMapper.toDto(patientHealthProfile);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -138,8 +136,7 @@ export class PatientHealthProfileRepo implements IPatientHealthProfileRepo {
 
             await patientHealthProfile.save();
 
-            const dto = await PatientHealthProfileMapper.toDto(patientHealthProfile);
-            return dto;
+            return PatientHealthProfileMapper.toDto(patientHealthProfile);
 
         } catch (error) {
             Logger.instance().log(error.message);

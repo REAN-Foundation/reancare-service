@@ -75,7 +75,7 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
             "Doctor.GetByUserId",
             "Person.GetOrganizations",
             "Person.GetAddresses",
@@ -124,7 +124,7 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
             "Doctor.UpdateByUserId",
             "Person.GetOrganizations",
             "Person.GetAddresses",

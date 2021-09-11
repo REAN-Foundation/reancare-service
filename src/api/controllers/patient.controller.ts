@@ -117,14 +117,11 @@ export class PatientController {
 
             patientDomainModel.DisplayId = displayId;
             const patient = await this._service.create(patientDomainModel);
-            if (user == null) {
+            if (patient == null) {
                 throw new ApiError(400, 'Cannot create patient!');
             }
 
-            var healthProfileDomainModel: PatientHealthProfileDomainModel =
-                this.createDefaultHealthProfileModel(user.id);
-
-            const healthProfile = await this._patientHealthProfileService.create(healthProfileDomainModel);
+            const healthProfile = await this._patientHealthProfileService.createDefault(user.id);
             patient.HealthProfile = healthProfile;
 
             //Create address
@@ -302,35 +299,6 @@ export class PatientController {
                 throw new ApiError(400, 'Cannot create address!');
             }
         }
-    }
-
-    private createDefaultHealthProfileModel = (patientUserId : string): PatientHealthProfileDomainModel => {
-
-        const model: PatientHealthProfileDomainModel = {
-            PatientUserId      : patientUserId,
-            BloodGroup         : null,
-            MajorAilment       : null,
-            OtherConditions    : null,
-            IsDiabetic         : false,
-            HasHeartAilment    : false,
-            MaritalStatus      : 'Unknown',
-            Ethnicity          : null,
-            Nationality        : null,
-            Occupation         : null,
-            SedentaryLifestyle : false,
-            IsSmoker           : false,
-            SmokingSeverity    : 'Low',
-            SmokingSince       : null,
-            IsDrinker          : false,
-            DrinkingSeverity   : 'Low',
-            DrinkingSince      : null,
-            SubstanceAbuse     : false,
-            ProcedureHistory   : null,
-            ObstetricHistory   : null,
-            OtherInformation   : null,
-        };
-
-        return model;
     }
 
     //#endregion

@@ -16,12 +16,12 @@ import { v4 } from 'uuid';
 
 @Table({
     timestamps      : true,
-    modelName       : 'InternalTestPhoneNumber',
-    tableName       : 'internal_test_phone_numbers',
+    modelName       : 'InternalTestUser',
+    tableName       : 'internal_test_users',
     paranoid        : true,
     freezeTableName : true
 })
-export default class InternalTestPhoneNumber extends Model {
+export default class InternalTestUser extends Model {
 
     @IsUUID(4)
     @PrimaryKey

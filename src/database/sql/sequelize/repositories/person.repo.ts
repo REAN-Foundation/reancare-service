@@ -30,8 +30,14 @@ export class PersonRepo implements IPersonRepo {
 
     personExistsWithPhone = async (phone: string): Promise<boolean> => {
         if (phone != null && typeof phone !== 'undefined') {
-            const existing = await Person.findOne({ where: { Phone: phone } });
-            return existing != null;
+            var possiblePhoneNumbers = this.getPossiblePhoneNumbers(phone);
+            var persons = await Person.findAll({
+                where : {
+                    Phone : { [Op.in] : possiblePhoneNumbers,
+                    }
+                }
+            });
+            return persons.length > 0;
         }
         return false;
     };

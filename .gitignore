@@ -113,3 +113,4 @@ dist
 .vs/service-x/v17/.suo
 src/assets/seed.data/internal.clients.seed.json
 src/assets/seed.data/system.admin.seed.json
+src/assets/seed.data/internal.test.users.seed.json

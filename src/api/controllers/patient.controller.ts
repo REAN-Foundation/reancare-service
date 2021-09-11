@@ -17,8 +17,10 @@ import { AddressDomainModel } from '../../domain.types/address/address.domain.mo
 import { AddressValidator } from '../validators/address.validator';
 import { AddressService } from '../../services/address.service';
 import { RoleService } from '../../services/role.service';
+import { PatientHealthProfileService } from '../../services/patient.health.profile.service';
 import { PersonDomainModel } from '../../domain.types/person/person.domain.model';
 import { PatientDetailsDto } from '../../domain.types/patient/patient.dto';
+import { PatientHealthProfileDomainModel } from '../../domain.types/patient.health.profile/patient.health.profile.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +38,8 @@ export class PatientController {
 
     _roleService: RoleService = null;
 
+    _patientHealthProfileService: PatientHealthProfileService = null;
+
     _authorizer: Authorizer = null;
 
     constructor() {
@@ -43,6 +47,7 @@ export class PatientController {
         this._userService = Loader.container.resolve(UserService);
         this._personService = Loader.container.resolve(PersonService);
         this._roleService = Loader.container.resolve(RoleService);
+        this._patientHealthProfileService = Loader.container.resolve(PatientHealthProfileService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -116,6 +121,13 @@ export class PatientController {
                 throw new ApiError(400, 'Cannot create patient!');
             }
 
+            var healthProfileDomainModel: PatientHealthProfileDomainModel =
+                this.createDefaultHealthProfileModel(user.id);
+
+            const healthProfile = await this._patientHealthProfileService.create(healthProfileDomainModel);
+            patient.HealthProfile = healthProfile;
+
+            //Create address
             await this.createAddress(request, patient);
 
             ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -290,6 +302,35 @@ export class PatientController {
                 throw new ApiError(400, 'Cannot create address!');
             }
         }
+    }
+
+    private createDefaultHealthProfileModel = (patientUserId : string): PatientHealthProfileDomainModel => {
+
+        const model: PatientHealthProfileDomainModel = {
+            PatientUserId      : patientUserId,
+            BloodGroup         : null,
+            MajorAilment       : null,
+            OtherConditions    : null,
+            IsDiabetic         : false,
+            HasHeartAilment    : false,
+            MaritalStatus      : 'Unknown',
+            Ethnicity          : null,
+            Nationality        : null,
+            Occupation         : null,
+            SedentaryLifestyle : false,
+            IsSmoker           : false,
+            SmokingSeverity    : 'Low',
+            SmokingSince       : null,
+            IsDrinker          : false,
+            DrinkingSeverity   : 'Low',
+            DrinkingSince      : null,
+            SubstanceAbuse     : false,
+            ProcedureHistory   : null,
+            ObstetricHistory   : null,
+            OtherInformation   : null,
+        };
+
+        return model;
     }
 
     //#endregion

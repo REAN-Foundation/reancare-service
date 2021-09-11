@@ -85,7 +85,14 @@
             "Biometrics.Body.Height.GetById",
             "Biometrics.Body.Height.Update",
             "Biometrics.Body.Height.Search",
-            "Biometrics.Body.Height.Delete"
+            "Biometrics.Body.Height.Delete",
+            "Doctor.GetByUserId",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress",
+            "HealthProfile.GetByPatientUserId",
+            "HealthProfile.UpdateByPatientUserId"
         ]
     },
     {
@@ -132,7 +139,14 @@
             "Biometrics.Body.Height.GetById",
             "Biometrics.Body.Height.Update",
             "Biometrics.Body.Height.Search",
-            "Biometrics.Body.Height.Delete"
+            "Biometrics.Body.Height.Delete",
+            "Doctor.UpdateByUserId",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress",
+            "HealthProfile.GetByPatientUserId",
+            "HealthProfile.UpdateByPatientUserId"
         ]
     },
     {

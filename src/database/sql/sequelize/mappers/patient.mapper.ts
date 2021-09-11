@@ -18,7 +18,7 @@ export class PatientMapper {
             DisplayId         : patient.DisplayId,
             EhrId             : patient.EhrId,
             Addresses         : [],
-            MedicalProfile    : null, //PatientMedicalProfileDto;
+            HealthProfile     : null, //PatientMedicalProfileDto;
             Insurances        : [], //PatientInsuranceDto[];
             EmergencyContacts : [], // PatientEmergencyContactDto[];
         };

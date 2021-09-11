@@ -45,12 +45,20 @@ export class PersonRepo implements IPersonRepo {
     };
 
     getAllPersonsWithPhoneAndRole = async (phone: string, roleId: number): Promise<PersonDetailsDto[]> => {
+
         if (phone != null && typeof phone !== 'undefined') {
 
             //KK: To be optimized with associations
 
             const personsWithRole: PersonDetailsDto[] = [];
-            const persons = await Person.findAll({ where: { Phone: phone } });
+            var possiblePhoneNumbers = this.getPossiblePhoneNumbers(phone);
+            var persons = await Person.findAll({
+                where : {
+                    Phone : { [Op.in] : possiblePhoneNumbers,
+                    }
+                }
+            });
+ 
             for await (const person of persons) {
                 const withRole = await PersonRole.findOne({ where: { PersonId: person.id, RoleId: roleId } });
                 if (withRole != null) {
@@ -58,6 +66,7 @@ export class PersonRepo implements IPersonRepo {
                     personsWithRole.push(dto);
                 }
             }
+
             return personsWithRole;
         }
         return null;
@@ -266,4 +275,37 @@ export class PersonRepo implements IPersonRepo {
         }
     }
 
+    private getPossiblePhoneNumbers = (phone) => {
+
+        let phoneTemp = phone;
+        phoneTemp = phoneTemp.trim();
+        const searchFors = ['+91', '+1'];
+        const possiblePhoneNumbers = [phone];
+
+        let phonePrefix = "";
+
+        for (var s of searchFors) {
+            if (phoneTemp.startsWith(s)) {
+                phonePrefix = s;
+                phoneTemp = phoneTemp.replace(s, '');
+                phoneTemp = phoneTemp.replace('-', '');
+            }
+        }
+    
+        if (phonePrefix) {
+            possiblePhoneNumbers.push(phonePrefix + phoneTemp);
+            possiblePhoneNumbers.push(phonePrefix + "-" + phoneTemp);
+            possiblePhoneNumbers.push(phoneTemp);
+    
+        } else {
+            possiblePhoneNumbers.push("+91" + phoneTemp);
+            possiblePhoneNumbers.push("+91-" + phoneTemp);
+    
+            possiblePhoneNumbers.push("+1" + phoneTemp);
+            possiblePhoneNumbers.push("+1-" + phoneTemp);
+            possiblePhoneNumbers.push(phoneTemp);
+        }
+        return possiblePhoneNumbers;
+    }
+    
 }

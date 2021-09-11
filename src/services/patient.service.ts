@@ -72,6 +72,7 @@ export class PatientService {
     };
 
     public checkforDuplicatePatients = async (domainModel: PatientDomainModel): Promise<number> => {
+
         const role = await this._roleRepo.getByName(Roles.Patient);
         if (role == null) {
             throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');

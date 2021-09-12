@@ -2,6 +2,8 @@ import { IInternalTestUserRepo } from '../../../repository.interfaces/internal.t
 import InternalTestUser from '../models/internal.test.user';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
+import { Helper } from '../../../../common/helper';
+import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -21,9 +23,11 @@ export class InternalTestUserRepo implements IInternalTestUserRepo {
 
     isInternalTestUser = async (phone: string): Promise<boolean> => {
         try {
+            var phoneNumbers = Helper.getPossiblePhoneNumbers(phone);
             const internalTestUsers = await InternalTestUser.findAll({
                 where : {
-                    Phone : phone
+                    Phone : { [Op.in] : phoneNumbers,
+                    }
                 }
             });
             return internalTestUsers.length > 0;

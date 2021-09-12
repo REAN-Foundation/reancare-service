@@ -22,6 +22,7 @@ import { RoleService } from "../services/role.service";
 import { Helper } from "../common/helper";
 import { PersonService } from "../services/person.service";
 import { PatientHealthProfileService } from "../services/patient.health.profile.service";
+import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -46,7 +47,8 @@ export class Seeder {
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IRolePrivilegeRepo') private _rolePrivilegeRepo: IRolePrivilegeRepo,
-        @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo
+        @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
+        @inject('IInternalTestUserRepo') private _internalTestUserRepo: IInternalTestUserRepo
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -205,12 +207,15 @@ export class Seeder {
 
     private seedInternalPatients = async () => {
         try {
-            const arr = SeededInternalTestsUsers.Patients['default'];
+            const arr = SeededInternalTestsUsers.Patients;
             for (let i = 0; i < arr.length; i++) {
                 var phone = arr[i];
                 var exists = await this._personRepo.personExistsWithPhone(phone);
                 if (!exists) {
-                    await this.createTestPatient(phone);
+                    var added = await this.createTestPatient(phone);
+                    if (added) {
+                        await this._internalTestUserRepo.create(phone);
+                    }
                 }
             }
         }

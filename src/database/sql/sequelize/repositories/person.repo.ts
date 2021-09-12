@@ -4,6 +4,7 @@ import Person from '../models/person.model';
 import { PersonMapper } from "../mappers/person.mapper";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
+import { Helper } from "../../../../common/helper";
 import { Op } from 'sequelize';
 import PersonRole from "../models/person.role.model";
 import { PersonDetailsDto, PersonDto } from "../../../../domain.types/person/person.dto";
@@ -30,7 +31,7 @@ export class PersonRepo implements IPersonRepo {
 
     personExistsWithPhone = async (phone: string): Promise<boolean> => {
         if (phone != null && typeof phone !== 'undefined') {
-            var possiblePhoneNumbers = this.getPossiblePhoneNumbers(phone);
+            var possiblePhoneNumbers = Helper.getPossiblePhoneNumbers(phone);
             var persons = await Person.findAll({
                 where : {
                     Phone : { [Op.in] : possiblePhoneNumbers,
@@ -57,7 +58,7 @@ export class PersonRepo implements IPersonRepo {
             //KK: To be optimized with associations
 
             const personsWithRole: PersonDetailsDto[] = [];
-            var possiblePhoneNumbers = this.getPossiblePhoneNumbers(phone);
+            var possiblePhoneNumbers = Helper.getPossiblePhoneNumbers(phone);
             var persons = await Person.findAll({
                 where : {
                     Phone : { [Op.in] : possiblePhoneNumbers,
@@ -281,37 +282,4 @@ export class PersonRepo implements IPersonRepo {
         }
     }
 
-    private getPossiblePhoneNumbers = (phone) => {
-
-        let phoneTemp = phone;
-        phoneTemp = phoneTemp.trim();
-        const searchFors = ['+91', '+1'];
-        const possiblePhoneNumbers = [phone];
-
-        let phonePrefix = "";
-
-        for (var s of searchFors) {
-            if (phoneTemp.startsWith(s)) {
-                phonePrefix = s;
-                phoneTemp = phoneTemp.replace(s, '');
-                phoneTemp = phoneTemp.replace('-', '');
-            }
-        }
-    
-        if (phonePrefix) {
-            possiblePhoneNumbers.push(phonePrefix + phoneTemp);
-            possiblePhoneNumbers.push(phonePrefix + "-" + phoneTemp);
-            possiblePhoneNumbers.push(phoneTemp);
-    
-        } else {
-            possiblePhoneNumbers.push("+91" + phoneTemp);
-            possiblePhoneNumbers.push("+91-" + phoneTemp);
-    
-            possiblePhoneNumbers.push("+1" + phoneTemp);
-            possiblePhoneNumbers.push("+1-" + phoneTemp);
-            possiblePhoneNumbers.push(phoneTemp);
-        }
-        return possiblePhoneNumbers;
-    }
-    
 }

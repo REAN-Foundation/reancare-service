@@ -4,6 +4,7 @@ import { DatabaseConnector_Sequelize } from './database.connector.sequelize';
 import { AddressRepo } from './repositories/address.repo';
 import { ApiClientRepo } from './repositories/api.client.repo';
 import { DoctorRepo } from './repositories/doctor.repo';
+import { InternalTestUserRepo } from './repositories/internal.test.user.repo';
 import { OrganizationRepo } from './repositories/organization.repo';
 import { OtpRepo } from './repositories/otp.repo';
 import { PatientHealthProfileRepo } from './repositories/patient.health.profile.repo';
@@ -34,6 +35,7 @@ export class SequelizeInjector {
         container.register('IOrganizationRepo', OrganizationRepo);
         container.register('IDoctorRepo', DoctorRepo);
         container.register('IPatientHealthProfileRepo', PatientHealthProfileRepo);
+        container.register('IInternalTestUserRepo', InternalTestUserRepo);
         
     }
 

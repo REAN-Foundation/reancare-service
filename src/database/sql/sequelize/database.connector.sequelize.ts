@@ -23,7 +23,9 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
             const dialect: Dialect = this.getDialect();
             const modelsPath = [
                 __dirname + '/models',
-                __dirname + '/biometrics/models',
+                __dirname + '/models/biometrics',
+                __dirname + '/models/daily.records',
+                __dirname + '/models/patient',
             ];
             const options = {
                 host    : config.host,

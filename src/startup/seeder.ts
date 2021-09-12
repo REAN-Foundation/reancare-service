@@ -8,21 +8,22 @@ import { IUserRepo } from "../database/repository.interfaces/user.repo.interface
 import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
 import { Logger } from "../common/logger";
 import { UserDomainModel } from "../domain.types/user/user.domain.model";
-import { PatientDomainModel } from "../domain.types/patient/patient.domain.model";
+import { PatientDomainModel } from "../domain.types/patient/patient/patient.domain.model";
 import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
 import { Loader } from "./loader";
-import * as RolePrivilegesList from '../assets/seed.data/role.privileges.json';
-import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
-import * as SeededInternalClients from '../assets/seed.data/internal.clients.seed.json';
-import * as SeededSystemAdmin from '../assets/seed.data/system.admin.seed.json';
-import * as SeededInternalTestsUsers from '../assets/seed.data/internal.test.users.seed.json';
-import { PatientService } from "../services/patient.service";
+import { PatientService } from "../services/patient/patient.service";
 import { UserService } from "../services/user.service";
 import { RoleService } from "../services/role.service";
 import { Helper } from "../common/helper";
 import { PersonService } from "../services/person.service";
-import { PatientHealthProfileService } from "../services/patient.health.profile.service";
+import { HealthProfileService } from "../services/patient/health.profile.service";
 import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
+import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
+
+import * as RolePrivilegesList from '../assets/seed.data/role.privileges.json';
+import * as SeededInternalClients from '../assets/seed.data/internal.clients.seed.json';
+import * as SeededSystemAdmin from '../assets/seed.data/system.admin.seed.json';
+import * as SeededInternalTestsUsers from '../assets/seed.data/internal.test.users.seed.json';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -39,7 +40,7 @@ export class Seeder {
 
     _roleService: RoleService = null;
 
-    _patientHealthProfileService: PatientHealthProfileService = null;
+    _patientHealthProfileService: HealthProfileService = null;
 
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
@@ -55,7 +56,7 @@ export class Seeder {
         this._personService = Loader.container.resolve(PersonService);
         this._userService = Loader.container.resolve(UserService);
         this._roleService = Loader.container.resolve(RoleService);
-        this._patientHealthProfileService = Loader.container.resolve(PatientHealthProfileService);
+        this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
     }
 
     public init = async (): Promise<void> => {

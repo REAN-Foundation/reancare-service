@@ -1,7 +1,7 @@
 import { IPatientStore } from '../interfaces/patient.store.interface';
 import { injectable, inject } from "tsyringe";
-import { PatientDomainModel } from '../../../domain.types/patient/patient.domain.model';
-import { PatientSearchFilters } from '../../../domain.types/patient/patient.search.types';
+import { PatientDomainModel } from '../../../domain.types/patient/patient/patient.domain.model';
+import { PatientSearchFilters } from '../../../domain.types/patient/patient/patient.search.types';
 
 ///////////////////////////////////////////////////////////////////
 

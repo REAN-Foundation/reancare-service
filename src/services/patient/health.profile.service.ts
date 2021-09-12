@@ -1,27 +1,27 @@
 import { inject, injectable } from "tsyringe";
-import { IPatientHealthProfileRepo } from "../database/repository.interfaces/patient.health.profile.repo.interface";
-import { PatientHealthProfileDomainModel } from '../domain.types/patient.health.profile/patient.health.profile.domain.model';
-import { PatientHealthProfileDto } from '../domain.types/patient.health.profile/patient.health.profile.dto';
+import { IHealthProfileRepo } from "../../database/repository.interfaces/patient/health.profile.repo.interface";
+import { HealthProfileDomainModel } from '../../domain.types/patient/health.profile/health.profile.domain.model';
+import { HealthProfileDto } from '../../domain.types/patient/health.profile/health.profile.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class PatientHealthProfileService {
+export class HealthProfileService {
 
     constructor(
-        @inject('IPatientHealthProfileRepo') private _patientHealthProfileRepo: IPatientHealthProfileRepo,
+        @inject('IHealthProfileRepo') private _patientHealthProfileRepo: IHealthProfileRepo,
     ) {}
 
-    create = async (healthProfileDomainModel: PatientHealthProfileDomainModel): Promise<PatientHealthProfileDto> => {
+    create = async (healthProfileDomainModel: HealthProfileDomainModel): Promise<HealthProfileDto> => {
         return await this._patientHealthProfileRepo.create(healthProfileDomainModel);
     };
 
-    getByPatientUserId = async (patientUserId: string): Promise<PatientHealthProfileDto> => {
+    getByPatientUserId = async (patientUserId: string): Promise<HealthProfileDto> => {
         return await this._patientHealthProfileRepo.getByPatientUserId(patientUserId);
     };
 
-    updateByPatientUserId = async (patientUserId: string, healthProfileDomainModel: PatientHealthProfileDomainModel)
-    : Promise<PatientHealthProfileDto> => {
+    updateByPatientUserId = async (patientUserId: string, healthProfileDomainModel: HealthProfileDomainModel)
+    : Promise<HealthProfileDto> => {
         return await this._patientHealthProfileRepo.updateByPatientUserId(patientUserId, healthProfileDomainModel);
     };
 
@@ -30,14 +30,14 @@ export class PatientHealthProfileService {
     };
 
     createDefault = async (patientUserId : string)
-        : Promise<PatientHealthProfileDto> => {
+        : Promise<HealthProfileDto> => {
         var model = this.createDefaultHealthProfileModel(patientUserId);
         return await this._patientHealthProfileRepo.create(model);
     };
 
-    private createDefaultHealthProfileModel = (patientUserId : string): PatientHealthProfileDomainModel => {
+    private createDefaultHealthProfileModel = (patientUserId : string): HealthProfileDomainModel => {
 
-        const model: PatientHealthProfileDomainModel = {
+        const model: HealthProfileDomainModel = {
             PatientUserId      : patientUserId,
             BloodGroup         : null,
             MajorAilment       : null,

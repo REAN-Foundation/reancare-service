@@ -1,23 +1,21 @@
-import { BloodGroup, MaritalStatus, Severity } from "../miscellaneous/system.types";
-
-export interface PatientHealthProfileDomainModel {
-    id?: string;
+export interface HealthProfileDto {
+    id: string;
     PatientUserId?: string;
-    BloodGroup?: BloodGroup;
+    BloodGroup?: string;
     MajorAilment?: string;
     OtherConditions?: string;
     IsDiabetic?: boolean;
     HasHeartAilment?: boolean;
-    MaritalStatus?: MaritalStatus;
+    MaritalStatus?: string;
     Ethnicity?: string;
     Nationality?: string;
     Occupation?: string;
     SedentaryLifestyle?: boolean;
     IsSmoker?: boolean;
-    SmokingSeverity?: Severity;
+    SmokingSeverity?: string;
     SmokingSince?: Date;
     IsDrinker?: boolean;
-    DrinkingSeverity?: Severity;
+    DrinkingSeverity?: string;
     DrinkingSince?: Date;
     SubstanceAbuse?: boolean;
     ProcedureHistory?: string;

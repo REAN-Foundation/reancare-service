@@ -1,18 +1,18 @@
-import { Loader } from '../startup/loader';
-import { IPatientRepo } from '../database/repository.interfaces/patient.repo.interface';
-import { IUserRepo } from '../database/repository.interfaces/user.repo.interface';
-import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
-import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
-import { IAddressRepo } from '../database/repository.interfaces/address.repo.interface';
+import { Loader } from '../../startup/loader';
+import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
+import { IUserRepo } from '../../database/repository.interfaces/user.repo.interface';
+import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
+import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
+import { IAddressRepo } from '../../database/repository.interfaces/address.repo.interface';
 import { injectable, inject } from 'tsyringe';
-import { ApiError } from '../common/api.error';
-import { Roles } from '../domain.types/role/role.types';
-import { PatientStore } from '../modules/ehr/services/patient.store';
-import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
-import { Helper } from '../common/helper';
-import { PatientDomainModel } from '../domain.types/patient/patient.domain.model';
-import { PatientDetailsDto, PatientDto } from '../domain.types/patient/patient.dto';
-import { PatientSearchFilters, PatientDetailsSearchResults, PatientSearchResults } from '../domain.types/patient/patient.search.types';
+import { ApiError } from '../../common/api.error';
+import { Roles } from '../../domain.types/role/role.types';
+import { PatientStore } from '../../modules/ehr/services/patient.store';
+import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
+import { Helper } from '../../common/helper';
+import { PatientDomainModel } from '../../domain.types/patient/patient/patient.domain.model';
+import { PatientDetailsDto, PatientDto } from '../../domain.types/patient/patient/patient.dto';
+import { PatientSearchFilters, PatientDetailsSearchResults, PatientSearchResults } from '../../domain.types/patient/patient/patient.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

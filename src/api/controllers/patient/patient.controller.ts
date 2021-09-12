@@ -1,26 +1,26 @@
 import express from 'express';
 
-import { PatientService } from '../../services/patient.service';
-import { UserService } from '../../services/user.service';
-import { PersonService } from '../../services/person.service';
-import { Helper } from '../../common/helper';
-import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
-import { Authorizer } from '../../auth/authorizer';
-import { PatientValidator } from '../validators/patient.validator';
-import { PatientDomainModel } from '../../domain.types/patient/patient.domain.model';
+import { PatientService } from '../../../services/patient/patient.service';
+import { UserService } from '../../../services/user.service';
+import { PersonService } from '../../../services/person.service';
+import { Helper } from '../../../common/helper';
+import { ResponseHandler } from '../../../common/response.handler';
+import { Loader } from '../../../startup/loader';
+import { Authorizer } from '../../../auth/authorizer';
+import { PatientValidator } from '../../validators/patient/patient.validator';
+import { PatientDomainModel } from '../../../domain.types/patient/patient/patient.domain.model';
 
-import { Roles } from '../../domain.types/role/role.types';
-import { UserDomainModel } from '../../domain.types/user/user.domain.model';
-import { ApiError } from '../../common/api.error';
-import { AddressDomainModel } from '../../domain.types/address/address.domain.model';
-import { AddressValidator } from '../validators/address.validator';
-import { AddressService } from '../../services/address.service';
-import { RoleService } from '../../services/role.service';
-import { PatientHealthProfileService } from '../../services/patient.health.profile.service';
-import { PersonDomainModel } from '../../domain.types/person/person.domain.model';
-import { PatientDetailsDto } from '../../domain.types/patient/patient.dto';
-import { PatientHealthProfileDomainModel } from '../../domain.types/patient.health.profile/patient.health.profile.domain.model';
+import { Roles } from '../../../domain.types/role/role.types';
+import { UserDomainModel } from '../../../domain.types/user/user.domain.model';
+import { ApiError } from '../../../common/api.error';
+import { AddressDomainModel } from '../../../domain.types/address/address.domain.model';
+import { AddressValidator } from '../../validators/address.validator';
+import { AddressService } from '../../../services/address.service';
+import { RoleService } from '../../../services/role.service';
+import { HealthProfileService } from '../../../services/patient/health.profile.service';
+import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
+import { PatientDetailsDto } from '../../../domain.types/patient/patient/patient.dto';
+import { HealthProfileDomainModel } from '../../../domain.types/patient/health.profile/health.profile.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +38,7 @@ export class PatientController {
 
     _roleService: RoleService = null;
 
-    _patientHealthProfileService: PatientHealthProfileService = null;
+    _patientHealthProfileService: HealthProfileService = null;
 
     _authorizer: Authorizer = null;
 
@@ -47,7 +47,7 @@ export class PatientController {
         this._userService = Loader.container.resolve(UserService);
         this._personService = Loader.container.resolve(PersonService);
         this._roleService = Loader.container.resolve(RoleService);
-        this._patientHealthProfileService = Loader.container.resolve(PatientHealthProfileService);
+        this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -301,9 +301,9 @@ export class PatientController {
         }
     }
 
-    private createDefaultHealthProfileModel = (patientUserId : string): PatientHealthProfileDomainModel => {
+    private createDefaultHealthProfileModel = (patientUserId : string): HealthProfileDomainModel => {
 
-        const model: PatientHealthProfileDomainModel = {
+        const model: HealthProfileDomainModel = {
             PatientUserId      : patientUserId,
             BloodGroup         : null,
             MajorAilment       : null,

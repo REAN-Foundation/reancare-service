@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PatientDomainModel } from '../../../../domain.types/patient/patient.domain.model';
+import { PatientDomainModel } from '../../../../domain.types/patient/patient/patient.domain.model';
 import { IPatientStore } from '../../interfaces/patient.store.interface';
 
 ////////////////////////////////////////////////////////////////////////////////

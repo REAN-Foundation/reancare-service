@@ -1,31 +1,31 @@
 import express from 'express';
 
-import { Helper } from '../../common/helper';
-import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
-import { Authorizer } from '../../auth/authorizer';
-import { PatientService } from '../../services/patient.service';
+import { Helper } from '../../../common/helper';
+import { ResponseHandler } from '../../../common/response.handler';
+import { Loader } from '../../../startup/loader';
+import { Authorizer } from '../../../auth/authorizer';
+import { PatientService } from '../../../services/patient/patient.service';
 
-import { ApiError } from '../../common/api.error';
-import { PatientHealthProfileValidator } from '../validators/patient.health.profile.validator';
-import { PatientHealthProfileService } from '../../services/patient.health.profile.service';
-import { PatientHealthProfileDomainModel } from '../../domain.types/patient.health.profile/patient.health.profile.domain.model';
-import { PatientHealthProfileDto } from '../../domain.types/patient.health.profile/patient.health.profile.dto';
+import { ApiError } from '../../../common/api.error';
+import { HealthProfileValidator } from '../../validators/patient/health.profile.validator';
+import { HealthProfileService } from '../../../services/patient/health.profile.service';
+import { HealthProfileDomainModel } from '../../../domain.types/patient/health.profile/health.profile.domain.model';
+import { HealthProfileDto } from '../../../domain.types/patient/health.profile/health.profile.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PatientHealthProfileController {
+export class HealthProfileController {
 
     //#region member variables and constructors
 
-    _service: PatientHealthProfileService = null;
+    _service: HealthProfileService = null;
 
     _patientService: PatientService = null;
 
     _authorizer: Authorizer = null;
 
     constructor() {
-        this._service = Loader.container.resolve(PatientHealthProfileService);
+        this._service = Loader.container.resolve(HealthProfileService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -40,15 +40,15 @@ export class PatientHealthProfileController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const patientUserId: string = await PatientHealthProfileValidator.validatePatientUserId(request);
+            const patientUserId: string = await HealthProfileValidator.validatePatientUserId(request);
 
-            const healthProfile : PatientHealthProfileDto = await this._service.getByPatientUserId(patientUserId);
+            const healthProfile : HealthProfileDto = await this._service.getByPatientUserId(patientUserId);
             if (healthProfile == null) {
                 throw new ApiError(404, 'Patient health profile not found.');
             }
 
             ResponseHandler.success(request, response, 'Patient health profile retrieved successfully!', 200, {
-                PatientHealthProfile : healthProfile,
+                HealthProfile : healthProfile,
             });
             
         } catch (error) {
@@ -61,9 +61,9 @@ export class PatientHealthProfileController {
             request.context = 'HealthProfile.UpdateByPatientUserId';
             await this._authorizer.authorize(request, response);
 
-            const domainModel: PatientHealthProfileDomainModel = await PatientHealthProfileValidator.update(request);
+            const domainModel: HealthProfileDomainModel = await HealthProfileValidator.update(request);
 
-            const patientUserId : string = await PatientHealthProfileValidator.validatePatientUserId(request);
+            const patientUserId : string = await HealthProfileValidator.validatePatientUserId(request);
 
             const existingHealthProfile = await this._service.getByPatientUserId(patientUserId);
             if (existingHealthProfile == null) {
@@ -76,7 +76,7 @@ export class PatientHealthProfileController {
             }
 
             ResponseHandler.success(request, response, 'Patient health profile record updated successfully!', 200, {
-                PatientHealthProfile : updated,
+                HealthProfile : updated,
             });
 
         } catch (error) {

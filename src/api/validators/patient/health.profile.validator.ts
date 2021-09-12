@@ -1,16 +1,16 @@
 import express from 'express';
 import { body, param, validationResult } from 'express-validator';
 
-import { Helper } from '../../common/helper';
-import { PatientHealthProfileDomainModel } from '../../domain.types/patient.health.profile/patient.health.profile.domain.model';
+import { Helper } from '../../../common/helper';
+import { HealthProfileDomainModel } from '../../../domain.types/patient/health.profile/health.profile.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PatientHealthProfileValidator {
+export class HealthProfileValidator {
 
-    static getDomainModel = (request: express.Request): PatientHealthProfileDomainModel => {
+    static getDomainModel = (request: express.Request): HealthProfileDomainModel => {
 
-        const model: PatientHealthProfileDomainModel = {
+        const model: HealthProfileDomainModel = {
             BloodGroup         : request.body.BloodGroup ?? null,
             MajorAilment       : request.body.MajorAilment,
             OtherConditions    : request.body.OtherConditions ?? null,
@@ -54,12 +54,12 @@ export class PatientHealthProfileValidator {
 
     };
 
-    static update = async (request: express.Request): Promise<PatientHealthProfileDomainModel> => {
+    static update = async (request: express.Request): Promise<HealthProfileDomainModel> => {
 
-        const patientUserId = await PatientHealthProfileValidator.validatePatientUserId(request);
-        await PatientHealthProfileValidator.validateBody(request);
+        const patientUserId = await HealthProfileValidator.validatePatientUserId(request);
+        await HealthProfileValidator.validateBody(request);
 
-        const domainModel = PatientHealthProfileValidator.getDomainModel(request);
+        const domainModel = HealthProfileValidator.getDomainModel(request);
         domainModel.PatientUserId = patientUserId;
 
         return domainModel;

@@ -1,17 +1,17 @@
-import PatientHealthProfile from '../models/patient.health.profile.model';
-import { PatientHealthProfileDto } from '../../../../domain.types/patient.health.profile/patient.health.profile.dto';
+import HealthProfile from '../../models/patient/health.profile.model';
+import { HealthProfileDto } from '../../../../../domain.types/patient/health.profile/health.profile.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-export class PatientHealthProfileMapper {
+export class HealthProfileMapper {
 
-    static toDto = (patientHealthProfile: PatientHealthProfile): PatientHealthProfileDto => {
+    static toDto = (patientHealthProfile: HealthProfile): HealthProfileDto => {
 
         if (patientHealthProfile == null){
             return null;
         }
 
-        const dto: PatientHealthProfileDto = {
+        const dto: HealthProfileDto = {
             id                 : patientHealthProfile.id,
             PatientUserId      : patientHealthProfile.PatientUserId,
             BloodGroup         : patientHealthProfile.BloodGroup,

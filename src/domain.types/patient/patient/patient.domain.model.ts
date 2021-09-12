@@ -1,5 +1,5 @@
-import { AddressDomainModel } from '../address/address.domain.model';
-import { UserDomainModel } from '../user/user.domain.model';
+import { AddressDomainModel } from '../../address/address.domain.model';
+import { UserDomainModel } from '../../user/user.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

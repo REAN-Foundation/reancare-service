@@ -7,8 +7,8 @@ import { DoctorRepo } from './repositories/doctor.repo';
 import { InternalTestUserRepo } from './repositories/internal.test.user.repo';
 import { OrganizationRepo } from './repositories/organization.repo';
 import { OtpRepo } from './repositories/otp.repo';
-import { PatientHealthProfileRepo } from './repositories/patient.health.profile.repo';
-import { PatientRepo } from './repositories/patient.repo';
+import { HealthProfileRepo } from './repositories/patient/health.profile.repo';
+import { PatientRepo } from './repositories/patient/patient.repo';
 import { PersonRepo } from './repositories/person.repo';
 import { PersonRoleRepo } from './repositories/person.role.repo';
 import { RolePrivilegeRepo } from './repositories/role.privilege.repo';
@@ -34,7 +34,7 @@ export class SequelizeInjector {
         container.register('IRolePrivilegeRepo', RolePrivilegeRepo);
         container.register('IOrganizationRepo', OrganizationRepo);
         container.register('IDoctorRepo', DoctorRepo);
-        container.register('IPatientHealthProfileRepo', PatientHealthProfileRepo);
+        container.register('IHealthProfileRepo', HealthProfileRepo);
         container.register('IInternalTestUserRepo', InternalTestUserRepo);
         
     }

@@ -1,17 +1,17 @@
-import { IPatientHealthProfileRepo } from '../../../repository.interfaces/patient.health.profile.repo.interface';
-import PatientHealthProfile from '../models/patient.health.profile.model';
-import { PatientHealthProfileMapper } from '../mappers/patient.health.profile.mapper';
-import { Logger } from '../../../../common/logger';
-import { ApiError } from '../../../../common/api.error';
-import { PatientHealthProfileDomainModel } from '../../../../domain.types/patient.health.profile/patient.health.profile.domain.model';
-import { PatientHealthProfileDto } from '../../../../domain.types/patient.health.profile/patient.health.profile.dto';
+import { IHealthProfileRepo } from '../../../../repository.interfaces/patient/health.profile.repo.interface';
+import HealthProfile from '../../models/patient/health.profile.model';
+import { HealthProfileMapper } from '../../mappers/patient/health.profile.mapper';
+import { Logger } from '../../../../../common/logger';
+import { ApiError } from '../../../../../common/api.error';
+import { HealthProfileDomainModel } from '../../../../../domain.types/patient/health.profile/health.profile.domain.model';
+import { HealthProfileDto } from '../../../../../domain.types/patient/health.profile/health.profile.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
-export class PatientHealthProfileRepo implements IPatientHealthProfileRepo {
+export class HealthProfileRepo implements IHealthProfileRepo {
 
-    create = async (patientHealthProfileDomainModel: PatientHealthProfileDomainModel)
-    : Promise<PatientHealthProfileDto> => {
+    create = async (patientHealthProfileDomainModel: HealthProfileDomainModel)
+    : Promise<HealthProfileDto> => {
         try {
             const entity = {
                 PatientUserId      : patientHealthProfileDomainModel.PatientUserId,
@@ -36,22 +36,22 @@ export class PatientHealthProfileRepo implements IPatientHealthProfileRepo {
                 ObstetricHistory   : patientHealthProfileDomainModel.ObstetricHistory ?? null,
                 OtherInformation   : patientHealthProfileDomainModel.OtherInformation ?? null,
             };
-            const patientHealthProfile = await PatientHealthProfile.create(entity);
-            return PatientHealthProfileMapper.toDto(patientHealthProfile);
+            const patientHealthProfile = await HealthProfile.create(entity);
+            return HealthProfileMapper.toDto(patientHealthProfile);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    getByPatientUserId = async (patientUserId: string): Promise<PatientHealthProfileDto> => {
+    getByPatientUserId = async (patientUserId: string): Promise<HealthProfileDto> => {
         try {
-            const patientHealthProfile = await PatientHealthProfile.findOne({
+            const patientHealthProfile = await HealthProfile.findOne({
                 where : {
                     PatientUserId : patientUserId
                 }
             });
-            return PatientHealthProfileMapper.toDto(patientHealthProfile);
+            return HealthProfileMapper.toDto(patientHealthProfile);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -60,11 +60,11 @@ export class PatientHealthProfileRepo implements IPatientHealthProfileRepo {
 
     updateByPatientUserId = async (
         patientUserId: string,
-        patientHealthProfileDomainModel: PatientHealthProfileDomainModel)
-        : Promise<PatientHealthProfileDto> => {
+        patientHealthProfileDomainModel: HealthProfileDomainModel)
+        : Promise<HealthProfileDto> => {
 
         try {
-            const patientHealthProfile = await PatientHealthProfile.findOne({
+            const patientHealthProfile = await HealthProfile.findOne({
                 where : {
                     PatientUserId : patientUserId
                 }
@@ -136,7 +136,7 @@ export class PatientHealthProfileRepo implements IPatientHealthProfileRepo {
 
             await patientHealthProfile.save();
 
-            return PatientHealthProfileMapper.toDto(patientHealthProfile);
+            return HealthProfileMapper.toDto(patientHealthProfile);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -146,7 +146,7 @@ export class PatientHealthProfileRepo implements IPatientHealthProfileRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            var result = await PatientHealthProfile.destroy({ where: { id: id } });
+            var result = await HealthProfile.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);

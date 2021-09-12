@@ -20,12 +20,12 @@ import User from '../user.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'Allergy',
-    tableName       : 'patient_allergies',
+    modelName       : 'Complaint',
+    tableName       : 'patient_complaints',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class Allergy extends Model {
+export default class Complaint extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -46,27 +46,35 @@ export default class Allergy extends Model {
     })
     PatientUserId: string;
 
-    @Length({ min: 2, max: 128 })
+    @IsUUID(4)
+    @ForeignKey(() => User)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    MedicalPractitionerUserId: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => User)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    VisitId: string;
+
+    @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
         allowNull : false,
     })
-    Allergy: string;
+    EhrId: string;
 
-    @Length({ min: 2, max: 128 })
+    @Length({ min: 2, max: 256 })
     @Column({
-        type      : DataType.STRING(128),
+        type      : DataType.STRING(256),
         allowNull : true,
     })
-    AllergenCategory: string;
-
-    @Length({ max: 64 })
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-        values    : [ 'Airway', 'Injection', 'Food', 'Contact' ],
-    })
-    AllergenExposureRoute: string;
+    Complaint: string;
 
     @Length({ max: 16 })
     @Column({
@@ -77,26 +85,12 @@ export default class Allergy extends Model {
     })
     Severity: string;
 
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    Reaction: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    OtherInformation: string;
-
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    LastOccurrence: Date
+    RecordDate: Date
 
     @Column
     @CreatedAt

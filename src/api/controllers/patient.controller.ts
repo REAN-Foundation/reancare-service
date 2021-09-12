@@ -301,6 +301,35 @@ export class PatientController {
         }
     }
 
+    private createDefaultHealthProfileModel = (patientUserId : string): PatientHealthProfileDomainModel => {
+
+        const model: PatientHealthProfileDomainModel = {
+            PatientUserId      : patientUserId,
+            BloodGroup         : null,
+            MajorAilment       : null,
+            OtherConditions    : null,
+            IsDiabetic         : false,
+            HasHeartAilment    : false,
+            MaritalStatus      : 'Unknown',
+            Ethnicity          : null,
+            Nationality        : null,
+            Occupation         : null,
+            SedentaryLifestyle : false,
+            IsSmoker           : false,
+            SmokingSeverity    : 'Low',
+            SmokingSince       : null,
+            IsDrinker          : false,
+            DrinkingSeverity   : 'Low',
+            DrinkingSince      : null,
+            SubstanceAbuse     : false,
+            ProcedureHistory   : null,
+            ObstetricHistory   : null,
+            OtherInformation   : null,
+        };
+
+        return model;
+    }
+
     //#endregion
 
 }

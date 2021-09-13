@@ -6,6 +6,8 @@ import { OrganizationDto } from '../domain.types/organization/organization.dto';
 import { OrganizationSearchFilters, OrganizationSearchResults } from '../domain.types/organization/organization.search.types';
 import { IUserRepo } from '../database/repository.interfaces/user.repo.interface';
 import { IAddressRepo } from '../database/repository.interfaces/address.repo.interface';
+import { PersonDto } from "../domain.types/person/person.dto";
+import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +19,7 @@ export class OrganizationService {
     constructor(
         @inject('IOrganizationRepo') private _organizationRepo: IOrganizationRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
+        @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
     ) {}
 
@@ -34,16 +37,6 @@ export class OrganizationService {
 
     getByContactUserId = async (contactUserId: string): Promise<OrganizationDto[]> => {
         var dtos = await this._organizationRepo.getByContactUserId(contactUserId);
-        var updatedDtos = [];
-        for await (var dto of dtos) {
-            dto = await this.updateDto(dto);
-            updatedDtos.push(dto);
-        }
-        return updatedDtos;
-    };
-
-    getByPersonId = async (personId: string): Promise<OrganizationDto[]> => {
-        var dtos = await this._organizationRepo.getByPersonId(personId);
         var updatedDtos = [];
         for await (var dto of dtos) {
             dto = await this.updateDto(dto);
@@ -81,6 +74,10 @@ export class OrganizationService {
         return await this._organizationRepo.removeAddress(id, addressId);
     };
 
+    getAddresses = async (id: string): Promise<AddressDto[]> => {
+        return await this._organizationRepo.getAddresses(id);
+    }
+
     addPerson = async (id: string, personId: string): Promise<boolean> => {
         return await this._organizationRepo.addPerson(id, personId);
     };
@@ -88,6 +85,10 @@ export class OrganizationService {
     removePerson = async (id: string, personId: string): Promise<boolean> => {
         return await this._organizationRepo.removePerson(id, personId);
     };
+
+    getPersons = async (id: string): Promise<PersonDto[]> => {
+        return await this._organizationRepo.getPersons(id);
+    }
 
     //#endregion
 
@@ -107,7 +108,7 @@ export class OrganizationService {
             dto.ParentOrganization = parentOrganization;
         }
 
-        var addresses: AddressDto[] = await this._addressRepo.getByOrganizationId(dto.id);
+        var addresses: AddressDto[] = await this._organizationRepo.getAddresses(dto.id);
         dto.Addresses = addresses;
         
         return dto;

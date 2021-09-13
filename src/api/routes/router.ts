@@ -2,11 +2,13 @@ import express from "express";
 import { register as registerUserRoutes } from "./user.routes";
 import { register as registerClientRoutes } from "./api.client.routes";
 import { register as registerAddressRoutes } from "./address.routes";
-import { register as registerPatientRoutes } from "./patient.routes";
+import { register as registerPatientRoutes } from "./patient/patient.routes";
 import { register as registerDoctorRoutes } from "./doctor.routes";
 import { register as registerOrganizationRoutes } from './organization.routes';
+import { register as registerPersonRoutes } from './person.routes';
 import { register as registerTypesRoutes } from './types.routes';
 import { register as registerBiometricsBloodOxygenSaturationRoutes } from './biometrics/blood.oxygen.saturation.routes';
+import { register as registerHealthProfileRoutes } from './patient/health.profile.routes';
 import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -35,9 +37,11 @@ export class Router {
                 registerClientRoutes(this._app);
                 registerPatientRoutes(this._app);
                 registerDoctorRoutes(this._app);
-                registerOrganizationRoutes(this._app);
                 registerTypesRoutes(this._app);
                 registerBiometricsBloodOxygenSaturationRoutes(this._app);
+                registerPersonRoutes(this._app);
+                registerOrganizationRoutes(this._app);
+                registerHealthProfileRoutes(this._app);
 
                 resolve(true);
 

@@ -1,11 +1,11 @@
 import { Helper } from '../../../../../../common/helper';
 import { Logger } from '../../../../../../common/logger';
-import { PatientDomainModel } from '../../../../../../domain.types/patient/patient.domain.model';
+import { PatientDomainModel } from '../../../../../../domain.types/patient/patient/patient.domain.model';
 import { IPatientStore } from '../../../../interfaces/patient.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { FhirHelper } from '../../fhir.helper';
-import { PatientSearchFilters } from '../../../../../../domain.types/patient/patient.search.types';
+import { PatientSearchFilters } from '../../../../../../domain.types/patient/patient/patient.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -126,7 +126,7 @@ export class GcpPatientStore implements IPatientStore {
             gender       : model.User.Person.Gender != null ? model.User.Person.Gender.toLowerCase() : 'unknown',
             telecom      : [],
             address      : []
-        }
+        };
         
         if (model.User.Person.BirthDate != null) {
             var str = Helper.formatDate(model.User.Person.BirthDate);

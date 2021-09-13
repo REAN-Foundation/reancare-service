@@ -1,6 +1,6 @@
-import { PatientDomainModel } from '../../../../domain.types/patient/patient.domain.model'
-import { UserDomainModel } from '../../../../domain.types/user/user.domain.model'
-import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model'
+import { PatientDomainModel } from '../../../../domain.types/patient/patient/patient.domain.model';
+import { UserDomainModel } from '../../../../domain.types/user/user.domain.model';
+import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 import { AddressDomainModel } from "../../../../domain.types/address/address.domain.model";
 import { Helper } from "../../../../common/helper";
 import path from 'path';
@@ -45,7 +45,7 @@ export class PatientMapper {
             User       : user,
             Addresses  : [address],
             AddressIds : []
-        }
+        };
 
         return model;
     }

@@ -1,3 +1,5 @@
+import { AddressDto } from "../../domain.types/address/address.dto";
+import { OrganizationDto } from "../../domain.types/organization/organization.dto";
 import { PersonDomainModel } from "../../domain.types/person/person.domain.model";
 import { PersonDetailsDto, PersonDto } from "../../domain.types/person/person.dto";
 
@@ -27,4 +29,11 @@ export interface IPersonRepo {
 
     update(id: string, personDomainModel: PersonDomainModel): Promise<PersonDetailsDto>;
 
+    getOrganizations(id: string): Promise<OrganizationDto[]>;
+
+    addAddress(id: string, addressId: string): Promise<boolean>;
+
+    removeAddress(id: string, addressId: string): Promise<boolean>;
+
+    getAddresses(id: string): Promise<AddressDto[]>;
 }

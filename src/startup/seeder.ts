@@ -8,12 +8,22 @@ import { IUserRepo } from "../database/repository.interfaces/user.repo.interface
 import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
 import { Logger } from "../common/logger";
 import { UserDomainModel } from "../domain.types/user/user.domain.model";
+import { PatientDomainModel } from "../domain.types/patient/patient/patient.domain.model";
 import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
 import { Loader } from "./loader";
-import * as RolePrivilegesList from '../assets/seed.data/role.privileges.json';
+import { PatientService } from "../services/patient/patient.service";
+import { UserService } from "../services/user.service";
+import { RoleService } from "../services/role.service";
+import { Helper } from "../common/helper";
+import { PersonService } from "../services/person.service";
+import { HealthProfileService } from "../services/patient/health.profile.service";
+import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
 import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
+
+import * as RolePrivilegesList from '../assets/seed.data/role.privileges.json';
 import * as SeededInternalClients from '../assets/seed.data/internal.clients.seed.json';
 import * as SeededSystemAdmin from '../assets/seed.data/system.admin.seed.json';
+import * as SeededInternalTestsUsers from '../assets/seed.data/internal.test.users.seed.json';
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -22,15 +32,31 @@ export class Seeder {
 
     _apiClientService: ApiClientService = null;
 
+    _patientService: PatientService = null;
+
+    _personService: PersonService = null;
+
+    _userService: UserService = null;
+
+    _roleService: RoleService = null;
+
+    _patientHealthProfileService: HealthProfileService = null;
+
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IApiClientRepo') private _apiClientRepo: IApiClientRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IRolePrivilegeRepo') private _rolePrivilegeRepo: IRolePrivilegeRepo,
-        @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo
+        @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
+        @inject('IInternalTestUserRepo') private _internalTestUserRepo: IInternalTestUserRepo
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
+        this._patientService = Loader.container.resolve(PatientService);
+        this._personService = Loader.container.resolve(PersonService);
+        this._userService = Loader.container.resolve(UserService);
+        this._roleService = Loader.container.resolve(RoleService);
+        this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
     }
 
     public init = async (): Promise<void> => {
@@ -39,6 +65,7 @@ export class Seeder {
             await this.seedRolePrivileges();
             await this.seedInternalClients();
             await this.seedSystemAdmin();
+            await this.seedInternalPatients();
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -175,6 +202,102 @@ export class Seeder {
             Description :
                 'Represents a health social worker/health support professional representing government/private health service.',
         });
+
+        Logger.instance().log('Seeded default roles successfully!');
     };
 
+    private seedInternalPatients = async () => {
+        try {
+            const arr = SeededInternalTestsUsers.Patients;
+            for (let i = 0; i < arr.length; i++) {
+                var phone = arr[i];
+                var exists = await this._personRepo.personExistsWithPhone(phone);
+                if (!exists) {
+                    var added = await this.createTestPatient(phone);
+                    if (added) {
+                        await this._internalTestUserRepo.create(phone);
+                    }
+                }
+            }
+        }
+        catch (error) {
+            Logger.instance().log('Error occurred while seeding internal test users!');
+        }
+        Logger.instance().log('Seeded internal-test-users successfully!');
+    }
+
+    private createTestPatient = async (phone: string): Promise<boolean> => {
+
+        var patientDomainModel: PatientDomainModel = {
+            User : {
+                Person : {
+                    Phone : phone
+                }
+            },
+            AddressIds : []
+        };
+
+        //Throw an error if patient with same name and phone number exists
+        const existingPatientCountSharingPhone = await this._patientService.checkforDuplicatePatients(
+            patientDomainModel
+        );
+        
+        const userName = await this._userService.generateUserName(
+            patientDomainModel.User.Person.FirstName,
+            patientDomainModel.User.Person.LastName
+        );
+        
+        const displayId = await this._userService.generateUserDisplayId(
+            Roles.Patient,
+            patientDomainModel.User.Person.Phone,
+            existingPatientCountSharingPhone
+        );
+        
+        const displayName = Helper.constructPersonDisplayName(
+            patientDomainModel.User.Person.Prefix,
+            patientDomainModel.User.Person.FirstName,
+            patientDomainModel.User.Person.LastName
+        );
+        
+        patientDomainModel.User.Person.DisplayName = displayName;
+        patientDomainModel.User.UserName = userName;
+        patientDomainModel.DisplayId = displayId;
+        
+        const userDomainModel = patientDomainModel.User;
+        const personDomainModel = userDomainModel.Person;
+        
+        //Create a person first
+        
+        let person = await this._personService.getPersonWithPhone(patientDomainModel.User.Person.Phone);
+        if (person == null) {
+            person = await this._personService.create(personDomainModel);
+            if (person == null) {
+                return false;
+            }
+        }
+        
+        const role = await this._roleService.getByName(Roles.Patient);
+        patientDomainModel.PersonId = person.id;
+        userDomainModel.Person.id = person.id;
+        userDomainModel.RoleId = role.id;
+        
+        const user = await this._userService.create(userDomainModel);
+        if (user == null) {
+            return false;
+        }
+        patientDomainModel.UserId = user.id;
+        
+        patientDomainModel.DisplayId = displayId;
+        const patient = await this._patientService.create(patientDomainModel);
+        if (patient == null) {
+            return false;
+        }
+        
+        const healthProfile = await this._patientHealthProfileService.createDefault(user.id);
+        patient.HealthProfile = healthProfile;
+
+        return true;
+        
+    }
+    
 }

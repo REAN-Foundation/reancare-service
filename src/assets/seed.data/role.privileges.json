@@ -27,6 +27,8 @@
             "Organization.RemovePerson",
             "Organization.AddAddress",
             "Organization.RemoveAddress",
+            "Organization.GetAddresses",
+            "Organization.GetPersons",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
@@ -40,7 +42,11 @@
             "Biometrics.BloodOxygenSaturation.GetById",
             "Biometrics.BloodOxygenSaturation.Update",
             "Biometrics.BloodOxygenSaturation.Delete",
-            "Biometrics.BloodOxygenSaturation.Search"
+            "Biometrics.BloodOxygenSaturation.Search",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress"
         ]
     },
     {
@@ -60,6 +66,8 @@
             "Organization.GetByPersonId",
             "Organization.Search",
             "Organization.GetById",
+            "Organization.GetAddresses",
+            "Organization.GetPersons",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
@@ -73,7 +81,18 @@
             "Biometrics.BloodOxygenSaturation.GetById",
             "Biometrics.BloodOxygenSaturation.Update",
             "Biometrics.BloodOxygenSaturation.Delete",
-            "Biometrics.BloodOxygenSaturation.Search"
+            "Biometrics.BloodOxygenSaturation.Search",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress",
+            "Doctor.GetByUserId",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress",
+            "HealthProfile.GetByPatientUserId",
+            "HealthProfile.UpdateByPatientUserId"
         ]
     },
     {
@@ -100,6 +119,8 @@
             "Organization.RemovePerson",
             "Organization.AddAddress",
             "Organization.RemoveAddress",
+            "Organization.GetAddresses",
+            "Organization.GetPersons",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
@@ -114,7 +135,18 @@
             "Biometrics.BloodOxygenSaturation.GetById",
             "Biometrics.BloodOxygenSaturation.Update",
             "Biometrics.BloodOxygenSaturation.Delete",
-            "Biometrics.BloodOxygenSaturation.Search"
+            "Biometrics.BloodOxygenSaturation.Search",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress",
+            "Doctor.UpdateByUserId",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress",
+            "HealthProfile.GetByPatientUserId",
+            "HealthProfile.UpdateByPatientUserId"
         ]
     },
     {
@@ -140,6 +172,8 @@
             "Organization.RemovePerson",
             "Organization.AddAddress",
             "Organization.RemoveAddress",
+            "Organization.GetAddresses",
+            "Organization.GetPersons",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
@@ -152,7 +186,11 @@
             "Biometrics.BloodOxygenSaturation.GetById",
             "Biometrics.BloodOxygenSaturation.Update",
             "Biometrics.BloodOxygenSaturation.Delete",
-            "Biometrics.BloodOxygenSaturation.Search"
+            "Biometrics.BloodOxygenSaturation.Search",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress"
         ]
     },
     {
@@ -178,6 +216,8 @@
             "Organization.RemovePerson",
             "Organization.AddAddress",
             "Organization.RemoveAddress",
+            "Organization.GetAddresses",
+            "Organization.GetPersons",
             "Address.Create",
             "Address.GetById",
             "Address.Search",
@@ -190,7 +230,11 @@
             "Biometrics.BloodOxygenSaturation.GetById",
             "Biometrics.BloodOxygenSaturation.Update",
             "Biometrics.BloodOxygenSaturation.Delete",
-            "Biometrics.BloodOxygenSaturation.Search"
+            "Biometrics.BloodOxygenSaturation.Search",
+            "Person.GetOrganizations",
+            "Person.GetAddresses",
+            "Person.AddAddress",
+            "Person.RemoveAddress"
         ]
     }
 ]

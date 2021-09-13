@@ -95,48 +95,6 @@ export class AddressController {
         }
     };
 
-    getByPersonId = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'Address.GetByPersonId';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
-            await this._authorizer.authorize(request, response);
-
-            const personId: string = await AddressValidator.getByPersonId(request);
-
-            const address = await this._service.getByPersonId(personId);
-            if (address == null) {
-                throw new ApiError(404, 'Address not found.');
-            }
-
-            ResponseHandler.success(request, response, 'Address retrieved successfully!', 200, {
-                Address : address,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    getByOrganizationId = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'Address.GetByOrganizationId';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
-            await this._authorizer.authorize(request, response);
-
-            const organizationId: string = await AddressValidator.getByOrganizationId(request);
-
-            const address = await this._service.getByOrganizationId(organizationId);
-            if (address == null) {
-                throw new ApiError(404, 'Address not found.');
-            }
-
-            ResponseHandler.success(request, response, 'Address retrieved successfully!', 200, {
-                Address : address,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Address.Search';

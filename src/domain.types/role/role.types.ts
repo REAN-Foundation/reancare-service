@@ -1,13 +1,13 @@
 
 export enum Roles {
-    SystemAdmin = 'SystemAdmin',
+    SystemAdmin = 'System Admin',
     Patient = 'Patient',
     Doctor = 'Doctor',
-    LabUser = 'LabUser',
-    PharmacyUser = 'PharmacyUser',
+    LabUser = 'Lab user',
+    PharmacyUser = 'Pharmacy user',
     Nurse = 'Nurse',
-    AmbulanceServiceUser = 'AmbulanceServiceUser',
-    SocialHealthWorker = 'SocialHealthWorker',
-    PatientFamilyMember = 'PatientFamilyMember',
-    PatientFriend = 'PatientFriend',
+    AmbulanceServiceUser = 'Ambulance service user',
+    SocialHealthWorker = 'Social health worker',
+    PatientFamilyMember = 'Patient family member',
+    PatientFriend = 'Patient friend',
 }

@@ -1,6 +1,6 @@
-import { DoctorDomainModel } from '../../../../domain.types/doctor/doctor.domain.model'
-import { UserDomainModel } from '../../../../domain.types/user/user.domain.model'
-import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model'
+import { DoctorDomainModel } from '../../../../domain.types/doctor/doctor.domain.model';
+import { UserDomainModel } from '../../../../domain.types/user/user.domain.model';
+import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 import { AddressDomainModel } from "../../../../domain.types/address/address.domain.model";
 import { Helper } from "../../../../common/helper";
 import path from 'path';
@@ -44,7 +44,7 @@ export class DoctorMapper {
         var model: DoctorDomainModel = {
             User      : user,
             Addresses : [address]
-        }
+        };
 
         return model;
     }

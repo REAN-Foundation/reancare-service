@@ -87,21 +87,14 @@ export default class FileResource extends Model {
         type      : DataType.STRING(2048),
         allowNull : true,
     })
-    ReferenceItemIds: string; //Comma separated list
+    SiblingResources: string; //Comma separated object list
 
-    @Length({ max: 512 })
+    @Length({ max: 2048 })
     @Column({
-        type      : DataType.STRING(512),
+        type      : DataType.STRING(2048),
         allowNull : true,
     })
-    ReferenceItemTypes: string; //Comma separated list
-
-    @Length({ max: 512 })
-    @Column({
-        type      : DataType.STRING(512),
-        allowNull : true,
-    })
-    ReferenceItemKeywords: string; //Comma separated list
+    ReferenceItems: string; //Comma separated object list
 
     @Length({ max: 64 })
     @Column({
@@ -121,7 +114,7 @@ export default class FileResource extends Model {
         type      : DataType.FLOAT,
         allowNull : true,
     })
-    SizeInKBytes: number;
+    SizeInKB: number;
 
     @IsDate
     @Column({

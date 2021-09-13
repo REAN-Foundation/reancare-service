@@ -46,7 +46,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Biometrics.Pulse.Create",
+            "Biometrics.Pulse.GetById",
+            "Biometrics.Pulse.Update",
+            "Biometrics.Pulse.Delete",
+            "Biometrics.Pulse.Search"
         ]
     },
     {
@@ -92,7 +97,12 @@
             "Person.AddAddress",
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
-            "HealthProfile.UpdateByPatientUserId"
+            "HealthProfile.UpdateByPatientUserId",
+            "Biometrics.Pulse.Create",
+            "Biometrics.Pulse.GetById",
+            "Biometrics.Pulse.Update",
+            "Biometrics.Pulse.Delete",
+            "Biometrics.Pulse.Search"
         ]
     },
     {
@@ -146,7 +156,12 @@
             "Person.AddAddress",
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
-            "HealthProfile.UpdateByPatientUserId"
+            "HealthProfile.UpdateByPatientUserId",
+            "Biometrics.Pulse.Create",
+            "Biometrics.Pulse.GetById",
+            "Biometrics.Pulse.Update",
+            "Biometrics.Pulse.Delete",
+            "Biometrics.Pulse.Search"
         ]
     },
     {
@@ -190,7 +205,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Biometrics.Pulse.Create",
+            "Biometrics.Pulse.GetById",
+            "Biometrics.Pulse.Update",
+            "Biometrics.Pulse.Delete",
+            "Biometrics.Pulse.Search"
         ]
     },
     {
@@ -234,7 +254,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Biometrics.Pulse.Create",
+            "Biometrics.Pulse.GetById",
+            "Biometrics.Pulse.Update",
+            "Biometrics.Pulse.Delete",
+            "Biometrics.Pulse.Search"
         ]
     }
 ]

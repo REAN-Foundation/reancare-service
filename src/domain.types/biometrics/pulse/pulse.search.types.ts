@@ -1,7 +1,6 @@
 import { PulseDto } from "./pulse.dto";
 
 export interface PulseSearchFilters {
-    PersonId?: string;
     PatientUserId?: string;
     MinValue?: number;
     MaxValue?: number;

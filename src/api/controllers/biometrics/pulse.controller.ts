@@ -2,25 +2,25 @@ import express from 'express';
 import { ResponseHandler } from '../../../common/response.handler';
 import { Loader } from '../../../startup/loader';
 import { ApiError } from '../../../common/api.error';
-import { BloodOxygenSaturationService } from '../../../services/biometrics/blood.oxygen.saturation.service';
+import { PulseService } from '../../../services/biometrics/pulse.service';
 import { Authorizer } from '../../../auth/authorizer';
-import { BloodOxygenSaturationValidator } from '../../validators/biometrics/blood.oxygen.saturation.validator';
+import { PulseValidator } from '../../validators/biometrics/pulse.validator';
 import { Helper } from '../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodOxygenSaturationController {
+export class PulseController {
 
     //#region member variables and constructors
 
-    _service: BloodOxygenSaturationService = null;
+    _service: PulseService = null;
 
     _authorizer: Authorizer = null;
 
     _personService: any;
 
     constructor() {
-        this._service = Loader.container.resolve(BloodOxygenSaturationService);
+        this._service = Loader.container.resolve(PulseService);
         this._authorizer = Loader.authorizer;
 
     }
@@ -31,17 +31,17 @@ export class BloodOxygenSaturationController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BloodOxygenSaturation.Create';
+            request.context = 'Biometrics.Pulse.Create';
 
-            const bloodOxygenSaturationDomainModel = await BloodOxygenSaturationValidator.create(request);
+            const pulseDomainModel = await PulseValidator.create(request);
 
-            const BloodOxygenSaturation = await this._service.create(bloodOxygenSaturationDomainModel);
-            if (BloodOxygenSaturation == null) {
-                throw new ApiError(400, 'Cannot create record for blood oxygen saturation!');
+            const Pulse = await this._service.create(pulseDomainModel);
+            if (Pulse == null) {
+                throw new ApiError(400, 'Cannot create record for pulse!');
             }
 
-            ResponseHandler.success(request, response, 'Blood oxygen saturation record created successfully!', 201, {
-                BloodOxygenSaturation : BloodOxygenSaturation,
+            ResponseHandler.success(request, response, 'Pulse record created successfully!', 201, {
+                Pulse : Pulse,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -50,19 +50,19 @@ export class BloodOxygenSaturationController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BloodOxygenSaturation.GetById';
+            request.context = 'Biometrics.Pulse.GetById';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const id: string = await BloodOxygenSaturationValidator.getById(request);
+            const id: string = await PulseValidator.getById(request);
 
-            const BloodOxygenSaturation = await this._service.getById(id);
-            if (BloodOxygenSaturation == null) {
-                throw new ApiError(404, ' Blood oxygen saturation record not found.');
+            const Pulse = await this._service.getById(id);
+            if (Pulse == null) {
+                throw new ApiError(404, ' Pulse record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Blood oxygen saturation record retrieved successfully!', 200, {
-                BloodOxygenSaturation : BloodOxygenSaturation,
+            ResponseHandler.success(request, response, 'Pulse record retrieved successfully!', 200, {
+                Pulse : Pulse,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -71,22 +71,22 @@ export class BloodOxygenSaturationController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BloodOxygenSaturation.Search';
+            request.context = 'Biometrics.Pulse.Search';
             await this._authorizer.authorize(request, response);
 
-            const filters = await BloodOxygenSaturationValidator.search(request);
+            const filters = await PulseValidator.search(request);
 
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
-            
+
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} blood oxygen saturation records retrieved successfully!`;
+                    : `Total ${count} pulse records retrieved successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, {
-                BloodOxygenSaturationRecords : searchResults });
+                PulseRecords : searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -95,25 +95,25 @@ export class BloodOxygenSaturationController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BloodOxygenSaturation.Update';
+            request.context = 'Biometrics.Pulse.Update';
 
             await this._authorizer.authorize(request, response);
 
-            const domainModel = await BloodOxygenSaturationValidator.update(request);
+            const domainModel = await PulseValidator.update(request);
 
-            const id: string = await BloodOxygenSaturationValidator.getById(request);
+            const id: string = await PulseValidator.getById(request);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
-                throw new ApiError(404, 'Blood Oxygen Saturation record not found.');
+                throw new ApiError(404, 'Pulse record not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update Blood Oxygen Saturation record!');
+                throw new ApiError(400, 'Unable to update pulse record!');
             }
 
-            ResponseHandler.success(request, response, 'Blood Oxygen Saturation record updated successfully!', 200, {
-                BloodOxygenSaturation : updated,
+            ResponseHandler.success(request, response, 'Pulse record updated successfully!', 200, {
+                Pulse : updated,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -122,21 +122,21 @@ export class BloodOxygenSaturationController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BloodOxygenSaturation.Delete';
+            request.context = 'Biometrics.Pulse.Delete';
             await this._authorizer.authorize(request, response);
 
-            const id: string = await BloodOxygenSaturationValidator.getById(request);
+            const id: string = await PulseValidator.getById(request);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
-                throw new ApiError(404, 'Blood Oxygen Saturation record not found.');
+                throw new ApiError(404, 'Pulse record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'Blood Oxygen Saturation record cannot be deleted.');
+                throw new ApiError(400, 'Pulse record cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'Blood Oxygen Saturation record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Pulse record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

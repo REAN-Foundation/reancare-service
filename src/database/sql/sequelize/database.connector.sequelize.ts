@@ -24,7 +24,6 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
             const modelsPath = [
                 __dirname + '/models',
                 __dirname + '/models/biometrics',
-                __dirname + '/models/biometrics',
                 __dirname + '/models/daily.records',
                 __dirname + '/models/patient',
             ];

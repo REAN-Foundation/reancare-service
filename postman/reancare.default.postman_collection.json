@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"_postman_id": "1fdd54db-1e66-4ca5-b0a1-0866bc963299",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2117,15 +2117,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2640,10 +2631,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -5745,6 +5732,510 @@
 				}
 			],
 			"description": "## APIs to manage addresses\n\nThese set of APIs are used to manage addresses belonging to persons or organizations."
+		},
+		{
+			"name": "HeartPoints",
+			"item": [
+				{
+					"name": "Create HeartPoint",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let personId = pm.environment.get('PERSON_ID');\r",
+									"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
+									"pm.environment.set(\"HEART_POINT_PERSONID\", personId);\r",
+									"pm.environment.set(\"HEART_POINT_PATIENTUSERID\", patientUserId);\r",
+									"pm.environment.set(\"HEART_POINT_VALUE\", '120');\r",
+									"pm.environment.set(\"HEART_POINT_UNIT\", 'bpm');"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"HEART_POINT_ID\", jsonRes.Data.HeartPoints.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"New Heart point record is created\", function () {\r",
+									"\r",
+									"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
+									"    var expectedPersonId = pm.environment.get(\"HEART_POINT_PERSONID\");\r",
+									"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
+									"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PersonId');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.PersonId).equals(expectedPersonId);\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(\"\" + expectedHeartPoints);\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PersonId\": \"{{HEART_POINT_PERSONID}}\",\r\n    \"PatientUserId\": \"{{HEART_POINT_PATIENTUSERID}}\",\r\n    \"HeartPoints\": {{HEART_POINT_VALUE}},\r\n    \"Unit\": \"{{HEART_POINT_UNIT}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/dailyRecords/heartPoint",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"dailyRecords",
+								"heartPoint"
+							]
+						},
+						"description": "Add A HeartPoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Get HeartPoint by id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Calorie record should have correct data\", function () {\r",
+									"\r",
+									"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
+									"    var expectedPersonId = pm.environment.get(\"HEART_POINT_PERSONID\");\r",
+									"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
+									"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PersonId');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.PersonId).equals(expectedPersonId);\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
+									"    pm.expect(\"\" + jsonRes.Data.HeartPoints.HeartPoints).equals(expectedHeartPoints);\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/dailyRecords/heartPoint/{{HEART_POINT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"dailyRecords",
+								"heartPoint",
+								"{{HEART_POINT_ID}}"
+							]
+						},
+						"description": "Get an HeartPoint by HeartPoint id."
+					},
+					"response": []
+				},
+				{
+					"name": "Update an HeartPoint",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let heartPoints = pm.environment.get(\"HEART_POINT_VALUE\");",
+									"pm.environment.set(\"HEART_POINT_Value\", Number(heartPoints) + 10);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Correct updates should be reflected\", function () {\r",
+									"\r",
+									"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
+									"    var expectedPersonId = pm.environment.get(\"HEART_POINT_PERSONID\");\r",
+									"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
+									"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PersonId');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.PersonId).equals(expectedPersonId);\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(expectedHeartPoints);\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PersonId\": \"{{HEART_POINT_PERSONID}}\",\r\n    \"PatientUserId\": \"{{HEART_POINT_PATIENTUSERID}}\",\r\n    \"HeartPoints\": {{HEART_POINT_VALUE}},\r\n    \"Unit\": \"{{HEART_POINT_UNIT}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/dailyRecords/heartPoint/{{HEART_POINT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"dailyRecords",
+								"heartPoint",
+								"{{HEART_POINT_ID}}"
+							]
+						},
+						"description": "Update the details for an HeartPoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Search CalorieBalance",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"List of Calorie Record is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
+									"    pm.expect(jsonRes.Data.HeartPoints.Items.length).to.be.greaterThan(0);\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "Session token (JWT) for the user",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API client secret key",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/dailyRecords/heartPoint/search?pageIndex=0&itemsPerPage=25&minValue=10",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"dailyRecords",
+								"heartPoint",
+								"search"
+							],
+							"query": [
+								{
+									"key": "createdDateFrom",
+									"value": "2021-05-01",
+									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
+									"disabled": true
+								},
+								{
+									"key": "createdDateTo",
+									"value": "2021-12-12",
+									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": "CaloriesBurned",
+									"description": "The name of the Parameter to order by",
+									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "ascending",
+									"description": "'ascending' or 'descending'",
+									"disabled": true
+								},
+								{
+									"key": "pageIndex",
+									"value": "0",
+									"description": "Page index for pagination"
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "25",
+									"description": "Items per page"
+								},
+								{
+									"key": "personId",
+									"value": "",
+									"description": "Person ID to filter",
+									"disabled": true
+								},
+								{
+									"key": "patientUserId",
+									"value": "",
+									"description": "Patient User ID to filter",
+									"disabled": true
+								},
+								{
+									"key": "minValue",
+									"value": "10",
+									"description": "filter using heartpoint minimum value"
+								},
+								{
+									"key": "maxValue",
+									"value": "100",
+									"description": "filter using heartpoint maximum value",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Search HeartPoints using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete CalorieBalance record",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Deleted is true\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+									"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "Session token (JWT) for the user",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API client secret key",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/dailyRecords/heartPoint/{{HEART_POINT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"dailyRecords",
+								"heartPoint",
+								"{{HEART_POINT_ID}}"
+							]
+						},
+						"description": "Deletes Heart points using ID"
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

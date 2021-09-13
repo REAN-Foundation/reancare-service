@@ -41,7 +41,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "HeartPoints.Create",
+            "HeartPoints.GetById",
+            "HeartPoints.Search",
+            "HeartPoints.Update",
+            "HeartPoints.Delete"
         ]
     },
     {
@@ -82,7 +87,12 @@
             "Person.AddAddress",
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
-            "HealthProfile.UpdateByPatientUserId"
+            "HealthProfile.UpdateByPatientUserId",
+            "HeartPoints.Create",
+            "HeartPoints.GetById",
+            "HeartPoints.Search",
+            "HeartPoints.Update",
+            "HeartPoints.Delete"
         ]
     },
     {
@@ -131,7 +141,12 @@
             "Person.AddAddress",
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
-            "HealthProfile.UpdateByPatientUserId"
+            "HealthProfile.UpdateByPatientUserId",
+            "HeartPoints.Create",
+            "HeartPoints.GetById",
+            "HeartPoints.Search",
+            "HeartPoints.Update",
+            "HeartPoints.Delete"
         ]
     },
     {
@@ -171,7 +186,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "HeartPoints.Create",
+            "HeartPoints.GetById",
+            "HeartPoints.Search",
+            "HeartPoints.Update",
+            "HeartPoints.Delete"
         ]
     },
     {
@@ -211,7 +231,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "HeartPoints.Create",
+            "HeartPoints.GetById",
+            "HeartPoints.Search",
+            "HeartPoints.Update",
+            "HeartPoints.Delete"
         ]
     }
 ]

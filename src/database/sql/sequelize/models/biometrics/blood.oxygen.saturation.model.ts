@@ -11,6 +11,7 @@ import {
     Length,
     ForeignKey,
     IsDate,
+    IsDecimal,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
@@ -21,7 +22,7 @@ import User from '../user.model';
 @Table({
     timestamps      : true,
     modelName       : 'BloodOxygenSaturation',
-    tableName       : 'blood_oxygen_saturation',
+    tableName       : 'biometrics_blood_oxygen_saturation',
     paranoid        : true,
     freezeTableName : true
 })
@@ -44,10 +45,14 @@ export default class BloodOxygenSaturation extends Model {
     })
     PatientUserId: string;
 
-    @Length({ max: 64 })
+    @IsDecimal
     @Column({
-        type      : DataType.INTEGER,
+        type      : DataType.FLOAT,
         allowNull : false,
+        validate  : {
+            min : 10,
+            max : 100
+        }
     })
     BloodOxygenSaturation: number;
 

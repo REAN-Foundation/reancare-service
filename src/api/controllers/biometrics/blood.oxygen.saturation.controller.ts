@@ -6,8 +6,6 @@ import { BloodOxygenSaturationService } from '../../../services/biometrics/blood
 import { Authorizer } from '../../../auth/authorizer';
 import { BloodOxygenSaturationValidator } from '../../validators/biometrics/blood.oxygen.saturation.validator';
 import { Helper } from '../../../common/helper';
-import { Logger } from '../../../common/logger';
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class BloodOxygenSaturationController {
@@ -32,7 +30,7 @@ export class BloodOxygenSaturationController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometric.BloodOxygenSaturation.Create';
+            request.context = 'Biometrics.BloodOxygenSaturation.Create';
 
             const bloodOxygenSaturationDomainModel = await BloodOxygenSaturationValidator.create(request);
 
@@ -51,7 +49,7 @@ export class BloodOxygenSaturationController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometric.BloodOxygenSaturation.GetById';
+            request.context = 'Biometrics.BloodOxygenSaturation.GetById';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
@@ -72,7 +70,7 @@ export class BloodOxygenSaturationController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometric.BloodOxygenSaturation.Search';
+            request.context = 'Biometrics.BloodOxygenSaturation.Search';
             await this._authorizer.authorize(request, response);
 
             const filters = await BloodOxygenSaturationValidator.search(request);
@@ -80,7 +78,7 @@ export class BloodOxygenSaturationController {
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
-
+            
             const message =
                 count === 0
                     ? 'No records found!'
@@ -96,7 +94,7 @@ export class BloodOxygenSaturationController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometric.BloodOxygenSaturation.Update';
+            request.context = 'Biometrics.BloodOxygenSaturation.Update';
 
             await this._authorizer.authorize(request, response);
 
@@ -123,7 +121,7 @@ export class BloodOxygenSaturationController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometric.BloodOxygenSaturation.Delete';
+            request.context = 'Biometrics.BloodOxygenSaturation.Delete';
             await this._authorizer.authorize(request, response);
 
             const id: string = await BloodOxygenSaturationValidator.getById(request);

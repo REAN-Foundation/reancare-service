@@ -46,6 +46,9 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
 
     search = async (filters: BloodOxygenSaturationSearchFilters): Promise<BloodOxygenSaturationSearchResults> => {
         try {
+
+            Logger.instance().log(`Filters 2 , ${JSON.stringify(filters)}`);
+            
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
@@ -166,8 +169,8 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
         try {
             Logger.instance().log(id);
 
-            await BloodOxygenSaturationModel.destroy({ where: { id: id } });
-            return true;
+            const result = await BloodOxygenSaturationModel.destroy({ where: { id: id } });
+            return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

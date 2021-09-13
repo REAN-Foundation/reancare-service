@@ -45,7 +45,7 @@ export class BloodOxygenSaturationValidator {
             Helper.handleValidationError(result);
         }
 
-        return request.params.PatientUserId;
+        return request.params.patientUserId;
     };
 
     static getByPersonId = async (request: express.Request): Promise<string> => {
@@ -70,22 +70,22 @@ export class BloodOxygenSaturationValidator {
 
     static search = async (request: express.Request): Promise<BloodOxygenSaturationSearchFilters> => {
 
-        await query('PatientUserId').optional()
+        await query('patientUserId').optional()
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await query('MinValue').optional()
+        await query('minValue').optional()
             .trim()
             .escape()
             .run(request);
 
-        await query('MaxValue').optional()
+        await query('maxValue').optional()
             .trim()
             .run(request);
 
-        await query('RecordedByUserId').optional()
+        await query('recordedByUserId').optional()
             .trim()
             .escape()
             .isUUID()
@@ -186,14 +186,14 @@ export class BloodOxygenSaturationValidator {
             request.query.ItemsPerPage !== 'undefined' ? parseInt(request.query.ItemsPerPage as string, 10) : 25;
 
         const filters: BloodOxygenSaturationSearchFilters = {
-            PatientUserId    : request.query.PatientUserId ?? null,
-            MinValue         : request.query.MinValue ?? null,
-            MaxValue         : request.query.MaxValue ?? null,
-            CreatedDateFrom  : request.query.CreatedDateFrom ?? null,
-            CreatedDateTo    : request.query.CreatedDateTo ?? null,
-            RecordedByUserId : request.query.RecordedByUserId ?? null,
-            OrderBy          : request.query.OrderBy ?? 'CreatedAt',
-            Order            : request.query.Order ?? 'descending',
+            PatientUserId    : request.query.patientUserId ?? null,
+            MinValue         : request.query.minValue ?? null,
+            MaxValue         : request.query.maxValue ?? null,
+            CreatedDateFrom  : request.query.createdDateFrom ?? null,
+            CreatedDateTo    : request.query.createdDateTo ?? null,
+            RecordedByUserId : request.query.recordedByUserId ?? null,
+            OrderBy          : request.query.orderBy ?? 'CreatedAt',
+            Order            : request.query.order ?? 'descending',
             PageIndex        : pageIndex,
             ItemsPerPage     : itemsPerPage,
         };

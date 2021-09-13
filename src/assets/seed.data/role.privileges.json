@@ -36,11 +36,11 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
-            "Biometric.BloodOxygenSaturation.Create",
-            "Biometric.BloodOxygenSaturation.GetById",
-            "Biometric.BloodOxygenSaturation.Update",
-            "Biometric.BloodOxygenSaturation.Delete",
-            "Biometric.BloodOxygenSaturation.Search"
+            "Biometrics.BloodOxygenSaturation.Create",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search"
         ]
     },
     {
@@ -69,11 +69,11 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
-            "Biometric.BloodOxygenSaturation.Create",
-            "Biometric.BloodOxygenSaturation.GetById",
-            "Biometric.BloodOxygenSaturation.Update",
-            "Biometric.BloodOxygenSaturation.Delete",
-            "Biometric.BloodOxygenSaturation.Search"
+            "Biometrics.BloodOxygenSaturation.Create",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search"
         ]
     },
     {
@@ -110,11 +110,11 @@
             "Doctor.Search",
             "Doctor.GetByUserId",
             "Doctor.UpdateByUserId",
-            "Biometric.BloodOxygenSaturation.Create",
-            "Biometric.BloodOxygenSaturation.GetById",
-            "Biometric.BloodOxygenSaturation.Update",
-            "Biometric.BloodOxygenSaturation.Delete",
-            "Biometric.BloodOxygenSaturation.Search"
+            "Biometrics.BloodOxygenSaturation.Create",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search"
         ]
     },
     {
@@ -149,10 +149,10 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
-            "Biometric.BloodOxygenSaturation.GetById",
-            "Biometric.BloodOxygenSaturation.Update",
-            "Biometric.BloodOxygenSaturation.Delete",
-            "Biometric.BloodOxygenSaturation.Search"
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search"
         ]
     },
     {
@@ -187,10 +187,10 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
-            "Biometric.BloodOxygenSaturation.GetById",
-            "Biometric.BloodOxygenSaturation.Update",
-            "Biometric.BloodOxygenSaturation.Delete",
-            "Biometric.BloodOxygenSaturation.Search"
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search"
         ]
     }
 ]

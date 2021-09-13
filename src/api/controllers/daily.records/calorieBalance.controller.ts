@@ -110,7 +110,7 @@ export class CalorieBalanceController {
                     ? 'No records found!'
                     : `Total ${count} calorieBalance records retrieved successfully!`;
                     
-            ResponseHandler.success(request, response, message, 200, { Addresses: searchResults });
+            ResponseHandler.success(request, response, message, 200, { CalorieBalances: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "620f4df1-cfb1-4a37-8f75-e33d4ffec243",
+		"_postman_id": "a75794ee-b514-42f9-876f-adaa43c2adfd",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -5474,9 +5474,6 @@
 									}
 								}
 							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
 							"request": {
 								"method": "GET",
 								"header": [
@@ -5808,12 +5805,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/biometrics-bloodoxygensaturation",
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"biometrics-bloodoxygensaturation"
+										"biometrics",
+										"blood-oxygen-saturations"
 									]
 								}
 							},
@@ -5875,12 +5873,13 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/biometrics-bloodoxygensaturation/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"biometrics-bloodoxygensaturation",
+										"biometrics",
+										"blood-oxygen-saturations",
 										"{{BIOMETRICS_BLOOD_OXYGEN_ID}}"
 									]
 								}
@@ -5954,12 +5953,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/biometrics-bloodoxygensaturation/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"biometrics-bloodoxygensaturation",
+										"biometrics",
+										"blood-oxygen-saturations",
 										"{{BIOMETRICS_BLOOD_OXYGEN_ID}}"
 									]
 								}
@@ -6014,12 +6014,13 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/biometrics-bloodoxygensaturation/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"biometrics-bloodoxygensaturation",
+										"biometrics",
+										"blood-oxygen-saturations",
 										"{{BIOMETRICS_BLOOD_OXYGEN_ID}}"
 									]
 								}
@@ -6072,37 +6073,38 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/biometrics-bloodoxygensaturation/search?RecordedByUserId={{RECORDED_BY_USER_ID}}&CreatedDateFrom=2021-09-05&CreatedDateTo=2021-09-08&OrderBy=BloodOxygenSaturation&Order=ascending&PageIndex=0&itemsPerPage=25&MinValue=90&MaxValue=95&PatientUserId={{PATIENT_USER_ID}}",
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-10-14&orderBy=BloodOxygenSaturation&order=ascending&pageIndex=0&itemsPerPage=25&minValue=90&maxValue=100&patientUserId={{PATIENT_USER_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"biometrics-bloodoxygensaturation",
+										"biometrics",
+										"blood-oxygen-saturations",
 										"search"
 									],
 									"query": [
 										{
-											"key": "RecordedByUserId",
+											"key": "recordedByUserId",
 											"value": "{{RECORDED_BY_USER_ID}}"
 										},
 										{
-											"key": "CreatedDateFrom",
-											"value": "2021-09-05"
+											"key": "createdDateFrom",
+											"value": "2021-09-01"
 										},
 										{
-											"key": "CreatedDateTo",
-											"value": "2021-09-08"
+											"key": "createdDateTo",
+											"value": "2021-10-14"
 										},
 										{
-											"key": "OrderBy",
+											"key": "orderBy",
 											"value": "BloodOxygenSaturation"
 										},
 										{
-											"key": "Order",
+											"key": "order",
 											"value": "ascending"
 										},
 										{
-											"key": "PageIndex",
+											"key": "pageIndex",
 											"value": "0"
 										},
 										{
@@ -6110,15 +6112,15 @@
 											"value": "25"
 										},
 										{
-											"key": "MinValue",
+											"key": "minValue",
 											"value": "90"
 										},
 										{
-											"key": "MaxValue",
-											"value": "95"
+											"key": "maxValue",
+											"value": "100"
 										},
 										{
-											"key": "PatientUserId",
+											"key": "patientUserId",
 											"value": "{{PATIENT_USER_ID}}"
 										}
 									]

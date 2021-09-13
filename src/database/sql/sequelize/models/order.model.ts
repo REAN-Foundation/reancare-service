@@ -13,7 +13,7 @@ import {
     ForeignKey,
 } from 'sequelize-typescript';
 
-import { OrderStates, OrderTypes } from '../../../../domain.types/miscellaneous/system.types';
+import { OrderStates, OrderTypes } from '../../../../domain.types/order/order.types';
 import { v4 } from 'uuid';
 import Organization from './organization.model';
 import User from './user.model';
@@ -54,7 +54,7 @@ export default class Order extends Model {
         ],
         defaultValue : OrderTypes.Unknown
     })
-    OrderType: string;
+    Type: string;
 
     @Length({ max: 128 })
     @Column({

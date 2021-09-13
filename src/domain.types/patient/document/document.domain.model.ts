@@ -1,5 +1,6 @@
 import { Roles } from "../../role/role.types";
-import { OrderTypes, VisitTypes } from "../../miscellaneous/system.types";
+import { VisitTypes } from "../../miscellaneous/system.types";
+import { OrderTypes } from "../../order/order.types";
 import { DocumentTypes } from "./document.types";
 
 export interface DocumentDomainModel {

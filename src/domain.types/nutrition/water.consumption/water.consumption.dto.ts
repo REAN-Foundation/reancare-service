@@ -1,5 +1,6 @@
 
 export interface WaterConsumptionDto {
+    id?: string;
     EhrId?: string;
     PatientUserId?: string;
     Volume: number;

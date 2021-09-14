@@ -1,4 +1,3 @@
-//////////////////////////////////////////////////////////////////////
 
 import { WaterConsumptionDto, WaterConsumptionForDayDto } from "./water.consumption.dto";
 

@@ -14,7 +14,13 @@ import {
     IsDecimal,
 } from 'sequelize-typescript';
 
-import { FoodConsumptionEventList, FoodConsumptionEvents } from '../../../../../domain.types/nutrition/food.consumption/food.consumption.types';
+import {
+    PhysicalActivityCategoriesList,
+    PhysicalActivityCategories,
+    Intensity,
+    IntensityList
+} from '../../../../../domain.types/exercise/physical.activity/physical.activity.types';
+
 import { v4 } from 'uuid';
 import FileResource from '../file.resource.model';
 import User from '../user.model';
@@ -23,12 +29,12 @@ import User from '../user.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'FoodConsumption',
-    tableName       : 'nutrition_food_consumption',
+    modelName       : 'PhysicalActivity',
+    tableName       : 'exercise_physical_activity',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class FoodConsumption extends Model {
+export default class PhysicalActivity extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -61,7 +67,7 @@ export default class FoodConsumption extends Model {
         type      : DataType.STRING(128),
         allowNull : false,
     })
-    Food: string;
+    Exercise: string;
 
     @Length({ max: 1024 })
     @Column({
@@ -74,10 +80,10 @@ export default class FoodConsumption extends Model {
     @Column({
         type         : DataType.STRING(128),
         allowNull    : false,
-        values       : FoodConsumptionEventList,
-        defaultValue : FoodConsumptionEvents.Other
+        values       : PhysicalActivityCategoriesList,
+        defaultValue : PhysicalActivityCategories.Other
     })
-    ConsumedAs: string;
+    Category: string;
 
     @IsDecimal
     @Column({
@@ -85,7 +91,16 @@ export default class FoodConsumption extends Model {
         allowNull    : false,
         defaultValue : 0
     })
-    Calories: number;
+    CaloriesBurned: number;
+
+    @Length({ max: 128 })
+    @Column({
+        type         : DataType.STRING(128),
+        allowNull    : false,
+        values       : IntensityList,
+        defaultValue : Intensity.Low
+    })
+    Intensity: string;
 
     @IsUUID(4)
     @ForeignKey(() => FileResource)

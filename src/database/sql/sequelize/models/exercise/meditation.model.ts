@@ -11,24 +11,21 @@ import {
     Length,
     IsDate,
     ForeignKey,
-    IsDecimal,
 } from 'sequelize-typescript';
 
-import { FoodConsumptionEventList, FoodConsumptionEvents } from '../../../../../domain.types/nutrition/food.consumption/food.consumption.types';
 import { v4 } from 'uuid';
-import FileResource from '../file.resource.model';
 import User from '../user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'FoodConsumption',
-    tableName       : 'nutrition_food_consumption',
+    modelName       : 'Meditation',
+    tableName       : 'exercise_meditations',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class FoodConsumption extends Model {
+export default class Meditation extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -61,7 +58,7 @@ export default class FoodConsumption extends Model {
         type      : DataType.STRING(128),
         allowNull : false,
     })
-    Food: string;
+    Meditation: string;
 
     @Length({ max: 1024 })
     @Column({
@@ -74,26 +71,9 @@ export default class FoodConsumption extends Model {
     @Column({
         type         : DataType.STRING(128),
         allowNull    : false,
-        values       : FoodConsumptionEventList,
-        defaultValue : FoodConsumptionEvents.Other
+        defaultValue : 'Mindfulness'
     })
-    ConsumedAs: string;
-
-    @IsDecimal
-    @Column({
-        type         : DataType.FLOAT,
-        allowNull    : false,
-        defaultValue : 0
-    })
-    Calories: number;
-
-    @IsUUID(4)
-    @ForeignKey(() => FileResource)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : false,
-    })
-    ImageResourceId: string;
+    Category: string;
 
     @IsDate
     @Column({

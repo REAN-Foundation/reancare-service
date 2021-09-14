@@ -15,7 +15,6 @@ export interface FoodConsumptionDto {
 }
 
 export interface FoodConsumptionEventDto {
-    id?: string;
     PatientUserId?: string;
     Event: FoodConsumptionEvents;
     Foods: FoodConsumptionDto[];
@@ -26,7 +25,6 @@ export interface FoodConsumptionEventDto {
 }
 
 export interface FoodConsumptionForDayDto {
-    id?: string;
     PatientUserId?: string;
     Date: Date;
     Event: FoodConsumptionEventDto[];

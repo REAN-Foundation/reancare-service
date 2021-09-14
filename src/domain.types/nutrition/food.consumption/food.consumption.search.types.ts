@@ -1,4 +1,4 @@
-import { FoodConsumptionDto } from "./food.consumption.dto";
+import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from "./food.consumption.dto";
 import { FoodConsumptionEvents } from "./food.consumption.types";
 
 //////////////////////////////////////////////////////////////////////
@@ -25,5 +25,5 @@ export interface FoodConsumptionSearchResults {
     ItemsPerPage: number;
     Order: string;
     OrderedBy: string;
-    Items: FoodConsumptionDto[];
+    Items: FoodConsumptionDto[] | FoodConsumptionEventDto[] | FoodConsumptionForDayDto[];
 }

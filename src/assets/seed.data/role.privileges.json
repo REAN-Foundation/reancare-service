@@ -35,7 +35,13 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Biometrics.BodyWeight.Create",
+            "Biometrics.BodyWeight.GetById",
+            "Biometrics.BodyWeight.GetByPatientUserId",
+            "Biometrics.BodyWeight.Update",
+            "Biometrics.BodyWeight.Search",
+            "Biometrics.BodyWeight.Delete"
         ]
     },
     {
@@ -63,7 +69,13 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Biometrics.BodyWeight.Create",
+            "Biometrics.BodyWeight.GetById",
+            "Biometrics.BodyWeight.GetByPatientUserId",
+            "Biometrics.BodyWeight.Update",
+            "Biometrics.BodyWeight.Search",
+            "Biometrics.BodyWeight.Delete"
         ]
     },
     {
@@ -99,7 +111,13 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
-            "Doctor.UpdateByUserId"
+            "Doctor.UpdateByUserId",
+            "Biometrics.BodyWeight.Create",
+            "Biometrics.BodyWeight.GetById",
+            "Biometrics.BodyWeight.GetByPatientUserId",
+            "Biometrics.BodyWeight.Update",
+            "Biometrics.BodyWeight.Search",
+            "Biometrics.BodyWeight.Delete"
         ]
     },
     {
@@ -133,7 +151,13 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Biometrics.BodyWeight.Create",
+            "Biometrics.BodyWeight.GetById",
+            "Biometrics.BodyWeight.GetByPatientUserId",
+            "Biometrics.BodyWeight.Update",
+            "Biometrics.BodyWeight.Search",
+            "Biometrics.BodyWeight.Delete"
         ]
     },
     {
@@ -167,7 +191,13 @@
             "Address.GetByPersonId",
             "Address.GetByOrganizationId",
             "Doctor.Search",
-            "Doctor.GetByUserId"
+            "Doctor.GetByUserId",
+            "Biometrics.BodyWeight.Create",
+            "Biometrics.BodyWeight.GetById",
+            "Biometrics.BodyWeight.GetByPatientUserId",
+            "Biometrics.BodyWeight.Update",
+            "Biometrics.BodyWeight.Search",
+            "Biometrics.BodyWeight.Delete"
         ]
     }
 ]

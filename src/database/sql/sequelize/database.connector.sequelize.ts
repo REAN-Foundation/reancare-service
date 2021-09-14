@@ -26,6 +26,10 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
                 __dirname + '/models/biometrics',
                 __dirname + '/models/daily.records',
                 __dirname + '/models/patient',
+                __dirname + '/models/exercise',
+                __dirname + '/models/medication',
+                __dirname + '/models/nutrition',
+                __dirname + '/models/static.types',
             ];
             const options = {
                 host    : config.host,

@@ -5,6 +5,7 @@ import { AddressRepo } from './repositories/address.repo';
 import { ApiClientRepo } from './repositories/api.client.repo';
 import { DoctorRepo } from './repositories/doctor.repo';
 import { InternalTestUserRepo } from './repositories/internal.test.user.repo';
+import { MedicationStockImageRepo } from './repositories/medication/medication.stock.image.repo';
 import { OrganizationRepo } from './repositories/organization.repo';
 import { OtpRepo } from './repositories/otp.repo';
 import { HealthProfileRepo } from './repositories/patient/health.profile.repo';
@@ -36,6 +37,7 @@ export class SequelizeInjector {
         container.register('IDoctorRepo', DoctorRepo);
         container.register('IHealthProfileRepo', HealthProfileRepo);
         container.register('IInternalTestUserRepo', InternalTestUserRepo);
+        container.register('IMedicationStockImageRepo', MedicationStockImageRepo);
         
     }
 

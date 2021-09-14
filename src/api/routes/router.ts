@@ -7,6 +7,7 @@ import { register as registerDoctorRoutes } from "./doctor.routes";
 import { register as registerOrganizationRoutes } from './organization.routes';
 import { register as registerPersonRoutes } from './person.routes';
 import { register as registerTypesRoutes } from './types.routes';
+import { register as registerBloodPressureRoutes } from './blood.pressure.routes';
 import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -38,6 +39,7 @@ export class Router {
                 registerTypesRoutes(this._app);
                 registerPersonRoutes(this._app);
                 registerOrganizationRoutes(this._app);
+                registerBloodPressureRoutes(this._app);
 
                 resolve(true);
 

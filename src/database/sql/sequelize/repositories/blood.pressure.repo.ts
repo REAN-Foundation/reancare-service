@@ -17,11 +17,12 @@ export class BloodPressureRepo implements IBloodPressureRepo {
     Promise<BloodPressureDto> => {
         try {
             const entity = {
-                PatientUserId         : bloodPressureDomainModel.PatientUserId,
-                BloodPressure         : bloodPressureDomainModel.BloodPressure,
-                Unit                  : bloodPressureDomainModel.Unit,
-                RecordDate            : bloodPressureDomainModel.RecordDate,
-                RecordedByUserId      : bloodPressureDomainModel.RecordedByUserId
+                PatientUserId    : bloodPressureDomainModel.PatientUserId,
+                Systolic         : bloodPressureDomainModel.Systolic,
+                Diastolic        : bloodPressureDomainModel.Diastolic,
+                Unit             : bloodPressureDomainModel.Unit,
+                RecordDate       : bloodPressureDomainModel.RecordDate,
+                RecordedByUserId : bloodPressureDomainModel.RecordedByUserId
             };
 
             const bloodPressure = await BloodPressureModel.create(entity);
@@ -54,18 +55,32 @@ export class BloodPressureRepo implements IBloodPressureRepo {
             if (filters.PatientUserId != null) {
                 search.where['PatientUserId'] = filters.PatientUserId;
             }
-            if (filters.MinValue != null && filters.MaxValue != null) {
+            if (filters.MinSystolicValue != null && filters.MaxSystolicValue != null) {
                 search.where['BloodPressure'] = {
-                    [Op.gte] : filters.MinValue,
-                    [Op.lte] : filters.MaxValue,
+                    [Op.gte] : filters.MinSystolicValue,
+                    [Op.lte] : filters.MaxSystolicValue,
                 };
-            } else if (filters.MinValue === null && filters.MaxValue !== null) {
+            } else if (filters.MinSystolicValue === null && filters.MaxSystolicValue !== null) {
                 search.where['BloodPressure'] = {
-                    [Op.lte] : filters.MaxValue,
+                    [Op.lte] : filters.MaxSystolicValue,
                 };
-            } else if (filters.MinValue !== null && filters.MaxValue === null) {
+            } else if (filters.MinSystolicValue !== null && filters.MaxSystolicValue === null) {
                 search.where['BloodPressure'] = {
-                    [Op.gte] : filters.MinValue,
+                    [Op.gte] : filters.MinSystolicValue,
+                };
+            }
+            if (filters.MinDiastolicValue != null && filters.MaxDiastolicValue != null) {
+                search.where['BloodPressure'] = {
+                    [Op.gte] : filters.MinDiastolicValue,
+                    [Op.lte] : filters.MaxDiastolicValue,
+                };
+            } else if (filters.MinDiastolicValue === null && filters.MaxDiastolicValue !== null) {
+                search.where['BloodPressure'] = {
+                    [Op.lte] : filters.MaxDiastolicValue,
+                };
+            } else if (filters.MinDiastolicValue !== null && filters.MaxDiastolicValue === null) {
+                search.where['BloodPressure'] = {
+                    [Op.gte] : filters.MinDiastolicValue,
                 };
             }
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
@@ -142,8 +157,11 @@ export class BloodPressureRepo implements IBloodPressureRepo {
             if (bloodPressureDomainModel.PatientUserId != null) {
                 bloodPressure.PatientUserId = bloodPressureDomainModel.PatientUserId;
             }
-            if (bloodPressureDomainModel.BloodPressure != null) {
-                bloodPressure.BloodPressure = bloodPressureDomainModel.BloodPressure;
+            if (bloodPressureDomainModel.Systolic != null) {
+                bloodPressure.Systolic = bloodPressureDomainModel.Systolic;
+            }
+            if (bloodPressure.Diastolic != null) {
+                bloodPressure.Diastolic = bloodPressureDomainModel.Diastolic;
             }
             if (bloodPressureDomainModel.Unit != null) {
                 bloodPressure.Unit = bloodPressureDomainModel.Unit;

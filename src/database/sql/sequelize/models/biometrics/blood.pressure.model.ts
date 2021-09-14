@@ -126,5 +126,5 @@ export default class BloodPressure extends Model {
 
     @DeletedAt
     DeletedAt: Date;
-
+    
 }

@@ -13,3 +13,25 @@ export interface FoodConsumptionDto {
     StartTime?: Date;
     EndTime?: Date;
 }
+
+export interface FoodConsumptionEventDto {
+    id?: string;
+    PatientUserId?: string;
+    Event: FoodConsumptionEvents;
+    Foods: FoodConsumptionDto[];
+    TotalCalories: number;
+    StartTime?: Date;
+    EndTime?: Date;
+    DurationInMin: number;
+}
+
+export interface FoodConsumptionForDayDto {
+    id?: string;
+    PatientUserId?: string;
+    Date: Date;
+    Event: FoodConsumptionEventDto[];
+    TotalCalories: number;
+    StartTime?: Date;
+    EndTime?: Date;
+    DurationInMin: number;
+}

@@ -12,11 +12,12 @@ export class BloodPressureValidator {
     static getDomainModel = (request: express.Request): BloodPressureDomainModel => {
  
         const BloodPressureModel: BloodPressureDomainModel = {
-            PatientUserId         : request.body.PatientUserId,
-            BloodPressure         : request.body.BloodPressure,
-            Unit                  : request.body.Unit,
-            RecordDate            : request.body.RecordDate ?? null,
-            RecordedByUserId      : request.body.RecordedByUserId ?? null,
+            PatientUserId    : request.body.PatientUserId,
+            Systolic         : request.body.Systolic,
+            Diastolic        : request.body.Diastolic,
+            Unit             : request.body.Unit,
+            RecordDate       : request.body.RecordDate ?? null,
+            RecordedByUserId : request.body.RecordedByUserId ?? null,
  
         };
  
@@ -186,16 +187,18 @@ export class BloodPressureValidator {
             request.query.ItemsPerPage !== 'undefined' ? parseInt(request.query.ItemsPerPage as string, 10) : 25;
  
         const filters: BloodPressureSearchFilters = {
-            PatientUserId    : request.query.PatientUserId ?? null,
-            MinValue         : request.query.MinValue ?? null,
-            MaxValue         : request.query.MaxValue ?? null,
-            CreatedDateFrom  : request.query.CreatedDateFrom ?? null,
-            CreatedDateTo    : request.query.CreatedDateTo ?? null,
-            RecordedByUserId : request.query.RecordedByUserId ?? null,
-            OrderBy          : request.query.OrderBy ?? 'CreatedAt',
-            Order            : request.query.Order ?? 'descending',
-            PageIndex        : pageIndex,
-            ItemsPerPage     : itemsPerPage,
+            PatientUserId     : request.query.PatientUserId ?? null,
+            MinSystolicValue  : request.query.MinSystolicValue ?? null,
+            MinDiastolicValue : request.query.MinDiastolicValue ?? null,
+            MaxSystolicValue  : request.query.MaxSystolicValue ?? null,
+            MaxDiastolicValue : request.query.MaxDiastolicValue ?? null,
+            CreatedDateFrom   : request.query.CreatedDateFrom ?? null,
+            CreatedDateTo     : request.query.CreatedDateTo ?? null,
+            RecordedByUserId  : request.query.RecordedByUserId ?? null,
+            OrderBy           : request.query.OrderBy ?? 'CreatedAt',
+            Order             : request.query.Order ?? 'descending',
+            PageIndex         : pageIndex,
+            ItemsPerPage      : itemsPerPage,
         };
         return filters;
     }

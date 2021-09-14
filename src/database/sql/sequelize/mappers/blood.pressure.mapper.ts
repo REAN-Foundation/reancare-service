@@ -11,14 +11,14 @@ export class BloodPressureMapper {
             return null;
         }
         const dto: BloodPressureDto = {
-            id                    : bloodPressure.id,
-            EhrId                 : bloodPressure.EhrId,
-            PatientUserId         : bloodPressure.PatientUserId,
-            PatientId             : bloodPressure.PatientId,
-            BloodPressure         : bloodPressure.BloodPressure,
-            Unit                  : bloodPressure.Unit,
-            RecordDate            : bloodPressure.RecordDate,
-            RecordedByUserId      : bloodPressure.RecordedByUserId
+            id               : bloodPressure.id,
+            EhrId            : bloodPressure.EhrId,
+            PatientUserId    : bloodPressure.PatientUserId,
+            Systolic         : bloodPressure.Systolic,
+            Diastolic        : bloodPressure.Diastolic,
+            Unit             : bloodPressure.Unit,
+            RecordDate       : bloodPressure.RecordDate,
+            RecordedByUserId : bloodPressure.RecordedByUserId
         };
         return dto;
     }

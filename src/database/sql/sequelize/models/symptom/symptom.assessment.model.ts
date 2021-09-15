@@ -6,27 +6,31 @@ import {
     CreatedAt,
     UpdatedAt,
     DeletedAt,
-    IsUUID,
     PrimaryKey,
     Length,
-    IsDate,
+    IsUUID,
     ForeignKey,
+    IsDate,
 } from 'sequelize-typescript';
 
+import {
+    ProgressStatusList,
+    ProgressStatus
+} from '../../../../../domain.types/miscellaneous/system.types';
+import User from '../user.model';
+import SymptomAssessmentTemplate from './symptom.assessment.template.model';
 import { v4 } from 'uuid';
-import User from './user.model';
-import { ClinicalValidationStatus, ClinicalValidationStatusList } from '../../../../domain.types/miscellaneous/clinical.types';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'DoctorNote',
-    tableName       : 'doctor_notes',
+    modelName       : 'SymptomAssessment',
+    tableName       : 'symptom_assessments',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class DoctorNote extends Model {
+export default class SymptomAssessment extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -54,44 +58,36 @@ export default class DoctorNote extends Model {
     })
     PatientUserId: string;
 
-    @IsUUID(4)
-    @ForeignKey(() => User)
+    @Length({ max: 128 })
     @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    MedicalPractitionerUserId: string;
-
-    @IsUUID(4)
-    @ForeignKey(() => User)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    VisitId: string;
-
-    @Length({ max: 512 })
-    @Column({
-        type      : DataType.STRING(512),
+        type      : DataType.STRING(128),
         allowNull : false,
     })
-    Notes: string;
-
+    Title: string;
+    
+    @IsUUID(4)
+    @ForeignKey(() => SymptomAssessmentTemplate)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    AssessmentTemplateId: string;
+    
+    @IsDate
+    @Column({
+        type      : DataType.DATE,
+        allowNull : false,
+    })
+    AssessmentDate: Date
+    
     @Length({ max: 32 })
     @Column({
         type         : DataType.STRING(32),
         allowNull    : false,
-        values       : ClinicalValidationStatusList,
-        defaultValue : ClinicalValidationStatus.Preliminary
+        values       : ProgressStatusList,
+        defaultValue : ProgressStatus.Pending
     })
-    ValidationStatus: string;
-
-    @IsDate
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    RecordDate: Date
+    OverallStatus: string;
 
     @Column
     @CreatedAt

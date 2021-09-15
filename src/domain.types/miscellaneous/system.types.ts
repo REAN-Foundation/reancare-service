@@ -37,3 +37,19 @@ export const SeverityList: Severity[] = [
     Severity.Critical,
     Severity.Unknown
 ];
+
+export enum ProgressStatus {
+    Pending      = 'Pending',
+    InProgress   = 'In-progress',
+    Completed     = 'Completed',
+    Cancelled = 'Cancelled',
+    Unknown  = 'Unknown',
+}
+
+export const ProgressStatusList: ProgressStatus[] = [
+    ProgressStatus.Pending,
+    ProgressStatus.InProgress,
+    ProgressStatus.Completed,
+    ProgressStatus.Cancelled,
+    ProgressStatus.Unknown,
+];

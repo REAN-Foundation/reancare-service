@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"_postman_id": "2c514120-7c4d-4ab1-b0de-8c4c8521e983",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2117,15 +2117,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2640,10 +2631,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -5745,6 +5732,486 @@
 				}
 			],
 			"description": "## APIs to manage addresses\n\nThese set of APIs are used to manage addresses belonging to persons or organizations."
+		},
+		{
+			"name": "Patient Allergy",
+			"item": [
+				{
+					"name": "Create patient allergy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
+									"pm.environment.set(\"PATIENT_ALLERGY_PATIENTUSERID\", patientUserId);\r",
+									"pm.environment.set(\"PATIENT_ALLERGY_Allergy\", 'Peanut');\r",
+									"pm.environment.set(\"PATIENT_ALLERGY_AllergenCategory\", 'Food');\r",
+									"pm.environment.set(\"PATIENT_ALLERGY_AllergenExposureRoute\", 'Food');\r",
+									"pm.environment.set(\"PATIENT_ALLERGY_Severity\", 'Medium');\r",
+									"pm.environment.set(\"PATIENT_ALLERGY_Reaction\", 'Difficulty Breathing');\r",
+									"pm.environment.set(\"PATIENT_ALLERGY_OtherInformation\", 'Na');\r",
+									"pm.environment.set(\"PATIENT_ALLERGY_LastOccurrence\", new Date());"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"PATIENT_ALLERGY_ID\", jsonRes.Data.PatientAllergy.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"New Patient Allergy record is created\", function () {\r",
+									"\r",
+									"    let expectedPatientUserId = pm.environment.get(\"PATIENT_ALLERGY_PATIENTUSERID\");\r",
+									"    let expectedAllergy = pm.environment.get(\"PATIENT_ALLERGY_Allergy\");\r",
+									"    let expectedAllergenCategory = pm.environment.get(\"PATIENT_ALLERGY_AllergenCategory\");\r",
+									"    let expectedAllergenExposureRoute = pm.environment.get(\"PATIENT_ALLERGY_AllergenExposureRoute\");\r",
+									"    let expectedSeverity = pm.environment.get(\"PATIENT_ALLERGY_Severity\");\r",
+									"    let expectedReaction = pm.environment.get(\"PATIENT_ALLERGY_Reaction\");\r",
+									"    let expectedOtherInformation = pm.environment.get(\"PATIENT_ALLERGY_OtherInformation\");\r",
+									"    let expectedLastOccurrence = pm.environment.get(\"PATIENT_ALLERGY_LastOccurrence\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('PatientAllergy');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Allergy');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenCategory');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenExposureRoute');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Severity');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Reaction');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('OtherInformation');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('LastOccurrence');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.PatientUserId).equals(expectedPatientUserId);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.Allergy).equals(expectedAllergy);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.AllergenCategory).equals(expectedAllergenCategory);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.Severity).equals(expectedSeverity);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.Reaction).equals(expectedReaction);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.OtherInformation).equals(expectedOtherInformation);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.LastOccurrence).equals(expectedLastOccurrence);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_ALLERGY_PATIENTUSERID}}\",\r\n    \"Allergy\": \"{{PATIENT_ALLERGY_Allergy}}\",\r\n    \"AllergenCategory\": \"{{PATIENT_ALLERGY_AllergenCategory}}\",\r\n    \"AllergenExposureRoute\": \"{{PATIENT_ALLERGY_AllergenExposureRoute}}\",\r\n    \"Severity\": \"{{PATIENT_ALLERGY_Severity}}\",\r\n    \"Reaction\": \"{{PATIENT_ALLERGY_Reaction}}\",\r\n    \"OtherInformation\": \"{{PATIENT_ALLERGY_OtherInformation}}\",\r\n    \"LastOccurrence\": \"{{PATIENT_ALLERGY_LastOccurrence}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/allergy",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"allergy"
+							]
+						},
+						"description": "Add A PatientAllergy."
+					},
+					"response": []
+				},
+				{
+					"name": "Get patient allergy by id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Patient Allergy should have correct data\", function () {\r",
+									"\r",
+									"    let expectedPatientUserId = pm.environment.get(\"PATIENT_ALLERGY_PATIENTUSERID\");\r",
+									"    let expectedAllergy = pm.environment.get(\"PATIENT_ALLERGY_Allergy\");\r",
+									"    let expectedAllergenCategory = pm.environment.get(\"PATIENT_ALLERGY_AllergenCategory\");\r",
+									"    let expectedAllergenExposureRoute = pm.environment.get(\"PATIENT_ALLERGY_AllergenExposureRoute\");\r",
+									"    let expectedSeverity = pm.environment.get(\"PATIENT_ALLERGY_Severity\");\r",
+									"    let expectedReaction = pm.environment.get(\"PATIENT_ALLERGY_Reaction\");\r",
+									"    let expectedOtherInformation = pm.environment.get(\"PATIENT_ALLERGY_OtherInformation\");\r",
+									"    let expectedLastOccurrence = pm.environment.get(\"PATIENT_ALLERGY_LastOccurrence\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('PatientAllergy');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Allergy');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenCategory');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenExposureRoute');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Severity');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Reaction');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('OtherInformation');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.PatientUserId).equals(expectedPatientUserId);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.Allergy).equals(expectedAllergy);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.AllergenCategory).equals(expectedAllergenCategory);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.Severity).equals(expectedSeverity);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.Reaction).equals(expectedReaction);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.OtherInformation).equals(expectedOtherInformation);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/allergy/{{PATIENT_ALLERGY_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"allergy",
+								"{{PATIENT_ALLERGY_ID}}"
+							]
+						},
+						"description": "Get an PatientAllergy by PatientAllergy id."
+					},
+					"response": []
+				},
+				{
+					"name": "Update an PatientAllergy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"PATIENT_ALLERGY_Severity\", 'Low');"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Correct updates should be reflected\", function () {\r",
+									"\r",
+									"    let expectedPatientUserId = pm.environment.get(\"PATIENT_ALLERGY_PATIENTUSERID\");\r",
+									"    let expectedAllergy = pm.environment.get(\"PATIENT_ALLERGY_Allergy\");\r",
+									"    let expectedAllergenCategory = pm.environment.get(\"PATIENT_ALLERGY_AllergenCategory\");\r",
+									"    let expectedAllergenExposureRoute = pm.environment.get(\"PATIENT_ALLERGY_AllergenExposureRoute\");\r",
+									"    let expectedSeverity = pm.environment.get(\"PATIENT_ALLERGY_Severity\");\r",
+									"    let expectedReaction = pm.environment.get(\"PATIENT_ALLERGY_Reaction\");\r",
+									"    let expectedOtherInformation = pm.environment.get(\"PATIENT_ALLERGY_OtherInformation\");\r",
+									"    let expectedLastOccurrence = pm.environment.get(\"PATIENT_ALLERGY_LastOccurrence\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('PatientAllergy');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Allergy');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenCategory');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenExposureRoute');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Severity');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Reaction');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('OtherInformation');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.PatientUserId).equals(expectedPatientUserId);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.Allergy).equals(expectedAllergy);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.AllergenCategory).equals(expectedAllergenCategory);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.Severity).equals(expectedSeverity);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.Reaction).equals(expectedReaction);\r",
+									"    pm.expect(jsonRes.Data.PatientAllergy.OtherInformation).equals(expectedOtherInformation);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_ALLERGY_PATIENTUSERID}}\",\r\n    \"Allergy\": \"{{PATIENT_ALLERGY_Allergy}}\",\r\n    \"AllergenCategory\": \"{{PATIENT_ALLERGY_AllergenCategory}}\",\r\n    \"AllergenExposureRoute\": \"{{PATIENT_ALLERGY_AllergenExposureRoute}}\",\r\n    \"Severity\": \"{{PATIENT_ALLERGY_Severity}}\",\r\n    \"Reaction\": \"{{PATIENT_ALLERGY_Reaction}}\",\r\n    \"OtherInformation\": \"{{PATIENT_ALLERGY_OtherInformation}}\",\r\n    \"LastOccurrence\": \"{{PATIENT_ALLERGY_LastOccurrence}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/allergy/{{PATIENT_ALLERGY_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"allergy",
+								"{{PATIENT_ALLERGY_ID}}"
+							]
+						},
+						"description": "Update the details for an PatientAllergy."
+					},
+					"response": []
+				},
+				{
+					"name": "Search PatientAllergy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"List of Calorie Record is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('PatientAllergys');\r",
+									"    pm.expect(jsonRes.Data.PatientAllergys.length).to.be.greaterThan(0);\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "Session token (JWT) for the user",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API client secret key",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/allergy/search/{{PATIENT_USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"allergy",
+								"search",
+								"{{PATIENT_USER_ID}}"
+							]
+						},
+						"description": "Search PatientAllergy using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete PatientAllergy record",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Deleted is true\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+									"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "Session token (JWT) for the user",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API client secret key",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/allergy/{{PATIENT_ALLERGY_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"allergy",
+								"{{PATIENT_ALLERGY_ID}}"
+							]
+						},
+						"description": "Deletes PatientAllergy using ID"
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

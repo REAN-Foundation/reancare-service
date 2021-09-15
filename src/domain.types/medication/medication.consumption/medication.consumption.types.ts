@@ -1,9 +1,9 @@
 export enum MedicationConsumptionStatus {
-    Overdue   = 'overdue',
-    Cancelled = 'cancelled',
-    Taken     = 'taken',
-    Missed    = 'missed',
-    Upcoming  = 'upcoming',
+    Overdue   = 'Overdue',
+    Cancelled = 'Cancelled',
+    Taken     = 'Taken',
+    Missed    = 'Missed',
+    Upcoming  = 'Upcoming',
     Unknown   = 'Unknown'
 }
 

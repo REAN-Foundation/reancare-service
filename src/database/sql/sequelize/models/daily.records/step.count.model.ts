@@ -38,14 +38,6 @@ export default class DailyRecordsStepCount extends Model {
     })
     id: string;
 
-    @IsUUID(4)
-    @ForeignKey(() => Person)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    PersonId: string;
-
     @BelongsTo(() => Person)
     Person: Person;
 
@@ -66,7 +58,7 @@ export default class DailyRecordsStepCount extends Model {
             min : 0
         }
     })
-    Pulse: number;
+    StepCount: number;
 
     @Length({ max: 8 })
     @Column({

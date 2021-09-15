@@ -1,7 +1,6 @@
 import { StepCountDto } from "./step.count.dto";
 
 export interface StepCountSearchFilters {
-    PersonId?: string;
     PatientUserId?: string;
     MinValue?: number;
     MaxValue?: number;

@@ -4,8 +4,7 @@ import { PersonDto } from "../../person/person.dto";
 
 export interface StepCountDto {
     id?: string;
-    PersonId: string;
-    Person: PersonDto;
+    Person?: PersonDto;
     PatientUserId: string;
     PatientId?: string;
     StepCount: number;

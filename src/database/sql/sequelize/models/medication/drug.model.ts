@@ -32,7 +32,6 @@ export default class Drug extends Model {
     })
     id: string;
 
-
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),

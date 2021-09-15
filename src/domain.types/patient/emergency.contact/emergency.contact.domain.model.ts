@@ -1,12 +1,13 @@
+import { EmergencyContactRoles } from "./emergency.contact.types";
+
 export interface EmergencyContactDomainModel {
-    id?: string;
-    PersonId: string;
-    PatientUserId: string;
+    id?: string,
+    PatientUserId?: string;
+    ContactPersonId?: string;
+    ContactRelation?: EmergencyContactRoles;
     AddressId?: string;
     OrganizationId?: string;
     IsAvailableForEmergency?: boolean;
-    RoleId?: string;
-    Relation?: string;
     TimeOfAvailability?: string;
     Description?: string;
     AdditionalPhoneNumbers?: string;

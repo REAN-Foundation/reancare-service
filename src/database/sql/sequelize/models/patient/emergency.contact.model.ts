@@ -9,22 +9,22 @@ import {
     IsUUID,
     PrimaryKey,
     ForeignKey,
-    Length,
-    IsInt } from 'sequelize-typescript';
+    Length } from 'sequelize-typescript';
+
+import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.types';
 
 import { v4 } from 'uuid';
-import Address from './address.model';
-import Organization from './organization.model';
-import Person from './person.model';
-import Role from './role.model';
-import User from './user.model';
+import Address from '../address.model';
+import Organization from '../organization.model';
+import Person from '../person.model';
+import User from '../user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
     modelName       : 'EmergencyContact',
-    tableName       : 'emergency_contacts',
+    tableName       : 'patient_emergency_contacts',
     paranoid        : true,
     freezeTableName : true
 })
@@ -40,20 +40,28 @@ export default class EmergencyContact extends Model {
     id: string;
 
     @IsUUID(4)
-    @ForeignKey(() => Person)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : false,
-    })
-    PersonId: string;
-
-    @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
         allowNull : false,
     })
     PatientUserId: string;
+    
+    @IsUUID(4)
+    @ForeignKey(() => Person)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    ContactPersonId: string;
+
+    @Column({
+        type         : DataType.STRING(64),
+        allowNull    : false,
+        values       : EmergencyContactRoleList,
+        defaultValue : EmergencyContactRoles.Doctor
+    })
+    ContactRelation: string;
 
     @IsUUID(4)
     @ForeignKey(() => Address)
@@ -77,22 +85,7 @@ export default class EmergencyContact extends Model {
         defaultValue : false,
     })
     IsAvailableForEmergency: boolean;
-
-    @IsInt
-    @ForeignKey(() => Role)
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
-    })
-    RoleId: string;
-    
-    @Length({ max: 32 })
-    @Column({
-        type      : DataType.STRING(32),
-        allowNull : true,
-    })
-    Relation: string;
-
+  
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),

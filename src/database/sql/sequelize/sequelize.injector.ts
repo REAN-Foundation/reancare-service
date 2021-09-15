@@ -7,6 +7,7 @@ import { BloodOxygenSaturationRepo } from './repositories/biometrics/blood.oxyge
 import { BodyTemperatureRepo } from './repositories/biometrics/body.temperature.repo';
 import { DoctorRepo } from './repositories/doctor.repo';
 import { InternalTestUserRepo } from './repositories/internal.test.user.repo';
+import { MedicationStockImageRepo } from './repositories/medication/medication.stock.image.repo';
 import { OrganizationRepo } from './repositories/organization.repo';
 import { OtpRepo } from './repositories/otp.repo';
 import { HealthProfileRepo } from './repositories/patient/health.profile.repo';
@@ -40,7 +41,8 @@ export class SequelizeInjector {
         container.register('IHealthProfileRepo', HealthProfileRepo);
         container.register('IInternalTestUserRepo', InternalTestUserRepo);
         container.register('IBodyTemperatureRepo', BodyTemperatureRepo);
-    
+        container.register('IMedicationStockImageRepo', MedicationStockImageRepo);
+     
     }
 
 }

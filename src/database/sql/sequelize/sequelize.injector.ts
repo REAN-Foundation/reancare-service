@@ -15,6 +15,7 @@ import { PersonRoleRepo } from './repositories/person.role.repo';
 import { RolePrivilegeRepo } from './repositories/role.privilege.repo';
 import { RoleRepo } from './repositories/role.repo';
 import { UserRepo } from './repositories/user.repo';
+import { ComplaintRepo } from './repositories/patient/complaint.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +39,7 @@ export class SequelizeInjector {
         container.register('IHealthProfileRepo', HealthProfileRepo);
         container.register('IInternalTestUserRepo', InternalTestUserRepo);
         container.register('IMedicationStockImageRepo', MedicationStockImageRepo);
+        container.register('IComplaintRepo', ComplaintRepo);
         
     }
 

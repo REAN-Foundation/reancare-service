@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"_postman_id": "4b90b44b-f859-4ca5-ac45-2820d092564d",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2117,15 +2117,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2640,10 +2631,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -5745,6 +5732,486 @@
 				}
 			],
 			"description": "## APIs to manage addresses\n\nThese set of APIs are used to manage addresses belonging to persons or organizations."
+		},
+		{
+			"name": "Patient Complaint",
+			"item": [
+				{
+					"name": "Create complaint allergy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
+									"let doctorUserId = pm.environment.get('DOCTOR_USER_ID');\r",
+									"pm.environment.set(\"PATIENT_COMPLAINT_PATIENTUSERID\", patientUserId);\r",
+									"pm.environment.set(\"PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID\", doctorUserId);\r",
+									"pm.environment.set(\"PATIENT_COMPLAINT_VISITID\", patientUserId);\r",
+									"pm.environment.set(\"PATIENT_COMPLAINT_EHRID\", '');\r",
+									"pm.environment.set(\"PATIENT_COMPLAINT_COMPLAINT\", 'Bad Service');\r",
+									"pm.environment.set(\"PATIENT_COMPLAINT_SEVERITY\", 'Medium');\r",
+									"pm.environment.set(\"PATIENT_COMPLAINT_RECORDDATE\", new Date());"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"PATIENT_COMPLAINT_ID\", jsonRes.Data.Complaint.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"New Patient Complaint record is created\", function () {\r",
+									"\r",
+									"    let expectedPatientUserID = pm.environment.get(\"PATIENT_COMPLAINT_PATIENTUSERID\");\r",
+									"    let expectedMedicalPractitionerUserID = pm.environment.get(\"PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID\");\r",
+									"    let expectedVisitID = pm.environment.get(\"PATIENT_COMPLAINT_VISITID\");\r",
+									"    let expectedEHRID = pm.environment.get(\"PATIENT_COMPLAINT_EHRID\");\r",
+									"    let expectedComplaint = pm.environment.get(\"PATIENT_COMPLAINT_COMPLAINT\");\r",
+									"    let expectedSeverity = pm.environment.get(\"PATIENT_COMPLAINT_SEVERITY\");\r",
+									"    let expectedRecordDate = pm.environment.get(\"PATIENT_COMPLAINT_RECORDDATE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Complaint');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('MedicalPractitionerUserId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('VisitId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('EhrId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('Complaint');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('Severity');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('RecordDate');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.Complaint.PatientUserId).equals(expectedPatientUserID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.VisitId).equals(expectedVisitID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.EhrId).equals(expectedEHRID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.Complaint).equals(expectedComplaint);\r",
+									"    pm.expect(jsonRes.Data.Complaint.Severity).equals(expectedSeverity);\r",
+									"    pm.expect(jsonRes.Data.Complaint.RecordDate).equals(expectedRecordDate);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_COMPLAINT_PATIENTUSERID}}\",\r\n    \"MedicalPractitionerUserId\": \"{{PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID}}\",\r\n    \"VisitId\": \"{{PATIENT_COMPLAINT_VISITID}}\",\r\n    \"EhrId\": \"{{PATIENT_COMPLAINT_EHRID}}\",\r\n    \"Complaint\": \"{{PATIENT_COMPLAINT_COMPLAINT}}\",\r\n    \"Severity\": \"{{PATIENT_COMPLAINT_SEVERITY}}\",\r\n    \"RecordDate\": \"{{PATIENT_COMPLAINT_RECORDDATE}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/complaint",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"complaint"
+							]
+						},
+						"description": "Add A Patient Complaint."
+					},
+					"response": []
+				},
+				{
+					"name": "Get patient complaint by id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"PATIENT_COMPLAINT_ID\", jsonRes.Data.Complaint.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Patient Complaint record should have correct values\", function () {\r",
+									"\r",
+									"    let expectedPatientUserID = pm.environment.get(\"PATIENT_COMPLAINT_PATIENTUSERID\");\r",
+									"    let expectedMedicalPractitionerUserID = pm.environment.get(\"PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID\");\r",
+									"    let expectedVisitID = pm.environment.get(\"PATIENT_COMPLAINT_VISITID\");\r",
+									"    let expectedEHRID = pm.environment.get(\"PATIENT_COMPLAINT_EHRID\");\r",
+									"    let expectedComplaint = pm.environment.get(\"PATIENT_COMPLAINT_COMPLAINT\");\r",
+									"    let expectedSeverity = pm.environment.get(\"PATIENT_COMPLAINT_SEVERITY\");\r",
+									"    let expectedRecordDate = pm.environment.get(\"PATIENT_COMPLAINT_RECORDDATE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Complaint');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('MedicalPractitionerUserId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('VisitId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('EhrId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('Complaint');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('Severity');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('RecordDate');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.Complaint.PatientUserId).equals(expectedPatientUserID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.VisitId).equals(expectedVisitID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.EhrId).equals(expectedEHRID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.Complaint).equals(expectedComplaint);\r",
+									"    pm.expect(jsonRes.Data.Complaint.Severity).equals(expectedSeverity);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/complaint/{{PATIENT_COMPLAINT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"complaint",
+								"{{PATIENT_COMPLAINT_ID}}"
+							]
+						},
+						"description": "Get Patient Complaint by Patient Complaint id."
+					},
+					"response": []
+				},
+				{
+					"name": "Update an Patient complaint",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"PATIENT_COMPLAINT_SEVERITY\", 'Low');"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Correct updates should be reflected\", function () {\r",
+									"\r",
+									"    let expectedPatientUserID = pm.environment.get(\"PATIENT_COMPLAINT_PATIENTUSERID\");\r",
+									"    let expectedMedicalPractitionerUserID = pm.environment.get(\"PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID\");\r",
+									"    let expectedVisitID = pm.environment.get(\"PATIENT_COMPLAINT_VISITID\");\r",
+									"    let expectedEHRID = pm.environment.get(\"PATIENT_COMPLAINT_EHRID\");\r",
+									"    let expectedComplaint = pm.environment.get(\"PATIENT_COMPLAINT_COMPLAINT\");\r",
+									"    let expectedSeverity = pm.environment.get(\"PATIENT_COMPLAINT_SEVERITY\");\r",
+									"    let expectedRecordDate = pm.environment.get(\"PATIENT_COMPLAINT_RECORDDATE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Complaint');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('MedicalPractitionerUserId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('VisitId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('EhrId');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('Complaint');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('Severity');\r",
+									"    pm.expect(jsonRes.Data.Complaint).to.have.property('RecordDate');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.Complaint.PatientUserId).equals(expectedPatientUserID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.VisitId).equals(expectedVisitID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.EhrId).equals(expectedEHRID);\r",
+									"    pm.expect(jsonRes.Data.Complaint.Complaint).equals(expectedComplaint);\r",
+									"    pm.expect(jsonRes.Data.Complaint.Severity).equals(expectedSeverity);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_COMPLAINT_PATIENTUSERID}}\",\r\n    \"MedicalPractitionerUserId\": \"{{PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID}}\",\r\n    \"VisitId\": \"{{PATIENT_COMPLAINT_VISITID}}\",\r\n    \"EhrId\": \"{{PATIENT_COMPLAINT_EHRID}}\",\r\n    \"Complaint\": \"{{PATIENT_COMPLAINT_COMPLAINT}}\",\r\n    \"Severity\": \"{{PATIENT_COMPLAINT_SEVERITY}}\",\r\n    \"RecordDate\": \"{{PATIENT_COMPLAINT_RECORDDATE}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/complaint/{{PATIENT_COMPLAINT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"complaint",
+								"{{PATIENT_COMPLAINT_ID}}"
+							]
+						},
+						"description": "Update the details for a Patient Complaint."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Patient complaint",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"List of Calorie Record is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Complaints');\r",
+									"    pm.expect(jsonRes.Data.Complaints.length).to.be.greaterThan(0);\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "Session token (JWT) for the user",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API client secret key",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/complaint/search/{{PATIENT_USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"complaint",
+								"search",
+								"{{PATIENT_USER_ID}}"
+							]
+						},
+						"description": "Search Patient Complaint using patient user id"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Patient complaint record",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Deleted is true\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+									"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "Session token (JWT) for the user",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API client secret key",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/complaint/{{PATIENT_COMPLAINT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"complaint",
+								"{{PATIENT_COMPLAINT_ID}}"
+							]
+						},
+						"description": "Deletes Patient Complaint using ID"
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a75794ee-b514-42f9-876f-adaa43c2adfd",
+		"_postman_id": "84068c31-7f89-439e-b81b-f7e6a45be4fa",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -6118,6 +6118,798 @@
 										{
 											"key": "maxValue",
 											"value": "100"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Pulse",
+					"item": [
+						{
+							"name": "Add pulse record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"BIOMETRICS_PULSE_ID\", jsonRes.Data.Pulse.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New pulse record is created\", function () {",
+											"",
+											"    var expectedValue = 72;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.Pulse.Pulse).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.Pulse.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Pulse\": 72,\n    \"Unit\": \"%\",\n    \"RecordDate\": \"2021-09-01\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/pulse",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"pulse"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get pulse record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Pulse record is returned\", function () {",
+											"",
+											"    var expectedValue = 74;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.Pulse.Pulse).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.Pulse.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/pulse/{{BIOMETRICS_PULSE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"pulse",
+										"{{BIOMETRICS_PULSE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update pulse record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated pulse record is returned\", function () {",
+											"",
+											"    var expectedPulse = 74;",
+											"    var expectedRecordDate = \"2021-09-07T00:00:00.000Z\";",
+											"    var expectedRecordedByUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('RecordDate');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('RecordedByUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.Pulse.Pulse).equals(expectedBloodOxygenSaturation);",
+											"    pm.expect(jsonRes.Data.Pulse.RecordDate).equals(expectedRecordDate);",
+											"    pm.expect(jsonRes.Data.Pulse.RecordedByUserId).equals(expectedRecordedByUserId);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"Pulse\": 74,\n    \"RecordDate\": \"2021-09-07\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/pulse/{{BIOMETRICS_PULSE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"pulse",
+										"{{BIOMETRICS_PULSE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete pulse record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Pulse record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/pulse/{{BIOMETRICS_PULSE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"pulse",
+										"{{BIOMETRICS_PULSE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search pulse records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of pulse records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('PulseRecords');",
+											"    pm.expect(jsonRes.Data.PulseRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/pulse/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-09-07&orderBy=Pulse&order=ascending&pageIndex=0&itemsPerPage=25&minValue=70&maxValue=76&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"pulse",
+										"search"
+									],
+									"query": [
+										{
+											"key": "recordedByUserId",
+											"value": "{{RECORDED_BY_USER_ID}}"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-01"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-09-07"
+										},
+										{
+											"key": "orderBy",
+											"value": "Pulse"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "70"
+										},
+										{
+											"key": "maxValue",
+											"value": "76"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Body temperature",
+					"item": [
+						{
+							"name": "Add body temperature record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"BIOMETRICS_BODY_TEMPERATURE_ID\", jsonRes.Data.Pulse.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New body temperature record is created\", function () {",
+											"",
+											"    var expectedValue = 37;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.BodyTemperature.BodyTemperature).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.BodyTemperature.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"BodyTemperature\": 36,\n    \"Unit\": \"C\",\n    \"RecordDate\": \"2021-09-14\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-temperature",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-temperature"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get body temperature record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Body temperature record is returned\", function () {",
+											"",
+											"    var expectedValue = 46;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.BodyTemperature.BodyTemperature).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.BodyTemperature.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-temperature/{{BIOMETRICS_BODY_TEMPERATURE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-temperature",
+										"{{BIOMETRICS_BODY_TEMPERATURE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update body temperature record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated body temperature record is returned\", function () {",
+											"",
+											"    var expectedBodyTemperature = 46;",
+											"    var expectedRecordDate = \"2021-09-07T00:00:00.000Z\";",
+											"    var expectedRecordedByUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('RecordDate');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('RecordedByUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.BodyTemperature.BodyTemperature).equals(expectedBodyTemperature);",
+											"    pm.expect(jsonRes.Data.BodyTemperature.RecordDate).equals(expectedRecordDate);",
+											"    pm.expect(jsonRes.Data.BodyTemperature.RecordedByUserId).equals(expectedRecordedByUserId);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"BodyTemperature\": 46,\n    \"Unit\": \"C\",\n    \"RecordDate\": \"2021-09-14\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-temperature/{{BIOMETRICS_BODY_TEMPERATURE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-temperature",
+										"{{BIOMETRICS_BODY_TEMPERATURE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete body temperature record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Body temperature record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-temperature/{{BIOMETRICS_BODY_TEMPERATURE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-temperature",
+										"{{BIOMETRICS_BODY_TEMPERATURE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search body temperature records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of body temperature records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyTemperatureRecords');",
+											"    pm.expect(jsonRes.Data.BodyTemperatureRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-temperature/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-13&createdDateTo=2021-10-14&orderBy=BodyTemperature&order=ascending&pageIndex=0&itemsPerPage=25&minValue=36&maxValue=48&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-temperature",
+										"search"
+									],
+									"query": [
+										{
+											"key": "recordedByUserId",
+											"value": "{{RECORDED_BY_USER_ID}}"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-13"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-14"
+										},
+										{
+											"key": "orderBy",
+											"value": "BodyTemperature"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "36"
+										},
+										{
+											"key": "maxValue",
+											"value": "48"
 										},
 										{
 											"key": "patientUserId",

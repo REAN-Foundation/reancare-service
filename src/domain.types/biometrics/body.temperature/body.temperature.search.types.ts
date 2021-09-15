@@ -1,7 +1,6 @@
 import { BodyTemperatureDto } from "./body.temperature.dto";
 
 export interface BodyTemperatureSearchFilters {
-    PersonId?: string;
     PatientUserId?: string;
     MinValue?: number;
     MaxValue?: number;

@@ -1,6 +1,6 @@
 [
     {
-        "Role": "SystemAdmin",
+        "Role": "System Admin",
         "Privileges": [
             "Client.Create",
             "Client.GetById",
@@ -46,7 +46,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Biometrics.BodyTemperature.Create",
+            "Biometrics.BodyTemperature.GetById",
+            "Biometrics.BodyTemperature.Update",
+            "Biometrics.BodyTemperature.Delete",
+            "Biometrics.BodyTemperature.Search"
         ]
     },
     {
@@ -92,7 +97,12 @@
             "Person.AddAddress",
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
-            "HealthProfile.UpdateByPatientUserId"
+            "HealthProfile.UpdateByPatientUserId",
+            "Biometrics.BodyTemperature.Create",
+            "Biometrics.BodyTemperature.GetById",
+            "Biometrics.BodyTemperature.Update",
+            "Biometrics.BodyTemperature.Delete",
+            "Biometrics.BodyTemperature.Search"
         ]
     },
     {
@@ -146,11 +156,16 @@
             "Person.AddAddress",
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
-            "HealthProfile.UpdateByPatientUserId"
+            "HealthProfile.UpdateByPatientUserId",
+            "Biometrics.BodyTemperature.Create",
+            "Biometrics.BodyTemperature.GetById",
+            "Biometrics.BodyTemperature.Update",
+            "Biometrics.BodyTemperature.Delete",
+            "Biometrics.BodyTemperature.Search"
         ]
     },
     {
-        "Role": "LabUser",
+        "Role": "Lab User",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -190,11 +205,16 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Biometrics.BodyTemperature.Create",
+            "Biometrics.BodyTemperature.GetById",
+            "Biometrics.BodyTemperature.Update",
+            "Biometrics.BodyTemperature.Delete",
+            "Biometrics.BodyTemperature.Search"
         ]
     },
     {
-        "Role": "PharmacyUser",
+        "Role": "Pharmacy User",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -234,7 +254,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Biometrics.BodyTemperature.Create",
+            "Biometrics.BodyTemperature.GetById",
+            "Biometrics.BodyTemperature.Update",
+            "Biometrics.BodyTemperature.Delete",
+            "Biometrics.BodyTemperature.Search"
         ]
     }
 ]

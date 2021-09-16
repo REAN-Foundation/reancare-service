@@ -102,7 +102,12 @@
             "Biometrics.BodyTemperature.GetById",
             "Biometrics.BodyTemperature.Update",
             "Biometrics.BodyTemperature.Delete",
-            "Biometrics.BodyTemperature.Search"
+            "Biometrics.BodyTemperature.Search",
+            "DailyRecords.MoveMinutes.Create",
+            "DailyRecords.MoveMinutes.GetById",
+            "DailyRecords.MoveMinutes.Update",
+            "DailyRecords.MoveMinutes.Delete",
+            "DailyRecords.MoveMinutes.Search"
         ]
     },
     {

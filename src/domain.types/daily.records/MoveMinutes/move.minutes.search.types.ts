@@ -1,7 +1,6 @@
 import { MoveMinutesDto } from "./move.minutes.dto";
 
 export interface MoveMinutesSearchFilters {
-    PersonId?: string;
     PatientUserId?: string;
     MinValue?: number;
     MaxValue?: number;

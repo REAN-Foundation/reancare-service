@@ -19,11 +19,18 @@ import { PersonService } from "../services/person.service";
 import { HealthProfileService } from "../services/patient/health.profile.service";
 import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
 import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
+import { IMedicationStockImageRepo } from "../database/repository.interfaces/medication/medication.stock.image.repo.interface";
 
 import * as RolePrivilegesList from '../assets/seed.data/role.privileges.json';
 import * as SeededInternalClients from '../assets/seed.data/internal.clients.seed.json';
 import * as SeededSystemAdmin from '../assets/seed.data/system.admin.seed.json';
 import * as SeededInternalTestsUsers from '../assets/seed.data/internal.test.users.seed.json';
+
+// import path from "path";
+// import * as fs from "fs";
+// import {
+//     MedicationStockImageDomainModel
+// } from "../domain.types/medication/medication.stock.image/medication.stock.image.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -42,6 +49,8 @@ export class Seeder {
 
     _patientHealthProfileService: HealthProfileService = null;
 
+    //_fileResourceService: FileResourceService = null;
+
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IApiClientRepo') private _apiClientRepo: IApiClientRepo,
@@ -49,6 +58,7 @@ export class Seeder {
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IRolePrivilegeRepo') private _rolePrivilegeRepo: IRolePrivilegeRepo,
         @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
+        @inject('IMedicationStockImageRepo') private _medicationStockImageRepo: IMedicationStockImageRepo,
         @inject('IInternalTestUserRepo') private _internalTestUserRepo: IInternalTestUserRepo
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
@@ -57,6 +67,8 @@ export class Seeder {
         this._userService = Loader.container.resolve(UserService);
         this._roleService = Loader.container.resolve(RoleService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
+
+        //this._fileResourceService = Loader.container.resolve(FileResourceService);
     }
 
     public init = async (): Promise<void> => {
@@ -66,6 +78,7 @@ export class Seeder {
             await this.seedInternalClients();
             await this.seedSystemAdmin();
             await this.seedInternalPatients();
+            await this.seedMedicationStockImages();
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -300,4 +313,42 @@ export class Seeder {
         
     }
     
+    private seedMedicationStockImages = async () => {
+
+        var images = await this._medicationStockImageRepo.getAll();
+        if (images.length > 0) {
+            return;
+        }
+
+        // var cloudStoragePath = 'assets/images/stock.medication.images/';
+        // var sourceFilePath = path.join(process.cwd(), "./assets/images/stock.medication.images/");
+        // var files = fs.readdirSync(sourceFilePath);
+        // var imageFiles = files.filter((f) => {
+        //     return path.extname(f).toLowerCase() === '.png';
+        // });
+
+        // for await (const fileName of imageFiles) {
+
+        //     var sourceFileLocation = path.join(sourceFilePath, fileName);
+        //     var storageFileLocation = cloudStoragePath + fileName;
+
+        //     var uploaded = await this._fileResourceService.UploadLocalFile(
+        //         sourceFileLocation,
+        //         storageFileLocation,
+        //         true);
+
+        //     var domainModel: MedicationStockImageDomainModel = {
+        //         Code       : fileName.replace('.png', ''),
+        //         FileName   : fileName,
+        //         ResourceId : uploaded.ResourceId,
+        //         PublicUrl  : uploaded.UrlPublic
+        //     };
+            
+        //     var medStockImage = await this._medicationStockImageRepo.create(domainModel);
+        //     if (!medStockImage) {
+        //         Logger.instance().log('Error occurred while seeding medication stock images!');
+        //     }
+        // }
+    }
+
 }

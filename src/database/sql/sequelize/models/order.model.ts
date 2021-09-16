@@ -18,6 +18,7 @@ import { v4 } from 'uuid';
 import Organization from './organization.model';
 import User from './user.model';
 import FileResource from './file.resource.model';
+import Visit from './visit.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -87,7 +88,7 @@ export default class Order extends Model {
     MedicalPractitionerUserId: string;
 
     @IsUUID(4)
-    @ForeignKey(() => User)
+    @ForeignKey(() => Visit)
     @Column({
         type      : DataType.UUID,
         allowNull : true,

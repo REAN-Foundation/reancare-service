@@ -1,6 +1,6 @@
 [
     {
-        "Role": "SystemAdmin",
+        "Role": "System admin",
         "Privileges": [
             "Client.Create",
             "Client.GetById",
@@ -38,6 +38,11 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
+            "Biometrics.BloodOxygenSaturation.Create",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search",
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
@@ -72,6 +77,11 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
+            "Biometrics.BloodOxygenSaturation.Create",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search",
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
@@ -121,6 +131,11 @@
             "Doctor.Search",
             "Doctor.GetByUserId",
             "Doctor.UpdateByUserId",
+            "Biometrics.BloodOxygenSaturation.Create",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search",
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
@@ -135,7 +150,7 @@
         ]
     },
     {
-        "Role": "LabUser",
+        "Role": "Lab user",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -168,6 +183,10 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search",
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
@@ -175,7 +194,7 @@
         ]
     },
     {
-        "Role": "PharmacyUser",
+        "Role": "Pharmacy user",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -208,6 +227,10 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search",
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",

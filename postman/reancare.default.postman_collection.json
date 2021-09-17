@@ -5745,6 +5745,423 @@
 				}
 			],
 			"description": "## APIs to manage addresses\n\nThese set of APIs are used to manage addresses belonging to persons or organizations."
+		},
+		{
+			"name": "Biometrics",
+			"item": [
+				{
+					"name": "Blood oxygen saturation",
+					"item": [
+						{
+							"name": "Add blood oxygen saturation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"BIOMETRICS_BLOOD_OXYGEN_ID\", jsonRes.Data.BloodOxygenSaturation.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New blood oxygen saturation record is created\", function () {",
+											"",
+											"    var expectedValue = 85;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.BloodOxygenSaturation).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var userId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"pm.environment.set(\"RECORDED_BY_USER_ID\", userId);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"BloodOxygenSaturation\": 85,\n    \"Unit\": \"%\",\n    \"RecordDate\": \"2021-09-01\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-oxygen-saturations"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get blood oxygen saturation by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Blood oxygen saturation record is returned\", function () {",
+											"",
+											"    var expectedValue = 85;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.BloodOxygenSaturation).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-oxygen-saturations",
+										"{{BIOMETRICS_BLOOD_OXYGEN_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update blood oxygen saturation by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated blood oxygen saturation record is returned\", function () {",
+											"",
+											"    var expectedBloodOxygenSaturation = 90;",
+											"    var expectedRecordDate = \"2021-09-07T00:00:00.000Z\";",
+											"    var expectedRecordedByUserId = pm.environment.get(\"RECORDED_BY_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('RecordDate');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('RecordedByUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.BloodOxygenSaturation).equals(expectedBloodOxygenSaturation);",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.RecordDate).equals(expectedRecordDate);",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.RecordedByUserId).equals(expectedRecordedByUserId);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"BloodOxygenSaturation\": \"90\",\n    \"RecordDate\": \"2021-09-07\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-oxygen-saturations",
+										"{{BIOMETRICS_BLOOD_OXYGEN_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search blood oxygen saturation record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of blood oxygen saturation records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodOxygenSaturationRecords');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturationRecords.Items.length).greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-10-14&orderBy=BloodOxygenSaturation&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=100&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-oxygen-saturations",
+										"search"
+									],
+									"query": [
+										{
+											"key": "recordedByUserId",
+											"value": "{{RECORDED_BY_USER_ID}}"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-01"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-14"
+										},
+										{
+											"key": "orderBy",
+											"value": "BloodOxygenSaturation"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "0"
+										},
+										{
+											"key": "maxValue",
+											"value": "100"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete blood oxygen saturation record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\" Blood oxygen saturation record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-oxygen-saturations",
+										"{{BIOMETRICS_BLOOD_OXYGEN_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
 		}
 	]
 }

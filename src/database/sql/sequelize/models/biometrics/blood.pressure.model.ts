@@ -110,7 +110,6 @@ export default class BloodPressure extends Model {
     RecordDate: Date;
 
     @IsUUID(4)
-    @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
         allowNull : true,

@@ -1,13 +1,13 @@
-import { IBloodPressureRepo } from '../../../repository.interfaces/blood.pressure.repo.interface';
-import BloodPressureModel from '../models/biometrics/blood.pressure.model';
+import { IBloodPressureRepo } from '../../../../repository.interfaces/biometrics/blood.pressure.repo.interface';
+import BloodPressureModel from '../../models/biometrics/blood.pressure.model';
 import { Op } from 'sequelize';
-import { BloodPressureMapper } from '../mappers/blood.pressure.mapper';
-import { Logger } from '../../../../common/logger';
-import { ApiError } from '../../../../common/api.error';
-import { BloodPressureDomainModel } from "../../../../domain.types/biometrics/blood.pressure/blood.pressure.domain.model";
-import { BloodPressureDto } from "../../../../domain.types/biometrics/blood.pressure/blood.pressure.dto";
+import { BloodPressureMapper } from '../../mappers/biometrics/blood.pressure.mapper';
+import { Logger } from '../../../../../common/logger';
+import { ApiError } from '../../../../../common/api.error';
+import { BloodPressureDomainModel } from "../../../../../domain.types/biometrics/blood.pressure/blood.pressure.domain.model";
+import { BloodPressureDto } from "../../../../../domain.types/biometrics/blood.pressure/blood.pressure.dto";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { BloodPressureSearchFilters, BloodPressureSearchResults } from "../../../../domain.types/biometrics/blood.pressure/blood.pressure.search.types";
+import { BloodPressureSearchFilters, BloodPressureSearchResults } from "../../../../../domain.types/biometrics/blood.pressure/blood.pressure.search.types";
 
 ///////////////////////////////////////////////////////////////////////
 

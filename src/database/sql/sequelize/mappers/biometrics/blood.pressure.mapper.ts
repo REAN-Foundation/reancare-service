@@ -1,5 +1,5 @@
-import BloodPressureModel from '../models/biometrics/blood.pressure.model';
-import { BloodPressureDto } from '../../../../domain.types/biometrics/blood.pressure/blood.pressure.dto';
+import BloodPressureModel from '../../models/biometrics/blood.pressure.model';
+import { BloodPressureDto } from '../../../../../domain.types/biometrics/blood.pressure/blood.pressure.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

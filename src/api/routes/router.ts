@@ -7,7 +7,7 @@ import { register as registerDoctorRoutes } from "./doctor.routes";
 import { register as registerOrganizationRoutes } from './organization.routes';
 import { register as registerPersonRoutes } from './person.routes';
 import { register as registerTypesRoutes } from './types.routes';
-import { register as registerBloodPressureRoutes } from './blood.pressure.routes';
+import { register as registerBloodPressureRoutes } from './biometrics/blood.pressure.routes';
 import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////

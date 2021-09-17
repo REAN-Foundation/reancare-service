@@ -1,12 +1,11 @@
 import express from 'express';
-import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
-import { ApiError } from '../../common/api.error';
-import { BloodPressureService } from '../../services/blood.pressure.service';
-import { Authorizer } from '../../auth/authorizer';
-import { BloodPressureValidator } from '../validators/blood.pressure.validator';
-import { Helper } from '../../common/helper';
-import { Logger } from '../../common/logger';
+import { ResponseHandler } from '../../../common/response.handler';
+import { Loader } from '../../../startup/loader';
+import { ApiError } from '../../../common/api.error';
+import { BloodPressureService } from '../../../services/biometrics/blood.pressure.service';
+import { Authorizer } from '../../../auth/authorizer';
+import { BloodPressureValidator } from '../../validators/biometrics/blood.pressure.validator';
+import { Helper } from '../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

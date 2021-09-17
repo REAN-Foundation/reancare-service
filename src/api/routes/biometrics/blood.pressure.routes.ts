@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import express from 'express';
-import { BloodPressureController } from '../controllers/blood.pressure.controller';
-import { Loader } from '../../startup/loader';
+import { BloodPressureController } from '../../controllers/biometrics/blood.pressure.controller';
+import { Loader } from '../../../startup/loader';
  
 ///////////////////////////////////////////////////////////////////////////////////
  
@@ -17,5 +17,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
  
-    app.use('/api/v1/biometrics-bloodpressure', router);
+    app.use('/api/v1/biometrics/blood-pressure', router);
 };

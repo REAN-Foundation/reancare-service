@@ -1,7 +1,7 @@
   
-import { BloodPressureDomainModel } from "../../domain.types/biometrics/blood.pressure/blood.pressure.domain.model";
-import { BloodPressureDto } from "../../domain.types/biometrics/blood.pressure/blood.pressure.dto";
-import { BloodPressureSearchFilters, BloodPressureSearchResults } from "../../domain.types/biometrics/blood.pressure/blood.pressure.search.types";
+import { BloodPressureDomainModel } from "../../../domain.types/biometrics/blood.pressure/blood.pressure.domain.model";
+import { BloodPressureDto } from "../../../domain.types/biometrics/blood.pressure/blood.pressure.dto";
+import { BloodPressureSearchFilters, BloodPressureSearchResults } from "../../../domain.types/biometrics/blood.pressure/blood.pressure.search.types";
 
 export interface IBloodPressureRepo {
 

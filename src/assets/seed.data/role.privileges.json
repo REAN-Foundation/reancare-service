@@ -75,7 +75,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Biometric.BloodPressure.Create",
+            "Biometric.BloodPressure.GetById",
+            "Biometric.BloodPressure.Search",
+            "Biometric.BloodPressure.Update",
+            "Biometric.BloodPressure.Delete"
         ]
     },
     {
@@ -117,7 +122,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Biometric.BloodPressure.Create",
+            "Biometric.BloodPressure.GetById",
+            "Biometric.BloodPressure.Search",
+            "Biometric.BloodPressure.Update",
+            "Biometric.BloodPressure.Delete"
         ]
     },
     {

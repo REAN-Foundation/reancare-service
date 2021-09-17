@@ -1,9 +1,8 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
-import { Logger } from '../../common/logger';
-import { Helper } from '../../common/helper';
-import { BloodPressureDomainModel } from '../../domain.types/biometrics/blood.pressure/blood.pressure.domain.model';
-import { BloodPressureSearchFilters } from '../../domain.types/biometrics/blood.pressure/blood.pressure.search.types';
+import { Helper } from '../../../common/helper';
+import { BloodPressureDomainModel } from '../../../domain.types/biometrics/blood.pressure/blood.pressure.domain.model';
+import { BloodPressureSearchFilters } from '../../../domain.types/biometrics/blood.pressure/blood.pressure.search.types';
  
 ///////////////////////////////////////////////////////////////////////////////////////
  
@@ -172,6 +171,18 @@ export class BloodPressureValidator {
         await body('RecordedByUserId').optional()
             .trim()
             .escape()
+            .run(request);
+
+        await body('Systolic').optional()
+            .trim()
+            .escape()
+            .toInt()
+            .run(request);
+
+        await body('Diastolic').optional()
+            .trim()
+            .escape()
+            .toInt()
             .run(request);
  
         const result = validationResult(request);

@@ -1,6 +1,6 @@
 [
     {
-        "Role": "SystemAdmin",
+        "Role": "System admin",
         "Privileges": [
             "Client.Create",
             "Client.GetById",
@@ -150,7 +150,7 @@
         ]
     },
     {
-        "Role": "LabUser",
+        "Role": "Lab user",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -194,7 +194,7 @@
         ]
     },
     {
-        "Role": "PharmacyUser",
+        "Role": "Pharmacy user",
         "Privileges": [
             "User.GetById",
             "User.Search",

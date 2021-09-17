@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a75794ee-b514-42f9-876f-adaa43c2adfd",
+		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -189,7 +189,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"ClientName\": \"Tabbu health app\",\r\n    \"Password\": \"{{API_CLIENT_PASSWORD}}\",\r\n    \"Phone\": \"+91 8329569676\",\r\n    \"Email\": \"tabbasum.kolhapure@reanfoundation.org\"\r\n}",
+							"raw": "{\r\n    \"ClientName\": \"My health app\",\r\n    \"Password\": \"{{API_CLIENT_PASSWORD}}\",\r\n    \"Phone\": \"+91 9876543219\",\r\n    \"Email\": \"dev@excell-medicos.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2117,6 +2117,15 @@
 												"type": "text"
 											}
 										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2631,6 +2640,10 @@
 												"type": "text"
 											}
 										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -5474,6 +5487,9 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
 							"request": {
 								"method": "GET",
 								"header": [
@@ -5495,6 +5511,10 @@
 										"type": "text"
 									}
 								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
 								"url": {
 									"raw": "{{BASE_URL}}/persons/{{PATIENT_PERSON_ID}}/addresses",
 									"host": [
@@ -5774,6 +5794,17 @@
 										],
 										"type": "text/javascript"
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var userId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"pm.environment.set(\"RECORDED_BY_USER_ID\", userId);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
 								}
 							],
 							"request": {
@@ -5797,7 +5828,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"BloodOxygenSaturation\": 99,\n    \"Unit\": \"%\",\n    \"RecordDate\": \"2021-09-01\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"BloodOxygenSaturation\": 85,\n    \"Unit\": \"%\",\n    \"RecordDate\": \"2021-09-01\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -5832,7 +5863,7 @@
 											"",
 											"pm.test(\"Blood oxygen saturation record is returned\", function () {",
 											"",
-											"    var expectedValue = 99;",
+											"    var expectedValue = 85;",
 											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
 											"",
 											"    var jsonRes = pm.response.json();",
@@ -5901,9 +5932,9 @@
 											"",
 											"pm.test(\"Updated blood oxygen saturation record is returned\", function () {",
 											"",
-											"    var expectedBloodOxygenSaturation = 80;",
+											"    var expectedBloodOxygenSaturation = 90;",
 											"    var expectedRecordDate = \"2021-09-07T00:00:00.000Z\";",
-											"    var expectedRecordedByUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+											"    var expectedRecordedByUserId = pm.environment.get(\"RECORDED_BY_USER_ID\");",
 											"    ",
 											"    var jsonRes = pm.response.json();",
 											"    pm.expect(jsonRes.Data).to.have.property('BloodOxygenSaturation');",
@@ -5967,6 +5998,107 @@
 							"response": []
 						},
 						{
+							"name": "Search blood oxygen saturation record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of blood oxygen saturation records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodOxygenSaturationRecords');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturationRecords.Items.length).greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-10-14&orderBy=BloodOxygenSaturation&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=100&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-oxygen-saturations",
+										"search"
+									],
+									"query": [
+										{
+											"key": "recordedByUserId",
+											"value": "{{RECORDED_BY_USER_ID}}"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-01"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-14"
+										},
+										{
+											"key": "orderBy",
+											"value": "BloodOxygenSaturation"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "0"
+										},
+										{
+											"key": "maxValue",
+											"value": "100"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Delete blood oxygen saturation record by id",
 							"event": [
 								{
@@ -6022,107 +6154,6 @@
 										"biometrics",
 										"blood-oxygen-saturations",
 										"{{BIOMETRICS_BLOOD_OXYGEN_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search blood oxygen saturation record",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"List of blood oxygen saturation records is returned\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('BloodOxygenSaturationRecords');",
-											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.BloodOxygenSaturation).equals(expectedValue);",
-											"",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-10-14&orderBy=BloodOxygenSaturation&order=ascending&pageIndex=0&itemsPerPage=25&minValue=90&maxValue=100&patientUserId={{PATIENT_USER_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"biometrics",
-										"blood-oxygen-saturations",
-										"search"
-									],
-									"query": [
-										{
-											"key": "recordedByUserId",
-											"value": "{{RECORDED_BY_USER_ID}}"
-										},
-										{
-											"key": "createdDateFrom",
-											"value": "2021-09-01"
-										},
-										{
-											"key": "createdDateTo",
-											"value": "2021-10-14"
-										},
-										{
-											"key": "orderBy",
-											"value": "BloodOxygenSaturation"
-										},
-										{
-											"key": "order",
-											"value": "ascending"
-										},
-										{
-											"key": "pageIndex",
-											"value": "0"
-										},
-										{
-											"key": "itemsPerPage",
-											"value": "25"
-										},
-										{
-											"key": "minValue",
-											"value": "90"
-										},
-										{
-											"key": "maxValue",
-											"value": "100"
-										},
-										{
-											"key": "patientUserId",
-											"value": "{{PATIENT_USER_ID}}"
-										}
 									]
 								}
 							},

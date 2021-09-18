@@ -10,13 +10,11 @@ import {
     PrimaryKey,
     Length,
     ForeignKey,
-    BelongsTo,
     IsDecimal,
     IsDate } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import User from '../user.model';
-import Person from '../person.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -46,31 +44,12 @@ export default class BodyWeight extends Model {
     EhrId: string;
 
     @IsUUID(4)
-    @ForeignKey(() => Person)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    PersonId: string;
-
-    @BelongsTo(() => Person)
-    Person: Person;
-
-    @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : true,
+        allowNull : false,
     })
     PatientUserId: string;
-
-    // @IsUUID(4)
-    // @ForeignKey(() => Encounter)
-    // @Column({
-    //     type      : DataType.UUID,
-    //     allowNull : true,
-    // })
-    // EncounterId: string;
 
     @IsDecimal
     @Column({

@@ -29,7 +29,10 @@ export class CustomAuthorizer implements IAuthorizer {
             if (currentUser == null) {
                 return false;
             }
-            const hasPrivilege = await this.hasRolePrivileges(currentUser.CurrentRoleId, context);
+            const hasPrivilege = await this._rolePrivilegeService.hasPrivilegeForRole(
+                currentUser.CurrentRoleId,
+                context);
+
             if (!hasPrivilege) {
                 return false;
             }
@@ -54,24 +57,6 @@ export class CustomAuthorizer implements IAuthorizer {
                 reject(error);
             }
         });
-    };
-
-    private hasRolePrivileges = async (currentRoleId: number, context: string): Promise<boolean> => {
-        const rolePrivileges = await this._rolePrivilegeService.getPrivilegesForRole(currentRoleId);
-        if (rolePrivileges.length === 0) {
-            return false;
-        }
-        const privileges: string[] = rolePrivileges.map((x) => {
-            return x.Privilege.toLowerCase();
-        });
-        const contextLower = context.toLowerCase();
-        const found = privileges.find((x) => {
-            return x === contextLower;
-        });
-        if (!found) {
-            return false;
-        }
-        return true;
     };
 
     private isResourceOwner = async (user: CurrentUser, request: express.Request): Promise<boolean> => {

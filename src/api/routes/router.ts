@@ -10,6 +10,7 @@ import { register as registerTypesRoutes } from './types.routes';
 import { register as registerBiometricsBloodOxygenSaturationRoutes } from './biometrics/blood.oxygen.saturation.routes';
 import { register as registerHealthProfileRoutes } from './patient/health.profile.routes';
 import { register as registerComplaintRoutes } from './patient/complaint.routes';
+import { register as registerAllergyRoutes } from './patient/allergy.route';
 import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -44,6 +45,7 @@ export class Router {
                 registerOrganizationRoutes(this._app);
                 registerHealthProfileRoutes(this._app);
                 registerComplaintRoutes(this._app);
+                registerAllergyRoutes(this._app);
 
                 resolve(true);
 

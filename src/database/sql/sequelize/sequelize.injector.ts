@@ -4,6 +4,8 @@ import { DatabaseConnector_Sequelize } from './database.connector.sequelize';
 import { AddressRepo } from './repositories/address.repo';
 import { ApiClientRepo } from './repositories/api.client.repo';
 import { BloodOxygenSaturationRepo } from './repositories/biometrics/blood.oxygen.saturation.repo';
+import { BodyTemperatureRepo } from './repositories/biometrics/body.temperature.repo';
+import { MoveMinutesRepo } from './repositories/daily.records/move.minutes.repo';
 import { DoctorRepo } from './repositories/doctor.repo';
 import { InternalTestUserRepo } from './repositories/internal.test.user.repo';
 import { MedicationStockImageRepo } from './repositories/medication/medication.stock.image.repo';
@@ -46,6 +48,9 @@ export class SequelizeInjector {
         container.register('IBloodOxygenSaturationRepo', BloodOxygenSaturationRepo);
         container.register('IHealthProfileRepo', HealthProfileRepo);
         container.register('IInternalTestUserRepo', InternalTestUserRepo);
+        container.register('IBodyTemperatureRepo', BodyTemperatureRepo);
+        container.register('IMedicationStockImageRepo', MedicationStockImageRepo);
+        container.register('IMoveMinutesRepo', MoveMinutesRepo);
         container.register('ICalorieBalanceRepo', CalorieBalanceRepo);
         container.register('IHeartPointsRepo', HeartPointsRepo);
         container.register('IMedicationStockImageRepo', MedicationStockImageRepo);

@@ -4,6 +4,7 @@ import Person from '../models/person.model';
 import { PersonMapper } from "../mappers/person.mapper";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
+import { Helper } from "../../../../common/helper";
 import { Op } from 'sequelize';
 import PersonRole from "../models/person.role.model";
 import { PersonDetailsDto, PersonDto } from "../../../../domain.types/person/person.dto";
@@ -30,8 +31,14 @@ export class PersonRepo implements IPersonRepo {
 
     personExistsWithPhone = async (phone: string): Promise<boolean> => {
         if (phone != null && typeof phone !== 'undefined') {
-            const existing = await Person.findOne({ where: { Phone: phone } });
-            return existing != null;
+            var possiblePhoneNumbers = Helper.getPossiblePhoneNumbers(phone);
+            var persons = await Person.findAll({
+                where : {
+                    Phone : { [Op.in] : possiblePhoneNumbers,
+                    }
+                }
+            });
+            return persons.length > 0;
         }
         return false;
     };
@@ -45,12 +52,20 @@ export class PersonRepo implements IPersonRepo {
     };
 
     getAllPersonsWithPhoneAndRole = async (phone: string, roleId: number): Promise<PersonDetailsDto[]> => {
+
         if (phone != null && typeof phone !== 'undefined') {
 
             //KK: To be optimized with associations
 
             const personsWithRole: PersonDetailsDto[] = [];
-            const persons = await Person.findAll({ where: { Phone: phone } });
+            var possiblePhoneNumbers = Helper.getPossiblePhoneNumbers(phone);
+            var persons = await Person.findAll({
+                where : {
+                    Phone : { [Op.in] : possiblePhoneNumbers,
+                    }
+                }
+            });
+ 
             for await (const person of persons) {
                 const withRole = await PersonRole.findOne({ where: { PersonId: person.id, RoleId: roleId } });
                 if (withRole != null) {
@@ -58,6 +73,7 @@ export class PersonRepo implements IPersonRepo {
                     personsWithRole.push(dto);
                 }
             }
+
             return personsWithRole;
         }
         return null;

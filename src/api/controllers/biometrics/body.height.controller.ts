@@ -7,7 +7,7 @@ import { Authorizer } from '../../../auth/authorizer';
 import { PersonService } from '../../../services/person.service';
 
 import { ApiError } from '../../../common/api.error';
-import { BodyHeightValidator } from '../../validators/biometrics/body.height';
+import { BodyHeightValidator } from '../../validators/biometrics/body.height.validator';
 import { BodyHeightService } from '../../../services/biometrics/body.height.service';
 import { RoleService } from '../../../services/role.service';
 import { OrganizationService } from '../../../services/organization.service';
@@ -42,18 +42,18 @@ export class BodyHeightController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.Body.Height.Create";
+            request.context = "Biometrics.BodyHeight.Create";
             await this._authorizer.authorize(request, response);
             
             const domainModel = await BodyHeightValidator.create(request);
 
             const bodyHeight = await this._service.create(domainModel);
             if (bodyHeight == null) {
-                throw new ApiError(400, 'Cannot create bodyHeight!');
+                throw new ApiError(400, 'Cannot create body height!');
             }
 
-            ResponseHandler.success(request, response, 'BodyHeight created successfully!', 201, {
-                Biometrices : { Body: { Height: bodyHeight } }
+            ResponseHandler.success(request, response, 'Body height created successfully!', 201, {
+                BodyHeight : bodyHeight
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -62,7 +62,7 @@ export class BodyHeightController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.Body.Height.GetById";
+            request.context = "Biometrics.BodyHeight.GetById";
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
@@ -70,11 +70,11 @@ export class BodyHeightController {
 
             const bodyHeight = await this._service.getById(id);
             if (bodyHeight == null) {
-                throw new ApiError(404, 'BodyHeight not found.');
+                throw new ApiError(404, 'Body height not found.');
             }
 
-            ResponseHandler.success(request, response, 'BodyHeight retrieved successfully!', 200, {
-                Biometrices : { Body: { Height: bodyHeight } }
+            ResponseHandler.success(request, response, 'Body height retrieved successfully!', 200, {
+                BodyHeight : bodyHeight
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -83,7 +83,7 @@ export class BodyHeightController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.Body.Height.Search";
+            request.context = "Biometrics.BodyHeight.Search";
             await this._authorizer.authorize(request, response);
 
             const filters = await BodyHeightValidator.search(request);
@@ -94,10 +94,10 @@ export class BodyHeightController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} bodyHeight records retrieved successfully!`;
+                    : `Total ${count} body height records retrieved successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, {
-                Biometrices : { Body: { Height: { Items: searchResults.Items } } }
+                BodyHeightRecords : searchResults
             });
 
         } catch (error) {
@@ -107,7 +107,7 @@ export class BodyHeightController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.Body.Height.Update";
+            request.context = "Biometrics.BodyHeight.Update";
             await this._authorizer.authorize(request, response);
 
             const domainModel = await BodyHeightValidator.update(request);
@@ -115,16 +115,16 @@ export class BodyHeightController {
             const id: string = await BodyHeightValidator.getById(request);
             const existingAddress = await this._service.getById(id);
             if (existingAddress == null) {
-                throw new ApiError(404, 'BodyHeight not found.');
+                throw new ApiError(404, 'Body height not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update bodyHeight record!');
+                throw new ApiError(400, 'Unable to update body height record!');
             }
 
-            ResponseHandler.success(request, response, 'BodyHeight record updated successfully!', 200, {
-                Biometrices : { Body: { Height: updated } }
+            ResponseHandler.success(request, response, 'Body height record updated successfully!', 200, {
+                BodyHeight : updated
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -133,21 +133,21 @@ export class BodyHeightController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = "Biometrics.Body.Height.Delete";
+            request.context = "Biometrics.BodyHeight.Delete";
             await this._authorizer.authorize(request, response);
 
             const id: string = await BodyHeightValidator.getById(request);
             const existingAddress = await this._service.getById(id);
             if (existingAddress == null) {
-                throw new ApiError(404, 'BodyHeight not found.');
+                throw new ApiError(404, 'Body height not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'BodyHeight cannot be deleted.');
+                throw new ApiError(400, 'Body height cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'BodyHeight record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Body height record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

@@ -4,8 +4,6 @@ import { PersonService } from '../../services/person.service';
 import { ResponseHandler } from '../../common/response.handler';
 import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
-import { PersonDetailsDto } from '../../domain.types/person/person.dto';
-import { OrganizationDto } from '../../domain.types/organization/organization.dto';
 import { AddressDto } from '../../domain.types/address/address.dto';
 import { PersonValidator } from '../validators/person.validator';
 import { UserService } from '../../services/user.service';
@@ -39,7 +37,7 @@ export class PersonController {
 
     //#endregion
 
-    getById = async (request: express.Request, response: express.Response): Promise<PersonDetailsDto> => {
+    getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Person.GetById';
             await this._authorizer.authorize(request, response);
@@ -57,8 +55,28 @@ export class PersonController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    getAllPersonsWithPhoneAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Person.GetAllPersonsWithPhoneAndRole';
+            await this._authorizer.authorize(request, response);
+
+            const { phone, roleId } = await PersonValidator.getAllPersonsWithPhoneAndRole(request);
+            const persons = await this._service.getAllPersonsWithPhoneAndRole(phone, roleId);
+            const message =
+                persons.length === 0 ?
+                    'No records found!' : `Total ${persons.length} person records retrieved successfully!`;
+                
+            ResponseHandler.success(request, response, message, 200, {
+                Persons : persons,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
     
-    getOrganizations = async (request: express.Request, response: express.Response): Promise<OrganizationDto> => {
+    getOrganizations = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Person.GetOrganizations';
             await this._authorizer.authorize(request, response);

@@ -13,6 +13,8 @@ export const register = (app: express.Application): void => {
     //Person will not be directly created/updated/deleted, but through user/person type specific
     //entity controllers such patient, doctor, etc.
 
+    router.get('/phone/:phone/role/:roleId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAllPersonsWithPhoneAndRole);
+
     //Person may be associated with multiple organizations.
     //e.g. A apecialist doctor may be associated multiple hospitals
     router.get('/:id/organizations', authenticator.authenticateClient, authenticator.authenticateUser, controller.getOrganizations);

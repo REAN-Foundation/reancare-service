@@ -83,6 +83,10 @@ export class PersonService {
         return await this._personRepo.getAddresses(id);
     }
 
+    getAllPersonsWithPhoneAndRole = async (phone: string, roleId: number): Promise<PersonDetailsDto[]> => {
+        return await this._personRepo.getAllPersonsWithPhoneAndRole(phone, roleId);
+    }
+
     //#endregion
 
     //#region Privates

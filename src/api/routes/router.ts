@@ -9,6 +9,7 @@ import { register as registerPersonRoutes } from './person.routes';
 import { register as registerTypesRoutes } from './types.routes';
 import { register as registerBiometricsBloodOxygenSaturationRoutes } from './biometrics/blood.oxygen.saturation.routes';
 import { register as registerHealthProfileRoutes } from './patient/health.profile.routes';
+import { register as registerCalorieBalanceRoute } from './daily.records/calorie.balance.routes';
 import { register as registerComplaintRoutes } from './patient/complaint.routes';
 import { register as registerAllergyRoutes } from './patient/allergy.route';
 import { register as registerHeartPointRoutes } from './daily.records/heart.points.routes';
@@ -45,6 +46,7 @@ export class Router {
                 registerPersonRoutes(this._app);
                 registerOrganizationRoutes(this._app);
                 registerHealthProfileRoutes(this._app);
+                registerCalorieBalanceRoute(this._app);
                 registerComplaintRoutes(this._app);
                 registerAllergyRoutes(this._app);
                 registerHeartPointRoutes(this._app);

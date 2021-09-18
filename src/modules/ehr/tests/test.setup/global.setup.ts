@@ -4,7 +4,7 @@ import * as path from 'path';
 
 import { Logger } from "../../../../common/logger";
 import { TestLoader } from '../test.loader';
-import {} from 'jest'
+import {} from 'jest';
 
 //////////////////////////////////////////////////////////////////////////////////
 

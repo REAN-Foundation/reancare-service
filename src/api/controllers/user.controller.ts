@@ -43,34 +43,6 @@ export class UserController {
         }
     };
 
-    // search = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-    //         request.context = 'User.Search';
-    //         if (!this._authorizer.authorize(request, response)) {
-    //             return false;
-    //         }
-    //         var filters = await UserInputValidator.search(request, response);
-
-    //         var extractFull: boolean =
-    //             request.query.full != 'undefined' && typeof request.query.full == 'boolean'
-    //                 ? request.query.full
-    //                 : false;
-
-    //         const users = await this._service.search(filters, extractFull);
-    //         if (users != null) {
-    //             var count = users.length;
-    //             var message =
-    //                 count == 0 ? 'No records found!' : `Total ${count} user records retrieved successfully!`;
-    //             ResponseHandler.success(request, response, message, 200, {
-    //                 users: users,
-    //             });
-    //             return;
-    //         }
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
-
     loginWithPassword = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.LoginWithPassword';
@@ -123,11 +95,17 @@ export class UserController {
 
             const user: UserDetailsDto = userDetails.user;
             const accessToken = userDetails.accessToken;
-            const message = `User '${user.Person.DisplayName}' logged in successfully!`;
+
+            const isProfileComplete = user.Person.FirstName && user.Person.LastName &&
+                                      user.Person.Gender && user.Person.BirthDate;
             const data = {
-                AccessToken : accessToken,
-                User        : user,
+                AccessToken       : accessToken,
+                User              : user,
+                RoleId            : user.RoleId,
+                IsProfileComplete : isProfileComplete
             };
+
+            const message = `User '${user.Person.DisplayName}' logged in successfully!`;
 
             ResponseHandler.success(request, response, message, 200, data, true);
 
@@ -136,24 +114,4 @@ export class UserController {
         }
     };
     
-    // resetPassword = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-    //         request.context = 'User.ResetPassword';
-    //         if (!this._authorizer.authorize(request, response)) {
-    //             return false;
-    //         }
-    //         var obj = UserInputValidator.resetPassword(request, response);
-    //         var details = await this._service.resetPassword(obj);
-    //         if (details == null) {
-    //             ResponseHandler.failure(request, response, 'Unable to reset password!', 404);
-    //             return;
-    //         }
-    //         ResponseHandler.success(request, response, `Password reset successfully!`, 200, {
-    //             details: details,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
-
 }

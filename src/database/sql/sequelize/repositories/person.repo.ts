@@ -4,9 +4,18 @@ import Person from '../models/person.model';
 import { PersonMapper } from "../mappers/person.mapper";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
+import { Helper } from "../../../../common/helper";
 import { Op } from 'sequelize';
 import PersonRole from "../models/person.role.model";
 import { PersonDetailsDto, PersonDto } from "../../../../domain.types/person/person.dto";
+import { OrganizationDto } from "../../../../domain.types/organization/organization.dto";
+import { AddressDto } from "../../../../domain.types/address/address.dto";
+import OrganizationPersons from "../models/organization.persons.model";
+import { OrganizationMapper } from "../mappers/organization.mapper";
+import { AddressMapper } from "../mappers/address.mapper";
+import PersonAddresses from "../models/person.addresses.model";
+import Organization from "../models/organization.model";
+import Address from "../models/address.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -22,8 +31,14 @@ export class PersonRepo implements IPersonRepo {
 
     personExistsWithPhone = async (phone: string): Promise<boolean> => {
         if (phone != null && typeof phone !== 'undefined') {
-            const existing = await Person.findOne({ where: { Phone: phone } });
-            return existing != null;
+            var possiblePhoneNumbers = Helper.getPossiblePhoneNumbers(phone);
+            var persons = await Person.findAll({
+                where : {
+                    Phone : { [Op.in] : possiblePhoneNumbers,
+                    }
+                }
+            });
+            return persons.length > 0;
         }
         return false;
     };
@@ -37,12 +52,20 @@ export class PersonRepo implements IPersonRepo {
     };
 
     getAllPersonsWithPhoneAndRole = async (phone: string, roleId: number): Promise<PersonDetailsDto[]> => {
+
         if (phone != null && typeof phone !== 'undefined') {
 
             //KK: To be optimized with associations
 
             const personsWithRole: PersonDetailsDto[] = [];
-            const persons = await Person.findAll({ where: { Phone: phone } });
+            var possiblePhoneNumbers = Helper.getPossiblePhoneNumbers(phone);
+            var persons = await Person.findAll({
+                where : {
+                    Phone : { [Op.in] : possiblePhoneNumbers,
+                    }
+                }
+            });
+ 
             for await (const person of persons) {
                 const withRole = await PersonRole.findOne({ where: { PersonId: person.id, RoleId: roleId } });
                 if (withRole != null) {
@@ -50,6 +73,7 @@ export class PersonRepo implements IPersonRepo {
                     personsWithRole.push(dto);
                 }
             }
+
             return personsWithRole;
         }
         return null;
@@ -177,6 +201,85 @@ export class PersonRepo implements IPersonRepo {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     search(filters: any): Promise<PersonDto[]> {
         throw new Error('Method not implemented.');
+    }
+
+    getOrganizations = async (id: string): Promise<OrganizationDto[]> => {
+        try {
+            const organizationPersons = await OrganizationPersons.findAll({
+                where : {
+                    PersonId : id
+                },
+                include : [
+                    {
+                        model : Organization
+                    }
+                ]
+            });
+            const list = organizationPersons.map(x => x.Organization);
+            return list.map(y => OrganizationMapper.toDto(y));
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    addAddress = async (id: string, addressId: string): Promise<boolean> => {
+        try {
+            const personAddresses = await PersonAddresses.findAll({
+                where : {
+                    AddressId : addressId,
+                    PersonId  : id
+                }
+            });
+            if (personAddresses.length > 0) {
+                return false;
+            }
+            var entity = await PersonAddresses.create({
+                AddressId : addressId,
+                PersonId  : id
+            });
+            return entity != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+    
+    removeAddress = async (id: string, addressId: string): Promise<boolean> => {
+        try {
+            var result = await PersonAddresses.destroy({
+                where : {
+                    AddressId : addressId,
+                    PersonId  : id
+                }
+            });
+            return result === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    getAddresses = async (id: string): Promise<AddressDto[]> => {
+        try {
+            var personAddresses = await PersonAddresses.findAll({
+                where : {
+                    PersonId : id
+                },
+                include : [
+                    {
+                        model : Address
+                    }
+                ]
+            });
+            var list = personAddresses.map(x => x.Address);
+            return list.map(y => AddressMapper.toDto(y));
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
 }

@@ -13,15 +13,12 @@ import {
     IsEmail,
     IsDate,
     Index,
-    BelongsToMany,
 } from 'sequelize-typescript';
 
 import { PersonIdentificationType } from '../../../../domain.types/person/person.types';
 
 import { v4 } from 'uuid';
 import User from './user.model';
-import Organization from './organization.model';
-import OrganizationPersons from './organization.persons.model';
 import Address from './address.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -127,9 +124,6 @@ export default class Person extends Model {
         defaultValue : PersonIdentificationType.Aadhar
     })
     NationalIdType: string;
-
-    @BelongsToMany(() => Organization, () => OrganizationPersons)
-    Organizations: Array<Organization & { OrganizationPersons: OrganizationPersons }>;
 
     @HasMany(() => Address)
     Addresses: Address[]

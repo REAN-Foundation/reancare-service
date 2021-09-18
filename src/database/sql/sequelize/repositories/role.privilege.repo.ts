@@ -19,7 +19,7 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
                 id        : rolePrivilege.id,
                 RoleId    : rolePrivilege.RoleId,
                 Privilege : rolePrivilege.Privilege
-            }
+            };
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -34,7 +34,7 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
                 id        : rolePrivilege.id,
                 RoleId    : rolePrivilege.RoleId,
                 Privilege : rolePrivilege.Privilege
-            }
+            };
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -53,7 +53,7 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
                     id        : rp.id,
                     RoleId    : rp.RoleId,
                     Privilege : rp.Privilege
-                }
+                };
                 dtos.push(dto);
             }
             return dtos;
@@ -78,7 +78,7 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
                     id        : rp.id,
                     RoleId    : rp.RoleId,
                     Privilege : rp.Privilege
-                }
+                };
                 dtos.push(dto);
             }
             return dtos;

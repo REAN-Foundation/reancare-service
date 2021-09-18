@@ -24,7 +24,7 @@ export class ApiClientService {
         const d = new Date();
         d.setFullYear(d.getFullYear() + 1);
         clientDomainModel.ValidFrom = clientDomainModel.ValidFrom ?? new Date();
-        clientDomainModel.ValidTill = clientDomainModel.ValidTill ?? d
+        clientDomainModel.ValidTill = clientDomainModel.ValidTill ?? d;
 
         return await this._clientRepo.create(clientDomainModel);
     };

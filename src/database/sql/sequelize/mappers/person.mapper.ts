@@ -40,7 +40,7 @@ export class PersonMapper {
         return dto;
     }
 
-    toDto = (person: Person) => {
+    static toDto = (person: Person) => {
 
         if (person == null){
             return null;

@@ -15,6 +15,7 @@ import {
     IsDate,
 } from 'sequelize-typescript';
 
+import { v4 } from 'uuid';
 import User from '../user.model';
 import Drug from './drug.model';
 
@@ -29,14 +30,14 @@ import Drug from './drug.model';
 })
 export default class MedicationConsumption extends Model {
 
-    @IsInt
+    @IsUUID(4)
     @PrimaryKey
     @Column({
-        type          : DataType.INTEGER,
-        autoIncrement : true,
-        allowNull     : false,
+        type         : DataType.UUID,
+        defaultValue : () => { return v4(); },
+        allowNull    : false
     })
-    id: number;
+    id: string;
 
     @Length({ max: 128 })
     @Column({

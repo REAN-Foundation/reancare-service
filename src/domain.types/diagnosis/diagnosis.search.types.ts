@@ -1,5 +1,5 @@
 import { DiagnosisDto } from "./diagnosis.dto";
-import { DiagnosisInterpretation, ValidationStatus } from "./diagnosis.types";
+import { ClinicalInterpretation, ClinicalValidationStatus } from "../miscellaneous/clinical.types";
 
 //////////////////////////////////////////////////////////////////////
 
@@ -11,8 +11,8 @@ export interface DiagnosisSearchFilters {
     MedicalConditionId?: string;
     IsClinicallyActive?: boolean;
     FulfilledByOrganizationId?: string;
-    ValidationStatus?: ValidationStatus;
-    Interpretation?: DiagnosisInterpretation;
+    ValidationStatus?: ClinicalValidationStatus;
+    Interpretation?: ClinicalInterpretation;
     OnsetDateFrom?: Date;
     OnsetDateTo?: Date;
     OrderBy: string;

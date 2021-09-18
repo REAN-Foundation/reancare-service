@@ -30,7 +30,7 @@ import User from '../user.model';
 @Table({
     timestamps      : true,
     modelName       : 'PhysicalActivity',
-    tableName       : 'exercise_physical_activity',
+    tableName       : 'exercise_physical_activities',
     paranoid        : true,
     freezeTableName : true,
 })

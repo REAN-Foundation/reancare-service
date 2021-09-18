@@ -8,28 +8,29 @@ import {
     DeletedAt,
     PrimaryKey,
     Length,
-    IsInt,
+    IsUUID,
 } from 'sequelize-typescript';
+import { v4 } from 'uuid';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
     modelName       : 'Drug',
-    tableName       : 'drugs',
+    tableName       : 'medication_drugs',
     paranoid        : true,
     freezeTableName : true,
 })
 export default class Drug extends Model {
 
-    @IsInt
+    @IsUUID(4)
     @PrimaryKey
     @Column({
-        type          : DataType.INTEGER,
-        autoIncrement : true,
-        allowNull     : false,
+        type         : DataType.UUID,
+        defaultValue : () => { return v4(); },
+        allowNull    : false
     })
-    id: number;
+    id: string;
 
     @Length({ max: 128 })
     @Column({

@@ -6,27 +6,31 @@ import {
     CreatedAt,
     UpdatedAt,
     DeletedAt,
-    IsUUID,
     PrimaryKey,
     Length,
-    IsDate,
     ForeignKey,
+    IsUUID,
+    IsDate,
 } from 'sequelize-typescript';
 
+import {
+    SymptomsProgressList,
+    SymptomsProgress
+} from '../../../../../domain.types/symptom/how.do.you.feel/symptom.progress.types';
 import { v4 } from 'uuid';
-import User from './user.model';
-import { ClinicalValidationStatus, ClinicalValidationStatusList } from '../../../../domain.types/miscellaneous/clinical.types';
+import User from '../user.model';
+import SymptomAssessment from './symptom.assessment.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'DoctorNote',
-    tableName       : 'doctor_notes',
+    modelName       : 'HowDoYouFeel',
+    tableName       : 'symptom_how_do_you_feel',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class DoctorNote extends Model {
+export default class HowDoYouFeel extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -54,44 +58,36 @@ export default class DoctorNote extends Model {
     })
     PatientUserId: string;
 
-    @IsUUID(4)
-    @ForeignKey(() => User)
+    @Length({ max: 128 })
     @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    MedicalPractitionerUserId: string;
-
-    @IsUUID(4)
-    @ForeignKey(() => User)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    VisitId: string;
-
-    @Length({ max: 512 })
-    @Column({
-        type      : DataType.STRING(512),
-        allowNull : false,
-    })
-    Notes: string;
-
-    @Length({ max: 32 })
-    @Column({
-        type         : DataType.STRING(32),
+        type         : DataType.STRING(128),
         allowNull    : false,
-        values       : ClinicalValidationStatusList,
-        defaultValue : ClinicalValidationStatus.Preliminary
+        values       : SymptomsProgressList,
+        defaultValue : SymptomsProgress.Same
     })
-    ValidationStatus: string;
-
+    Feeling: string;
+    
     @IsDate
     @Column({
         type      : DataType.DATE,
-        allowNull : true,
+        allowNull : false,
     })
-    RecordDate: Date
+    RecordDate: string;
+    
+    @Length({ max: 256 })
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : false,
+    })
+    Comments: string;
+    
+    @IsUUID(4)
+    @ForeignKey(() => SymptomAssessment)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    SymptomAssessmentId: string;
 
     @Column
     @CreatedAt

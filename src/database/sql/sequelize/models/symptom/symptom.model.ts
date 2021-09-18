@@ -6,34 +6,37 @@ import {
     CreatedAt,
     UpdatedAt,
     DeletedAt,
-    IsUUID,
     PrimaryKey,
     Length,
-    IsDate,
+    IsUUID,
     ForeignKey,
+    IsDate,
 } from 'sequelize-typescript';
 
 import {
-    ClinicalValidationStatusList,
     ClinicalValidationStatus,
+    ClinicalInterpretation,
     ClinicalInterpretationList,
-    ClinicalInterpretation
-} from '../../../../domain.types/miscellaneous/clinical.types';
-
+    ClinicalValidationStatusList
+} from '../../../../../domain.types/miscellaneous/clinical.types';
 import { v4 } from 'uuid';
-import User from './user.model';
-import MedicalCondition from './static.types/medical.condition.model';
+import { SeverityList, Severity } from '../../../../../domain.types/miscellaneous/system.types';
+import User from '../user.model';
+import Visit from '../visit.model';
+import SymptomAssessment from './symptom.assessment.model';
+import SymptomAssessmentTemplate from './symptom.assessment.template.model';
+import SymptomType from './symptom.type.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'Diagnosis',
-    tableName       : 'diagnoses',
+    modelName       : 'Symptom',
+    tableName       : 'symptoms',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class Diagnosis extends Model {
+export default class Symptom extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -70,39 +73,64 @@ export default class Diagnosis extends Model {
     MedicalPractitionerUserId: string;
 
     @IsUUID(4)
-    @ForeignKey(() => User)
+    @ForeignKey(() => Visit)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
     VisitId: string;
-
+    
     @IsUUID(4)
-    @ForeignKey(() => MedicalCondition)
+    @ForeignKey(() => SymptomAssessment)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    MedicalConditionId: string;
-
+    AssessmentId: string;
+    
+    @IsUUID(4)
+    @ForeignKey(() => SymptomAssessmentTemplate)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    AssessmentTemplateId: string;
+    
+    @IsUUID(4)
+    @ForeignKey(() => SymptomType)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    SymptomTypeId: string;
+    
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),
-        allowNull : true,
+        allowNull : false,
     })
-    Comments: string;
+    Symptom: string;
 
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : true
     })
-    IsClinicallyActive: boolean;
+    IsPresent: boolean;
+
+    @Length({ max: 16 })
+    @Column({
+        type         : DataType.STRING(16),
+        allowNull    : false,
+        values       : SeverityList,
+        defaultValue : Severity.Low
+    })
+    Severity: string;
 
     @Length({ max: 32 })
     @Column({
         type         : DataType.STRING(32),
-        allowNull    : true,
+        allowNull    : false,
         values       : ClinicalValidationStatusList,
         defaultValue : ClinicalValidationStatus.Preliminary
     })
@@ -117,19 +145,19 @@ export default class Diagnosis extends Model {
     })
     Interpretation: string;
 
-    @IsDate
+    @Length({ max: 256 })
     @Column({
-        type      : DataType.DATE,
+        type      : DataType.STRING(256),
         allowNull : true,
     })
-    OnsetDate: Date
+    Comments: string;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
-        allowNull : true,
+        allowNull : false,
     })
-    EndDate: Date
+    RecordDate: Date
 
     @Column
     @CreatedAt

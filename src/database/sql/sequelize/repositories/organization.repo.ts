@@ -55,12 +55,7 @@ export class OrganizationRepo implements IOrganizationRepo {
     private addAddresses = async (organizationId, addressIds) => {
         if (addressIds !== null && addressIds.length > 0) {
             for await (var addressId of addressIds) {
-                var address = await Address.findByPk(addressId);
-                if (address === null) {
-                    continue;
-                }
-                address.OrganizationId = organizationId;
-                await address.save();
+                await this.addAddress(organizationId, addressId);
             }
         }
     };

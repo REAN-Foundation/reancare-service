@@ -1,7 +1,6 @@
 import { BodyWeightDto } from "./body.weight.dto";
 
 export interface BodyWeightSearchFilters {
-    PersonId?: string;
     PatientUserId?: string;
     MinValue?: number;
     MaxValue?: number;

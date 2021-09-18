@@ -7125,6 +7125,483 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Body height",
+					"item": [
+						{
+							"name": "Add body height",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"BODY_HEIGHT\", 175);\r",
+											"pm.environment.set(\"HEIGHT_UNIT\", \"cms\");\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"BODY_HEIGHT_ID\", jsonRes.Data.BodyHeight.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New body height biometrice is created\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"    var expectedBodyHeight = pm.environment.get(\"BODY_HEIGHT\");\r",
+											"    var expectedHeightUnit = pm.environment.get(\"HEIGHT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(Number(jsonRes.Data.BodyHeight.BodyHeight)).equals(Number(expectedBodyHeight));\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.Unit).equals(expectedHeightUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"BodyHeight\": {{BODY_HEIGHT}},\r\n    \"Unit\": \"{{HEIGHT_UNIT}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-height",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-height"
+									]
+								},
+								"description": "Adds Biometrics information for Body height"
+							},
+							"response": []
+						},
+						{
+							"name": "Get body height by id",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body height biometric is returned\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"    var expectedBodyHeight = pm.environment.get(\"BODY_HEIGHT\");\r",
+											"    var expectedHeightUnit = pm.environment.get(\"HEIGHT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(Number(jsonRes.Data.BodyHeight.BodyHeight)).equals(Number(expectedBodyHeight));\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.Unit).equals(expectedHeightUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-height/{{BODY_HEIGHT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-height",
+										"{{BODY_HEIGHT_ID}}"
+									]
+								},
+								"description": "Get body height metric by body_height_id"
+							},
+							"response": []
+						},
+						{
+							"name": "Update body height by id",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let height = pm.environment.get(\"BODY_HEIGHT\");",
+											"pm.environment.set(\"BODY_HEIGHT\", Number(height) + 10);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated Body height biometric is returned\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"    var expectedBodyHeight = 180;\r",
+											"    var expectedHeightUnit = pm.environment.get(\"HEIGHT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(Number(jsonRes.Data.BodyHeight.BodyHeight)).equals(Number(expectedBodyHeight));\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.Unit).equals(expectedHeightUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"BodyHeight\": 180,\r\n    \"Unit\": \"{{HEIGHT_UNIT}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-height/{{BODY_HEIGHT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-height",
+										"{{BODY_HEIGHT_ID}}"
+									]
+								},
+								"description": "Update the details for a body height metric by body_height_id."
+							},
+							"response": []
+						},
+						{
+							"name": "Search body height",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of body height records is returned\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyHeightRecords');\r",
+											"    pm.expect(jsonRes.Data.BodyHeightRecords.Items.length).to.be.greaterThan(0);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-height/search?createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=BodyHeight&order=ascending&pageIndex=0&itemsPerPage=25&PatientUserId={{PATIENT_USER_ID}}&MinValue=10&MaxValue=200",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-height",
+										"search"
+									],
+									"query": [
+										{
+											"key": "createdDateFrom",
+											"value": "2021-05-01",
+											"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-12-12",
+											"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
+										},
+										{
+											"key": "orderBy",
+											"value": "BodyHeight",
+											"description": "The name of the Parameter to order by"
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"description": "'ascending' or 'descending'"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"description": "Page index for pagination"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"description": "Items per page"
+										},
+										{
+											"key": "PatientUserId",
+											"value": "{{PATIENT_USER_ID}}",
+											"description": "Patient User Id"
+										},
+										{
+											"key": "MinValue",
+											"value": "10",
+											"description": "Minimum value of height"
+										},
+										{
+											"key": "MaxValue",
+											"value": "200",
+											"description": "Maximum value of height"
+										},
+										{
+											"key": "RecordedByUserId",
+											"value": "",
+											"description": "User Id of the user who recorded the height biometric record",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Search body height biometrics using query parameters."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete body height",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Deleted is true\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-height/{{BODY_HEIGHT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-height",
+										"{{BODY_HEIGHT_ID}}"
+									]
+								},
+								"description": "Delete body height metric by body_height_id"
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},

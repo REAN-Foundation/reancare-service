@@ -1,7 +1,6 @@
 import { BodyHeightDto } from "./body.height.dto";
 
 export interface BodyHeightSearchFilters {
-    PersonId?: string;
     PatientUserId?: string;
     MinValue?: number;
     MaxValue?: number;

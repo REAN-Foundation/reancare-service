@@ -10,9 +10,8 @@ import {
     PrimaryKey,
     Length,
     ForeignKey,
-    IsDate,
     IsDecimal,
-} from 'sequelize-typescript';
+    IsDate } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import User from '../user.model';
@@ -37,6 +36,13 @@ export default class BloodOxygenSaturation extends Model {
     })
     id: string;
 
+    @Length({ min: 2, max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    EhrId: string;
+
     @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
@@ -44,6 +50,14 @@ export default class BloodOxygenSaturation extends Model {
         allowNull : false,
     })
     PatientUserId: string;
+
+    // @IsUUID(4)
+    // @ForeignKey(() => Encounter)
+    // @Column({
+    //     type      : DataType.UUID,
+    //     allowNull : true,
+    // })
+    // EncounterId: string;
 
     @IsDecimal
     @Column({
@@ -56,9 +70,9 @@ export default class BloodOxygenSaturation extends Model {
     })
     BloodOxygenSaturation: number;
 
-    @Length({ min: 1, max: 32 })
+    @Length({ max: 8 })
     @Column({
-        type         : DataType.STRING(32),
+        type         : DataType.STRING(8),
         allowNull    : false,
         defaultValue : '%'
     })
@@ -66,15 +80,16 @@ export default class BloodOxygenSaturation extends Model {
 
     @IsDate
     @Column({
-        type      : DataType.DATE(),
+        type      : DataType.DATE,
         allowNull : true
     })
     RecordDate: Date;
 
     @IsUUID(4)
+    @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : true
+        allowNull : true,
     })
     RecordedByUserId: string;
 
@@ -87,9 +102,4 @@ export default class BloodOxygenSaturation extends Model {
 
     @DeletedAt
     DeletedAt: Date;
-
-    EhrId: string;
-
-    PatientId: string;
-
 }

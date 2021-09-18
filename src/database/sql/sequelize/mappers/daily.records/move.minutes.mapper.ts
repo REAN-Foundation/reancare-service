@@ -1,5 +1,5 @@
 import MoveMinutesModel from '../../models/daily.records/move.minutes.model';
-import { MoveMinutesDto } from '../../../../../domain.types/daily.records/MoveMinutes/move.minutes.dto';
+import { MoveMinutesDto } from '../../../../../domain.types/daily.records/move.minutes/move.minutes.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

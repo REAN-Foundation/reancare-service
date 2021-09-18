@@ -1,4 +1,4 @@
-import { ValidationStatus } from "../diagnosis/diagnosis.types";
+import { ClinicalValidationStatus } from "../miscellaneous/clinical.types";
 
 export interface DoctorNoteDomainModel {
     id?: string,
@@ -7,6 +7,6 @@ export interface DoctorNoteDomainModel {
     MedicalPractitionerUserId?: string;
     VisitId?: string;
     Notes?: string;
-    ValidationStatus?: ValidationStatus;
+    ValidationStatus?: ClinicalValidationStatus;
     RecordDate?: Date;
 }

@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
 import { IMoveMinutesRepo } from "../../database/repository.interfaces/daily.records/move.minutes.repo.interface";
-import { MoveMinutesDomainModel } from '../../domain.types/daily.records/MoveMinutes/move.minutes.domain.model';
-import { MoveMinutesDto } from '../../domain.types/daily.records/MoveMinutes/move.minutes.dto';
-import { MoveMinutesSearchResults, MoveMinutesSearchFilters } from '../../domain.types/daily.records/MoveMinutes/move.minutes.search.types';
+import { MoveMinutesDomainModel } from '../../domain.types/daily.records/move.minutes/move.minutes.domain.model';
+import { MoveMinutesDto } from '../../domain.types/daily.records/move.minutes/move.minutes.dto';
+import { MoveMinutesSearchResults, MoveMinutesSearchFilters } from '../../domain.types/daily.records/move.minutes/move.minutes.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,4 +36,3 @@ export class MoveMinutesService {
     };
 
 }
-

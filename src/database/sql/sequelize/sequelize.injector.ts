@@ -18,6 +18,11 @@ import { PersonRoleRepo } from './repositories/person.role.repo';
 import { RolePrivilegeRepo } from './repositories/role.privilege.repo';
 import { RoleRepo } from './repositories/role.repo';
 import { UserRepo } from './repositories/user.repo';
+import { BodyHeightRepo } from './repositories/biometrics/body.height.repo';
+import { CalorieBalanceRepo } from './repositories/daily.records/calorie.balance.repo';
+import { HeartPointsRepo } from './repositories/daily.records/heart.points.repo';
+import { ComplaintRepo } from './repositories/patient/complaint.repo';
+import { AllergyRepo } from './repositories/patient/allergy.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -38,13 +43,19 @@ export class SequelizeInjector {
         container.register('IRolePrivilegeRepo', RolePrivilegeRepo);
         container.register('IOrganizationRepo', OrganizationRepo);
         container.register('IDoctorRepo', DoctorRepo);
+        container.register('IBodyHeightRepo', BodyHeightRepo);
+        container.register('IPatientHealthProfileRepo', HealthProfileRepo);
         container.register('IBloodOxygenSaturationRepo', BloodOxygenSaturationRepo);
         container.register('IHealthProfileRepo', HealthProfileRepo);
         container.register('IInternalTestUserRepo', InternalTestUserRepo);
         container.register('IBodyTemperatureRepo', BodyTemperatureRepo);
         container.register('IMedicationStockImageRepo', MedicationStockImageRepo);
         container.register('IMoveMinutesRepo', MoveMinutesRepo);
-    
+        container.register('ICalorieBalanceRepo', CalorieBalanceRepo);
+        container.register('IHeartPointsRepo', HeartPointsRepo);
+        container.register('IMedicationStockImageRepo', MedicationStockImageRepo);
+        container.register('IComplaintRepo', ComplaintRepo);
+        container.register('IAllergyRepo', AllergyRepo);
     }
 
 }

@@ -1,6 +1,6 @@
-import { MoveMinutesDomainModel } from "../../../domain.types/daily.records/MoveMinutes/move.minutes.domain.model";
-import { MoveMinutesDto } from "../../../domain.types/daily.records/MoveMinutes/move.minutes.dto";
-import { MoveMinutesSearchFilters, MoveMinutesSearchResults } from "../../../domain.types/daily.records/MoveMinutes/move.minutes.search.types";
+import { MoveMinutesDomainModel } from "../../../domain.types/daily.records/move.minutes/move.minutes.domain.model";
+import { MoveMinutesDto } from "../../../domain.types/daily.records/move.minutes/move.minutes.dto";
+import { MoveMinutesSearchFilters, MoveMinutesSearchResults } from "../../../domain.types/daily.records/move.minutes/move.minutes.search.types";
 
 export interface IMoveMinutesRepo {
 

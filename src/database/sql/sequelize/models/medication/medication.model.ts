@@ -33,6 +33,7 @@ import Order from '../order.model';
 import User from '../user.model';
 import Visit from '../visit.model';
 import Drug from './drug.model';
+import { v4 } from 'uuid';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -45,14 +46,14 @@ import Drug from './drug.model';
 })
 export default class Medication extends Model {
 
-    @IsInt
+    @IsUUID(4)
     @PrimaryKey
     @Column({
-        type          : DataType.INTEGER,
-        autoIncrement : true,
-        allowNull     : false,
+        type         : DataType.UUID,
+        defaultValue : () => { return v4(); },
+        allowNull    : false
     })
-    id: number;
+    id: string;
 
     @Length({ max: 128 })
     @Column({

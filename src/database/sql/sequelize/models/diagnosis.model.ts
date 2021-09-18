@@ -14,11 +14,11 @@ import {
 } from 'sequelize-typescript';
 
 import {
-    ValidationStatusList,
-    ValidationStatus,
-    DiagnosisInterpretationList,
-    DiagnosisInterpretation
-} from '../../../../domain.types/diagnosis/diagnosis.types';
+    ClinicalValidationStatusList,
+    ClinicalValidationStatus,
+    ClinicalInterpretationList,
+    ClinicalInterpretation
+} from '../../../../domain.types/miscellaneous/clinical.types';
 
 import { v4 } from 'uuid';
 import User from './user.model';
@@ -103,8 +103,8 @@ export default class Diagnosis extends Model {
     @Column({
         type         : DataType.STRING(32),
         allowNull    : true,
-        values       : ValidationStatusList,
-        defaultValue : ValidationStatus.Preliminary
+        values       : ClinicalValidationStatusList,
+        defaultValue : ClinicalValidationStatus.Preliminary
     })
     ValidationStatus: string;
 
@@ -112,8 +112,8 @@ export default class Diagnosis extends Model {
     @Column({
         type         : DataType.STRING(32),
         allowNull    : true,
-        values       : DiagnosisInterpretationList,
-        defaultValue : DiagnosisInterpretation.Normal
+        values       : ClinicalInterpretationList,
+        defaultValue : ClinicalInterpretation.Normal
     })
     Interpretation: string;
 

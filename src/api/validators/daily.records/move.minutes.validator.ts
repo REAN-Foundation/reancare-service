@@ -1,8 +1,8 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 import { Helper } from '../../../common/helper';
-import { MoveMinutesDomainModel } from '../../../domain.types/daily.records/MoveMinutes/move.minutes.domain.model';
-import { MoveMinutesSearchFilters } from '../../../domain.types/daily.records/MoveMinutes/move.minutes.search.types';
+import { MoveMinutesDomainModel } from '../../../domain.types/daily.records/move.minutes/move.minutes.domain.model';
+import { MoveMinutesSearchFilters } from '../../../domain.types/daily.records/move.minutes/move.minutes.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

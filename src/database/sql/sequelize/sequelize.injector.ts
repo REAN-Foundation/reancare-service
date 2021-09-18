@@ -16,7 +16,7 @@ import { PersonRoleRepo } from './repositories/person.role.repo';
 import { RolePrivilegeRepo } from './repositories/role.privilege.repo';
 import { RoleRepo } from './repositories/role.repo';
 import { UserRepo } from './repositories/user.repo';
-import { CalorieBalanceRepo } from './repositories/daily.records/calorieBalance.repo';
+import { CalorieBalanceRepo } from './repositories/daily.records/calorie.balance.repo';
 import { ComplaintRepo } from './repositories/patient/complaint.repo';
 import { AllergyRepo } from './repositories/patient/allergy.repo';
 

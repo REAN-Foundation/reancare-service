@@ -1,5 +1,5 @@
 import express from 'express';
-import { CalorieBalanceController } from '../../controllers/daily.records/calorieBalance.controller';
+import { CalorieBalanceController } from '../../controllers/daily.records/calorie.balance.controller';
 import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////

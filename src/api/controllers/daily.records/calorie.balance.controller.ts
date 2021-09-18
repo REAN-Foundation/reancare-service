@@ -7,8 +7,8 @@ import { Authorizer } from '../../../auth/authorizer';
 import { PersonService } from '../../../services/person.service';
 
 import { ApiError } from '../../../common/api.error';
-import { CalorieBalanceValidator } from '../../validators/daily.records/calorieBalance.validator';
-import { CalorieBalanceService } from '../../../services/daily.records/calorieBalance.service';
+import { CalorieBalanceValidator } from '../../validators/daily.records/calorie.balance.validator';
+import { CalorieBalanceService } from '../../../services/daily.records/calorie.balance.service';
 import { RoleService } from '../../../services/role.service';
 import { PatientService } from '../../../services/patient/patient.service';
 

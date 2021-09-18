@@ -1,7 +1,7 @@
-import { ICalorieBalanceRepo } from '../../../../repository.interfaces/daily.records/calorieBalance.repo.interface';
+import { ICalorieBalanceRepo } from '../../../../repository.interfaces/daily.records/calorie.balance.repo.interface';
 import CalorieBalance from '../../models/daily.records/calorie.balance.model';
 import { Op } from 'sequelize';
-import { CalorieBalanceMapper } from '../../mappers/daily.records/calorieBalance.mapper';
+import { CalorieBalanceMapper } from '../../mappers/daily.records/calorie.balance.mapper';
 import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
 import { CalorieBalanceDomainModel } from '../../../../../domain.types/daily.records/CalorieBalance/calorie.balance.domain.model';

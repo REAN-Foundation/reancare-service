@@ -46,7 +46,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Complaint.Create",
+            "Complaint.GetById",
+            "Complaint.Search",
+            "Complaint.Update",
+            "Complaint.Delete"
         ]
     },
     {
@@ -92,7 +97,12 @@
             "Person.AddAddress",
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
-            "HealthProfile.UpdateByPatientUserId"
+            "HealthProfile.UpdateByPatientUserId",
+            "Complaint.Create",
+            "Complaint.GetById",
+            "Complaint.Search",
+            "Complaint.Update",
+            "Complaint.Delete"
         ]
     },
     {
@@ -146,7 +156,12 @@
             "Person.AddAddress",
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
-            "HealthProfile.UpdateByPatientUserId"
+            "HealthProfile.UpdateByPatientUserId",
+            "Complaint.Create",
+            "Complaint.GetById",
+            "Complaint.Search",
+            "Complaint.Update",
+            "Complaint.Delete"
         ]
     },
     {
@@ -190,7 +205,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Complaint.Create",
+            "Complaint.GetById",
+            "Complaint.Search",
+            "Complaint.Update",
+            "Complaint.Delete"
         ]
     },
     {
@@ -234,7 +254,12 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Complaint.Create",
+            "Complaint.GetById",
+            "Complaint.Search",
+            "Complaint.Update",
+            "Complaint.Delete"
         ]
     }
 ]

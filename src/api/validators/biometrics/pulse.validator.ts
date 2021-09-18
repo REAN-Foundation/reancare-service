@@ -1,34 +1,34 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 import { Helper } from '../../../common/helper';
-import { BloodOxygenSaturationDomainModel } from '../../../domain.types/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
-import { BloodOxygenSaturationSearchFilters } from '../../../domain.types/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.search.types';
+import { PulseDomainModel } from '../../../domain.types/biometrics/pulse/pulse.domain.model';
+import { PulseSearchFilters } from '../../../domain.types/biometrics/pulse/pulse.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodOxygenSaturationValidator {
+export class PulseValidator {
 
-    static getDomainModel = (request: express.Request): BloodOxygenSaturationDomainModel => {
+    static getDomainModel = (request: express.Request): PulseDomainModel => {
 
-        const BloodOxygenSaturationModel: BloodOxygenSaturationDomainModel = {
-            PatientUserId         : request.body.PatientUserId,
-            BloodOxygenSaturation : request.body.BloodOxygenSaturation,
-            Unit                  : request.body.Unit,
-            RecordDate            : request.body.RecordDate ?? null,
-            RecordedByUserId      : request.body.RecordedByUserId ?? null,
+        const PulseModel: PulseDomainModel = {
+            PatientUserId    : request.body.PatientUserId,
+            Pulse            : request.body.Pulse,
+            Unit             : request.body.Unit,
+            RecordDate       : request.body.RecordDate ?? null,
+            RecordedByUserId : request.body.RecordedByUserId ?? null,
 
         };
 
-        return BloodOxygenSaturationModel;
+        return PulseModel;
     };
 
-    static create = async (request: express.Request): Promise<BloodOxygenSaturationDomainModel> => {
-        await BloodOxygenSaturationValidator.validateBody(request);
-        return BloodOxygenSaturationValidator.getDomainModel(request);
+    static create = async (request: express.Request): Promise<PulseDomainModel> => {
+        await PulseValidator.validateBody(request);
+        return PulseValidator.getDomainModel(request);
     };
 
     static getById = async (request: express.Request): Promise<string> => {
-        return await BloodOxygenSaturationValidator.getParamId(request);
+        return await PulseValidator.getParamId(request);
     };
 
     static getByPatientUserId = async (request: express.Request): Promise<string> => {
@@ -64,10 +64,10 @@ export class BloodOxygenSaturationValidator {
     };
 
     static delete = async (request: express.Request): Promise<string> => {
-        return await BloodOxygenSaturationValidator.getParamId(request);
+        return await PulseValidator.getParamId(request);
     };
 
-    static search = async (request: express.Request): Promise<BloodOxygenSaturationSearchFilters> => {
+    static search = async (request: express.Request): Promise<PulseSearchFilters> => {
 
         await query('patientUserId').optional()
             .trim()
@@ -129,15 +129,15 @@ export class BloodOxygenSaturationValidator {
             Helper.handleValidationError(result);
         }
 
-        return BloodOxygenSaturationValidator.getFilter(request);
+        return PulseValidator.getFilter(request);
     };
 
-    static update = async (request: express.Request): Promise<BloodOxygenSaturationDomainModel> => {
+    static update = async (request: express.Request): Promise<PulseDomainModel> => {
 
-        const id = await BloodOxygenSaturationValidator.getParamId(request);
-        await BloodOxygenSaturationValidator.validateBody(request);
+        const id = await PulseValidator.getParamId(request);
+        await PulseValidator.validateBody(request);
 
-        const domainModel = BloodOxygenSaturationValidator.getDomainModel(request);
+        const domainModel = PulseValidator.getDomainModel(request);
         domainModel.id = id;
 
         return domainModel;
@@ -151,7 +151,7 @@ export class BloodOxygenSaturationValidator {
             .isUUID()
             .run(request);
 
-        await body('BloodOxygenSaturation').optional()
+        await body('Pulse').optional()
             .trim()
             .escape()
             .toInt()
@@ -178,13 +178,13 @@ export class BloodOxygenSaturationValidator {
         }
     }
 
-    private static getFilter(request): BloodOxygenSaturationSearchFilters {
+    private static getFilter(request): PulseSearchFilters {
         const pageIndex = request.query.PageIndex !== 'undefined' ? parseInt(request.query.PageIndex as string, 10) : 0;
 
         const itemsPerPage =
             request.query.ItemsPerPage !== 'undefined' ? parseInt(request.query.ItemsPerPage as string, 10) : 25;
 
-        const filters: BloodOxygenSaturationSearchFilters = {
+        const filters: PulseSearchFilters = {
             PatientUserId    : request.query.patientUserId ?? null,
             MinValue         : request.query.minValue ?? null,
             MaxValue         : request.query.maxValue ?? null,

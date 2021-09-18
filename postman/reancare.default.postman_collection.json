@@ -8107,7 +8107,7 @@
 											"",
 											"pm.test(\"Pulse record is returned\", function () {",
 											"",
-											"    var expectedValue = 74;",
+											"    var expectedValue = 72;",
 											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
 											"",
 											"    var jsonRes = pm.response.json();",
@@ -8177,8 +8177,8 @@
 											"pm.test(\"Updated pulse record is returned\", function () {",
 											"",
 											"    var expectedPulse = 74;",
-											"    var expectedRecordDate = \"2021-09-07T00:00:00.000Z\";",
-											"    var expectedRecordedByUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+											"    var expectedRecordDate = \"2021-09-07\";",
+											"    var expectedRecordedByUserId = pm.environment.get(\"RECORDED_BY_USER_ID\");",
 											"    ",
 											"    var jsonRes = pm.response.json();",
 											"    pm.expect(jsonRes.Data).to.have.property('Pulse');",
@@ -8187,9 +8187,13 @@
 											"    pm.expect(jsonRes.Data.Pulse).to.have.property('RecordDate');",
 											"    pm.expect(jsonRes.Data.Pulse).to.have.property('RecordedByUserId');",
 											"",
-											"    pm.expect(jsonRes.Data.Pulse.Pulse).equals(expectedBloodOxygenSaturation);",
-											"    pm.expect(jsonRes.Data.Pulse.RecordDate).equals(expectedRecordDate);",
+											"    pm.expect(jsonRes.Data.Pulse.Pulse).equals(expectedPulse);",
 											"    pm.expect(jsonRes.Data.Pulse.RecordedByUserId).equals(expectedRecordedByUserId);",
+											"    var recordDate = jsonRes.Data.Pulse.RecordDate;",
+											"    if (recordDate) {",
+											"        recordDate = recordDate.split('T')[0];",
+											"    }",
+											"    pm.expect(recordDate).equals(expectedRecordDate);",
 											"    ",
 											"});",
 											"",
@@ -8231,6 +8235,107 @@
 										"biometrics",
 										"pulse",
 										"{{BIOMETRICS_PULSE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search pulse records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of pulse records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('PulseRecords');",
+											"    pm.expect(jsonRes.Data.PulseRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/pulse/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-12-07&orderBy=Pulse&order=ascending&pageIndex=0&itemsPerPage=25&minValue=70&maxValue=76&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"pulse",
+										"search"
+									],
+									"query": [
+										{
+											"key": "recordedByUserId",
+											"value": "{{RECORDED_BY_USER_ID}}"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-01"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-12-07"
+										},
+										{
+											"key": "orderBy",
+											"value": "Pulse"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "70"
+										},
+										{
+											"key": "maxValue",
+											"value": "76"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
 									]
 								}
 							},
@@ -8292,107 +8397,6 @@
 										"biometrics",
 										"pulse",
 										"{{BIOMETRICS_PULSE_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search pulse records",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"List of pulse records is returned\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('PulseRecords');",
-											"    pm.expect(jsonRes.Data.PulseRecords.Items.length).to.be.greaterThan(0);",
-											"",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/biometrics/pulse/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-09-07&orderBy=Pulse&order=ascending&pageIndex=0&itemsPerPage=25&minValue=70&maxValue=76&patientUserId={{PATIENT_USER_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"biometrics",
-										"pulse",
-										"search"
-									],
-									"query": [
-										{
-											"key": "recordedByUserId",
-											"value": "{{RECORDED_BY_USER_ID}}"
-										},
-										{
-											"key": "createdDateFrom",
-											"value": "2021-09-01"
-										},
-										{
-											"key": "createdDateTo",
-											"value": "2021-09-07"
-										},
-										{
-											"key": "orderBy",
-											"value": "Pulse"
-										},
-										{
-											"key": "order",
-											"value": "ascending"
-										},
-										{
-											"key": "pageIndex",
-											"value": "0"
-										},
-										{
-											"key": "itemsPerPage",
-											"value": "25"
-										},
-										{
-											"key": "minValue",
-											"value": "70"
-										},
-										{
-											"key": "maxValue",
-											"value": "76"
-										},
-										{
-											"key": "patientUserId",
-											"value": "{{PATIENT_USER_ID}}"
-										}
 									]
 								}
 							},

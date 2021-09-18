@@ -1,5 +1,5 @@
 import CalorieBalance from '../../models/daily.records/calorie.balance.model';
-import { CalorieBalanceDto } from '../../../../../domain.types/daily.records/CalorieBalance/calorie.balance.dto';
+import { CalorieBalanceDto } from '../../../../../domain.types/daily.records/calorie.balance/calorie.balance.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

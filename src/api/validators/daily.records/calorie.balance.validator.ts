@@ -2,8 +2,8 @@ import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 
 import { Helper } from '../../../common/helper';
-import { CalorieBalanceDomainModel } from '../../../domain.types/daily.records/CalorieBalance/calorie.balance.domain.model';
-import { CalorieBalanceSearchFilters } from '../../../domain.types/daily.records/CalorieBalance/calorie.balance.search.types';
+import { CalorieBalanceDomainModel } from '../../../domain.types/daily.records/calorie.balance/calorie.balance.domain.model';
+import { CalorieBalanceSearchFilters } from '../../../domain.types/daily.records/calorie.balance/calorie.balance.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -4,9 +4,9 @@ import { Op } from 'sequelize';
 import { CalorieBalanceMapper } from '../../mappers/daily.records/calorie.balance.mapper';
 import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
-import { CalorieBalanceDomainModel } from '../../../../../domain.types/daily.records/CalorieBalance/calorie.balance.domain.model';
-import { CalorieBalanceDto } from '../../../../../domain.types/daily.records/CalorieBalance/calorie.balance.dto';
-import { CalorieBalanceSearchResults, CalorieBalanceSearchFilters } from '../../../../../domain.types/daily.records/CalorieBalance/calorie.balance.search.types';
+import { CalorieBalanceDomainModel } from '../../../../../domain.types/daily.records/calorie.balance/calorie.balance.domain.model';
+import { CalorieBalanceDto } from '../../../../../domain.types/daily.records/calorie.balance/calorie.balance.dto';
+import { CalorieBalanceSearchResults, CalorieBalanceSearchFilters } from '../../../../../domain.types/daily.records/calorie.balance/calorie.balance.search.types';
 
 ///////////////////////////////////////////////////////////////////////
 

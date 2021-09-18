@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
-import { ICalorieBalanceRepo } from "../../database/repository.interfaces/daily.records/calorieBalance.repo.interface";
-import { CalorieBalanceDomainModel } from '../../domain.types/daily.records/CalorieBalance/calorie.balance.domain.model';
-import { CalorieBalanceDto } from '../../domain.types/daily.records/CalorieBalance/calorie.balance.dto';
-import { CalorieBalanceSearchFilters, CalorieBalanceSearchResults } from '../../domain.types/daily.records/CalorieBalance/calorie.balance.search.types';
+import { ICalorieBalanceRepo } from "../../database/repository.interfaces/daily.records/calorie.balance.repo.interface";
+import { CalorieBalanceDomainModel } from '../../domain.types/daily.records/calorie.balance/calorie.balance.domain.model';
+import { CalorieBalanceDto } from '../../domain.types/daily.records/calorie.balance/calorie.balance.dto';
+import { CalorieBalanceSearchFilters, CalorieBalanceSearchResults } from '../../domain.types/daily.records/calorie.balance/calorie.balance.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

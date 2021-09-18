@@ -1,6 +1,6 @@
-import { CalorieBalanceDomainModel } from "../../../domain.types/daily.records/CalorieBalance/calorie.balance.domain.model";
-import { CalorieBalanceDto } from "../../../domain.types/daily.records/CalorieBalance/calorie.balance.dto";
-import { CalorieBalanceSearchFilters, CalorieBalanceSearchResults } from "../../../domain.types/daily.records/CalorieBalance/calorie.balance.search.types";
+import { CalorieBalanceDomainModel } from "../../../domain.types/daily.records/calorie.balance/calorie.balance.domain.model";
+import { CalorieBalanceDto } from "../../../domain.types/daily.records/calorie.balance/calorie.balance.dto";
+import { CalorieBalanceSearchFilters, CalorieBalanceSearchResults } from "../../../domain.types/daily.records/calorie.balance/calorie.balance.search.types";
 
 export interface ICalorieBalanceRepo {
 

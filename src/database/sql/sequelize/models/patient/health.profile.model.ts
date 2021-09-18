@@ -13,6 +13,7 @@ import {
     ForeignKey,
 } from 'sequelize-typescript';
 
+import { Severity, SeverityList } from '../../../../../domain.types/miscellaneous/system.types';
 import { v4 } from 'uuid';
 import User from '../user.model';
 
@@ -126,9 +127,9 @@ export default class HealthProfile extends Model {
 
     @Column({
         type         : DataType.ENUM,
-        values       : ['Low', 'Medium', 'High', 'Critical'],
-        defaultValue : 'Low',
         allowNull    : false,
+        values       : SeverityList,
+        defaultValue : Severity.Low
     })
     SmokingSeverity: string;
 
@@ -148,9 +149,9 @@ export default class HealthProfile extends Model {
 
     @Column({
         type         : DataType.ENUM,
-        values       : ['Low', 'Medium', 'High', 'Critical'],
-        defaultValue : 'Low',
         allowNull    : false,
+        values       : SeverityList,
+        defaultValue : Severity.Low
     })
     DrinkingSeverity: string;
 

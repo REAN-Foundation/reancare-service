@@ -13,6 +13,9 @@ import {
     ForeignKey,
 } from 'sequelize-typescript';
 
+import { Severity, SeverityList } from '../../../../../domain.types/miscellaneous/system.types';
+import { AllergenExposureRoutes, AllergenExposureRoutesList } from '../../../../../domain.types/patient/allergy/allergy.types';
+
 import { v4 } from 'uuid';
 import User from '../user.model';
 
@@ -62,9 +65,10 @@ export default class Allergy extends Model {
 
     @Length({ max: 64 })
     @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-        values    : [ 'Airway', 'Injection', 'Food', 'Contact' ],
+        type         : DataType.STRING(64),
+        allowNull    : true,
+        values       : AllergenExposureRoutesList,
+        defaultValue : AllergenExposureRoutes.Unknown
     })
     AllergenExposureRoute: string;
 
@@ -72,8 +76,8 @@ export default class Allergy extends Model {
     @Column({
         type         : DataType.STRING(16),
         allowNull    : false,
-        values       : ['Low', 'Medium', 'High', 'Critical'],
-        defaultValue : 'Low'
+        values       : SeverityList,
+        defaultValue : Severity.Low
     })
     Severity: string;
 

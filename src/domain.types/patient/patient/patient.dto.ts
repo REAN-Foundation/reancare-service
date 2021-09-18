@@ -1,6 +1,6 @@
 import { Gender } from "../../miscellaneous/system.types";
 import { AddressDto } from "../../address/address.dto";
-import { EmergencyContactDto } from "../../emergency.contact/emergency.contact.dto";
+import { EmergencyContactDto } from "../../patient/emergency.contact/emergency.contact.dto";
 import { HealthProfileDto } from "../health.profile/health.profile.dto";
 import { PatientInsuranceDto } from "../insurance/insurance.dto";
 import { UserDto } from "../../user/user.dto";

@@ -15,6 +15,7 @@ import {
 
 import { v4 } from 'uuid';
 import User from '../user.model';
+import { Severity, SeverityList } from '../../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -80,8 +81,8 @@ export default class Complaint extends Model {
     @Column({
         type         : DataType.STRING(16),
         allowNull    : false,
-        values       : ['Low', 'Medium', 'High', 'Critical'],
-        defaultValue : 'Low'
+        values       : SeverityList,
+        defaultValue : Severity.Low
     })
     Severity: string;
 

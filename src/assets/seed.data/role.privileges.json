@@ -1,6 +1,6 @@
 [
     {
-        "Role": "SystemAdmin",
+        "Role": "System admin",
         "Privileges": [
             "Client.Create",
             "Client.GetById",
@@ -38,6 +38,11 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
+            "Biometrics.BloodOxygenSaturation.Create",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search",
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
@@ -46,7 +51,12 @@
             "PatientAllergy.GetById",
             "PatientAllergy.Search",
             "PatientAllergy.Update",
-            "PatientAllergy.Delete"
+            "PatientAllergy.Delete",
+            "Complaint.Create",
+            "Complaint.GetById",
+            "Complaint.Search",
+            "Complaint.Update",
+            "Complaint.Delete"
         ]
     },
     {
@@ -77,6 +87,11 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
+            "Biometrics.BloodOxygenSaturation.Create",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search",
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
@@ -92,7 +107,12 @@
             "PatientAllergy.GetById",
             "PatientAllergy.Search",
             "PatientAllergy.Update",
-            "PatientAllergy.Delete"
+            "PatientAllergy.Delete",
+            "Complaint.Create",
+            "Complaint.GetById",
+            "Complaint.Search",
+            "Complaint.Update",
+            "Complaint.Delete"
         ]
     },
     {
@@ -131,6 +151,11 @@
             "Doctor.Search",
             "Doctor.GetByUserId",
             "Doctor.UpdateByUserId",
+            "Biometrics.BloodOxygenSaturation.Create",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search",
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
@@ -146,11 +171,16 @@
             "PatientAllergy.GetById",
             "PatientAllergy.Search",
             "PatientAllergy.Update",
-            "PatientAllergy.Delete"
+            "PatientAllergy.Delete",
+            "Complaint.Create",
+            "Complaint.GetById",
+            "Complaint.Search",
+            "Complaint.Update",
+            "Complaint.Delete"
         ]
     },
     {
-        "Role": "LabUser",
+        "Role": "Lab user",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -183,6 +213,10 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search",
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
@@ -191,11 +225,16 @@
             "PatientAllergy.GetById",
             "PatientAllergy.Search",
             "PatientAllergy.Update",
-            "PatientAllergy.Delete"
+            "PatientAllergy.Delete",
+            "Complaint.Create",
+            "Complaint.GetById",
+            "Complaint.Search",
+            "Complaint.Update",
+            "Complaint.Delete"
         ]
     },
     {
-        "Role": "PharmacyUser",
+        "Role": "Pharmacy user",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -228,6 +267,10 @@
             "Address.GetByOrganizationId",
             "Doctor.Search",
             "Doctor.GetByUserId",
+            "Biometrics.BloodOxygenSaturation.GetById",
+            "Biometrics.BloodOxygenSaturation.Update",
+            "Biometrics.BloodOxygenSaturation.Delete",
+            "Biometrics.BloodOxygenSaturation.Search",
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
@@ -236,7 +279,12 @@
             "PatientAllergy.GetById",
             "PatientAllergy.Search",
             "PatientAllergy.Update",
-            "PatientAllergy.Delete"
+            "PatientAllergy.Delete",
+            "Complaint.Create",
+            "Complaint.GetById",
+            "Complaint.Search",
+            "Complaint.Update",
+            "Complaint.Delete"
         ]
     }
 ]

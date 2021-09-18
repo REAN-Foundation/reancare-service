@@ -1,4 +1,4 @@
-import { DiagnosisInterpretation, ValidationStatus } from "./diagnosis.types";
+import { ClinicalInterpretation, ClinicalValidationStatus } from "../miscellaneous/clinical.types";
 import { PatientDto } from "../patient/patient/patient.dto";
 import { MedicalConditionDto } from "../static.types/medical.condition/medical.condition.dto";
 
@@ -11,8 +11,8 @@ export interface DiagnosisDto {
     MedicalCondition?: MedicalConditionDto;
     Comments?: string;
     IsClinicallyActive?: boolean;
-    ValidationStatus?: ValidationStatus;
-    Interpretation?: DiagnosisInterpretation;
+    ValidationStatus?: ClinicalValidationStatus;
+    Interpretation?: ClinicalInterpretation;
     OnsetDate?: Date;
     EndDate?: Date;
 }

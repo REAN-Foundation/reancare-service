@@ -15,7 +15,7 @@ import {
 
 import { v4 } from 'uuid';
 import User from './user.model';
-import { ValidationStatus, ValidationStatusList } from '../../../../domain.types/diagnosis/diagnosis.types';
+import { ClinicalValidationStatus, ClinicalValidationStatusList } from '../../../../domain.types/miscellaneous/clinical.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -81,8 +81,8 @@ export default class DoctorNote extends Model {
     @Column({
         type         : DataType.STRING(32),
         allowNull    : false,
-        values       : ValidationStatusList,
-        defaultValue : ValidationStatus.Preliminary
+        values       : ClinicalValidationStatusList,
+        defaultValue : ClinicalValidationStatus.Preliminary
     })
     ValidationStatus: string;
 

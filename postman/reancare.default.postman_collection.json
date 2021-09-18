@@ -10392,6 +10392,391 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Step count",
+					"item": [
+						{
+							"name": "Add step count record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"DAILY_STEP_COUNT_ID\", jsonRes.Data.StepCount.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New step count record is created\", function () {",
+											"",
+											"    var expectedValue = 1590;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.StepCount.StepCount).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.StepCount.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"StepCount\": 1590,\n    \"RecordDate\": \"2021-09-15\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/step-count",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"step-count"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get step count record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Step count record is returned\", function () {",
+											"",
+											"    var expectedValue = 1590;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.StepCount.StepCount).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.StepCount.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/step-count/{{DAILY_STEP_COUNT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"step-count",
+										"{{DAILY_STEP_COUNT_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update step count record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated step count record is returned\", function () {",
+											"",
+											"    var expectedStepCount = 10000;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('RecordDate');",
+											"",
+											"    pm.expect(jsonRes.Data.StepCount.StepCount).equals(expectedStepCount);",
+											"    var recordDate = jsonRes.Data.StepCount.RecordDate;",
+											"    if (recordDate) {",
+											"        recordDate = recordDate.split('T')[0];",
+											"    } ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"StepCount\": 10000,\n    \"RecordDate\": \"2021-09-14\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/step-count/{{DAILY_STEP_COUNT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"step-count",
+										"{{DAILY_STEP_COUNT_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search step count records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of move minutes records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('StepCountRecords');",
+											"    pm.expect(jsonRes.Data.StepCountRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/step-count/search?createdDateFrom=2021-09-14&createdDateTo=2021-10-15&orderBy=StepCount&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=25000&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"step-count",
+										"search"
+									],
+									"query": [
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-14"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-15"
+										},
+										{
+											"key": "orderBy",
+											"value": "StepCount"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "0"
+										},
+										{
+											"key": "maxValue",
+											"value": "25000"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete step count record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Step count record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/step-count/{{DAILY_STEP_COUNT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"step-count",
+										"{{DAILY_STEP_COUNT_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},

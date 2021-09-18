@@ -19,6 +19,7 @@ import { PersonRoleRepo } from './repositories/person.role.repo';
 import { RolePrivilegeRepo } from './repositories/role.privilege.repo';
 import { RoleRepo } from './repositories/role.repo';
 import { UserRepo } from './repositories/user.repo';
+import { StepCountRepo } from './repositories/daily.records/step.count.repo';
 import { BodyWeightRepo } from './repositories/biometrics/body.weight.repo';
 import { BodyHeightRepo } from './repositories/biometrics/body.height.repo';
 import { CalorieBalanceRepo } from './repositories/daily.records/calorie.balance.repo';
@@ -51,6 +52,7 @@ export class SequelizeInjector {
         container.register('IBloodOxygenSaturationRepo', BloodOxygenSaturationRepo);
         container.register('IHealthProfileRepo', HealthProfileRepo);
         container.register('IInternalTestUserRepo', InternalTestUserRepo);
+        container.register('IStepCountRepo', StepCountRepo);
         container.register('IPulseRepo', PulseRepo);
         container.register('IBodyTemperatureRepo', BodyTemperatureRepo);
         container.register('IMedicationStockImageRepo', MedicationStockImageRepo);

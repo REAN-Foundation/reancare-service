@@ -3,6 +3,7 @@ import RolePrivilege from '../models/role.privilege.model';
 import { RolePrivilegeDto } from '../../../../domain.types/role/role.privilege.dto';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
+import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -82,6 +83,21 @@ export class RolePrivilegeRepo implements IRolePrivilegeRepo {
                 dtos.push(dto);
             }
             return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    hasPrivilegeForRole = async (roleId: number, privilege: string): Promise<boolean> => {
+        try {
+            const rolePrivileges = await RolePrivilege.findAll({
+                where : {
+                    RoleId    : roleId,
+                    Privilege : { [Op.like]: '%' + privilege + '%' }
+                }
+            });
+            return rolePrivileges.length > 0;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

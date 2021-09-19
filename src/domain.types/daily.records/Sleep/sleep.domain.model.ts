@@ -1,8 +1,8 @@
 export interface SleepDomainModel {
-    id?: string;
-    PersonId: string;
+    id?           : string;
+    PersonId      : string;
     PatientUserId?: string;
-    SleepDuration: number;
-    Unit: string;
-    RecordDate?: Date;
+    SleepDuration : number;
+    Unit          : string;
+    RecordDate?   : Date;
 }

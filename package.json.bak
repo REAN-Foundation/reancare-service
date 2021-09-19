@@ -20,10 +20,7 @@
   "dependencies": {
     "@aws-sdk/client-comprehendmedical": "^3.13.0",
     "@types/bcryptjs": "^2.4.2",
-    "@types/express": "^4.17.13",
-    "@types/express-fileupload": "^1.1.7",
     "@types/sequelize": "^4.28.9",
-    "adm-zip": "^0.5.6",
     "approx-string-match": "^1.1.0",
     "aws-sdk": "^2.888.0",
     "bcryptjs": "^2.4.3",
@@ -57,6 +54,7 @@
     "@jest/types": "^27.0.6",
     "@types/body-parser": "^1.19.0",
     "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.11",
     "@types/fs-extra": "^9.0.11",
     "@types/jest": "^26.0.24",
     "@types/node": "^14.17.0",

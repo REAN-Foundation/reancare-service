@@ -14,7 +14,7 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import User from './user.model';
+import User from '../user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -73,7 +73,7 @@ export default class FileResource extends Model {
         type      : DataType.STRING(512),
         allowNull : true,
     })
-    CloudStorageKey: string;
+    StorageKey: string;
 
     @Column({
         type         : DataType.BOOLEAN,
@@ -81,23 +81,23 @@ export default class FileResource extends Model {
         defaultValue : false
     })
     IsPublic: boolean;
+    
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false
+    })
+    IsMultiResolutionImage: boolean;
 
     @Length({ max: 2048 })
     @Column({
         type      : DataType.STRING(2048),
         allowNull : true,
     })
-    SiblingResources: string; //Comma separated object list
-
-    @Length({ max: 2048 })
-    @Column({
-        type      : DataType.STRING(2048),
-        allowNull : true,
-    })
-    ReferenceItems: string; //Comma separated object list
+    Tags: string; //Comma separated string list
 
     @Length({ max: 64 })
-    @Column({
+    @Column({ 
         type      : DataType.STRING(64),
         allowNull : true,
     })

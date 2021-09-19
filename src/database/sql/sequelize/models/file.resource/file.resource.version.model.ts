@@ -9,59 +9,55 @@ import {
     IsUUID,
     PrimaryKey,
     Length,
-    IsInt,
     ForeignKey,
 } from 'sequelize-typescript';
-import FileResource from '../file.resource/file.resource.model';
+
+import { v4 } from 'uuid';
+import FileResource from './file.resource.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'MedicationStockImage',
-    tableName       : 'medication_stock_images',
+    modelName       : 'FileResourceVersion',
+    tableName       : 'file_resource_versions',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class MedicationStockImage extends Model {
+export default class FileResourceVersion extends Model {
 
-    @IsInt
+    @IsUUID(4)
     @PrimaryKey
     @Column({
-        type          : DataType.INTEGER,
-        autoIncrement : true,
-        allowNull     : false,
-    })
-    id: number;
-
-    @Length({ max: 64 })
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    Code: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
+        type         : DataType.UUID,
+        defaultValue : () => {
+            return v4();
+        },
         allowNull : false,
     })
-    FileName: string;
+    id: string;
 
     @IsUUID(4)
     @ForeignKey(() => FileResource)
     @Column({
         type      : DataType.UUID,
-        allowNull : true,
+        allowNull : false,
     })
     ResourceId: string;
 
-    @Length({ max: 2048 })
+    @Length({ max: 32 })
     @Column({
-        type      : DataType.STRING(2048),
+        type      : DataType.STRING(32),
+        allowNull : false,
+    })
+    Version: string;
+
+    @Length({ max: 512 })
+    @Column({
+        type      : DataType.STRING(512),
         allowNull : true,
     })
-    PublicUrl: string;
+    StorageKey: string;
 
     @Column
     @CreatedAt

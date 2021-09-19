@@ -8,6 +8,10 @@ import {
     EHRSpecification,
     AuthenticationType,
     AuthorizationType,
+    FileStorageProvider,
+    SMSServiceProvider,
+    EmailServiceProvider,
+    InAppNotificationServiceProvider,
 } from './configs';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,6 +35,15 @@ export class ConfigurationManager {
             Ehr : {
                 Specification : configuration.Ehr.Specification as EHRSpecification,
                 Provider      : configuration.Ehr.Provider as EHRProvider,
+            },
+            FileStorage : {
+                Provider : configuration.FileStorage.Provider as FileStorageProvider,
+            },
+            Communication : {
+                SMSProvider               : configuration.Communication.SMS.Provider as SMSServiceProvider,
+                EmailProvider             : configuration.Communication.Email.Provider as EmailServiceProvider,
+                // eslint-disable-next-line max-len
+                InAppNotificationProvider : configuration.Communication.InAppNotifications.Provider as InAppNotificationServiceProvider,
             },
             MaxUploadFileSize : configuration.MaxUploadFileSize,
         };
@@ -68,6 +81,22 @@ export class ConfigurationManager {
 
     public static MaxUploadFileSize = (): number => {
         return ConfigurationManager._config.MaxUploadFileSize;
+    };
+
+    public static FileStorageProvider = (): FileStorageProvider => {
+        return ConfigurationManager._config.FileStorage.Provider;
+    };
+    
+    public static SMSServiceProvider = (): SMSServiceProvider => {
+        return ConfigurationManager._config.Communication.SMSProvider;
+    };
+    
+    public static EmailServiceProvider = (): EmailServiceProvider => {
+        return ConfigurationManager._config.Communication.EmailProvider;
+    };
+    
+    public static InAppNotificationServiceProvider = (): InAppNotificationServiceProvider => {
+        return ConfigurationManager._config.Communication.InAppNotificationProvider;
     };
 
     private static checkConfigSanity() {

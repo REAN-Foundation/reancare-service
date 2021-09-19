@@ -391,4 +391,9 @@ export class Helper {
         return possiblePhoneNumbers;
     }
 
+    public static getFileExtension = (filename: string) => {
+        var ext = /^.+\.([^.]+)$/.exec(filename);
+        return ext == null ? "" : ext[1];
+    }
+
 }

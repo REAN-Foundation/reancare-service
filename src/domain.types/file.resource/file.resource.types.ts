@@ -1,11 +1,11 @@
 export interface ResourceReferenceItem {
-    ItemId: string;
+    ItemId  : string;
     ItemType: string;
     Keyword?: string;
 }
 
 export interface SiblingResource {
     ResourceId: string;
-    SizeInKB: number;
-    Tag?: string;
+    SizeInKB  : number;
+    Tag?      : string;
 }

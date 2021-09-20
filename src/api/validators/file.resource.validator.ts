@@ -2,7 +2,12 @@ import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 import { ResourceReferenceItem } from '../../domain.types/file.resource/file.resource.types';
 import { Helper } from '../../common/helper';
-import { FileResourceSearchDownloadDomainModel, FileResourceUploadDomainModel, FileResourceVersionDomainModel } from '../../domain.types/file.resource/file.resource.domain.model';
+import {
+    FileResourceRenameDomainModel,
+    FileResourceSearchDownloadDomainModel,
+    FileResourceUploadDomainModel,
+    FileResourceVersionDomainModel,
+} from '../../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -38,6 +43,7 @@ export class FileResourceValidator {
             IsPublicResource       : request.body.IsPublicResource ?? false,
             IsMultiResolutionImage : request.body.IsMultiResolutionImage ?? false,
             References             : references,
+            StorageKey             : null,
             Tags                   : tags,
             MimeType               : null,
             MetaInformation        : null,
@@ -56,6 +62,32 @@ export class FileResourceValidator {
     static uploadVersion = async (request: express.Request): Promise<FileResourceVersionDomainModel> => {
         return await FileResourceValidator.getIdAndVersion(request);
     };
+
+    static rename = async (request: express.Request): Promise<FileResourceRenameDomainModel> => {
+
+        await param('id').exists()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await param('newFileName').exists()
+            .trim()
+            .escape()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        var domainModel: FileResourceRenameDomainModel = {
+            id          : request.params.id,
+            NewFileName : request.params.newFileName
+        };
+        
+        return domainModel;
+    }
 
     static getIdAndVersion = async (request: express.Request): Promise<FileResourceVersionDomainModel> => {
 
@@ -78,6 +110,7 @@ export class FileResourceValidator {
         var model: FileResourceVersionDomainModel = {
             ResourceId : request.params.id,
             Version    : request.params.version,
+            StorageKey : null
         };
 
         return model;

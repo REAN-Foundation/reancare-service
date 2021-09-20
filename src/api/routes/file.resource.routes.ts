@@ -25,9 +25,11 @@ export const register = (app: express.Application): void => {
     //- Tags - This option allows to associate tags with file resources.
 
     //Upload a new version of existing resource
-    //router.post('/upload/:id/version/:version', 
-    // authenticator.authenticateClient, authenticator.authenticateUser, controller.uploadVersion);
+
+    router.post('/upload/:id/version/:version',
+        authenticator.authenticateClient, authenticator.authenticateUser, controller.uploadVersion);
     router.post('/upload', authenticator.authenticateClient, authenticator.authenticateUser, controller.upload);
+    router.post('/rename/:id/new-name/:newFileName', authenticator.authenticateClient, authenticator.authenticateUser, controller.rename);
 
     //#endregion
 
@@ -41,8 +43,8 @@ export const register = (app: express.Application): void => {
     //3. referenceId=<> and optional referenceType=<>
     //4. tag=<>
 
-    // router.get('/search-download', controller.searchAndDownload);
-    // router.get('/download/:id/version/:version', controller.downloadByVersion);
+    router.get('/search-download', controller.searchAndDownload);
+    router.get('/download/:id/version/:version', controller.downloadByVersion);
     router.get('/download/:id', controller.downloadById);
 
     //#endregion
@@ -57,7 +59,7 @@ export const register = (app: express.Application): void => {
     //3. referenceId=<> and optional referenceType=<>
     //4. tag=<>
 
-    //router.get('/search', controller.search);
+    router.get('/search', controller.search);
     router.get('/:id', controller.getMetadata);
 
     //#endregion
@@ -67,10 +69,7 @@ export const register = (app: express.Application): void => {
     //Routes to delete resource. These routes will wipe out resources from storage and database.
     //NOTE: Please note that only those resources will be deleted which are owned by requesting user.
 
-    // router.delete('/by-reference/:referenceId',
-    //authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteByReference);
-
-    // router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 
     //#endregion
 

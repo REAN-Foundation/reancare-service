@@ -4,6 +4,7 @@ import { ResourceReferenceItem } from "./file.resource.types";
 export interface FileResourceUploadDomainModel {
     id?                    : string,
     Files?                 : express.FileArray;
+    FileNames?             : string[];
     OwnerUserId?           : string;
     UploadedByUserId?      : string;
     IsPublicResource?      : boolean;
@@ -37,9 +38,14 @@ export interface FileResourceSearchDownloadDomainModel {
 }
 
 export interface FileResourceMetadata {
-    FileName: string;
-    FilePath: string;
-    MimeType: string;
+    FileName    : string;
+    FilePath    : string;
+    MimeType    : string;
     OriginalName: string;
-    Size: number;
+    Size        : number;
+}
+
+export interface FileResourceRenameDomainModel {
+    id?        : string,
+    NewFileName: string;
 }

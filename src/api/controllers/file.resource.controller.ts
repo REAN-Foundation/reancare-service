@@ -87,6 +87,28 @@ export class FileResourceController {
         }
     };
 
+    rename = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'FileResource.Rename';
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            await this._authorizer.authorize(request, response);
+
+            const model = await FileResourceValidator.rename(request);
+            if (model.NewFileName === null) {
+                throw new ApiError(400, "Invalid file name!");
+            }
+
+            const renamed = await this._service.rename(model.id, model.NewFileName);
+
+            ResponseHandler.success(request, response, 'File renamed successfully!', 200, {
+                Renamed : renamed,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     searchAndDownload = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'FileResource.SearchAndDownload';
@@ -103,7 +125,7 @@ export class FileResourceController {
 
             var zipper = new admzip();
             for await (var f of downloaded.Files) {
-                zipper.addLocalFile(f);
+                zipper.add(f.DownloadedLocalPath);
             }
             var zipFile = `${downloaded.LocalFolderName}.zip`;
             const data = zipper.toBuffer();
@@ -153,13 +175,13 @@ export class FileResourceController {
 
             const id: string = await FileResourceValidator.downloadById(request);
 
-            const dto = await this._service.downloadById(id);
-            if (dto == null) {
+            const localDestination = await this._service.downloadById(id);
+            if (localDestination === undefined) {
                 throw new ApiError(404, 'FileResource not found.');
             }
 
-            var filename = path.basename(dto.localDestination);
-            var mimetype = mime.getType(localDestination);
+            var filename = path.basename(localDestination);
+            var mimetype = mime.lookup(localDestination);
 
             response.setHeader('Content-disposition', 'attachment; filename=' + filename);
             response.setHeader('Content-type', mimetype);

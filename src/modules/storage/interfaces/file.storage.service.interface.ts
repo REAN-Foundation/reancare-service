@@ -1,11 +1,13 @@
 
 export interface IFileStorageService {
 
-    upload(storageKey: string, localFilePath?: string): Promise<string>;
+    upload(storageKey: string, sourceFilePath: string): Promise<string>;
     
     download(storageKey: string, localFolder?: string): Promise<string>;
 
-    rename(existingStorageKey: string, newStorageKey: string): Promise<boolean>;
+    rename(existingStorageKey: string, newFileName: string): Promise<boolean>;
+
+    getShareableLink(storageKey: string, durationInMinutes: number): Promise<string>;
 
     delete(storageKey: string): Promise<boolean>;
 }

@@ -15,10 +15,12 @@ import { ITimeService } from "../modules/time/interfaces/time.service.interface"
 import * as express from 'express-fileupload';
 import mime from 'mime';
 import path from 'path';
+import fs from 'fs';
 import * as _ from 'lodash';
 import { Helper } from "../common/helper";
-import { DateStringFormat } from "../modules/time/interfaces/time.types";
+import { DateStringFormat, DurationType } from "../modules/time/interfaces/time.types";
 import { ApiError } from "../common/api.error";
+import { Logger } from "../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,6 +51,30 @@ export class FileResourceService {
         }
         var file = fileMetadataList[0]; //Only take the first file - single upload
         return await this.uploadFile(file, domainModel);
+    };
+
+    uploadLocal = async (
+        sourceLocation: string,
+        storageLocation: string,
+        isPublicResource: boolean
+    ): Promise<FileResourceDto> => {
+        
+        var exists = fs.existsSync(sourceLocation);
+        if (!exists) {
+            Logger.instance().log('Source file location does not exist!');
+        }
+        var storageKey = await this._storageService.upload(storageLocation, sourceLocation);
+        var stats = fs.statSync(sourceLocation);
+        var filename = path.basename(sourceLocation);
+        var domainModel: FileResourceUploadDomainModel = {
+            StorageKey             : storageKey,
+            IsMultiResolutionImage : false,
+            MimeType               : mime.lookup(sourceLocation),
+            SizeInKB               : stats['size'] / 1024,
+            IsPublicResource       : isPublicResource,
+            FileNames              : [filename]
+        };
+        return await this._fileResourceRepo.create(domainModel);
     };
 
     uploadMultiple = async (domainModel: FileResourceUploadDomainModel): Promise<FileResourceDto[]> => {
@@ -82,6 +108,15 @@ export class FileResourceService {
 
         return await this._fileResourceRepo.addVersionDetails(domainModel);
     };
+
+    rename = async (id: string, newFileName: string): Promise<boolean> => {
+        var resourceDto = await this._fileResourceRepo.getById(id);
+        if (resourceDto === null) {
+            throw new ApiError(404, "File resource not found!");
+        }
+        await this._storageService.rename(resourceDto.StorageKey, newFileName);
+        return await this._fileResourceRepo.rename(id, newFileName);
+    }
 
     searchAndDownload = async (filters: FileResourceSearchDownloadDomainModel)
         : Promise<DownloadedFilesDetailsDto> => {
@@ -119,6 +154,12 @@ export class FileResourceService {
         return await this._fileResourceRepo.getById(id);
     };
 
+    getShareableLink = async (id: string, durationInMinutes: number): Promise<string> => {
+        var dto = await this._fileResourceRepo.getById(id);
+        var storageKey = dto.StorageKey;
+        return await this._storageService.getShareableLink(storageKey, durationInMinutes);
+    };
+
     delete = async (id: string): Promise<boolean> => {
 
         var versions = await this._fileResourceRepo.getVersions(id);
@@ -137,6 +178,11 @@ export class FileResourceService {
         }
         return await this._fileResourceRepo.delete(id);
     };
+
+    cleanupTempFiles = async () => {
+        this.cleanupDirectories(TEMP_UPLOAD_FOLDER);
+        this.cleanupDirectories(TEMP_DOWNLOAD_FOLDER);
+    }
 
     //#endregion
 
@@ -215,6 +261,34 @@ export class FileResourceService {
         var storageKey = 'resources/' + dateFolder + '/' + filename;
         await this._storageService.upload(storageKey, filepath);
         return storageKey;
+    }
+
+    private async cleanupDirectories(parentFolder) {
+
+        try {
+            const getDirectories = source =>
+                fs.readdirSync(source, { withFileTypes: true })
+                    .filter(dirent => dirent.isDirectory())
+                    .map(dirent => dirent.name);
+    
+            var cleanupBefore = this._timeService.subtractDuration(new Date(), CLEANUP_DURATION, DurationType.Minutes);
+            var directories = getDirectories(parentFolder);
+    
+            for await (var d of directories) {
+                var tmp = new Date();
+                tmp.setTime(parseInt(d));
+                var createdAt = tmp;
+                var isBefore = this._timeService.isBefore(createdAt, cleanupBefore);
+                if (isBefore) {
+                    var dPath = path.join(parentFolder, d);
+                    fs.rmdirSync(dPath, { recursive: true });
+                }
+            }
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+        }
+    
     }
 
     //#endregion

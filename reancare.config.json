@@ -26,6 +26,10 @@
             "Provider": "Firebase"
         }
     },
-
+    "TemporaryFolders": {
+        "Upload": "./tmp/resources/uploads/",
+        "Download": "./tmp/resources/downloads/",
+        "CleanupFolderBeforeMinutes": 10
+    },
     "MaxUploadFileSize": 104857600
 }

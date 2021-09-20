@@ -21,12 +21,7 @@ import { Helper } from "../common/helper";
 import { DateStringFormat, DurationType } from "../modules/time/interfaces/time.types";
 import { ApiError } from "../common/api.error";
 import { Logger } from "../common/logger";
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const TEMP_UPLOAD_FOLDER = path.join(process.cwd(), './tmp/resources/uploads/');
-const TEMP_DOWNLOAD_FOLDER = path.join(process.cwd(), './tmp/resources/downloads/');
-const CLEANUP_DURATION = 10;
+import { ConfigurationManager } from "../configs/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,7 +39,8 @@ export class FileResourceService {
     upload = async (domainModel: FileResourceUploadDomainModel): Promise<FileResourceDto> => {
         
         var timestamp = this._timeService.timestamp(new Date());
-        var folderPath = path.join(TEMP_UPLOAD_FOLDER, timestamp);
+        var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
+        var folderPath = path.join(tempUploadFolder, timestamp);
         var fileMetadataList = this.storeLocally(folderPath, domainModel.Files);
         if (fileMetadataList.length === 0) {
             return null;
@@ -81,7 +77,8 @@ export class FileResourceService {
         
         var uploaded: FileResourceDto[] = [];
         var timestamp = this._timeService.timestamp(new Date());
-        var folderPath = path.join(TEMP_UPLOAD_FOLDER, timestamp);
+        var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
+        var folderPath = path.join(tempUploadFolder, timestamp);
         var fileMetadataList = this.storeLocally(folderPath, domainModel.Files);
 
         for await (var file of fileMetadataList) {
@@ -95,7 +92,8 @@ export class FileResourceService {
     uploadVersion = async (domainModel: FileResourceVersionDomainModel): Promise<FileResourceDto> => {
 
         var timestamp = this._timeService.timestamp(new Date());
-        var folderPath = path.join(TEMP_UPLOAD_FOLDER, timestamp);
+        var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
+        var folderPath = path.join(tempUploadFolder, timestamp);
         var fileMetadataList = this.storeLocally(folderPath, domainModel.Files);
         if (fileMetadataList.length === 0) {
             return null;
@@ -123,7 +121,8 @@ export class FileResourceService {
 
         var downloads = await this._fileResourceRepo.searchForDownload(filters);
         var timestamp = this._timeService.timestamp(new Date());
-        var downloadFolderPath = path.join(TEMP_DOWNLOAD_FOLDER, timestamp);
+        var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
+        var downloadFolderPath = path.join(tempDownloadFolder, timestamp);
 
         for await (var file of downloads.Files) {
             var localFilePath = path.join(downloadFolderPath, file.FileName);
@@ -180,8 +179,10 @@ export class FileResourceService {
     };
 
     cleanupTempFiles = async () => {
-        this.cleanupDirectories(TEMP_UPLOAD_FOLDER);
-        this.cleanupDirectories(TEMP_DOWNLOAD_FOLDER);
+        var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
+        var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
+        this.cleanupDirectories(tempDownloadFolder);
+        this.cleanupDirectories(tempUploadFolder);
     }
 
     //#endregion
@@ -271,7 +272,11 @@ export class FileResourceService {
                     .filter(dirent => dirent.isDirectory())
                     .map(dirent => dirent.name);
     
-            var cleanupBefore = this._timeService.subtractDuration(new Date(), CLEANUP_DURATION, DurationType.Minutes);
+            var cleanupBeforeInMinutes = ConfigurationManager.TemporaryFolderCleanupBefore();
+            
+            var cleanupBefore = this._timeService.subtractDuration(
+                new Date(), cleanupBeforeInMinutes, DurationType.Minutes);
+
             var directories = getDirectories(parentFolder);
     
             for await (var d of directories) {

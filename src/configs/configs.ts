@@ -41,11 +41,18 @@ export interface CommunicationConfig {
     InAppNotificationProvider: InAppNotificationServiceProvider
 }
 
+export interface TemporaryFoldersConfig {
+    Upload: string,
+    Download: string,
+    CleanupFolderBeforeMinutes: number
+}
+
 export interface Configurations {
     Auth: AuthConfig;
     Database: DatabaseConfig;
     Ehr: EHRConfig;
     FileStorage: FileStorageConfig;
     Communication: CommunicationConfig;
+    TemporaryFolders: TemporaryFoldersConfig;
     MaxUploadFileSize: number;
 }

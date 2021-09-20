@@ -14,6 +14,8 @@ import {
     InAppNotificationServiceProvider,
 } from './configs';
 
+import path from 'path';
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class ConfigurationManager {
@@ -44,6 +46,11 @@ export class ConfigurationManager {
                 EmailProvider             : configuration.Communication.Email.Provider as EmailServiceProvider,
                 // eslint-disable-next-line max-len
                 InAppNotificationProvider : configuration.Communication.InAppNotifications.Provider as InAppNotificationServiceProvider,
+            },
+            TemporaryFolders : {
+                Upload                     : configuration.TemporaryFolders.Upload as string,
+                Download                   : configuration.TemporaryFolders.Download as string,
+                CleanupFolderBeforeMinutes : configuration.TemporaryFolders.CleanupFolderBeforeMinutes as number,
             },
             MaxUploadFileSize : configuration.MaxUploadFileSize,
         };
@@ -93,6 +100,20 @@ export class ConfigurationManager {
     
     public static EmailServiceProvider = (): EmailServiceProvider => {
         return ConfigurationManager._config.Communication.EmailProvider;
+    };
+    
+    public static UploadTemporaryFolder = (): string => {
+        var location = ConfigurationManager._config.TemporaryFolders.Upload;
+        return path.join(process.cwd(), location);
+    };
+    
+    public static DownloadTemporaryFolder = (): string => {
+        var location = ConfigurationManager._config.TemporaryFolders.Download;
+        return path.join(process.cwd(), location);
+    };
+    
+    public static TemporaryFolderCleanupBefore = (): number => {
+        return ConfigurationManager._config.TemporaryFolders.CleanupFolderBeforeMinutes;
     };
     
     public static InAppNotificationServiceProvider = (): InAppNotificationServiceProvider => {

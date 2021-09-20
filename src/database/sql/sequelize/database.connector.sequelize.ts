@@ -29,7 +29,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
                 __dirname + '/models/patient',
                 __dirname + '/models/exercise',
                 __dirname + '/models/medication',
-                __dirname + '/models/nutrition',
+                __dirname + '/models/nutritions',
                 __dirname + '/models/static.types',
                 __dirname + '/models/symptom',
             ];

@@ -1,34 +1,44 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 import { Helper } from '../../../common/helper';
-import { BloodOxygenSaturationDomainModel } from '../../../domain.types/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
-import { BloodOxygenSaturationSearchFilters } from '../../../domain.types/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.search.types';
+import { FoodConsumptionDomainModel } from '../../../domain.types/nutritions/food.consumption/food.consumption.domain.model';
+import { FoodConsumptionSearchFilters } from '../../../domain.types/nutritions/food.consumption/food.consumption.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodOxygenSaturationValidator {
+export class FoodConsumptionValidator {
 
-    static getDomainModel = (request: express.Request): BloodOxygenSaturationDomainModel => {
+    static getDomainModel = (request: express.Request): FoodConsumptionDomainModel => {
 
-        const BloodOxygenSaturationModel: BloodOxygenSaturationDomainModel = {
-            PatientUserId         : request.body.PatientUserId,
-            BloodOxygenSaturation : request.body.BloodOxygenSaturation,
-            Unit                  : request.body.Unit,
-            RecordDate            : request.body.RecordDate ?? null,
-            RecordedByUserId      : request.body.RecordedByUserId ?? null,
-
+        const FoodConsumptionModel: FoodConsumptionDomainModel = {
+            PatientUserId   : request.body.PatientUserId ?? null,
+            Food            : request.body.Food,
+            Description     : request.body.Description ?? null,
+            ConsumedAs      : request.body.ConsumedAs ?? null,
+            Calories        : request.body.Calories ?? null,
+            ImageResourceId : request.body.ImageResourceId ?? null,
+            StartTime       : request.body.StartTime ?? null,
+            EndTime         : request.body.EndTime ?? null,
         };
 
-        return BloodOxygenSaturationModel;
+        return FoodConsumptionModel;
     };
 
-    static create = async (request: express.Request): Promise<BloodOxygenSaturationDomainModel> => {
-        await BloodOxygenSaturationValidator.validateBody(request);
-        return BloodOxygenSaturationValidator.getDomainModel(request);
+    static create = async (request: express.Request): Promise<FoodConsumptionDomainModel> => {
+        await FoodConsumptionValidator.validateBody(request);
+        return FoodConsumptionValidator.getDomainModel(request);
     };
 
     static getById = async (request: express.Request): Promise<string> => {
-        return await BloodOxygenSaturationValidator.getParamId(request);
+        return await FoodConsumptionValidator.getParamId(request);
+    };
+
+    static getByEvent = async (request: express.Request): Promise<string> => {
+        return await FoodConsumptionValidator.getParamEvent(request);
+    };
+
+    static getByDate = async (request: express.Request): Promise<string> => {
+        return await FoodConsumptionValidator.getParamDate(request);
     };
 
     static getByPatientUserId = async (request: express.Request): Promise<string> => {
@@ -64,10 +74,10 @@ export class BloodOxygenSaturationValidator {
     };
 
     static delete = async (request: express.Request): Promise<string> => {
-        return await BloodOxygenSaturationValidator.getParamId(request);
+        return await FoodConsumptionValidator.getParamId(request);
     };
 
-    static search = async (request: express.Request): Promise<BloodOxygenSaturationSearchFilters> => {
+    static search = async (request: express.Request): Promise<FoodConsumptionSearchFilters> => {
 
         await query('patientUserId').optional()
             .trim()
@@ -129,15 +139,15 @@ export class BloodOxygenSaturationValidator {
             Helper.handleValidationError(result);
         }
 
-        return BloodOxygenSaturationValidator.getFilter(request);
+        return FoodConsumptionValidator.getFilter(request);
     };
 
-    static update = async (request: express.Request): Promise<BloodOxygenSaturationDomainModel> => {
+    static update = async (request: express.Request): Promise<FoodConsumptionDomainModel> => {
 
-        const id = await BloodOxygenSaturationValidator.getParamId(request);
-        await BloodOxygenSaturationValidator.validateBody(request);
+        const id = await FoodConsumptionValidator.getParamId(request);
+        await FoodConsumptionValidator.validateBody(request);
 
-        const domainModel = BloodOxygenSaturationValidator.getDomainModel(request);
+        const domainModel = FoodConsumptionValidator.getDomainModel(request);
         domainModel.id = id;
 
         return domainModel;
@@ -151,7 +161,7 @@ export class BloodOxygenSaturationValidator {
             .isUUID()
             .run(request);
 
-        await body('BloodOxygenSaturation').optional()
+        await body('FoodConsumption').optional()
             .trim()
             .escape()
             .toInt()
@@ -178,23 +188,25 @@ export class BloodOxygenSaturationValidator {
         }
     }
 
-    private static getFilter(request): BloodOxygenSaturationSearchFilters {
+    private static getFilter(request): FoodConsumptionSearchFilters {
         const pageIndex = request.query.PageIndex !== 'undefined' ? parseInt(request.query.PageIndex as string, 10) : 0;
 
         const itemsPerPage =
             request.query.ItemsPerPage !== 'undefined' ? parseInt(request.query.ItemsPerPage as string, 10) : 25;
 
-        const filters: BloodOxygenSaturationSearchFilters = {
-            PatientUserId    : request.query.patientUserId ?? null,
-            MinValue         : request.query.minValue ?? null,
-            MaxValue         : request.query.maxValue ?? null,
-            CreatedDateFrom  : request.query.createdDateFrom ?? null,
-            CreatedDateTo    : request.query.createdDateTo ?? null,
-            RecordedByUserId : request.query.recordedByUserId ?? null,
-            OrderBy          : request.query.orderBy ?? 'CreatedAt',
-            Order            : request.query.order ?? 'descending',
-            PageIndex        : pageIndex,
-            ItemsPerPage     : itemsPerPage,
+        const filters: FoodConsumptionSearchFilters = {
+            PatientUserId : request.query.patientUserId ?? null,
+            Food          : request.query.food ?? null,
+            ConsumedAs    : request.query.consumedAs ?? null,
+            ContactPhone  : request.query.contactPhone ?? null,
+            ContactEmail  : request.query.contactEmail ?? null,
+            TimeFrom      : request.query.timeFrom ?? null,
+            TimeTo        : request.query.timeTo ?? null,
+            ForDay        : request.query.forDay ?? null,
+            OrderBy       : request.query.orderBy ?? 'CreatedAt',
+            Order         : request.query.order ?? 'descending',
+            PageIndex     : pageIndex,
+            ItemsPerPage  : itemsPerPage,
         };
         return filters;
     }
@@ -212,6 +224,35 @@ export class BloodOxygenSaturationValidator {
             Helper.handleValidationError(result);
         }
         return request.params.id;
+    }
+
+    private static async getParamEvent(request) {
+
+        await param('event').trim()
+            .escape()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+        return request.params.event;
+    }
+
+    private static async getParamDate(request) {
+
+        await param('date').trim()
+            .escape()
+            .isDate()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+        return request.params.date;
     }
 
 }

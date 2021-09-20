@@ -1,6 +1,6 @@
 [
     {
-        "Role": "SystemAdmin",
+        "Role": "System Admin",
         "Privileges": [
             "Client.Create",
             "Client.GetById",
@@ -46,7 +46,14 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Nutritions.FoodConsumption.Create",
+            "Nutritions.FoodConsumption.GetById",
+            "Nutritions.FoodConsumption.Update",
+            "Nutritions.FoodConsumption.Delete",
+            "Nutritions.FoodConsumption.Search",
+            "Nutritions.FoodConsumption.GetByEvent"
+
         ]
     },
     {
@@ -92,7 +99,14 @@
             "Person.AddAddress",
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
-            "HealthProfile.UpdateByPatientUserId"
+            "HealthProfile.UpdateByPatientUserId",
+            "Nutritions.FoodConsumption.Create",
+            "Nutritions.FoodConsumption.GetById",
+            "Nutritions.FoodConsumption.Update",
+            "Nutritions.FoodConsumption.Delete",
+            "Nutritions.FoodConsumption.Search",
+            "Nutritions.FoodConsumption.GetByEvent"
+
         ]
     },
     {
@@ -146,11 +160,18 @@
             "Person.AddAddress",
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
-            "HealthProfile.UpdateByPatientUserId"
+            "HealthProfile.UpdateByPatientUserId",
+            "Nutritions.FoodConsumption.Create",
+            "Nutritions.FoodConsumption.GetById",
+            "Nutritions.FoodConsumption.Update",
+            "Nutritions.FoodConsumption.Delete",
+            "Nutritions.FoodConsumption.Search",
+            "Nutritions.FoodConsumption.GetByEvent"
+
         ]
     },
     {
-        "Role": "LabUser",
+        "Role": "Lab User",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -190,11 +211,18 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Nutritions.FoodConsumption.Create",
+            "Nutritions.FoodConsumption.GetById",
+            "Nutritions.FoodConsumption.Update",
+            "Nutritions.FoodConsumption.Delete",
+            "Nutritions.FoodConsumption.Search",
+            "Nutritions.FoodConsumption.GetByEvent"
+
         ]
     },
     {
-        "Role": "PharmacyUser",
+        "Role": "Pharmacy User",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -234,7 +262,14 @@
             "Person.GetOrganizations",
             "Person.GetAddresses",
             "Person.AddAddress",
-            "Person.RemoveAddress"
+            "Person.RemoveAddress",
+            "Nutritions.FoodConsumption.Create",
+            "Nutritions.FoodConsumption.GetById",
+            "Nutritions.FoodConsumption.Update",
+            "Nutritions.FoodConsumption.Delete",
+            "Nutritions.FoodConsumption.Search",
+            "Nutritions.FoodConsumption.GetByEvent"
+
         ]
     }
 ]

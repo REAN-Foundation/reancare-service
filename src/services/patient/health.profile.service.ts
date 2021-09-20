@@ -1,4 +1,3 @@
-import { Severity } from "../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IHealthProfileRepo } from "../../database/repository.interfaces/patient/health.profile.repo.interface";
 import { HealthProfileDomainModel } from '../../domain.types/patient/health.profile/health.profile.domain.model';
@@ -51,10 +50,10 @@ export class HealthProfileService {
             Occupation         : null,
             SedentaryLifestyle : false,
             IsSmoker           : false,
-            SmokingSeverity    : Severity.Low,
+            SmokingSeverity    : null,
             SmokingSince       : null,
             IsDrinker          : false,
-            DrinkingSeverity   : Severity.Low,
+            DrinkingSeverity   : null,
             DrinkingSince      : null,
             SubstanceAbuse     : false,
             ProcedureHistory   : null,

@@ -14,7 +14,7 @@ import {
     IsDecimal,
 } from 'sequelize-typescript';
 
-import { FoodConsumptionEventList, FoodConsumptionEvents } from '../../../../../domain.types/nutrition/food.consumption/food.consumption.types';
+import { FoodConsumptionEventList, FoodConsumptionEvents } from '../../../../../domain.types/nutritions/food.consumption/food.consumption.types';
 import { v4 } from 'uuid';
 import FileResource from '../file.resource.model';
 import User from '../user.model';

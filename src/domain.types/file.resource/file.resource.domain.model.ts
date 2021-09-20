@@ -10,6 +10,7 @@ export interface FileResourceUploadDomainModel {
     IsMultiResolutionImage?: boolean;
     References?            : ResourceReferenceItem[];
     Tags?                  : string[];
+    StorageKey             : string;
     MimeType?              : string;
     MetaInformation?       : string;
     SizeInKB?              : number;
@@ -19,14 +20,26 @@ export interface FileResourceUploadDomainModel {
 export interface FileResourceVersionDomainModel {
     ResourceId?: string;
     Version?   : string;
+    StorageKey : string;
+    MimeType?  : string;
+    SizeInKB?  : number;
     Files?     : express.FileArray;
 }
 
 export interface FileResourceSearchDownloadDomainModel {
-    OwnerUserId?     : string,
-    IsPublicResource?: boolean;
-    Version?         : string;
-    ReferenceId?     : string;
-    ReferenceType?   : string;
-    Tag              : string;
+    OwnerUserId?       : string,
+    IsPublicResource?  : boolean;
+    Version?           : string;
+    ReferenceId?       : string;
+    ReferenceType?     : string;
+    Tag?               : string;
+    DownloadOnlyLatest?: boolean;
+}
+
+export interface FileResourceMetadata {
+    FileName: string;
+    FilePath: string;
+    MimeType: string;
+    OriginalName: string;
+    Size: number;
 }

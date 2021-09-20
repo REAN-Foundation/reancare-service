@@ -105,7 +105,7 @@ export class FileResourceController {
             for await (var f of downloaded.Files) {
                 zipper.addLocalFile(f);
             }
-            var zipFile = `${downloaded.FolderName}.zip`;
+            var zipFile = `${downloaded.LocalFolderName}.zip`;
             const data = zipper.toBuffer();
     
             response.set('Content-Type', 'application/octet-stream');
@@ -132,7 +132,7 @@ export class FileResourceController {
             }
 
             var filename = path.basename(localDestination);
-            var mimetype = mime.getType(localDestination);
+            var mimetype = mime.lookup(localDestination);
 
             response.setHeader('Content-disposition', 'attachment; filename=' + filename);
             response.setHeader('Content-type', mimetype);
@@ -153,12 +153,12 @@ export class FileResourceController {
 
             const id: string = await FileResourceValidator.downloadById(request);
 
-            const localDestination = await this._service.downloadById(id);
-            if (localDestination == null) {
+            const dto = await this._service.downloadById(id);
+            if (dto == null) {
                 throw new ApiError(404, 'FileResource not found.');
             }
 
-            var filename = path.basename(localDestination);
+            var filename = path.basename(dto.localDestination);
             var mimetype = mime.getType(localDestination);
 
             response.setHeader('Content-disposition', 'attachment; filename=' + filename);
@@ -214,26 +214,7 @@ export class FileResourceController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-
-    deleteByReference = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'FileResource.DeleteByReference';
-            await this._authorizer.authorize(request, response);
-
-            const referenceId: string = await FileResourceValidator.deleteByReference(request);
-            const deleted = await this._service.deleteByReference(referenceId);
-            if (!deleted) {
-                throw new ApiError(400, 'FileResource cannot be deleted.');
-            }
-
-            ResponseHandler.success(request, response, 'FileResource record deleted successfully!', 200, {
-                Deleted : true,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-    
+   
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 

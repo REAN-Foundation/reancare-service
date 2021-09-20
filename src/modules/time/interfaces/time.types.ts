@@ -8,3 +8,7 @@ export enum DurationType {
     Months      = 'Months',
     Years       = 'Years',
 }
+
+export enum DateStringFormat {
+    YYYY_MM_DD = 'YYYY-MM-DD'
+}

@@ -5,8 +5,9 @@ export interface FileResourceDto {
     EhrId?           : string;
     FileName?        : string;
     OwnerUserId?     : string;
+    Version?         : string;
     UploadedByUserId?: string;
-    CloudStorageKey? : string;
+    StorageKey?      : string;
     IsPublic?        : boolean;
     SiblingResources?: SiblingResource[];
     ReferenceItems?  : ResourceReferenceItem[];
@@ -19,15 +20,19 @@ export interface FileResourceDto {
 }
 
 export interface DownloadedFilesDetailsDto {
-    FolderName      : string;
-    Files           : string[];
+    LocalFolderName : string;
+    Files           : FileVersionDetailsDto[];
     ReferenceItemId : string;
     ReferenceType   : string;
     ReferenceKeyword: string;
+    Tag             : string;
 }
 
 export interface FileVersionDetailsDto {
-    id        : string;
-    Version   : string;
-    StorageKey: string;
+    id                  : string;
+    FileName            : string;
+    OriginalName        : string;
+    Version             : string;
+    StorageKey          : string;
+    DownloadedLocalPath?: string;
 }

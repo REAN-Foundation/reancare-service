@@ -1,10 +1,18 @@
 import { ITimeService } from "../interfaces/time.service.interface";
-import { DurationType } from "../interfaces/time.types";
+import { DateStringFormat, DurationType } from "../interfaces/time.types";
 
 export class CustomTimeService implements ITimeService {
 
     timestamp = (date: Date): string => {
         return date.getTime().toString();
+    }
+
+    getDateString = (date: Date, format: DateStringFormat): string => {
+
+        if (format === DateStringFormat.YYYY_MM_DD) {
+            return date.toISOString().split('T')[0];
+        }
+        return date.toISOString().split('T')[0];
     }
 
     addDuration = (date: Date, surationValue: number, durationType: DurationType): Date => {

@@ -1,10 +1,12 @@
-import { DurationType } from "./time.types";
+import { DateStringFormat, DurationType } from "./time.types";
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export interface ITimeService {
 
     timestamp(date: Date): string;
+
+    getDateString(date: Date, format: DateStringFormat): string;
 
     addDuration(date: Date, surationValue: number, durationType: DurationType): Date;
 

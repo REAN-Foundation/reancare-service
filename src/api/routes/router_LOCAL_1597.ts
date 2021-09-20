@@ -12,7 +12,6 @@ import { register as registerBodyHeightRoutes } from './biometrics/body.height.r
 import { register as registerPatientHealthProfileRoutes } from './patient/health.profile.routes';
 import { register as registerBiometricsBloodOxygenSaturationRoutes } from './biometrics/blood.oxygen.saturation.routes';
 import { register as registerHealthProfileRoutes } from './patient/health.profile.routes';
-<<<<<<< Updated upstream
 import { register as registerStepCountRoutes } from './daily.records/step.count.routes';
 import { register as registerBiometricsPulse } from './biometrics/pulse.routes';
 import { register as registerBodyTemperatureRoutes } from './biometrics/body.temperature.routes';
@@ -21,9 +20,6 @@ import { register as registerCalorieBalanceRoute } from './daily.records/calorie
 import { register as registerComplaintRoutes } from './patient/complaint.routes';
 import { register as registerAllergyRoutes } from './patient/allergy.route';
 import { register as registerHeartPointRoutes } from './daily.records/heart.points.routes';
-=======
-import { register as registerPhysicalActivityRoutes } from './exercise/physical.activity.routes';
->>>>>>> Stashed changes
 import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +56,6 @@ export class Router {
                 registerBodyHeightRoutes(this._app);
                 registerPatientHealthProfileRoutes(this._app);
                 registerHealthProfileRoutes(this._app);
-<<<<<<< Updated upstream
                 registerStepCountRoutes(this._app);
                 registerBiometricsPulse(this._app);
                 registerBodyTemperatureRoutes(this._app);
@@ -69,9 +64,6 @@ export class Router {
                 registerComplaintRoutes(this._app);
                 registerAllergyRoutes(this._app);
                 registerHeartPointRoutes(this._app);
-=======
-                registerPhysicalActivityRoutes(this._app);
->>>>>>> Stashed changes
 
                 resolve(true);
 

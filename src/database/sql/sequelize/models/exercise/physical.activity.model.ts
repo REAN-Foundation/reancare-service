@@ -10,6 +10,7 @@ import {
     PrimaryKey,
     Length,
     IsDate,
+    IsInt,
     ForeignKey,
     IsDecimal,
 } from 'sequelize-typescript';
@@ -106,14 +107,14 @@ export default class PhysicalActivity extends Model {
     @ForeignKey(() => FileResource)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     ImageResourceId: string;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
-        allowNull : false,
+        allowNull : true,
     })
     StartTime: Date
 
@@ -123,6 +124,13 @@ export default class PhysicalActivity extends Model {
         allowNull : true,
     })
     EndTime: Date
+
+    @IsInt
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    DurationInMin: number
 
     @Column
     @CreatedAt

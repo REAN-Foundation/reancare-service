@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"_postman_id": "0db8aac7-717f-4c6a-8d24-bf08da0529d2",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2117,15 +2117,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2640,10 +2631,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -8884,7 +8871,975 @@
 		},
 		{
 			"name": "Exercise",
-			"item": []
+			"item": [
+				{
+					"name": "PhysicalActivity",
+					"item": [
+						{
+							"name": "Add physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"EXERCISE_PHYSICAL_ACTIVITY_ID\", jsonRes.Data.PhysicalActivity.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New physical activity record is created\", function () {\r",
+											"\r",
+											"    var expectedExercise = \"Dead lift\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivity');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Exercise');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Category');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Exercise).equals(expectedExercise);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Exercise\": \"Dead lift\",\r\n    \"Description\": \"30 kg\",\r\n    \"Category\": \"Strength training\",\r\n    \"CaloriesBurned\": 120,\r\n    \"Intensity\": \"Moderate\",\r\n    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\r\n    \"EndTime\": \"2021-09-20T00:15:00.000Z\",\r\n    \"DurationInMin\": 15\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activity",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activity"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Add physical activity",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Exercise\": \"Dead lift\",\r\n    \"Description\": \"30 kg\",\r\n    \"Category\": \"Strength training\",\r\n    \"CaloriesBurned\": 120,\r\n    \"Intensity\": \"Moderate\",\r\n    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\r\n    \"EndTime\": \"2021-09-20T00:15:00.000Z\",\r\n    \"DurationInMin\": 15\r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/exercise/physical-activity",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"exercise",
+												"physical-activity"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "810"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"32a-CNkeUAC9Rd+/m7zH5vpUMdsmPnM\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 20 Sep 2021 06:23:56 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"physical activity created successfully!\",\n    \"HttpCode\": 201,\n    \"Data\": {\n        \"PhysicalActivity\": {\n            \"id\": \"78235c9a-8ce9-452c-a786-d3f2bc956565\",\n            \"PatientUserId\": \"54bba718-bd68-429a-968e-0ebea59b6aac\",\n            \"Exercise\": \"Dead lift\",\n            \"Description\": \"30 kg\",\n            \"Category\": \"Strength training\",\n            \"Intensity\": \"Moderate\",\n            \"CaloriesBurned\": \"120\",\n            \"StartTime\": \"2021-09-20T00:00:00.000Z\",\n            \"EndTime\": \"2021-09-20T00:15:00.000Z\",\n            \"DurationInMin\": \"15\"\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-8126671387\",\n        \"Email\": null,\n        \"UserName\": \"tnkert2002\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627890497,\n        \"exp\": 1635666497\n    },\n    \"Context\": \"PhysicalActivity.Create\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Get physical activity by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Physical activity record is returned\", function () {\r",
+											"\r",
+											"    var expectedExercise = \"Dead lift\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivity');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Exercise');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Category');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Exercise).equals(expectedExercise);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activity",
+										"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get physical activity by id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"exercise",
+												"physical-activity",
+												"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "809"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"329-yy0tveicyDANu3Bs4zcaARu/XEo\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 20 Sep 2021 06:25:13 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Physical activity retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"PhysicalActivity\": {\n            \"id\": \"78235c9a-8ce9-452c-a786-d3f2bc956565\",\n            \"PatientUserId\": \"54bba718-bd68-429a-968e-0ebea59b6aac\",\n            \"Exercise\": \"Dead lift\",\n            \"Description\": \"30 kg\",\n            \"Category\": \"Strength training\",\n            \"Intensity\": \"Moderate\",\n            \"CaloriesBurned\": 120,\n            \"StartTime\": \"2021-09-20T00:00:00.000Z\",\n            \"EndTime\": \"2021-09-20T00:15:00.000Z\",\n            \"DurationInMin\": 15\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-8126671387\",\n        \"Email\": null,\n        \"UserName\": \"tnkert2002\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627890497,\n        \"exp\": 1635666497\n    },\n    \"Context\": \"PhysicalActivity.GetById\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Update physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated physical activity record is returned\", function () {\r",
+											"\r",
+											"    var expectedExercise = \"Push up\";\r",
+											"    var expectedIntensity = \"Vigorous\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivity');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Exercise');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Category');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Exercise).equals(expectedExercise);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Intensity).equals(expectedIntensity);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Exercise\": \"Push up\",\r\n    \"Description\": \"Straight\",\r\n    \"Category\": \"Strength training\",\r\n    \"CaloriesBurned\": 40,\r\n    \"Intensity\": \"Vigorous\",\r\n    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\r\n    \"EndTime\": \"2021-09-20T00:00:05.000Z\",\r\n    \"DurationInMin\": 5\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activity",
+										"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Update physical activity",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Exercise\": \"Push up\",\r\n    \"Description\": \"Straight\",\r\n    \"Category\": \"Strength training\",\r\n    \"CaloriesBurned\": 40,\r\n    \"Intensity\": \"Vigorous\",\r\n    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\r\n    \"EndTime\": \"2021-09-20T00:00:05.000Z\",\r\n    \"DurationInMin\": 5\r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"exercise",
+												"physical-activity",
+												"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "816"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"330-NJDmHmgxW4YK66RXrJJrEmXM2Qo\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 20 Sep 2021 06:33:19 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"physical activity record updated successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"PhysicalActivity\": {\n            \"id\": \"78235c9a-8ce9-452c-a786-d3f2bc956565\",\n            \"PatientUserId\": \"54bba718-bd68-429a-968e-0ebea59b6aac\",\n            \"Exercise\": \"Push up\",\n            \"Description\": \"Straight\",\n            \"Category\": \"Strength training\",\n            \"Intensity\": \"Vigorous\",\n            \"CaloriesBurned\": \"40\",\n            \"StartTime\": \"2021-09-20T00:00:00.000Z\",\n            \"EndTime\": \"2021-09-20T00:00:05.000Z\",\n            \"DurationInMin\": \"5\"\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-8126671387\",\n        \"Email\": null,\n        \"UserName\": \"tnkert2002\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627890497,\n        \"exp\": 1635666497\n    },\n    \"Context\": \"PhysicalActivity.Update\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Physical activity record is deleted\", function () {\r",
+											"\r",
+											"    var expectedValue = true;\r",
+											"    var jsonRes = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activity",
+										"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Delete physical activity",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"exercise",
+												"physical-activity",
+												"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "493"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"1ed-FPzfUyp/fdm9NnQaUV/7nKWY0Qk\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 20 Sep 2021 06:34:31 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Physical activity record deleted successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Deleted\": true\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-8126671387\",\n        \"Email\": null,\n        \"UserName\": \"tnkert2002\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627890497,\n        \"exp\": 1635666497\n    },\n    \"Context\": \"PhysicalActivity.Delete\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Search physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of physical activity is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivity');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activity/search?exercise=Dead lift&category=Strength training&orderBy=Category&order=ascending&pageIndex=0&itemsPerPage=25",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activity",
+										"search"
+									],
+									"query": [
+										{
+											"key": "exercise",
+											"value": "Dead lift"
+										},
+										{
+											"key": "category",
+											"value": "Strength training"
+										},
+										{
+											"key": "orderBy",
+											"value": "Category"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Search physical activity",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/exercise/physical-activity/search?exercise=Dead lift&category=Strength training&orderBy=Category&order=ascending&pageIndex=0&itemsPerPage=25",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"exercise",
+												"physical-activity",
+												"search"
+											],
+											"query": [
+												{
+													"key": "exercise",
+													"value": "Dead lift"
+												},
+												{
+													"key": "category",
+													"value": "Strength training"
+												},
+												{
+													"key": "orderBy",
+													"value": "Category"
+												},
+												{
+													"key": "order",
+													"value": "ascending"
+												},
+												{
+													"key": "pageIndex",
+													"value": "0"
+												},
+												{
+													"key": "itemsPerPage",
+													"value": "25"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1269"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"4f5-eaFs38UTN0qSm7uudIUSiGe3Wgk\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 20 Sep 2021 11:36:21 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Total undefined Physical activity records retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"PhysicalActivity\": {\n            \"TotalCount\": 2,\n            \"RetrievedCount\": 2,\n            \"PageIndex\": 0,\n            \"ItemsPerPage\": 25,\n            \"Order\": \"ascending\",\n            \"OrderedBy\": \"Category\",\n            \"Items\": [\n                {\n                    \"id\": \"1a1457c6-753a-4482-b47b-5b6f75ce11ac\",\n                    \"PatientUserId\": \"54bba718-bd68-429a-968e-0ebea59b6aac\",\n                    \"Exercise\": \"Dead lift\",\n                    \"Description\": \"30 kg\",\n                    \"Category\": \"Strength training\",\n                    \"Intensity\": \"Moderate\",\n                    \"CaloriesBurned\": 120,\n                    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\n                    \"EndTime\": \"2021-09-20T00:00:15.000Z\",\n                    \"DurationInMin\": 15\n                },\n                {\n                    \"id\": \"9d5e8840-83f5-4667-9322-c0e523accdfc\",\n                    \"PatientUserId\": \"54bba718-bd68-429a-968e-0ebea59b6aac\",\n                    \"Exercise\": \"Dead lift\",\n                    \"Description\": \"30 kg\",\n                    \"Category\": \"Strength training\",\n                    \"Intensity\": \"Moderate\",\n                    \"CaloriesBurned\": 120,\n                    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\n                    \"EndTime\": \"2021-09-20T00:00:15.000Z\",\n                    \"DurationInMin\": 15\n                }\n            ]\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-8126671387\",\n        \"Email\": null,\n        \"UserName\": \"tnkert2002\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627890497,\n        \"exp\": 1635666497\n    },\n    \"Context\": \"PhysicalActivity.Search\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "Daily records",
@@ -10631,7 +11586,7 @@
 											"    pm.expect(jsonRes.Status).to.eql('success');",
 											"});",
 											"",
-											"pm.test(\"List of move minutes records is returned\", function () {",
+											"pm.test(\"List of Step count records is returned\", function () {",
 											"",
 											"    var jsonRes = pm.response.json();",
 											"    pm.expect(jsonRes.Data).to.have.property('StepCountRecords');",

@@ -94,9 +94,15 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 order : [['StartTime', 'ASC']]
             });
 
+            const foodConsumptions: FoodConsumptionDto[] = [];
+            for (const foodConsumption of foodResults) {
+                const dto = await FoodConsumptionMapper.toDto(foodConsumption);
+                foodConsumptions.push(dto);
+            }
+
             // get distinct food consumption events for the day
             const availableFoodEvents = {};
-            foodResults.forEach((food: FoodConsumptionDomainModel) => {
+            foodConsumptions.forEach((food: FoodConsumptionDomainModel) => {
                 if (Object.keys(availableFoodEvents).indexOf(food.ConsumedAs) === -1) {
                     availableFoodEvents[food.ConsumedAs] = [];
                 }

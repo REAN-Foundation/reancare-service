@@ -114,7 +114,7 @@ export default class PhysicalActivity extends Model {
     @IsDate
     @Column({
         type      : DataType.DATE,
-        allowNull : true,
+        allowNull : false,
     })
     StartTime: Date
 
@@ -128,7 +128,7 @@ export default class PhysicalActivity extends Model {
     @IsInt
     @Column({
         type      : DataType.INTEGER,
-        allowNull : true,
+        allowNull : false,
     })
     DurationInMin: number
 

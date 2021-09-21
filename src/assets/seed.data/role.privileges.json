@@ -53,7 +53,6 @@
             "Person.GetAddresses",
             "Person.AddAddress",
             "Person.RemoveAddress",
-<<<<<<< Updated upstream
             "Biometrics.Pulse.Create",
             "Biometrics.Pulse.GetById",
             "Biometrics.Pulse.Update",
@@ -93,14 +92,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
-=======
+            "Complaint.Delete",
             "PhysicalActivity.Create",
             "PhysicalActivity.GetById",
             "PhysicalActivity.Search",
             "PhysicalActivity.Update",
             "PhysicalActivity.Delete"
->>>>>>> Stashed changes
         ]
     },
     {
@@ -158,7 +155,6 @@
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
             "HealthProfile.UpdateByPatientUserId",
-<<<<<<< Updated upstream
             "Biometrics.Pulse.Create",
             "Biometrics.Pulse.GetById",
             "Biometrics.Pulse.Update",
@@ -198,14 +194,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
-=======
+            "Complaint.Delete",
             "PhysicalActivity.Create",
             "PhysicalActivity.GetById",
             "PhysicalActivity.Search",
             "PhysicalActivity.Update",
             "PhysicalActivity.Delete"
->>>>>>> Stashed changes
         ]
     },
     {
@@ -276,7 +270,6 @@
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
             "HealthProfile.UpdateByPatientUserId",
-<<<<<<< Updated upstream
             "Biometrics.Pulse.Create",
             "Biometrics.Pulse.GetById",
             "Biometrics.Pulse.Update",
@@ -306,14 +299,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
-=======
+            "Complaint.Delete",
             "PhysicalActivity.Create",
             "PhysicalActivity.GetById",
             "PhysicalActivity.Search",
             "PhysicalActivity.Update",
             "PhysicalActivity.Delete"
->>>>>>> Stashed changes
         ]
     },
     {
@@ -399,19 +390,16 @@
             "Person.GetAddresses",
             "Person.AddAddress",
             "Person.RemoveAddress",
-<<<<<<< Updated upstream
             "DailyRecords.StepCount.Create",
             "DailyRecords.StepCount.GetById",
             "DailyRecords.StepCount.Search",
             "DailyRecords.StepCount.Update",
-            "DailyRecords.StepCount.Delete"
-=======
+            "DailyRecords.StepCount.Delete",
             "PhysicalActivity.Create",
             "PhysicalActivity.GetById",
             "PhysicalActivity.Search",
             "PhysicalActivity.Update",
             "PhysicalActivity.Delete"
->>>>>>> Stashed changes
         ]
     },
     {
@@ -492,7 +480,6 @@
             "Person.GetAddresses",
             "Person.AddAddress",
             "Person.RemoveAddress",
-<<<<<<< Updated upstream
             "DailyRecords.StepCount.Create",
             "DailyRecords.StepCount.GetById",
             "DailyRecords.StepCount.Search",
@@ -502,14 +489,12 @@
             "Biometrics.Pulse.GetById",
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
-            "Biometrics.Pulse.Search"
-=======
+            "Biometrics.Pulse.Search",
             "PhysicalActivity.Create",
             "PhysicalActivity.GetById",
             "PhysicalActivity.Search",
             "PhysicalActivity.Update",
             "PhysicalActivity.Delete"
->>>>>>> Stashed changes
         ]
     }
 ]

@@ -1,6 +1,6 @@
 [
     {
-        "Role": "System admin",
+        "Role": "SystemAdmin",
         "Privileges": [
             "Client.Create",
             "Client.GetById",
@@ -92,7 +92,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "Nutrition.WaterConsumption.Create",
+            "Nutrition.WaterConsumption.GetById",
+            "Nutrition.WaterConsumption.Update",
+            "Nutrition.WaterConsumption.Delete",
+            "Nutrition.WaterConsumption.Search"
         ]
     },
     {
@@ -189,7 +194,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "Nutrition.WaterConsumption.Create",
+            "Nutrition.WaterConsumption.GetById",
+            "Nutrition.WaterConsumption.Update",
+            "Nutrition.WaterConsumption.Delete",
+            "Nutrition.WaterConsumption.Search"
         ]
     },
     {
@@ -289,11 +299,16 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "Nutrition.WaterConsumption.Create",
+            "Nutrition.WaterConsumption.GetById",
+            "Nutrition.WaterConsumption.Update",
+            "Nutrition.WaterConsumption.Delete",
+            "Nutrition.WaterConsumption.Search"
         ]
     },
     {
-        "Role": "Lab user",
+        "Role": "LabUser",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -379,11 +394,16 @@
             "DailyRecords.StepCount.GetById",
             "DailyRecords.StepCount.Search",
             "DailyRecords.StepCount.Update",
-            "DailyRecords.StepCount.Delete"
+            "DailyRecords.StepCount.Delete",
+            "Nutrition.WaterConsumption.Create",
+            "Nutrition.WaterConsumption.GetById",
+            "Nutrition.WaterConsumption.Update",
+            "Nutrition.WaterConsumption.Delete",
+            "Nutrition.WaterConsumption.Search"
         ]
     },
     {
-        "Role": "Pharmacy user",
+        "Role": "PharmacyUser",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -469,7 +489,12 @@
             "Biometrics.Pulse.GetById",
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
-            "Biometrics.Pulse.Search"
+            "Biometrics.Pulse.Search",
+            "Nutrition.WaterConsumption.Create",
+            "Nutrition.WaterConsumption.GetById",
+            "Nutrition.WaterConsumption.Update",
+            "Nutrition.WaterConsumption.Delete",
+            "Nutrition.WaterConsumption.Search"
         ]
     }
 ]

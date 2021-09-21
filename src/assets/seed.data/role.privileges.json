@@ -273,6 +273,7 @@
             "Person.AddAddress",
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
+            "HealthProfile.UpdateByPatientUserId",
             "Biometrics.Pulse.Create",
             "Biometrics.Pulse.GetById",
             "Biometrics.Pulse.Update",

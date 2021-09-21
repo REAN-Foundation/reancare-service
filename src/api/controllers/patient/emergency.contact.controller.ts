@@ -67,6 +67,11 @@ export class EmergencyContactController {
                 if (person == null) {
                     throw new ApiError(404, `User with an id ${domainModel.ContactPersonId} cannot be found.`);
                 }
+            } else {
+                const person = await this._personService.create({
+                    Phone : domainModel.AdditionalPhoneNumbers
+                });
+                domainModel.ContactPersonId = person.id;
             }
 
             if (domainModel.AddressId != null) {

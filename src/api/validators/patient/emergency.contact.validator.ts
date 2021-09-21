@@ -111,6 +111,7 @@ export class EmergencyContactValidator {
         await body('ContactPersonId').exists()
             .trim()
             .escape()
+            .optional()
             .isUUID()
             .run(request);
 

@@ -14,10 +14,10 @@ export class EmergencyContactMapper {
         const dto: EmergencyContactDto = {
             id                      : contact.id,
             PatientUserId           : contact.PatientUserId,
-            ContactPerson           : null,
+            ContactPerson           : undefined,
             ContactRelation         : contact.ContactRelation as EmergencyContactRoles,
-            Address                 : null,
-            Organization            : null,
+            Address                 : undefined,
+            Organization            : undefined,
             IsAvailableForEmergency : contact.IsAvailableForEmergency,
             TimeOfAvailability      : contact.TimeOfAvailability,
             Description             : contact.Description,

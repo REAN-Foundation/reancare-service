@@ -21,6 +21,7 @@ import { HealthProfileService } from '../../../services/patient/health.profile.s
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { PatientDetailsDto } from '../../../domain.types/patient/patient/patient.dto';
 import { HealthProfileDomainModel } from '../../../domain.types/patient/health.profile/health.profile.domain.model';
+import { Severity } from '../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -316,10 +317,10 @@ export class PatientController {
             Occupation         : null,
             SedentaryLifestyle : false,
             IsSmoker           : false,
-            SmokingSeverity    : null,
+            SmokingSeverity    : Severity.Low,
             SmokingSince       : null,
             IsDrinker          : false,
-            DrinkingSeverity   : null,
+            DrinkingSeverity   : Severity.Low,
             DrinkingSince      : null,
             SubstanceAbuse     : false,
             ProcedureHistory   : null,

@@ -1,6 +1,6 @@
 [
     {
-        "Role": "System admin",
+        "Role": "System Admin",
         "Privileges": [
             "Client.Create",
             "Client.GetById",
@@ -92,7 +92,13 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "StaticTypes.KnowledgeNugget.Create",
+            "StaticTypes.KnowledgeNugget.GetById",
+            "StaticTypes.KnowledgeNugget.Search",
+            "StaticTypes.KnowledgeNugget.Update",
+            "StaticTypes.KnowledgeNugget.Delete"
+
         ]
     },
     {
@@ -189,7 +195,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "StaticTypes.KnowledgeNugget.Create",
+            "StaticTypes.KnowledgeNugget.GetById",
+            "StaticTypes.KnowledgeNugget.Search",
+            "StaticTypes.KnowledgeNugget.Update",
+            "StaticTypes.KnowledgeNugget.Delete"
         ]
     },
     {
@@ -289,7 +300,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "StaticTypes.KnowledgeNugget.Create",
+            "StaticTypes.KnowledgeNugget.GetById",
+            "StaticTypes.KnowledgeNugget.Search",
+            "StaticTypes.KnowledgeNugget.Update",
+            "StaticTypes.KnowledgeNugget.Delete"
         ]
     },
     {
@@ -379,7 +395,12 @@
             "DailyRecords.StepCount.GetById",
             "DailyRecords.StepCount.Search",
             "DailyRecords.StepCount.Update",
-            "DailyRecords.StepCount.Delete"
+            "DailyRecords.StepCount.Delete",
+            "StaticTypes.KnowledgeNugget.Create",
+            "StaticTypes.KnowledgeNugget.GetById",
+            "StaticTypes.KnowledgeNugget.Search",
+            "StaticTypes.KnowledgeNugget.Update",
+            "StaticTypes.KnowledgeNugget.Delete"
         ]
     },
     {
@@ -469,7 +490,12 @@
             "Biometrics.Pulse.GetById",
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
-            "Biometrics.Pulse.Search"
+            "Biometrics.Pulse.Search",
+            "StaticTypes.KnowledgeNugget.Create",
+            "StaticTypes.KnowledgeNugget.GetById",
+            "StaticTypes.KnowledgeNugget.Search",
+            "StaticTypes.KnowledgeNugget.Update",
+            "StaticTypes.KnowledgeNugget.Delete"
         ]
     }
 ]

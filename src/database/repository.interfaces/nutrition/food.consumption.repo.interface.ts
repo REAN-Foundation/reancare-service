@@ -1,6 +1,6 @@
-import { FoodConsumptionDomainModel } from "../../../domain.types/nutritions/food.consumption/food.consumption.domain.model";
-import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from "../../../domain.types/nutritions/food.consumption/food.consumption.dto";
-import { FoodConsumptionSearchFilters, FoodConsumptionSearchResults } from "../../../domain.types/nutritions/food.consumption/food.consumption.search.types";
+import { FoodConsumptionDomainModel } from "../../../domain.types/nutrition/food.consumption/food.consumption.domain.model";
+import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from "../../../domain.types/nutrition/food.consumption/food.consumption.dto";
+import { FoodConsumptionSearchFilters, FoodConsumptionSearchResults } from "../../../domain.types/nutrition/food.consumption/food.consumption.search.types";
 
 export interface IFoodConsumptionRepo {
 
@@ -10,7 +10,7 @@ export interface IFoodConsumptionRepo {
 
     getByEvent(event: string, patientUserId: string): Promise<FoodConsumptionEventDto>;
 
-    getByDate(date: Date, patientUserId: string): Promise<FoodConsumptionForDayDto>;
+    getForDay(date: Date, patientUserId: string): Promise<FoodConsumptionForDayDto>;
     
     search(filters: FoodConsumptionSearchFilters): Promise<FoodConsumptionSearchResults>;
 

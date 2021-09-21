@@ -1,9 +1,9 @@
 import { inject, injectable } from "tsyringe";
-import { IFoodConsumptionRepo } from "../../database/repository.interfaces/nutritions/food.consumption.repo.interface";
-import { FoodConsumptionDomainModel } from '../../domain.types/nutritions/food.consumption/food.consumption.domain.model';
-import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from '../../domain.types/nutritions/food.consumption/food.consumption.dto';
+import { IFoodConsumptionRepo } from "../../database/repository.interfaces/nutrition/food.consumption.repo.interface";
+import { FoodConsumptionDomainModel } from '../../domain.types/nutrition/food.consumption/food.consumption.domain.model';
+import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from '../../domain.types/nutrition/food.consumption/food.consumption.dto';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FoodConsumptionSearchResults, FoodConsumptionSearchFilters } from '../../domain.types/nutritions/food.consumption/food.consumption.search.types';
+import { FoodConsumptionSearchResults, FoodConsumptionSearchFilters } from '../../domain.types/nutrition/food.consumption/food.consumption.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,8 +27,8 @@ export class FoodConsumptionService {
         return await this._foodConsumptionRepo.getByEvent(event, patientUserId);
     };
 
-    getByDate = async (date: Date, patientUserId: string): Promise<FoodConsumptionForDayDto> => {
-        return await this._foodConsumptionRepo.getByDate(date, patientUserId);
+    getForDay = async (date: Date, patientUserId: string): Promise<FoodConsumptionForDayDto> => {
+        return await this._foodConsumptionRepo.getForDay(date, patientUserId);
     };
 
     search = async (filters: FoodConsumptionSearchFilters): Promise<FoodConsumptionSearchResults> => {

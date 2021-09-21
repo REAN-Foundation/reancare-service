@@ -1,8 +1,8 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 import { Helper } from '../../../common/helper';
-import { FoodConsumptionDomainModel } from '../../../domain.types/nutritions/food.consumption/food.consumption.domain.model';
-import { FoodConsumptionSearchFilters } from '../../../domain.types/nutritions/food.consumption/food.consumption.search.types';
+import { FoodConsumptionDomainModel } from '../../../domain.types/nutrition/food.consumption/food.consumption.domain.model';
+import { FoodConsumptionSearchFilters } from '../../../domain.types/nutrition/food.consumption/food.consumption.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +37,7 @@ export class FoodConsumptionValidator {
         return await FoodConsumptionValidator.getParamEvent(request);
     };
 
-    static getByDate = async (request: express.Request): Promise<string> => {
+    static getForDay = async (request: express.Request): Promise<Date> => {
         return await FoodConsumptionValidator.getParamDate(request);
     };
 
@@ -198,8 +198,6 @@ export class FoodConsumptionValidator {
             PatientUserId : request.query.patientUserId ?? null,
             Food          : request.query.food ?? null,
             ConsumedAs    : request.query.consumedAs ?? null,
-            ContactPhone  : request.query.contactPhone ?? null,
-            ContactEmail  : request.query.contactEmail ?? null,
             TimeFrom      : request.query.timeFrom ?? null,
             TimeTo        : request.query.timeTo ?? null,
             ForDay        : request.query.forDay ?? null,

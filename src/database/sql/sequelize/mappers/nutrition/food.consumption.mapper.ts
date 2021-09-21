@@ -1,5 +1,6 @@
-import FoodConsumptionModel from '../../models/nutritions/food.consumption.model';
-import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from '../../../../../domain.types/nutritions/food.consumption/food.consumption.dto';
+import FoodConsumptionModel from '../../models/nutrition/food.consumption.model';
+import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from '../../../../../domain.types/nutrition/food.consumption/food.consumption.dto';
+import { FoodConsumptionEvents } from '../../../../../domain.types/nutrition/food.consumption/food.consumption.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +17,7 @@ export class FoodConsumptionMapper {
             PatientUserId   : foodConsumption.PatientUserId,
             Food            : foodConsumption.Food,
             Description     : foodConsumption.Description,
-            ConsumedAs      : foodConsumption.ConsumedAs,
+            ConsumedAs      : FoodConsumptionEvents[foodConsumption.ConsumedAs],
             Calories        : foodConsumption.Calories,
             ImageResourceId : foodConsumption.ImageResourceId,
             StartTime       : foodConsumption.StartTime,

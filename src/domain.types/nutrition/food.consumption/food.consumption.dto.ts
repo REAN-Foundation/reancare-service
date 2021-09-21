@@ -7,11 +7,7 @@ export interface FoodConsumptionDto {
     PatientUserId?: string;
     Food: string;
     Description?: string;
-
-    //ConsumedAs?: FoodConsumptionEvents;
-
-    ConsumedAs?: string;
-
+    ConsumedAs?: FoodConsumptionEvents;
     Calories?: number;
     ImageResourceId?: string;
     StartTime?: Date;

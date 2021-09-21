@@ -47,12 +47,13 @@
             "Person.GetAddresses",
             "Person.AddAddress",
             "Person.RemoveAddress",
-            "Nutritions.FoodConsumption.Create",
-            "Nutritions.FoodConsumption.GetById",
-            "Nutritions.FoodConsumption.Update",
-            "Nutritions.FoodConsumption.Delete",
-            "Nutritions.FoodConsumption.Search",
-            "Nutritions.FoodConsumption.GetByEvent"
+            "Nutrition.FoodConsumption.Create",
+            "Nutrition.FoodConsumption.GetById",
+            "Nutrition.FoodConsumption.Update",
+            "Nutrition.FoodConsumption.Delete",
+            "Nutrition.FoodConsumption.Search",
+            "Nutrition.FoodConsumption.GetByEvent",
+            "Nutrition.FoodConsumption.GetForDay"
 
         ]
     },
@@ -100,12 +101,13 @@
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
             "HealthProfile.UpdateByPatientUserId",
-            "Nutritions.FoodConsumption.Create",
-            "Nutritions.FoodConsumption.GetById",
-            "Nutritions.FoodConsumption.Update",
-            "Nutritions.FoodConsumption.Delete",
-            "Nutritions.FoodConsumption.Search",
-            "Nutritions.FoodConsumption.GetByEvent"
+            "Nutrition.FoodConsumption.Create",
+            "Nutrition.FoodConsumption.GetById",
+            "Nutrition.FoodConsumption.Update",
+            "Nutrition.FoodConsumption.Delete",
+            "Nutrition.FoodConsumption.Search",
+            "Nutrition.FoodConsumption.GetByEvent",
+            "Nutrition.FoodConsumption.GetForDay"
 
         ]
     },
@@ -161,12 +163,13 @@
             "Person.RemoveAddress",
             "HealthProfile.GetByPatientUserId",
             "HealthProfile.UpdateByPatientUserId",
-            "Nutritions.FoodConsumption.Create",
-            "Nutritions.FoodConsumption.GetById",
-            "Nutritions.FoodConsumption.Update",
-            "Nutritions.FoodConsumption.Delete",
-            "Nutritions.FoodConsumption.Search",
-            "Nutritions.FoodConsumption.GetByEvent"
+            "Nutrition.FoodConsumption.Create",
+            "Nutrition.FoodConsumption.GetById",
+            "Nutrition.FoodConsumption.Update",
+            "Nutrition.FoodConsumption.Delete",
+            "Nutrition.FoodConsumption.Search",
+            "Nutrition.FoodConsumption.GetByEvent",
+            "Nutrition.FoodConsumption.GetForDay"
 
         ]
     },
@@ -212,12 +215,13 @@
             "Person.GetAddresses",
             "Person.AddAddress",
             "Person.RemoveAddress",
-            "Nutritions.FoodConsumption.Create",
-            "Nutritions.FoodConsumption.GetById",
-            "Nutritions.FoodConsumption.Update",
-            "Nutritions.FoodConsumption.Delete",
-            "Nutritions.FoodConsumption.Search",
-            "Nutritions.FoodConsumption.GetByEvent"
+            "Nutrition.FoodConsumption.Create",
+            "Nutrition.FoodConsumption.GetById",
+            "Nutrition.FoodConsumption.Update",
+            "Nutrition.FoodConsumption.Delete",
+            "Nutrition.FoodConsumption.Search",
+            "Nutrition.FoodConsumption.GetByEvent",
+            "Nutrition.FoodConsumption.GetForDay"
 
         ]
     },
@@ -263,12 +267,13 @@
             "Person.GetAddresses",
             "Person.AddAddress",
             "Person.RemoveAddress",
-            "Nutritions.FoodConsumption.Create",
-            "Nutritions.FoodConsumption.GetById",
-            "Nutritions.FoodConsumption.Update",
-            "Nutritions.FoodConsumption.Delete",
-            "Nutritions.FoodConsumption.Search",
-            "Nutritions.FoodConsumption.GetByEvent"
+            "Nutrition.FoodConsumption.Create",
+            "Nutrition.FoodConsumption.GetById",
+            "Nutrition.FoodConsumption.Update",
+            "Nutrition.FoodConsumption.Delete",
+            "Nutrition.FoodConsumption.Search",
+            "Nutrition.FoodConsumption.GetByEvent",
+            "Nutrition.FoodConsumption.GetForDay"
 
         ]
     }

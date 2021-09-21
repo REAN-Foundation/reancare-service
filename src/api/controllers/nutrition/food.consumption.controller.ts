@@ -2,9 +2,9 @@ import express from 'express';
 import { ResponseHandler } from '../../../common/response.handler';
 import { Loader } from '../../../startup/loader';
 import { ApiError } from '../../../common/api.error';
-import { FoodConsumptionService } from '../../../services/nutritions/food.consumption.service';
+import { FoodConsumptionService } from '../../../services/nutrition/food.consumption.service';
 import { Authorizer } from '../../../auth/authorizer';
-import { FoodConsumptionValidator } from '../../validators/nutritions/food.consumption.validator';
+import { FoodConsumptionValidator } from '../../validators/nutrition/food.consumption.validator';
 import { Helper } from '../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ export class FoodConsumptionController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutritions.FoodConsumption.Create';
+            request.context = 'Nutrition.FoodConsumption.Create';
 
             const foodConsumptionDomainModel = await FoodConsumptionValidator.create(request);
 
@@ -50,7 +50,7 @@ export class FoodConsumptionController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutritions.FoodConsumption.GetById';
+            request.context = 'Nutrition.FoodConsumption.GetById';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
@@ -71,7 +71,7 @@ export class FoodConsumptionController {
 
     getByEvent = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutritions.FoodConsumption.GetByEvent';
+            request.context = 'Nutrition.FoodConsumption.GetByEvent';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
@@ -90,21 +90,21 @@ export class FoodConsumptionController {
         }
     };
 
-    getByDate = async (request: express.Request, response: express.Response): Promise<void> => {
+    getForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutritions.FoodConsumption.GetByDate';
+            request.context = 'Nutrition.FoodConsumption.GetForDay';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const date: Date = await FoodConsumptionValidator.getByDate(request);
+            const date = await FoodConsumptionValidator.getForDay(request);
 
-            const FoodConsumptionEvent = await this._service.getByDate(date, request.resourceOwnerUserId);
-            if (FoodConsumptionEvent == null) {
+            const FoodConsumptionForDay = await this._service.getForDay(date, request.resourceOwnerUserId);
+            if (FoodConsumptionForDay == null) {
                 throw new ApiError(404, 'Food consumption record not found.');
             }
 
             ResponseHandler.success(request, response, 'Food consumption record retrieved successfully!', 200, {
-                FoodConsumptionEvent : FoodConsumptionEvent,
+                FoodConsumptionForDay : FoodConsumptionForDay,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -113,7 +113,7 @@ export class FoodConsumptionController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutritions.FoodConsumption.Search';
+            request.context = 'Nutrition.FoodConsumption.Search';
             await this._authorizer.authorize(request, response);
 
             const filters = await FoodConsumptionValidator.search(request);
@@ -137,7 +137,7 @@ export class FoodConsumptionController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutritions.FoodConsumption.Update';
+            request.context = 'Nutrition.FoodConsumption.Update';
 
             await this._authorizer.authorize(request, response);
 
@@ -164,7 +164,7 @@ export class FoodConsumptionController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutritions.FoodConsumption.Delete';
+            request.context = 'Nutrition.FoodConsumption.Delete';
             await this._authorizer.authorize(request, response);
 
             const id: string = await FoodConsumptionValidator.getById(request);

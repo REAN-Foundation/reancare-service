@@ -1,13 +1,13 @@
-import { IFoodConsumptionRepo } from '../../../../repository.interfaces/nutritions/food.consumption.repo.interface';
-import FoodConsumptionModel from '../../models/nutritions/food.consumption.model';
+import { IFoodConsumptionRepo } from '../../../../repository.interfaces/nutrition/food.consumption.repo.interface';
+import FoodConsumptionModel from '../../models/nutrition/food.consumption.model';
 import { Op } from 'sequelize';
-import { FoodConsumptionMapper } from '../../mappers/nutritions/food.consumption.mapper';
+import { FoodConsumptionMapper } from '../../mappers/nutrition/food.consumption.mapper';
 import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
-import { FoodConsumptionDomainModel } from "../../../../../domain.types/nutritions/food.consumption/food.consumption.domain.model";
-import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from "../../../../../domain.types/nutritions/food.consumption/food.consumption.dto";
-import { FoodConsumptionSearchFilters, FoodConsumptionSearchResults } from "../../../../../domain.types/nutritions/food.consumption/food.consumption.search.types";
-import { FoodConsumptionEvents } from '../../../../../domain.types/nutritions/food.consumption/food.consumption.types';
+import { FoodConsumptionDomainModel } from "../../../../../domain.types/nutrition/food.consumption/food.consumption.domain.model";
+import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from "../../../../../domain.types/nutrition/food.consumption/food.consumption.dto";
+import { FoodConsumptionSearchFilters, FoodConsumptionSearchResults } from "../../../../../domain.types/nutrition/food.consumption/food.consumption.search.types";
+import { FoodConsumptionEvents } from '../../../../../domain.types/nutrition/food.consumption/food.consumption.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 PatientUserId   : foodConsumptionDomainModel.PatientUserId,
                 Food            : foodConsumptionDomainModel.Food,
                 Description     : foodConsumptionDomainModel.Description,
-                ConsumedAs      : foodConsumptionDomainModel.ConsumedAs,
+                ConsumedAs      : FoodConsumptionEvents[foodConsumptionDomainModel.ConsumedAs],
                 Calories        : foodConsumptionDomainModel.Calories,
                 ImageResourceId : foodConsumptionDomainModel.ImageResourceId,
                 StartTime       : foodConsumptionDomainModel.StartTime,
@@ -49,17 +49,24 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
     getByEvent = async (ConsumedAs: string, PatientUserId: string): Promise<FoodConsumptionEventDto> => {
         try {
-            const foods = await FoodConsumptionModel.findAll({
+            const foodResults = await FoodConsumptionModel.findAll({
                 where : { ConsumedAs: ConsumedAs, PatientUserId: PatientUserId, DeletedAt: null }
             });
+
+            const foodConsumptions: FoodConsumptionDto[] = [];
+            for (const foodConsumption of foodResults) {
+                const dto = await FoodConsumptionMapper.toDto(foodConsumption);
+                foodConsumptions.push(dto);
+            }
+
             const entity = {
                 PatientUserId : PatientUserId,
                 Event         : FoodConsumptionEvents[ConsumedAs],
-                Foods         : foods,
-                TotalCalories : await FoodConsumptionRepo.calculateEventTotalCalories(foods),
-                StartTime     : await FoodConsumptionRepo.calculateEventStartTime(foods),
-                EndTime       : await FoodConsumptionRepo.calculateEventEndTime(foods),
-                DurationInMin : await FoodConsumptionRepo.calculateEventDuration(foods),
+                Foods         : foodConsumptions,
+                TotalCalories : await FoodConsumptionRepo.calculateEventTotalCalories(foodConsumptions),
+                StartTime     : await FoodConsumptionRepo.calculateEventStartTime(foodConsumptions),
+                EndTime       : await FoodConsumptionRepo.calculateEventEndTime(foodConsumptions),
+                DurationInMin : await FoodConsumptionRepo.calculateEventDuration(foodConsumptions),
             };
 
             const event = await FoodConsumptionMapper.event(entity);
@@ -70,27 +77,59 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
     };
 
-    getByDate = async (date: Date, PatientUserId: string): Promise<FoodConsumptionForDayDto> => {
+    getForDay = async (date: Date, PatientUserId: string): Promise<FoodConsumptionForDayDto> => {
         try {
             const startTime = new Date(date);
+            startTime.setHours(0, 0, 0, 0);
             const endTime = new Date(date);
+            endTime.setHours(23, 59, 59, 0);
 
-            const foods = await FoodConsumptionModel.findAll({
+            const foodResults = await FoodConsumptionModel.findAll({
                 where : {
                     StartTime     : { [Op.gte]: startTime },
                     EndTime       : { [Op.lte]: endTime },
                     PatientUserId : PatientUserId,
-                    DeletedAt     : null }
+                    DeletedAt     : null
+                },
+                order : [['StartTime', 'ASC']]
             });
+
+            // get distinct food consumption events for the day
+            const availableFoodEvents = {};
+            foodResults.forEach((food: FoodConsumptionDomainModel) => {
+                if (Object.keys(availableFoodEvents).indexOf(food.ConsumedAs) === -1) {
+                    availableFoodEvents[food.ConsumedAs] = [];
+                }
+
+                availableFoodEvents[food.ConsumedAs].push(food);
+            });
+
+            // get food consumption event for each event
+            const foodConsumptionsEvents = [];
+            for (const eventName of Object.keys(availableFoodEvents)) {
+                const foodConsumptions = availableFoodEvents[eventName];
+
+                const eventEntity = {
+                    PatientUserId : PatientUserId,
+                    Event         : FoodConsumptionEvents[eventName],
+                    Foods         : foodConsumptions,
+                    TotalCalories : await FoodConsumptionRepo.calculateEventTotalCalories(foodConsumptions),
+                    StartTime     : await FoodConsumptionRepo.calculateEventStartTime(foodConsumptions),
+                    EndTime       : await FoodConsumptionRepo.calculateEventEndTime(foodConsumptions),
+                    DurationInMin : await FoodConsumptionRepo.calculateEventDuration(foodConsumptions),
+                };
+
+                foodConsumptionsEvents.push(eventEntity);
+            }
 
             const entity = {
                 PatientUserId : PatientUserId,
-                Event         : FoodConsumptionEventDto[Event],
-                Date          : Date,
-                TotalCalories : await FoodConsumptionRepo.calculateEventTotalCalories(foods),
-                StartTime     : await FoodConsumptionRepo.calculateEventStartTime(foods),
-                EndTime       : await FoodConsumptionRepo.calculateEventEndTime(foods),
-                DurationInMin : await FoodConsumptionRepo.calculateEventDuration(foods),
+                Event         : foodConsumptionsEvents,
+                Date          : date,
+                TotalCalories : await FoodConsumptionRepo.calculateTotalCaloriesForDay(foodConsumptionsEvents),
+                StartTime     : await FoodConsumptionRepo.calculateStartTimeForDay(foodConsumptionsEvents),
+                EndTime       : await FoodConsumptionRepo.calculateEndTimeForDay(foodConsumptionsEvents),
+                DurationInMin : await FoodConsumptionRepo.calculateDurationForDay(foodConsumptionsEvents),
             };
 
             const eventsForDay = await FoodConsumptionMapper.eventForDay(entity);
@@ -118,12 +157,6 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             if (filters.ConsumedAs != null) {
                 search.where['ConsumedAs'] = filters.ConsumedAs;
             }
-            if (filters.ContactPhone != null) {
-                search.where['ContactPhone'] = filters.ContactPhone;
-            }
-            if (filters.ContactEmail != null) {
-                search.where['ContactEmail'] = filters.ContactEmail;
-            }
             if (filters.TimeFrom != null && filters.TimeTo != null) {
                 search.where['CreatedAt'] = {
                     [Op.gte] : filters.TimeFrom,
@@ -139,7 +172,13 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 };
             }
             if (filters.ForDay !== null) {
-                search.where['ForDay'] = filters.ForDay;
+                const startTime = new Date(filters.ForDay);
+                startTime.setHours(0, 0, 0, 0);
+                const endTime = new Date(filters.ForDay);
+                endTime.setHours(23, 59, 59, 0);
+
+                search.where['StartTime'] = { [Op.gte]: startTime };
+                search.where['EndTime'] = { [Op.lte]: endTime };
             }
 
             let orderByColum = 'CreatedAt';
@@ -276,6 +315,49 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     private static calculateEventDuration = async (foods: FoodConsumptionDomainModel[]): Promise<number> => {
         const startTime = await FoodConsumptionRepo.calculateEventStartTime(foods);
         const endTime = await FoodConsumptionRepo.calculateEventEndTime(foods);
+        let duration = 0;
+
+        if (startTime && endTime) {
+            duration = Math.round((endTime.getTime() - startTime.getTime()) / 60000);
+        }
+
+        return duration;
+    }
+
+    private static calculateTotalCaloriesForDay = async (events: FoodConsumptionEventDto[]): Promise<number> => {
+        let totalCalories = 0;
+        events.forEach((event) => {
+            totalCalories += event.TotalCalories;
+        });
+
+        return totalCalories;
+    }
+
+    private static calculateStartTimeForDay = async (events: FoodConsumptionEventDto[]): Promise<Date> => {
+        let startTime = events[0] ? events[0].StartTime : null;
+        events.forEach((event) => {
+            if (event.StartTime < startTime) {
+                startTime = event.StartTime;
+            }
+        });
+
+        return startTime;
+    }
+
+    private static calculateEndTimeForDay = async (events: FoodConsumptionEventDto[]): Promise<Date> => {
+        let endTime = events[0] ? events[0].EndTime : null;
+        events.forEach((event) => {
+            if (event.EndTime > endTime) {
+                endTime = event.EndTime;
+            }
+        });
+
+        return endTime;
+    }
+
+    private static calculateDurationForDay = async (events: FoodConsumptionEventDto[]): Promise<number> => {
+        const startTime = await FoodConsumptionRepo.calculateStartTimeForDay(events);
+        const endTime = await FoodConsumptionRepo.calculateEndTimeForDay(events);
         let duration = 0;
 
         if (startTime && endTime) {

@@ -16,7 +16,7 @@ import { PersonRoleRepo } from './repositories/person.role.repo';
 import { RolePrivilegeRepo } from './repositories/role.privilege.repo';
 import { RoleRepo } from './repositories/role.repo';
 import { UserRepo } from './repositories/user.repo';
-import { FoodConsumptionRepo } from './repositories/nutritions/food.consumption.repo';
+import { FoodConsumptionRepo } from './repositories/nutrition/food.consumption.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 

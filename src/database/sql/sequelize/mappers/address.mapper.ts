@@ -13,18 +13,16 @@ export class AddressMapper {
         const lattitude: string = address.Lattitude ? address.Lattitude.toString() : null;
 
         const dto: AddressDto = {
-            id             : address.id,
-            Type           : address.Type,
-            PersonId       : address.PersonId,
-            OrganizationId : address.OrganizationId,
-            AddressLine    : address.AddressLine,
-            City           : address.City,
-            District       : address.District,
-            State          : address.State,
-            Country        : address.Country,
-            PostalCode     : address.PostalCode,
-            Longitude      : longitude ? parseFloat(longitude) : null,
-            Lattitude      : lattitude ? parseFloat(lattitude) : null,
+            id          : address.id,
+            Type        : address.Type,
+            AddressLine : address.AddressLine,
+            City        : address.City,
+            District    : address.District,
+            State       : address.State,
+            Country     : address.Country,
+            PostalCode  : address.PostalCode,
+            Longitude   : longitude ? parseFloat(longitude) : null,
+            Lattitude   : lattitude ? parseFloat(lattitude) : null,
         };
         return dto;
     }

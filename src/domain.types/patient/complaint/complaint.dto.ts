@@ -1,6 +1,6 @@
 import { Severity } from "../../miscellaneous/system.types";
 
-export interface AllergyDto {
+export interface ComplaintDto {
     id: string;
     PatientUserId: string;
     MedicalPractitionerUserId?: string;

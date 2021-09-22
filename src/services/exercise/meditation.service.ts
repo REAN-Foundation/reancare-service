@@ -2,7 +2,6 @@ import { inject, injectable } from "tsyringe";
 import { IMeditationRepo } from "../../database/repository.interfaces/exercise/meditation.repo.interface";
 import { MeditationDomainModel } from '../../domain.types/exercise/meditation/meditation.domain.model';
 import { MeditationDto } from '../../domain.types/exercise/meditation/meditation.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MeditationSearchResults, MeditationSearchFilters } from '../../domain.types/exercise/meditation/meditation.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

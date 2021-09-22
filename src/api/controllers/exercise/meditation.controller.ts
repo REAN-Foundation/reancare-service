@@ -4,7 +4,7 @@ import { Loader } from '../../../startup/loader';
 import { ApiError } from '../../../common/api.error';
 import { MeditationService } from '../../../services/exercise/meditation.service';
 import { Authorizer } from '../../../auth/authorizer';
-import { MeditationValidator } from '../../validators/exercise/mediation.validator';
+import { MeditationValidator } from '../../validators/exercise/meditation.validator';
 import { Helper } from '../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,3 @@
-import * as express from 'express-fileupload';
 import { FileResourceMetadata, ResourceReference } from "./file.resource.types";
 
 export interface FileResourceUploadDomainModel {
@@ -11,16 +10,7 @@ export interface FileResourceUploadDomainModel {
     References?            : ResourceReference[];
     Tags?                  : string[];
     MimeType?              : string;
-}
-
-export interface FileResourceSearchDownloadDomainModel {
-    OwnerUserId?       : string,
-    IsPublicResource?  : boolean;
-    Version?           : string;
-    ReferenceId?       : string;
-    ReferenceType?     : string;
-    Tag?               : string;
-    DownloadOnlyLatest?: boolean;
+    DefaultVersionId?      : string;
 }
 
 export interface FileResourceRenameDomainModel {

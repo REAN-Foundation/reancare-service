@@ -1,25 +1,20 @@
 import { inject, injectable } from "tsyringe";
-import {
-    FileResourceUploadDomainModel,
-    FileResourceVersionDomainModel
-} from '../domain.types/file.resource/file.resource.domain.model';
-
+import { FileResourceUploadDomainModel } from '../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceDetailsDto, FileResourceDto } from '../domain.types/file.resource/file.resource.dto';
 import { FileResourceSearchResults, FileResourceSearchFilters } from '../domain.types/file.resource/file.resource.search.types';
 import { IFileResourceRepo } from "../database/repository.interfaces/file.resource.repo.interface";
 import { IFileStorageService } from '../modules/storage/interfaces/file.storage.service.interface';
 import { TimeHelper } from "../common/time.helper";
-
-import mime from 'mime';
-import path from 'path';
-import fs from 'fs';
-import * as _ from 'lodash';
-import * as sharp from 'sharp';
 import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
 import { ApiError } from "../common/api.error";
 import { Logger } from "../common/logger";
 import { ConfigurationManager } from "../configs/configuration.manager";
 import { FileResourceMetadata } from "../domain.types/file.resource/file.resource.types";
+
+import mime from 'mime';
+import path from 'path';
+import fs from 'fs';
+import sharp from 'sharp';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,10 +41,10 @@ export class FileResourceService {
             resource = await this.uploadDefaultVersion(domainModel);
             
             var imageVersions = await this.generateImageVersions(domainModel);
-            for await (var v of imageVersions) {
+            for await (var versionMetadata of imageVersions) {
                 var storageKey = await this.uploadFileToStorage(domainModel.FileMetadata);
-                v.StorageKey = storageKey;
-                var versionDetails = await this._fileResourceRepo.addVersionDetails(resource.id, v);
+                versionMetadata.StorageKey = storageKey;
+                var versionDetails = await this._fileResourceRepo.addVersion(versionMetadata, false);
                 resource.Versions.push(versionDetails);
             }
         }
@@ -92,17 +87,17 @@ export class FileResourceService {
         return await this._fileResourceRepo.create(domainModel);
     };
 
-    uploadVersion = async (resourceId, metadata: FileResourceMetadata): Promise<FileResourceDto> => {
+    uploadVersion = async (metadata: FileResourceMetadata, makeDefaultVersion: boolean): Promise<FileResourceDto> => {
 
         if (metadata.VersionIdentifier === undefined || metadata.VersionIdentifier === null) {
-            throw Error('Version identifier found missing!');
+            metadata.VersionIdentifier = await this.generateNewVersionIdentifier(metadata.ResourceId);
         }
+
         var storageKey = await this.uploadFileToStorage(metadata);
         metadata.StorageKey = storageKey;
+        await this._fileResourceRepo.addVersion(metadata, makeDefaultVersion);
 
-        await this._fileResourceRepo.addVersionDetails(resourceId, metadata);
-
-        return await this.getById(resourceId);
+        return await this.getById(metadata.ResourceId);
     };
 
     rename = async (id: string, newFileName: string): Promise<boolean> => {
@@ -111,7 +106,7 @@ export class FileResourceService {
         if (resource === null) {
             throw new ApiError(404, "File resource not found!");
         }
-        await this._storageService.rename(resource.LatestVersion.StorageKey, newFileName);
+        await this._storageService.rename(resource.DefaultVersion.StorageKey, newFileName);
         return await this._fileResourceRepo.rename(id, newFileName);
     }
 
@@ -119,27 +114,27 @@ export class FileResourceService {
         : Promise<string> => {
 
         var resources = await this._fileResourceRepo.searchForDownload(filters);
-        var timestamp = TimeHelper.timestamp(new Date());
-        var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
-        var downloadFolderPath = path.join(tempDownloadFolder, timestamp);
+        var downloadFolderPath = this.generateDownloadFolderPath();
 
         for await (var resource of resources) {
-            var localFilePath = path.join(downloadFolderPath, resource.LatestVersion.FileName);
-            await this._storageService.download(resource.LatestVersion.StorageKey, localFilePath);
+            var localFilePath = path.join(downloadFolderPath, resource.DefaultVersion.FileName);
+            await this._storageService.download(resource.DefaultVersion.StorageKey, localFilePath);
         }
 
         return downloadFolderPath;
     };
 
     downloadByVersion = async (resourceId: string, version: string): Promise<string> => {
-        var versionDetails = await this._fileResourceRepo.getVersionDetails(resourceId, version);
-        var localDestination = await this._storageService.download(versionDetails.StorageKey);
+        var downloadFolderPath = this.generateDownloadFolderPath();
+        var versionDetails = await this._fileResourceRepo.getVersion(resourceId, version);
+        var localDestination = await this._storageService.download(versionDetails.StorageKey, downloadFolderPath);
         return localDestination;
     };
 
     downloadById = async (id: string): Promise<string> => {
         var dto = await this._fileResourceRepo.getById(id);
-        var localDestination = await this._storageService.download(dto.StorageKey);
+        var downloadFolderPath = this.generateDownloadFolderPath();
+        var localDestination = await this._storageService.download(dto.DefaultVersion.StorageKey, downloadFolderPath);
         return localDestination;
     };
 
@@ -147,13 +142,13 @@ export class FileResourceService {
         return await this._fileResourceRepo.search(filters);
     };
 
-    getById = async (id: string): Promise<FileResourceDto> => {
+    getById = async (id: string): Promise<FileResourceDetailsDto> => {
         return await this._fileResourceRepo.getById(id);
     };
 
     getShareableLink = async (id: string, durationInMinutes: number): Promise<string> => {
         var dto = await this._fileResourceRepo.getById(id);
-        var storageKey = dto.FileMetadata.StorageKey;
+        var storageKey = dto.DefaultVersion.StorageKey;
         return await this._storageService.getShareableLink(storageKey, durationInMinutes);
     };
 
@@ -163,7 +158,7 @@ export class FileResourceService {
         for await (var version of versions) {
             var deleted = await this._storageService.delete(version.StorageKey);
             if (deleted) {
-                var success = await this._fileResourceRepo.deleteVersion(version.ResourceId, version.Version);
+                var success = await this._fileResourceRepo.deleteVersion(version.ResourceId, version.VersionIdentifier);
                 if (!success) {
                     throw new ApiError(422, "Error deleting version for resource!");
                 }
@@ -183,6 +178,13 @@ export class FileResourceService {
         this.cleanupDirectories(tempUploadFolder);
     }
 
+    private generateDownloadFolderPath() {
+        var timestamp = TimeHelper.timestamp(new Date());
+        var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
+        var downloadFolderPath = path.join(tempDownloadFolder, timestamp);
+        return downloadFolderPath;
+    }
+
     private async uploadDefaultVersion(domainModel: FileResourceUploadDomainModel) {
 
         var resource = await this._fileResourceRepo.create(domainModel);
@@ -193,11 +195,12 @@ export class FileResourceService {
         domainModel.FileMetadata.StorageKey = storageKey;
 
         var versions = [];
-        var versionDetails = await this._fileResourceRepo.addVersionDetails(resource.id, domainModel.FileMetadata);
-        versions.push(versionDetails);
+        var version = await this._fileResourceRepo.addVersion(domainModel.FileMetadata, true);
+        resource.DefaultVersion = version;
 
+        versions.push(version);
         resource.Versions = versions;
-
+        
         return resource;
     }
 
@@ -205,17 +208,14 @@ export class FileResourceService {
 
     //#region Privates
    
-    private async uploadFile(domainModel: FileResourceUploadDomainModel)
-        : Promise<FileResourceDto> {
-
-        return await this._fileResourceRepo.create(domainModel);
-    }
-
     private async uploadFileToStorage(fileMetadata: FileResourceMetadata) {
+
         var dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
         var filename = fileMetadata.FileName;
         var storageKey = 'resources/' + dateFolder + '/' + filename;
+
         await this._storageService.upload(storageKey, fileMetadata.SourceFilePath);
+        
         return storageKey;
     }
 
@@ -251,7 +251,7 @@ export class FileResourceService {
     
     }
 
-    isSupportedImageType = (mimeType: string): boolean => {
+    private isSupportedImageType = (mimeType: string): boolean => {
         var supportedTypes = [
             'image/bmp',
             'image/jpeg',
@@ -263,7 +263,20 @@ export class FileResourceService {
         return false;
     }
 
-    generateImageVersions = async (domainModel: FileResourceUploadDomainModel): Promise<FileResourceMetadata[]> => {
+    private generateNewVersionIdentifier = async (ResourceId: string): Promise<string> => {
+
+        var versionNames = await this._fileResourceRepo.getVersionNames(ResourceId);
+        var count = versionNames.length + 1;
+        var versionName = count.toString();
+        while (versionNames.includes(versionName)) {
+            count++;
+            versionName = count.toString();
+        }
+        return versionName;
+    }
+
+    private generateImageVersions = async (domainModel: FileResourceUploadDomainModel)
+        : Promise<FileResourceMetadata[]> => {
 
         var metadata = domainModel.FileMetadata;
         var sourceFilePath = metadata.SourceFilePath;
@@ -272,8 +285,9 @@ export class FileResourceService {
         var extension = path.extname(sourceFilePath);
         var strippedFilename = path.basename(sourceFilePath, extension);
 
-        var width = sharp(sourceFilePath).width;
-        var height = sharp(sourceFilePath).height;
+        var imageMetadata = await sharp(sourceFilePath).metadata();
+        var width = imageMetadata.width;
+        var height = imageMetadata.height;
         var aspectRatio = width / height;
 
         var thumbnailHeight = aspectRatio < 1.0 ? 200 : 200 * aspectRatio;

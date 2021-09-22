@@ -2,27 +2,14 @@ import { Op } from 'sequelize';
 import { FileResourceMapper } from '../mappers/file.resource.mapper';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
-import {
-    FileResourceMetadata,
-    FileResourceRenameDomainModel,
-    FileResourceSearchDownloadDomainModel,
-    FileResourceUploadDomainModel,
-} from '../../../../domain.types/file.resource/file.resource.domain.model';
-
-import {
-    FileResourceDetailsDto,
-    FileVersionDetailsDto,
-} from '../../../../domain.types/file.resource/file.resource.dto';
-
-import {
-    FileResourceSearchFilters,
-    FileResourceSearchResults,
-} from '../../../../domain.types/file.resource/file.resource.search.types';
-
+import { FileResourceUploadDomainModel } from '../../../../domain.types/file.resource/file.resource.domain.model';
+import { FileResourceDetailsDto, FileResourceDto } from '../../../../domain.types/file.resource/file.resource.dto';
+import { FileResourceSearchFilters, FileResourceSearchResults } from '../../../../domain.types/file.resource/file.resource.search.types';
 import { IFileResourceRepo } from '../../../../database/repository.interfaces/file.resource.repo.interface';
 import FileResource from '../models/file.resource/file.resource.model';
 import FileResourceReference from '../models/file.resource/file.resource.reference.model';
-import { ResourceReference } from '../../../../domain.types/file.resource/file.resource.types';
+import { FileResourceMetadata, ResourceReference } from '../../../../domain.types/file.resource/file.resource.types';
+import FileResourceVersion from '../models/file.resource/file.resource.version.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -42,6 +29,7 @@ export class FileResourceRepo implements IFileResourceRepo {
                 Tags                   : tags,
                 MimeType               : domainModel.MimeType ?? null,
                 UploadedDate           : new Date(),
+                DefaultVersionId       : domainModel.DefaultVersionId
             };
             const resource = await FileResource.create(entity);
             if (resource === null) {
@@ -61,7 +49,7 @@ export class FileResourceRepo implements IFileResourceRepo {
                 }
             }
         
-            var dto = FileResourceMapper.toDto(resource);
+            var dto = FileResourceMapper.toDetailsDto(resource);
             dto.References = FileResourceMapper.toFileReferenceDtos(references);
             
             return dto;
@@ -78,24 +66,69 @@ export class FileResourceRepo implements IFileResourceRepo {
         if (resource === null) {
             throw new Error('Cannot find the resource!');
         }
-        var dto = FileResourceMapper.toDto(resource);
+        var dto = FileResourceMapper.toDetailsDto(resource);
 
         const references = await FileResourceReference.findAll({
-            where
+            where : {
+                ResourceId : id
+            }
         });
+        dto.References = FileResourceMapper.toFileReferenceDtos(references);
 
+        if (resource.DefaultVersionId) {
+            var defaultVersion = await FileResourceVersion.findByPk(resource.DefaultVersionId);
+            dto.DefaultVersion = FileResourceMapper.toFileVersionDto(defaultVersion);
+        }
+
+        var versions = await FileResourceVersion.findAll({
+            where : {
+                ResourceId : id
+            },
+            order : [['UpdatedAt', 'DESC']]
+        });
+        dto.Versions = FileResourceMapper.toFileVersionDtos(versions);
+        
         return dto;
     }
 
-    addVersionDetails = async (versionModel: FileResourceVersionDomainModel): Promise<FileVersionDetailsDto> => {
+    addVersion = async (metadata: FileResourceMetadata, makeDefaultVersion: boolean): Promise<FileResourceMetadata> => {
+        
+        var fileVersion = {
+            ResourceId       : metadata.ResourceId,
+            Version          : metadata.VersionIdentifier,
+            FileName         : metadata.FileName,
+            OriginalFileName : metadata.OriginalName,
+            MimeType         : metadata.MimeType,
+            StorageKey       : metadata.StorageKey,
+            SizeInKB         : metadata.Size,
+        };
+
+        var version = await FileResourceVersion.create(fileVersion);
+        if (version === null) {
+            throw new Error('Unable to create version instance in database!');
+        }
+
+        if (makeDefaultVersion) {
+            var resource = await FileResource.findByPk(metadata.ResourceId);
+            if (resource === null) {
+                throw new Error('Unable to find resource!');
+            }
+            resource.DefaultVersionId = version.id;
+            await resource.save();
+        }
+
+        return FileResourceMapper.toFileVersionDto(version);
+    }
+
+    searchForDownload = async (filters: FileResourceSearchFilters): Promise<FileResourceDto[]> => {
         throw new Error('Method not implemented.');
     }
 
-    searchForDownload = async (filters: FileResourceSearchDownloadDomainModel): Promise<DownloadedFilesDetailsDto> => {
+    getVersion = async (id: string, version: string): Promise<FileResourceMetadata> => {
         throw new Error('Method not implemented.');
     }
 
-    getVersionDetails = async (versionModel: FileResourceVersionDomainModel): Promise<FileVersionDetailsDto> => {
+    getVersionNames = async (id: string): Promise<string[]> => {
         throw new Error('Method not implemented.');
     }
 

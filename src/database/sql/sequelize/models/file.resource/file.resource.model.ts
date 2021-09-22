@@ -11,10 +11,12 @@ import {
     Length,
     IsDate,
     ForeignKey,
+    HasOne,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import User from '../user.model';
+import FileResourceVersion from './file.resource.version.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -37,13 +39,6 @@ export default class FileResource extends Model {
         allowNull : false,
     })
     id: string;
-    
-    // @Length({ max: 128 })
-    // @Column({
-    //     type      : DataType.STRING(128),
-    //     allowNull : true,
-    // })
-    // EhrId: string;
 
     @Length({ max: 128 })
     @Column({
@@ -95,6 +90,14 @@ export default class FileResource extends Model {
         allowNull : true,
     })
     MimeType: string;
+    
+    @IsUUID(4)
+    @ForeignKey(() => FileResourceVersion)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    DefaultVersionId: string;
 
     @IsDate
     @Column({

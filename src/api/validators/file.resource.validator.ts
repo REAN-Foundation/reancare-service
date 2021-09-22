@@ -1,11 +1,7 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 import { FileResourceMetadata, ResourceReference } from '../../domain.types/file.resource/file.resource.types';
-import {
-    FileResourceRenameDomainModel,
-    FileResourceSearchDownloadDomainModel,
-    FileResourceUploadDomainModel,
-} from '../../domain.types/file.resource/file.resource.domain.model';
+import { FileResourceRenameDomainModel, FileResourceUploadDomainModel } from '../../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
 import * as _ from 'lodash';
 import { ValidationError } from 'sequelize';
@@ -32,6 +28,7 @@ export class FileResourceValidator {
                 var item: ResourceReference = {
                     ItemId   : element.ItemId,
                     ItemType : element.ItemType ?? null,
+                    Keyword  : element.Keyword ?? null
                 };
                 references.push(item);
             });
@@ -87,9 +84,13 @@ export class FileResourceValidator {
             .isUUID()
             .run(request);
 
-        await param('version').exists()
+        await body('Version').optional()
             .trim()
-            .isUUID()
+            .run(request);
+
+        await body('MakeAsDefault').optional()
+            .trim()
+            .isBoolean()
             .run(request);
 
         const result = validationResult(request);
@@ -105,7 +106,8 @@ export class FileResourceValidator {
 
         var metadata = metadataList[0];
         metadata.ResourceId = request.params.id;
-        metadata.VersionIdentifier = request.params.version;
+        metadata.VersionIdentifier = request.body.Version;
+        metadata.IsDefaultVersion = request.body.MakeAsDefault === 'false' ? false : true;
         
         return metadata;
     };
@@ -161,22 +163,6 @@ export class FileResourceValidator {
 
         return model;
     }
-
-    static searchAndDownload = async (request): Promise<FileResourceSearchDownloadDomainModel> => {
-
-        await FileResourceValidator.searchQueryParams(request);
-
-        var model: FileResourceSearchDownloadDomainModel = {
-            OwnerUserId      : request.query.ownerUserId ?? null,
-            IsPublicResource : request.query.isPublicResource ?? false,
-            Version          : request.query.version ?? null,
-            ReferenceId      : request.query.referenceId ?? null,
-            ReferenceType    : request.query.referenceType ?? null,
-            Tag              : request.query.tag ?? null
-        };
-
-        return model;
-    };
 
     static downloadByVersion = async (request: express.Request): Promise<FileResourceMetadata> => {
         return await FileResourceValidator.getIdAndVersion(request);

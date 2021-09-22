@@ -1,4 +1,8 @@
 import express from 'express';
+import path from 'path';
+import fs from 'fs';
+import mime from 'mime';
+import * as admzip from 'adm-zip';
 
 import { Helper } from '../../common/helper';
 import { ResponseHandler } from '../../common/response.handler';
@@ -9,14 +13,9 @@ import { ApiError } from '../../common/api.error';
 import { FileResourceValidator } from '../validators/file.resource.validator';
 import { FileResourceService } from '../../services/file.resource.service';
 import { RoleService } from '../../services/role.service';
-import { FileResourceSearchDownloadDomainModel, FileResourceVersionDomainModel } from '../../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
-import { DownloadedFilesDetailsDto } from '../../domain.types/file.resource/file.resource.dto';
-
-import path from 'path';
-import fs from 'fs';
-import mime from 'mime';
-import * as admzip from 'adm-zip';
+import { FileResourceMetadata } from '../../domain.types/file.resource/file.resource.types';
+import { TimeHelper } from '../../common/time.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,8 +69,8 @@ export class FileResourceController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const domainModel: FileResourceVersionDomainModel = await FileResourceValidator.uploadVersion(request);
-            const dto = await this._service.uploadVersion(domainModel);
+            const metadata: FileResourceMetadata = await FileResourceValidator.uploadVersion(request);
+            const dto = await this._service.uploadVersion(metadata, metadata.IsDefaultVersion);
 
             ResponseHandler.success(request, response, 'File version uploaded successfully!', 201, {
                 FileResource : dto,
@@ -110,19 +109,22 @@ export class FileResourceController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const domainModel: FileResourceSearchDownloadDomainModel =
-                await FileResourceValidator.searchAndDownload(request);
+            const filters: FileResourceSearchFilters =
+                await FileResourceValidator.search(request);
 
-            const downloaded: DownloadedFilesDetailsDto = await this._service.searchAndDownload(domainModel);
-            if (downloaded.Files === null || downloaded.Files.length === 0) {
+            const downloadedFolder = await this._service.searchAndDownload(filters);
+            var filenames = fs.readdirSync(downloadedFolder);
+            if (filenames.length === 0) {
                 throw new ApiError(404, 'File resources are not found.');
             }
 
             var zipper = new admzip();
-            for await (var f of downloaded.Files) {
-                zipper.add(f.DownloadedLocalPath);
+            for await (var f of filenames) {
+                var fullFilePath = path.join(downloadedFolder, f);
+                zipper.add(fullFilePath);
             }
-            var zipFile = `${downloaded.LocalFolderName}.zip`;
+            var timestamp = TimeHelper.timestamp(new Date());
+            var zipFile = `${timestamp}.zip`;
             const data = zipper.toBuffer();
     
             response.set('Content-Type', 'application/octet-stream');
@@ -141,9 +143,12 @@ export class FileResourceController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const domainModel: FileResourceVersionDomainModel = await FileResourceValidator.downloadByVersion(request);
+            const metadata: FileResourceMetadata = await FileResourceValidator.downloadByVersion(request);
 
-            const localDestination = await this._service.downloadByVersion(domainModel);
+            const localDestination = await this._service.downloadByVersion(
+                metadata.ResourceId,
+                metadata.VersionIdentifier);
+
             if (localDestination == null) {
                 throw new ApiError(404, 'FileResource not found.');
             }

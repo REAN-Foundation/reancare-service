@@ -59,6 +59,13 @@ export default class FileResourceReference extends Model {
     })
     ReferenceType: string;
 
+    @Length({ max: 32 })
+    @Column({
+        type      : DataType.STRING(32),
+        allowNull : true,
+    })
+    Keyword: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

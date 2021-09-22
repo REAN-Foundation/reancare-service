@@ -1,6 +1,6 @@
 import { FileResourceMetadata } from "../../domain.types/file.resource/file.resource.types";
-import { FileResourceSearchDownloadDomainModel, FileResourceUploadDomainModel, FileResourceVersionDomainModel } from "../../domain.types/file.resource/file.resource.domain.model";
-import { FileResourceDetailsDto, FileResourceDto, FileVersionDetailsDto } from "../../domain.types/file.resource/file.resource.dto";
+import { FileResourceUploadDomainModel } from "../../domain.types/file.resource/file.resource.domain.model";
+import { FileResourceDetailsDto, FileResourceDto } from "../../domain.types/file.resource/file.resource.dto";
 import { FileResourceSearchFilters, FileResourceSearchResults } from "../../domain.types/file.resource/file.resource.search.types";
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -11,20 +11,22 @@ export interface IFileResourceRepo {
 
     getById(id: string): Promise<FileResourceDetailsDto>;
 
-    addVersionDetails(id: string, metadata: FileResourceMetadata): Promise<FileResourceMetadata>;
+    addVersion(metadata: FileResourceMetadata, makeDefaultVersion: boolean): Promise<FileResourceMetadata>;
 
-    searchForDownload(filters: FileResourceSearchDownloadDomainModel): Promise<FileResourceDto[]>;
+    searchForDownload(filters: FileResourceSearchFilters): Promise<FileResourceDto[]>;
 
-    getVersionDetails(versionModel: FileResourceVersionDomainModel): Promise<FileVersionDetailsDto>;
+    getVersion(id: string, version: string): Promise<FileResourceMetadata>;
+    
+    getVersions(id: string): Promise<FileResourceMetadata[]>;
 
+    getVersionNames(id: string): Promise<string[]>;
+    
     search(filters: FileResourceSearchFilters): Promise<FileResourceSearchResults>;
 
     rename(id: string, newFileName: string): Promise<boolean>;
 
     delete(id: string): Promise<boolean>;
 
-    deleteVersion(ResourceId: any, Version: any);
-    
-    getVersions(id: string);
+    deleteVersion(ResourceId: any, Version: any): Promise<boolean>;
 
 }

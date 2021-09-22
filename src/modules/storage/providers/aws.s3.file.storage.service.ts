@@ -32,7 +32,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         return storageKey;
     };
 
-    download = async (storageKey: string, localFolder?: string): Promise<string> => {
+    download = async (storageKey: string, localFolder: string): Promise<string> => {
         
         const s3 = this.getS3Client();
         const params = {

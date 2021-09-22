@@ -26,7 +26,7 @@ export const register = (app: express.Application): void => {
 
     //Upload a new version of existing resource
 
-    router.post('/upload/:id/version/:version',
+    router.post('/upload-version/:id',
         authenticator.authenticateClient, authenticator.authenticateUser, controller.uploadVersion);
     router.post('/upload', authenticator.authenticateClient, authenticator.authenticateUser, controller.upload);
     router.post('/rename/:id/new-name/:newFileName', authenticator.authenticateClient, authenticator.authenticateUser, controller.rename);

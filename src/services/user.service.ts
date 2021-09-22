@@ -16,6 +16,7 @@ import { IPersonRepo } from '../database/repository.interfaces/person.repo.inter
 import { PersonDetailsDto } from '../domain.types/person/person.dto';
 import { Helper } from '../common/helper';
 import { UserDetailsDto, UserDto } from '../domain.types/user/user.dto';
+import { IInternalTestUserRepo } from '../database/repository.interfaces/internal.test.user.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,10 +29,13 @@ export class UserService {
         @inject('IPersonRoleRepo') private _userRoleRepo: IPersonRoleRepo,
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IOtpRepo') private _otpRepo: IOtpRepo,
+        @inject('IInternalTestUserRepo') private _internalTestUserRepo: IInternalTestUserRepo,
         @inject('IMessagingService') private _messagingService: IMessagingService
     ) {}
 
-    create = async (userDomainModel: UserDomainModel) => {
+    //#region Publics
+
+    public create = async (userDomainModel: UserDomainModel) => {
         var dto = await this._userRepo.create(userDomainModel);
         if (dto == null) {
             return null;
@@ -55,11 +59,16 @@ export class UserService {
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
 
+        var isInternalTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
+
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
-        const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
-        const isPasswordValid = Helper.compare(loginModel.Password, hashedPassword);
-        if (!isPasswordValid) {
-            throw new ApiError(401, 'Invalid password!');
+
+        if (!isInternalTestUser) {
+            const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
+            const isPasswordValid = Helper.compare(loginModel.Password, hashedPassword);
+            if (!isPasswordValid) {
+                throw new ApiError(401, 'Invalid password!');
+            }
         }
 
         //The following user data is immutable. Don't include any mutable data
@@ -77,6 +86,11 @@ export class UserService {
     };
 
     public generateOtp = async (otpDetails: any): Promise<boolean> => {
+
+        var isInternalTestUser = await this._internalTestUserRepo.isInternalTestUser(otpDetails.Phone);
+        if (isInternalTestUser) {
+            return true;
+        }
 
         let person: PersonDetailsDto = null;
 
@@ -129,15 +143,19 @@ export class UserService {
 
     public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
         
+        var isInternalTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
+        
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
 
-        const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
-        if (!storedOtp) {
-            throw new ApiError(404, 'Active Otp record not found!');
-        }
-        const date = new Date();
-        if (storedOtp.ValidTill <= date) {
-            throw new ApiError(400, 'Login OTP has expired. Please regenerate OTP again!');
+        if (!isInternalTestUser) {
+            const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
+            if (!storedOtp) {
+                throw new ApiError(404, 'Active Otp record not found!');
+            }
+            const date = new Date();
+            if (storedOtp.ValidTill <= date) {
+                throw new ApiError(400, 'Login OTP has expired. Please regenerate OTP again!');
+            }
         }
 
         //The following user data is immutable. Don't include any mutable data
@@ -170,15 +188,6 @@ export class UserService {
         return userName;
     }
     
-    private constructUserName(firstName: string, lastName: string) {
-        const rand = Math.random()
-            .toString(10)
-            .substr(2, 4);
-        let userName = firstName.substr(0, 3) + lastName.substr(0, 3) + rand;
-        userName = userName.toLowerCase();
-        return userName;
-    }
-
     public generateUserDisplayId = async (role:Roles, phone, phoneCount = 0) => {
 
         let prefix = '';
@@ -223,6 +232,19 @@ export class UserService {
     
         const displayId = prefix + str;
         return displayId;
+    }
+
+    //#endregion
+
+    //#region Privates
+
+    private constructUserName(firstName: string, lastName: string) {
+        const rand = Math.random()
+            .toString(10)
+            .substr(2, 4);
+        let userName = firstName.substr(0, 3) + lastName.substr(0, 3) + rand;
+        userName = userName.toLowerCase();
+        return userName;
     }
 
     private async checkUserDetails(loginModel: UserLoginDetails): Promise<UserDetailsDto> {
@@ -284,12 +306,6 @@ export class UserService {
             }
         }
     }
-
-    // public resetPassword = async (obj: any): Promise<boolean> => {
-    //     return true;
-    // };
-
-    //#region Privates
 
     private updateDetailsDto = async (dto: UserDetailsDto): Promise<UserDetailsDto> => {
         if (dto == null) {

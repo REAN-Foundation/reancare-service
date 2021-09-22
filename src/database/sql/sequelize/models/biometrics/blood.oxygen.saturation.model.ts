@@ -10,13 +10,11 @@ import {
     PrimaryKey,
     Length,
     ForeignKey,
-    BelongsTo,
     IsDecimal,
     IsDate } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import User from '../user.model';
-import Person from '../person.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -46,21 +44,10 @@ export default class BloodOxygenSaturation extends Model {
     EhrId: string;
 
     @IsUUID(4)
-    @ForeignKey(() => Person)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    PersonId: string;
-
-    @BelongsTo(() => Person)
-    Person: Person;
-
-    @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : true,
+        allowNull : false,
     })
     PatientUserId: string;
 
@@ -87,7 +74,7 @@ export default class BloodOxygenSaturation extends Model {
     @Column({
         type         : DataType.STRING(8),
         allowNull    : false,
-        defaultValue : '%s'
+        defaultValue : '%'
     })
     Unit: string;
 
@@ -115,5 +102,4 @@ export default class BloodOxygenSaturation extends Model {
 
     @DeletedAt
     DeletedAt: Date;
-
 }

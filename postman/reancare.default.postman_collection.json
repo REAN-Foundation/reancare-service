@@ -5535,210 +5535,5254 @@
 			]
 		},
 		{
-			"name": "Patient medical profile",
+			"name": "Patient specific routes",
 			"item": [
 				{
-					"name": "Update medical profile for patient",
-					"event": [
+					"name": "Patient health profile",
+					"item": [
 						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"// var types = ['Home', 'Communication', 'Official'];\r",
-									"\r",
-									"// var addressLines = [\r",
-									"//     '89/88, Sembudoss St, Parrys',\r",
-									"//     '228, Commerce House, Nagindas Master Rd, Fort',\r",
-									"//     '19, Shanti Sadan 2nd Flr, 11 Th Road, Khar (west)',\r",
-									"//     '99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli',\r",
-									"//     '249-a, Shop No.4, Ganesh Co Ophsg Soc, N M Joshi Marg, Opp Mafatlal Mill No3, Lower Parel (west)',\r",
-									"//     '8081 Manor Drive Piqua, OH 45356'];\r",
-									"\r",
-									"// var cities = [\r",
-									"//     \"Chennai\",\r",
-									"//     \"Mumbai\",\r",
-									"//     \"Banglore\"\r",
-									"// ];\r",
-									"\r",
-									"// var states = [\r",
-									"//     \"Tamilnadu\",\r",
-									"//     \"Maharashtra\",\r",
-									"//     \"Karnataka\"\r",
-									"// ];\r",
-									"\r",
-									"// var countries = [\"India\",\r",
-									"//     \"Thailand\",\r",
-									"//     \"Russia\",\r",
-									"//     \"USA\",\r",
-									"//     \"UK\",\r",
-									"//     \"Germany\",\r",
-									"//     \"France\",\r",
-									"//     \"Mexico\"];\r",
-									"\r",
-									"// var postalCodes = [\r",
-									"//     \"400023\",\r",
-									"//     \"400052\",\r",
-									"//     \"560068\",\r",
-									"//     \"400013\"\r",
-									"// ];\r",
-									"\r",
-									"// //Reference: https://stackoverflow.com/a/6878845\r",
-									"// function getRandomInRange(from, to, fixed) {\r",
-									"//     return (Math.random() * (to - from) + from).toFixed(fixed) * 1;\r",
-									"//     // .toFixed() returns string, so ' * 1' is a trick to convert to number\r",
-									"// }\r",
-									"\r",
-									"// var type = types[Math.floor(Math.random() * types.length)];\r",
-									"// var addressLine = addressLines[Math.floor(Math.random() * addressLines.length)];\r",
-									"// var city = cities[Math.floor(Math.random() * cities.length)];\r",
-									"// var state = states[Math.floor(Math.random() * states.length)];\r",
-									"// var country = countries[Math.floor(Math.random() * countries.length)];\r",
-									"// var postalCode = postalCodes[Math.floor(Math.random() * postalCodes.length)];\r",
-									"// var longitude = getRandomInRange(-180, 180, 6);\r",
-									"// var lattitude = getRandomInRange(-180, 180, 6);\r",
-									"\r",
-									"// console.log(type + '\\n');\r",
-									"// console.log(addressLine + '\\n');\r",
-									"// console.log(city + '\\n');\r",
-									"// console.log(state + '\\n');\r",
-									"// console.log(country + '\\n');\r",
-									"// console.log(postalCode + '\\n');\r",
-									"// console.log(longitude + '\\n');\r",
-									"// console.log(lattitude + '\\n');\r",
-									"\r",
-									"pm.environment.set(\"ADDRESS_TYPE\", 'Home');\r",
-									"pm.environment.set(\"ADDRESS_LINE\", '89/88, Sembudoss St, Parrys');\r",
-									"pm.environment.set(\"ADDRESS_CITY\", 'Pune');\r",
-									"pm.environment.set(\"ADDRESS_DISTRICT\", 'Greater Pune');\r",
-									"pm.environment.set(\"ADDRESS_STATE\", 'Maharashtra');\r",
-									"pm.environment.set(\"ADDRESS_COUNTRY\", 'India');\r",
-									"pm.environment.set(\"ADDRESS_POSTAL_CODE\", '411001');\r",
-									"pm.environment.set(\"ADDRESS_LONGITUDE\", 36.732324);\r",
-									"pm.environment.set(\"ADDRESS_LATTITUDE\", 6.611966);\r",
-									"\r",
-									"\r",
-									""
+							"name": "Get health profile",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Default patient health profile is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('HealthProfile');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('BloodGroup');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('IsDiabetic');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('HasHeartAilment');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('MaritalStatus');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('SedentaryLifestyle');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('IsSmoker');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('IsDrinker');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('SubstanceAbuse');\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
 								],
-								"type": "text/javascript"
-							}
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient-health-profiles/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-health-profiles",
+										"{{PATIENT_USER_ID}}"
+									]
+								},
+								"description": "Add an address."
+							},
+							"response": []
 						},
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonRes = pm.response.json();\r",
-									"\r",
-									"try {\r",
-									"    pm.environment.set(\"ADDRESS_ID\", jsonRes.Data.Address.id);\r",
-									"}\r",
-									"catch (error) {\r",
-									"    console.log(error.message);\r",
-									"}\r",
-									"\r",
-									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(201);\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Status).to.eql('success');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"New address is created\", function () {\r",
-									"\r",
-									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
-									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
-									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
-									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
-									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
-									"\r",
-									"    console.log(expectedType + '\\n');\r",
-									"    console.log(expectedAddressLine + '\\n');\r",
-									"    console.log(expectedCity + '\\n');\r",
-									"    console.log(expectedDistrict + '\\n');\r",
-									"    console.log(expectedState + '\\n');\r",
-									"    console.log(expectedCountry + '\\n');\r",
-									"    console.log(expectedPostalCode + '\\n');\r",
-									"    console.log(expectedLongitude + '\\n');\r",
-									"    console.log(expectedLattitude + '\\n');\r",
-									"\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
-									"    pm.expect(jsonRes.Data.Address).to.not.be.empty;\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Type');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('AddressLine');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('City');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('District');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('State');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Country');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('PostalCode');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Longitude');\r",
-									"    pm.expect(jsonRes.Data.Address).to.have.property('Lattitude');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.Address.Type).equals(expectedType);\r",
-									"    pm.expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);\r",
-									"    pm.expect(jsonRes.Data.Address.City).equals(expectedCity);\r",
-									"    pm.expect(jsonRes.Data.Address.District).equals(expectedDistrict);\r",
-									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
-									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
-									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
-									"\r",
-									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"});\r",
-									"\r",
-									""
+							"name": "Update health profile",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated patient health profile is returned\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('HealthProfile');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('MajorAilment');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('OtherConditions');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('BloodGroup');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('IsDiabetic');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('HasHeartAilment');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('MaritalStatus');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('Ethnicity');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('Nationality');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('Occupation');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('SedentaryLifestyle');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('IsSmoker');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('IsDrinker');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('DrinkingSeverity');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('DrinkingSince');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('ProcedureHistory');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('SubstanceAbuse');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.BloodGroup).equals(\"O+\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.MajorAilment).equals(\"Heart failure\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.OtherConditions).equals(\"None\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.IsDiabetic).equals(false);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.HasHeartAilment).equals(true);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.MaritalStatus).equals(\"Married\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.Ethnicity).equals(\"South-Asian\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.Nationality).equals(\"Indian\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.Occupation).equals(\"Software engineer\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.SedentaryLifestyle).equals(true);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.IsSmoker).equals(false);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.IsDrinker).equals(true);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.DrinkingSeverity).equals(\"Medium\");\r",
+											"\r",
+											"    var drinkingSince = jsonRes.Data.HealthProfile.DrinkingSince;\r",
+											"    if(drinkingSince){\r",
+											"        drinkingSince = drinkingSince.split('T')[0];\r",
+											"    }\r",
+											"    pm.expect(drinkingSince).equals(\"2010-01-01\");\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.SubstanceAbuse).equals(true);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.ProcedureHistory).equals(\"Had a toncil operation\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
 								],
-								"type": "text/javascript"
-							}
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"BloodGroup\": \"O+\",\r\n    \"MajorAilment\": \"Heart failure\",\r\n    \"OtherConditions\": \"None\",\r\n    \"IsDiabetic\": false,\r\n    \"HasHeartAilment\": true,\r\n    \"MaritalStatus\": \"Married\",\r\n    \"Ethnicity\": \"South-Asian\",\r\n    \"Nationality\": \"Indian\",\r\n    \"Occupation\": \"Software engineer\",\r\n    \"SedentaryLifestyle\": true,\r\n    \"IsSmoker\": false,\r\n    \"IsDrinker\": true,\r\n    \"DrinkingSeverity\": \"Medium\",\r\n    \"DrinkingSince\": \"2010-01-01\",\r\n    \"SubstanceAbuse\": true,\r\n    \"ProcedureHistory\": \"Had a toncil operation\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient-health-profiles/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-health-profiles",
+										"{{PATIENT_USER_ID}}"
+									]
+								},
+								"description": "Add an address."
+							},
+							"response": []
 						}
 					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{PATIENT_USER_JWT}}",
-								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-								"type": "text"
-							},
-							{
-								"key": "x-api-key",
-								"value": "{{API_CLIENT_INTERNAL_KEY}}",
-								"description": "API key for client authentication",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"PersonId\": \"{{PATIENT_PERSON_ID}}\",\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"District\": \"{{ADDRESS_DISTRICT}}\",\r\n    \"State\": \"{{ADDRESS_STATE}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\",\r\n    \"PostalCode\": \"{{ADDRESS_POSTAL_CODE}}\",\r\n    \"Longitude\": {{ADDRESS_LONGITUDE}},\r\n    \"Lattitude\": {{ADDRESS_LATTITUDE}}\r\n}"
-						},
-						"url": {
-							"raw": "{{BASE_URL}}/patient-medical-profiles",
-							"host": [
-								"{{BASE_URL}}"
+					"description": "## APIs to manage addresses\n\nThese set of APIs are used to manage addresses belonging to persons or organizations."
+				},
+				{
+					"name": "Patient Complaint",
+					"item": [
+						{
+							"name": "Create complaint",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
+											"let doctorUserId = pm.environment.get('DOCTOR_USER_ID');\r",
+											"pm.environment.set(\"PATIENT_COMPLAINT_PATIENTUSERID\", patientUserId);\r",
+											"pm.environment.set(\"PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID\", doctorUserId);\r",
+											"pm.environment.set(\"PATIENT_COMPLAINT_VISITID\", patientUserId);\r",
+											"pm.environment.set(\"PATIENT_COMPLAINT_EHRID\", '');\r",
+											"pm.environment.set(\"PATIENT_COMPLAINT_COMPLAINT\", 'Bad Service');\r",
+											"pm.environment.set(\"PATIENT_COMPLAINT_SEVERITY\", 'Medium');\r",
+											"pm.environment.set(\"PATIENT_COMPLAINT_RECORDDATE\", new Date());"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"PATIENT_COMPLAINT_ID\", jsonRes.Data.Complaint.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New Patient Complaint record is created\", function () {\r",
+											"\r",
+											"    let expectedPatientUserID = pm.environment.get(\"PATIENT_COMPLAINT_PATIENTUSERID\");\r",
+											"    let expectedMedicalPractitionerUserID = pm.environment.get(\"PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID\");\r",
+											"    let expectedVisitID = pm.environment.get(\"PATIENT_COMPLAINT_VISITID\");\r",
+											"    let expectedEHRID = pm.environment.get(\"PATIENT_COMPLAINT_EHRID\");\r",
+											"    let expectedComplaint = pm.environment.get(\"PATIENT_COMPLAINT_COMPLAINT\");\r",
+											"    let expectedSeverity = pm.environment.get(\"PATIENT_COMPLAINT_SEVERITY\");\r",
+											"    let expectedRecordDate = pm.environment.get(\"PATIENT_COMPLAINT_RECORDDATE\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Complaint');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('MedicalPractitionerUserId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('VisitId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('EhrId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('Complaint');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('Severity');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('RecordDate');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.Complaint.PatientUserId).equals(expectedPatientUserID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.VisitId).equals(expectedVisitID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.EhrId).equals(expectedEHRID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.Complaint).equals(expectedComplaint);\r",
+											"    pm.expect(jsonRes.Data.Complaint.Severity).equals(expectedSeverity);\r",
+											"    pm.expect(jsonRes.Data.Complaint.RecordDate).equals(expectedRecordDate);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
 							],
-							"path": [
-								"patient-medical-profiles"
-							]
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_COMPLAINT_PATIENTUSERID}}\",\r\n    \"MedicalPractitionerUserId\": \"{{PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID}}\",\r\n    \"VisitId\": \"{{PATIENT_COMPLAINT_VISITID}}\",\r\n    \"EhrId\": \"{{PATIENT_COMPLAINT_EHRID}}\",\r\n    \"Complaint\": \"{{PATIENT_COMPLAINT_COMPLAINT}}\",\r\n    \"Severity\": \"{{PATIENT_COMPLAINT_SEVERITY}}\",\r\n    \"RecordDate\": \"{{PATIENT_COMPLAINT_RECORDDATE}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/complaint",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"complaint"
+									]
+								},
+								"description": "Add A Patient Complaint."
+							},
+							"response": []
 						},
-						"description": "Add an address."
-					},
-					"response": []
+						{
+							"name": "Get patient complaint by id",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"PATIENT_COMPLAINT_ID\", jsonRes.Data.Complaint.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient Complaint record should have correct values\", function () {\r",
+											"\r",
+											"    let expectedPatientUserID = pm.environment.get(\"PATIENT_COMPLAINT_PATIENTUSERID\");\r",
+											"    let expectedMedicalPractitionerUserID = pm.environment.get(\"PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID\");\r",
+											"    let expectedVisitID = pm.environment.get(\"PATIENT_COMPLAINT_VISITID\");\r",
+											"    let expectedEHRID = pm.environment.get(\"PATIENT_COMPLAINT_EHRID\");\r",
+											"    let expectedComplaint = pm.environment.get(\"PATIENT_COMPLAINT_COMPLAINT\");\r",
+											"    let expectedSeverity = pm.environment.get(\"PATIENT_COMPLAINT_SEVERITY\");\r",
+											"    let expectedRecordDate = pm.environment.get(\"PATIENT_COMPLAINT_RECORDDATE\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Complaint');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('MedicalPractitionerUserId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('VisitId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('EhrId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('Complaint');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('Severity');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('RecordDate');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.Complaint.PatientUserId).equals(expectedPatientUserID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.VisitId).equals(expectedVisitID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.EhrId).equals(expectedEHRID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.Complaint).equals(expectedComplaint);\r",
+											"    pm.expect(jsonRes.Data.Complaint.Severity).equals(expectedSeverity);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/complaint/{{PATIENT_COMPLAINT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"complaint",
+										"{{PATIENT_COMPLAINT_ID}}"
+									]
+								},
+								"description": "Get Patient Complaint by Patient Complaint id."
+							},
+							"response": []
+						},
+						{
+							"name": "Update an Patient complaint",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"PATIENT_COMPLAINT_SEVERITY\", 'Low');"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Correct updates should be reflected\", function () {\r",
+											"\r",
+											"    let expectedPatientUserID = pm.environment.get(\"PATIENT_COMPLAINT_PATIENTUSERID\");\r",
+											"    let expectedMedicalPractitionerUserID = pm.environment.get(\"PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID\");\r",
+											"    let expectedVisitID = pm.environment.get(\"PATIENT_COMPLAINT_VISITID\");\r",
+											"    let expectedEHRID = pm.environment.get(\"PATIENT_COMPLAINT_EHRID\");\r",
+											"    let expectedComplaint = pm.environment.get(\"PATIENT_COMPLAINT_COMPLAINT\");\r",
+											"    let expectedSeverity = pm.environment.get(\"PATIENT_COMPLAINT_SEVERITY\");\r",
+											"    let expectedRecordDate = pm.environment.get(\"PATIENT_COMPLAINT_RECORDDATE\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Complaint');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('MedicalPractitionerUserId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('VisitId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('EhrId');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('Complaint');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('Severity');\r",
+											"    pm.expect(jsonRes.Data.Complaint).to.have.property('RecordDate');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.Complaint.PatientUserId).equals(expectedPatientUserID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.VisitId).equals(expectedVisitID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.EhrId).equals(expectedEHRID);\r",
+											"    pm.expect(jsonRes.Data.Complaint.Complaint).equals(expectedComplaint);\r",
+											"    pm.expect(jsonRes.Data.Complaint.Severity).equals(expectedSeverity);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_COMPLAINT_PATIENTUSERID}}\",\r\n    \"MedicalPractitionerUserId\": \"{{PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID}}\",\r\n    \"VisitId\": \"{{PATIENT_COMPLAINT_VISITID}}\",\r\n    \"EhrId\": \"{{PATIENT_COMPLAINT_EHRID}}\",\r\n    \"Complaint\": \"{{PATIENT_COMPLAINT_COMPLAINT}}\",\r\n    \"Severity\": \"{{PATIENT_COMPLAINT_SEVERITY}}\",\r\n    \"RecordDate\": \"{{PATIENT_COMPLAINT_RECORDDATE}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/complaint/{{PATIENT_COMPLAINT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"complaint",
+										"{{PATIENT_COMPLAINT_ID}}"
+									]
+								},
+								"description": "Update the details for a Patient Complaint."
+							},
+							"response": []
+						},
+						{
+							"name": "Search Patient complaint",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of Calorie Record is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Complaints');\r",
+											"    pm.expect(jsonRes.Data.Complaints.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/complaint/search/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"complaint",
+										"search",
+										"{{PATIENT_USER_ID}}"
+									]
+								},
+								"description": "Search Patient Complaint using patient user id"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Patient complaint record",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Deleted is true\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/complaint/{{PATIENT_COMPLAINT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"complaint",
+										"{{PATIENT_COMPLAINT_ID}}"
+									]
+								},
+								"description": "Deletes Patient Complaint using ID"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Patient Allergy",
+					"item": [
+						{
+							"name": "Create patient allergy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
+											"pm.environment.set(\"PATIENT_ALLERGY_PATIENTUSERID\", patientUserId);\r",
+											"pm.environment.set(\"PATIENT_ALLERGY_Allergy\", 'Peanut');\r",
+											"pm.environment.set(\"PATIENT_ALLERGY_AllergenCategory\", 'Food');\r",
+											"pm.environment.set(\"PATIENT_ALLERGY_AllergenExposureRoute\", 'Food');\r",
+											"pm.environment.set(\"PATIENT_ALLERGY_Severity\", 'Medium');\r",
+											"pm.environment.set(\"PATIENT_ALLERGY_Reaction\", 'Difficulty Breathing');\r",
+											"pm.environment.set(\"PATIENT_ALLERGY_OtherInformation\", 'Na');\r",
+											"pm.environment.set(\"PATIENT_ALLERGY_LastOccurrence\", new Date());"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"PATIENT_ALLERGY_ID\", jsonRes.Data.PatientAllergy.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New Patient Allergy record is created\", function () {\r",
+											"\r",
+											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_ALLERGY_PATIENTUSERID\");\r",
+											"    let expectedAllergy = pm.environment.get(\"PATIENT_ALLERGY_Allergy\");\r",
+											"    let expectedAllergenCategory = pm.environment.get(\"PATIENT_ALLERGY_AllergenCategory\");\r",
+											"    let expectedAllergenExposureRoute = pm.environment.get(\"PATIENT_ALLERGY_AllergenExposureRoute\");\r",
+											"    let expectedSeverity = pm.environment.get(\"PATIENT_ALLERGY_Severity\");\r",
+											"    let expectedReaction = pm.environment.get(\"PATIENT_ALLERGY_Reaction\");\r",
+											"    let expectedOtherInformation = pm.environment.get(\"PATIENT_ALLERGY_OtherInformation\");\r",
+											"    let expectedLastOccurrence = pm.environment.get(\"PATIENT_ALLERGY_LastOccurrence\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientAllergy');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Allergy');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenCategory');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenExposureRoute');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Severity');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Reaction');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('OtherInformation');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('LastOccurrence');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.Allergy).equals(expectedAllergy);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenCategory).equals(expectedAllergenCategory);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.Severity).equals(expectedSeverity);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.Reaction).equals(expectedReaction);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.OtherInformation).equals(expectedOtherInformation);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.LastOccurrence).equals(expectedLastOccurrence);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_ALLERGY_PATIENTUSERID}}\",\r\n    \"Allergy\": \"{{PATIENT_ALLERGY_Allergy}}\",\r\n    \"AllergenCategory\": \"{{PATIENT_ALLERGY_AllergenCategory}}\",\r\n    \"AllergenExposureRoute\": \"{{PATIENT_ALLERGY_AllergenExposureRoute}}\",\r\n    \"Severity\": \"{{PATIENT_ALLERGY_Severity}}\",\r\n    \"Reaction\": \"{{PATIENT_ALLERGY_Reaction}}\",\r\n    \"OtherInformation\": \"{{PATIENT_ALLERGY_OtherInformation}}\",\r\n    \"LastOccurrence\": \"{{PATIENT_ALLERGY_LastOccurrence}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/allergy",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"allergy"
+									]
+								},
+								"description": "Add A PatientAllergy."
+							},
+							"response": []
+						},
+						{
+							"name": "Get patient allergy by id",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient Allergy should have correct data\", function () {\r",
+											"\r",
+											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_ALLERGY_PATIENTUSERID\");\r",
+											"    let expectedAllergy = pm.environment.get(\"PATIENT_ALLERGY_Allergy\");\r",
+											"    let expectedAllergenCategory = pm.environment.get(\"PATIENT_ALLERGY_AllergenCategory\");\r",
+											"    let expectedAllergenExposureRoute = pm.environment.get(\"PATIENT_ALLERGY_AllergenExposureRoute\");\r",
+											"    let expectedSeverity = pm.environment.get(\"PATIENT_ALLERGY_Severity\");\r",
+											"    let expectedReaction = pm.environment.get(\"PATIENT_ALLERGY_Reaction\");\r",
+											"    let expectedOtherInformation = pm.environment.get(\"PATIENT_ALLERGY_OtherInformation\");\r",
+											"    let expectedLastOccurrence = pm.environment.get(\"PATIENT_ALLERGY_LastOccurrence\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientAllergy');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Allergy');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenCategory');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenExposureRoute');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Severity');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Reaction');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('OtherInformation');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.Allergy).equals(expectedAllergy);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenCategory).equals(expectedAllergenCategory);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.Severity).equals(expectedSeverity);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.Reaction).equals(expectedReaction);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.OtherInformation).equals(expectedOtherInformation);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/allergy/{{PATIENT_ALLERGY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"allergy",
+										"{{PATIENT_ALLERGY_ID}}"
+									]
+								},
+								"description": "Get an PatientAllergy by PatientAllergy id."
+							},
+							"response": []
+						},
+						{
+							"name": "Update an patient allergy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"PATIENT_ALLERGY_Severity\", 'Low');"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Correct updates should be reflected\", function () {\r",
+											"\r",
+											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_ALLERGY_PATIENTUSERID\");\r",
+											"    let expectedAllergy = pm.environment.get(\"PATIENT_ALLERGY_Allergy\");\r",
+											"    let expectedAllergenCategory = pm.environment.get(\"PATIENT_ALLERGY_AllergenCategory\");\r",
+											"    let expectedAllergenExposureRoute = pm.environment.get(\"PATIENT_ALLERGY_AllergenExposureRoute\");\r",
+											"    let expectedSeverity = pm.environment.get(\"PATIENT_ALLERGY_Severity\");\r",
+											"    let expectedReaction = pm.environment.get(\"PATIENT_ALLERGY_Reaction\");\r",
+											"    let expectedOtherInformation = pm.environment.get(\"PATIENT_ALLERGY_OtherInformation\");\r",
+											"    let expectedLastOccurrence = pm.environment.get(\"PATIENT_ALLERGY_LastOccurrence\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientAllergy');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Allergy');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenCategory');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenExposureRoute');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Severity');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Reaction');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('OtherInformation');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.Allergy).equals(expectedAllergy);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenCategory).equals(expectedAllergenCategory);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.Severity).equals(expectedSeverity);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.Reaction).equals(expectedReaction);\r",
+											"    pm.expect(jsonRes.Data.PatientAllergy.OtherInformation).equals(expectedOtherInformation);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_ALLERGY_PATIENTUSERID}}\",\r\n    \"Allergy\": \"{{PATIENT_ALLERGY_Allergy}}\",\r\n    \"AllergenCategory\": \"{{PATIENT_ALLERGY_AllergenCategory}}\",\r\n    \"AllergenExposureRoute\": \"{{PATIENT_ALLERGY_AllergenExposureRoute}}\",\r\n    \"Severity\": \"{{PATIENT_ALLERGY_Severity}}\",\r\n    \"Reaction\": \"{{PATIENT_ALLERGY_Reaction}}\",\r\n    \"OtherInformation\": \"{{PATIENT_ALLERGY_OtherInformation}}\",\r\n    \"LastOccurrence\": \"{{PATIENT_ALLERGY_LastOccurrence}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/allergy/{{PATIENT_ALLERGY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"allergy",
+										"{{PATIENT_ALLERGY_ID}}"
+									]
+								},
+								"description": "Update the details for an PatientAllergy."
+							},
+							"response": []
+						},
+						{
+							"name": "Search patient allergy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of Calorie Record is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientAllergys');\r",
+											"    pm.expect(jsonRes.Data.PatientAllergys.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/allergy/search/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"allergy",
+										"search",
+										"{{PATIENT_USER_ID}}"
+									]
+								},
+								"description": "Search PatientAllergy using query parameters."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete patient allergy record",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Deleted is true\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/allergy/{{PATIENT_ALLERGY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"allergy",
+										"{{PATIENT_ALLERGY_ID}}"
+									]
+								},
+								"description": "Deletes PatientAllergy using ID"
+							},
+							"response": []
+						}
+					]
 				}
-			],
-			"description": "## APIs to manage addresses\n\nThese set of APIs are used to manage addresses belonging to persons or organizations."
+			]
+		},
+		{
+			"name": "Biometrics",
+			"item": [
+				{
+					"name": "Blood oxygen saturation",
+					"item": [
+						{
+							"name": "Add blood oxygen saturation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"BIOMETRICS_BLOOD_OXYGEN_ID\", jsonRes.Data.BloodOxygenSaturation.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New blood oxygen saturation record is created\", function () {",
+											"",
+											"    var expectedValue = 85;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.BloodOxygenSaturation).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var userId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"pm.environment.set(\"RECORDED_BY_USER_ID\", userId);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"BloodOxygenSaturation\": 85,\n    \"Unit\": \"%\",\n    \"RecordDate\": \"2021-09-01\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-oxygen-saturations"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get blood oxygen saturation by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Blood oxygen saturation record is returned\", function () {",
+											"",
+											"    var expectedValue = 85;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.BloodOxygenSaturation).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-oxygen-saturations",
+										"{{BIOMETRICS_BLOOD_OXYGEN_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update blood oxygen saturation by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated blood oxygen saturation record is returned\", function () {",
+											"",
+											"    var expectedBloodOxygenSaturation = 90;",
+											"    var expectedRecordDate = \"2021-09-07T00:00:00.000Z\";",
+											"    var expectedRecordedByUserId = pm.environment.get(\"RECORDED_BY_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('BloodOxygenSaturation');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('RecordDate');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('RecordedByUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.BloodOxygenSaturation).equals(expectedBloodOxygenSaturation);",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.RecordDate).equals(expectedRecordDate);",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturation.RecordedByUserId).equals(expectedRecordedByUserId);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"BloodOxygenSaturation\": \"90\",\n    \"RecordDate\": \"2021-09-07\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-oxygen-saturations",
+										"{{BIOMETRICS_BLOOD_OXYGEN_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search blood oxygen saturation record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of blood oxygen saturation records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodOxygenSaturationRecords');",
+											"    pm.expect(jsonRes.Data.BloodOxygenSaturationRecords.Items.length).greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-10-14&orderBy=BloodOxygenSaturation&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=100&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-oxygen-saturations",
+										"search"
+									],
+									"query": [
+										{
+											"key": "recordedByUserId",
+											"value": "{{RECORDED_BY_USER_ID}}"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-01"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-14"
+										},
+										{
+											"key": "orderBy",
+											"value": "BloodOxygenSaturation"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "0"
+										},
+										{
+											"key": "maxValue",
+											"value": "100"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete blood oxygen saturation record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\" Blood oxygen saturation record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-oxygen-saturations/{{BIOMETRICS_BLOOD_OXYGEN_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-oxygen-saturations",
+										"{{BIOMETRICS_BLOOD_OXYGEN_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Body height",
+					"item": [
+						{
+							"name": "Add body height",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"BODY_HEIGHT\", 175);\r",
+											"pm.environment.set(\"HEIGHT_UNIT\", \"cms\");\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"BODY_HEIGHT_ID\", jsonRes.Data.BodyHeight.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New body height biometrice is created\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"    var expectedBodyHeight = pm.environment.get(\"BODY_HEIGHT\");\r",
+											"    var expectedHeightUnit = pm.environment.get(\"HEIGHT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(Number(jsonRes.Data.BodyHeight.BodyHeight)).equals(Number(expectedBodyHeight));\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.Unit).equals(expectedHeightUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"BodyHeight\": {{BODY_HEIGHT}},\r\n    \"Unit\": \"{{HEIGHT_UNIT}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-height",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-height"
+									]
+								},
+								"description": "Adds Biometrics information for Body height"
+							},
+							"response": []
+						},
+						{
+							"name": "Get body height by id",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body height biometric is returned\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"    var expectedBodyHeight = pm.environment.get(\"BODY_HEIGHT\");\r",
+											"    var expectedHeightUnit = pm.environment.get(\"HEIGHT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(Number(jsonRes.Data.BodyHeight.BodyHeight)).equals(Number(expectedBodyHeight));\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.Unit).equals(expectedHeightUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-height/{{BODY_HEIGHT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-height",
+										"{{BODY_HEIGHT_ID}}"
+									]
+								},
+								"description": "Get body height metric by body_height_id"
+							},
+							"response": []
+						},
+						{
+							"name": "Update body height by id",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let height = pm.environment.get(\"BODY_HEIGHT\");",
+											"pm.environment.set(\"BODY_HEIGHT\", Number(height) + 10);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated Body height biometric is returned\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"    var expectedBodyHeight = 180;\r",
+											"    var expectedHeightUnit = pm.environment.get(\"HEIGHT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('BodyHeight');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.BodyHeight).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(Number(jsonRes.Data.BodyHeight.BodyHeight)).equals(Number(expectedBodyHeight));\r",
+											"    pm.expect(jsonRes.Data.BodyHeight.Unit).equals(expectedHeightUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"BodyHeight\": 180,\r\n    \"Unit\": \"{{HEIGHT_UNIT}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-height/{{BODY_HEIGHT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-height",
+										"{{BODY_HEIGHT_ID}}"
+									]
+								},
+								"description": "Update the details for a body height metric by body_height_id."
+							},
+							"response": []
+						},
+						{
+							"name": "Search body height",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of body height records is returned\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyHeightRecords');\r",
+											"    pm.expect(jsonRes.Data.BodyHeightRecords.Items.length).to.be.greaterThan(0);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-height/search?createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=BodyHeight&order=ascending&pageIndex=0&itemsPerPage=25&PatientUserId={{PATIENT_USER_ID}}&MinValue=10&MaxValue=200",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-height",
+										"search"
+									],
+									"query": [
+										{
+											"key": "createdDateFrom",
+											"value": "2021-05-01",
+											"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-12-12",
+											"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
+										},
+										{
+											"key": "orderBy",
+											"value": "BodyHeight",
+											"description": "The name of the Parameter to order by"
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"description": "'ascending' or 'descending'"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"description": "Page index for pagination"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"description": "Items per page"
+										},
+										{
+											"key": "PatientUserId",
+											"value": "{{PATIENT_USER_ID}}",
+											"description": "Patient User Id"
+										},
+										{
+											"key": "MinValue",
+											"value": "10",
+											"description": "Minimum value of height"
+										},
+										{
+											"key": "MaxValue",
+											"value": "200",
+											"description": "Maximum value of height"
+										},
+										{
+											"key": "RecordedByUserId",
+											"value": "",
+											"description": "User Id of the user who recorded the height biometric record",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Search body height biometrics using query parameters."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete body height",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Deleted is true\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-height/{{BODY_HEIGHT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-height",
+										"{{BODY_HEIGHT_ID}}"
+									]
+								},
+								"description": "Delete body height metric by body_height_id"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Body weight",
+					"item": [
+						{
+							"name": "Add body weight",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"BODY_WEIGHT\", 88);\r",
+											"pm.environment.set(\"WEIGHT_UNIT\", \"Kg\");\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"BODY_WEIGHT_ID\", jsonRes.Data.BodyWeight.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New body weight is created\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"    var expectedBodyWeight = pm.environment.get(\"BODY_WEIGHT\");\r",
+											"    var expectedWeightUnit = pm.environment.get(\"WEIGHT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyWeight');\r",
+											"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('BodyWeight');\r",
+											"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BodyWeight.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(Number(jsonRes.Data.BodyWeight.BodyWeight)).equals(Number(expectedBodyWeight));\r",
+											"    pm.expect(jsonRes.Data.BodyWeight.Unit).equals(expectedWeightUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"BodyWeight\": {{BODY_WEIGHT}},\r\n    \"Unit\": \"{{WEIGHT_UNIT}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-weight",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-weight"
+									]
+								},
+								"description": "Adds Biometrics information for Body height"
+							},
+							"response": []
+						},
+						{
+							"name": "Get body weight by id",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body weight biometric is returned\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"    var expectedBodyWeight = pm.environment.get(\"BODY_WEIGHT\");\r",
+											"    var expectedWeightUnit = pm.environment.get(\"WEIGHT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyWeight');\r",
+											"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('BodyWeight');\r",
+											"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BodyWeight.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(Number(jsonRes.Data.BodyWeight.BodyWeight)).equals(Number(expectedBodyWeight));\r",
+											"    pm.expect(jsonRes.Data.BodyWeight.Unit).equals(expectedWeightUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-weight/{{BODY_WEIGHT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-weight",
+										"{{BODY_WEIGHT_ID}}"
+									]
+								},
+								"description": "Get body height metric by body_height_id"
+							},
+							"response": []
+						},
+						{
+							"name": "Update body weight by id",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated Body weight biometric is returned\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"    var expectedBodyWeight = 90;\r",
+											"    var expectedWeightUnit = pm.environment.get(\"WEIGHT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyWeight');\r",
+											"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('BodyWeight');\r",
+											"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BodyWeight.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(Number(jsonRes.Data.BodyWeight.BodyWeight)).equals(Number(expectedBodyWeight));\r",
+											"    pm.expect(jsonRes.Data.BodyWeight.Unit).equals(expectedWeightUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"BodyWeight\": 90,\r\n    \"Unit\": \"{{WEIGHT_UNIT}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-weight/{{BODY_WEIGHT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-weight",
+										"{{BODY_WEIGHT_ID}}"
+									]
+								},
+								"description": "Update the details for a body height metric by body_height_id."
+							},
+							"response": []
+						},
+						{
+							"name": "Search body weight",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of body weight records is returned\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyWeightRecords');\r",
+											"    pm.expect(jsonRes.Data.BodyWeightRecords.Items.length).to.be.greaterThan(0);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-weight/search?createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=BodyWeight&order=ascending&pageIndex=0&itemsPerPage=25&PatientUserId={{PATIENT_USER_ID}}&MinValue=10&MaxValue=200",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-weight",
+										"search"
+									],
+									"query": [
+										{
+											"key": "createdDateFrom",
+											"value": "2021-05-01",
+											"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-12-12",
+											"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
+										},
+										{
+											"key": "orderBy",
+											"value": "BodyWeight",
+											"description": "The name of the Parameter to order by"
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"description": "'ascending' or 'descending'"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"description": "Page index for pagination"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"description": "Items per page"
+										},
+										{
+											"key": "PatientUserId",
+											"value": "{{PATIENT_USER_ID}}",
+											"description": "Patient User Id"
+										},
+										{
+											"key": "MinValue",
+											"value": "10",
+											"description": "Minimum value of weight"
+										},
+										{
+											"key": "MaxValue",
+											"value": "200",
+											"description": "Maximum value of weight"
+										},
+										{
+											"key": "RecordedByUserId",
+											"value": "",
+											"description": "User Id of the user who recorded the height biometric record",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Search body height biometrics using query parameters."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete body weight",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Deleted is true\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-weight/{{BODY_WEIGHT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-weight",
+										"{{BODY_WEIGHT_ID}}"
+									]
+								},
+								"description": "Delete body height metric by body_height_id"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Body temperature",
+					"item": [
+						{
+							"name": "Add body temperature record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"BIOMETRICS_BODY_TEMPERATURE_ID\", jsonRes.Data.BodyTemperature.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New body temperature record is created\", function () {",
+											"",
+											"    var expectedValue = 36;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.BodyTemperature.BodyTemperature).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.BodyTemperature.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"BodyTemperature\": 36,\n    \"Unit\": \"Celsius\",\n    \"RecordDate\": \"2021-09-14\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-temperature",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-temperature"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get body temperature record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Body temperature record is returned\", function () {",
+											"",
+											"    var expectedValue = 36;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.BodyTemperature.BodyTemperature).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.BodyTemperature.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-temperature/{{BIOMETRICS_BODY_TEMPERATURE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-temperature",
+										"{{BIOMETRICS_BODY_TEMPERATURE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update body temperature record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated body temperature record is returned\", function () {",
+											"",
+											"    var expectedBodyTemperature = 37;",
+											"    var expectedRecordDate = \"2021-09-14\";",
+											"    var expectedRecordedByUserId = pm.environment.get(\"RECORDED_BY_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('BodyTemperature');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('RecordDate');",
+											"    pm.expect(jsonRes.Data.BodyTemperature).to.have.property('RecordedByUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.BodyTemperature.BodyTemperature).equals(expectedBodyTemperature);",
+											"    pm.expect(jsonRes.Data.BodyTemperature.RecordedByUserId).equals(expectedRecordedByUserId);",
+											"    var recordDate = jsonRes.Data.BodyTemperature.RecordDate;",
+											"    if (recordDate) {",
+											"        recordDate = recordDate.split('T')[0];",
+											"    }",
+											"    pm.expect(recordDate).equals(expectedRecordDate);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"BodyTemperature\": 37,\n    \"Unit\": \"C\",\n    \"RecordDate\": \"2021-09-14\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-temperature/{{BIOMETRICS_BODY_TEMPERATURE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-temperature",
+										"{{BIOMETRICS_BODY_TEMPERATURE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search body temperature records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of body temperature records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BodyTemperatureRecords');",
+											"    pm.expect(jsonRes.Data.BodyTemperatureRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-temperature/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-13&createdDateTo=2021-10-14&orderBy=BodyTemperature&order=ascending&pageIndex=0&itemsPerPage=25&minValue=36&maxValue=48&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-temperature",
+										"search"
+									],
+									"query": [
+										{
+											"key": "recordedByUserId",
+											"value": "{{RECORDED_BY_USER_ID}}"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-13"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-14"
+										},
+										{
+											"key": "orderBy",
+											"value": "BodyTemperature"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "36"
+										},
+										{
+											"key": "maxValue",
+											"value": "48"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete body temperature record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Body temperature record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/body-temperature/{{BIOMETRICS_BODY_TEMPERATURE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"body-temperature",
+										"{{BIOMETRICS_BODY_TEMPERATURE_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Pulse",
+					"item": [
+						{
+							"name": "Add pulse record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"BIOMETRICS_PULSE_ID\", jsonRes.Data.Pulse.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New pulse record is created\", function () {",
+											"",
+											"    var expectedValue = 72;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.Pulse.Pulse).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.Pulse.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Pulse\": 72,\n    \"Unit\": \"%\",\n    \"RecordDate\": \"2021-09-01\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/pulse",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"pulse"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get pulse record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Pulse record is returned\", function () {",
+											"",
+											"    var expectedValue = 72;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.Pulse.Pulse).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.Pulse.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/pulse/{{BIOMETRICS_PULSE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"pulse",
+										"{{BIOMETRICS_PULSE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update pulse record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated pulse record is returned\", function () {",
+											"",
+											"    var expectedPulse = 74;",
+											"    var expectedRecordDate = \"2021-09-07\";",
+											"    var expectedRecordedByUserId = pm.environment.get(\"RECORDED_BY_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('Pulse');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('RecordDate');",
+											"    pm.expect(jsonRes.Data.Pulse).to.have.property('RecordedByUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.Pulse.Pulse).equals(expectedPulse);",
+											"    pm.expect(jsonRes.Data.Pulse.RecordedByUserId).equals(expectedRecordedByUserId);",
+											"    var recordDate = jsonRes.Data.Pulse.RecordDate;",
+											"    if (recordDate) {",
+											"        recordDate = recordDate.split('T')[0];",
+											"    }",
+											"    pm.expect(recordDate).equals(expectedRecordDate);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"Pulse\": 74,\n    \"RecordDate\": \"2021-09-07\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/pulse/{{BIOMETRICS_PULSE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"pulse",
+										"{{BIOMETRICS_PULSE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search pulse records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of pulse records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('PulseRecords');",
+											"    pm.expect(jsonRes.Data.PulseRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/pulse/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-12-07&orderBy=Pulse&order=ascending&pageIndex=0&itemsPerPage=25&minValue=70&maxValue=76&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"pulse",
+										"search"
+									],
+									"query": [
+										{
+											"key": "recordedByUserId",
+											"value": "{{RECORDED_BY_USER_ID}}"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-01"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-12-07"
+										},
+										{
+											"key": "orderBy",
+											"value": "Pulse"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "70"
+										},
+										{
+											"key": "maxValue",
+											"value": "76"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete pulse record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Pulse record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/pulse/{{BIOMETRICS_PULSE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"pulse",
+										"{{BIOMETRICS_PULSE_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Exercise",
+			"item": []
+		},
+		{
+			"name": "Daily records",
+			"item": [
+				{
+					"name": "Heart points records",
+					"item": [
+						{
+							"name": "Create heart points record",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let personId = pm.environment.get('PERSON_ID');\r",
+											"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
+											"pm.environment.set(\"HEART_POINT_PERSONID\", personId);\r",
+											"pm.environment.set(\"HEART_POINT_PATIENTUSERID\", patientUserId);\r",
+											"pm.environment.set(\"HEART_POINT_VALUE\", '120');\r",
+											"pm.environment.set(\"HEART_POINT_UNIT\", 'bpm');"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"HEART_POINT_ID\", jsonRes.Data.HeartPoints.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New Heart point record is created\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
+											"    var expectedPersonId = pm.environment.get(\"HEART_POINT_PERSONID\");\r",
+											"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
+											"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PersonId');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.PersonId).equals(expectedPersonId);\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(\"\" + expectedHeartPoints);\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PersonId\": \"{{HEART_POINT_PERSONID}}\",\r\n    \"PatientUserId\": \"{{HEART_POINT_PATIENTUSERID}}\",\r\n    \"HeartPoints\": {{HEART_POINT_VALUE}},\r\n    \"Unit\": \"{{HEART_POINT_UNIT}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/heart-points",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"heart-points"
+									]
+								},
+								"description": "Add A HeartPoint."
+							},
+							"response": []
+						},
+						{
+							"name": "Get a heart points record by id",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Calorie record should have correct data\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
+											"    var expectedPersonId = pm.environment.get(\"HEART_POINT_PERSONID\");\r",
+											"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
+											"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PersonId');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.PersonId).equals(expectedPersonId);\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(\"\" + jsonRes.Data.HeartPoints.HeartPoints).equals(expectedHeartPoints);\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/heart-points/{{HEART_POINT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"heart-points",
+										"{{HEART_POINT_ID}}"
+									]
+								},
+								"description": "Get an HeartPoint by HeartPoint id."
+							},
+							"response": []
+						},
+						{
+							"name": "Update a heart points record",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let heartPoints = pm.environment.get(\"HEART_POINT_VALUE\");",
+											"pm.environment.set(\"HEART_POINT_Value\", Number(heartPoints) + 10);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Correct updates should be reflected\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
+											"    var expectedPersonId = pm.environment.get(\"HEART_POINT_PERSONID\");\r",
+											"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
+											"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PersonId');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.PersonId).equals(expectedPersonId);\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(expectedHeartPoints);\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PersonId\": \"{{HEART_POINT_PERSONID}}\",\r\n    \"PatientUserId\": \"{{HEART_POINT_PATIENTUSERID}}\",\r\n    \"HeartPoints\": {{HEART_POINT_VALUE}},\r\n    \"Unit\": \"{{HEART_POINT_UNIT}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/heart-points/{{HEART_POINT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"heart-points",
+										"{{HEART_POINT_ID}}"
+									]
+								},
+								"description": "Update the details for an HeartPoint."
+							},
+							"response": []
+						},
+						{
+							"name": "Search heart points records",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of Calorie Record is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
+											"    pm.expect(jsonRes.Data.HeartPoints.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/heart-points/search?pageIndex=0&itemsPerPage=25&minValue=10",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"heart-points",
+										"search"
+									],
+									"query": [
+										{
+											"key": "createdDateFrom",
+											"value": "2021-05-01",
+											"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
+											"disabled": true
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-12-12",
+											"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
+											"disabled": true
+										},
+										{
+											"key": "orderBy",
+											"value": "CaloriesBurned",
+											"description": "The name of the Parameter to order by",
+											"disabled": true
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"description": "'ascending' or 'descending'",
+											"disabled": true
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"description": "Page index for pagination"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"description": "Items per page"
+										},
+										{
+											"key": "personId",
+											"value": "",
+											"description": "Person ID to filter",
+											"disabled": true
+										},
+										{
+											"key": "patientUserId",
+											"value": "",
+											"description": "Patient User ID to filter",
+											"disabled": true
+										},
+										{
+											"key": "minValue",
+											"value": "10",
+											"description": "filter using heartpoint minimum value"
+										},
+										{
+											"key": "maxValue",
+											"value": "100",
+											"description": "filter using heartpoint maximum value",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Search HeartPoints using query parameters."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete a heart points record",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Deleted is true\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/heart-points/{{HEART_POINT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"heart-points",
+										"{{HEART_POINT_ID}}"
+									]
+								},
+								"description": "Deletes Heart points using ID"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Calorie balance records",
+					"item": [
+						{
+							"name": "Create calorie balance record",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let personId = pm.environment.get('PERSON_ID');\r",
+											"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
+											"pm.environment.set(\"CALORIE_BALANCE_PERSONID\", personId);\r",
+											"pm.environment.set(\"CALORIE_BALANCE_PATIENTUSERID\", patientUserId);\r",
+											"pm.environment.set(\"CALORIE_BALANCE_CALORIESCONSUMED\", '120');\r",
+											"pm.environment.set(\"CALORIE_BALANCE_CALORIESBURNED\", '100');\r",
+											"pm.environment.set(\"CALORIE_BALANCE_UNIT\", 'kcal');"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"CALORIE_BALANCE_ID\", jsonRes.Data.CalorieBalance.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New Calorie Balance record is created\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"CALORIE_BALANCE_PATIENTUSERID\");\r",
+											"    var expectedPersonId = pm.environment.get(\"CALORIE_BALANCE_PERSONID\");\r",
+											"    var expectedCalorieConsumed = pm.environment.get(\"CALORIE_BALANCE_CALORIESCONSUMED\");\r",
+											"    var expectedCalorieBurned = pm.environment.get(\"CALORIE_BALANCE_CALORIESBURNED\");\r",
+											"    var expectedCalorieUnit = pm.environment.get(\"CALORIE_BALANCE_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('CalorieBalance');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PersonId');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesConsumed');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.PersonId).equals(expectedPersonId);\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.CaloriesConsumed).equals(expectedCalorieConsumed);\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.CaloriesBurned).equals(expectedCalorieBurned);\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.Unit).equals(expectedCalorieUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PersonId\": \"{{CALORIE_BALANCE_PERSONID}}\",\r\n    \"PatientUserId\": \"{{CALORIE_BALANCE_PATIENTUSERID}}\",\r\n    \"CaloriesConsumed\": {{CALORIE_BALANCE_CALORIESCONSUMED}},\r\n    \"CaloriesBurned\": {{CALORIE_BALANCE_CALORIESBURNED}},\r\n    \"Unit\": \"{{CALORIE_BALANCE_UNIT}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/calorie-balance",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"calorie-balance"
+									]
+								},
+								"description": "Add an address."
+							},
+							"response": []
+						},
+						{
+							"name": "Get calorie balance record by id",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Calorie record should have correct data\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"CALORIE_BALANCE_PATIENTUSERID\");\r",
+											"    var expectedPersonId = pm.environment.get(\"CALORIE_BALANCE_PERSONID\");\r",
+											"    var expectedCalorieConsumed = pm.environment.get(\"CALORIE_BALANCE_CALORIESCONSUMED\");\r",
+											"    var expectedCalorieBurned = pm.environment.get(\"CALORIE_BALANCE_CALORIESBURNED\");\r",
+											"    var expectedCalorieUnit = pm.environment.get(\"CALORIE_BALANCE_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('CalorieBalance');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PersonId');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesConsumed');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.PersonId).equals(expectedPersonId);\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.CaloriesConsumed).equals(Number(expectedCalorieConsumed));\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.CaloriesBurned).equals(Number(expectedCalorieBurned));\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.Unit).equals(expectedCalorieUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/calorie-balance/{{CALORIE_BALANCE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"calorie-balance",
+										"{{CALORIE_BALANCE_ID}}"
+									]
+								},
+								"description": "Get an address by address id."
+							},
+							"response": []
+						},
+						{
+							"name": "Update an calorie balance record",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let height = pm.environment.get(\"CALORIE_BALANCE_CALORIESBURNED\");",
+											"pm.environment.set(\"CALORIE_BALANCE_CALORIESBURNED\", Number(height) + 10);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Correct updates should be reflected\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"CALORIE_BALANCE_PATIENTUSERID\");\r",
+											"    var expectedPersonId = pm.environment.get(\"CALORIE_BALANCE_PERSONID\");\r",
+											"    var expectedCalorieConsumed = pm.environment.get(\"CALORIE_BALANCE_CALORIESCONSUMED\");\r",
+											"    var expectedCalorieBurned = pm.environment.get(\"CALORIE_BALANCE_CALORIESBURNED\");\r",
+											"    var expectedCalorieUnit = pm.environment.get(\"CALORIE_BALANCE_UNIT\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('CalorieBalance');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PersonId');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesConsumed');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('Unit');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.PersonId).equals(expectedPersonId);\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(Number(jsonRes.Data.CalorieBalance.CaloriesConsumed)).equals(Number(expectedCalorieConsumed));\r",
+											"    pm.expect(Number(jsonRes.Data.CalorieBalance.CaloriesBurned)).equals(Number(expectedCalorieBurned));\r",
+											"    pm.expect(jsonRes.Data.CalorieBalance.Unit).equals(expectedCalorieUnit);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PersonId\": \"{{CALORIE_BALANCE_PERSONID}}\",\r\n    \"PatientUserId\": \"{{CALORIE_BALANCE_PATIENTUSERID}}\",\r\n    \"CaloriesConsumed\": {{CALORIE_BALANCE_CALORIESCONSUMED}},\r\n    \"CaloriesBurned\": {{CALORIE_BALANCE_CALORIESBURNED}},\r\n    \"Unit\": \"{{CALORIE_BALANCE_UNIT}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/calorie-balance/{{CALORIE_BALANCE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"calorie-balance",
+										"{{CALORIE_BALANCE_ID}}"
+									]
+								},
+								"description": "Update the details for an address."
+							},
+							"response": []
+						},
+						{
+							"name": "Search calorie balance record",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of Calorie Record is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('CalorieBalances');\r",
+											"    pm.expect(jsonRes.Data.CalorieBalances.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/calorie-balance/search?pageIndex=0&itemsPerPage=25",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"calorie-balance",
+										"search"
+									],
+									"query": [
+										{
+											"key": "createdDateFrom",
+											"value": "2021-05-01",
+											"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
+											"disabled": true
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-12-12",
+											"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
+											"disabled": true
+										},
+										{
+											"key": "orderBy",
+											"value": "CaloriesBurned",
+											"description": "The name of the Parameter to order by",
+											"disabled": true
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"description": "'ascending' or 'descending'",
+											"disabled": true
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"description": "Page index for pagination"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"description": "Items per page"
+										},
+										{
+											"key": "personId",
+											"value": "",
+											"description": "Person ID to filter",
+											"disabled": true
+										},
+										{
+											"key": "patientUserId",
+											"value": "",
+											"description": "Patient User ID to filter",
+											"disabled": true
+										},
+										{
+											"key": "minCaloriesConsumedValue",
+											"value": "",
+											"description": "Min calories consumed",
+											"disabled": true
+										},
+										{
+											"key": "maxCaloriesConsumedValue",
+											"value": "",
+											"description": "Max calories consumed",
+											"disabled": true
+										},
+										{
+											"key": "minCaloriesBurnedValue",
+											"value": "",
+											"description": "Min calories burned",
+											"disabled": true
+										},
+										{
+											"key": "maxCaloriesBurnedValue",
+											"value": "",
+											"description": "Max calories burned",
+											"disabled": true
+										},
+										{
+											"key": "minCalorieBalanceValue",
+											"value": "",
+											"description": "Min calories balance value",
+											"disabled": true
+										},
+										{
+											"key": "maxCalorieBalanceValue",
+											"value": "",
+											"description": "Max calories balance value",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Search addresses using query parameters."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete calorie balance record",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var str = '';\r",
+											"var search = '';\r",
+											"var num = 0.0;\r",
+											"\r",
+											"var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+											"var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
+											"var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
+											"var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+											"var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+											"var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+											"var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+											"var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+											"var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_LINE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_LINE_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_CITY\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_CITY_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_DISTRICT_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_STATE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_STATE_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_COUNTRY_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_POSTAL_CODE_SEARCH_STRING\", search);\r",
+											"\r",
+											"num = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+											"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_FROM\", num - 1);\r",
+											"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_TO\", num + 1);\r",
+											"\r",
+											"num = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+											"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_FROM\", num - 1);\r",
+											"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_TO\", num + 1);\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Deleted is true\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/calorie-balance/{{CALORIE_BALANCE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"calorie-balance",
+										"{{CALORIE_BALANCE_ID}}"
+									],
+									"query": [
+										{
+											"key": "addressLine",
+											"value": "{{ADDRESS_LINE_SEARCH_STRING}}",
+											"description": "Search string to match address line",
+											"disabled": true
+										},
+										{
+											"key": "longitudeFrom",
+											"value": "{{ADDRESS_LONGITUDE_SEARCH_FROM}}",
+											"description": "Format: float value. \nStart of the range for longitude based search",
+											"disabled": true
+										},
+										{
+											"key": "longitudeTo",
+											"value": "{{ADDRESS_LONGITUDE_SEARCH_TO}}",
+											"description": "Format: float value. \nEnd of the range for longitude based search",
+											"disabled": true
+										},
+										{
+											"key": "lattitudeFrom",
+											"value": "{{ADDRESS_LATTITUDE_SEARCH_FROM}}",
+											"description": "Format: float value.\nStart of the range for lattitude based search",
+											"disabled": true
+										},
+										{
+											"key": "lattitudeTo",
+											"value": "{{ADDRESS_LATTITUDE_SEARCH_TO}}",
+											"description": "Format: float value.\nEnd of the range for lattitude based search",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Search addresses using query parameters."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Move minutes",
+					"item": [
+						{
+							"name": "Add move minutes record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"DAILY_MOVE_MINUTES_ID\", jsonRes.Data.MoveMinutes.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New move minutes record is created\", function () {",
+											"",
+											"    var expectedValue = 50;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('MoveMinutes');",
+											"    pm.expect(jsonRes.Data.MoveMinutes).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.MoveMinutes).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.MoveMinutes).to.have.property('MoveMinutes');",
+											"    pm.expect(jsonRes.Data.MoveMinutes).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.MoveMinutes.MoveMinutes).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.MoveMinutes.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"MoveMinutes\": 50,\n    \"Unit\": \"mins\",\n    \"RecordDate\": \"2021-09-15\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/move-minutes",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"move-minutes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get move minutes record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Move minutes record is returned\", function () {",
+											"",
+											"    var expectedValue = 50;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('MoveMinutes');",
+											"    pm.expect(jsonRes.Data.MoveMinutes).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.MoveMinutes).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.MoveMinutes).to.have.property('MoveMinutes');",
+											"    pm.expect(jsonRes.Data.MoveMinutes).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.MoveMinutes.MoveMinutes).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.MoveMinutes.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/move-minutes/{{DAILY_MOVE_MINUTES_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"move-minutes",
+										"{{DAILY_MOVE_MINUTES_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update move minutes record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated move minutes record is returned\", function () {",
+											"",
+											"    var expectedMoveMinutes = 85;",
+											"    var expectedRecordDate = \"2021-09-14T00:00:00.000Z\";",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('MoveMinutes');",
+											"    pm.expect(jsonRes.Data.MoveMinutes).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.MoveMinutes).to.have.property('MoveMinutes');",
+											"    pm.expect(jsonRes.Data.MoveMinutes).to.have.property('RecordDate');",
+											"",
+											"    pm.expect(jsonRes.Data.MoveMinutes.MoveMinutes).equals(expectedMoveMinutes);",
+											"    pm.expect(jsonRes.Data.MoveMinutes.RecordDate).equals(expectedRecordDate);    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"MoveMinutes\": 85,\n    \"Unit\": \"mins\",\n    \"RecordDate\": \"2021-09-14\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/move-minutes/{{DAILY_MOVE_MINUTES_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"move-minutes",
+										"{{DAILY_MOVE_MINUTES_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search move minutes records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of move minutes records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('MoveMinutesRecords');",
+											"    pm.expect(jsonRes.Data.MoveMinutesRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/move-minutes/search?createdDateFrom=2021-09-14&createdDateTo=2021-10-15&orderBy=MoveMinutes&order=ascending&pageIndex=0&itemsPerPage=25&minValue=60&maxValue=90&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"move-minutes",
+										"search"
+									],
+									"query": [
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-14"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-15"
+										},
+										{
+											"key": "orderBy",
+											"value": "MoveMinutes"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "60"
+										},
+										{
+											"key": "maxValue",
+											"value": "90"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete move minutes record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Move minutes record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/move-minutes/{{DAILY_MOVE_MINUTES_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"move-minutes",
+										"{{DAILY_MOVE_MINUTES_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Step count",
+					"item": [
+						{
+							"name": "Add step count record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"DAILY_STEP_COUNT_ID\", jsonRes.Data.StepCount.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New step count record is created\", function () {",
+											"",
+											"    var expectedValue = 1590;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.StepCount.StepCount).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.StepCount.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"StepCount\": 1590,\n    \"RecordDate\": \"2021-09-15\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/step-count",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"step-count"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get step count record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Step count record is returned\", function () {",
+											"",
+											"    var expectedValue = 1590;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.StepCount.StepCount).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.StepCount.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/step-count/{{DAILY_STEP_COUNT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"step-count",
+										"{{DAILY_STEP_COUNT_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update step count record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated step count record is returned\", function () {",
+											"",
+											"    var expectedStepCount = 10000;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('StepCount');",
+											"    pm.expect(jsonRes.Data.StepCount).to.have.property('RecordDate');",
+											"",
+											"    pm.expect(jsonRes.Data.StepCount.StepCount).equals(expectedStepCount);",
+											"    var recordDate = jsonRes.Data.StepCount.RecordDate;",
+											"    if (recordDate) {",
+											"        recordDate = recordDate.split('T')[0];",
+											"    } ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"StepCount\": 10000,\n    \"RecordDate\": \"2021-09-14\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/step-count/{{DAILY_STEP_COUNT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"step-count",
+										"{{DAILY_STEP_COUNT_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search step count records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of move minutes records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('StepCountRecords');",
+											"    pm.expect(jsonRes.Data.StepCountRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/step-count/search?createdDateFrom=2021-09-14&createdDateTo=2021-10-15&orderBy=StepCount&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=25000&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"step-count",
+										"search"
+									],
+									"query": [
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-14"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-15"
+										},
+										{
+											"key": "orderBy",
+											"value": "StepCount"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "0"
+										},
+										{
+											"key": "maxValue",
+											"value": "25000"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete step count record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Step count record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/step-count/{{DAILY_STEP_COUNT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"step-count",
+										"{{DAILY_STEP_COUNT_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Nutrition",
+			"item": []
 		}
 	]
 }

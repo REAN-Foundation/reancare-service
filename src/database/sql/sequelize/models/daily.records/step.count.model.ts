@@ -66,7 +66,7 @@ export default class DailyRecordsStepCount extends Model {
             min : 0
         }
     })
-    Pulse: number;
+    StepCount: number;
 
     @Length({ max: 8 })
     @Column({

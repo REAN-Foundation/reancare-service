@@ -354,4 +354,41 @@ export class Helper {
         return decrypted.toString();
     }
 
+    public static getPossiblePhoneNumbers = (phone) => {
+
+        if (phone == null) {
+            return [];
+        }
+        
+        let phoneTemp = phone;
+        phoneTemp = phoneTemp.trim();
+        const searchFors = ['+91', '+1'];
+        const possiblePhoneNumbers = [phone];
+
+        let phonePrefix = "";
+
+        for (var s of searchFors) {
+            if (phoneTemp.startsWith(s)) {
+                phonePrefix = s;
+                phoneTemp = phoneTemp.replace(s, '');
+                phoneTemp = phoneTemp.replace('-', '');
+            }
+        }
+    
+        if (phonePrefix) {
+            possiblePhoneNumbers.push(phonePrefix + phoneTemp);
+            possiblePhoneNumbers.push(phonePrefix + "-" + phoneTemp);
+            possiblePhoneNumbers.push(phoneTemp);
+    
+        } else {
+            possiblePhoneNumbers.push("+91" + phoneTemp);
+            possiblePhoneNumbers.push("+91-" + phoneTemp);
+    
+            possiblePhoneNumbers.push("+1" + phoneTemp);
+            possiblePhoneNumbers.push("+1-" + phoneTemp);
+            possiblePhoneNumbers.push(phoneTemp);
+        }
+        return possiblePhoneNumbers;
+    }
+
 }

@@ -49,4 +49,30 @@ export class PersonValidator {
         return { id, addressId };
     };
 
+    static getAllPersonsWithPhoneAndRole = async (request: express.Request)
+        : Promise<{ phone: string; roleId: number }> => {
+
+        await param('phone').trim()
+            .unescape()
+            .isUUID()
+            .run(request);
+
+        await param('roleId').trim()
+            .escape()
+            .isInt()
+            .toInt()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        const phone = request.params.phone;
+        const roleId = parseInt(request.params.roleId);
+
+        return { phone, roleId };
+    }
+
 }

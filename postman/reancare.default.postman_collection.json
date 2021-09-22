@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"_postman_id": "03301739-ec2b-43b1-8fcb-ac502df60939",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2117,15 +2117,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2640,10 +2631,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -8884,7 +8871,383 @@
 		},
 		{
 			"name": "Exercise",
-			"item": []
+			"item": [
+				{
+					"name": "Meditation",
+					"item": [
+						{
+							"name": "Add meditation record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"EXERCISE_MEDITATION_ID\", jsonRes.Data.Meditation.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New meditation record is created\", function () {",
+											"",
+											"    var expectedValue = \"Yoga\";",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Meditation');",
+											"    pm.expect(jsonRes.Data.Meditation).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Meditation).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Meditation).to.have.property('Meditation');",
+											"    pm.expect(jsonRes.Data.Meditation).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.Meditation.Meditation).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.Meditation.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Meditation\": \"Yoga\",\n    \"Description\": \"\",\n    \"Category\": \"\",\n    \"StartTime\": \"2021-09-21T05:30:00.000Z\",\n    \"EndTime\": \"2021-09-21T05:45:00.000Z\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/meditation",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"meditation"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get meditation record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Meditation record is returned\", function () {",
+											"",
+											"    var expectedValue = \"Breathing\";",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Meditation');",
+											"    pm.expect(jsonRes.Data.Meditation).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Meditation).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Meditation).to.have.property('Meditation');",
+											"    pm.expect(jsonRes.Data.Meditation).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.Meditation.Meditation).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.Meditation.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/meditation/{{EXERCISE_MEDITATION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"meditation",
+										"{{EXERCISE_MEDITATION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update meditation record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated meditation record is returned\", function () {",
+											"",
+											"    var expectedValue = \"Breathing\";",
+											"    var expectedStartTime = \"2021-09-22T06:30:00.000Z\";",
+											"    var expectedEndTime = \"2021-09-22T06:45:00.000Z\";",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Meditation');",
+											"    pm.expect(jsonRes.Data.Meditation).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Meditation).to.have.property('Meditation');",
+											"    pm.expect(jsonRes.Data.Meditation).to.have.property('StartTime');",
+											"    pm.expect(jsonRes.Data.Meditation).to.have.property('EndTime');",
+											"",
+											"    pm.expect(jsonRes.Data.Meditation.Meditation).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.Meditation.StartTime).equals(expectedStartTime);",
+											"    pm.expect(jsonRes.Data.Meditation.EndTime).equals(expectedEndTime);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Meditation\": \"Breathing\",\n    \"Description\": \"\",\n    \"Category\": \"Mindfulness\",\n    \"StartTime\": \"2021-09-22T06:30:00.000Z\",\n    \"EndTime\": \"2021-09-22T06:45:00.000Z\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/meditation/{{EXERCISE_MEDITATION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"meditation",
+										"{{EXERCISE_MEDITATION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search meditation records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of meditation records are returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('MeditationRecords');",
+											"    pm.expect(jsonRes.Data.MeditationRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/meditation/search?meditation=Breathing&orderBy=meditation&order=ascending&pageIndex=0&itemsPerPage=25&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"meditation",
+										"search"
+									],
+									"query": [
+										{
+											"key": "meditation",
+											"value": "Breathing"
+										},
+										{
+											"key": "orderBy",
+											"value": "meditation"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete meditation record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Meditation record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/meditation/{{EXERCISE_MEDITATION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"meditation",
+										"{{EXERCISE_MEDITATION_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "Daily records",

@@ -92,7 +92,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "Exercise.Meditation.Create",
+            "Exercise.Meditation.GetById",
+            "Exercise.Meditation.Update",
+            "Exercise.Meditation.Delete",
+            "Exercise.Meditation.Search"
         ]
     },
     {
@@ -189,7 +194,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "Exercise.Meditation.Create",
+            "Exercise.Meditation.GetById",
+            "Exercise.Meditation.Update",
+            "Exercise.Meditation.Delete",
+            "Exercise.Meditation.Search"
         ]
     },
     {
@@ -289,7 +299,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "Exercise.Meditation.Create",
+            "Exercise.Meditation.GetById",
+            "Exercise.Meditation.Update",
+            "Exercise.Meditation.Delete",
+            "Exercise.Meditation.Search"
         ]
     },
     {
@@ -379,7 +394,12 @@
             "DailyRecords.StepCount.GetById",
             "DailyRecords.StepCount.Search",
             "DailyRecords.StepCount.Update",
-            "DailyRecords.StepCount.Delete"
+            "DailyRecords.StepCount.Delete",
+            "Exercise.Meditation.Create",
+            "Exercise.Meditation.GetById",
+            "Exercise.Meditation.Update",
+            "Exercise.Meditation.Delete",
+            "Exercise.Meditation.Search"
         ]
     },
     {
@@ -469,7 +489,12 @@
             "Biometrics.Pulse.GetById",
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
-            "Biometrics.Pulse.Search"
+            "Biometrics.Pulse.Search",
+            "Exercise.Meditation.Create",
+            "Exercise.Meditation.GetById",
+            "Exercise.Meditation.Update",
+            "Exercise.Meditation.Delete",
+            "Exercise.Meditation.Search"
         ]
     }
 ]

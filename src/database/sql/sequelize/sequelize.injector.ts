@@ -48,7 +48,6 @@ export class SequelizeInjector {
         container.register('IOrganizationRepo', OrganizationRepo);
         container.register('IDoctorRepo', DoctorRepo);
         container.register('IBloodPressureRepo', BloodPressureRepo);
-
         container.register('IBodyWeightRepo', BodyWeightRepo);
         container.register('IBodyHeightRepo', BodyHeightRepo);
         container.register('IPatientHealthProfileRepo', HealthProfileRepo);

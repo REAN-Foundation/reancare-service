@@ -92,7 +92,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "EmergencyEvent.Create",
+            "EmergencyEvent.GetById",
+            "EmergencyEvent.Search",
+            "EmergencyEvent.Update",
+            "EmergencyEvent.Delete"
         ]
     },
     {
@@ -189,7 +194,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "EmergencyEvent.Create",
+            "EmergencyEvent.GetById",
+            "EmergencyEvent.Search",
+            "EmergencyEvent.Update",
+            "EmergencyEvent.Delete"
         ]
     },
     {
@@ -289,7 +299,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "EmergencyEvent.Create",
+            "EmergencyEvent.GetById",
+            "EmergencyEvent.Search",
+            "EmergencyEvent.Update",
+            "EmergencyEvent.Delete"
         ]
     },
     {
@@ -379,7 +394,12 @@
             "DailyRecords.StepCount.GetById",
             "DailyRecords.StepCount.Search",
             "DailyRecords.StepCount.Update",
-            "DailyRecords.StepCount.Delete"
+            "DailyRecords.StepCount.Delete",
+            "EmergencyEvent.Create",
+            "EmergencyEvent.GetById",
+            "EmergencyEvent.Search",
+            "EmergencyEvent.Update",
+            "EmergencyEvent.Delete"
         ]
     },
     {
@@ -469,7 +489,12 @@
             "Biometrics.Pulse.GetById",
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
-            "Biometrics.Pulse.Search"
+            "Biometrics.Pulse.Search",
+            "EmergencyEvent.Create",
+            "EmergencyEvent.GetById",
+            "EmergencyEvent.Search",
+            "EmergencyEvent.Update",
+            "EmergencyEvent.Delete"
         ]
     }
 ]

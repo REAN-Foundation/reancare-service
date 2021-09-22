@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"_postman_id": "befa3596-cd86-40ad-932b-7f53cb4ab7b5",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2117,15 +2117,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2640,10 +2631,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -10783,6 +10770,473 @@
 		{
 			"name": "Nutrition",
 			"item": []
+		},
+		{
+			"name": "EmergencyEvent",
+			"item": [
+				{
+					"name": "Create patient emergency event",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
+									"pm.environment.set(\"EMERGENCY_EHRID\", undefined);\r",
+									"pm.environment.set(\"EMERGENCY_PATIENTUSERID\", patientUserId);\r",
+									"pm.environment.set(\"EMERGENCY_DETAILS\", 'Allergy reaction and Difficulty breathing');\r",
+									"pm.environment.set(\"EMERGENCY_EMERGENCYDATE\", new Date());"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"EMERGENCY_EVENT_ID\", jsonRes.Data.EmergencyEvent.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"New PATIENT EMERGENCY Event record is created\", function () {\r",
+									"\r",
+									"    let expectedEhrId = pm.environment.get(\"EMERGENCY_EHRID\");\r",
+									"    let expectedPatientUserId = pm.environment.get(\"EMERGENCY_PATIENTUSERID\");\r",
+									"    let expectedDetails = pm.environment.get(\"EMERGENCY_DETAILS\");\r",
+									"    let expectedEmergencyDate = pm.environment.get(\"EMERGENCY_EMERGENCYDATE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('EmergencyEvent');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('EhrId');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('Details');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('EmergencyDate');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent.Details).equals(expectedDetails);\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent.EmergencyDate).equals(expectedEmergencyDate);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"EhrId\":\"{{EMERGENCY_EHRID}}\",\r\n    \"PatientUserId\":\"{{EMERGENCY_PATIENTUSERID}}\",\r\n    \"Details\":\"{{EMERGENCY_DETAILS}}\",\r\n    \"EmergencyDate\":\"{{EMERGENCY_EMERGENCYDATE}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/emergency-event",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"emergency-event"
+							]
+						},
+						"description": "Add an emergency event."
+					},
+					"response": []
+				},
+				{
+					"name": "Get patient emergency event by id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Patient Allergy should have correct data\", function () {\r",
+									"\r",
+									"    let expectedEhrId = pm.environment.get(\"EMERGENCY_EHRID\");\r",
+									"    let expectedPatientUserId = pm.environment.get(\"EMERGENCY_PATIENTUSERID\");\r",
+									"    let expectedDetails = pm.environment.get(\"EMERGENCY_DETAILS\");\r",
+									"    let expectedEmergencyDate = pm.environment.get(\"EMERGENCY_EMERGENCYDATE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('EmergencyEvent');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('EhrId');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('Details');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('EmergencyDate');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent.Details).equals(expectedDetails);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/emergency-event/{{EMERGENCY_EVENT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"emergency-event",
+								"{{EMERGENCY_EVENT_ID}}"
+							]
+						},
+						"description": "Get an emergency event by emergency event id."
+					},
+					"response": []
+				},
+				{
+					"name": "Update an patient emergency event",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"EMERGENCY_DETAILS\", 'Insomnia');"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Correct updates should be reflected\", function () {\r",
+									"\r",
+									"    let expectedEhrId = pm.environment.get(\"EMERGENCY_EHRID\");\r",
+									"    let expectedPatientUserId = pm.environment.get(\"EMERGENCY_PATIENTUSERID\");\r",
+									"    let expectedDetails = pm.environment.get(\"EMERGENCY_DETAILS\");\r",
+									"    let expectedEmergencyDate = pm.environment.get(\"EMERGENCY_EMERGENCYDATE\");\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('EmergencyEvent');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('EhrId');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('PatientUserId');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('Details');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('EmergencyDate');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent.Details).equals(expectedDetails);\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvent.EmergencyDate).equals(expectedEmergencyDate);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"EhrId\":\"{{EMERGENCY_EHRID}}\",\r\n    \"PatientUserId\":\"{{EMERGENCY_PATIENTUSERID}}\",\r\n    \"Details\":\"{{EMERGENCY_DETAILS}}\",\r\n    \"EmergencyDate\":\"{{EMERGENCY_EMERGENCYDATE}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/emergency-event/{{EMERGENCY_EVENT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"emergency-event",
+								"{{EMERGENCY_EVENT_ID}}"
+							]
+						},
+						"description": "Update the details for an emergency event."
+					},
+					"response": []
+				},
+				{
+					"name": "Search patient emergency event",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"List of Calorie Record is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('EmergencyEvents');\r",
+									"    pm.expect(jsonRes.Data.EmergencyEvents.Items.length).to.be.greaterThan(0);\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "Session token (JWT) for the user",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API client secret key",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/emergency-event/search?EmergencyDateFrom=2021-05-01&EmergencyDateTo=2021-12-12&orderBy=EmergencyDate&order=ascending&pageIndex=0&itemsPerPage=25",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"emergency-event",
+								"search"
+							],
+							"query": [
+								{
+									"key": "EmergencyDateFrom",
+									"value": "2021-05-01"
+								},
+								{
+									"key": "EmergencyDateTo",
+									"value": "2021-12-12"
+								},
+								{
+									"key": "orderBy",
+									"value": "EmergencyDate"
+								},
+								{
+									"key": "order",
+									"value": "ascending"
+								},
+								{
+									"key": "pageIndex",
+									"value": "0"
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "25"
+								},
+								{
+									"key": "PatientUserId",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "MedicalPractitionerUserId",
+									"value": null,
+									"disabled": true
+								}
+							]
+						},
+						"description": "Search emergency event using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete patient emergency event record",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Deleted is true\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+									"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "Session token (JWT) for the user",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API client secret key",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/emergency-event/{{EMERGENCY_EVENT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"emergency-event",
+								"{{EMERGENCY_EVENT_ID}}"
+							]
+						},
+						"description": "Deletes emergency event using ID"
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

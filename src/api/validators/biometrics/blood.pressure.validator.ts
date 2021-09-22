@@ -32,60 +32,43 @@ export class BloodPressureValidator {
         return await BloodPressureValidator.getParamId(request);
     };
  
-    static getByPatientUserId = async (request: express.Request): Promise<string> => {
- 
-        await param('PatientUserId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
- 
-        const result = validationResult(request);
- 
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
- 
-        return request.params.PatientUserId;
-    };
- 
-    static getByPersonId = async (request: express.Request): Promise<string> => {
- 
-        await param('personId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
- 
-        const result = validationResult(request);
- 
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
- 
-        return request.params.personId;
-    };
- 
     static delete = async (request: express.Request): Promise<string> => {
         return await BloodPressureValidator.getParamId(request);
     };
  
     static search = async (request: express.Request): Promise<BloodPressureSearchFilters> => {
  
-        await query('PatientUserId').optional()
+        await query('patientUserId').optional()
             .trim()
             .escape()
             .isUUID()
             .run(request);
  
-        await query('MinValue').optional()
+        await query('minSystolicValue').optional()
             .trim()
             .escape()
+            .toInt()
             .run(request);
  
-        await query('MaxValue').optional()
+        await query('maxSystolicValue').optional()
             .trim()
+            .escape()
+            .toInt()
+            .run(request);
+        
+        await query('minDiastolicValue').optional()
+            .trim()
+            .escape()
+            .toInt()
             .run(request);
  
-        await query('RecordedByUserId').optional()
+        await query('maxDiastolicValue').optional()
+            .trim()
+            .escape()
+            .toInt()
+            .run(request);
+ 
+        await query('recordedByUserId').optional()
             .trim()
             .escape()
             .isUUID()
@@ -152,12 +135,6 @@ export class BloodPressureValidator {
             .isUUID()
             .run(request);
  
-        await body('BloodPressure').optional()
-            .trim()
-            .escape()
-            .toInt()
-            .run(request);
- 
         await body('Unit').optional()
             .trim()
             .run(request);
@@ -198,14 +175,14 @@ export class BloodPressureValidator {
             request.query.ItemsPerPage !== 'undefined' ? parseInt(request.query.ItemsPerPage as string, 10) : 25;
  
         const filters: BloodPressureSearchFilters = {
-            PatientUserId     : request.query.PatientUserId ?? null,
-            MinSystolicValue  : request.query.MinSystolicValue ?? null,
-            MinDiastolicValue : request.query.MinDiastolicValue ?? null,
-            MaxSystolicValue  : request.query.MaxSystolicValue ?? null,
-            MaxDiastolicValue : request.query.MaxDiastolicValue ?? null,
-            CreatedDateFrom   : request.query.CreatedDateFrom ?? null,
-            CreatedDateTo     : request.query.CreatedDateTo ?? null,
-            RecordedByUserId  : request.query.RecordedByUserId ?? null,
+            PatientUserId     : request.query.patientUserId ?? null,
+            MinSystolicValue  : request.query.minSystolicValue ?? null,
+            MinDiastolicValue : request.query.minDiastolicValue ?? null,
+            MaxSystolicValue  : request.query.maxSystolicValue ?? null,
+            MaxDiastolicValue : request.query.maxDiastolicValue ?? null,
+            CreatedDateFrom   : request.query.createdDateFrom ?? null,
+            CreatedDateTo     : request.query.createdDateTo ?? null,
+            RecordedByUserId  : request.query.recordedByUserId ?? null,
             OrderBy           : request.query.OrderBy ?? 'CreatedAt',
             Order             : request.query.Order ?? 'descending',
             PageIndex         : pageIndex,

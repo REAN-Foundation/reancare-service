@@ -2,7 +2,6 @@ import { inject, injectable } from "tsyringe";
 import { IBloodPressureRepo } from "../../database/repository.interfaces/biometrics/blood.pressure.repo.interface";
 import { BloodPressureDomainModel } from '../../domain.types/biometrics/blood.pressure/blood.pressure.domain.model';
 import { BloodPressureDto } from '../../domain.types/biometrics/blood.pressure/blood.pressure.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BloodPressureSearchResults, BloodPressureSearchFilters } from '../../domain.types/biometrics/blood.pressure/blood.pressure.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

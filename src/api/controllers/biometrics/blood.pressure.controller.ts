@@ -31,7 +31,7 @@ export class BloodPressureController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometric.BloodPressure.Create';
+            request.context = 'Biometrics.BloodPressure.Create';
 
             const bloodPressureDomainModel = await BloodPressureValidator.create(request);
 
@@ -50,7 +50,7 @@ export class BloodPressureController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometric.BloodPressure.GetById';
+            request.context = 'Biometrics.BloodPressure.GetById';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
@@ -71,7 +71,7 @@ export class BloodPressureController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometric.BloodPressure.Search';
+            request.context = 'Biometrics.BloodPressure.Search';
             await this._authorizer.authorize(request, response);
 
             const filters = await BloodPressureValidator.search(request);
@@ -95,7 +95,7 @@ export class BloodPressureController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometric.BloodPressure.Update';
+            request.context = 'Biometrics.BloodPressure.Update';
 
             await this._authorizer.authorize(request, response);
 
@@ -122,7 +122,7 @@ export class BloodPressureController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometric.BloodPressure.Delete';
+            request.context = 'Biometrics.BloodPressure.Delete';
             await this._authorizer.authorize(request, response);
 
             const id: string = await BloodPressureValidator.getById(request);

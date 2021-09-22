@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import express from 'express';
 import { BloodPressureController } from '../../controllers/biometrics/blood.pressure.controller';
 import { Loader } from '../../../startup/loader';

@@ -6,7 +6,6 @@ import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
 import { BloodPressureDomainModel } from "../../../../../domain.types/biometrics/blood.pressure/blood.pressure.domain.model";
 import { BloodPressureDto } from "../../../../../domain.types/biometrics/blood.pressure/blood.pressure.dto";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BloodPressureSearchFilters, BloodPressureSearchResults } from "../../../../../domain.types/biometrics/blood.pressure/blood.pressure.search.types";
 
 ///////////////////////////////////////////////////////////////////////
@@ -48,38 +47,36 @@ export class BloodPressureRepo implements IBloodPressureRepo {
     search = async (filters: BloodPressureSearchFilters): Promise<BloodPressureSearchResults> => {
         try {
 
-            Logger.instance().log(`Filters 2 , ${JSON.stringify(filters)}`);
-            
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
                 search.where['PatientUserId'] = filters.PatientUserId;
             }
             if (filters.MinSystolicValue != null && filters.MaxSystolicValue != null) {
-                search.where['BloodPressure'] = {
+                search.where['Systolic'] = {
                     [Op.gte] : filters.MinSystolicValue,
                     [Op.lte] : filters.MaxSystolicValue,
                 };
             } else if (filters.MinSystolicValue === null && filters.MaxSystolicValue !== null) {
-                search.where['BloodPressure'] = {
+                search.where['Systolic'] = {
                     [Op.lte] : filters.MaxSystolicValue,
                 };
             } else if (filters.MinSystolicValue !== null && filters.MaxSystolicValue === null) {
-                search.where['BloodPressure'] = {
+                search.where['Systolic'] = {
                     [Op.gte] : filters.MinSystolicValue,
                 };
             }
             if (filters.MinDiastolicValue != null && filters.MaxDiastolicValue != null) {
-                search.where['BloodPressure'] = {
+                search.where['Diastolic'] = {
                     [Op.gte] : filters.MinDiastolicValue,
                     [Op.lte] : filters.MaxDiastolicValue,
                 };
             } else if (filters.MinDiastolicValue === null && filters.MaxDiastolicValue !== null) {
-                search.where['BloodPressure'] = {
+                search.where['Diastolic'] = {
                     [Op.lte] : filters.MaxDiastolicValue,
                 };
             } else if (filters.MinDiastolicValue !== null && filters.MaxDiastolicValue === null) {
-                search.where['BloodPressure'] = {
+                search.where['Diastolic'] = {
                     [Op.gte] : filters.MinDiastolicValue,
                 };
             }

@@ -1,25 +1,28 @@
-import { ResourceReferenceItem, SiblingResource } from "./file.resource.types";
+import { FileResourceMetadata, ResourceReference } from "./file.resource.types";
+
+export interface FileResourceDetailsDto {
+    id?              : string;
+    FileName?        : string;
+    OwnerUserId?     : string;
+    UploadedByUserId?: string;
+    IsPublicResource?: boolean;
+    MimeType?        : string;
+    LatestVersion    : FileResourceMetadata;
+    Versions?        : FileResourceMetadata[];
+    References?      : ResourceReference[];
+    Tags?            : string[];
+}
 
 export interface FileResourceDto {
     id?              : string;
-    EhrId?           : string;
     FileName?        : string;
     OwnerUserId?     : string;
-    Version?         : string;
-    UploadedByUserId?: string;
-    StorageKey?      : string;
-    IsPublic?        : boolean;
-    SiblingResources?: SiblingResource[];
-    ReferenceItems?  : ResourceReferenceItem[];
+    IsPublicResource?: boolean;
     MimeType?        : string;
-    MetaInformation? : string;
-    SizeInKB?        : number;
-    UploadedDate?    : Date;
-    PublicUrl?       : string;
-    AuthUrl?         : string;
+    LatestVersion    : FileResourceMetadata;
 }
 
-export interface DownloadedFilesDetailsDto {
+export interface SearchFilesDetailsDto {
     LocalFolderName : string;
     Files           : FileVersionDetailsDto[];
     ReferenceItemId : string;
@@ -33,6 +36,10 @@ export interface FileVersionDetailsDto {
     FileName            : string;
     OriginalName        : string;
     Version             : string;
-    StorageKey          : string;
+    StorageKey?         : string;
+    MimeType            : string;
+    PublicUrl?          : string;
+    AuthUrl?            : string;
+    UploadedDate?       : Date;
     DownloadedLocalPath?: string;
 }

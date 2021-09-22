@@ -1,14 +1,20 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
-import { ResourceReferenceItem } from '../../domain.types/file.resource/file.resource.types';
-import { Helper } from '../../common/helper';
+import { FileResourceMetadata, ResourceReference } from '../../domain.types/file.resource/file.resource.types';
 import {
     FileResourceRenameDomainModel,
     FileResourceSearchDownloadDomainModel,
     FileResourceUploadDomainModel,
-    FileResourceVersionDomainModel,
 } from '../../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
+import * as _ from 'lodash';
+import { ValidationError } from 'sequelize';
+import * as expressFileupload from 'express-fileupload';
+import mime from 'mime';
+import path from 'path';
+import { Helper } from "../../common/helper";
+import { TimeHelper } from '../../common/time.helper';
+import { ConfigurationManager } from '../../configs/configuration.manager';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,16 +22,16 @@ export class FileResourceValidator {
 
     //#region Publics
 
-    static getUploadDomainModel = (request: express.Request): FileResourceUploadDomainModel => {
+    static getUploadDomainModel = (request: express.Request): FileResourceUploadDomainModel[] => {
+
         var currentUserId = request.currentUser.UserId;
 
-        var references: ResourceReferenceItem[] = [];
+        var references: ResourceReference[] = [];
         if (request.body.References !== undefined && request.body.References.length > 0) {
             request.body.References.array.forEach((element) => {
-                var item: ResourceReferenceItem = {
+                var item: ResourceReference = {
                     ItemId   : element.ItemId,
                     ItemType : element.ItemType ?? null,
-                    Keyword  : element.Keyword ?? null,
                 };
                 references.push(item);
             });
@@ -37,30 +43,71 @@ export class FileResourceValidator {
             });
         }
 
-        const domainModel: FileResourceUploadDomainModel = {
-            OwnerUserId            : request.body.OwnerUserId ?? currentUserId,
-            UploadedByUserId       : currentUserId,
-            IsPublicResource       : request.body.IsPublicResource ?? false,
-            IsMultiResolutionImage : request.body.IsMultiResolutionImage ?? false,
-            References             : references,
-            StorageKey             : null,
-            Tags                   : tags,
-            MimeType               : null,
-            MetaInformation        : null,
-            SizeInKB               : null,
-            UploadedDate           : new Date(),
-        };
+        var models: FileResourceUploadDomainModel[] = [];
 
-        return domainModel;
+        var fileMetadataList = FileResourceValidator.getFileMetadataList(request);
+
+        var mimeType = null;
+        if (fileMetadataList.length > 0) {
+            mimeType = fileMetadataList[0].MimeType;
+        }
+        for (var x of fileMetadataList) {
+            const model: FileResourceUploadDomainModel = {
+                FileMetadata           : x,
+                OwnerUserId            : request.body.OwnerUserId ?? currentUserId,
+                UploadedByUserId       : currentUserId,
+                IsPublicResource       : request.body.IsPublicResource ?? false,
+                IsMultiResolutionImage : request.body.IsMultiResolutionImage ?? false,
+                References             : references,
+                Tags                   : tags,
+                MimeType               : mimeType,
+            };
+            models.push(model);
+        }
+
+        return models;
     };
 
-    static upload = async (request: express.Request): Promise<FileResourceUploadDomainModel> => {
+    static upload = async (request: express.Request): Promise<FileResourceUploadDomainModel[]> => {
+        if (!request.files) {
+            throw new ValidationError('No file uploaded!!');
+        }
         await FileResourceValidator.validateBody(request);
         return FileResourceValidator.getUploadDomainModel(request);
     };
 
-    static uploadVersion = async (request: express.Request): Promise<FileResourceVersionDomainModel> => {
-        return await FileResourceValidator.getIdAndVersion(request);
+    static uploadVersion = async (request: express.Request): Promise<FileResourceMetadata> => {
+
+        if (!request.files) {
+            throw new ValidationError('No file uploaded!!');
+        }
+
+        await param('id').exists()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await param('version').exists()
+            .trim()
+            .isUUID()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        var metadataList = FileResourceValidator.getFileMetadataList(request);
+        if (metadataList.length === 0) {
+            throw new ValidationError('Missing file metadata!');
+        }
+
+        var metadata = metadataList[0];
+        metadata.ResourceId = request.params.id;
+        metadata.VersionIdentifier = request.params.version;
+        
+        return metadata;
     };
 
     static rename = async (request: express.Request): Promise<FileResourceRenameDomainModel> => {
@@ -89,7 +136,7 @@ export class FileResourceValidator {
         return domainModel;
     }
 
-    static getIdAndVersion = async (request: express.Request): Promise<FileResourceVersionDomainModel> => {
+    static getIdAndVersion = async (request: express.Request): Promise<FileResourceMetadata> => {
 
         await param('id').exists()
             .escape()
@@ -107,10 +154,9 @@ export class FileResourceValidator {
             Helper.handleValidationError(result);
         }
 
-        var model: FileResourceVersionDomainModel = {
-            ResourceId : request.params.id,
-            Version    : request.params.version,
-            StorageKey : null
+        var model: FileResourceMetadata = {
+            ResourceId        : request.params.id,
+            VersionIdentifier : request.params.version,
         };
 
         return model;
@@ -132,7 +178,7 @@ export class FileResourceValidator {
         return model;
     };
 
-    static downloadByVersion = async (request: express.Request): Promise<FileResourceVersionDomainModel> => {
+    static downloadByVersion = async (request: express.Request): Promise<FileResourceMetadata> => {
         return await FileResourceValidator.getIdAndVersion(request);
     };
 
@@ -167,6 +213,14 @@ export class FileResourceValidator {
         }
         return request.params.referenceId;
     };
+
+    private static getFileMetadataList(request) {
+        var timestamp = TimeHelper.timestamp(new Date());
+        var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
+        var folderPath = path.join(tempUploadFolder, timestamp);
+        var fileMetadataList = this.storeLocally(folderPath, request.files);
+        return fileMetadataList;
+    }
 
     //#endregion
 
@@ -309,6 +363,65 @@ export class FileResourceValidator {
         return request.params.id;
     }
 
+    static storeLocally = (tempFolder: string, files: expressFileupload.FileArray): FileResourceMetadata[] => {
+
+        var metadataDetails = [];
+        _.forEach(_.keysIn(files), (key) => {
+            const file = files[key];
+            if (Array.isArray(file)) {
+                var fileArray = file;
+                for (var fileElement of fileArray) {
+                    var metadata = FileResourceValidator.moveToTempFolder(tempFolder, fileElement);
+                    metadataDetails.push(metadata);
+                }
+            }
+            else {
+                var metadata = FileResourceValidator.moveToTempFolder(tempFolder, file);
+                metadataDetails.push(metadata);
+            }
+        });
+        return metadataDetails;
+    }
+
+    static moveToTempFolder = (folder, file): FileResourceMetadata => {
+
+        var timestamp = TimeHelper.timestamp(new Date());
+        var filename = file.name;
+        var ext = Helper.getFileExtension(filename);
+    
+        filename = filename.replace('.' + ext, "");
+        filename = filename.replace(' ', "_");
+        filename = filename + '_' + timestamp + '.' + ext;
+        var tempFilename = path.join(folder, filename);
+    
+        var moveIt = async (m, tempFilename) => {
+    
+            return new Promise((resolve, reject) => {
+                m.mv(tempFilename, function (error) {
+                    if (error) {
+                        return reject(error);
+                    }
+                    return resolve(true);
+                });
+            });
+    
+        };
+    
+        (async () => {
+            await moveIt(file, tempFilename);
+        })();
+    
+        var metadata: FileResourceMetadata = {
+            FileName       : filename,
+            OriginalName   : file.name,
+            SourceFilePath : tempFilename,
+            MimeType       : mime.lookup(tempFilename),
+            Size           : file.size,
+            StorageKey     : null
+        };
+        return metadata;
+    }
+    
     //#endregion
 
 }

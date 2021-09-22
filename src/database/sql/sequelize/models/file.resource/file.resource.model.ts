@@ -38,16 +38,16 @@ export default class FileResource extends Model {
     })
     id: string;
     
+    // @Length({ max: 128 })
+    // @Column({
+    //     type      : DataType.STRING(128),
+    //     allowNull : true,
+    // })
+    // EhrId: string;
+
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
-        allowNull : true,
-    })
-    EhrId: string;
-
-    @Length({ max: 512 })
-    @Column({
-        type      : DataType.STRING(512),
         allowNull : true,
     })
     FileName: string;
@@ -68,19 +68,12 @@ export default class FileResource extends Model {
     })
     UploadedByUserId: string;
 
-    @Length({ max: 512 })
-    @Column({
-        type      : DataType.STRING(512),
-        allowNull : true,
-    })
-    StorageKey: string;
-
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : false
     })
-    IsPublic: boolean;
+    IsPublicResource: boolean;
     
     @Column({
         type         : DataType.BOOLEAN,
@@ -97,24 +90,11 @@ export default class FileResource extends Model {
     Tags: string; //Comma separated string list
 
     @Length({ max: 64 })
-    @Column({ 
+    @Column({
         type      : DataType.STRING(64),
         allowNull : true,
     })
     MimeType: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    MetaInformation: string;
-
-    @Column({
-        type      : DataType.FLOAT,
-        allowNull : true,
-    })
-    SizeInKB: number;
 
     @IsDate
     @Column({

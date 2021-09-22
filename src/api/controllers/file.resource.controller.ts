@@ -48,16 +48,16 @@ export class FileResourceController {
             request.context = 'FileResource.Upload';
             await this._authorizer.authorize(request, response);
             
-            var domainModel = await FileResourceValidator.upload(request);
-            if (!request.files) {
-                throw new ApiError(400, 'No file uploaded!!');
+            var domainModels = await FileResourceValidator.upload(request);
+
+            var dtos = [];
+            for await (var model of domainModels) {
+                const dto = await this._service.upload(model);
+                dtos.push(dto);
             }
-            domainModel.Files = request.files;
-
-            var dto = await this._service.upload(domainModel);
-
+            
             ResponseHandler.success(request, response, 'File/s uploaded successfully!', 201, {
-                FileResource : dto,
+                FileResources : dtos,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -71,11 +71,6 @@ export class FileResourceController {
             await this._authorizer.authorize(request, response);
 
             const domainModel: FileResourceVersionDomainModel = await FileResourceValidator.uploadVersion(request);
-            if (!request.files) {
-                throw new ApiError(400, 'No file uploaded!!');
-            }
-
-            domainModel.Files = request.files;
             const dto = await this._service.uploadVersion(domainModel);
 
             ResponseHandler.success(request, response, 'File version uploaded successfully!', 201, {

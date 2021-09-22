@@ -8,13 +8,13 @@ export interface FileResourceSearchFilters {
     Version?         : string;
     ReferenceId?     : string;
     ReferenceType?   : string;
-    Tag              : string;
-    CreatedDateFrom  : Date;
-    CreatedDateTo    : Date;
-    OrderBy          : string;
-    Order            : string;
-    PageIndex        : number;
-    ItemsPerPage     : number;
+    Tag?             : string;
+    CreatedDateFrom? : Date;
+    CreatedDateTo?   : Date;
+    OrderBy?         : string;
+    Order?           : string;
+    PageIndex?       : number;
+    ItemsPerPage?    : number;
 }
 
 export interface FileResourceSearchResults {

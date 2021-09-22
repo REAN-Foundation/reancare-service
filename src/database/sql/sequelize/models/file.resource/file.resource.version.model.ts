@@ -45,6 +45,20 @@ export default class FileResourceVersion extends Model {
     })
     ResourceId: string;
 
+    @Length({ max: 512 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    FileName: string;
+
+    @Length({ max: 512 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    OriginalFileName: string;
+
     @Length({ max: 32 })
     @Column({
         type      : DataType.STRING(32),
@@ -52,12 +66,26 @@ export default class FileResourceVersion extends Model {
     })
     Version: string;
 
+    @Length({ max: 64 })
+    @Column({
+        type      : DataType.STRING(64),
+        allowNull : true,
+    })
+    MimeType: string;
+
     @Length({ max: 512 })
     @Column({
         type      : DataType.STRING(512),
         allowNull : true,
     })
     StorageKey: string;
+        
+    @Column({
+        type         : DataType.FLOAT,
+        allowNull    : false,
+        defaultValue : 0
+    })
+    SizeInKB: number;
 
     @Column
     @CreatedAt

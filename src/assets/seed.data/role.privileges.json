@@ -92,7 +92,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete"
         ]
     },
     {
@@ -138,11 +143,6 @@
             "Person.GetAddresses",
             "Person.AddAddress",
             "Person.RemoveAddress",
-            "Biometric.BloodPressure.Create",
-            "Biometric.BloodPressure.GetById",
-            "Biometric.BloodPressure.Search",
-            "Biometric.BloodPressure.Update",
-            "Biometric.BloodPressure.Delete",
             "Biometrics.BodyHeight.Create",
             "Biometrics.BodyHeight.GetById",
             "Biometrics.BodyHeight.Update",
@@ -194,7 +194,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete"
         ]
     },
     {
@@ -263,11 +268,6 @@
             "Person.GetAddresses",
             "Person.AddAddress",
             "Person.RemoveAddress",
-            "Biometric.BloodPressure.Create",
-            "Biometric.BloodPressure.GetById",
-            "Biometric.BloodPressure.Search",
-            "Biometric.BloodPressure.Update",
-            "Biometric.BloodPressure.Delete",
             "HealthProfile.GetByPatientUserId",
             "HealthProfile.UpdateByPatientUserId",
             "Biometrics.Pulse.Create",
@@ -299,7 +299,12 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete"
         ]
     },
     {
@@ -389,7 +394,12 @@
             "DailyRecords.StepCount.GetById",
             "DailyRecords.StepCount.Search",
             "DailyRecords.StepCount.Update",
-            "DailyRecords.StepCount.Delete"
+            "DailyRecords.StepCount.Delete",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete"
         ]
     },
     {
@@ -479,7 +489,12 @@
             "Biometrics.Pulse.GetById",
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
-            "Biometrics.Pulse.Search"
+            "Biometrics.Pulse.Search",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete"
         ]
     }
 ]

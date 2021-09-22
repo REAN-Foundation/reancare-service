@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"_postman_id": "0db8aac7-717f-4c6a-8d24-bf08da0529d2",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2117,15 +2117,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2640,10 +2631,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -3527,6 +3514,979 @@
 								"description": "Search addresses using query parameters."
 							},
 							"response": []
+						}
+					]
+				},
+				{
+					"name": "Dooctor Note",
+					"item": [
+						{
+							"name": "Add doctor note",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"DOCTOR_NOTE_ID\", jsonRes.Data.DoctorNote.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"A New doctor note record is created\", function () {\r",
+											"\r",
+											"    var expectedValidationStatus = \"Confirmed\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DoctorNote');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('VisitId');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('ValidationStatus');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('Notes');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('RecordDate');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.ValidationStatus).equals(expectedValidationStatus);\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var userId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"pm.environment.set(\"DOCTOR_NOTE_VISIT_ID\", userId);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"VisitId\": \"{{DOCTOR_NOTE_VISIT_ID}}\",\r\n    \"ValidationStatus\": \"Confirmed\",\r\n    \"Notes\": \"Prescribing two days bed rest and more liquid no fried food\",\r\n    \"RecordDate\": \"2021-09-22\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/doctor-note",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"doctor-note"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Add doctor note",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"VisitId\": \"{{DOCTOR_NOTE_VISIT_ID}}\",\r\n    \"ValidationStatus\": \"Confirmed\",\r\n    \"Notes\": \"Prescribing two days bed rest and more liquid no fried food\",\r\n    \"RecordDate\": \"2021-09-22\"\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/doctornote",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"doctornote"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "809"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"329-tsIj2KbLXg6HeGXPnkUqi7AV8Z8\""
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 22 Sep 2021 08:52:03 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Doctor Note created successfully!\",\n    \"HttpCode\": 201,\n    \"Data\": {\n        \"DoctorNote\": {\n            \"id\": \"aedc5609-4dd5-41b6-9860-cce8d84376ab\",\n            \"PatientUserId\": \"ca594977-7df3-4e1f-b344-7a31f39e136d\",\n            \"EhrId\": null,\n            \"MedicalPractitionerUserId\": null,\n            \"VisitId\": \"fc597563-2ecf-4f12-a044-5b2a7edd0ceb\",\n            \"Notes\": \"Prescribing two days bed rest and more liquid no fried food\",\n            \"ValidationStatus\": \"Confirmed\",\n            \"RecordDate\": \"2021-09-22T00:00:00.000Z\"\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"ca594977-7df3-4e1f-b344-7a31f39e136d\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-5048936518\",\n        \"Email\": null,\n        \"UserName\": \"qtisao5139\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1632243073,\n        \"exp\": 1640019073\n    },\n    \"Context\": \"DoctorNote.Create\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Get doctor note by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Doctor note record is returned\", function () {\r",
+											"\r",
+											"    var expectedValidationStatus = \"Confirmed\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DoctorNote');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('VisitId');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('ValidationStatus');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('Notes');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('RecordDate');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.ValidationStatus).equals(expectedValidationStatus);\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/doctor-note/{{DOCTOR_NOTE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"doctor-note",
+										"{{DOCTOR_NOTE_ID}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get doctor note by id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/doctornote/{{DOCTOR_NOTE_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"doctornote",
+												"{{DOCTOR_NOTE_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "812"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"32c-r0BmLNVgCkWkerfM/9NMDqm1pQs\""
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 22 Sep 2021 08:58:47 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Doctor Note retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"DoctorNote\": {\n            \"id\": \"aedc5609-4dd5-41b6-9860-cce8d84376ab\",\n            \"PatientUserId\": \"ca594977-7df3-4e1f-b344-7a31f39e136d\",\n            \"EhrId\": null,\n            \"MedicalPractitionerUserId\": null,\n            \"VisitId\": \"fc597563-2ecf-4f12-a044-5b2a7edd0ceb\",\n            \"Notes\": \"Prescribing two days bed rest and more liquid no fried food\",\n            \"ValidationStatus\": \"Confirmed\",\n            \"RecordDate\": \"2021-09-22T00:00:00.000Z\"\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"ca594977-7df3-4e1f-b344-7a31f39e136d\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-5048936518\",\n        \"Email\": null,\n        \"UserName\": \"qtisao5139\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1632243073,\n        \"exp\": 1640019073\n    },\n    \"Context\": \"DoctorNote.GetById\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Update doctor note",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated doctor note record is returned\", function () {\r",
+											"\r",
+											"    var expectedValidationStatus = \"Preliminary\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DoctorNote');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('VisitId');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('ValidationStatus');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('Notes');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('RecordDate');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.ValidationStatus).equals(expectedValidationStatus);\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"VisitId\": \"{{DOCTOR_NOTE_VISIT_ID}}\",\r\n    \"ValidationStatus\": \"Preliminary\",\r\n    \"Notes\": \"Prescribing rest at home and light food\",\r\n    \"RecordDate\": \"2021-09-16\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/doctor-note/{{DOCTOR_NOTE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"doctor-note",
+										"{{DOCTOR_NOTE_ID}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Update doctor note",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"VisitId\": \"{{DOCTOR_NOTE_VISIT_ID}}\",\r\n    \"ValidationStatus\": \"Preliminary\",\r\n    \"Notes\": \"Prescribing rest at home and light food\",\r\n    \"RecordDate\": \"2021-09-16\"\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/doctornote/{{DOCTOR_NOTE_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"doctornote",
+												"{{DOCTOR_NOTE_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "798"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"31e-QgS32didpwFUApqZE78buYDZ8Zc\""
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 22 Sep 2021 08:59:53 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Doctor Note record updated successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"DoctorNote\": {\n            \"id\": \"aedc5609-4dd5-41b6-9860-cce8d84376ab\",\n            \"PatientUserId\": \"ca594977-7df3-4e1f-b344-7a31f39e136d\",\n            \"EhrId\": null,\n            \"MedicalPractitionerUserId\": null,\n            \"VisitId\": \"fc597563-2ecf-4f12-a044-5b2a7edd0ceb\",\n            \"Notes\": \"Prescribing rest at home and light food\",\n            \"ValidationStatus\": \"Preliminary\",\n            \"RecordDate\": \"2021-09-16T00:00:00.000Z\"\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"ca594977-7df3-4e1f-b344-7a31f39e136d\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-5048936518\",\n        \"Email\": null,\n        \"UserName\": \"qtisao5139\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1632243073,\n        \"exp\": 1640019073\n    },\n    \"Context\": \"DoctorNote.Update\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Search doctor note",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of doctor note is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DoctorNote');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/doctor-note/search/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"doctor-note",
+										"search",
+										"{{PATIENT_USER_ID}}"
+									],
+									"query": [
+										{
+											"key": "recordDateFrom",
+											"value": "2021-09-01",
+											"disabled": true
+										},
+										{
+											"key": "recordDateTo",
+											"value": "2021-10-14",
+											"disabled": true
+										},
+										{
+											"key": "orderBy",
+											"value": "RecordDate",
+											"disabled": true
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"disabled": true
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"disabled": true
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Search doctor note",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/doctor-note/search/{{PATIENT_USER_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"doctor-note",
+												"search",
+												"{{PATIENT_USER_ID}}"
+											],
+											"query": [
+												{
+													"key": "recordDateFrom",
+													"value": "2021-09-01",
+													"disabled": true
+												},
+												{
+													"key": "recordDateTo",
+													"value": "2021-10-14",
+													"disabled": true
+												},
+												{
+													"key": "orderBy",
+													"value": "RecordDate",
+													"disabled": true
+												},
+												{
+													"key": "order",
+													"value": "ascending",
+													"disabled": true
+												},
+												{
+													"key": "pageIndex",
+													"value": "0",
+													"disabled": true
+												},
+												{
+													"key": "itemsPerPage",
+													"value": "25",
+													"disabled": true
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "958"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"3be-9V1WQSle9Z5tFOmukMuV/oeUW8w\""
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 22 Sep 2021 09:44:46 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Total undefined Doctor Note records retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"DoctorNote\": {\n            \"TotalCount\": 1,\n            \"RetrievedCount\": 1,\n            \"PageIndex\": 0,\n            \"ItemsPerPage\": 25,\n            \"Order\": \"descending\",\n            \"OrderedBy\": \"CreatedAt\",\n            \"Items\": [\n                {\n                    \"id\": \"2630bb89-37b3-43a0-9a2d-781960e91b0a\",\n                    \"PatientUserId\": \"ca594977-7df3-4e1f-b344-7a31f39e136d\",\n                    \"EhrId\": null,\n                    \"MedicalPractitionerUserId\": null,\n                    \"VisitId\": \"fc597563-2ecf-4f12-a044-5b2a7edd0ceb\",\n                    \"Notes\": \"Prescribing two days bed rest and more liquid no fried food\",\n                    \"ValidationStatus\": \"Confirmed\",\n                    \"RecordDate\": \"2021-09-22T00:00:00.000Z\"\n                }\n            ]\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"ca594977-7df3-4e1f-b344-7a31f39e136d\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-5048936518\",\n        \"Email\": null,\n        \"UserName\": \"qtisao5139\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1632243073,\n        \"exp\": 1640019073\n    },\n    \"Context\": \"DoctorNote.Search\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete doctor note",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Doctor note record is deleted\", function () {\r",
+											"\r",
+											"    var expectedValue = true;\r",
+											"    var jsonRes = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/doctor-note/{{DOCTOR_NOTE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"doctor-note",
+										"{{DOCTOR_NOTE_ID}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Delete doctor note",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/doctornote/{{DOCTOR_NOTE_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"doctornote",
+												"{{DOCTOR_NOTE_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "481"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"1e1-jvQ6WC0c4M8XtYAIT/8/2hDgJqY\""
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 22 Sep 2021 09:07:39 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Doctor Note record deleted successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Deleted\": true\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"ca594977-7df3-4e1f-b344-7a31f39e136d\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-5048936518\",\n        \"Email\": null,\n        \"UserName\": \"qtisao5139\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1632243073,\n        \"exp\": 1640019073\n    },\n    \"Context\": \"DoctorNote.Delete\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
 						}
 					]
 				}
@@ -8884,7 +9844,975 @@
 		},
 		{
 			"name": "Exercise",
-			"item": []
+			"item": [
+				{
+					"name": "PhysicalActivity",
+					"item": [
+						{
+							"name": "Add physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"EXERCISE_PHYSICAL_ACTIVITY_ID\", jsonRes.Data.PhysicalActivity.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New physical activity record is created\", function () {\r",
+											"\r",
+											"    var expectedExercise = \"Dead lift\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivity');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Exercise');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Category');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Exercise).equals(expectedExercise);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Exercise\": \"Dead lift\",\r\n    \"Description\": \"30 kg\",\r\n    \"Category\": \"Strength training\",\r\n    \"CaloriesBurned\": 120,\r\n    \"Intensity\": \"Moderate\",\r\n    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\r\n    \"EndTime\": \"2021-09-20T00:15:00.000Z\",\r\n    \"DurationInMin\": 15\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activity",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activity"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Add physical activity",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Exercise\": \"Dead lift\",\r\n    \"Description\": \"30 kg\",\r\n    \"Category\": \"Strength training\",\r\n    \"CaloriesBurned\": 120,\r\n    \"Intensity\": \"Moderate\",\r\n    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\r\n    \"EndTime\": \"2021-09-20T00:15:00.000Z\",\r\n    \"DurationInMin\": 15\r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/exercise/physical-activity",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"exercise",
+												"physical-activity"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "810"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"32a-CNkeUAC9Rd+/m7zH5vpUMdsmPnM\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 20 Sep 2021 06:23:56 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"physical activity created successfully!\",\n    \"HttpCode\": 201,\n    \"Data\": {\n        \"PhysicalActivity\": {\n            \"id\": \"78235c9a-8ce9-452c-a786-d3f2bc956565\",\n            \"PatientUserId\": \"54bba718-bd68-429a-968e-0ebea59b6aac\",\n            \"Exercise\": \"Dead lift\",\n            \"Description\": \"30 kg\",\n            \"Category\": \"Strength training\",\n            \"Intensity\": \"Moderate\",\n            \"CaloriesBurned\": \"120\",\n            \"StartTime\": \"2021-09-20T00:00:00.000Z\",\n            \"EndTime\": \"2021-09-20T00:15:00.000Z\",\n            \"DurationInMin\": \"15\"\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-8126671387\",\n        \"Email\": null,\n        \"UserName\": \"tnkert2002\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627890497,\n        \"exp\": 1635666497\n    },\n    \"Context\": \"PhysicalActivity.Create\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Get physical activity by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Physical activity record is returned\", function () {\r",
+											"\r",
+											"    var expectedExercise = \"Dead lift\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivity');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Exercise');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Category');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Exercise).equals(expectedExercise);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activity",
+										"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get physical activity by id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"exercise",
+												"physical-activity",
+												"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "809"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"329-yy0tveicyDANu3Bs4zcaARu/XEo\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 20 Sep 2021 06:25:13 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Physical activity retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"PhysicalActivity\": {\n            \"id\": \"78235c9a-8ce9-452c-a786-d3f2bc956565\",\n            \"PatientUserId\": \"54bba718-bd68-429a-968e-0ebea59b6aac\",\n            \"Exercise\": \"Dead lift\",\n            \"Description\": \"30 kg\",\n            \"Category\": \"Strength training\",\n            \"Intensity\": \"Moderate\",\n            \"CaloriesBurned\": 120,\n            \"StartTime\": \"2021-09-20T00:00:00.000Z\",\n            \"EndTime\": \"2021-09-20T00:15:00.000Z\",\n            \"DurationInMin\": 15\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-8126671387\",\n        \"Email\": null,\n        \"UserName\": \"tnkert2002\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627890497,\n        \"exp\": 1635666497\n    },\n    \"Context\": \"PhysicalActivity.GetById\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Update physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated physical activity record is returned\", function () {\r",
+											"\r",
+											"    var expectedExercise = \"Push up\";\r",
+											"    var expectedIntensity = \"Vigorous\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivity');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Exercise');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Category');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Exercise).equals(expectedExercise);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Intensity).equals(expectedIntensity);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Exercise\": \"Push up\",\r\n    \"Description\": \"Straight\",\r\n    \"Category\": \"Strength training\",\r\n    \"CaloriesBurned\": 40,\r\n    \"Intensity\": \"Vigorous\",\r\n    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\r\n    \"EndTime\": \"2021-09-20T00:00:05.000Z\",\r\n    \"DurationInMin\": 5\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activity",
+										"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Update physical activity",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Exercise\": \"Push up\",\r\n    \"Description\": \"Straight\",\r\n    \"Category\": \"Strength training\",\r\n    \"CaloriesBurned\": 40,\r\n    \"Intensity\": \"Vigorous\",\r\n    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\r\n    \"EndTime\": \"2021-09-20T00:00:05.000Z\",\r\n    \"DurationInMin\": 5\r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"exercise",
+												"physical-activity",
+												"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "816"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"330-NJDmHmgxW4YK66RXrJJrEmXM2Qo\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 20 Sep 2021 06:33:19 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"physical activity record updated successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"PhysicalActivity\": {\n            \"id\": \"78235c9a-8ce9-452c-a786-d3f2bc956565\",\n            \"PatientUserId\": \"54bba718-bd68-429a-968e-0ebea59b6aac\",\n            \"Exercise\": \"Push up\",\n            \"Description\": \"Straight\",\n            \"Category\": \"Strength training\",\n            \"Intensity\": \"Vigorous\",\n            \"CaloriesBurned\": \"40\",\n            \"StartTime\": \"2021-09-20T00:00:00.000Z\",\n            \"EndTime\": \"2021-09-20T00:00:05.000Z\",\n            \"DurationInMin\": \"5\"\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-8126671387\",\n        \"Email\": null,\n        \"UserName\": \"tnkert2002\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627890497,\n        \"exp\": 1635666497\n    },\n    \"Context\": \"PhysicalActivity.Update\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Physical activity record is deleted\", function () {\r",
+											"\r",
+											"    var expectedValue = true;\r",
+											"    var jsonRes = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activity",
+										"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Delete physical activity",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/exercise/physical-activity/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"exercise",
+												"physical-activity",
+												"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "493"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"1ed-FPzfUyp/fdm9NnQaUV/7nKWY0Qk\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 20 Sep 2021 06:34:31 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Physical activity record deleted successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Deleted\": true\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-8126671387\",\n        \"Email\": null,\n        \"UserName\": \"tnkert2002\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627890497,\n        \"exp\": 1635666497\n    },\n    \"Context\": \"PhysicalActivity.Delete\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Search physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of physical activity is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivity');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activity/search?exercise=Dead lift&category=Strength training&orderBy=Category&order=ascending&pageIndex=0&itemsPerPage=25",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activity",
+										"search"
+									],
+									"query": [
+										{
+											"key": "exercise",
+											"value": "Dead lift"
+										},
+										{
+											"key": "category",
+											"value": "Strength training"
+										},
+										{
+											"key": "orderBy",
+											"value": "Category"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Search physical activity",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/exercise/physical-activity/search?exercise=Dead lift&category=Strength training&orderBy=Category&order=ascending&pageIndex=0&itemsPerPage=25",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"exercise",
+												"physical-activity",
+												"search"
+											],
+											"query": [
+												{
+													"key": "exercise",
+													"value": "Dead lift"
+												},
+												{
+													"key": "category",
+													"value": "Strength training"
+												},
+												{
+													"key": "orderBy",
+													"value": "Category"
+												},
+												{
+													"key": "order",
+													"value": "ascending"
+												},
+												{
+													"key": "pageIndex",
+													"value": "0"
+												},
+												{
+													"key": "itemsPerPage",
+													"value": "25"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1269"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"4f5-eaFs38UTN0qSm7uudIUSiGe3Wgk\""
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 20 Sep 2021 11:36:21 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Total undefined Physical activity records retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"PhysicalActivity\": {\n            \"TotalCount\": 2,\n            \"RetrievedCount\": 2,\n            \"PageIndex\": 0,\n            \"ItemsPerPage\": 25,\n            \"Order\": \"ascending\",\n            \"OrderedBy\": \"Category\",\n            \"Items\": [\n                {\n                    \"id\": \"1a1457c6-753a-4482-b47b-5b6f75ce11ac\",\n                    \"PatientUserId\": \"54bba718-bd68-429a-968e-0ebea59b6aac\",\n                    \"Exercise\": \"Dead lift\",\n                    \"Description\": \"30 kg\",\n                    \"Category\": \"Strength training\",\n                    \"Intensity\": \"Moderate\",\n                    \"CaloriesBurned\": 120,\n                    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\n                    \"EndTime\": \"2021-09-20T00:00:15.000Z\",\n                    \"DurationInMin\": 15\n                },\n                {\n                    \"id\": \"9d5e8840-83f5-4667-9322-c0e523accdfc\",\n                    \"PatientUserId\": \"54bba718-bd68-429a-968e-0ebea59b6aac\",\n                    \"Exercise\": \"Dead lift\",\n                    \"Description\": \"30 kg\",\n                    \"Category\": \"Strength training\",\n                    \"Intensity\": \"Moderate\",\n                    \"CaloriesBurned\": 120,\n                    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\n                    \"EndTime\": \"2021-09-20T00:00:15.000Z\",\n                    \"DurationInMin\": 15\n                }\n            ]\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-8126671387\",\n        \"Email\": null,\n        \"UserName\": \"tnkert2002\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627890497,\n        \"exp\": 1635666497\n    },\n    \"Context\": \"PhysicalActivity.Search\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "Daily records",
@@ -10631,7 +12559,7 @@
 											"    pm.expect(jsonRes.Status).to.eql('success');",
 											"});",
 											"",
-											"pm.test(\"List of move minutes records is returned\", function () {",
+											"pm.test(\"List of Step count records is returned\", function () {",
 											"",
 											"    var jsonRes = pm.response.json();",
 											"    pm.expect(jsonRes.Data).to.have.property('StepCountRecords');",

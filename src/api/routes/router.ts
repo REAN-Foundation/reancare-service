@@ -7,6 +7,7 @@ import { register as registerDoctorRoutes } from "./doctor.routes";
 import { register as registerOrganizationRoutes } from './organization.routes';
 import { register as registerPersonRoutes } from './person.routes';
 import { register as registerTypesRoutes } from './types.routes';
+import { register as registerBloodPressureRoutes } from './biometrics/blood.pressure.routes';
 import { register as registerBodyWeightRoutes } from './biometrics/body.weight.routes';
 import { register as registerBodyHeightRoutes } from './biometrics/body.height.routes';
 import { register as registerPatientHealthProfileRoutes } from './patient/health.profile.routes';
@@ -21,6 +22,8 @@ import { register as registerComplaintRoutes } from './patient/complaint.routes'
 import { register as registerAllergyRoutes } from './patient/allergy.route';
 import { register as registerHeartPointRoutes } from './daily.records/heart.points.routes';
 import { register as registerEmergencyEventRoutes } from './emergency.event.routes';
+import { register as registerMeditationtRoutes } from './exercise/meditation.routes';
+
 import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +57,7 @@ export class Router {
                 registerBiometricsBloodOxygenSaturationRoutes(this._app);
                 registerPersonRoutes(this._app);
                 registerOrganizationRoutes(this._app);
+                registerBloodPressureRoutes(this._app);
                 registerBodyHeightRoutes(this._app);
                 registerPatientHealthProfileRoutes(this._app);
                 registerHealthProfileRoutes(this._app);
@@ -66,6 +70,7 @@ export class Router {
                 registerAllergyRoutes(this._app);
                 registerHeartPointRoutes(this._app);
                 registerEmergencyEventRoutes(this._app);
+                registerMeditationtRoutes(this._app);
 
                 resolve(true);
 

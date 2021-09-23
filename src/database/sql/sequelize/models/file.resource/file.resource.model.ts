@@ -11,10 +11,14 @@ import {
     Length,
     IsDate,
     ForeignKey,
+    HasOne,
+    HasMany,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import User from './user.model';
+import User from '../user.model';
+import FileResourceReference from './file.resource.reference.model';
+import FileResourceVersion from './file.resource.version.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -37,17 +41,10 @@ export default class FileResource extends Model {
         allowNull : false,
     })
     id: string;
-    
+
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
-        allowNull : true,
-    })
-    EhrId: string;
-
-    @Length({ max: 512 })
-    @Column({
-        type      : DataType.STRING(512),
         allowNull : true,
     })
     FileName: string;
@@ -68,33 +65,26 @@ export default class FileResource extends Model {
     })
     UploadedByUserId: string;
 
-    @Length({ max: 512 })
-    @Column({
-        type      : DataType.STRING(512),
-        allowNull : true,
-    })
-    CloudStorageKey: string;
-
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : false
     })
-    IsPublic: boolean;
+    IsPublicResource: boolean;
+    
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false
+    })
+    IsMultiResolutionImage: boolean;
 
     @Length({ max: 2048 })
     @Column({
         type      : DataType.STRING(2048),
         allowNull : true,
     })
-    SiblingResources: string; //Comma separated object list
-
-    @Length({ max: 2048 })
-    @Column({
-        type      : DataType.STRING(2048),
-        allowNull : true,
-    })
-    ReferenceItems: string; //Comma separated object list
+    Tags: string; //Comma separated string list
 
     @Length({ max: 64 })
     @Column({
@@ -102,26 +92,30 @@ export default class FileResource extends Model {
         allowNull : true,
     })
     MimeType: string;
-
-    @Length({ max: 256 })
+    
+    @IsUUID(4)
+    @ForeignKey(() => FileResourceVersion)
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.UUID,
         allowNull : true,
     })
-    MetaInformation: string;
+    DefaultVersionId: string;
 
-    @Column({
-        type      : DataType.FLOAT,
-        allowNull : true,
-    })
-    SizeInKB: number;
+    @HasOne(() => FileResourceVersion)
+    DefaultVersion: FileResourceVersion;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    UploadedDate: Date
+    UploadedDate: Date;
+
+    @HasMany(() => FileResourceReference)
+    References: FileResourceReference[];
+
+    @HasMany(() => FileResourceVersion)
+    Versions: FileResourceVersion[];
 
     @Column
     @CreatedAt
@@ -134,3 +128,7 @@ export default class FileResource extends Model {
     DeletedAt: Date;
 
 }
+
+// FileResource.hasMany(FileResourceReference, { as: 'References'});
+// FileResource.hasMany(FileResourceVersion, { as: 'Versions'});
+//FileResource.hasOne(FileResourceVersion, { as: 'DefaultVersion', foreignKey: 'DefaultVersionId'});

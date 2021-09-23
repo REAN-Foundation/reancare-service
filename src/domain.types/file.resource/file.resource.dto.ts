@@ -1,19 +1,23 @@
-import { ResourceReferenceItem, SiblingResource } from "./file.resource.types";
+import { FileResourceMetadata, ResourceReference } from "./file.resource.types";
+
+export interface FileResourceDetailsDto {
+    id?              : string;
+    FileName?        : string;
+    OwnerUserId?     : string;
+    UploadedByUserId?: string;
+    IsPublicResource?: boolean;
+    MimeType?        : string;
+    DefaultVersion   : FileResourceMetadata;
+    Versions?        : FileResourceMetadata[];
+    References?      : ResourceReference[];
+    Tags?            : string[];
+}
 
 export interface FileResourceDto {
-    id?: string;
-    EhrId?: string;
-    FileName?: string;
-    OwnerUserId?: string;
-    UploadedByUserId?: string;
-    CloudStorageKey?: string;
-    IsPublic?: boolean;
-    SiblingResources?: SiblingResource[];
-    ReferenceItems?: ResourceReferenceItem[];
-    MimeType?: string;
-    MetaInformation?: string;
-    SizeInKB?: number;
-    UploadedDate?: Date;
-    PublicUrl?: string;
-    AuthUrl?: string;
+    id?              : string;
+    FileName?        : string;
+    OwnerUserId?     : string;
+    IsPublicResource?: boolean;
+    MimeType?        : string;
+    DefaultVersion   : FileResourceMetadata;
 }

@@ -15,4 +15,5 @@ export interface FileResourceMetadata {
     Size?            : number;
     StorageKey?      : string;
     IsDefaultVersion?: boolean;
+    IsPublicResource?: boolean;
 }

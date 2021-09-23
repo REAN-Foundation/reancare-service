@@ -176,6 +176,10 @@ export class FileResourceService {
         return await this._fileResourceRepo.getLatestVersion(id);
     };
 
+    getVersions = async (id: string): Promise<FileResourceMetadata[]> => {
+        return await this._fileResourceRepo.getVersions(id);
+    };
+
     getShareableLink = async (id: string, durationInMinutes: number): Promise<string> => {
         var dto = await this._fileResourceRepo.getById(id);
         var storageKey = dto.DefaultVersion.StorageKey;
@@ -211,6 +215,10 @@ export class FileResourceService {
         this.cleanupDirectories(tempUploadFolder);
     }
 
+    //#endregion
+
+    //#region Privates
+
     private generateDownloadFolderPath = async() => {
 
         var timestamp = TimeHelper.timestamp(new Date());
@@ -241,10 +249,6 @@ export class FileResourceService {
         
         return resource;
     }
-
-    //#endregion
-
-    //#region Privates
    
     private async uploadFileToStorage(fileMetadata: FileResourceMetadata) {
 

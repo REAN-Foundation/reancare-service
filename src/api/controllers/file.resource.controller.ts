@@ -137,30 +137,44 @@ export class FileResourceController {
         }
     };
 
-    downloadByVersion = async (request: express.Request, response: express.Response): Promise<void> => {
+    downloadByVersionName = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.DownloadByVersion';
+            request.context = 'FileResource.DownloadByVersionName';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
-            await this._authorizer.authorize(request, response);
 
-            const metadata: FileResourceMetadata = await FileResourceValidator.downloadByVersion(request);
+            const metadata: FileResourceMetadata = await FileResourceValidator.getByVersionName(request);
+            var resource = await this._service.getById(metadata.ResourceId);
+            if (!metadata.IsPublicResource || resource.IsPublicResource === false) {
+                await this._authorizer.authorize(request, response);
+            }
 
-            const localDestination = await this._service.downloadByVersion(
+            const localDestination = await this._service.downloadByVersionName(
                 metadata.ResourceId,
                 metadata.Version);
 
-            if (localDestination == null) {
-                throw new ApiError(404, 'FileResource not found.');
+            this.streamDownloadedFileInResponse(localDestination, response);
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    downloadByVersionId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'FileResource.DownloadByVersionId';
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+
+            const metadata: FileResourceMetadata = await FileResourceValidator.getByVersionId(request);
+            var resource = await this._service.getById(metadata.ResourceId);
+            if (!metadata.IsPublicResource || resource.IsPublicResource === false) {
+                await this._authorizer.authorize(request, response);
             }
 
-            var filename = path.basename(localDestination);
-            var mimetype = mime.lookup(localDestination);
+            const localDestination = await this._service.downloadByVersionId(
+                metadata.ResourceId,
+                metadata.Version);
 
-            response.setHeader('Content-disposition', 'attachment; filename=' + filename);
-            response.setHeader('Content-type', mimetype);
-
-            var filestream = fs.createReadStream(localDestination);
-            filestream.pipe(response);
+            this.streamDownloadedFileInResponse(localDestination, response);
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -171,13 +185,16 @@ export class FileResourceController {
         try {
             request.context = 'FileResource.DownloadById';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
-            await this._authorizer.authorize(request, response);
 
-            const id: string = await FileResourceValidator.downloadById(request);
-
-            const localDestination = await this._service.downloadById(id);
+            const metadata = await FileResourceValidator.downloadById(request);
+            var resource = await this._service.getById(metadata.ResourceId);
+            if (!metadata.IsPublicResource || resource.IsPublicResource === false) {
+                await this._authorizer.authorize(request, response);
+            }
+            
+            const localDestination = await this._service.downloadById(metadata.ResourceId);
             if (localDestination === undefined) {
-                throw new ApiError(404, 'FileResource not found.');
+                throw new ApiError(404, 'File resource not found.');
             }
 
             var filename = path.basename(localDestination);
@@ -202,13 +219,13 @@ export class FileResourceController {
 
             const filters: FileResourceSearchFilters = await FileResourceValidator.search(request);
 
-            const address = await this._service.search(filters);
-            if (address == null) {
-                throw new ApiError(404, 'FileResource not found.');
+            const resource = await this._service.search(filters);
+            if (resource == null) {
+                throw new ApiError(404, 'File resource not found.');
             }
 
-            ResponseHandler.success(request, response, 'FileResource retrieved successfully!', 200, {
-                FileResource : address,
+            ResponseHandler.success(request, response, 'File resource retrieved successfully!', 200, {
+                FileResource : resource,
             });
 
         } catch (error) {
@@ -216,21 +233,77 @@ export class FileResourceController {
         }
     };
 
-    getMetadata = async (request: express.Request, response: express.Response): Promise<void> => {
+    getVersionById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.GetMetadata';
+            request.context = 'FileResource.GetVersionById';
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            await this._authorizer.authorize(request, response);
+
+            const metadata: FileResourceMetadata = await FileResourceValidator.getByVersionId(request);
+            
+            const versionMetadata = await this._service.getVersionByVersionId(
+                metadata.ResourceId,
+                metadata.Version);
+
+            if (versionMetadata == null) {
+                throw new ApiError(404, 'File resource version not found.');
+            }
+
+            //Sanitize the metadata before sending
+            versionMetadata.StorageKey = null;
+            versionMetadata.SourceFilePath = null;
+
+            ResponseHandler.success(request, response, 'File resource version retrieved successfully!', 200, {
+                FileResourceVersion : versionMetadata,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+   
+    getVersions = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'FileResource.GetVersions';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
             const id: string = await FileResourceValidator.getById(request);
 
-            const address = await this._service.getById(id);
-            if (address == null) {
-                throw new ApiError(404, 'FileResource not found.');
+            const versions = await this._service.getVersions(id);
+            if (versions === null || versions.length === 0) {
+                throw new ApiError(404, 'File resource versions are not found.');
             }
 
-            ResponseHandler.success(request, response, 'FileResource retrieved successfully!', 200, {
-                FileResource : address,
+            //Sanitize the metadata before sending
+            var sanitizedVersions = versions.map(x => {
+                x.StorageKey = null;
+                x.SourceFilePath = null;
+                return x;
+            });
+
+            ResponseHandler.success(request, response, 'File resource versions retrieved successfully!', 200, {
+                FileResourceVersions : sanitizedVersions,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
+    getResourceInfo = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'FileResource.GetResourceInfo';
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            await this._authorizer.authorize(request, response);
+
+            const id: string = await FileResourceValidator.getById(request);
+
+            const resource = await this._service.getById(id);
+            if (resource == null) {
+                throw new ApiError(404, 'File resource not found.');
+            }
+
+            ResponseHandler.success(request, response, 'File resource retrieved successfully!', 200, {
+                FileResource : resource,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -246,15 +319,15 @@ export class FileResourceController {
             const id: string = await FileResourceValidator.delete(request);
             const existingFileResource = await this._service.getById(id);
             if (existingFileResource == null) {
-                throw new ApiError(404, 'FileResource not found.');
+                throw new ApiError(404, 'File resource not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'FileResource cannot be deleted.');
+                throw new ApiError(400, 'File resource cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'FileResource record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'File resource record deleted successfully!', 200, {
                 Deleted : true,
             });
 
@@ -262,6 +335,50 @@ export class FileResourceController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    deleteVersionByVersionId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            request.context = 'FileResource.DeleteVersionByVersionId';
+            await this._authorizer.authorize(request, response);
+
+            const metadata: FileResourceMetadata = await FileResourceValidator.getByVersionId(request);
+
+            const deleted = await this._service.deleteVersionByVersionId(metadata.ResourceId, metadata.VersionId);
+            if (!deleted) {
+                throw new ApiError(400, 'File resource cannot be deleted.');
+            }
+
+            ResponseHandler.success(request, response, 'File resource version deleted successfully!', 200, {
+                Deleted : true,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    //#endregion
+
+    //#region Privates
+
+    private streamDownloadedFileInResponse(
+        localDestination: string,
+        response: express.Response<any, Record<string, any>>) {
+
+        if (localDestination == null) {
+            throw new ApiError(404, 'File resource not found.');
+        }
+
+        var filename = path.basename(localDestination);
+        var mimetype = mime.lookup(localDestination);
+
+        response.setHeader('Content-disposition', 'attachment; filename=' + filename);
+        response.setHeader('Content-type', mimetype);
+
+        var filestream = fs.createReadStream(localDestination);
+        filestream.pipe(response);
+    }
 
     //#endregion
 

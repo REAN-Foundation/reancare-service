@@ -138,7 +138,7 @@ export class FileResourceValidator {
         return domainModel;
     }
 
-    static getIdAndVersion = async (request: express.Request): Promise<FileResourceMetadata> => {
+    static getByVersionName = async (request: express.Request): Promise<FileResourceMetadata> => {
 
         await param('id').exists()
             .escape()
@@ -147,7 +147,11 @@ export class FileResourceValidator {
 
         await param('version').exists()
             .trim()
-            .isUUID()
+            .run(request);
+
+        await query('public').optional()
+            .trim()
+            .isBoolean()
             .run(request);
 
         const result = validationResult(request);
@@ -156,20 +160,71 @@ export class FileResourceValidator {
             Helper.handleValidationError(result);
         }
 
-        var model: FileResourceMetadata = {
-            ResourceId        : request.params.id,
-            Version : request.params.version,
+        var metadata: FileResourceMetadata = {
+            ResourceId       : request.params.id,
+            Version          : request.params.version,
+            IsPublicResource : request.query.public === 'true' ? true : false
         };
 
-        return model;
-    }
-
-    static downloadByVersion = async (request: express.Request): Promise<FileResourceMetadata> => {
-        return await FileResourceValidator.getIdAndVersion(request);
+        return metadata;
     };
 
-    static downloadById = async (request: express.Request): Promise<string> => {
-        return await FileResourceValidator.getParamId(request);
+    static getByVersionId = async (request: express.Request): Promise<FileResourceMetadata> => {
+
+        await param('id').exists()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await param('versionId').exists()
+            .trim()
+            .isUUID()
+            .run(request);
+
+        await query('public').optional()
+            .trim()
+            .isBoolean()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        var metadata: FileResourceMetadata = {
+            ResourceId       : request.params.id,
+            VersionId        : request.params.versionId,
+            IsPublicResource : request.query.public === 'true' ? true : false
+        };
+
+        return metadata;
+    };
+
+    static downloadById = async (request: express.Request): Promise<FileResourceMetadata> => {
+
+        await param('id').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await query('public').optional()
+            .trim()
+            .isBoolean()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        var metadata: FileResourceMetadata = {
+            ResourceId       : request.params.id,
+            IsPublicResource : request.query.public === 'true' ? true : false
+        };
+
+        return metadata;
     };
 
     static getById = async (request: express.Request): Promise<string> => {
@@ -341,6 +396,7 @@ export class FileResourceValidator {
     }
 
     private static async getParamId(request) {
+
         await param('id').trim()
             .escape()
             .isUUID()

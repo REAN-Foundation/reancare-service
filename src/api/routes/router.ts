@@ -21,6 +21,7 @@ import { register as registerCalorieBalanceRoute } from './daily.records/calorie
 import { register as registerComplaintRoutes } from './patient/complaint.routes';
 import { register as registerAllergyRoutes } from './patient/allergy.route';
 import { register as registerHeartPointRoutes } from './daily.records/heart.points.routes';
+import { register as registerSleepRoutes } from './daily.records/sleep.routes';
 import { register as registerEmergencyEventRoutes } from './emergency.event.routes';
 import { register as registerMeditationtRoutes } from './exercise/meditation.routes';
 
@@ -69,6 +70,7 @@ export class Router {
                 registerComplaintRoutes(this._app);
                 registerAllergyRoutes(this._app);
                 registerHeartPointRoutes(this._app);
+                registerSleepRoutes(this._app);
                 registerEmergencyEventRoutes(this._app);
                 registerMeditationtRoutes(this._app);
 

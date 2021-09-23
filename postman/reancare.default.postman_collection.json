@@ -11567,6 +11567,420 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Sleep",
+					"item": [
+						{
+							"name": "Add Sleep record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"SLEEP_RECORD_ID\", jsonRes.Data.SleepRecord.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Sleep record is created\", function () {",
+											"",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    var expectedSleepDuration = pm.environment.get(\"SLEEP_DURATION\");",
+											"    var expectedUnit = pm.environment.get(\"SLEEP_UNIT\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('SleepRecord');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('SleepDuration');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('Unit');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('RecordDate');",
+											"",
+											"    pm.expect(jsonRes.Data.SleepRecord.PatientUserId).equals(expectedPatientUserId);",
+											"    pm.expect(Number(jsonRes.Data.SleepRecord.SleepDuration)).equals(expectedSleepDuration);",
+											"    pm.expect(jsonRes.Data.SleepRecord.Unit).equals(expectedUnit);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"SLEEP_DURATION\", 8);",
+											"pm.environment.set(\"SLEEP_UNIT\", 'hrs');",
+											"pm.environment.set(\"SLEEP_RECORDDATE\", '2021-09-20');"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"SleepDuration\": \"{{SLEEP_DURATION}}\",\n    \"Unit\": \"{{SLEEP_UNIT}}\",\n    \"RecordDate\": \"{{SLEEP_RECORDDATE}}\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/sleep",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"sleep"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Sleep record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Sleep record is returned\", function () {",
+											"",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    var expectedSleepDuration = pm.environment.get(\"SLEEP_DURATION\");",
+											"    var expectedUnit = pm.environment.get(\"SLEEP_UNIT\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('SleepRecord');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('SleepDuration');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('Unit');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('RecordDate');",
+											"",
+											"    pm.expect(jsonRes.Data.SleepRecord.PatientUserId).equals(expectedPatientUserId);",
+											"    pm.expect(Number(jsonRes.Data.SleepRecord.SleepDuration)).equals(expectedSleepDuration);",
+											"    pm.expect(jsonRes.Data.SleepRecord.Unit).equals(expectedUnit);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/sleep/{{SLEEP_RECORD_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"sleep",
+										"{{SLEEP_RECORD_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Sleep record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated sleep record is returned\", function () {",
+											"",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    var expectedSleepDuration = 10;",
+											"    var expectedUnit = pm.environment.get(\"SLEEP_UNIT\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('SleepRecord');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('SleepDuration');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('Unit');",
+											"    pm.expect(jsonRes.Data.SleepRecord).to.have.property('RecordDate');",
+											"",
+											"    pm.expect(jsonRes.Data.SleepRecord.PatientUserId).equals(expectedPatientUserId);",
+											"    pm.expect(Number(jsonRes.Data.SleepRecord.SleepDuration)).equals(expectedSleepDuration);",
+											"    pm.expect(jsonRes.Data.SleepRecord.Unit).equals(expectedUnit);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"SleepDuration\": \"10\",\n    \"Unit\": \"{{SLEEP_UNIT}}\",\n    \"RecordDate\": \"{{SLEEP_RECORDDATE}}\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/sleep/{{SLEEP_RECORD_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"sleep",
+										"{{SLEEP_RECORD_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Sleep records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of daily sleep records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('SleepRecords');",
+											"    pm.expect(jsonRes.Data.SleepRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/sleep/search?createdDateFrom=2021-09-14&createdDateTo=2021-10-15&orderBy=RecordDate&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=15&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"sleep",
+										"search"
+									],
+									"query": [
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-14"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-15"
+										},
+										{
+											"key": "orderBy",
+											"value": "RecordDate"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "0"
+										},
+										{
+											"key": "maxValue",
+											"value": "15"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Sleep record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Sleep record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/daily-records/sleep/{{SLEEP_RECORD_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"daily-records",
+										"sleep",
+										"{{SLEEP_RECORD_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},
@@ -11955,12 +12369,12 @@
 										},
 										{
 											"key": "PatientUserId",
-											"value": null,
+											"value": "",
 											"disabled": true
 										},
 										{
 											"key": "MedicalPractitionerUserId",
-											"value": null,
+											"value": "",
 											"disabled": true
 										}
 									]

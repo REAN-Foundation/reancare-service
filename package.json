@@ -52,6 +52,7 @@
     "sleep": "^6.3.0",
     "stream-json": "^1.7.2",
     "timezone-support": "^2.0.2",
+    "tmpl": "^1.0.5",
     "tsyringe": "^4.5.0",
     "twilio": "^3.67.2",
     "uuid": "^8.3.2",

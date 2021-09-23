@@ -24,7 +24,7 @@ import { IMedicationStockImageRepo } from "../database/repository.interfaces/med
 import * as RolePrivilegesList from '../assets/seed.data/role.privileges.json';
 import * as SeededInternalClients from '../assets/seed.data/internal.clients.seed.json';
 import * as SeededSystemAdmin from '../assets/seed.data/system.admin.seed.json';
-import * as SeededInternalTestsUsers from '../assets/seed.data/internal.test.users.seed.json';
+import * as SeededInternalTestsUsers from '../assets/seed.data/internal.test.users.seed.sample.json';
 
 // import path from "path";
 // import * as fs from "fs";

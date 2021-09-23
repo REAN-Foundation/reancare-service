@@ -93,6 +93,11 @@
             "Complaint.Search",
             "Complaint.Update",
             "Complaint.Delete",
+            "Exercise.Meditation.Create",
+            "Exercise.Meditation.GetById",
+            "Exercise.Meditation.Update",
+            "Exercise.Meditation.Delete",
+            "Exercise.Meditation.Search",
             "Biometrics.BloodPressure.Create",
             "Biometrics.BloodPressure.GetById",
             "Biometrics.BloodPressure.Update",
@@ -165,6 +170,11 @@
             "Biometrics.BodyTemperature.Update",
             "Biometrics.BodyTemperature.Delete",
             "Biometrics.BodyTemperature.Search",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete",
             "DailyRecords.MoveMinutes.Create",
             "DailyRecords.MoveMinutes.GetById",
             "DailyRecords.MoveMinutes.Update",
@@ -195,11 +205,11 @@
             "Complaint.Search",
             "Complaint.Update",
             "Complaint.Delete",
-            "Biometrics.BloodPressure.Create",
-            "Biometrics.BloodPressure.GetById",
-            "Biometrics.BloodPressure.Update",
-            "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete"
+            "Exercise.Meditation.Create",
+            "Exercise.Meditation.GetById",
+            "Exercise.Meditation.Update",
+            "Exercise.Meditation.Delete",
+            "Exercise.Meditation.Search"
         ]
     },
     {
@@ -275,6 +285,11 @@
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
             "Biometrics.Pulse.Search",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete",
             "CalorieBalance.Create",
             "CalorieBalance.GetById",
             "CalorieBalance.Search",
@@ -300,11 +315,11 @@
             "Complaint.Search",
             "Complaint.Update",
             "Complaint.Delete",
-            "Biometrics.BloodPressure.Create",
-            "Biometrics.BloodPressure.GetById",
-            "Biometrics.BloodPressure.Update",
-            "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete"
+            "Exercise.Meditation.Create",
+            "Exercise.Meditation.GetById",
+            "Exercise.Meditation.Update",
+            "Exercise.Meditation.Delete",
+            "Exercise.Meditation.Search"
         ]
     },
     {
@@ -366,6 +381,11 @@
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
             "Biometrics.Pulse.Search",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete",
             "CalorieBalance.Create",
             "CalorieBalance.GetById",
             "CalorieBalance.Search",
@@ -395,11 +415,11 @@
             "DailyRecords.StepCount.Search",
             "DailyRecords.StepCount.Update",
             "DailyRecords.StepCount.Delete",
-            "Biometrics.BloodPressure.Create",
-            "Biometrics.BloodPressure.GetById",
-            "Biometrics.BloodPressure.Update",
-            "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete"
+            "Exercise.Meditation.Create",
+            "Exercise.Meditation.GetById",
+            "Exercise.Meditation.Update",
+            "Exercise.Meditation.Delete",
+            "Exercise.Meditation.Search"
         ]
     },
     {
@@ -456,6 +476,11 @@
             "Biometrics.BodyHeight.Update",
             "Biometrics.BodyHeight.Search",
             "Biometrics.BodyHeight.Delete",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete",
             "CalorieBalance.Create",
             "CalorieBalance.GetById",
             "CalorieBalance.Search",
@@ -490,11 +515,11 @@
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
             "Biometrics.Pulse.Search",
-            "Biometrics.BloodPressure.Create",
-            "Biometrics.BloodPressure.GetById",
-            "Biometrics.BloodPressure.Update",
-            "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete"
+            "Exercise.Meditation.Create",
+            "Exercise.Meditation.GetById",
+            "Exercise.Meditation.Update",
+            "Exercise.Meditation.Delete",
+            "Exercise.Meditation.Search"
         ]
     }
 ]

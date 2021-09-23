@@ -1,11 +1,19 @@
-export interface ResourceReferenceItem {
-    ItemId: string;
+export interface ResourceReference {
+    ItemId  : string;
     ItemType: string;
-    Keyword?: string;
+    Keyword : string;
 }
 
-export interface SiblingResource {
-    ResourceId: string;
-    SizeInKB: number;
-    Tag?: string;
+export interface FileResourceMetadata {
+    ResourceId?      : string;
+    VersionId?       : string;
+    Version?         : string;
+    FileName?        : string;
+    OriginalName?    : string;
+    SourceFilePath?  : string;
+    MimeType?        : string;
+    Size?            : number;
+    StorageKey?      : string;
+    IsDefaultVersion?: boolean;
+    IsPublicResource?: boolean;
 }

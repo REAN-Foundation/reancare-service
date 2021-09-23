@@ -21,7 +21,7 @@ import { VisitTypes } from '../../../../../domain.types/miscellaneous/system.typ
 import { OrderTypes } from '../../../../../domain.types/order/order.types';
 import Order from '../order.model';
 import Visit from '../visit.model';
-import FileResource from '../file.resource.model';
+import FileResource from '../file.resource/file.resource.model';
 
 ///////////////////////////////////////////////////////////////////////
 

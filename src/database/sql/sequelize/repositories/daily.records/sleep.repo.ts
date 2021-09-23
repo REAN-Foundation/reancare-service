@@ -15,7 +15,6 @@ export class SleepRepo implements ISleepRepo {
     create = async (sleepDomainModel: SleepDomainModel): Promise<SleepDto> => {
         try {
             const entity = {
-                PersonId      : sleepDomainModel.PersonId,
                 PatientUserId : sleepDomainModel.PatientUserId ?? null,
                 SleepDuration : sleepDomainModel.SleepDuration ?? 0,
                 RecordDate    : sleepDomainModel.RecordDate ?? null,
@@ -45,9 +44,6 @@ export class SleepRepo implements ISleepRepo {
         try {
             const search = { where: {} };
 
-            if (filters.PersonId != null) {
-                search.where['PersonId'] = { [Op.eq]: filters.PersonId };
-            }
             if (filters.PatientUserId != null) {
                 search.where['PatientUserId'] = { [Op.eq]: filters.PatientUserId };
             }
@@ -124,9 +120,6 @@ export class SleepRepo implements ISleepRepo {
         try {
             const sleep = await Sleep.findByPk(id);
 
-            if (sleepDomainModel.PersonId != null) {
-                sleep.PersonId = sleepDomainModel.PersonId;
-            }
             if (sleepDomainModel.PatientUserId != null) {
                 sleep.PatientUserId = sleepDomainModel.PatientUserId;
             }

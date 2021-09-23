@@ -12,7 +12,6 @@ export class SleepValidator {
     static getDomainModel = (request: express.Request): SleepDomainModel => {
 
         const sleepModel: SleepDomainModel = {
-            PersonId      : request.body.PersonId ?? null,
             PatientUserId : request.body.PatientUserId ?? null,
             SleepDuration : request.body.SleepDuration ?? 0,
             RecordDate    : request.body.RecordDate ?? null,
@@ -37,31 +36,25 @@ export class SleepValidator {
 
     static search = async (request: express.Request): Promise<SleepSearchFilters> => {
 
-        await query('personId').optional()
+        await query('patientUserId').optional()
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await query('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('SleepDuration').optional()
+        await query('sleepDuration').optional()
             .trim()
             .escape()
             .isDecimal()
             .run(request);
 
-        await query('RecordDate').optional()
+        await query('recordDate').optional()
             .trim()
             .escape()
             .isDate()
             .run(request);
 
-        await query('Unit').optional()
+        await query('unit').optional()
             .trim()
             .escape()
             .run(request);
@@ -86,12 +79,6 @@ export class SleepValidator {
     };
 
     private static async validateBody(request) {
-
-        await body('personId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
 
         await body('PatientUserId').optional()
             .trim()
@@ -129,7 +116,6 @@ export class SleepValidator {
             request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
 
         const filters: SleepSearchFilters = {
-            PersonId        : request.query.personId ?? null,
             PatientUserId   : request.query.patientUserId ?? null,
             MinValue        : request.query.minValue ?? null,
             MaxValue        : request.query.maxValue ?? null,

@@ -42,17 +42,10 @@ export class SleepController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Sleep.Create';
+            request.context = 'DailyRecords.Sleep.Create';
             await this._authorizer.authorize(request, response);
             
             const domainModel = await SleepValidator.create(request);
-
-            if (domainModel.PersonId != null) {
-                const person = await this._personService.getById(domainModel.PersonId);
-                if (person == null) {
-                    throw new ApiError(404, `Person with an id ${domainModel.PersonId} cannot be found.`);
-                }
-            }
 
             if (domainModel.PatientUserId != null) {
                 var organization = await this._patientService.getByUserId(domainModel.PatientUserId);
@@ -66,8 +59,8 @@ export class SleepController {
                 throw new ApiError(400, 'Cannot create sleep!');
             }
 
-            ResponseHandler.success(request, response, 'Sleep created successfully!', 201, {
-                Sleep : sleep,
+            ResponseHandler.success(request, response, 'Daily sleep record created successfully!', 201, {
+                SleepRecord : sleep,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -76,19 +69,19 @@ export class SleepController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Sleep.GetById';
+            request.context = 'DailyRecords.Sleep.GetById';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
             const id: string = await SleepValidator.getById(request);
 
-            const sleep = await this._service.getById(id);
-            if (sleep == null) {
-                throw new ApiError(404, 'Sleep not found.');
+            const sleepRecord = await this._service.getById(id);
+            if (sleepRecord == null) {
+                throw new ApiError(404, 'Sleep record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Sleep retrieved successfully!', 200, {
-                Sleep : sleep,
+            ResponseHandler.success(request, response, 'Sleep record retrieved successfully!', 200, {
+                SleepRecord : sleepRecord,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -97,7 +90,7 @@ export class SleepController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Sleep.Search';
+            request.context = 'DailyRecords.Sleep.Search';
             await this._authorizer.authorize(request, response);
 
             const filters = await SleepValidator.search(request);
@@ -110,7 +103,7 @@ export class SleepController {
                     ? 'No records found!'
                     : `Total ${count} sleep records retrieved successfully!`;
                     
-            ResponseHandler.success(request, response, message, 200, { Sleeps: searchResults });
+            ResponseHandler.success(request, response, message, 200, { SleepRecords: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -119,15 +112,15 @@ export class SleepController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Sleep.Update';
+            request.context = 'DailyRecords.Sleep.Update';
             await this._authorizer.authorize(request, response);
 
             const domainModel = await SleepValidator.update(request);
 
             const id: string = await SleepValidator.getById(request);
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
-                throw new ApiError(404, 'Sleep not found.');
+            const existingSleepRecord = await this._service.getById(id);
+            if (existingSleepRecord == null) {
+                throw new ApiError(404, 'Sleep record not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
@@ -136,7 +129,7 @@ export class SleepController {
             }
 
             ResponseHandler.success(request, response, 'Sleep record updated successfully!', 200, {
-                Sleep : updated,
+                SleepRecord : updated,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -145,18 +138,18 @@ export class SleepController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Sleep.Delete';
+            request.context = 'DailyRecords.Sleep.Delete';
             await this._authorizer.authorize(request, response);
 
             const id: string = await SleepValidator.getById(request);
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
-                throw new ApiError(404, 'Sleep not found.');
+            const existingSleepRecord = await this._service.getById(id);
+            if (existingSleepRecord == null) {
+                throw new ApiError(404, 'Sleep record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'Sleep cannot be deleted.');
+                throw new ApiError(400, 'Sleep record cannot be deleted.');
             }
 
             ResponseHandler.success(request, response, 'Sleep record deleted successfully!', 200, {

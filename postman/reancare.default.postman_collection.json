@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"_postman_id": "6e72d58d-c032-4b31-a689-a5feed90195a",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2117,15 +2117,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2640,10 +2631,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -10783,6 +10770,383 @@
 		{
 			"name": "Nutrition",
 			"item": []
+		},
+		{
+			"name": "User device details",
+			"item": [
+				{
+					"name": "Add user device details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();",
+									"try {",
+									"    pm.environment.set(\"USER_DEVICE_DETAILS_ID\", jsonRes.Data.UserDeviceDetails.id);",
+									"}",
+									"catch (error) {",
+									"    console.log(error.message);",
+									"}",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"pm.test(\"New user device details is created\", function () {",
+									"",
+									"    var expectedDeviceName = \"Iphone13\";",
+									"    var expectedUserId = pm.environment.get(\"USER_ID\");",
+									"    var expectedAppVersion = \"1.2.0\";",
+									"",
+									"",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserDeviceDetails');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.have.property('id');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.have.property('DeviceName');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.have.property('UserId');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.have.property('AppVersion');",
+									"",
+									"",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails.DeviceName).equals(expectedDeviceName);",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails.UserId).equals(expectedUserId);",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails.UserId).equals(expectedAppVersion);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Token\": \"abcds\",\n    \"UserId\": \"237d4b82-d682-43cb-8688-3ec19ee9f2ea\",\n    \"DeviceName\": \"Iphone13\",\n    \"OSType\": \"aaa\",\n    \"OSVersion\": \"14.2\",\n    \"AppName\": \"Reancare\",\n    \"AppVersion\": \"1.2.0\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user-device-details",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-device-details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user device details by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"pm.test(\"User device details is returned\", function () {",
+									"    var expectedDeviceName = \"Iphone13\";",
+									"    var expectedUserId = pm.environment.get(\"USER_ID\");",
+									"    var expectedAppVersion = \"1.2.0\";",
+									"",
+									"   var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserDeviceDetails');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.have.property('id');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.have.property('DeviceName');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.have.property('UserId');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.have.property('AppVersion');",
+									"",
+									"",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails.DeviceName).equals(expectedDeviceName);",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails.UserId).equals(expectedUserId);",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails.UserId).equals(expectedAppVersion);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/user-device-details/{{USER_DEVICE_DETAILS_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-device-details",
+								"{{USER_DEVICE_DETAILS_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user device details by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"pm.test(\"Updated user device details is returned\", function () {",
+									"    var expectedDeviceName = \"Iphone13\";",
+									"    var expectedAppVersion = \"1.2.0\";",
+									"",
+									"     var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserDeviceDetails');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.have.property('id');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.have.property('DeviceName');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails).to.have.property('AppVersion');",
+									"",
+									"",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails.DeviceName).equals(expectedDeviceName);",
+									"    pm.expect(jsonRes.Data.UserDeviceDetails.UserId).equals(expectedAppVersion);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Token\": \"abcds\",\n    \"UserId\": \"237d4b82-d682-43cb-8688-3ec19ee9f2ea\",\n    \"DeviceName\": \"Iphone13\",\n    \"OSType\": \"aaa\",\n    \"OSVersion\": \"14.2\",\n    \"AppName\": \"Rean Health\",\n    \"AppVersion\": \"1.3.0\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user-device-details/{{USER_DEVICE_DETAILS_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-device-details",
+								"{{USER_DEVICE_DETAILS_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user device details by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"User device details is deleted\", function () {",
+									"    var expectedValue = true;",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+									"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/user-device-details/{{USER_DEVICE_DETAILS_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-device-details",
+								"{{USER_DEVICE_DETAILS_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search user device details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"List of user device details is returned\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserDeviceDetailsRecords');",
+									"    pm.expect(jsonRes.Data.UserDeviceDetailsRecords.Items.length).to.be.greaterThan(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/user-device-details/search?deviceName=Iphone13&oSType=aaa&oSVersion=14.2&orderBy=DeviceName&order=ascending&pageIndex=0&itemsPerPage=25&appName=Rean Health&appVersion=1.3.0&userId={{USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-device-details",
+								"search"
+							],
+							"query": [
+								{
+									"key": "deviceName",
+									"value": "Iphone13"
+								},
+								{
+									"key": "oSType",
+									"value": "aaa"
+								},
+								{
+									"key": "oSVersion",
+									"value": "14.2"
+								},
+								{
+									"key": "orderBy",
+									"value": "DeviceName"
+								},
+								{
+									"key": "order",
+									"value": "ascending"
+								},
+								{
+									"key": "pageIndex",
+									"value": "0"
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "25"
+								},
+								{
+									"key": "appName",
+									"value": "Rean Health"
+								},
+								{
+									"key": "appVersion",
+									"value": "1.3.0"
+								},
+								{
+									"key": "userId",
+									"value": "{{USER_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

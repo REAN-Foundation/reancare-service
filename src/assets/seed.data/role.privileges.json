@@ -92,7 +92,13 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
+
         ]
     },
     {
@@ -189,7 +195,13 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
+
         ]
     },
     {
@@ -289,7 +301,13 @@
             "Complaint.GetById",
             "Complaint.Search",
             "Complaint.Update",
-            "Complaint.Delete"
+            "Complaint.Delete",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
+
         ]
     },
     {
@@ -379,7 +397,13 @@
             "DailyRecords.StepCount.GetById",
             "DailyRecords.StepCount.Search",
             "DailyRecords.StepCount.Update",
-            "DailyRecords.StepCount.Delete"
+            "DailyRecords.StepCount.Delete",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
+
         ]
     },
     {
@@ -469,7 +493,13 @@
             "Biometrics.Pulse.GetById",
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
-            "Biometrics.Pulse.Search"
+            "Biometrics.Pulse.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
+
         ]
     }
 ]

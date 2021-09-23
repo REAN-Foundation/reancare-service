@@ -12,5 +12,24 @@
         "Specification": "FHIR",
         "Provider": "GCP-FHIR"
     },
+    "FileStorage" : {
+        "Provider": "AWS-S3"
+    },
+    "Communication" : {
+        "SMS": {
+            "Provider": "Twilio"
+        },
+        "Email": {
+            "Provider": "SendGrid"
+        },
+        "InAppNotifications": {
+            "Provider": "Firebase"
+        }
+    },
+    "TemporaryFolders": {
+        "Upload": "./tmp/resources/uploads/",
+        "Download": "./tmp/resources/downloads/",
+        "CleanupFolderBeforeMinutes": 10
+    },
     "MaxUploadFileSize": 104857600
 }

@@ -41,7 +41,8 @@
 							"host": [
 								"{{BASE_URL}}"
 							]
-						}
+						},
+						"description": "This request will be used by API monitor to check the health of the service."
 					},
 					"response": []
 				}
@@ -8866,6 +8867,419 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Blood Pressure",
+					"item": [
+						{
+							"name": "Add blood pressure record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"BIOMETRICS_BLOOD_PRESSURE_ID\", jsonRes.Data.BloodPressure.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New blood pressure record is created\", function () {",
+											"",
+											"    var expectedSystolic = 160;",
+											"    var expectedDiastolic = 180;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodPressure');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('Systolic');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('Diastolic');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.BloodPressure.Systolic).equals(expectedSystolic);",
+											"    pm.expect(jsonRes.Data.BloodPressure.Diastolic).equals(expectedDiastolic);",
+											"    pm.expect(jsonRes.Data.BloodPressure.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Systolic\": 160,\n    \"Diastolic\": 180,\n    \"Unit\": \"mm Hg\",\n    \"RecordDate\": \"2021-09-22\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-pressure",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-pressure"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get blood pressure record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Blood pressure record is returned\", function () {",
+											"",
+											"    var expectedSystolic = 160;",
+											"    var expectedDiastolic = 180;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodPressure');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('Systolic');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('Diastolic');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.BloodPressure.Systolic).equals(expectedSystolic);",
+											"    pm.expect(jsonRes.Data.BloodPressure.Diastolic).equals(expectedDiastolic);",
+											"    pm.expect(jsonRes.Data.BloodPressure.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-pressure/{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-pressure",
+										"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update blood pressure record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated blood pressure record is returned\", function () {",
+											"",
+											"    var expectedSystolic = 100;",
+											"    var expectedDiastolic = 80;",
+											"    var expectedRecordDate = \"2021-09-22T00:00:00.000Z\";",
+											"    var expectedRecordedByUserId = pm.environment.get(\"RECORDED_BY_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodPressure');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('Systolic');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('Diastolic');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('RecordDate');",
+											"    pm.expect(jsonRes.Data.BloodPressure).to.have.property('RecordedByUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.BloodPressure.Systolic).equals(expectedSystolic);",
+											"    pm.expect(jsonRes.Data.BloodPressure.Diastolic).equals(expectedDiastolic);",
+											"    pm.expect(jsonRes.Data.BloodPressure.RecordDate).equals(expectedRecordDate);",
+											"    pm.expect(jsonRes.Data.BloodPressure.RecordedByUserId).equals(expectedRecordedByUserId);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Systolic\": 100,\n    \"Diastolic\": 80,\n    \"Unit\": \"mm Hg\",\n    \"RecordDate\": \"2021-09-22\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-pressure/{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-pressure",
+										"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search blood pressure records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of blood pressure records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodPressureRecords');",
+											"    pm.expect(jsonRes.Data.BloodPressureRecords.Items.length).greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-pressure/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-22&createdDateTo=2021-10-22&orderBy=Systolic&order=ascending&pageIndex=0&itemsPerPage=25&MinSystolicValue=100&MaxSystolicValue=160&patientUserId={{PATIENT_USER_ID}}&MinDiastolicValue=80&MaxDiastolicValue=180",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-pressure",
+										"search"
+									],
+									"query": [
+										{
+											"key": "recordedByUserId",
+											"value": "{{RECORDED_BY_USER_ID}}"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-22"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-22"
+										},
+										{
+											"key": "orderBy",
+											"value": "Systolic"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "MinSystolicValue",
+											"value": "100"
+										},
+										{
+											"key": "MaxSystolicValue",
+											"value": "160"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										},
+										{
+											"key": "MinDiastolicValue",
+											"value": "80"
+										},
+										{
+											"key": "MaxDiastolicValue",
+											"value": "180"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete blood pressure record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\" Blood pressure record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-pressure/{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-pressure",
+										"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},
@@ -11146,6 +11560,213 @@
 		{
 			"name": "Nutrition",
 			"item": []
+		},
+		{
+			"name": "File resource management",
+			"item": [
+				{
+					"name": "Upload file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRespData = pm.response.json();\r",
+									"    var images = jsonRespData.data.details;\r",
+									"    var imageurl = images[0].Url_Public;\r",
+									"    var resourceId = images[0].ResourceId;\r",
+									"\r",
+									"    pm.environment.set(\"PATIENT_ROLE_PROFILE_IMAGE_URL\", imageurl);\r",
+									"    pm.environment.set(\"UPLOADED_RESOURCE_ID\", resourceId);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "enc",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_ROLE_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"type": "file",
+									"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/male/14.jpg"
+								},
+								{
+									"key": "isPublicResource",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/resources/upload/",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"resources",
+								"upload",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Upload profile image",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "enc",
+										"value": "multipart/form-data",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_ROLE_JWT}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"type": "file",
+											"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/female/1.jpg"
+										},
+										{
+											"key": "isPublicResource",
+											"value": "true",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/resources/upload/",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"resources",
+										"upload",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "Expect-CT",
+									"value": "max-age=0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=15552000; includeSubDomains"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "449"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1c1-VH9K0xWsJcHsyNGh0i3cViLO5ME\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 28 May 2021 10:59:25 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"File/s uploaded successfully!\",\n    \"data\": {\n        \"details\": [\n            {\n                \"FileName\": \"1.jpg\",\n                \"ResourceId\": \"c3c6ae1c-0375-4958-a162-a16e7c0b77d9\",\n                \"Url_Auth\": \"https://reancare-api-dev.services.reanfoundation.org//resources/download/c3c6ae1c-0375-4958-a162-a16e7c0b77d9\",\n                \"Url_Public\": \"https://reancare-api-dev.services.reanfoundation.org//resources/download-public/c3c6ae1c-0375-4958-a162-a16e7c0b77d9\",\n                \"MimeType\": \"image/jpeg\",\n                \"Size\": 149389\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Download file",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/resources/download-public/{{UPLOADED_RESOURCE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"resources",
+								"download-public",
+								"{{UPLOADED_RESOURCE_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

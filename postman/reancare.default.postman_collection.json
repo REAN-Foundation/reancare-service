@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a49fca88-40d2-4ce0-9b13-0b9e086cb85d",
+		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -41,7 +41,8 @@
 							"host": [
 								"{{BASE_URL}}"
 							]
-						}
+						},
+						"description": "This request will be used by API monitor to check the health of the service."
 					},
 					"response": []
 				}
@@ -2117,6 +2118,15 @@
 												"type": "text"
 											}
 										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2631,6 +2641,10 @@
 												"type": "text"
 											}
 										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -8968,8 +8982,8 @@
 											"",
 											"pm.test(\"Blood pressure record is returned\", function () {",
 											"",
-											"    var expectedSystolic = 100;",
-											"    var expectedDiastolic = 80;",
+											"    var expectedSystolic = 160;",
+											"    var expectedDiastolic = 180;",
 											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
 											"",
 											"    var jsonRes = pm.response.json();",
@@ -9109,67 +9123,6 @@
 							"response": []
 						},
 						{
-							"name": "Delete blood pressure record by id",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\" Blood pressure record is deleted\", function () {",
-											"",
-											"    var expectedValue = true;",
-											"    ",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
-											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
-											"",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/biometrics/blood-pressure/{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"biometrics",
-										"blood-pressure",
-										"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "Search blood pressure records",
 							"event": [
 								{
@@ -9273,6 +9226,67 @@
 											"key": "MaxDiastolicValue",
 											"value": "180"
 										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete blood pressure record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\" Blood pressure record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-pressure/{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-pressure",
+										"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
 									]
 								}
 							},
@@ -11183,6 +11197,213 @@
 		{
 			"name": "Nutrition",
 			"item": []
+		},
+		{
+			"name": "File resource management",
+			"item": [
+				{
+					"name": "Upload file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRespData = pm.response.json();\r",
+									"    var images = jsonRespData.data.details;\r",
+									"    var imageurl = images[0].Url_Public;\r",
+									"    var resourceId = images[0].ResourceId;\r",
+									"\r",
+									"    pm.environment.set(\"PATIENT_ROLE_PROFILE_IMAGE_URL\", imageurl);\r",
+									"    pm.environment.set(\"UPLOADED_RESOURCE_ID\", resourceId);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "enc",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_ROLE_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"type": "file",
+									"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/male/14.jpg"
+								},
+								{
+									"key": "isPublicResource",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/resources/upload/",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"resources",
+								"upload",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Upload profile image",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "enc",
+										"value": "multipart/form-data",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_ROLE_JWT}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"type": "file",
+											"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/female/1.jpg"
+										},
+										{
+											"key": "isPublicResource",
+											"value": "true",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/resources/upload/",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"resources",
+										"upload",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Security-Policy",
+									"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+								},
+								{
+									"key": "X-DNS-Prefetch-Control",
+									"value": "off"
+								},
+								{
+									"key": "Expect-CT",
+									"value": "max-age=0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "SAMEORIGIN"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=15552000; includeSubDomains"
+								},
+								{
+									"key": "X-Download-Options",
+									"value": "noopen"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Permitted-Cross-Domain-Policies",
+									"value": "none"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "0"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "449"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1c1-VH9K0xWsJcHsyNGh0i3cViLO5ME\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 28 May 2021 10:59:25 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"File/s uploaded successfully!\",\n    \"data\": {\n        \"details\": [\n            {\n                \"FileName\": \"1.jpg\",\n                \"ResourceId\": \"c3c6ae1c-0375-4958-a162-a16e7c0b77d9\",\n                \"Url_Auth\": \"https://reancare-api-dev.services.reanfoundation.org//resources/download/c3c6ae1c-0375-4958-a162-a16e7c0b77d9\",\n                \"Url_Public\": \"https://reancare-api-dev.services.reanfoundation.org//resources/download-public/c3c6ae1c-0375-4958-a162-a16e7c0b77d9\",\n                \"MimeType\": \"image/jpeg\",\n                \"Size\": 149389\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Download file",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/resources/download-public/{{UPLOADED_RESOURCE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"resources",
+								"download-public",
+								"{{UPLOADED_RESOURCE_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

@@ -97,8 +97,12 @@
             "UserDeviceDetails.GetById",
             "UserDeviceDetails.Update",
             "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete"
-
+            "UserDeviceDetails.Delete",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete"
         ]
     },
     {
@@ -200,8 +204,12 @@
             "UserDeviceDetails.GetById",
             "UserDeviceDetails.Update",
             "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete"
-
+            "UserDeviceDetails.Delete",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete"
         ]
     },
     {
@@ -306,8 +314,12 @@
             "UserDeviceDetails.GetById",
             "UserDeviceDetails.Update",
             "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete"
-
+            "UserDeviceDetails.Delete",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete"
         ]
     },
     {
@@ -402,8 +414,12 @@
             "UserDeviceDetails.GetById",
             "UserDeviceDetails.Update",
             "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete"
-
+            "UserDeviceDetails.Delete",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete"
         ]
     },
     {
@@ -498,8 +514,12 @@
             "UserDeviceDetails.GetById",
             "UserDeviceDetails.Update",
             "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete"
-
+            "UserDeviceDetails.Delete",
+            "Biometrics.BloodPressure.Create",
+            "Biometrics.BloodPressure.GetById",
+            "Biometrics.BloodPressure.Update",
+            "Biometrics.BloodPressure.Search",
+            "Biometrics.BloodPressure.Delete"
         ]
     }
 ]

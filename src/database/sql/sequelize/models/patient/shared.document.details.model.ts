@@ -16,7 +16,7 @@ import {
 import { v4 } from 'uuid';
 import User from '../user.model';
 import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
-import FileResource from '../file.resource.model';
+import FileResource from '../file.resource/file.resource.model';
 import Document from './document.model';
 
 ///////////////////////////////////////////////////////////////////////

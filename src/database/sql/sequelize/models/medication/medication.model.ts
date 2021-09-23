@@ -28,7 +28,7 @@ import {
     MedicationFrequencyUnits
 } from '../../../../../domain.types/medication/medication/medication.types';
 
-import FileResource from '../file.resource.model';
+import FileResource from '../file.resource/file.resource.model';
 import Order from '../order.model';
 import User from '../user.model';
 import Visit from '../visit.model';

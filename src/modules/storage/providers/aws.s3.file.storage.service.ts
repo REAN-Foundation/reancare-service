@@ -1,13 +1,8 @@
 import { IFileStorageService } from '../interfaces/file.storage.service.interface';
 
 import * as aws from 'aws-sdk';
-import path from 'path';
 import fs from 'fs';
 import { Logger } from '../../../common/logger';
-
-///////////////////////////////////////////////////////////////////////////////////
-
-const TEMP_DOWNLOAD_FOLDER = path.join(process.cwd(), './tmp/resources/downloads/');
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +27,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         return storageKey;
     };
 
-    download = async (storageKey: string, localFolder: string): Promise<string> => {
+    download = async (storageKey: string, localFilePath: string): Promise<string> => {
         
         const s3 = this.getS3Client();
         const params = {
@@ -40,30 +35,29 @@ export class AWSS3FileStorageService implements IFileStorageService {
             Key    : storageKey,
         };
 
-        var s3Path = storageKey;
-        var tokens = s3Path.split('/');
-        var localFile = tokens[tokens.length - 1];
-        var folderPath = path.join(TEMP_DOWNLOAD_FOLDER, localFolder);
-        await fs.promises.mkdir(folderPath, { recursive: true });
+        //var s3Path = storageKey;
+        // var tokens = s3Path.split('/');
+        // var localFile = tokens[tokens.length - 1];
+        // var folderPath = path.join(TEMP_DOWNLOAD_FOLDER, localFolder);
+        // var localDestination = path.join(folderPath, localFile);
 
-        var localDestination = path.join(folderPath, localFile);
-        var file = fs.createWriteStream(localDestination);
+        var file = fs.createWriteStream(localFilePath);
 
         return new Promise((resolve, reject) => {
             s3.getObject(params).createReadStream()
                 .on('end', () => {
 
-                    //var st = fs.existsSync(localDestination);
+                    //var st = fs.existsSync(localFilePath);
 
-                    var stats = fs.statSync(localDestination);
+                    var stats = fs.statSync(localFilePath);
                     var count = 0;
                     while (stats.size === 0 && count < 5) {
                         setTimeout(() => {
-                            stats = fs.statSync(localDestination);
+                            stats = fs.statSync(localFilePath);
                         }, 3000);
                         count++;
                     }
-                    return resolve(localDestination);
+                    return resolve(localFilePath);
                 })
                 .on('error', (error) => {
                     return reject(error);

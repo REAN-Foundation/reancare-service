@@ -4,10 +4,11 @@ import { FileResourceDto } from "./file.resource.dto";
 
 export interface FileResourceSearchFilters {
     OwnerUserId?     : string,
+    UploadedByUserId?: string,
     IsPublicResource?: boolean;
-    Version?         : string;
     ReferenceId?     : string;
     ReferenceType?   : string;
+    ReferenceKeyword?: string;
     Tag?             : string;
     CreatedDateFrom? : Date;
     CreatedDateTo?   : Date;

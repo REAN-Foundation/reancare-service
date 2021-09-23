@@ -69,13 +69,13 @@ export class FileResourceService {
         var filename = path.basename(sourceLocation);
         
         var metadata: FileResourceMetadata = {
-            VersionIdentifier : '1',
-            OriginalName      : filename,
-            FileName          : filename,
-            SourceFilePath    : null,
-            MimeType          : mime.lookup(sourceLocation),
-            Size              : stats['size'] / 1024,
-            StorageKey        : storageKey
+            Version        : '1',
+            OriginalName   : filename,
+            FileName       : filename,
+            SourceFilePath : null,
+            MimeType       : mime.lookup(sourceLocation),
+            Size           : stats['size'] / 1024,
+            StorageKey     : storageKey
         };
 
         var domainModel: FileResourceUploadDomainModel = {
@@ -89,8 +89,8 @@ export class FileResourceService {
 
     uploadVersion = async (metadata: FileResourceMetadata, makeDefaultVersion: boolean): Promise<FileResourceDto> => {
 
-        if (metadata.VersionIdentifier === undefined || metadata.VersionIdentifier === null) {
-            metadata.VersionIdentifier = await this.generateNewVersionIdentifier(metadata.ResourceId);
+        if (metadata.Version === undefined || metadata.Version === null) {
+            metadata.Version = await this.generateNewVersionIdentifier(metadata.ResourceId);
         }
 
         var storageKey = await this.uploadFileToStorage(metadata);
@@ -114,27 +114,45 @@ export class FileResourceService {
         : Promise<string> => {
 
         var resources = await this._fileResourceRepo.searchForDownload(filters);
-        var downloadFolderPath = this.generateDownloadFolderPath();
+        var downloadFolderPath = await this.generateDownloadFolderPath();
 
         for await (var resource of resources) {
-            var localFilePath = path.join(downloadFolderPath, resource.DefaultVersion.FileName);
-            await this._storageService.download(resource.DefaultVersion.StorageKey, localFilePath);
+            var versionMetadata = resource.DefaultVersion;
+            if (!resource.DefaultVersion) {
+                versionMetadata = await this._fileResourceRepo.getLatestVersion(resource.id);
+            }
+            var localFilePath = path.join(downloadFolderPath, resource.FileName); //Always download with resource name
+            await this._storageService.download(versionMetadata.StorageKey, localFilePath);
         }
 
         return downloadFolderPath;
     };
 
-    downloadByVersion = async (resourceId: string, version: string): Promise<string> => {
-        var downloadFolderPath = this.generateDownloadFolderPath();
-        var versionDetails = await this._fileResourceRepo.getVersion(resourceId, version);
-        var localDestination = await this._storageService.download(versionDetails.StorageKey, downloadFolderPath);
+    downloadByVersionName = async (resourceId: string, versionName: string): Promise<string> => {
+        var downloadFolderPath = await this.generateDownloadFolderPath();
+        var versionMetadata = await this._fileResourceRepo.getVersionByVersionName(resourceId, versionName);
+        var localFilePath = path.join(downloadFolderPath, versionMetadata.OriginalName);
+        var localDestination = await this._storageService.download(versionMetadata.StorageKey, localFilePath);
+        return localDestination;
+    };
+
+    downloadByVersionId = async (resourceId: string, versionId: string): Promise<string> => {
+        var downloadFolderPath = await this.generateDownloadFolderPath();
+        var versionMetadata = await this._fileResourceRepo.getVersionByVersionId(resourceId, versionId);
+        var localFilePath = path.join(downloadFolderPath, versionMetadata.OriginalName);
+        var localDestination = await this._storageService.download(versionMetadata.StorageKey, localFilePath);
         return localDestination;
     };
 
     downloadById = async (id: string): Promise<string> => {
+        var downloadFolderPath = await this.generateDownloadFolderPath();
         var dto = await this._fileResourceRepo.getById(id);
-        var downloadFolderPath = this.generateDownloadFolderPath();
-        var localDestination = await this._storageService.download(dto.DefaultVersion.StorageKey, downloadFolderPath);
+        var versionMetadata = dto.DefaultVersion;
+        if (!dto.DefaultVersion) {
+            versionMetadata = await this._fileResourceRepo.getLatestVersion(id);
+        }
+        var localFilePath = path.join(downloadFolderPath, versionMetadata.OriginalName);
+        var localDestination = await this._storageService.download(versionMetadata.StorageKey, localFilePath);
         return localDestination;
     };
 
@@ -144,6 +162,18 @@ export class FileResourceService {
 
     getById = async (id: string): Promise<FileResourceDetailsDto> => {
         return await this._fileResourceRepo.getById(id);
+    };
+
+    getVersionByVersionId = async (id: string, versionId: string): Promise<FileResourceMetadata> => {
+        return await this._fileResourceRepo.getVersionByVersionId(id, versionId);
+    };
+
+    getVersionByVersionName = async (id: string, versionName: string): Promise<FileResourceMetadata> => {
+        return await this._fileResourceRepo.getVersionByVersionId(id, versionName);
+    };
+
+    getLatestVersion = async (id: string): Promise<FileResourceMetadata> => {
+        return await this._fileResourceRepo.getLatestVersion(id);
     };
 
     getShareableLink = async (id: string, durationInMinutes: number): Promise<string> => {
@@ -157,18 +187,21 @@ export class FileResourceService {
         var versions = await this._fileResourceRepo.getVersions(id);
         for await (var version of versions) {
             var deleted = await this._storageService.delete(version.StorageKey);
-            if (deleted) {
-                var success = await this._fileResourceRepo.deleteVersion(version.ResourceId, version.VersionIdentifier);
-                if (!success) {
-                    throw new ApiError(422, "Error deleting version for resource!");
-                }
+            if (!deleted) {
+                throw new ApiError(422, "Error deleting version for resource!");
             }
         }
-        var versions = await this._fileResourceRepo.getVersions(id);
-        if (versions.length > 0) {
-            throw new ApiError(422, "Cannot delete all the versions for resource!");
-        }
         return await this._fileResourceRepo.delete(id);
+    };
+
+    deleteVersionByVersionId = async (id: string, versionId: string): Promise<boolean> => {
+
+        var versionMetadata = await this._fileResourceRepo.getVersionByVersionId(id, versionId);
+        var deleted = await this._storageService.delete(versionMetadata.StorageKey);
+        if (!deleted) {
+            throw new ApiError(422, "Error deleting version for resource!");
+        }
+        return await this._fileResourceRepo.deleteVersionByVersionId(id, versionId);
     };
 
     cleanupTempFiles = async () => {
@@ -178,10 +211,15 @@ export class FileResourceService {
         this.cleanupDirectories(tempUploadFolder);
     }
 
-    private generateDownloadFolderPath() {
+    private generateDownloadFolderPath = async() => {
+
         var timestamp = TimeHelper.timestamp(new Date());
         var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
         var downloadFolderPath = path.join(tempDownloadFolder, timestamp);
+
+        //Make sure the path exists
+        await fs.promises.mkdir(downloadFolderPath, { recursive: true });
+
         return downloadFolderPath;
     }
 
@@ -190,7 +228,7 @@ export class FileResourceService {
         var resource = await this._fileResourceRepo.create(domainModel);
 
         //Add default version
-        domainModel.FileMetadata.VersionIdentifier = '1';
+        domainModel.FileMetadata.Version = '1';
         var storageKey = await this.uploadFileToStorage(domainModel.FileMetadata);
         domainModel.FileMetadata.StorageKey = storageKey;
 
@@ -309,24 +347,24 @@ export class FileResourceService {
         var metadataList: FileResourceMetadata[] = [];
 
         var thumbnailMetadata: FileResourceMetadata = {
-            VersionIdentifier : '1:Thumbnail',
-            FileName          : path.basename(thumbnailFilename),
-            OriginalName      : path.basename(sourceFilePath),
-            SourceFilePath    : thumbnailFilename,
-            MimeType          : mime.lookup(thumbnailFilename),
-            Size              : thumbnailStats['size'] / 1024,
-            StorageKey        : null
+            Version        : '1:Thumbnail',
+            FileName       : path.basename(thumbnailFilename),
+            OriginalName   : path.basename(sourceFilePath),
+            SourceFilePath : thumbnailFilename,
+            MimeType       : mime.lookup(thumbnailFilename),
+            Size           : thumbnailStats['size'] / 1024,
+            StorageKey     : null
         };
         metadataList.push(thumbnailMetadata);
 
         var previewMetadata: FileResourceMetadata = {
-            VersionIdentifier : '1:Preview',
-            FileName          : path.basename(previewFilename),
-            OriginalName      : path.basename(sourceFilePath),
-            SourceFilePath    : previewFilename,
-            MimeType          : mime.lookup(previewFilename),
-            Size              : previewStats['size'] / 1024,
-            StorageKey        : null
+            Version        : '1:Preview',
+            FileName       : path.basename(previewFilename),
+            OriginalName   : path.basename(sourceFilePath),
+            SourceFilePath : previewFilename,
+            MimeType       : mime.lookup(previewFilename),
+            Size           : previewStats['size'] / 1024,
+            StorageKey     : null
         };
         metadataList.push(previewMetadata);
 

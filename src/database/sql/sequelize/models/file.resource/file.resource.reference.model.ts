@@ -10,6 +10,7 @@ import {
     PrimaryKey,
     Length,
     ForeignKey,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
@@ -45,19 +46,22 @@ export default class FileResourceReference extends Model {
     })
     ResourceId: string;
     
+    @BelongsTo(() => FileResource)
+    Resource: FileResource
+
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,
         allowNull : false,
     })
-    ReferenceItemId: string;
+    ReferenceId: string;
 
     @Length({ max: 32 })
     @Column({
         type      : DataType.STRING(32),
         allowNull : true,
     })
-    ReferenceType: string;
+    Type: string;
 
     @Length({ max: 32 })
     @Column({

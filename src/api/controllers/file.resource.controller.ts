@@ -147,7 +147,7 @@ export class FileResourceController {
 
             const localDestination = await this._service.downloadByVersion(
                 metadata.ResourceId,
-                metadata.VersionIdentifier);
+                metadata.Version);
 
             if (localDestination == null) {
                 throw new ApiError(404, 'FileResource not found.');

@@ -106,7 +106,7 @@ export class FileResourceValidator {
 
         var metadata = metadataList[0];
         metadata.ResourceId = request.params.id;
-        metadata.VersionIdentifier = request.body.Version;
+        metadata.Version = request.body.Version;
         metadata.IsDefaultVersion = request.body.MakeAsDefault === 'false' ? false : true;
         
         return metadata;
@@ -158,7 +158,7 @@ export class FileResourceValidator {
 
         var model: FileResourceMetadata = {
             ResourceId        : request.params.id,
-            VersionIdentifier : request.params.version,
+            Version : request.params.version,
         };
 
         return model;
@@ -242,6 +242,11 @@ export class FileResourceValidator {
             .escape()
             .run(request);
 
+        await query('referenceKeyword').optional()
+            .trim()
+            .escape()
+            .run(request);
+
         await query('tag').optional()
             .trim()
             .escape()
@@ -321,9 +326,9 @@ export class FileResourceValidator {
         const filters: FileResourceSearchFilters = {
             OwnerUserId      : request.query.ownerUserId ?? null,
             IsPublicResource : request.query.isPublicResource ?? false,
-            Version          : request.query.version ?? null,
             ReferenceId      : request.query.referenceId ?? null,
             ReferenceType    : request.query.referenceType ?? null,
+            ReferenceKeyword : request.query.referenceKeyword ?? null,
             Tag              : request.query.tag ?? null,
             CreatedDateFrom  : request.query.createdDateFrom ?? null,
             CreatedDateTo    : request.query.createdDateTo ?? null,

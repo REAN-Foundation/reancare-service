@@ -9,9 +9,7 @@ import { FileResourceMetadata } from '../../../../domain.types/file.resource/fil
 
 export class FileResourceMapper {
 
-    static toDetailsDto = (
-        fileResource: FileResource,
-        defaultVersion?: FileResourceVersion): FileResourceDetailsDto => {
+    static toDetailsDto = (fileResource: FileResource): FileResourceDetailsDto => {
 
         if (fileResource == null){
             return null;
@@ -27,12 +25,13 @@ export class FileResourceMapper {
             References       : [],
             Tags             : fileResource.Tags ? JSON.parse(fileResource.Tags) : [],
             Versions         : [],
-            DefaultVersion   : defaultVersion ? FileResourceMapper.toFileVersionDto(defaultVersion) : null
+            DefaultVersion   : fileResource.DefaultVersion ?
+                FileResourceMapper.toFileVersionDto(fileResource.DefaultVersion) : null
         };
         return dto;
     }
 
-    static toDto = (fileResource: FileResource, defaultVersion?: FileResourceVersion): FileResourceDto => {
+    static toDto = (fileResource: FileResource): FileResourceDto => {
 
         if (fileResource == null){
             return null;
@@ -44,7 +43,8 @@ export class FileResourceMapper {
             OwnerUserId      : fileResource.OwnerUserId,
             IsPublicResource : fileResource.IsPublicResource,
             MimeType         : fileResource.MimeType,
-            DefaultVersion   : defaultVersion ? FileResourceMapper.toFileVersionDto(defaultVersion) : null
+            DefaultVersion   : fileResource.DefaultVersion ?
+                FileResourceMapper.toFileVersionDto(fileResource.DefaultVersion) : null
         };
 
         return dto;
@@ -52,9 +52,14 @@ export class FileResourceMapper {
 
     static toFileReferenceDtos = (references ?:FileResourceReference[]): ResourceReference[] => {
         var dtos = references.map(x => {
+
+            if (x == null){
+                return null;
+            }
+
             var ref: ResourceReference = {
-                ItemId   : x.ReferenceItemId,
-                ItemType : x.ReferenceType,
+                ItemId   : x.ReferenceId,
+                ItemType : x.Type,
                 Keyword  : x.Keyword
             };
             return ref;
@@ -73,13 +78,19 @@ export class FileResourceMapper {
 
     static toFileVersionDto = (fileVersion ?: FileResourceVersion): FileResourceMetadata => {
 
+        if (fileVersion == null){
+            return null;
+        }
+
         var v: FileResourceMetadata = {
-            VersionIdentifier : fileVersion.Version,
-            FileName          : fileVersion.FileName,
-            MimeType          : fileVersion.MimeType,
-            OriginalName      : fileVersion.OriginalFileName,
-            Size              : fileVersion.SizeInKB,
-            StorageKey        : fileVersion.StorageKey,
+            VersionId    : fileVersion.id,
+            ResourceId   : fileVersion.ResourceId,
+            Version      : fileVersion.Version,
+            FileName     : fileVersion.FileName,
+            MimeType     : fileVersion.MimeType,
+            OriginalName : fileVersion.OriginalFileName,
+            Size         : fileVersion.SizeInKB,
+            StorageKey   : fileVersion.StorageKey,
         };
 
         return v;

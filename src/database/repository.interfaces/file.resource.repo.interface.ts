@@ -15,7 +15,11 @@ export interface IFileResourceRepo {
 
     searchForDownload(filters: FileResourceSearchFilters): Promise<FileResourceDto[]>;
 
-    getVersion(id: string, version: string): Promise<FileResourceMetadata>;
+    getVersionByVersionName(id: string, versionName: string): Promise<FileResourceMetadata>;
+
+    getVersionByVersionId(id: string, versionId: string): Promise<FileResourceMetadata>;
+
+    getLatestVersion(id: string): Promise<FileResourceMetadata>;
     
     getVersions(id: string): Promise<FileResourceMetadata[]>;
 
@@ -27,6 +31,6 @@ export interface IFileResourceRepo {
 
     delete(id: string): Promise<boolean>;
 
-    deleteVersion(ResourceId: any, Version: any): Promise<boolean>;
+    deleteVersionByVersionId(ResourceId: any, Version: any): Promise<boolean>;
 
 }

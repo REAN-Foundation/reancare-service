@@ -12,10 +12,12 @@ import {
     IsDate,
     ForeignKey,
     HasOne,
+    HasMany,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import User from '../user.model';
+import FileResourceReference from './file.resource.reference.model';
 import FileResourceVersion from './file.resource.version.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -99,12 +101,21 @@ export default class FileResource extends Model {
     })
     DefaultVersionId: string;
 
+    @HasOne(() => FileResourceVersion)
+    DefaultVersion: FileResourceVersion;
+
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    UploadedDate: Date
+    UploadedDate: Date;
+
+    @HasMany(() => FileResourceReference)
+    References: FileResourceReference[];
+
+    @HasMany(() => FileResourceVersion)
+    Versions: FileResourceVersion[];
 
     @Column
     @CreatedAt
@@ -117,3 +128,7 @@ export default class FileResource extends Model {
     DeletedAt: Date;
 
 }
+
+// FileResource.hasMany(FileResourceReference, { as: 'References'});
+// FileResource.hasMany(FileResourceVersion, { as: 'Versions'});
+//FileResource.hasOne(FileResourceVersion, { as: 'DefaultVersion', foreignKey: 'DefaultVersionId'});

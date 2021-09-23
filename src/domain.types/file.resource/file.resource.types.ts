@@ -5,13 +5,14 @@ export interface ResourceReference {
 }
 
 export interface FileResourceMetadata {
-    ResourceId?       : string;
-    VersionIdentifier?: string;
-    FileName?         : string;
-    OriginalName?     : string;
-    SourceFilePath?   : string;
-    MimeType?         : string;
-    Size?             : number;
-    StorageKey?       : string;
-    IsDefaultVersion? : boolean;
+    ResourceId?      : string;
+    VersionId?       : string;
+    Version?         : string;
+    FileName?        : string;
+    OriginalName?    : string;
+    SourceFilePath?  : string;
+    MimeType?        : string;
+    Size?            : number;
+    StorageKey?      : string;
+    IsDefaultVersion?: boolean;
 }

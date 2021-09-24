@@ -1,8 +1,8 @@
 import { IMedicationStockImageRepo } from '../../../../repository.interfaces/medication/medication.stock.image.repo.interface';
-import MedicationStockImage from '../../models/medication/medication.stock.image.model';
-import { MedicationStockImageMapper } from '../../mappers/medication/medication.stock.image.mapper';
-import { Logger } from '../../../../../common/logger';
-import { ApiError } from '../../../../../common/api.error';
+import MedicationStockImage from '../../../models/clinical/medication/medication.stock.image.model';
+import { MedicationStockImageMapper } from '../../../mappers/clinical/medication/medication.stock.image.mapper';
+import { Logger } from '../../../../../../common/logger';
+import { ApiError } from '../../../../../../common/api.error';
 import { MedicationStockImageDomainModel } from '../../../../../domain.types/medication/medication.stock.image/medication.stock.image.domain.model';
 import { MedicationStockImageDto } from '../../../../../domain.types/medication/medication.stock.image/medication.stock.image.dto';
 

@@ -1,5 +1,5 @@
 import express from 'express';
-import { ComplaintController } from '../../controllers/patient/complaint.controller';
+import { PatientAllergyController } from '../../controllers/patient/allergy.controller';
 import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -8,7 +8,7 @@ export const register = (app: express.Application): void => {
 
     const router = express.Router();
     const authenticator = Loader.authenticator;
-    const controller = new ComplaintController();
+    const controller = new PatientAllergyController();
 
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
@@ -16,5 +16,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
     
-    app.use('/api/v1/patient-complaints', router);
+    app.use('/api/v1/patient-allergies', router);
 };

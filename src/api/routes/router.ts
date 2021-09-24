@@ -19,7 +19,7 @@ import { register as registerBodyTemperatureRoutes } from './biometrics/body.tem
 import { register as registerMoveMinutesRoutes } from './daily.records/move.minutes.routes';
 import { register as registerCalorieBalanceRoute } from './daily.records/calorie.balance.routes';
 import { register as registerComplaintRoutes } from './patient/complaint.routes';
-import { register as registerAllergyRoutes } from './patient/allergy.route';
+import { register as registerAllergyRoutes } from './patient/allergy.routes';
 import { register as registerHeartPointRoutes } from './daily.records/heart.points.routes';
 import { register as registerSleepRoutes } from './daily.records/sleep.routes';
 import { register as registerEmergencyEventRoutes } from './emergency.event.routes';

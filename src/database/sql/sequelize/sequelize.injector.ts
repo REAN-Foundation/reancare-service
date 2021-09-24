@@ -9,7 +9,7 @@ import { BodyTemperatureRepo } from './repositories/biometrics/body.temperature.
 import { MoveMinutesRepo } from './repositories/daily.records/move.minutes.repo';
 import { DoctorRepo } from './repositories/doctor.repo';
 import { InternalTestUserRepo } from './repositories/internal.test.user.repo';
-import { MedicationStockImageRepo } from './repositories/medication/medication.stock.image.repo';
+import { MedicationStockImageRepo } from './repositories/clinical/medication/medication.stock.image.repo';
 import { OrganizationRepo } from './repositories/organization.repo';
 import { OtpRepo } from './repositories/otp.repo';
 import { HealthProfileRepo } from './repositories/patient/health.profile.repo';

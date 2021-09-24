@@ -3,13 +3,14 @@ import { SymptomAssessmentTemplateDto } from "./symptom.assessment.template.dto"
 //////////////////////////////////////////////////////////////////////
 
 export interface SymptomAssessmentTemplateSearchFilters {
-    Title?      : string;
-    Tags?       : string;
-    SymptomName?: string;
-    OrderBy     : string;
-    Order       : string;
-    PageIndex   : number;
-    ItemsPerPage: number;
+    Title?        : string;
+    Tag ?         : string;
+    SymptomName?  : string;
+    SymptomTypeId?: string;
+    OrderBy       : string;
+    Order         : string;
+    PageIndex     : number;
+    ItemsPerPage  : number;
 }
 
 export interface SymptomAssessmentTemplateSearchResults {

@@ -4,9 +4,11 @@ import { SymptomDto } from "./symptom.dto";
 
 export interface SymptomSearchFilters {
     Symptom?             : string;
+    SymptomTypeId?       : string;
     PatientUserId?       : string;
     AssessmentId?        : string;
     AssessmentTemplateId?: string;
+    VisitId?             : string;
     DateFrom?            : Date;
     DateTo?              : Date;
     OrderBy              : string;

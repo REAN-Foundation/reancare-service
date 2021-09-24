@@ -1,5 +1,5 @@
-import { ClinicalValidationStatus, ClinicalInterpretation } from "../../../domain.types/miscellaneous/clinical.types";
-import { Severity } from "../../../domain.types/miscellaneous/system.types";
+import { ClinicalValidationStatus, ClinicalInterpretation } from "../../../../domain.types/miscellaneous/clinical.types";
+import { Severity } from "../../../../domain.types/miscellaneous/system.types";
 
 export interface SymptomDomainModel {
     id?                       : string,

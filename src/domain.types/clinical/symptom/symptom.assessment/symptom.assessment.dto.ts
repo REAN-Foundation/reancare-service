@@ -1,4 +1,4 @@
-import { ProgressStatus } from "../../miscellaneous/system.types";
+import { ProgressStatus } from "../../../miscellaneous/system.types";
 import { SymptomDto } from "../symptom/symptom.dto";
 
 export interface SymptomAssessmentDto {

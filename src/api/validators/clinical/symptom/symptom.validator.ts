@@ -1,6 +1,5 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
-
 import { Helper } from '../../../../common/helper';
 import { SymptomDomainModel } from '../../../../domain.types/clinical/symptom/symptom/symptom.domain.model';
 import { SymptomSearchFilters } from '../../../../domain.types/clinical/symptom/symptom/symptom.search.types';
@@ -11,25 +10,40 @@ export class SymptomValidator {
 
     static getDomainModel = (request: express.Request): SymptomDomainModel => {
 
-        const addressModel: SymptomDomainModel = {
-            Type           : request.body.Type ?? 'Home',
-            PersonId       : request.body.PersonId ?? null,
-            OrganizationId : request.body.OrganizationId ?? null,
-            SymptomLine    : request.body.SymptomLine,
-            City           : request.body.City ?? null,
-            District       : request.body.District ?? null,
-            State          : request.body.State ?? null,
-            Country        : request.body.Country ?? null,
-            PostalCode     : request.body.PostalCode ?? null,
-            Longitude      : request.body.Longitude ?? null,
-            Lattitude      : request.body.Lattitude ?? null,
+        const model: SymptomDomainModel = {
+            id                        : request.body.id ?? null,
+            PatientUserId             : request.body.PatientUserId ?? null,
+            MedicalPractitionerUserId : request.body.MedicalPractitionerUserId ?? null,
+            VisitId                   : request.body.VisitId,
+            AssessmentId              : request.body.AssessmentId ?? null,
+            AssessmentTemplateId      : request.body.AssessmentTemplateId ?? null,
+            SymptomTypeId             : request.body.SymptomTypeId ?? null,
+            Symptom                   : request.body.Symptom ?? null,
+            IsPresent                 : request.body.IsPresent ?? null,
+            Severity                  : request.body.Severity ?? null,
+            ValidationStatus          : request.body.ValidationStatus ?? null,
+            Interpretation            : request.body.Interpretation ?? null,
+            Comments                  : request.body.Comments ?? null,
+            RecordDate                : request.body.RecordDate ?? null,
         };
 
-        return addressModel;
+        return model;
     };
 
     static create = async (request: express.Request): Promise<SymptomDomainModel> => {
+
+        await body('PatientUserId').exists()
+            .trim()
+            .isUUID()
+            .run(request);
+
+        await body('SymptomTypeId').exists()
+            .trim()
+            .isUUID()
+            .run(request);
+
         await SymptomValidator.validateBody(request);
+
         return SymptomValidator.getDomainModel(request);
     };
 
@@ -37,121 +51,40 @@ export class SymptomValidator {
         return await SymptomValidator.getParamId(request);
     };
     
-    static getByOrganizationId = async (request: express.Request): Promise<string> => {
-
-        await param('organizationId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        
-        return request.params.organizationId;
-    };
-    
-    static getByPersonId = async (request: express.Request): Promise<string> => {
-
-        await param('personId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        
-        return request.params.personId;
-    };
-
     static delete = async (request: express.Request): Promise<string> => {
         return await SymptomValidator.getParamId(request);
     };
 
     static search = async (request: express.Request): Promise<SymptomSearchFilters> => {
 
-        await query('personId').optional()
+        await query('patientUserId').optional()
+            .trim()
+            .isUUID()
+            .run(request);
+
+        await query('visitId').optional()
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await query('organizationId').optional()
+        await query('assessmentId').optional()
             .trim()
-            .escape()
             .isUUID()
             .run(request);
 
-        await query('type').optional()
+        await query('assessmentTemplateId').optional()
             .trim()
-            .escape()
+            .isUUID()
             .run(request);
 
-        await query('addressLine').optional()
-            .trim()
-            .run(request);
-
-        await query('city').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('district').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('state').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('country').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('postalCode').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('longitudeFrom').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('longitudeTo').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('lattitudeFrom').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('lattitudeTo').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('createdDateFrom').optional()
+        await query('dateFrom').optional()
             .trim()
             .escape()
             .toDate()
             .run(request);
 
-        await query('createdDateTo').optional()
+        await query('dateTo').optional()
             .trim()
             .escape()
             .toDate()
@@ -180,6 +113,7 @@ export class SymptomValidator {
             .run(request);
 
         const result = validationResult(request);
+
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
@@ -189,9 +123,19 @@ export class SymptomValidator {
 
     static update = async (request: express.Request): Promise<SymptomDomainModel> => {
 
-        const id = await SymptomValidator.getParamId(request);
+        await body('PatientUserId').optional()
+            .trim()
+            .isUUID()
+            .run(request);
+
+        await body('SymptomTypeId').optional()
+            .trim()
+            .isUUID()
+            .run(request);
+
         await SymptomValidator.validateBody(request);
 
+        const id = await SymptomValidator.getParamId(request);
         const domainModel = SymptomValidator.getDomainModel(request);
         domainModel.id = id;
 
@@ -200,96 +144,84 @@ export class SymptomValidator {
 
     private static async validateBody(request) {
 
-        await body('PersonId').optional()
+        await body('MedicalPractitionerUserId').optional()
             .trim()
-            .escape()
             .isUUID()
             .run(request);
 
-        await body('OrganizationId').optional()
+        await body('VisitId').optional()
             .trim()
-            .escape()
             .isUUID()
             .run(request);
 
-        await body('Type').optional()
+        await body('AssessmentId').optional()
             .trim()
-            .escape()
+            .isUUID()
             .run(request);
 
-        await body('SymptomLine').exists()
+        await body('AssessmentTemplateId').optional()
+            .trim()
+            .isUUID()
+            .run(request);
+
+        await body('Symptom').optional()
             .trim()
             .run(request);
 
-        await body('City').optional()
+        await body('IsPresent').optional()
             .trim()
-            .escape()
+            .isBoolean()
             .run(request);
 
-        await body('District').optional()
+        await body('Severity').optional()
             .trim()
-            .escape()
             .run(request);
 
-        await body('State').optional()
+        await body('ValidationStatus').optional()
             .trim()
-            .escape()
             .run(request);
 
-        await body('Country').optional()
+        await body('Interpretation').optional()
             .trim()
-            .escape()
             .run(request);
 
-        await body('PostalCode').optional()
+        await body('Comments').optional()
             .trim()
-            .escape()
             .run(request);
 
-        await body('Longitude').optional()
+        await body('RecordDate').optional()
             .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await body('Lattitude').optional()
-            .trim()
-            .escape()
-            .isDecimal()
+            .isDate()
             .run(request);
 
         const result = validationResult(request);
+
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
     }
 
     private static getFilter(request): SymptomSearchFilters {
-        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
 
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
+        const pageIndex = request.query.pageIndex !== 'undefined' ?
+            parseInt(request.query.pageIndex as string, 10) : 0;
+
+        const itemsPerPage = request.query.itemsPerPage !== 'undefined' ?
+            parseInt(request.query.itemsPerPage as string, 10) : 25;
 
         const filters: SymptomSearchFilters = {
-            Type            : request.query.type ?? null,
-            PersonId        : request.query.personId ?? null,
-            OrganizationId  : request.query.organizationId ?? null,
-            SymptomLine     : request.query.addressLine ?? null,
-            City            : request.query.city ?? null,
-            District        : request.query.district ?? null,
-            State           : request.query.state ?? null,
-            Country         : request.query.country ?? null,
-            PostalCode      : request.query.postalCode ?? null,
-            LongitudeFrom   : request.query.longitudeFrom ?? null,
-            LongitudeTo     : request.query.longitudeTo ?? null,
-            LattitudeFrom   : request.query.lattitudeFrom ?? null,
-            LattitudeTo     : request.query.lattitudeTo ?? null,
-            CreatedDateFrom : request.query.createdDateFrom ?? null,
-            CreatedDateTo   : request.query.createdDateTo ?? null,
-            OrderBy         : request.query.orderBy ?? 'CreatedAt',
-            Order           : request.query.order ?? 'descending',
-            PageIndex       : pageIndex,
-            ItemsPerPage    : itemsPerPage,
+            Symptom              : request.query.symptom ?? null,
+            SymptomTypeId        : request.query.symptomTypeId ?? null,
+            PatientUserId        : request.query.patientUserId ?? null,
+            AssessmentId         : request.query.assessmentId ?? null,
+            AssessmentTemplateId : request.query.assessmentTemplateId ?? null,
+            VisitId              : request.query.visitId ?? null,
+            DateFrom             : request.query.dateFrom ?? null,
+            DateTo               : request.query.dateTo ?? null,
+            OrderBy              : request.query.orderBy ?? 'CreatedAt',
+            Order                : request.query.order ?? 'descending',
+            PageIndex            : pageIndex,
+            ItemsPerPage         : itemsPerPage,
         };
         return filters;
     }

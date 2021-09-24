@@ -10,7 +10,7 @@ export class SymptomTypeValidator {
 
     static getDomainModel = (request: express.Request): SymptomTypeDomainModel => {
 
-        const addressModel: SymptomTypeDomainModel = {
+        const model: SymptomTypeDomainModel = {
             id              : request.body.id ?? null,
             Symptom         : request.body.Symptom ?? null,
             Description     : request.body.Description ?? null,
@@ -19,7 +19,7 @@ export class SymptomTypeValidator {
             ImageResourceId : request.body.ImageResourceId ?? null,
         };
 
-        return addressModel;
+        return model;
     };
 
     static create = async (request: express.Request): Promise<SymptomTypeDomainModel> => {

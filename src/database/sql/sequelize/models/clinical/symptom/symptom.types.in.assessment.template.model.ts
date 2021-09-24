@@ -59,7 +59,7 @@ export default class SymptomTypesInAssessmentTemplate extends Model {
         allowNull    : false,
         defaultValue : 0,
     })
-    Index: string;
+    Index: number;
 
     @Column
     @CreatedAt

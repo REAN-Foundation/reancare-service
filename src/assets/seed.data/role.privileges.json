@@ -112,7 +112,12 @@
             "Biometrics.BloodPressure.GetById",
             "Biometrics.BloodPressure.Update",
             "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete"
+            "Biometrics.BloodPressure.Delete",
+            "Biometrics.BloodGlucose.Create",
+            "Biometrics.BloodGlucose.GetById",
+            "Biometrics.BloodGlucose.Update",
+            "Biometrics.BloodGlucose.Search",
+            "Biometrics.BloodGlucose.Delete"
         ]
     },
     {
@@ -229,7 +234,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Biometrics.BloodGlucose.Create",
+            "Biometrics.BloodGlucose.GetById",
+            "Biometrics.BloodGlucose.Update",
+            "Biometrics.BloodGlucose.Search",
+            "Biometrics.BloodGlucose.Delete"
         ]
     },
     {
@@ -349,7 +359,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Biometrics.BloodGlucose.Create",
+            "Biometrics.BloodGlucose.GetById",
+            "Biometrics.BloodGlucose.Update",
+            "Biometrics.BloodGlucose.Search",
+            "Biometrics.BloodGlucose.Delete"
         ]
     },
     {
@@ -459,7 +474,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Biometrics.BloodGlucose.Create",
+            "Biometrics.BloodGlucose.GetById",
+            "Biometrics.BloodGlucose.Update",
+            "Biometrics.BloodGlucose.Search",
+            "Biometrics.BloodGlucose.Delete"
         ]
     },
     {
@@ -569,7 +589,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Biometrics.BloodGlucose.Create",
+            "Biometrics.BloodGlucose.GetById",
+            "Biometrics.BloodGlucose.Update",
+            "Biometrics.BloodGlucose.Search",
+            "Biometrics.BloodGlucose.Delete"
         ]
     }
 ]

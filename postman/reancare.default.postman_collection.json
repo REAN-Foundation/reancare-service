@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"_postman_id": "4f57b237-b35d-4c15-8748-2b51d5723b8b",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2118,15 +2118,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2641,10 +2632,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -9287,6 +9274,667 @@
 										"biometrics",
 										"blood-pressure",
 										"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Blood glucose",
+					"item": [
+						{
+							"name": "Add blood glucose",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"BIOMETRICS_BLOOD_GLUCOSE_ID\", jsonRes.Data.BloodGlucose.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New blood glucose record is created\", function () {\r",
+											"\r",
+											"    var expectedValue = 98;\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodGlucose');\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.have.property('BloodGlucose');\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose.BloodGlucose).equals(expectedValue);\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var userId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"pm.environment.set(\"RECORDED_BY_USER_ID\", userId);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Unit\": \"mg|dL\",\r\n    \"BloodGlucose\": 98,\r\n    \"RecordDate\": \"2021-09-02\",\r\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-glucose",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-glucose"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Add blood glucose",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"description": "API key for client authentication",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Unit\": \"mg|dL\",\r\n    \"BloodGlucose\": 100,\r\n    \"RecordDate\": \"2021-09-02\",\r\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/biometrics/blood-glucose",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"biometrics",
+												"blood-glucose"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "729"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2d9-+xbwkrm4+JwKTUEJUoMEPDQIsjs\""
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 16 Sep 2021 07:07:12 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Blood Glucose record created successfully!\",\n    \"HttpCode\": 201,\n    \"Data\": {\n        \"BloodGlucose\": {\n            \"id\": \"73c3bb5c-09c6-4277-97bf-71fc0ac2206b\",\n            \"PatientUserId\": \"b75e99d4-26e9-4897-93e8-a64d766e3eec\",\n            \"BloodGlucose\": 100,\n            \"Unit\": \"mg|dL\",\n            \"RecordDate\": \"2021-09-02T00:00:00.000Z\",\n            \"RecordedByUserId\": \"fc597563-2ecf-4f12-a044-5b2a7edd0ceb\"\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"b138e355-bb72-4f22-bbb1-21fffe33a9a3\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-1713925165\",\n        \"Email\": null,\n        \"UserName\": \"rlehyo7120\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627800887,\n        \"exp\": 1635576887\n    },\n    \"Context\": \"Biometrics.BloodGlucose.Create\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Get blood glucose by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Blood glucose record is returned\", function () {\r",
+											"\r",
+											"    var expectedValue = 100;\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"    \r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodGlucose');\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.have.property('BloodGlucose');\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose.BloodGlucose).equals(expectedValue);\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose.PatientUserId).equals(expectedPatientUserId);\r",
+											"    \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-glucose/{{BIOMETRICS_BLOOD_GLUCOSE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-glucose",
+										"{{BIOMETRICS_BLOOD_GLUCOSE_ID}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get blood glucose by id",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"description": "API key for client authentication",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/biometrics/blood-glucose/{{BIOMETRICS_BLOOD_GLUCOSE_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"biometrics",
+												"blood-glucose",
+												"{{BIOMETRICS_BLOOD_GLUCOSE_ID}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "Expect-CT",
+											"value": "max-age=0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "725"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2d5-YCEoxeyAuwtqKdccyF4GfyvPsFo\""
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 16 Sep 2021 13:50:26 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Blood glucose retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"BloodGlucose\": {\n            \"id\": \"0c875cb2-dc16-4765-9b12-d25c67232e06\",\n            \"PatientUserId\": \"b75e99d4-26e9-4897-93e8-a64d766e3eec\",\n            \"BloodGlucose\": 100,\n            \"Unit\": \"mg|dL\",\n            \"RecordDate\": \"2021-09-02T00:00:00.000Z\",\n            \"RecordedByUserId\": \"fc597563-2ecf-4f12-a044-5b2a7edd0ceb\"\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"b138e355-bb72-4f22-bbb1-21fffe33a9a3\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-1713925165\",\n        \"Email\": null,\n        \"UserName\": \"rlehyo7120\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627800887,\n        \"exp\": 1635576887\n    },\n    \"Context\": \"Biometrics.BloodGlucose.GetById\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Update blood glucose",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated blood glucose record is returned\", function () {\r",
+											"\r",
+											"    var expectedValue = 106;\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_Id\");\r",
+											"    \r",
+											"\r",
+											"   var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodGlucose');\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.have.property('BloodGlucose');\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose.BloodGlucose).equals(expectedValue);\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorisation",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Unit\": \"mg|dL\",\r\n    \"BloodGlucose\": 106,\r\n    \"RecordDate\": \"2021-09-12\",\r\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-glucose/{{BIOMETRICS_BLOOD_GLUCOSE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-glucose",
+										"{{BIOMETRICS_BLOOD_GLUCOSE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "search blood glucose",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Record of blood glucose is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodGlucose');\r",
+											"    pm.expect(jsonRes.Data.BloodGlucose.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorisation",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-glucose/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-10-14&orderBy=BloodGlucose&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=1000&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-glucose",
+										"search"
+									],
+									"query": [
+										{
+											"key": "recordedByUserId",
+											"value": "{{RECORDED_BY_USER_ID}}"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-01"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-14"
+										},
+										{
+											"key": "orderBy",
+											"value": "BloodGlucose"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "minValue",
+											"value": "0"
+										},
+										{
+											"key": "maxValue",
+											"value": "1000"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete blood glucose",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Blood glucose record is deleted\", function () {\r",
+											"\r",
+											"    var expectedValue = true;\r",
+											"    var jsonRes = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorisation",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/biometrics/blood-glucose/{{BIOMETRICS_BLOOD_GLUCOSE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"biometrics",
+										"blood-glucose",
+										"{{BIOMETRICS_BLOOD_GLUCOSE_ID}}"
 									]
 								}
 							},

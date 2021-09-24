@@ -12,17 +12,17 @@ export class SymptomAssessmentValidator {
     static getDomainModel = (request: express.Request): SymptomAssessmentDomainModel => {
 
         const model: SymptomAssessmentDomainModel = {
-            Type           : request.body.Type ?? 'Home',
-            PersonId       : request.body.PersonId ?? null,
-            OrganizationId : request.body.OrganizationId ?? null,
-            SymptomAssessmentLine    : request.body.SymptomAssessmentLine,
-            City           : request.body.City ?? null,
-            District       : request.body.District ?? null,
-            State          : request.body.State ?? null,
-            Country        : request.body.Country ?? null,
-            PostalCode     : request.body.PostalCode ?? null,
-            Longitude      : request.body.Longitude ?? null,
-            Lattitude      : request.body.Lattitude ?? null,
+            Type                  : request.body.Type ?? 'Home',
+            PersonId              : request.body.PersonId ?? null,
+            OrganizationId        : request.body.OrganizationId ?? null,
+            SymptomAssessmentLine : request.body.SymptomAssessmentLine,
+            City                  : request.body.City ?? null,
+            District              : request.body.District ?? null,
+            State                 : request.body.State ?? null,
+            Country               : request.body.Country ?? null,
+            PostalCode            : request.body.PostalCode ?? null,
+            Longitude             : request.body.Longitude ?? null,
+            Lattitude             : request.body.Lattitude ?? null,
         };
 
         return model;
@@ -239,25 +239,25 @@ export class SymptomAssessmentValidator {
             request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
 
         const filters: SymptomAssessmentSearchFilters = {
-            Type            : request.query.type ?? null,
-            PersonId        : request.query.personId ?? null,
-            OrganizationId  : request.query.organizationId ?? null,
-            SymptomAssessmentLine     : request.query.addressLine ?? null,
-            City            : request.query.city ?? null,
-            District        : request.query.district ?? null,
-            State           : request.query.state ?? null,
-            Country         : request.query.country ?? null,
-            PostalCode      : request.query.postalCode ?? null,
-            LongitudeFrom   : request.query.longitudeFrom ?? null,
-            LongitudeTo     : request.query.longitudeTo ?? null,
-            LattitudeFrom   : request.query.lattitudeFrom ?? null,
-            LattitudeTo     : request.query.lattitudeTo ?? null,
-            CreatedDateFrom : request.query.createdDateFrom ?? null,
-            CreatedDateTo   : request.query.createdDateTo ?? null,
-            OrderBy         : request.query.orderBy ?? 'CreatedAt',
-            Order           : request.query.order ?? 'descending',
-            PageIndex       : pageIndex,
-            ItemsPerPage    : itemsPerPage,
+            Type                  : request.query.type ?? null,
+            PersonId              : request.query.personId ?? null,
+            OrganizationId        : request.query.organizationId ?? null,
+            SymptomAssessmentLine : request.query.addressLine ?? null,
+            City                  : request.query.city ?? null,
+            District              : request.query.district ?? null,
+            State                 : request.query.state ?? null,
+            Country               : request.query.country ?? null,
+            PostalCode            : request.query.postalCode ?? null,
+            LongitudeFrom         : request.query.longitudeFrom ?? null,
+            LongitudeTo           : request.query.longitudeTo ?? null,
+            LattitudeFrom         : request.query.lattitudeFrom ?? null,
+            LattitudeTo           : request.query.lattitudeTo ?? null,
+            CreatedDateFrom       : request.query.createdDateFrom ?? null,
+            CreatedDateTo         : request.query.createdDateTo ?? null,
+            OrderBy               : request.query.orderBy ?? 'CreatedAt',
+            Order                 : request.query.order ?? 'descending',
+            PageIndex             : pageIndex,
+            ItemsPerPage          : itemsPerPage,
         };
         return filters;
     }

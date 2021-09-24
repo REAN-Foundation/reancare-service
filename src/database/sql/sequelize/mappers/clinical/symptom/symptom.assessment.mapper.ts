@@ -13,16 +13,16 @@ export class SymptomAssessmentMapper {
         const lattitude: string = address.Lattitude ? address.Lattitude.toString() : null;
 
         const dto: SymptomAssessmentDto = {
-            id          : address.id,
-            Type        : address.Type,
+            id                    : address.id,
+            Type                  : address.Type,
             SymptomAssessmentLine : address.SymptomAssessmentLine,
-            City        : address.City,
-            District    : address.District,
-            State       : address.State,
-            Country     : address.Country,
-            PostalCode  : address.PostalCode,
-            Longitude   : longitude ? parseFloat(longitude) : null,
-            Lattitude   : lattitude ? parseFloat(lattitude) : null,
+            City                  : address.City,
+            District              : address.District,
+            State                 : address.State,
+            Country               : address.Country,
+            PostalCode            : address.PostalCode,
+            Longitude             : longitude ? parseFloat(longitude) : null,
+            Lattitude             : lattitude ? parseFloat(lattitude) : null,
         };
         return dto;
     }

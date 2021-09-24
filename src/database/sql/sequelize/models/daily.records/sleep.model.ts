@@ -10,13 +10,11 @@ import {
     PrimaryKey,
     Length,
     ForeignKey,
-    BelongsTo,
     IsDate,
     IsInt } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import User from '../user.model';
-import Person from '../person.model';
 
 ///////////////////////////////////////////////////////////////////////
 

@@ -12,17 +12,17 @@ export class SymptomTypeValidator {
     static getDomainModel = (request: express.Request): SymptomTypeDomainModel => {
 
         const addressModel: SymptomTypeDomainModel = {
-            Type           : request.body.Type ?? 'Home',
-            PersonId       : request.body.PersonId ?? null,
-            OrganizationId : request.body.OrganizationId ?? null,
-            SymptomTypeLine    : request.body.SymptomTypeLine,
-            City           : request.body.City ?? null,
-            District       : request.body.District ?? null,
-            State          : request.body.State ?? null,
-            Country        : request.body.Country ?? null,
-            PostalCode     : request.body.PostalCode ?? null,
-            Longitude      : request.body.Longitude ?? null,
-            Lattitude      : request.body.Lattitude ?? null,
+            Type            : request.body.Type ?? 'Home',
+            PersonId        : request.body.PersonId ?? null,
+            OrganizationId  : request.body.OrganizationId ?? null,
+            SymptomTypeLine : request.body.SymptomTypeLine,
+            City            : request.body.City ?? null,
+            District        : request.body.District ?? null,
+            State           : request.body.State ?? null,
+            Country         : request.body.Country ?? null,
+            PostalCode      : request.body.PostalCode ?? null,
+            Longitude       : request.body.Longitude ?? null,
+            Lattitude       : request.body.Lattitude ?? null,
         };
 
         return addressModel;
@@ -274,7 +274,7 @@ export class SymptomTypeValidator {
             Type            : request.query.type ?? null,
             PersonId        : request.query.personId ?? null,
             OrganizationId  : request.query.organizationId ?? null,
-            SymptomTypeLine     : request.query.addressLine ?? null,
+            SymptomTypeLine : request.query.addressLine ?? null,
             City            : request.query.city ?? null,
             District        : request.query.district ?? null,
             State           : request.query.state ?? null,

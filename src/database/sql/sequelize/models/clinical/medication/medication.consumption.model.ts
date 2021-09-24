@@ -8,7 +8,6 @@ import {
     DeletedAt,
     PrimaryKey,
     Length,
-    IsInt,
     IsUUID,
     ForeignKey,
     IsDecimal,

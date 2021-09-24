@@ -15,15 +15,15 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
     create = async (model: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
         try {
             const entity = {
-                Type        : model.Type,
+                Type            : model.Type,
                 SymptomTypeLine : model.SymptomTypeLine ?? null,
-                City        : model.City ?? null,
-                District    : model.District ?? null,
-                State       : model.State ?? null,
-                Country     : model.Country ?? null,
-                PostalCode  : model.PostalCode ?? null,
-                Longitude   : model.Longitude ?? null,
-                Lattitude   : model.Lattitude ?? null,
+                City            : model.City ?? null,
+                District        : model.District ?? null,
+                State           : model.State ?? null,
+                Country         : model.Country ?? null,
+                PostalCode      : model.PostalCode ?? null,
+                Longitude       : model.Longitude ?? null,
+                Lattitude       : model.Lattitude ?? null,
             };
             const symptom = await SymptomType.create(entity);
             const dto = await SymptomTypeMapper.toDto(symptom);

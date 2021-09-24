@@ -9,7 +9,6 @@ import { ApiError } from '../../../../common/api.error';
 import { SymptomValidator } from '../../../validators/clinical/symptom/symptom.validator';
 import { SymptomService } from '../../../../services/clinical/symptom/symptom.service';
 
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class SymptomController {

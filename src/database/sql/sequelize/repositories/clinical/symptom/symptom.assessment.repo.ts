@@ -15,15 +15,15 @@ export class SymptomAssessmentRepo implements ISymptomAssessmentRepo {
     create = async (model: SymptomAssessmentDomainModel): Promise<SymptomAssessmentDto> => {
         try {
             const entity = {
-                Type        : model.Type,
+                Type                  : model.Type,
                 SymptomAssessmentLine : model.SymptomAssessmentLine ?? null,
-                City        : model.City ?? null,
-                District    : model.District ?? null,
-                State       : model.State ?? null,
-                Country     : model.Country ?? null,
-                PostalCode  : model.PostalCode ?? null,
-                Longitude   : model.Longitude ?? null,
-                Lattitude   : model.Lattitude ?? null,
+                City                  : model.City ?? null,
+                District              : model.District ?? null,
+                State                 : model.State ?? null,
+                Country               : model.Country ?? null,
+                PostalCode            : model.PostalCode ?? null,
+                Longitude             : model.Longitude ?? null,
+                Lattitude             : model.Lattitude ?? null,
             };
             const symptom = await SymptomAssessment.create(entity);
             const dto = await SymptomAssessmentMapper.toDto(symptom);

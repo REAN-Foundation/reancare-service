@@ -15,15 +15,15 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
     create = async (model: SymptomAssessmentTemplateDomainModel): Promise<SymptomAssessmentTemplateDto> => {
         try {
             const entity = {
-                Type        : model.Type,
+                Type                          : model.Type,
                 SymptomAssessmentTemplateLine : model.SymptomAssessmentTemplateLine ?? null,
-                City        : model.City ?? null,
-                District    : model.District ?? null,
-                State       : model.State ?? null,
-                Country     : model.Country ?? null,
-                PostalCode  : model.PostalCode ?? null,
-                Longitude   : model.Longitude ?? null,
-                Lattitude   : model.Lattitude ?? null,
+                City                          : model.City ?? null,
+                District                      : model.District ?? null,
+                State                         : model.State ?? null,
+                Country                       : model.Country ?? null,
+                PostalCode                    : model.PostalCode ?? null,
+                Longitude                     : model.Longitude ?? null,
+                Lattitude                     : model.Lattitude ?? null,
             };
             const symptom = await SymptomAssessmentTemplate.create(entity);
             const dto = await SymptomAssessmentTemplateMapper.toDto(symptom);
@@ -45,7 +45,8 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
         }
     };
 
-    search = async (filters: SymptomAssessmentTemplateSearchFilters): Promise<SymptomAssessmentTemplateSearchResults> => {
+    search = async (filters: SymptomAssessmentTemplateSearchFilters)
+     : Promise<SymptomAssessmentTemplateSearchResults> => {
         try {
             const search = { where: {} };
 

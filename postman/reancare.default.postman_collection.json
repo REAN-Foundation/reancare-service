@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"_postman_id": "89e480f2-f25a-473e-86ec-6fe4d4983949",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2117,15 +2117,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2640,10 +2631,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -10783,6 +10770,408 @@
 		{
 			"name": "Nutrition",
 			"item": []
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Add order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();",
+									"",
+									"try {",
+									"    pm.environment.set(\"ORDER_ID\", jsonRes.Data.Order.id);",
+									"}",
+									"catch (error) {",
+									"    console.log(error.message);",
+									"}",
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"New order record is created\", function () {",
+									"",
+									"    var expectedType = \"Drug order\";",
+									"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+									"    var expectedMedicalPractitionerUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+									"    var expectedCurrentState = \"Raised query\";",
+									"",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Order');",
+									"    pm.expect(jsonRes.Data.Order).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('id');",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('Type');",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('PatientUserId');",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('MedicalPractitionerUserId');",
+									"",
+									"    ",
+									"    pm.expect(jsonRes.Data.Order.Type).equals(expectedType);",
+									"    pm.expect(jsonRes.Data.Order.PatientUserId).equals(expectedPatientUserId);",
+									"    pm.expect(jsonRes.Data.Order.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
+									"    pm.expect(jsonRes.Data.Order.CurrentState).equals(expectedCurrentState);",
+									"    ",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Type\": \"DrugOrder\",\n    \"DisplayId\": \"1234\",\n    \"MedicalPractitionerUserId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"VisitId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"ResourceId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"ReferenceOrderId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"CurrentState\": \"RaisedQuery\",\n    \"OrderDate\": \"2021-09-23\",\n    \"FulfilledByUserId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"FulfilledByOrganizationId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AdditionalInformation\": \"Nothing\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/order",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"order record is returned\", function () {",
+									"",
+									"    var expectedType = \"Drug order\";",
+									"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+									"    var expectedMedicalPractitionerUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+									"    var expectedCurrentState = \"Raised query\";",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Order');",
+									"    pm.expect(jsonRes.Data.Order).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('id');",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('Type');",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('PatientUserId');",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('MedicalPractitionerUserId');",
+									"",
+									"    ",
+									"    pm.expect(jsonRes.Data.Order.Type).equals(expectedType);",
+									"    pm.expect(jsonRes.Data.Order.PatientUserId).equals(expectedPatientUserId);",
+									"    pm.expect(jsonRes.Data.Order.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
+									"    pm.expect(jsonRes.Data.Order.CurrentState).equals(expectedCurrentState);",
+									"",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/order/{{ORDER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"order",
+								"{{ORDER_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update order details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Updated order record is returned\", function () {",
+									"",
+									"    var expectedType = \"Diagnostic pathology lab order\";",
+									"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+									"    var expectedMedicalPractitionerUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+									"    var expectedCurrentState = \"Initiated\";",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Order');",
+									"    pm.expect(jsonRes.Data.Order).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('id');",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('Type');",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('PatientUserId');",
+									"    pm.expect(jsonRes.Data.Order).to.have.property('MedicalPractitionerUserId');",
+									" ",
+									"    pm.expect(jsonRes.Data.Order.Type).equals(expectedType);",
+									"    pm.expect(jsonRes.Data.Order.PatientUserId).equals(expectedPatientUserId);",
+									"    pm.expect(jsonRes.Data.Order.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
+									"    pm.expect(jsonRes.Data.Order.CurrentState).equals(expectedCurrentState);",
+									"    ",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Type\": \"DiagnosticPathologyLabOrder\",\n    \"DisplayId\": \"1234\",\n    \"MedicalPractitionerUserId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"VisitId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"ResourceId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"ReferenceOrderId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"CurrentState\": \"Initiated\",\n    \"OrderDate\": \"2021-09-23\",\n    \"FulfilledByUserId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"FulfilledByOrganizationId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AdditionalInformation\": \"Nothing\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/order/{{ORDER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"order",
+								"{{ORDER_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Order record is deleted\", function () {",
+									"",
+									"    var expectedValue = true;",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+									"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/order/{{ORDER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"order",
+								"{{ORDER_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search order records",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"List of order records is returned\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('OrderRecords');",
+									"    pm.expect(jsonRes.Data.OrderRecords.Items.length).to.be.greaterThan(0);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/order/search?type=DrugOrder&orderDateFrom=2021-09-22&orderDateFrom=2021-10-23&orderBy=Type&order=ascending&pageIndex=0&itemsPerPage=25&currentState=RaisedQuery&fulfilledByUserId=4cd74e12-cae1-4314-9a69-f45b18cc1cf9&patientUserId={{PATIENT_USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"order",
+								"search"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "DrugOrder"
+								},
+								{
+									"key": "orderDateFrom",
+									"value": "2021-09-22"
+								},
+								{
+									"key": "orderDateFrom",
+									"value": "2021-10-23"
+								},
+								{
+									"key": "orderBy",
+									"value": "Type"
+								},
+								{
+									"key": "order",
+									"value": "ascending"
+								},
+								{
+									"key": "pageIndex",
+									"value": "0"
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "25"
+								},
+								{
+									"key": "currentState",
+									"value": "RaisedQuery"
+								},
+								{
+									"key": "fulfilledByUserId",
+									"value": "4cd74e12-cae1-4314-9a69-f45b18cc1cf9"
+								},
+								{
+									"key": "patientUserId",
+									"value": "{{PATIENT_USER_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

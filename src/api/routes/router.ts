@@ -23,7 +23,11 @@ import { register as registerAllergyRoutes } from './patient/allergy.routes';
 import { register as registerHeartPointRoutes } from './daily.records/heart.points.routes';
 import { register as registerSleepRoutes } from './daily.records/sleep.routes';
 import { register as registerEmergencyEventRoutes } from './emergency.event.routes';
-import { register as registerMeditationtRoutes } from './exercise/meditation.routes';
+import { register as registerMeditationRoutes } from './exercise/meditation.routes';
+import { register as registerSymptomTypeRoutes } from './clinical/symptom/symptom.type.routes';
+import { register as registerSymptomRoutes } from './clinical/symptom/symptom.routes';
+import { register as registerSymptomAssessmentRoutes } from './clinical/symptom/symptom.assessment.routes';
+import { register as registerSymptomAssessmentTemplateRoutes } from './clinical/symptom/symptom.assessment.template.routes';
 
 import { Logger } from "../../common/logger";
 
@@ -72,7 +76,11 @@ export class Router {
                 registerHeartPointRoutes(this._app);
                 registerSleepRoutes(this._app);
                 registerEmergencyEventRoutes(this._app);
-                registerMeditationtRoutes(this._app);
+                registerMeditationRoutes(this._app);
+                registerSymptomTypeRoutes(this._app);
+                registerSymptomRoutes(this._app);
+                registerSymptomAssessmentRoutes(this._app);
+                registerSymptomAssessmentTemplateRoutes(this._app);
 
                 resolve(true);
 

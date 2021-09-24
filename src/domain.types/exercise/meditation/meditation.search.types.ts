@@ -1,8 +1,8 @@
 import { MeditationDto, MeditationForDayDto } from "./meditation.dto";
 
 export interface MeditationSearchFilters {
-    PatientUserId?: string;
-    Meditation?: number;
+    PatientUserId: string;
+    Meditation: number;
     OrderBy: string;
     Order: string;
     PageIndex: number;

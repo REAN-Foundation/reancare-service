@@ -63,7 +63,7 @@ export default class Meditation extends Model {
     @Length({ max: 1024 })
     @Column({
         type      : DataType.STRING(1024),
-        allowNull : false,
+        allowNull : true,
     })
     Description: string;
 

@@ -14,8 +14,8 @@ export interface ISymptomAssessmentTemplateRepo {
 
     delete(id: string): Promise<boolean>;
 
-    addSymptomType(id: string, symptomTypeIds: string[]): Promise<SymptomAssessmentTemplateDto>;
+    addSymptomTypes(id: string, symptomTypeIds: string[]): Promise<SymptomAssessmentTemplateDto>;
 
-    removeSymptomType(id: string, symptomTypeIds: string[]): Promise<SymptomAssessmentTemplateDto>;
+    removeSymptomTypes(id: string, symptomTypeIds: string[]): Promise<SymptomAssessmentTemplateDto>;
 
 }

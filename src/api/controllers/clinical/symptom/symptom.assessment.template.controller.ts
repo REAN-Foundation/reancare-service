@@ -141,47 +141,49 @@ export class SymptomAssessmentTemplateController {
         }
     };
 
-    addSymptomAssessmentTemplates = async (request: express.Request, response: express.Response): Promise<void> => {
+    addSymptomTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessmentTemplate.Delete';
+            request.context = 'SymptomAssessmentTemplate.AddSymptomTypes';
             await this._authorizer.authorize(request, response);
 
-            const id: string = await SymptomAssessmentTemplateValidator.getById(request);
+            const { id, symptomTypeIds } = await SymptomAssessmentTemplateValidator.addRemoveSymptomTypes(request);
+
             const existingSymptomAssessmentTemplate = await this._service.getById(id);
             if (existingSymptomAssessmentTemplate == null) {
                 throw new ApiError(404, 'Symptom assessment template not found.');
             }
 
-            const deleted = await this._service.delete(id);
-            if (!deleted) {
-                throw new ApiError(400, 'Symptom assessment template cannot be deleted.');
+            const template = await this._service.addSymptomTypes(id, symptomTypeIds);
+            if (template === null) {
+                throw new ApiError(400, 'Symptom types cannot be added.');
             }
 
-            ResponseHandler.success(request, response, 'Symptom assessment template record deleted successfully!', 200, {
-                Deleted : true,
+            ResponseHandler.success(request, response, 'Symptom types added to template successfully!', 200, {
+                SymptomAssessmentTemplate : template,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    removeSymptomAssessmentTemplates = async (request: express.Request, response: express.Response): Promise<void> => {
+    removeSymptomTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessmentTemplate.Delete';
+            request.context = 'SymptomAssessmentTemplate.RemoveSymptomTypes';
             await this._authorizer.authorize(request, response);
 
-            const id: string = await SymptomAssessmentTemplateValidator.getById(request);
+            const { id, symptomTypeIds } = await SymptomAssessmentTemplateValidator.addRemoveSymptomTypes(request);
+
             const existingSymptomAssessmentTemplate = await this._service.getById(id);
             if (existingSymptomAssessmentTemplate == null) {
                 throw new ApiError(404, 'Symptom assessment template not found.');
             }
 
-            const deleted = await this._service.delete(id);
-            if (!deleted) {
-                throw new ApiError(400, 'Symptom assessment template cannot be deleted.');
+            const template = await this._service.removeSymptomTypes(id, symptomTypeIds);
+            if (template === null) {
+                throw new ApiError(400, 'Symptom types cannot be removed.');
             }
 
-            ResponseHandler.success(request, response, 'Symptom assessment template record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Symptom types removed from template successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

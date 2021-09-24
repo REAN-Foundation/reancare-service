@@ -37,38 +37,6 @@ export class SymptomAssessmentTemplateValidator {
         return await SymptomAssessmentTemplateValidator.getParamId(request);
     };
     
-    static getByOrganizationId = async (request: express.Request): Promise<string> => {
-
-        await param('organizationId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        
-        return request.params.organizationId;
-    };
-    
-    static getByPersonId = async (request: express.Request): Promise<string> => {
-
-        await param('personId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        
-        return request.params.personId;
-    };
-
     static delete = async (request: express.Request): Promise<string> => {
         return await SymptomAssessmentTemplateValidator.getParamId(request);
     };
@@ -198,19 +166,30 @@ export class SymptomAssessmentTemplateValidator {
         return domainModel;
     };
 
+    static addRemoveSymptomTypes = async (request: express.Request): Promise<any> => {
+
+        await param('id').exists()
+            .isUUID()
+            .run(request);
+
+        await body('SymptomTypeIds').exists()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+        
+        var model = {
+            id             : request.params.id,
+            SymptomTypeIds : request.body.SymptomTypeIds
+        };
+        
+        return model;
+    }
+
     private static async validateBody(request) {
-
-        await body('PersonId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('OrganizationId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
 
         await body('Type').optional()
             .trim()

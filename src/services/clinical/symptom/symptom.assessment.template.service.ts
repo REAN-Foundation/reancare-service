@@ -36,12 +36,12 @@ export class SymptomAssessmentTemplateService {
         return await this._symptomAssessmentTemplateRepo.delete(id);
     };
 
-    addSymptomType = async (id: string, symptomTypeIds: string[]): Promise<SymptomAssessmentTemplateDto> => {
-        return await this._symptomAssessmentTemplateRepo.addSymptomType(id, symptomTypeIds);
+    addSymptomTypes = async (id: string, symptomTypeIds: string[]): Promise<SymptomAssessmentTemplateDto> => {
+        return await this._symptomAssessmentTemplateRepo.addSymptomTypes(id, symptomTypeIds);
     };
 
-    removeSymptomType = async (id: string, symptomTypeIds: string[]): Promise<SymptomAssessmentTemplateDto> => {
-        return await this._symptomAssessmentTemplateRepo.removeSymptomType(id, symptomTypeIds);
+    removeSymptomTypes = async (id: string, symptomTypeIds: string[]): Promise<SymptomAssessmentTemplateDto> => {
+        return await this._symptomAssessmentTemplateRepo.removeSymptomTypes(id, symptomTypeIds);
     };
 
 }

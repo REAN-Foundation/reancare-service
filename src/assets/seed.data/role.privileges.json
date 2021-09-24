@@ -93,11 +93,6 @@
             "Complaint.Search",
             "Complaint.Update",
             "Complaint.Delete",
-            "UserDeviceDetails.Create",
-            "UserDeviceDetails.GetById",
-            "UserDeviceDetails.Update",
-            "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete",
             "DailyRecords.Sleep.Create",
             "DailyRecords.Sleep.GetById",
             "DailyRecords.Sleep.Search",
@@ -117,7 +112,12 @@
             "Biometrics.BloodPressure.GetById",
             "Biometrics.BloodPressure.Update",
             "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete"
+            "Biometrics.BloodPressure.Delete",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -220,16 +220,6 @@
             "Complaint.Search",
             "Complaint.Update",
             "Complaint.Delete",
-            "UserDeviceDetails.Create",
-            "UserDeviceDetails.GetById",
-            "UserDeviceDetails.Update",
-            "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete",
-            "Biometrics.BloodPressure.Create",
-            "Biometrics.BloodPressure.GetById",
-            "Biometrics.BloodPressure.Update",
-            "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete",
             "DailyRecords.Sleep.Create",
             "DailyRecords.Sleep.GetById",
             "DailyRecords.Sleep.Search",
@@ -244,7 +234,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -350,16 +345,6 @@
             "Complaint.Search",
             "Complaint.Update",
             "Complaint.Delete",
-            "UserDeviceDetails.Create",
-            "UserDeviceDetails.GetById",
-            "UserDeviceDetails.Update",
-            "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete",
-            "Biometrics.BloodPressure.Create",
-            "Biometrics.BloodPressure.GetById",
-            "Biometrics.BloodPressure.Update",
-            "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete",
             "DailyRecords.Sleep.Create",
             "DailyRecords.Sleep.GetById",
             "DailyRecords.Sleep.Search",
@@ -374,7 +359,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -470,16 +460,6 @@
             "DailyRecords.StepCount.Search",
             "DailyRecords.StepCount.Update",
             "DailyRecords.StepCount.Delete",
-            "UserDeviceDetails.Create",
-            "UserDeviceDetails.GetById",
-            "UserDeviceDetails.Update",
-            "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete",
-            "Biometrics.BloodPressure.Create",
-            "Biometrics.BloodPressure.GetById",
-            "Biometrics.BloodPressure.Update",
-            "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete",
             "DailyRecords.Sleep.Create",
             "DailyRecords.Sleep.GetById",
             "DailyRecords.Sleep.Search",
@@ -494,7 +474,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -590,16 +575,6 @@
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
             "Biometrics.Pulse.Search",
-            "UserDeviceDetails.Create",
-            "UserDeviceDetails.GetById",
-            "UserDeviceDetails.Update",
-            "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete",
-            "Biometrics.BloodPressure.Create",
-            "Biometrics.BloodPressure.GetById",
-            "Biometrics.BloodPressure.Update",
-            "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete",
             "DailyRecords.Sleep.Create",
             "DailyRecords.Sleep.GetById",
             "DailyRecords.Sleep.Search",
@@ -614,7 +589,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     }
 ]

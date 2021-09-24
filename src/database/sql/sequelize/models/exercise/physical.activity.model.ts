@@ -22,7 +22,7 @@ import {
 } from '../../../../../domain.types/exercise/physical.activity/physical.activity.types';
 
 import { v4 } from 'uuid';
-import FileResource from '../file.resource.model';
+import FileResource from '../file.resource/file.resource.model';
 import User from '../user.model';
 
 ///////////////////////////////////////////////////////////////////////

@@ -53,8 +53,10 @@ export class ResponseHandler {
 
         ActivityRecorder.record(responseObject);
 
-        //Don't send request related info in response, only use it for logging
+        //Sanitize response: Don't send request and trace related info in response, only use it for logging
         delete responseObject.Request;
+        delete responseObject.Trace;
+
         return response.status(httpErrorCode).send(responseObject);
     }
 
@@ -101,8 +103,10 @@ export class ResponseHandler {
         
         ActivityRecorder.record(responseObject);
         
-        //Don't send request related info in response, only use it for logging
+        //Sanitize response: Don't send request and trace related info in response, only use it for logging
         delete responseObject.Request;
+        delete responseObject.Trace;
+
         return response.status(httpCode).send(responseObject);
     }
 

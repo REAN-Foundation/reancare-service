@@ -17,7 +17,7 @@ import { OrderStates, OrderTypes } from '../../../../domain.types/order/order.ty
 import { v4 } from 'uuid';
 import Organization from './organization.model';
 import User from './user.model';
-import FileResource from './file.resource.model';
+import FileResource from './file.resource/file.resource.model';
 import Visit from './visit.model';
 
 ///////////////////////////////////////////////////////////////////////

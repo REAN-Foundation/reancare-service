@@ -1,0 +1,78 @@
+{
+  "name": "service_x",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --w",
+    "start": "tsc && ts-node --files ./src/index.ts",
+    "lint": "eslint ./src/**",
+    "lint:fix": "eslint ./src/** --fix",
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "yes"
+  },
+  "keywords": [],
+  "author": "Kiran Kharade",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-comprehendmedical": "^3.13.0",
+    "@types/bcryptjs": "^2.4.2",
+    "@types/sequelize": "^4.28.9",
+    "approx-string-match": "^1.1.0",
+    "aws-sdk": "^2.888.0",
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.7.2",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.1",
+    "express-validator": "^6.11.1",
+    "generate-password": "^1.6.0",
+    "googleapis": "^71.0.0",
+    "helmet": "^4.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.2.5",
+    "needle": "^2.6.0",
+    "pg": "^8.6.0",
+    "pg-hstore": "^2.3.3",
+    "reflect-metadata": "^0.1.13",
+    "sequelize": "^6.6.2",
+    "sequelize-cli": "^6.2.0",
+    "sequelize-typescript": "^2.1.0",
+    "sleep": "^6.3.0",
+    "stream-json": "^1.7.2",
+    "tsyringe": "^4.5.0",
+    "twilio": "^3.67.2",
+    "uuid": "^8.3.2",
+    "uuid-apikey": "^1.5.3"
+  },
+  "devDependencies": {
+    "@jest/types": "^27.0.6",
+    "@types/body-parser": "^1.19.0",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.11",
+    "@types/fs-extra": "^9.0.11",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^14.17.0",
+    "@types/shelljs": "^0.8.8",
+    "@types/validator": "^13.1.3",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.4",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.4"
+  },
+  "jest": {
+    "projects": [
+      "src/modules/ehr/jest.config.ts"
+    ]
+  }
+}

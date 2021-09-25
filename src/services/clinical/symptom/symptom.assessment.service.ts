@@ -13,8 +13,8 @@ export class SymptomAssessmentService {
         @inject('ISymptomAssessmentRepo') private _symptomAssessmentRepo: ISymptomAssessmentRepo,
     ) {}
 
-    create = async (addressDomainModel: SymptomAssessmentDomainModel): Promise<SymptomAssessmentDto> => {
-        return await this._symptomAssessmentRepo.create(addressDomainModel);
+    create = async (domainModel: SymptomAssessmentDomainModel): Promise<SymptomAssessmentDto> => {
+        return await this._symptomAssessmentRepo.create(domainModel);
     };
 
     getById = async (id: string): Promise<SymptomAssessmentDto> => {
@@ -25,8 +25,8 @@ export class SymptomAssessmentService {
         return await this._symptomAssessmentRepo.search(filters);
     };
 
-    update = async (id: string, addressDomainModel: SymptomAssessmentDomainModel): Promise<SymptomAssessmentDto> => {
-        return await this._symptomAssessmentRepo.update(id, addressDomainModel);
+    update = async (id: string, domainModel: SymptomAssessmentDomainModel): Promise<SymptomAssessmentDto> => {
+        return await this._symptomAssessmentRepo.update(id, domainModel);
     };
 
     delete = async (id: string): Promise<boolean> => {

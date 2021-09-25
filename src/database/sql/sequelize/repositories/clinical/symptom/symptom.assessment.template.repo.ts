@@ -7,6 +7,8 @@ import { ApiError } from '../../../../../../common/api.error';
 import { SymptomAssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model';
 import { SymptomAssessmentTemplateDto } from '../../../../../../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.dto';
 import { SymptomAssessmentTemplateSearchFilters, SymptomAssessmentTemplateSearchResults } from '../../../../../../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.search.types';
+import SymptomType from '../../../models/clinical/symptom/symptom.type.model';
+import SymptomTypesInAssessmentTemplate from '../../../models/clinical/symptom/symptom.types.in.assessment.template.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -14,20 +16,15 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
 
     create = async (model: SymptomAssessmentTemplateDomainModel): Promise<SymptomAssessmentTemplateDto> => {
         try {
+
             const entity = {
-                Type                          : model.Type,
-                SymptomAssessmentTemplateLine : model.SymptomAssessmentTemplateLine ?? null,
-                City                          : model.City ?? null,
-                District                      : model.District ?? null,
-                State                         : model.State ?? null,
-                Country                       : model.Country ?? null,
-                PostalCode                    : model.PostalCode ?? null,
-                Longitude                     : model.Longitude ?? null,
-                Lattitude                     : model.Lattitude ?? null,
+                Title       : model.Title,
+                Description : model.Description ?? null,
+                Tags        : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
             };
-            const symptom = await SymptomAssessmentTemplate.create(entity);
-            const dto = await SymptomAssessmentTemplateMapper.toDto(symptom);
-            return dto;
+            const template = await SymptomAssessmentTemplate.create(entity);
+            return SymptomAssessmentTemplateMapper.toDto(template);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -36,9 +33,9 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
 
     getById = async (id: string): Promise<SymptomAssessmentTemplateDto> => {
         try {
-            const symptom = await SymptomAssessmentTemplate.findByPk(id);
-            const dto = await SymptomAssessmentTemplateMapper.toDto(symptom);
-            return dto;
+            const template = await SymptomAssessmentTemplate.findByPk(id);
+            const allSymptomTypes = await SymptomTypesInAssessmentTemplate.findAll({ where: { TemplateId: id }, order: [['Index', 'ASC']] });
+            return SymptomAssessmentTemplateMapper.toDto(template, allSymptomTypes);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -50,58 +47,29 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
         try {
             const search = { where: {} };
 
-            if (filters.Type != null) {
-                search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
+            if (filters.Title != null) {
+                search.where['Title'] = { [Op.like]: '%' + filters.Title + '%' };
             }
-            if (filters.SymptomAssessmentTemplateLine != null) {
-                search.where['SymptomAssessmentTemplateLine'] = { [Op.like]: '%' + filters.SymptomAssessmentTemplateLine + '%' };
-            }
-            if (filters.City != null) {
-                search.where['City'] = { [Op.like]: '%' + filters.City + '%' };
-            }
-            if (filters.District != null) {
-                search.where['District'] = { [Op.like]: '%' + filters.District + '%' };
-            }
-            if (filters.State != null) {
-                search.where['State'] = { [Op.like]: '%' + filters.State + '%' };
-            }
-            if (filters.Country != null) {
-                search.where['Country'] = { [Op.like]: '%' + filters.Country + '%' };
-            }
-            if (filters.PostalCode != null) {
-                search.where['PostalCode'] = { [Op.like]: '%' + filters.PostalCode + '%' };
-            }
-            if (filters.LongitudeFrom != null && filters.LongitudeTo != null) {
-                search.where['Longitude'] = {
-                    [Op.gte] : filters.LongitudeFrom,
-                    [Op.lte] : filters.LongitudeTo,
-                };
-            }
-            if (filters.LattitudeFrom != null && filters.LattitudeTo != null) {
-                search.where['Lattitude'] = {
-                    [Op.gte] : filters.LattitudeFrom,
-                    [Op.lte] : filters.LattitudeTo,
-                };
-            }
-            if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
-                search.where['CreatedAt'] = {
-                    [Op.gte] : filters.CreatedDateFrom,
-                    [Op.lte] : filters.CreatedDateTo,
-                };
-            } else if (filters.CreatedDateFrom === null && filters.CreatedDateTo !== null) {
-                search.where['CreatedAt'] = {
-                    [Op.lte] : filters.CreatedDateTo,
-                };
-            } else if (filters.CreatedDateFrom !== null && filters.CreatedDateTo === null) {
-                search.where['CreatedAt'] = {
-                    [Op.gte] : filters.CreatedDateFrom,
-                };
-            }
-            if (filters.PostalCode !== null) {
-                search.where['PostalCode'] = { [Op.like]: '%' + filters.PostalCode + '%' };
+            if (filters.Tag != null) {
+                search.where['Tags'] = { [Op.like]: '%' + filters.Tag + '%' };
             }
 
-            let orderByColum = 'SymptomAssessmentTemplateLine';
+            var symptomTypeFilter = {
+                model : SymptomType,
+                where : {
+                }
+            };
+            if (filters.SymptomName != null) {
+                symptomTypeFilter.where['Symptom'] = { [Op.like]: '%' + filters.SymptomName + '%' };
+            }
+            if (filters.SymptomTypeId != null) {
+                symptomTypeFilter.where['id'] = { [Op.like]: '%' + filters.SymptomTypeId + '%' };
+            }
+            search['include'] = [
+                symptomTypeFilter
+            ];
+
+            let orderByColum = 'Title';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }
@@ -126,11 +94,8 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
 
             const foundResults = await SymptomAssessmentTemplate.findAndCountAll(search);
 
-            const dtos: SymptomAssessmentTemplateDto[] = [];
-            for (const symptom of foundResults.rows) {
-                const dto = await SymptomAssessmentTemplateMapper.toDto(symptom);
-                dtos.push(dto);
-            }
+            const dtos: SymptomAssessmentTemplateDto[]
+                = foundResults.rows.map(x => SymptomAssessmentTemplateMapper.toDto(x));
 
             const searchResults: SymptomAssessmentTemplateSearchResults = {
                 TotalCount     : foundResults.count,
@@ -143,6 +108,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
             };
 
             return searchResults;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -151,39 +117,24 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
 
     update = async (id: string, model: SymptomAssessmentTemplateDomainModel): Promise<SymptomAssessmentTemplateDto> => {
         try {
-            const symptom = await SymptomAssessmentTemplate.findByPk(id);
+            const template = await SymptomAssessmentTemplate.findByPk(id);
 
-            if (model.Type != null) {
-                symptom.Type = model.Type;
+            if (model.Title != null) {
+                template.Title = model.Title;
             }
-            if (model.SymptomAssessmentTemplateLine != null) {
-                symptom.SymptomAssessmentTemplateLine = model.SymptomAssessmentTemplateLine;
+            if (model.Tags != null) {
+                var existingTags = template.Tags ? JSON.parse(template.Tags) as Array<string> : [];
+                existingTags.push(...model.Tags);
+                existingTags = [...new Set(existingTags)];
+                template.Tags = JSON.stringify(existingTags);
             }
-            if (model.City != null) {
-                symptom.City = model.City;
+            if (model.Description != null) {
+                template.Description = model.Description;
             }
-            if (model.District != null) {
-                symptom.District = model.District;
-            }
-            if (model.State != null) {
-                symptom.State = model.State;
-            }
-            if (model.Country != null) {
-                symptom.Country = model.Country;
-            }
-            if (model.PostalCode != null) {
-                symptom.PostalCode = model.PostalCode;
-            }
-            if (model.Longitude != null) {
-                symptom.Longitude = model.Longitude;
-            }
-            if (model.Lattitude != null) {
-                symptom.Lattitude = model.Lattitude;
-            }
-            await symptom.save();
 
-            const dto = await SymptomAssessmentTemplateMapper.toDto(symptom);
-            return dto;
+            await template.save();
+            return SymptomAssessmentTemplateMapper.toDto(template);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -192,12 +143,114 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            await SymptomAssessmentTemplate.destroy({ where: { id: id } });
-            return true;
+            var deletedSymptomTypeCount = await SymptomTypesInAssessmentTemplate.destroy({
+                where : {
+                    TemplateId : id
+                }
+            });
+            Logger.instance().log(`${deletedSymptomTypeCount.toString()} symptom instances deleted for assessment id: ${id}.`);
+
+            var deletedAssessmentTemplateCount = await SymptomAssessmentTemplate.destroy({ where: { id: id } });
+            return deletedAssessmentTemplateCount > 0;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
+    addSymptomTypes = async (id: string, symptomTypeIds: string[])
+        : Promise<SymptomAssessmentTemplateDto> => {
+
+        let symptomTypes = [];
+        if (symptomTypeIds) {
+            symptomTypes = await SymptomType.findAll({ where: { id: { [Op.in]: symptomTypeIds } } });
+            if (symptomTypes.length !== symptomTypeIds.length) {
+                Logger.instance().log("One or more Symptom Types not found on record!");
+            }
+        }
+
+        for await (var symptomType of symptomTypes) {
+
+            // check if this symptom type already added to template
+            const existing = await SymptomTypesInAssessmentTemplate.findOne(
+                {
+                    where : {
+                        TemplateId    : id,
+                        SymptomTypeId : symptomType.id
+                    }
+                });
+            if (existing) {
+                Logger.instance().log(`Symptom type with id '${symptomType.id}' already added to this template '${id}'!`);
+                continue;
+            }
+
+            // No existing symptom found for this template, adding new
+            const lastSymptom = await SymptomTypesInAssessmentTemplate.findOne({ where: { TemplateId: id }, order: [['Index', 'DESC']] });
+            var index = 1;
+            if (lastSymptom) {
+                index = lastSymptom.Index + 1;
+            }
+            const entity = {
+                TemplateId    : id,
+                SymptomTypeId : symptomType.id,
+                Index         : index
+            };
+            await SymptomTypesInAssessmentTemplate.create(entity);
+        }
+
+        return await this.getById(id);
+    }
+
+    removeSymptomTypes = async (id: string, symptomTypeIds: string[]):
+        Promise<SymptomAssessmentTemplateDto> => {
+
+        let symptomTypes = [];
+        if (symptomTypeIds) {
+            symptomTypes = await SymptomType.findAll({ where: { id: { [Op.in]: symptomTypeIds } } });
+            if (symptomTypes.length !== symptomTypeIds.length) {
+                Logger.instance().log("One or more Symptom Types not found on record!");
+            }
+        }
+
+        for await (var symptomType of symptomTypes) {
+
+            // check if this symptom type already added to template
+            const existing = await SymptomTypesInAssessmentTemplate.findOne(
+                {
+                    where : {
+                        TemplateId    : id,
+                        SymptomTypeId : symptomType.id
+                    }
+                });
+
+            if (!existing) {
+                Logger.instance().log(`Symptom type with id '${symptomType.id}' does not exist in template '${id}'!`);
+                continue;
+            }
+
+            // No existing symptom found for this template, adding new
+            await SymptomTypesInAssessmentTemplate.destroy(
+                {
+                    where : {
+                        id : existing.id,
+                    }
+                });
+        }
+        
+        await this.recalculateSymptomIndices(id);
+        return await this.getById(id);
+    }
+
+    private recalculateSymptomIndices = async (templateId) => {
+
+        const symptomTypes = await SymptomTypesInAssessmentTemplate.findAll({ where: { TemplateId: templateId }, order: [['Index', 'ASC']] });
+        var index = 1;
+        for await (var s of symptomTypes) {
+            s.Index = index;
+            await s.save();
+            index++;
+        }
+    }
+    
 }

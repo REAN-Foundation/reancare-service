@@ -8,7 +8,7 @@ import { SymptomMapper } from './symptom.mapper';
 
 export class SymptomAssessmentMapper {
 
-    static toDto = (assessment: SymptomAssessment, symptoms: Symptom[]): SymptomAssessmentDto => {
+    static toDto = (assessment: SymptomAssessment, symptoms?: Symptom[]): SymptomAssessmentDto => {
 
         if (assessment == null){
             return null;
@@ -22,7 +22,7 @@ export class SymptomAssessmentMapper {
             AssessmentTemplateId : assessment.AssessmentTemplateId,
             OverallStatus        : assessment.OverallStatus as ProgressStatus,
             AssessmentDate       : assessment.AssessmentDate,
-            SymptomsRecorded     : symptoms.length > 0 ? symptoms.map( x=> SymptomMapper.toDto(x)) : []
+            SymptomsRecorded     : symptoms && symptoms.length > 0 ? symptoms.map( x=> SymptomMapper.toDto(x)) : []
         };
         return dto;
     }

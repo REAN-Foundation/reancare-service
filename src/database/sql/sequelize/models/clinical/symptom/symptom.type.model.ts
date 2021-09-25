@@ -78,13 +78,6 @@ export default class SymptomType extends Model {
     })
     ImageResourceId: string;
 
-    @Length({ max: 1024 })
-    @Column({
-        type      : DataType.STRING(1024),
-        allowNull : true,
-    })
-    PublicImageUrl: string;
-
     @Column
     @CreatedAt
     CreatedAt: Date;

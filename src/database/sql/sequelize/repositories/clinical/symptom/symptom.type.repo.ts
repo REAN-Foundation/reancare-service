@@ -15,19 +15,15 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
     create = async (model: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
         try {
             const entity = {
-                Type            : model.Type,
-                SymptomTypeLine : model.SymptomTypeLine ?? null,
-                City            : model.City ?? null,
-                District        : model.District ?? null,
-                State           : model.State ?? null,
-                Country         : model.Country ?? null,
-                PostalCode      : model.PostalCode ?? null,
-                Longitude       : model.Longitude ?? null,
-                Lattitude       : model.Lattitude ?? null,
+                Symptom         : model.Symptom,
+                Description     : model.Description ?? null,
+                Tags            : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
+                Language        : model.Language ?? 'en-US',
+                ImageResourceId : model.ImageResourceId ?? null,
             };
             const symptom = await SymptomType.create(entity);
-            const dto = await SymptomTypeMapper.toDto(symptom);
-            return dto;
+            return SymptomTypeMapper.toDto(symptom);
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -36,9 +32,8 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
 
     getById = async (id: string): Promise<SymptomTypeDto> => {
         try {
-            const symptom = await SymptomType.findByPk(id);
-            const dto = await SymptomTypeMapper.toDto(symptom);
-            return dto;
+            const symptomType = await SymptomType.findByPk(id);
+            return SymptomTypeMapper.toDto(symptomType);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -49,58 +44,14 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
         try {
             const search = { where: {} };
 
-            if (filters.Type != null) {
-                search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
+            if (filters.Symptom != null) {
+                search.where['Symptom'] = { [Op.like]: '%' + filters.Symptom + '%' };
             }
-            if (filters.SymptomTypeLine != null) {
-                search.where['SymptomTypeLine'] = { [Op.like]: '%' + filters.SymptomTypeLine + '%' };
-            }
-            if (filters.City != null) {
-                search.where['City'] = { [Op.like]: '%' + filters.City + '%' };
-            }
-            if (filters.District != null) {
-                search.where['District'] = { [Op.like]: '%' + filters.District + '%' };
-            }
-            if (filters.State != null) {
-                search.where['State'] = { [Op.like]: '%' + filters.State + '%' };
-            }
-            if (filters.Country != null) {
-                search.where['Country'] = { [Op.like]: '%' + filters.Country + '%' };
-            }
-            if (filters.PostalCode != null) {
-                search.where['PostalCode'] = { [Op.like]: '%' + filters.PostalCode + '%' };
-            }
-            if (filters.LongitudeFrom != null && filters.LongitudeTo != null) {
-                search.where['Longitude'] = {
-                    [Op.gte] : filters.LongitudeFrom,
-                    [Op.lte] : filters.LongitudeTo,
-                };
-            }
-            if (filters.LattitudeFrom != null && filters.LattitudeTo != null) {
-                search.where['Lattitude'] = {
-                    [Op.gte] : filters.LattitudeFrom,
-                    [Op.lte] : filters.LattitudeTo,
-                };
-            }
-            if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
-                search.where['CreatedAt'] = {
-                    [Op.gte] : filters.CreatedDateFrom,
-                    [Op.lte] : filters.CreatedDateTo,
-                };
-            } else if (filters.CreatedDateFrom === null && filters.CreatedDateTo !== null) {
-                search.where['CreatedAt'] = {
-                    [Op.lte] : filters.CreatedDateTo,
-                };
-            } else if (filters.CreatedDateFrom !== null && filters.CreatedDateTo === null) {
-                search.where['CreatedAt'] = {
-                    [Op.gte] : filters.CreatedDateFrom,
-                };
-            }
-            if (filters.PostalCode !== null) {
-                search.where['PostalCode'] = { [Op.like]: '%' + filters.PostalCode + '%' };
+            if (filters.Tag != null) {
+                search.where['Tags'] = { [Op.like]: '%' + filters.Tag + '%' };
             }
 
-            let orderByColum = 'SymptomTypeLine';
+            let orderByColum = 'Symptom';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }
@@ -125,11 +76,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
 
             const foundResults = await SymptomType.findAndCountAll(search);
 
-            const dtos: SymptomTypeDto[] = [];
-            for (const symptom of foundResults.rows) {
-                const dto = await SymptomTypeMapper.toDto(symptom);
-                dtos.push(dto);
-            }
+            const dtos: SymptomTypeDto[] = foundResults.rows.map(x => SymptomTypeMapper.toDto(x));
 
             const searchResults: SymptomTypeSearchResults = {
                 TotalCount     : foundResults.count,
@@ -142,6 +89,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
             };
 
             return searchResults;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -150,39 +98,30 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
 
     update = async (id: string, model: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
         try {
-            const symptom = await SymptomType.findByPk(id);
+            const symptomType = await SymptomType.findByPk(id);
 
-            if (model.Type != null) {
-                symptom.Type = model.Type;
+            if (model.Symptom != null) {
+                symptomType.Symptom = model.Symptom;
             }
-            if (model.SymptomTypeLine != null) {
-                symptom.SymptomTypeLine = model.SymptomTypeLine;
+            if (model.Tags != null) {
+                var existingTags = symptomType.Tags ? JSON.parse(symptomType.Tags) as Array<string> : [];
+                existingTags.push(...model.Tags);
+                existingTags = [...new Set(existingTags)];
+                symptomType.Tags = JSON.stringify(existingTags);
             }
-            if (model.City != null) {
-                symptom.City = model.City;
+            if (model.Description != null) {
+                symptomType.Description = model.Description;
             }
-            if (model.District != null) {
-                symptom.District = model.District;
+            if (model.Language != null) {
+                symptomType.Language = model.Language;
             }
-            if (model.State != null) {
-                symptom.State = model.State;
+            if (model.ImageResourceId != null) {
+                symptomType.ImageResourceId = model.ImageResourceId;
             }
-            if (model.Country != null) {
-                symptom.Country = model.Country;
-            }
-            if (model.PostalCode != null) {
-                symptom.PostalCode = model.PostalCode;
-            }
-            if (model.Longitude != null) {
-                symptom.Longitude = model.Longitude;
-            }
-            if (model.Lattitude != null) {
-                symptom.Lattitude = model.Lattitude;
-            }
-            await symptom.save();
 
-            const dto = await SymptomTypeMapper.toDto(symptom);
-            return dto;
+            await symptomType.save();
+            return SymptomTypeMapper.toDto(symptomType);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -191,8 +130,8 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            await SymptomType.destroy({ where: { id: id } });
-            return true;
+            var deleted = await SymptomType.destroy({ where: { id: id } });
+            return deleted > 0;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

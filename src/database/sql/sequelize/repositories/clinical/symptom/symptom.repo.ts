@@ -7,6 +7,9 @@ import { ApiError } from '../../../../../../common/api.error';
 import { SymptomDomainModel } from '../../../../../../domain.types/clinical/symptom/symptom/symptom.domain.model';
 import { SymptomDto } from '../../../../../../domain.types/clinical/symptom/symptom/symptom.dto';
 import { SymptomSearchFilters, SymptomSearchResults } from '../../../../../../domain.types/clinical/symptom/symptom/symptom.search.types';
+import { Severity } from '../../../../../../domain.types/miscellaneous/system.types';
+import { ClinicalValidationStatus } from '../../../../../../domain.types/miscellaneous/clinical.types';
+import { ClinicalInterpretation } from '../../../../../../domain.types/miscellaneous/clinical.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -15,19 +18,21 @@ export class SymptomRepo implements ISymptomRepo {
     create = async (model: SymptomDomainModel): Promise<SymptomDto> => {
         try {
             const entity = {
-                Type        : model.Type,
-                SymptomLine : model.SymptomLine ?? null,
-                City        : model.City ?? null,
-                District    : model.District ?? null,
-                State       : model.State ?? null,
-                Country     : model.Country ?? null,
-                PostalCode  : model.PostalCode ?? null,
-                Longitude   : model.Longitude ?? null,
-                Lattitude   : model.Lattitude ?? null,
+                PatientUserId             : model.PatientUserId,
+                MedicalPractitionerUserId : model.MedicalPractitionerUserId ?? null,
+                VisitId                   : model.VisitId ?? null,
+                AssessmentId              : model.AssessmentId ?? null,
+                AssessmentTemplateId      : model.AssessmentTemplateId ?? null,
+                SymptomTypeId             : model.SymptomTypeId,
+                Symptom                   : model.Symptom ?? null,
+                Severity                  : model.Severity ?? Severity.Low,
+                ValidationStatus          : model.ValidationStatus ?? ClinicalValidationStatus.Preliminary,
+                Interpretation            : model.Interpretation ?? ClinicalInterpretation.Normal,
+                Comments                  : model.Comments ?? null,
+                RecordDate                : model.RecordDate ?? null,
             };
             const symptom = await Symptom.create(entity);
-            const dto = await SymptomMapper.toDto(symptom);
-            return dto;
+            return SymptomMapper.toDto(symptom);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -37,8 +42,7 @@ export class SymptomRepo implements ISymptomRepo {
     getById = async (id: string): Promise<SymptomDto> => {
         try {
             const symptom = await Symptom.findByPk(id);
-            const dto = await SymptomMapper.toDto(symptom);
-            return dto;
+            return SymptomMapper.toDto(symptom);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -49,58 +53,39 @@ export class SymptomRepo implements ISymptomRepo {
         try {
             const search = { where: {} };
 
-            if (filters.Type != null) {
-                search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
+            if (filters.Symptom != null) {
+                search.where['Symptom'] = { [Op.like]: '%' + filters.Symptom + '%' };
             }
-            if (filters.SymptomLine != null) {
-                search.where['SymptomLine'] = { [Op.like]: '%' + filters.SymptomLine + '%' };
+            if (filters.SymptomTypeId != null) {
+                search.where['SymptomTypeId'] = filters.SymptomTypeId;
             }
-            if (filters.City != null) {
-                search.where['City'] = { [Op.like]: '%' + filters.City + '%' };
+            if (filters.PatientUserId != null) {
+                search.where['PatientUserId'] = filters.PatientUserId;
             }
-            if (filters.District != null) {
-                search.where['District'] = { [Op.like]: '%' + filters.District + '%' };
+            if (filters.AssessmentId != null) {
+                search.where['AssessmentId'] = filters.AssessmentId;
             }
-            if (filters.State != null) {
-                search.where['State'] = { [Op.like]: '%' + filters.State + '%' };
+            if (filters.AssessmentTemplateId != null) {
+                search.where['AssessmentTemplateId'] = filters.AssessmentTemplateId;
             }
-            if (filters.Country != null) {
-                search.where['Country'] = { [Op.like]: '%' + filters.Country + '%' };
+            if (filters.VisitId != null) {
+                search.where['VisitId'] = filters.VisitId;
             }
-            if (filters.PostalCode != null) {
-                search.where['PostalCode'] = { [Op.like]: '%' + filters.PostalCode + '%' };
-            }
-            if (filters.LongitudeFrom != null && filters.LongitudeTo != null) {
-                search.where['Longitude'] = {
-                    [Op.gte] : filters.LongitudeFrom,
-                    [Op.lte] : filters.LongitudeTo,
-                };
-            }
-            if (filters.LattitudeFrom != null && filters.LattitudeTo != null) {
-                search.where['Lattitude'] = {
-                    [Op.gte] : filters.LattitudeFrom,
-                    [Op.lte] : filters.LattitudeTo,
-                };
-            }
-            if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
+            if (filters.DateFrom != null && filters.DateTo != null) {
                 search.where['CreatedAt'] = {
-                    [Op.gte] : filters.CreatedDateFrom,
-                    [Op.lte] : filters.CreatedDateTo,
+                    [Op.gte] : filters.DateFrom,
+                    [Op.lte] : filters.DateTo,
                 };
-            } else if (filters.CreatedDateFrom === null && filters.CreatedDateTo !== null) {
+            } else if (filters.DateFrom === null && filters.DateTo !== null) {
                 search.where['CreatedAt'] = {
-                    [Op.lte] : filters.CreatedDateTo,
+                    [Op.lte] : filters.DateTo,
                 };
-            } else if (filters.CreatedDateFrom !== null && filters.CreatedDateTo === null) {
+            } else if (filters.DateFrom !== null && filters.DateTo === null) {
                 search.where['CreatedAt'] = {
-                    [Op.gte] : filters.CreatedDateFrom,
+                    [Op.gte] : filters.DateFrom,
                 };
             }
-            if (filters.PostalCode !== null) {
-                search.where['PostalCode'] = { [Op.like]: '%' + filters.PostalCode + '%' };
-            }
-
-            let orderByColum = 'SymptomLine';
+            let orderByColum = 'Symptom';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }
@@ -125,11 +110,7 @@ export class SymptomRepo implements ISymptomRepo {
 
             const foundResults = await Symptom.findAndCountAll(search);
 
-            const dtos: SymptomDto[] = [];
-            for (const symptom of foundResults.rows) {
-                const dto = await SymptomMapper.toDto(symptom);
-                dtos.push(dto);
-            }
+            const dtos: SymptomDto[] = foundResults.rows.map(x => SymptomMapper.toDto(x));
 
             const searchResults: SymptomSearchResults = {
                 TotalCount     : foundResults.count,
@@ -142,6 +123,7 @@ export class SymptomRepo implements ISymptomRepo {
             };
 
             return searchResults;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -152,37 +134,20 @@ export class SymptomRepo implements ISymptomRepo {
         try {
             const symptom = await Symptom.findByPk(id);
 
-            if (model.Type != null) {
-                symptom.Type = model.Type;
-            }
-            if (model.SymptomLine != null) {
-                symptom.SymptomLine = model.SymptomLine;
-            }
-            if (model.City != null) {
-                symptom.City = model.City;
-            }
-            if (model.District != null) {
-                symptom.District = model.District;
-            }
-            if (model.State != null) {
-                symptom.State = model.State;
-            }
-            if (model.Country != null) {
-                symptom.Country = model.Country;
-            }
-            if (model.PostalCode != null) {
-                symptom.PostalCode = model.PostalCode;
-            }
-            if (model.Longitude != null) {
-                symptom.Longitude = model.Longitude;
-            }
-            if (model.Lattitude != null) {
-                symptom.Lattitude = model.Lattitude;
-            }
-            await symptom.save();
+            symptom.MedicalPractitionerUserId = model.MedicalPractitionerUserId ?? symptom.MedicalPractitionerUserId,
+            symptom.VisitId                   = model.VisitId ?? symptom.VisitId,
+            symptom.AssessmentId              = model.AssessmentId ?? symptom.AssessmentId,
+            symptom.AssessmentTemplateId      = model.AssessmentTemplateId ?? symptom.AssessmentTemplateId,
+            symptom.Symptom                   = model.Symptom ?? symptom.Symptom,
+            symptom.Severity                  = model.Severity ?? symptom.Severity,
+            symptom.ValidationStatus          = model.ValidationStatus ?? symptom.ValidationStatus,
+            symptom.Interpretation            = model.Interpretation ?? symptom.Interpretation,
+            symptom.Comments                  = model.Comments ?? symptom.Comments,
+            symptom.RecordDate                = model.RecordDate ?? symptom.RecordDate,
 
-            const dto = await SymptomMapper.toDto(symptom);
-            return dto;
+            await symptom.save();
+            return SymptomMapper.toDto(symptom);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

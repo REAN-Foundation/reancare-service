@@ -1,6 +1,5 @@
 import express from 'express';
 
-import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { Loader } from '../../../../startup/loader';
 import { Authorizer } from '../../../../auth/authorizer';
@@ -51,7 +50,6 @@ export class SymptomTypeController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'SymptomType.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
             const id: string = await SymptomTypeValidator.getById(request);

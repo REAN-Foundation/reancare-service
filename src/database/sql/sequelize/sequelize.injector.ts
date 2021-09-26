@@ -34,6 +34,7 @@ import { SymptomTypeRepo } from './repositories/clinical/symptom/symptom.type.re
 import { SymptomRepo } from './repositories/clinical/symptom/symptom.repo';
 import { SymptomAssessmentRepo } from './repositories/clinical/symptom/symptom.assessment.repo';
 import { SymptomAssessmentTemplateRepo } from './repositories/clinical/symptom/symptom.assessment.template.repo';
+import { FileResourceRepo } from './repositories/file.resource.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -78,6 +79,7 @@ export class SequelizeInjector {
         container.register('ISymptomRepo', SymptomRepo);
         container.register('ISymptomAssessmentRepo', SymptomAssessmentRepo);
         container.register('ISymptomAssessmentTemplateRepo', SymptomAssessmentTemplateRepo);
+        container.register('IFileResourceRepo', FileResourceRepo);
 
     }
 

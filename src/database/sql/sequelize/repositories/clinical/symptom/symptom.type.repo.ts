@@ -138,4 +138,13 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
         }
     };
 
+    totalCount = async (): Promise<number> => {
+        try {
+            return await SymptomType.count();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

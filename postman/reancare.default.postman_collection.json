@@ -11992,7 +11992,7 @@
 			"name": "Clinical",
 			"item": [
 				{
-					"name": "EmergencyEvent",
+					"name": "Emergency event",
 					"item": [
 						{
 							"name": "Create patient emergency event",
@@ -12455,6 +12455,1340 @@
 								"description": "Deletes emergency event using ID"
 							},
 							"response": []
+						}
+					]
+				},
+				{
+					"name": "Symptom assessment",
+					"item": [
+						{
+							"name": "Symptom types",
+							"item": [
+								{
+									"name": "Add new symptom to the database library",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    var id = jsonRes.Data.SymptomType.id;\r",
+													"    pm.environment.set(\"SYMPTOM_TYPE_ID\", id);\r",
+													"    console.log(id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(201);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"New body height biometrice is created\", function () {\r",
+													"\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('SymptomType');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('Symptom');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('Description');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('Tags');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('Language');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('ImageResourceId');\r",
+													"\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Symptom).equals(\"Blurry vision\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Description).equals(\"Not able to see clearly.\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Language).equals(\"en-US\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Tags.length).greaterThan(0);\r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "authorization",
+												"type": "text",
+												"value": "Bearer {{DOCTOR_USER_JWT}}"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"Symptom\": \"Headache\",\n    \"Description\": \"Migrains\",\n    \"Tags\": [\"Headache\", \"Migrain\"],\n    \"Language\": \"en-US\",\n    \"ImageResourceId\": \"92313a9e-0eb0-46fa-ac24-c137f28c33d4\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-types",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-types"
+											]
+										},
+										"description": "Create a new drug order (medication list) for a patient for the visit."
+									},
+									"response": []
+								},
+								{
+									"name": "Symptom types by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(201);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"New body height biometrice is created\", function () {\r",
+													"\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('SymptomType');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('Symptom');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('Description');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('Tags');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('Language');\r",
+													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('ImageResourceId');\r",
+													"\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Symptom).equals(\"Blurry vision\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Description).equals(\"Not able to see clearly.\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Language).equals(\"en-US\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Tags.length).greaterThan(0);\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-types/{{SYMPTOM_TYPE_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-types",
+												"{{SYMPTOM_TYPE_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get a list of symptoms from database",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    var symptomTypes = jsonRes.Data.SymptomTypes.Items;\r",
+													"    \r",
+													"    if (symptomTypes.length > 0) {\r",
+													"        var symptomTypeIds = symptomTypes.map((x) => { return x.id; });\r",
+													"        console.log(symptomTypeIds);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_1\", symptomTypeIds[0]);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_2\", symptomTypeIds[1]);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_3\", symptomTypeIds[2]);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_4\", symptomTypeIds[3]);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_5\", symptomTypeIds[4]);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_6\", symptomTypeIds[5]);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_7\", symptomTypeIds[6]);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_8\", symptomTypeIds[7]);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_9\", symptomTypeIds[8]);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_10\", symptomTypeIds[9]);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_11\", symptomTypeIds[10]);\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_12\", symptomTypeIds[11]);\r",
+													"        \r",
+													"        var count = symptomTypes.length;\r",
+													"        var lastSymptomType = symptomTypes[count -1];\r",
+													"        pm.environment.set(\"SYMPTOM_TYPE_ID_A\", lastSymptomType.id);\r",
+													"    }\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "authorization",
+												"type": "text",
+												"value": "Bearer {{DOCTOR_USER_JWT}}"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-types/search?tag=Heart failure",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-types",
+												"search"
+											],
+											"query": [
+												{
+													"key": "tag",
+													"value": "Heart failure"
+												}
+											]
+										},
+										"description": "Returns the list of ailments stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Update symptom type record",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
+													"    var new_symptom = 'New symptom - ' + random_postfix;\r",
+													"    pm.environment.set(\"NEW_SYMPTOM_NAME\", new_symptom);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"Tags\": [\n        \"Blurry vision\",\n        \"Diabetes\",\n        \"Cataract\"\n    ],\n    \"ImageResourceId\": \"92313a9e-0eb0-46fa-ac24-c137f28c33d4\"\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-types/{{SYMPTOM_TYPE_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-types",
+												"{{SYMPTOM_TYPE_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete symptom type record",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "authorization",
+												"type": "text",
+												"value": "Bearer {{PATIENT_USER_JWT}}"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-types/{{SYMPTOM_TYPE_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-types",
+												"{{SYMPTOM_TYPE_ID}}"
+											]
+										},
+										"description": "Delete an already existing drug order."
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Assessment template",
+							"item": [
+								{
+									"name": "Search by template title",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessment-templates/search?title=Heart Failure Symptoms Assessment",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessment-templates",
+												"search"
+											],
+											"query": [
+												{
+													"key": "title",
+													"value": "Heart Failure Symptoms Assessment"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create for seeding - * Heart Failure Assessment Template",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var id = jsonData.data.assessmentTemplate.id;\r",
+													"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ID\", id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"Title\": \"Heart Failure Symptoms Assessment\",\n    \"Description\": \"This is an assessment recommended by American Heart Association (AHA <www.heart.org>) for heart failure symptomns. This is a periodical assessment of patient's heart failure condition.\",\n    \"Tags\": \"Heart failure, Low Ejection Fraction\",\n    \"SymptomTypeIds\": [\n        \"{{SYMPTOM_TYPE_ID_1}}\",\n        \"{{SYMPTOM_TYPE_ID_2}}\",\n        \"{{SYMPTOM_TYPE_ID_3}}\",\n        \"{{SYMPTOM_TYPE_ID_4}}\",\n        \"{{SYMPTOM_TYPE_ID_5}}\",\n        \"{{SYMPTOM_TYPE_ID_6}}\",\n        \"{{SYMPTOM_TYPE_ID_7}}\",\n        \"{{SYMPTOM_TYPE_ID_8}}\",\n        \"{{SYMPTOM_TYPE_ID_9}}\",\n        \"{{SYMPTOM_TYPE_ID_10}}\",\n        \"{{SYMPTOM_TYPE_ID_11}}\",\n        \"{{SYMPTOM_TYPE_ID_12}}\"\n    ]\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessment-templates",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessment-templates"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add assessment template - with symptom list Copy",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var id = jsonData.data.assessmentTemplate.id;\r",
+													"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ID\", id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"Title\": \"Appendicitis Assessment\",\n    \"Description\": \"This is symptom assessment for Appendicitis.\",\n    \"Tags\": \"Appendicitis\",\n    \"SymptomTypeIds\": [\n        \"{{SYMPTOM_TYPE_ID_1}}\",\n        \"{{SYMPTOM_TYPE_ID_2}}\",\n        \"{{SYMPTOM_TYPE_ID_3}}\",\n        \"{{SYMPTOM_TYPE_ID_4}}\",\n        \"{{SYMPTOM_TYPE_ID_5}}\",\n        \"{{SYMPTOM_TYPE_ID_6}}\",\n        \"{{SYMPTOM_TYPE_ID_7}}\",\n        \"{{SYMPTOM_TYPE_ID_8}}\",\n        \"{{SYMPTOM_TYPE_ID_9}}\",\n        \"{{SYMPTOM_TYPE_ID_10}}\",\n        \"{{SYMPTOM_TYPE_ID_11}}\",\n        \"{{SYMPTOM_TYPE_ID_12}}\"\n    ]\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessment-templates",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessment-templates"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add assessment template - without symptom list",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var id = jsonData.data.assessmentTemplate.id;\r",
+													"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ID\", id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"Title\": \"Gastritis Assessment\",\n    \"Description\": \"This is symptom assessment for gastritis.\",\n    \"Tags\": \"Gastritis\"\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessment-templates",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessment-templates"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get assessment template  by id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessment-templates",
+												"{{ASSESSMENT_TEMPLATE_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add symptoms to template",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"SymptomTypeIds\": [\r\n        \"{{SYMPTOM_TYPE_ID_1}}\",\r\n        \"{{SYMPTOM_TYPE_ID_2}}\",\r\n        \"{{SYMPTOM_TYPE_ID_3}}\",\r\n        \"{{SYMPTOM_TYPE_ID_4}}\",\r\n        \"{{SYMPTOM_TYPE_ID_5}}\",\r\n        \"{{SYMPTOM_TYPE_ID_6}}\"\r\n    ]\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/add-symptom-types",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessment-templates",
+												"{{ASSESSMENT_TEMPLATE_ID}}",
+												"add-symptom-types"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Remove symptoms from template",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"SymptomTypeIds\": [\r\n        \"{{SYMPTOM_TYPE_ID_3}}\"\r\n    ]\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/remove-symptom-types",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessment-templates",
+												"{{ASSESSMENT_TEMPLATE_ID}}",
+												"remove-symptom-types"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update template",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"Description\": \"This is updated description of the template\"\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessment-templates",
+												"{{ASSESSMENT_TEMPLATE_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete template",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "authorization",
+												"type": "text",
+												"value": "Bearer {{PATIENT_USER_JWT}}"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessment-templates",
+												"{{ASSESSMENT_TEMPLATE_ID}}"
+											]
+										},
+										"description": "Delete an already existing drug order."
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Assessment",
+							"item": [
+								{
+									"name": "Add new assessment",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var id = jsonData.data.assessment.id;\r",
+													"    pm.environment.set(\"SYMPTOM_ASSESSMENT_ID\", id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_ROLE_USER_ID}}\",\n    \"AssessmentTemplateId\": \"{{ASSESSMENT_TEMPLATE_ID}}\",\n    \"Title\": \"AHA Cardiac Rehab Assessment\",\n    \"AssessmentDate\": \"2021-05-30\"\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessments",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessments"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get assessment by id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessments/{{SYMPTOM_ASSESSMENT_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessments",
+												"{{SYMPTOM_ASSESSMENT_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Search assessment by template id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessments/search?templateId={{ASSESSMENT_TEMPLATE_ID}}&patientUserId={{PATIENT_ROLE_USER_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessments",
+												"search"
+											],
+											"query": [
+												{
+													"key": "templateId",
+													"value": "{{ASSESSMENT_TEMPLATE_ID}}"
+												},
+												{
+													"key": "patientUserId",
+													"value": "{{PATIENT_ROLE_USER_ID}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete symptom based assessment",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessments/{{SYMPTOM_ASSESSMENT_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessments",
+												"{{SYMPTOM_ASSESSMENT_ID}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Record/Update symptoms in an assessment",
+							"item": [
+								{
+									"name": "Add patient symptom in the assessment",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var id = jsonData.data.symptom.id;\r",
+													"    pm.environment.set(\"PATIENT_SYMPTOM_ID\", id);\r",
+													"\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "authorization",
+												"type": "text",
+												"value": "Bearer {{PATIENT_USER_JWT}}"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_ROLE_USER_ID}}\",\n    \"AssessmentId\": \"{{SYMPTOM_ASSESSMENT_ID}}\",\n\t\"SymptomTypeId\": \"{{SYMPTOM_TYPE_ID_1}}\",\n    \"IsPresent\": true,\n    \"Severity\": 1,\n\t\"Status\": 1,\n\t\"Interpretation\": 1,\n\t\"Comments\": \"The chronic hypertension for the patient with critically high levels.\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptoms",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptoms"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update symptom in the assessment",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "authorization",
+												"type": "text",
+												"value": "Bearer {{PATIENT_USER_JWT}}"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"Status\": 2,\n    \"Interpretation\": 3,\n    \"Comments\": \"The chronic hypertension\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptoms/{{PATIENT_SYMPTOM_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptoms",
+												"{{PATIENT_SYMPTOM_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Search symptoms",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "authorization",
+												"type": "text",
+												"value": "Bearer {{PATIENT_USER_JWT}}"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptoms/search?patientUserId={{PATIENT_ROLE_USER_ID}}&fromDate=2021-05-30&toDate=2021-09-30",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptoms",
+												"search"
+											],
+											"query": [
+												{
+													"key": "patientUserId",
+													"value": "{{PATIENT_ROLE_USER_ID}}"
+												},
+												{
+													"key": "symptomTypeId",
+													"value": "{{SYMPTOM_TYPE_ID}}",
+													"disabled": true
+												},
+												{
+													"key": "fromDate",
+													"value": "2021-05-30"
+												},
+												{
+													"key": "toDate",
+													"value": "2021-09-30"
+												},
+												{
+													"key": "assessmentId",
+													"value": "{{ASSESSMENT_ID}}",
+													"disabled": true
+												},
+												{
+													"key": "visitId",
+													"value": "{{DOCTOR_VISIT_ID}}",
+													"disabled": true
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "How do you feel",
+							"item": [
+								{
+									"name": "Add how do you feel details",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_ROLE_USER_ID}}\",\n    \"Feeling\": 1,\n    \"RecordDate\": \"2021-06-20\",\n    \"Comments\": \"abcd66\",\n    \"SymptomAssessmentId\": null\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/how-do-you-feel/",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"how-do-you-feel",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "How do you feel details by id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/how-do-you-feel/{{HOW_DO_YOU_FEEL_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"how-do-you-feel",
+												"{{HOW_DO_YOU_FEEL_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Search how do you feel details by patient user id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/how-do-you-feel/{{PATIENT_ROLE_USER_ID}}/search?startDate=2021-06-15&endDate=2021-06-21",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"how-do-you-feel",
+												"{{PATIENT_ROLE_USER_ID}}",
+												"search"
+											],
+											"query": [
+												{
+													"key": "startDate",
+													"value": "2021-06-15"
+												},
+												{
+													"key": "endDate",
+													"value": "2021-06-21"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update how do yo feel details",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"Feeling\": 1,\n    \"RecordDate\": \"2021-06-21\",\n    \"Comments\": \"abcd22\",\n    \"SymptomAssessmentId\": null\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/how-do-you-feel/{{HOW_DO_YOU_FEEL_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"how-do-you-feel",
+												"{{HOW_DO_YOU_FEEL_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete how do you feel details",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "authorization",
+												"type": "text",
+												"value": "Bearer {{PATIENT_USER_JWT}}"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/how-do-you-feel/{{HOW_DO_YOU_FEEL_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"how-do-you-feel",
+												"{{HOW_DO_YOU_FEEL_ID}}"
+											]
+										},
+										"description": "Delete an already existing drug order."
+									},
+									"response": []
+								}
+							]
 						}
 					]
 				}

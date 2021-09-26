@@ -11,6 +11,8 @@ import {
     IsUUID,
     ForeignKey,
     IsDate,
+    HasMany,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import {
@@ -20,6 +22,7 @@ import {
 import User from '../../user.model';
 import SymptomAssessmentTemplate from './symptom.assessment.template.model';
 import { v4 } from 'uuid';
+import Symptom from './symptom.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -72,6 +75,9 @@ export default class SymptomAssessment extends Model {
         allowNull : true,
     })
     AssessmentTemplateId: string;
+
+    @BelongsTo(() => SymptomAssessmentTemplate)
+    AssessmentTemplate: SymptomAssessmentTemplate;
     
     @IsDate
     @Column({
@@ -88,6 +94,9 @@ export default class SymptomAssessment extends Model {
         defaultValue : ProgressStatus.Pending
     })
     OverallStatus: string;
+
+    @HasMany(() => Symptom, 'AssessmentId')
+    Symptoms: Symptom[];
 
     @Column
     @CreatedAt

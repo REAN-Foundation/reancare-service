@@ -1,5 +1,5 @@
-import { MedicationStockImageDomainModel } from "../../../domain.types/medication/medication.stock.image/medication.stock.image.domain.model";
-import { MedicationStockImageDto } from "../../../domain.types/medication/medication.stock.image/medication.stock.image.dto";
+import { MedicationStockImageDomainModel } from "../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
+import { MedicationStockImageDto } from "../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto";
 
 export interface IMedicationStockImageRepo {
 

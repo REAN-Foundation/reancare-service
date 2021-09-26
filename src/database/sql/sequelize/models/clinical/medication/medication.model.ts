@@ -26,7 +26,7 @@ import {
     MedicationAdministrationRoutesList,
     MedicationFrequencyUnitsList,
     MedicationFrequencyUnits
-} from '../../../../../domain.types/medication/medication/medication.types';
+} from '../../../../../../domain.types/clinical/medication/medication/medication.types';
 
 import FileResource from '../../file.resource/file.resource.model';
 import Order from '../../order.model';

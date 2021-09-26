@@ -16,7 +16,7 @@ import {
 import {
     SymptomsProgressList,
     SymptomsProgress
-} from '../../../../../domain.types/symptom/how.do.you.feel/symptom.progress.types';
+} from '../../../../../../domain.types/clinical/symptom/how.do.you.feel/symptom.progress.types';
 import { v4 } from 'uuid';
 import User from '../../user.model';
 import SymptomAssessment from './symptom.assessment.model';

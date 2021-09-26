@@ -9,10 +9,13 @@ import {
     IsUUID,
     PrimaryKey,
     Length,
-    ForeignKey } from 'sequelize-typescript';
+    ForeignKey,
+    BelongsToMany } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import FileResource from '../../file.resource/file.resource.model';
+import SymptomAssessmentTemplate from './symptom.assessment.template.model';
+import SymptomTypesInAssessmentTemplate from './symptom.types.in.assessment.template.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -78,6 +81,9 @@ export default class SymptomType extends Model {
     })
     ImageResourceId: string;
 
+    @BelongsToMany(() => SymptomAssessmentTemplate, () => SymptomTypesInAssessmentTemplate)
+    Templates: SymptomAssessmentTemplate[]
+    
     @Column
     @CreatedAt
     CreatedAt: Date;

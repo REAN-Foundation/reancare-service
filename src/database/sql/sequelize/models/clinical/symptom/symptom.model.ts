@@ -11,6 +11,7 @@ import {
     IsUUID,
     ForeignKey,
     IsDate,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import {
@@ -87,6 +88,9 @@ export default class Symptom extends Model {
         allowNull : true,
     })
     AssessmentId: string;
+
+    @BelongsTo(() => SymptomAssessment)
+    Assessment: SymptomAssessment
     
     @IsUUID(4)
     @ForeignKey(() => SymptomAssessmentTemplate)

@@ -19,5 +19,5 @@ export const register = (app: express.Application): void => {
     router.post("/:id/add-symptom-types", authenticator.authenticateClient, authenticator.authenticateUser, controller.addSymptomTypes);
     router.post("/:id/remove-symptom-types", authenticator.authenticateClient, authenticator.authenticateUser, controller.removeSymptomTypes);
 
-    app.use('/api/v1/clinicals/symptom-assessment-templates/', router);
+    app.use('/api/v1/clinical/symptom-assessment-templates', router);
 };

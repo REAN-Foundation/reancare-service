@@ -19,7 +19,7 @@ import { PersonService } from "../services/person.service";
 import { HealthProfileService } from "../services/patient/health.profile.service";
 import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
 import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
-import { IMedicationStockImageRepo } from "../database/repository.interfaces/medication/medication.stock.image.repo.interface";
+import { IMedicationStockImageRepo } from "../database/repository.interfaces/clinical/medication/medication.stock.image.repo.interface";
 
 import * as RolePrivilegesList from '../assets/seed.data/role.privileges.json';
 import * as SeededInternalClients from '../assets/seed.data/internal.clients.seed.json';

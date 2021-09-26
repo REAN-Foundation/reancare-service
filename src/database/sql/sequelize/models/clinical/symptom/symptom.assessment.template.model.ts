@@ -9,8 +9,13 @@ import {
     PrimaryKey,
     Length,
     IsUUID,
+    BelongsToMany,
+    HasMany,
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
+import SymptomAssessment from './symptom.assessment.model';
+import SymptomType from './symptom.type.model';
+import SymptomTypesInAssessmentTemplate from './symptom.types.in.assessment.template.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -54,6 +59,12 @@ export default class SymptomAssessmentTemplate extends Model {
         allowNull : false,
     })
     Tags: string;
+
+    @BelongsToMany(() => SymptomType, () => SymptomTypesInAssessmentTemplate)
+    SymptomTypes: SymptomType[]
+    
+    @HasMany(() => SymptomAssessment)
+    Assessments: SymptomAssessment[]
     
     @Column
     @CreatedAt

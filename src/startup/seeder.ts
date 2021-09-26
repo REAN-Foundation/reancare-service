@@ -28,18 +28,19 @@ import { SymptomTypeService } from "../services/clinical/symptom/symptom.type.se
 import { FileResourceService } from "../services/file.resource.service";
 import { SymptomTypeDomainModel } from "../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model";
 import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model";
+import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/symptom.type/symptom.type.search.types";
 
 import * as RolePrivilegesList from '../seed.data/role.privileges.json';
 import * as SeededInternalClients from '../seed.data/internal.clients.seed.json';
 import * as SeededSystemAdmin from '../seed.data/system.admin.seed.json';
 import * as SeededInternalTestsUsers from '../seed.data/internal.test.users.seed.sample.json';
 import * as SeededSymptomTypes from '../seed.data/symptom.types.json';
-import * as SeededAssessmentTemplates from '../seed.data/symptom,assessment.templates.json';
+import * as SeededAssessmentTemplates from '../seed.data/symptom.assessment.templates.json';
 
 // import * as fs from "fs";
 // import {
 //     MedicationStockImageDomainModel
-// } from "../domain.types/medication/medication.stock.image/medication.stock.image.domain.model";
+// } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -384,8 +385,12 @@ export class Seeder {
         for (let i = 0; i < arr.length; i++) {
             var t = arr[i];
             var tokens = t['Tags'] ? t['Tags'].split(',') : [];
-            var imageName = t['Image'] ? t['Image'] : null;
-            var resourceId = await this.getImageResourceIdForSymptomType(imageName);
+
+            //TODO: Commented till storage is enabled
+            //var imageName = t['Image'] ? t['Image'] : null;
+            //var resourceId = await this.getImageResourceIdForSymptomType(imageName);
+            var resourceId = null;
+
             const model: SymptomTypeDomainModel = {
                 Symptom         : t['Symptom'],
                 Description     : t['Description'],
@@ -413,19 +418,30 @@ export class Seeder {
             Logger.instance().log("Symptom based assessment templates have already been seeded!");
             return;
         }
-        Logger.instance().log('Seeding symptom types...');
+        Logger.instance().log('Seeding symptom assessment templates...');
 
         const arr = SeededAssessmentTemplates['default'];
 
         for (let i = 0; i < arr.length; i++) {
             var t = arr[i];
-            var tokens = t['Tags'] ? t['Tags'].split(',') : [];
+            var tokens = t['Tags'] ? t['Tags'].split(',').map(x => x.trim()) : [];
             const model: SymptomAssessmentTemplateDomainModel = {
-                Title       : t['Symptom'],
+                Title       : t['Title'],
                 Description : t['Description'],
                 Tags        : tokens,
             };
-            await this._symptomAssessmentTemplateService.create(model);
+            var template = await this._symptomAssessmentTemplateService.create(model);
+
+            if (template.Title === 'Heart Failure Symptoms Assessment') {
+                var filters: SymptomTypeSearchFilters = {
+                    Tag : 'Heart failure'
+                };
+                var searchResults = await this._symptomTypeService.search(filters);
+                var symptomTypeIds = searchResults.Items.map(x => x.id);
+                if (symptomTypeIds.length > 0) {
+                    await this._symptomAssessmentTemplateService.addSymptomTypes(template.id, symptomTypeIds);
+                }
+            }
         }
     }
 

@@ -3,12 +3,12 @@ import { SymptomTypeDto } from "./symptom.type.dto";
 //////////////////////////////////////////////////////////////////////
 
 export interface SymptomTypeSearchFilters {
-    Symptom?    : string;
-    Tag?        : string;
-    OrderBy     : string;
-    Order       : string;
-    PageIndex   : number;
-    ItemsPerPage: number;
+    Symptom?     : string;
+    Tag?         : string;
+    OrderBy?     : string;
+    Order?       : string;
+    PageIndex?   : number;
+    ItemsPerPage?: number;
 }
 
 export interface SymptomTypeSearchResults {

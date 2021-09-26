@@ -19,12 +19,12 @@ import SymptomType from './symptom.type.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'SymptomTypesInAssessmentTemplate',
-    tableName       : 'symptom_types_in_assessment_templates',
+    modelName       : 'SymptomTypesInTemplate',
+    tableName       : 'symptom_types_in_templates',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class SymptomTypesInAssessmentTemplate extends Model {
+export default class SymptomTypesInTemplate extends Model {
 
     @IsUUID(4)
     @PrimaryKey

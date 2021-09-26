@@ -1,6 +1,6 @@
 import SymptomAssessmentTemplate from '../../../models/clinical/symptom/symptom.assessment.template.model';
 import { SymptomAssessmentTemplateDto, TemplateSymptomTypesDto } from '../../../../../../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.dto';
-import SymptomTypesInAssessmentTemplate from '../../../models/clinical/symptom/symptom.types.in.assessment.template.model';
+import SymptomTypesInTemplate from '../../../models/clinical/symptom/symptom.types.in.template.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -8,7 +8,7 @@ export class SymptomAssessmentTemplateMapper {
 
     static toDto = (
         template: SymptomAssessmentTemplate,
-        symptomTypes?: SymptomTypesInAssessmentTemplate[]): SymptomAssessmentTemplateDto => {
+        symptomTypes?: SymptomTypesInTemplate[]): SymptomAssessmentTemplateDto => {
 
         if (template == null){
             return null;
@@ -27,7 +27,7 @@ export class SymptomAssessmentTemplateMapper {
     }
 
     static toTemplateSymptomTypesDtos =
-        (symptomTypes: SymptomTypesInAssessmentTemplate[]): TemplateSymptomTypesDto[] => {
+        (symptomTypes: SymptomTypesInTemplate[]): TemplateSymptomTypesDto[] => {
 
             return symptomTypes.map(x => {
                 var d: TemplateSymptomTypesDto = {

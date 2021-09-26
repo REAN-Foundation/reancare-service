@@ -8,7 +8,7 @@ import { SymptomAssessmentTemplateDomainModel } from '../../../../../../domain.t
 import { SymptomAssessmentTemplateDto } from '../../../../../../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.dto';
 import { SymptomAssessmentTemplateSearchFilters, SymptomAssessmentTemplateSearchResults } from '../../../../../../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.search.types';
 import SymptomType from '../../../models/clinical/symptom/symptom.type.model';
-import SymptomTypesInAssessmentTemplate from '../../../models/clinical/symptom/symptom.types.in.assessment.template.model';
+import SymptomTypesInTemplate from '../../../models/clinical/symptom/symptom.types.in.template.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -34,7 +34,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
     getById = async (id: string): Promise<SymptomAssessmentTemplateDto> => {
         try {
             const template = await SymptomAssessmentTemplate.findByPk(id);
-            const allSymptomTypes = await SymptomTypesInAssessmentTemplate.findAll({ where: { TemplateId: id }, order: [['Index', 'ASC']] });
+            const allSymptomTypes = await SymptomTypesInTemplate.findAll({ where: { TemplateId: id }, order: [['Index', 'ASC']] });
             return SymptomAssessmentTemplateMapper.toDto(template, allSymptomTypes);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -143,7 +143,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            var deletedSymptomTypeCount = await SymptomTypesInAssessmentTemplate.destroy({
+            var deletedSymptomTypeCount = await SymptomTypesInTemplate.destroy({
                 where : {
                     TemplateId : id
                 }
@@ -173,7 +173,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
         for await (var symptomType of symptomTypes) {
 
             // check if this symptom type already added to template
-            const existing = await SymptomTypesInAssessmentTemplate.findOne(
+            const existing = await SymptomTypesInTemplate.findOne(
                 {
                     where : {
                         TemplateId    : id,
@@ -186,7 +186,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
             }
 
             // No existing symptom found for this template, adding new
-            const lastSymptom = await SymptomTypesInAssessmentTemplate.findOne({ where: { TemplateId: id }, order: [['Index', 'DESC']] });
+            const lastSymptom = await SymptomTypesInTemplate.findOne({ where: { TemplateId: id }, order: [['Index', 'DESC']] });
             var index = 1;
             if (lastSymptom) {
                 index = lastSymptom.Index + 1;
@@ -196,7 +196,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
                 SymptomTypeId : symptomType.id,
                 Index         : index
             };
-            await SymptomTypesInAssessmentTemplate.create(entity);
+            await SymptomTypesInTemplate.create(entity);
         }
 
         return await this.getById(id);
@@ -216,7 +216,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
         for await (var symptomType of symptomTypes) {
 
             // check if this symptom type already added to template
-            const existing = await SymptomTypesInAssessmentTemplate.findOne(
+            const existing = await SymptomTypesInTemplate.findOne(
                 {
                     where : {
                         TemplateId    : id,
@@ -230,7 +230,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
             }
 
             // No existing symptom found for this template, adding new
-            await SymptomTypesInAssessmentTemplate.destroy(
+            await SymptomTypesInTemplate.destroy(
                 {
                     where : {
                         id : existing.id,
@@ -244,7 +244,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
 
     private recalculateSymptomIndices = async (templateId) => {
 
-        const symptomTypes = await SymptomTypesInAssessmentTemplate.findAll({ where: { TemplateId: templateId }, order: [['Index', 'ASC']] });
+        const symptomTypes = await SymptomTypesInTemplate.findAll({ where: { TemplateId: templateId }, order: [['Index', 'ASC']] });
         var index = 1;
         for await (var s of symptomTypes) {
             s.Index = index;

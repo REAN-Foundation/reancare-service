@@ -15,7 +15,7 @@ import {
 import { v4 } from 'uuid';
 import SymptomAssessment from './symptom.assessment.model';
 import SymptomType from './symptom.type.model';
-import SymptomTypesInAssessmentTemplate from './symptom.types.in.assessment.template.model';
+import SymptomTypesInTemplate from './symptom.types.in.template.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -60,7 +60,7 @@ export default class SymptomAssessmentTemplate extends Model {
     })
     Tags: string;
 
-    @BelongsToMany(() => SymptomType, () => SymptomTypesInAssessmentTemplate)
+    @BelongsToMany(() => SymptomType, () => SymptomTypesInTemplate)
     SymptomTypes: SymptomType[]
     
     @HasMany(() => SymptomAssessment)

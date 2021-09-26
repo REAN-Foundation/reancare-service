@@ -15,7 +15,7 @@ import {
 import { v4 } from 'uuid';
 import FileResource from '../../file.resource/file.resource.model';
 import SymptomAssessmentTemplate from './symptom.assessment.template.model';
-import SymptomTypesInAssessmentTemplate from './symptom.types.in.assessment.template.model';
+import SymptomTypesInTemplate from './symptom.types.in.template.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -81,7 +81,7 @@ export default class SymptomType extends Model {
     })
     ImageResourceId: string;
 
-    @BelongsToMany(() => SymptomAssessmentTemplate, () => SymptomTypesInAssessmentTemplate)
+    @BelongsToMany(() => SymptomAssessmentTemplate, () => SymptomTypesInTemplate)
     Templates: SymptomAssessmentTemplate[]
     
     @Column

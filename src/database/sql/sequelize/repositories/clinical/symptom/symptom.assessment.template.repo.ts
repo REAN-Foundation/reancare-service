@@ -252,5 +252,14 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
             index++;
         }
     }
-    
+
+    totalCount = async (): Promise<number> => {
+        try {
+            return await SymptomAssessmentTemplate.count();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

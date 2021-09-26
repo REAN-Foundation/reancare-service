@@ -18,4 +18,6 @@ export interface ISymptomAssessmentTemplateRepo {
 
     removeSymptomTypes(id: string, symptomTypeIds: string[]): Promise<SymptomAssessmentTemplateDto>;
 
+    totalCount(): Promise<number>;
+
 }

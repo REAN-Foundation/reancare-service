@@ -14,4 +14,6 @@ export interface ISymptomTypeRepo {
 
     delete(id: string): Promise<boolean>;
 
+    totalCount(): Promise<number>;
+
 }

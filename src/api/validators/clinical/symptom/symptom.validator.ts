@@ -1,14 +1,37 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
+import { ClinicalInterpretation, ClinicalValidationStatus } from '../../../../domain.types/miscellaneous/clinical.types';
 import { Helper } from '../../../../common/helper';
 import { SymptomDomainModel } from '../../../../domain.types/clinical/symptom/symptom/symptom.domain.model';
 import { SymptomSearchFilters } from '../../../../domain.types/clinical/symptom/symptom/symptom.search.types';
+import { Severity } from '../../../../domain.types/miscellaneous/system.types';
+import { SymptomTypeService } from '../../../../services/clinical/symptom/symptom.type.service';
+import { SymptomAssessmentService } from '../../../../services/clinical/symptom/symptom.assessment.service';
+import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class SymptomValidator {
 
-    static getDomainModel = (request: express.Request): SymptomDomainModel => {
+    static getDomainModel = async (request: express.Request, create = true): Promise<SymptomDomainModel> => {
+
+        if (create) {
+            var symptomTypeName = null;
+            var symptomTypeService = Loader.container.resolve(SymptomTypeService);
+            var symptomType = await symptomTypeService.getById(request.body.SymptomTypeId);
+            if (symptomType !== null) {
+                symptomTypeName = symptomType.Symptom;
+            }
+    
+            var templateId = null;
+            if (request.body.AssessmentId !== undefined) {
+                var symptomAssessmentService = Loader.container.resolve(SymptomAssessmentService);
+                var assessment = await symptomAssessmentService.getById(request.body.AssessmentId);
+                if (assessment !== null) {
+                    templateId = assessment.AssessmentTemplateId;
+                }
+            }
+        }
 
         const model: SymptomDomainModel = {
             id                        : request.body.id ?? null,
@@ -16,15 +39,15 @@ export class SymptomValidator {
             MedicalPractitionerUserId : request.body.MedicalPractitionerUserId ?? null,
             VisitId                   : request.body.VisitId,
             AssessmentId              : request.body.AssessmentId ?? null,
-            AssessmentTemplateId      : request.body.AssessmentTemplateId ?? null,
+            AssessmentTemplateId      : request.body.AssessmentTemplateId ?? templateId,
             SymptomTypeId             : request.body.SymptomTypeId ?? null,
-            Symptom                   : request.body.Symptom ?? null,
-            IsPresent                 : request.body.IsPresent ?? null,
-            Severity                  : request.body.Severity ?? null,
-            ValidationStatus          : request.body.ValidationStatus ?? null,
-            Interpretation            : request.body.Interpretation ?? null,
+            Symptom                   : request.body.Symptom ?? symptomTypeName,
+            IsPresent                 : request.body.IsPresent ?? true,
+            Severity                  : request.body.Severity ?? Severity.Unknown,
+            ValidationStatus          : request.body.ValidationStatus ?? ClinicalValidationStatus.Preliminary,
+            Interpretation            : request.body.Interpretation ?? ClinicalInterpretation.Normal,
             Comments                  : request.body.Comments ?? null,
-            RecordDate                : request.body.RecordDate ?? null,
+            RecordDate                : request.body.RecordDate ?? new Date(),
         };
 
         return model;
@@ -44,7 +67,7 @@ export class SymptomValidator {
 
         await SymptomValidator.validateBody(request);
 
-        return SymptomValidator.getDomainModel(request);
+        return await SymptomValidator.getDomainModel(request);
     };
 
     static getById = async (request: express.Request): Promise<string> => {
@@ -136,7 +159,7 @@ export class SymptomValidator {
         await SymptomValidator.validateBody(request);
 
         const id = await SymptomValidator.getParamId(request);
-        const domainModel = SymptomValidator.getDomainModel(request);
+        const domainModel = await SymptomValidator.getDomainModel(request, false);
         domainModel.id = id;
 
         return domainModel;

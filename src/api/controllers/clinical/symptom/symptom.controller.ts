@@ -35,13 +35,13 @@ export class SymptomController {
             
             const domainModel = await SymptomValidator.create(request);
 
-            const address = await this._service.create(domainModel);
-            if (address == null) {
-                throw new ApiError(400, 'Cannot create address!');
+            const symptom = await this._service.create(domainModel);
+            if (symptom == null) {
+                throw new ApiError(400, 'Cannot create symptom!');
             }
 
             ResponseHandler.success(request, response, 'Symptom created successfully!', 201, {
-                Symptom : address,
+                Symptom : symptom,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -56,13 +56,13 @@ export class SymptomController {
 
             const id: string = await SymptomValidator.getById(request);
 
-            const address = await this._service.getById(id);
-            if (address == null) {
+            const symptom = await this._service.getById(id);
+            if (symptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
             }
 
             ResponseHandler.success(request, response, 'Symptom retrieved successfully!', 200, {
-                Symptom : address,
+                Symptom : symptom,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -82,9 +82,9 @@ export class SymptomController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} address records retrieved successfully!`;
+                    : `Total ${count} symptom records retrieved successfully!`;
                     
-            ResponseHandler.success(request, response, message, 200, { Symptomes: searchResults });
+            ResponseHandler.success(request, response, message, 200, { Symptoms: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -106,7 +106,7 @@ export class SymptomController {
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update address record!');
+                throw new ApiError(400, 'Unable to update symptom record!');
             }
 
             ResponseHandler.success(request, response, 'Symptom record updated successfully!', 200, {

@@ -84,7 +84,7 @@ export class SymptomAssessmentController {
                     ? 'No records found!'
                     : `Total ${count} assessment records retrieved successfully!`;
                     
-            ResponseHandler.success(request, response, message, 200, { SymptomAssessmentes: searchResults });
+            ResponseHandler.success(request, response, message, 200, { SymptomAssessments: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

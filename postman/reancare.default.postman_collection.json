@@ -15050,6 +15050,90 @@
 								"exec": [
 									"try {\r",
 									"    var jsonRespData = pm.response.json();\r",
+									"    var resources = jsonRespData.Data.FileResources;\r",
+									"    var resource = images[0];\r",
+									"    var resourceId = resource.id;\r",
+									"\r",
+									"    pm.environment.set(\"PATIENT_PROFILE_IMAGE_RESOURCE_ID\", resourceId);\r",
+									"    pm.environment.set(\"UPLOADED_RESOURCE_ID\", resourceId);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "enc",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Name",
+									"type": "file",
+									"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/male/14.jpg"
+								},
+								{
+									"key": "IsPublicResource",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "IsMultiResolutionImage",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "References",
+									"value": "",
+									"contentType": "",
+									"type": "text",
+									"disabled": true
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/upload/",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"upload",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload file to public",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRespData = pm.response.json();\r",
 									"    var images = jsonRespData.data.details;\r",
 									"    var imageurl = images[0].Url_Public;\r",
 									"    var resourceId = images[0].ResourceId;\r",
@@ -15095,134 +15179,222 @@
 							]
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/resources/upload/",
+							"raw": "{{BASE_URL}}/file-resources/upload/",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"resources",
+								"file-resources",
 								"upload",
 								""
 							]
 						}
 					},
-					"response": [
+					"response": []
+				},
+				{
+					"name": "Upload multi-resolution image",
+					"event": [
 						{
-							"name": "Upload profile image",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "enc",
-										"value": "multipart/form-data",
-										"type": "text"
-									},
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_ROLE_JWT}}",
-										"type": "text"
-									}
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRespData = pm.response.json();\r",
+									"    var images = jsonRespData.data.details;\r",
+									"    var imageurl = images[0].Url_Public;\r",
+									"    var resourceId = images[0].ResourceId;\r",
+									"\r",
+									"    pm.environment.set(\"PATIENT_ROLE_PROFILE_IMAGE_URL\", imageurl);\r",
+									"    pm.environment.set(\"UPLOADED_RESOURCE_ID\", resourceId);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}"
 								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "name",
-											"type": "file",
-											"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/female/1.jpg"
-										},
-										{
-											"key": "isPublicResource",
-											"value": "true",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/resources/upload/",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"resources",
-										"upload",
-										""
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Security-Policy",
-									"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-								},
-								{
-									"key": "X-DNS-Prefetch-Control",
-									"value": "off"
-								},
-								{
-									"key": "Expect-CT",
-									"value": "max-age=0"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "SAMEORIGIN"
-								},
-								{
-									"key": "Strict-Transport-Security",
-									"value": "max-age=15552000; includeSubDomains"
-								},
-								{
-									"key": "X-Download-Options",
-									"value": "noopen"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "X-Permitted-Cross-Domain-Policies",
-									"value": "none"
-								},
-								{
-									"key": "Referrer-Policy",
-									"value": "no-referrer"
-								},
-								{
-									"key": "X-XSS-Protection",
-									"value": "0"
-								},
-								{
-									"key": "Access-Control-Allow-Origin",
-									"value": "*"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json; charset=utf-8"
-								},
-								{
-									"key": "Content-Length",
-									"value": "449"
-								},
-								{
-									"key": "ETag",
-									"value": "W/\"1c1-VH9K0xWsJcHsyNGh0i3cViLO5ME\""
-								},
-								{
-									"key": "Date",
-									"value": "Fri, 28 May 2021 10:59:25 GMT"
-								},
-								{
-									"key": "Connection",
-									"value": "keep-alive"
-								}
-							],
-							"cookie": [],
-							"body": "{\n    \"status\": \"success\",\n    \"message\": \"File/s uploaded successfully!\",\n    \"data\": {\n        \"details\": [\n            {\n                \"FileName\": \"1.jpg\",\n                \"ResourceId\": \"c3c6ae1c-0375-4958-a162-a16e7c0b77d9\",\n                \"Url_Auth\": \"https://reancare-api-dev.services.reanfoundation.org//resources/download/c3c6ae1c-0375-4958-a162-a16e7c0b77d9\",\n                \"Url_Public\": \"https://reancare-api-dev.services.reanfoundation.org//resources/download-public/c3c6ae1c-0375-4958-a162-a16e7c0b77d9\",\n                \"MimeType\": \"image/jpeg\",\n                \"Size\": 149389\n            }\n        ]\n    }\n}"
+								"type": "text/javascript"
+							}
 						}
-					]
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "enc",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_ROLE_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"type": "file",
+									"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/male/14.jpg"
+								},
+								{
+									"key": "isPublicResource",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/upload/",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"upload",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update file resource - references and tags",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Assessment template is updated\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('SymptomAssessmentTemplate');\r",
+									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Title');\r",
+									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Description');\r",
+									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Tags');\r",
+									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('TemplateSymptomTypes');\r",
+									"\r",
+									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate.Description).equals(\"This is updated description of the template.\");\r",
+									"    var previousTagCount = 2;\r",
+									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate.Tags.length).greaterThan(previousTagCount);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"References\": [\n        {\n            \"ItemId\": \"{{BIOMETRICS_BLOOD_PRESSURE_ID}}\",\n            \"ItemType\": \"Biometrics\",\n            \"Keyword\": \"Blood pressure\"\n        }\n    ],\n    \"Tags\": [\n        \"First tag\",\n        \"Second tag\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{UPLOADED_RESOURCE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{UPLOADED_RESOURCE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload file version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRespData = pm.response.json();\r",
+									"    var images = jsonRespData.data.details;\r",
+									"    var imageurl = images[0].Url_Public;\r",
+									"    var resourceId = images[0].ResourceId;\r",
+									"\r",
+									"    pm.environment.set(\"PATIENT_ROLE_PROFILE_IMAGE_URL\", imageurl);\r",
+									"    pm.environment.set(\"UPLOADED_RESOURCE_ID\", resourceId);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "enc",
+								"value": "multipart/form-data",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_ROLE_JWT}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"type": "file",
+									"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/male/14.jpg"
+								},
+								{
+									"key": "isPublicResource",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/upload-version/",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"upload-version",
+								""
+							]
+						}
+					},
+					"response": []
 				},
 				{
 					"name": "Download file",

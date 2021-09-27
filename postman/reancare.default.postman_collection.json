@@ -13371,7 +13371,6 @@
 													"    console.log(error.message);\r",
 													"}\r",
 													"\r",
-													"\r",
 													"pm.test(\"Request is successfull\", function () {\r",
 													"    pm.response.to.have.status(201);\r",
 													"    var jsonRes = pm.response.json();\r",
@@ -14005,12 +14004,41 @@
 												"exec": [
 													"try {\r",
 													"    var jsonData = pm.response.json();\r",
-													"    var id = jsonData.data.assessment.id;\r",
+													"    var id = jsonData.Data.SymptomAssessment.id;\r",
 													"    pm.environment.set(\"SYMPTOM_ASSESSMENT_ID\", id);\r",
 													"}\r",
 													"catch (error) {\r",
 													"    console.log(error.message);\r",
-													"}"
+													"}\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(201);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"New assessment is created\", function () {\r",
+													"\r",
+													"    var assessmentTemplateId = pm.environment.get(\"ASSESSMENT_TEMPLATE_ID\");\r",
+													"\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('SymptomAssessment');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('PatientUserId');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('Title');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('AssessmentTemplateId');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('OverallStatus');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('AssessmentDate');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('SymptomsRecorded');\r",
+													"\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment.Title).equals(\"AHA Cardiac Rehab Assessment\");\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment.AssessmentTemplateId).equals(assessmentTemplateId);\r",
+													"\r",
+													"    var assessmentDate = (jsonRes.Data.SymptomAssessment.AssessmentDate).split('T')[0];\r",
+													"    pm.expect(assessmentDate).equals(\"2021-09-30\");\r",
+													"\r",
+													"});\r",
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -14037,7 +14065,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_ROLE_USER_ID}}\",\n    \"AssessmentTemplateId\": \"{{ASSESSMENT_TEMPLATE_ID}}\",\n    \"Title\": \"AHA Cardiac Rehab Assessment\",\n    \"AssessmentDate\": \"2021-05-30\"\n}\n",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"AssessmentTemplateId\": \"{{ASSESSMENT_TEMPLATE_ID}}\",\n    \"Title\": \"AHA Cardiac Rehab Assessment\",\n    \"AssessmentDate\": \"2021-09-30\"\n}\n",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -14059,6 +14087,45 @@
 								},
 								{
 									"name": "Get assessment by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Symptom assessment is returned\", function () {\r",
+													"\r",
+													"    var assessmentTemplateId = pm.environment.get(\"ASSESSMENT_TEMPLATE_ID\");\r",
+													"\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('SymptomAssessment');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('PatientUserId');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('Title');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('AssessmentTemplateId');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('OverallStatus');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('AssessmentDate');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment).to.have.property('SymptomsRecorded');\r",
+													"\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment.Title).equals(\"AHA Cardiac Rehab Assessment\");\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessment.AssessmentTemplateId).equals(assessmentTemplateId);\r",
+													"\r",
+													"    var assessmentDate = (jsonRes.Data.SymptomAssessment.AssessmentDate).split('T')[0];\r",
+													"    pm.expect(assessmentDate).equals(\"2021-09-30\");\r",
+													"\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"request": {
 										"method": "GET",
 										"header": [
@@ -14093,7 +14160,29 @@
 									"response": []
 								},
 								{
-									"name": "Search assessment by template id",
+									"name": "Search assessment",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"List of assessments are returned\", function () {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('SymptomAssessments');\r",
+													"    pm.expect(jsonRes.Data.SymptomAssessments.Items.length).greaterThan(0);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"request": {
 										"method": "GET",
 										"header": [
@@ -14114,7 +14203,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/symptom-assessments/search?templateId={{ASSESSMENT_TEMPLATE_ID}}&patientUserId={{PATIENT_ROLE_USER_ID}}",
+											"raw": "{{BASE_URL}}/clinical/symptom-assessments/search?templateId={{ASSESSMENT_TEMPLATE_ID}}&patientUserId={{PATIENT_USER_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -14130,7 +14219,7 @@
 												},
 												{
 													"key": "patientUserId",
-													"value": "{{PATIENT_ROLE_USER_ID}}"
+													"value": "{{PATIENT_USER_ID}}"
 												}
 											]
 										}
@@ -14139,6 +14228,29 @@
 								},
 								{
 									"name": "Delete symptom based assessment",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Assessment is deleted\", function () {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+													"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+													"\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"request": {
 										"method": "DELETE",
 										"header": [
@@ -14171,6 +14283,68 @@
 										}
 									},
 									"response": []
+								},
+								{
+									"name": "Add assessment again",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var id = jsonData.Data.SymptomAssessment.id;\r",
+													"    pm.environment.set(\"SYMPTOM_ASSESSMENT_ID\", id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"AssessmentTemplateId\": \"{{ASSESSMENT_TEMPLATE_ID}}\",\n    \"Title\": \"AHA Cardiac Rehab Assessment\",\n    \"AssessmentDate\": \"2021-09-30\"\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptom-assessments",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptom-assessments"
+											]
+										}
+									},
+									"response": []
 								}
 							]
 						},
@@ -14185,15 +14359,45 @@
 											"script": {
 												"exec": [
 													"try {\r",
-													"\r",
 													"    var jsonData = pm.response.json();\r",
-													"    var id = jsonData.data.symptom.id;\r",
+													"    var id = jsonData.Data.Symptom.id;\r",
 													"    pm.environment.set(\"PATIENT_SYMPTOM_ID\", id);\r",
-													"\r",
 													"}\r",
 													"catch (error) {\r",
 													"    console.log(error.message);\r",
-													"}"
+													"}\r",
+													"\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(201);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"New symptom is created\", function () {\r",
+													"\r",
+													"    var assessmentId = pm.environment.get(\"SYMPTOM_ASSESSMENT_ID\");\r",
+													"    var assessmentTemplateId = pm.environment.get(\"ASSESSMENT_TEMPLATE_ID\");\r",
+													"    var symptomTypeId = pm.environment.get(\"SYMPTOM_TYPE_FACIAL_DROPPING_ID\");\r",
+													"    var symptomName = \"Facial dropping\";\r",
+													"\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Symptom');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('PatientUserId');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('Symptom');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('AssessmentTemplateId');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('Severity');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('ValidationStatus');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('Interpretation');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('RecordDate');\r",
+													"\r",
+													"    pm.expect(jsonRes.Data.Symptom.AssessmentTemplateId).equals(assessmentTemplateId);\r",
+													"    pm.expect(jsonRes.Data.Symptom.AssessmentId).equals(assessmentId);\r",
+													"    pm.expect(jsonRes.Data.Symptom.Symptom).equals(symptomName);\r",
+													"    pm.expect(jsonRes.Data.Symptom.SymptomTypeId).equals(symptomTypeId);\r",
+													"});\r",
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -14220,7 +14424,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_ROLE_USER_ID}}\",\n    \"AssessmentId\": \"{{SYMPTOM_ASSESSMENT_ID}}\",\n\t\"SymptomTypeId\": \"{{SYMPTOM_TYPE_ID_1}}\",\n    \"IsPresent\": true,\n    \"Severity\": 1,\n\t\"Status\": 1,\n\t\"Interpretation\": 1,\n\t\"Comments\": \"The chronic hypertension for the patient with critically high levels.\"\n}",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"AssessmentId\": \"{{SYMPTOM_ASSESSMENT_ID}}\",\n\t\"SymptomTypeId\": \"{{SYMPTOM_TYPE_FACIAL_DROPPING_ID}}\",\n    \"IsPresent\": true,\n    \"Severity\": 1,\n\t\"Status\": 1,\n\t\"Interpretation\": 1,\n\t\"Comments\": \"The chronic hypertension for the patient with critically high levels.\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -14241,54 +14445,48 @@
 									"response": []
 								},
 								{
-									"name": "Update symptom in the assessment",
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											},
-											{
-												"key": "authorization",
-												"type": "text",
-												"value": "Bearer {{PATIENT_USER_JWT}}"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
+									"name": "Get symptom",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Symptom is returned\", function () {\r",
+													"\r",
+													"    var assessmentId = pm.environment.get(\"SYMPTOM_ASSESSMENT_ID\");\r",
+													"    var assessmentTemplateId = pm.environment.get(\"ASSESSMENT_TEMPLATE_ID\");\r",
+													"    var symptomTypeId = pm.environment.get(\"SYMPTOM_TYPE_FACIAL_DROPPING_ID\");\r",
+													"    var symptomName = \"Facial dropping\";\r",
+													"\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Symptom');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('PatientUserId');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('Symptom');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('AssessmentTemplateId');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('Severity');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('ValidationStatus');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('Interpretation');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('RecordDate');\r",
+													"\r",
+													"    pm.expect(jsonRes.Data.Symptom.AssessmentTemplateId).equals(assessmentTemplateId);\r",
+													"    pm.expect(jsonRes.Data.Symptom.AssessmentId).equals(assessmentId);\r",
+													"    pm.expect(jsonRes.Data.Symptom.Symptom).equals(symptomName);\r",
+													"    pm.expect(jsonRes.Data.Symptom.SymptomTypeId).equals(symptomTypeId);\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
 											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"Status\": 2,\n    \"Interpretation\": 3,\n    \"Comments\": \"The chronic hypertension\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/clinical/symptoms/{{PATIENT_SYMPTOM_ID}}",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"clinical",
-												"symptoms",
-												"{{PATIENT_SYMPTOM_ID}}"
-											]
 										}
-									},
-									"response": []
-								},
-								{
-									"name": "Search symptoms",
+									],
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -14321,7 +14519,163 @@
 											}
 										},
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/symptoms/search?patientUserId={{PATIENT_ROLE_USER_ID}}&fromDate=2021-05-30&toDate=2021-09-30",
+											"raw": "{{BASE_URL}}/clinical/symptoms/{{PATIENT_SYMPTOM_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptoms",
+												"{{PATIENT_SYMPTOM_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update symptom",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Symptom is updated\", function () {\r",
+													"\r",
+													"    var assessmentId = pm.environment.get(\"SYMPTOM_ASSESSMENT_ID\");\r",
+													"    var assessmentTemplateId = pm.environment.get(\"ASSESSMENT_TEMPLATE_ID\");\r",
+													"    var symptomTypeId = pm.environment.get(\"SYMPTOM_TYPE_FACIAL_DROPPING_ID\");\r",
+													"    var symptomName = \"Facial dropping\";\r",
+													"\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Symptom');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('PatientUserId');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('Symptom');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('AssessmentTemplateId');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('Severity');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('ValidationStatus');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('Interpretation');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('RecordDate');\r",
+													"    pm.expect(jsonRes.Data.Symptom).to.have.property('Comments');\r",
+													"\r",
+													"    pm.expect(jsonRes.Data.Symptom.AssessmentTemplateId).equals(assessmentTemplateId);\r",
+													"    pm.expect(jsonRes.Data.Symptom.AssessmentId).equals(assessmentId);\r",
+													"    pm.expect(jsonRes.Data.Symptom.Symptom).equals(symptomName);\r",
+													"    pm.expect(jsonRes.Data.Symptom.SymptomTypeId).equals(symptomTypeId);\r",
+													"    pm.expect(jsonRes.Data.Symptom.Comments).equals(\"The chronic hypertension\");\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "authorization",
+												"type": "text",
+												"value": "Bearer {{PATIENT_USER_JWT}}"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"Comments\": \"The chronic hypertension\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptoms/{{PATIENT_SYMPTOM_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptoms",
+												"{{PATIENT_SYMPTOM_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Search symptoms",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"List of assessments are returned\", function () {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Symptoms');\r",
+													"    pm.expect(jsonRes.Data.Symptoms.Items.length).greaterThan(0);\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "authorization",
+												"type": "text",
+												"value": "Bearer {{PATIENT_USER_JWT}}"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptoms/search?patientUserId={{PATIENT_USER_ID}}&fromDate=2021-05-30&toDate=2022-09-30",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -14333,7 +14687,7 @@
 											"query": [
 												{
 													"key": "patientUserId",
-													"value": "{{PATIENT_ROLE_USER_ID}}"
+													"value": "{{PATIENT_USER_ID}}"
 												},
 												{
 													"key": "symptomTypeId",
@@ -14346,7 +14700,7 @@
 												},
 												{
 													"key": "toDate",
-													"value": "2021-09-30"
+													"value": "2022-09-30"
 												},
 												{
 													"key": "assessmentId",
@@ -14358,6 +14712,126 @@
 													"value": "{{DOCTOR_VISIT_ID}}",
 													"disabled": true
 												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete symptom",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Symptom is deleted\", function () {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+													"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+													"\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptoms/{{PATIENT_SYMPTOM_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptoms",
+												"{{PATIENT_SYMPTOM_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Add patient symptom",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var id = jsonData.Data.Symptom.id;\r",
+													"    pm.environment.set(\"PATIENT_SYMPTOM_ID\", id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "authorization",
+												"type": "text",
+												"value": "Bearer {{PATIENT_USER_JWT}}"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"AssessmentId\": \"{{SYMPTOM_ASSESSMENT_ID}}\",\n\t\"SymptomTypeId\": \"{{SYMPTOM_TYPE_FACIAL_DROPPING_ID}}\",\n    \"IsPresent\": true,\n    \"Severity\": 1,\n\t\"Status\": 1,\n\t\"Interpretation\": 1,\n\t\"Comments\": \"The chronic hypertension for the patient with critically high levels.\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/symptoms",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"symptoms"
 											]
 										}
 									},

@@ -57,7 +57,9 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
             var symptomTypeFilter = {
                 model : SymptomType,
                 where : {
-                }
+                },
+                joinTableAttributes : ['Index'],
+                required            : false
             };
             if (filters.SymptomName != null) {
                 symptomTypeFilter.where['Symptom'] = { [Op.like]: '%' + filters.SymptomName + '%' };
@@ -89,8 +91,9 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
                 pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
                 offset = pageIndex * limit;
             }
-            search['limit'] = limit;
-            search['offset'] = offset;
+            search['limit']    = limit;
+            search['offset']   = offset;
+            search['distinct'] = true;
 
             const foundResults = await SymptomAssessmentTemplate.findAndCountAll(search);
 

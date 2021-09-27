@@ -134,7 +134,21 @@
             "SymptomAssessment.GetById",
             "SymptomAssessment.Update",
             "SymptomAssessment.Search",
-            "SymptomAssessment.Delete"
+            "SymptomAssessment.Delete",
+            "FileResource.Upload",
+            "FileResource.Update",
+            "FileResource.UploadVersion",
+            "FileResource.Rename",
+            "FileResource.SearchAndDownload",
+            "FileResource.DownloadByVersionName",
+            "FileResource.DownloadByVersionId",
+            "FileResource.DownloadById",
+            "FileResource.Search",
+            "FileResource.GetVersionById",
+            "FileResource.GetVersions",
+            "FileResource.GetResourceInfo",
+            "FileResource.Delete",
+            "FileResource.DeleteVersionByVersionId"
         ]
     },
     {
@@ -273,7 +287,21 @@
             "SymptomAssessment.GetById",
             "SymptomAssessment.Update",
             "SymptomAssessment.Search",
-            "SymptomAssessment.Delete"
+            "SymptomAssessment.Delete",
+            "FileResource.Upload",
+            "FileResource.Update",
+            "FileResource.UploadVersion",
+            "FileResource.Rename",
+            "FileResource.SearchAndDownload",
+            "FileResource.DownloadByVersionName",
+            "FileResource.DownloadByVersionId",
+            "FileResource.DownloadById",
+            "FileResource.Search",
+            "FileResource.GetVersionById",
+            "FileResource.GetVersions",
+            "FileResource.GetResourceInfo",
+            "FileResource.Delete",
+            "FileResource.DeleteVersionByVersionId"
         ]
     },
     {
@@ -415,7 +443,21 @@
             "SymptomAssessment.GetById",
             "SymptomAssessment.Update",
             "SymptomAssessment.Search",
-            "SymptomAssessment.Delete"
+            "SymptomAssessment.Delete",
+            "FileResource.Upload",
+            "FileResource.Update",
+            "FileResource.UploadVersion",
+            "FileResource.Rename",
+            "FileResource.SearchAndDownload",
+            "FileResource.DownloadByVersionName",
+            "FileResource.DownloadByVersionId",
+            "FileResource.DownloadById",
+            "FileResource.Search",
+            "FileResource.GetVersionById",
+            "FileResource.GetVersions",
+            "FileResource.GetResourceInfo",
+            "FileResource.Delete",
+            "FileResource.DeleteVersionByVersionId"
         ]
     },
     {
@@ -525,7 +567,21 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "FileResource.Upload",
+            "FileResource.Update",
+            "FileResource.UploadVersion",
+            "FileResource.Rename",
+            "FileResource.SearchAndDownload",
+            "FileResource.DownloadByVersionName",
+            "FileResource.DownloadByVersionId",
+            "FileResource.DownloadById",
+            "FileResource.Search",
+            "FileResource.GetVersionById",
+            "FileResource.GetVersions",
+            "FileResource.GetResourceInfo",
+            "FileResource.Delete",
+            "FileResource.DeleteVersionByVersionId"
         ]
     },
     {
@@ -635,7 +691,21 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "FileResource.Upload",
+            "FileResource.Update",
+            "FileResource.UploadVersion",
+            "FileResource.Rename",
+            "FileResource.SearchAndDownload",
+            "FileResource.DownloadByVersionName",
+            "FileResource.DownloadByVersionId",
+            "FileResource.DownloadById",
+            "FileResource.Search",
+            "FileResource.GetVersionById",
+            "FileResource.GetVersions",
+            "FileResource.GetResourceInfo",
+            "FileResource.Delete",
+            "FileResource.DeleteVersionByVersionId"
         ]
     }
 ]

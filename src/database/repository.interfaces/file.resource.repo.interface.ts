@@ -1,5 +1,5 @@
 import { FileResourceMetadata } from "../../domain.types/file.resource/file.resource.types";
-import { FileResourceUploadDomainModel } from "../../domain.types/file.resource/file.resource.domain.model";
+import { FileResourceUpdateModel, FileResourceUploadDomainModel } from "../../domain.types/file.resource/file.resource.domain.model";
 import { FileResourceDetailsDto, FileResourceDto } from "../../domain.types/file.resource/file.resource.dto";
 import { FileResourceSearchFilters, FileResourceSearchResults } from "../../domain.types/file.resource/file.resource.search.types";
 
@@ -10,6 +10,8 @@ export interface IFileResourceRepo {
     create(domainModel: FileResourceUploadDomainModel): Promise<FileResourceDetailsDto>;
 
     getById(id: string): Promise<FileResourceDetailsDto>;
+
+    update(id: string, model: FileResourceUpdateModel): Promise<FileResourceDetailsDto>;
 
     addVersion(metadata: FileResourceMetadata, makeDefaultVersion: boolean): Promise<FileResourceMetadata>;
 

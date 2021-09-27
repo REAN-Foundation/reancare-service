@@ -1,7 +1,7 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 import { FileResourceMetadata, ResourceReference } from '../../domain.types/file.resource/file.resource.types';
-import { FileResourceRenameDomainModel, FileResourceUploadDomainModel } from '../../domain.types/file.resource/file.resource.domain.model';
+import { FileResourceRenameDomainModel, FileResourceUpdateModel, FileResourceUploadDomainModel } from '../../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
 import * as _ from 'lodash';
 import { ValidationError } from 'sequelize';
@@ -21,33 +21,14 @@ export class FileResourceValidator {
     static getUploadDomainModel = (request: express.Request): FileResourceUploadDomainModel[] => {
 
         var currentUserId = request.currentUser.UserId;
-
-        var references: ResourceReference[] = [];
-        if (request.body.References !== undefined && request.body.References.length > 0) {
-            request.body.References.array.forEach((element) => {
-                var item: ResourceReference = {
-                    ItemId   : element.ItemId,
-                    ItemType : element.ItemType ?? null,
-                    Keyword  : element.Keyword ?? null
-                };
-                references.push(item);
-            });
-        }
-        var tags: string[] = [];
-        if (request.body.Tags !== undefined && request.body.Tags.length > 0) {
-            request.body.Tags.array.forEach((element) => {
-                references.push(element);
-            });
-        }
-
         var models: FileResourceUploadDomainModel[] = [];
-
         var fileMetadataList = FileResourceValidator.getFileMetadataList(request);
 
         var mimeType = null;
         if (fileMetadataList.length > 0) {
             mimeType = fileMetadataList[0].MimeType;
         }
+
         for (var x of fileMetadataList) {
             const model: FileResourceUploadDomainModel = {
                 FileMetadata           : x,
@@ -55,8 +36,6 @@ export class FileResourceValidator {
                 UploadedByUserId       : currentUserId,
                 IsPublicResource       : request.body.IsPublicResource ?? false,
                 IsMultiResolutionImage : request.body.IsMultiResolutionImage ?? false,
-                References             : references,
-                Tags                   : tags,
                 MimeType               : mimeType,
             };
             models.push(model);
@@ -71,6 +50,53 @@ export class FileResourceValidator {
         }
         await FileResourceValidator.validateBody(request);
         return FileResourceValidator.getUploadDomainModel(request);
+    };
+
+    static update = async (request: express.Request): Promise<FileResourceUpdateModel> => {
+
+        await param('id').exists()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await body('References').optional()
+            .run(request);
+
+        await body('Tags').optional()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+    
+        var references: ResourceReference[] = [];
+        if (request.body.References !== undefined && request.body.References.length > 0) {
+            request.body.References.array.forEach((element) => {
+                var item: ResourceReference = {
+                    ItemId   : element.ItemId,
+                    ItemType : element.ItemType ?? null,
+                    Keyword  : element.Keyword ?? null
+                };
+                references.push(item);
+            });
+        }
+        
+        var tags: string[] = [];
+        if (request.body.Tags !== undefined && request.body.Tags.length > 0) {
+            request.body.Tags.array.forEach((element) => {
+                references.push(element);
+            });
+        }
+
+        var updateModel : FileResourceUpdateModel = {
+            ResourceId : request.params.id,
+            References : references,
+            Tags       : tags
+        };
+        
+        return updateModel;
     };
 
     static uploadVersion = async (request: express.Request): Promise<FileResourceMetadata> => {

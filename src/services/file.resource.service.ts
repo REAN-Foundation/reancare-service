@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { FileResourceUploadDomainModel } from '../domain.types/file.resource/file.resource.domain.model';
+import { FileResourceUpdateModel, FileResourceUploadDomainModel } from '../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceDetailsDto, FileResourceDto } from '../domain.types/file.resource/file.resource.dto';
 import { FileResourceSearchResults, FileResourceSearchFilters } from '../domain.types/file.resource/file.resource.search.types';
 import { IFileResourceRepo } from "../database/repository.interfaces/file.resource.repo.interface";
@@ -108,6 +108,15 @@ export class FileResourceService {
         }
         await this._storageService.rename(resource.DefaultVersion.StorageKey, newFileName);
         return await this._fileResourceRepo.rename(id, newFileName);
+    }
+
+    update = async (id: string, updateModel: FileResourceUpdateModel): Promise<FileResourceDto> => {
+
+        var resource = await this._fileResourceRepo.update(id, updateModel);
+        if (resource === null) {
+            throw new ApiError(404, "File resource not found!");
+        }
+        return resource;
     }
 
     searchAndDownload = async (filters: FileResourceSearchFilters)

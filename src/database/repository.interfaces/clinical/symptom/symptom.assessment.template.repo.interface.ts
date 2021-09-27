@@ -8,6 +8,8 @@ export interface ISymptomAssessmentTemplateRepo {
 
     getById(id: string): Promise<SymptomAssessmentTemplateDto>;
 
+    exists(id: string): Promise<boolean>;
+
     search(filters: SymptomAssessmentTemplateSearchFilters): Promise<SymptomAssessmentTemplateSearchResults>;
 
     update(id: string, addressDomainModel: SymptomAssessmentTemplateDomainModel): Promise<SymptomAssessmentTemplateDto>;

@@ -14,7 +14,7 @@ export class SymptomAssessmentTemplateValidator {
             id          : request.params.id ?? null,
             Title       : request.body.Title ?? null,
             Description : request.body.Description ?? null,
-            Tags        : request.body.Tags ?? []
+            Tags        : request.body.Tags ?? null
         };
 
         return model;
@@ -133,7 +133,7 @@ export class SymptomAssessmentTemplateValidator {
     private static async validateBody(request) {
 
         await body('Tags').optional()
-            .trim()
+            .isArray()
             .run(request);
 
         await body('Description').optional()

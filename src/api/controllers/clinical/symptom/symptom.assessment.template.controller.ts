@@ -97,10 +97,10 @@ export class SymptomAssessmentTemplateController {
             await this._authorizer.authorize(request, response);
 
             const domainModel = await SymptomAssessmentTemplateValidator.update(request);
-
             const id: string = await SymptomAssessmentTemplateValidator.getById(request);
-            const existingSymptomAssessmentTemplate = await this._service.getById(id);
-            if (existingSymptomAssessmentTemplate == null) {
+
+            const exists = await this._service.exists(id);
+            if (!exists) {
                 throw new ApiError(404, 'Symptom assessment template not found.');
             }
 
@@ -123,8 +123,9 @@ export class SymptomAssessmentTemplateController {
             await this._authorizer.authorize(request, response);
 
             const id: string = await SymptomAssessmentTemplateValidator.getById(request);
-            const existingSymptomAssessmentTemplate = await this._service.getById(id);
-            if (existingSymptomAssessmentTemplate == null) {
+
+            const exists = await this._service.exists(id);
+            if (!exists) {
                 throw new ApiError(404, 'Symptom assessment template not found.');
             }
 
@@ -146,14 +147,14 @@ export class SymptomAssessmentTemplateController {
             request.context = 'SymptomAssessmentTemplate.AddSymptomTypes';
             await this._authorizer.authorize(request, response);
 
-            const { id, symptomTypeIds } = await SymptomAssessmentTemplateValidator.addRemoveSymptomTypes(request);
+            const x = await SymptomAssessmentTemplateValidator.addRemoveSymptomTypes(request);
 
-            const existingSymptomAssessmentTemplate = await this._service.getById(id);
-            if (existingSymptomAssessmentTemplate == null) {
+            const exists = await this._service.exists(x.id);
+            if (!exists) {
                 throw new ApiError(404, 'Symptom assessment template not found.');
             }
 
-            const template = await this._service.addSymptomTypes(id, symptomTypeIds);
+            const template = await this._service.addSymptomTypes(x.id, x.SymptomTypeIds);
             if (template === null) {
                 throw new ApiError(400, 'Symptom types cannot be added.');
             }
@@ -171,20 +172,20 @@ export class SymptomAssessmentTemplateController {
             request.context = 'SymptomAssessmentTemplate.RemoveSymptomTypes';
             await this._authorizer.authorize(request, response);
 
-            const { id, symptomTypeIds } = await SymptomAssessmentTemplateValidator.addRemoveSymptomTypes(request);
+            const x = await SymptomAssessmentTemplateValidator.addRemoveSymptomTypes(request);
 
-            const existingSymptomAssessmentTemplate = await this._service.getById(id);
-            if (existingSymptomAssessmentTemplate == null) {
+            const exists = await this._service.exists(x.id);
+            if (!exists) {
                 throw new ApiError(404, 'Symptom assessment template not found.');
             }
 
-            const template = await this._service.removeSymptomTypes(id, symptomTypeIds);
+            const template = await this._service.removeSymptomTypes(x.id, x.SymptomTypeIds);
             if (template === null) {
                 throw new ApiError(400, 'Symptom types cannot be removed.');
             }
 
             ResponseHandler.success(request, response, 'Symptom types removed from template successfully!', 200, {
-                Deleted : true,
+                SymptomAssessmentTemplate : template
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

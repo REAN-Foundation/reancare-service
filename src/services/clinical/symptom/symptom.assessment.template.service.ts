@@ -22,6 +22,10 @@ export class SymptomAssessmentTemplateService {
         return await this._symptomAssessmentTemplateRepo.getById(id);
     };
 
+    exists = async (id: string): Promise<boolean> => {
+        return await this._symptomAssessmentTemplateRepo.exists(id);
+    };
+
     search = async (filters: SymptomAssessmentTemplateSearchFilters)
         : Promise<SymptomAssessmentTemplateSearchResults> => {
         return await this._symptomAssessmentTemplateRepo.search(filters);

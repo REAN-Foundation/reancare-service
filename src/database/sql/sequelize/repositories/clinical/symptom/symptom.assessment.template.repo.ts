@@ -33,9 +33,29 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
 
     getById = async (id: string): Promise<SymptomAssessmentTemplateDto> => {
         try {
-            const template = await SymptomAssessmentTemplate.findByPk(id);
-            const allSymptomTypes = await SymptomTypesInTemplate.findAll({ where: { TemplateId: id }, order: [['Index', 'ASC']] });
-            return SymptomAssessmentTemplateMapper.toDto(template, allSymptomTypes);
+            const template = await SymptomAssessmentTemplate.findOne({
+                where : {
+                    id : id
+                },
+                include : [
+                    {
+                        model : SymptomType,
+                    }
+                ]
+            });
+
+            return SymptomAssessmentTemplateMapper.toDto(template);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    exists = async (id: string): Promise<boolean> => {
+        try {
+            var template = await SymptomAssessmentTemplate.findByPk(id);
+            return template !== null;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -136,7 +156,8 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
             }
 
             await template.save();
-            return SymptomAssessmentTemplateMapper.toDto(template);
+
+            return this.getById(id);
 
         } catch (error) {
             Logger.instance().log(error.message);

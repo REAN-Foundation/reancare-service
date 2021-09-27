@@ -14,13 +14,35 @@ export class SymptomAssessmentTemplateMapper {
             return null;
         }
 
+        var types = [];
+        if (symptomTypes) {
+            types = SymptomAssessmentTemplateMapper.toTemplateSymptomTypesDtos(symptomTypes);
+        }
+        else {
+            var list = template.SymptomTypes;
+            types =  list && list.length > 0 ? list.map(x => {
+                var y: any = x;
+                var index = y.SymptomTypesInTemplate.Index;
+                var d: TemplateSymptomTypesDto = {
+                    Index         : index,
+                    SymptomTypeId : x.id,
+                    Symptom       : x.Symptom,
+                    Description   : x.Description,
+                };
+                return d;
+            }) : [];
+
+            if (types.length > 0) {
+                types = types.sort((a, b) => a.Index - b.Index);
+            }
+        }
+
         const dto: SymptomAssessmentTemplateDto = {
             id                   : template.id,
             Title                : template.Title,
             Description          : template.Description,
             Tags                 : template.Tags ? JSON.parse(template.Tags) : [],
-            TemplateSymptomTypes : symptomTypes ?
-                SymptomAssessmentTemplateMapper.toTemplateSymptomTypesDtos(symptomTypes) : [],
+            TemplateSymptomTypes : types,
         };
 
         return dto;

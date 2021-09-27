@@ -10,6 +10,7 @@ import {
     IsUUID,
     ForeignKey,
     IsInt,
+    BelongsTo,
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import SymptomAssessmentTemplate from './symptom.assessment.template.model';
@@ -45,6 +46,9 @@ export default class SymptomTypesInTemplate extends Model {
     })
     TemplateId: string;
     
+    @BelongsTo(() => SymptomAssessmentTemplate)
+    Template: SymptomAssessmentTemplate;
+    
     @IsUUID(4)
     @ForeignKey(() => SymptomType)
     @Column({
@@ -52,6 +56,9 @@ export default class SymptomTypesInTemplate extends Model {
         allowNull : true,
     })
     SymptomTypeId: string;
+
+    @BelongsTo(() => SymptomType)
+    SymptomType: SymptomType;
     
     @IsInt
     @Column({

@@ -30,6 +30,7 @@ import { AllergyRepo } from './repositories/patient/allergy.repo';
 import { SleepRepo } from './repositories/daily.records/sleep.repo';
 import { EmergencyEventRepo } from './repositories/emergency.event.repo';
 import { MeditationRepo } from './repositories/exercise/meditation.repo';
+import { DiagnosisRepo } from './repositories/diagnosis.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -70,6 +71,7 @@ export class SequelizeInjector {
         container.register('ISleepRepo', SleepRepo);
         container.register('IEmergencyEventRepo', EmergencyEventRepo);
         container.register('IMeditationRepo', MeditationRepo);
+        container.register('IDiagnosisRepo', DiagnosisRepo);
     }
 
 }

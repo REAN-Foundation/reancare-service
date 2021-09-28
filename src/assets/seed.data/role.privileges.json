@@ -112,7 +112,12 @@
             "Biometrics.BloodPressure.GetById",
             "Biometrics.BloodPressure.Update",
             "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete"
+            "Biometrics.BloodPressure.Delete",
+            "Diagnosis.Create",
+            "Diagnosis.GetById",
+            "Diagnosis.Search",
+            "Diagnosis.Update",
+            "Diagnosis.Delete"
         ]
     },
     {
@@ -229,7 +234,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Diagnosis.Create",
+            "Diagnosis.GetById",
+            "Diagnosis.Search",
+            "Diagnosis.Update",
+            "Diagnosis.Delete"
         ]
     },
     {
@@ -349,7 +359,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Diagnosis.Create",
+            "Diagnosis.GetById",
+            "Diagnosis.Search",
+            "Diagnosis.Update",
+            "Diagnosis.Delete"
         ]
     },
     {
@@ -459,7 +474,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Diagnosis.Create",
+            "Diagnosis.GetById",
+            "Diagnosis.Search",
+            "Diagnosis.Update",
+            "Diagnosis.Delete"
         ]
     },
     {
@@ -569,7 +589,11 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Diagnosis.GetById",
+            "Diagnosis.Search",
+            "Diagnosis.Update",
+            "Diagnosis.Delete"
         ]
     }
 ]

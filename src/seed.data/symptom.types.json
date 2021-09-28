@@ -1,0 +1,74 @@
+[
+    {
+        "Symptom": "Sudden weight gain in last 24 hours",
+        "Description": "An increase in weight as a result of water retention",
+        "Tags": "Weight gain, Body water retention, Heart failure",
+        "Image": "weight_change.png"
+    },
+    {
+        "Symptom": "Chest pain or pain in jaw, shoulder or arm",
+        "Description": "Acute, continuous pain in chest, jaw or arm",
+        "Tags": "Chest pain, Pain in arm, Pain in jaw, Heart failure",
+        "Image": "chest_pain.png"
+    },
+    {
+        "Symptom": "Shortness of breath",
+        "Description": "Inability to breathe effortlessly. Breathlessness",
+        "Tags": "Breathlessness, Laboured breathing, Heart failure",
+        "Image": "shortness_of_breath.png"
+    },
+    {
+        "Symptom": "Dizziness or loss of consciousness",
+        "Description": "Dizziness, light headedness, or complete loss of conciousness for a period.",
+        "Tags": "Dizziness, Lightheadedness, Unconscious, Heart failure",
+        "Image": "dizzyness.png"
+    },
+    {
+        "Symptom": "Extreme Fatigue",
+        "Description": "Lack of energy, Tiredness, Loss of strength and Physical enthusiasm",
+        "Tags": "Fatigue, Lack of energy, Tiredness, Loss of strength, Heart failure",
+        "Image": "extreme_fatigue.png"
+    },
+    {
+        "Symptom": "Dry or frequent hacking cough",
+        "Description": "Frequent/repeated coughing",
+        "Tags": "Dry cough, Heart failure",
+        "Image": "cough.png"
+    },
+    {
+        "Symptom": "Increased swelling of legs, feet or ankles",
+        "Description": "Increased swelling of lower body parts",
+        "Tags": "Swelling of feet, Swelling of ankles, Heart failure",
+        "Image": "swelling_of_feet.png"
+    },
+    {
+        "Symptom": "Discomfort in abdomen or nausea",
+        "Description": "Uncomfortable feeling from abdomen area",
+        "Tags": "Nausea, Heart failure",
+        "Image": "nausea.png"
+    },
+    {
+        "Symptom": "Trouble sleeping",
+        "Description": "Inability to sleep without efforts, keeping awake for longer duration before falling asleep.",
+        "Tags": "Sleeplessness, Heart failure",
+        "Image": "sleeplessness.png"
+    },
+    {
+        "Symptom": "Frequent urination",
+        "Description": "Urinating frequently more than usual",
+        "Tags": "Frequent urination, Frequent toilet visits, Heart failure",
+        "Image": "urination.png"
+    },
+    {
+        "Symptom": "Extreme thirst",
+        "Description": "Feeling extreme thirst",
+        "Tags": "Thirst, Heart failure",
+        "Image": "thirst.png"
+    },
+    {
+        "Symptom": "Tingling or numbness in feet",
+        "Description": "Frequent numbness in feet and tingling sensation.",
+        "Tags": "Tingling sensation in feet, Numbness of feet, Heart failure",
+        "Image": "numbness_in_feet.png"
+    }
+]

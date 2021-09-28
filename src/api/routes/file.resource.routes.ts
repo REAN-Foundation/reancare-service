@@ -31,6 +31,8 @@ export const register = (app: express.Application): void => {
     router.post('/upload', authenticator.authenticateClient, authenticator.authenticateUser, controller.upload);
     router.post('/:id/rename/:newFileName', authenticator.authenticateClient, authenticator.authenticateUser, controller.rename);
 
+    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
+
     //#endregion
 
     //#region Download routes

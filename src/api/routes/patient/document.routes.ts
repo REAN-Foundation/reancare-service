@@ -1,0 +1,19 @@
+import express from 'express';
+import { DocumentController } from '../../controllers/patient/document.controller';
+import { Loader } from '../../../startup/loader';
+
+///////////////////////////////////////////////////////////////////////////////////
+
+export const register = (app: express.Application): void => {
+
+    const router = express.Router();
+    const authenticator = Loader.authenticator;
+    const controller = new DocumentController();
+
+    router.post('/', authenticator.authenticateClient, controller.create);
+    router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
+    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
+    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+
+    app.use('/api/v1/patient/document', router);
+};

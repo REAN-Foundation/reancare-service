@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d0eea2af-06ac-4dd9-8372-2da743a55642",
+		"_postman_id": "6cf69321-5e14-4133-8d5b-efe9019be013",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2118,15 +2118,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2641,10 +2632,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -12660,6 +12647,302 @@
 								"resources",
 								"download-public",
 								"{{UPLOADED_RESOURCE_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Patient document",
+			"item": [
+				{
+					"name": "Add patient document details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();",
+									"",
+									"try {",
+									"    pm.environment.set(\"PATIENT_DOCUMENT_ID\", jsonRes.Data.Document.id);",
+									"}",
+									"catch (error) {",
+									"    console.log(error.message);",
+									"}",
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"New Document record is created\", function () {",
+									"",
+									"    var expectedMedicalPractitionerUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+									"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+									"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Document');",
+									"    pm.expect(jsonRes.Data.Document).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('id');",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('MedicalPractitionerUserId');",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('PatientUserId');",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('ResourceId');",
+									"",
+									"    ",
+									"    pm.expect(jsonRes.Data.Document.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
+									"    pm.expect(jsonRes.Data.Document.PatientUserId).equals(expectedPatientUserId);",
+									"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId);    ",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"DocumentType\": \"Lab\",\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"MedicalPractitionerUserId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"MedicalPractionerRole\": \"Patient\",\n    \"UploadedByUserId\":\"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedVisitId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedVisitType\": \"Doctor\",\n    \"AssociatedOrderId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedOrderType\": \"Drug\",\n    \"FileName\": \"Lab report\",\n    \"ResourceId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AuthenticatedUrl\": \"http://localhost:7272\",\n    \"MimeType\": \"abcd\",\n    \"SizeInKBytes\": 10.2,\n    \"RecordDate\": \"2021-09-23\",\n    \"UploadedDate\": \"2021-09-24\"\n}\n"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/document",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get patient document by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Document record is returned\", function () {",
+									"",
+									"    var expectedMedicalPractitionerUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+									"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+									"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Document');",
+									"    pm.expect(jsonRes.Data.Document).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('id');",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('MedicalPractitionerUserId');",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('PatientUserId');",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('ResourceId');",
+									" ",
+									"    pm.expect(jsonRes.Data.Document.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
+									"    pm.expect(jsonRes.Data.Document.PatientUserId).equals(expectedPatientUserId);",
+									"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId); ",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/patient/document/{{PATIENT_DOCUMENT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"document",
+								"{{PATIENT_DOCUMENT_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update patient document by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Updated document record is returned\", function () {",
+									"",
+									"    var expectedMedicalPractitionerUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+									"    var expectedRecordDate = \"2021-09-24T00:00:00.000Z\";",
+									"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+									"",
+									"     var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Document');",
+									"    pm.expect(jsonRes.Data.Document).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('id');",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('MedicalPractitionerUserId');",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('RecordDate');",
+									"    pm.expect(jsonRes.Data.Document).to.have.property('ResourceId');",
+									"",
+									"    pm.expect(jsonRes.Data.Document.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
+									"    pm.expect(jsonRes.Data.Document.PatientUserId).equals(expectedRecordDate);",
+									"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId);    ",
+									"    ",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"DocumentType\": \"LabReport\",\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"MedicalPractitionerUserId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"MedicalPractionerRole\": \"LabUser\",\n    \"UploadedByUserId\":\"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedVisitId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedVisitType\": \"Doctor\",\n    \"AssociatedOrderId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedOrderType\": \"DrugOrder\",\n    \"FileName\": \"Scan\",\n    \"ResourceId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AuthenticatedUrl\": \"http://localhost:7272\",\n    \"MimeType\": \"abcd\",\n    \"SizeInKBytes\": 15.2,\n    \"RecordDate\": \"2021-09-24\",\n    \"UploadedDate\": \"2021-09-24\"\n}\n"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patient/document/{{PATIENT_DOCUMENT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"document",
+								"{{PATIENT_DOCUMENT_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete patient document by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Document record is deleted\", function () {",
+									"",
+									"    var expectedValue = true;",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+									"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/patient/document/{{PATIENT_DOCUMENT_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patient",
+								"document",
+								"{{PATIENT_DOCUMENT_ID}}"
 							]
 						}
 					},

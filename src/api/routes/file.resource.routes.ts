@@ -46,9 +46,9 @@ export const register = (app: express.Application): void => {
     //4. tag=<>
 
     router.get('/search-download', authenticator.authenticateClient, authenticator.authenticateUser, controller.searchAndDownload);
-    router.get('/:id/download-by-version-name/:version', authenticator.authenticateClient, authenticator.authenticateUser, controller.downloadByVersionName);
-    router.get('/:id/download-by-version-id/:versionId', authenticator.authenticateClient, authenticator.authenticateUser, controller.downloadByVersionId);
-    router.get('/:id/download', authenticator.authenticateClient, authenticator.authenticateUser, controller.downloadById);
+    router.get('/:id/download-by-version-name/:version', controller.downloadByVersionName);
+    router.get('/:id/download-by-version-id/:versionId', controller.downloadByVersionId);
+    router.get('/:id/download', controller.downloadById);
 
     //#endregion
 

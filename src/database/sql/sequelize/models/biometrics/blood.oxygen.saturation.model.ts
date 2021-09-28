@@ -102,4 +102,5 @@ export default class BloodOxygenSaturation extends Model {
 
     @DeletedAt
     DeletedAt: Date;
+
 }

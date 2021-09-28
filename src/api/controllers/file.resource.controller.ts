@@ -63,6 +63,22 @@ export class FileResourceController {
         }
     };
 
+    update = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'FileResource.Update';
+            await this._authorizer.authorize(request, response);
+            
+            var updateModel = await FileResourceValidator.update(request);
+            const dto = await this._service.update(updateModel.ResourceId, updateModel);
+            
+            ResponseHandler.success(request, response, 'File resource updated successfully!', 200, {
+                FileResource : dto,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     uploadVersion = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'FileResource.UploadVersion';

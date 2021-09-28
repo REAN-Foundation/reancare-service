@@ -1,5 +1,6 @@
 import { Roles } from "../domain.types/role/role.types";
 import { injectable, inject } from "tsyringe";
+import path from "path";
 import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
 import { IRolePrivilegeRepo } from "../database/repository.interfaces/role.privilege.repo.interface";
 import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
@@ -14,23 +15,32 @@ import { Loader } from "./loader";
 import { PatientService } from "../services/patient/patient.service";
 import { UserService } from "../services/user.service";
 import { RoleService } from "../services/role.service";
+import { SymptomAssessmentTemplateService } from "../services/clinical/symptom/symptom.assessment.template.service";
 import { Helper } from "../common/helper";
 import { PersonService } from "../services/person.service";
 import { HealthProfileService } from "../services/patient/health.profile.service";
 import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
 import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
-import { IMedicationStockImageRepo } from "../database/repository.interfaces/medication/medication.stock.image.repo.interface";
+import { IMedicationStockImageRepo } from "../database/repository.interfaces/clinical/medication/medication.stock.image.repo.interface";
+import { ISymptomTypeRepo } from "../database/repository.interfaces/clinical/symptom/symptom.type.repo.interface";
+import { ISymptomAssessmentTemplateRepo } from "../database/repository.interfaces/clinical/symptom/symptom.assessment.template.repo.interface";
+import { SymptomTypeService } from "../services/clinical/symptom/symptom.type.service";
+import { FileResourceService } from "../services/file.resource.service";
+import { SymptomTypeDomainModel } from "../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model";
+import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model";
+import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/symptom.type/symptom.type.search.types";
 
-import * as RolePrivilegesList from '../assets/seed.data/role.privileges.json';
-import * as SeededInternalClients from '../assets/seed.data/internal.clients.seed.json';
-import * as SeededSystemAdmin from '../assets/seed.data/system.admin.seed.json';
-import * as SeededInternalTestsUsers from '../assets/seed.data/internal.test.users.seed.sample.json';
+import * as RolePrivilegesList from '../seed.data/role.privileges.json';
+import * as SeededInternalClients from '../seed.data/internal.clients.seed.json';
+import * as SeededSystemAdmin from '../seed.data/system.admin.seed.json';
+import * as SeededInternalTestsUsers from '../seed.data/internal.test.users.seed.sample.json';
+import * as SeededSymptomTypes from '../seed.data/symptom.types.json';
+import * as SeededAssessmentTemplates from '../seed.data/symptom.assessment.templates.json';
 
-// import path from "path";
 // import * as fs from "fs";
 // import {
 //     MedicationStockImageDomainModel
-// } from "../domain.types/medication/medication.stock.image/medication.stock.image.domain.model";
+// } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +59,11 @@ export class Seeder {
 
     _patientHealthProfileService: HealthProfileService = null;
 
-    //_fileResourceService: FileResourceService = null;
+    _symptomTypeService: SymptomTypeService = null;
+
+    _symptomAssessmentTemplateService: SymptomAssessmentTemplateService = null;
+
+    _fileResourceService: FileResourceService = null;
 
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
@@ -59,7 +73,9 @@ export class Seeder {
         @inject('IRolePrivilegeRepo') private _rolePrivilegeRepo: IRolePrivilegeRepo,
         @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
         @inject('IMedicationStockImageRepo') private _medicationStockImageRepo: IMedicationStockImageRepo,
-        @inject('IInternalTestUserRepo') private _internalTestUserRepo: IInternalTestUserRepo
+        @inject('ISymptomTypeRepo') private _symptomTypeRepo: ISymptomTypeRepo,
+        @inject('IInternalTestUserRepo') private _internalTestUserRepo: IInternalTestUserRepo,
+        @inject('ISymptomAssessmentTemplateRepo') private _symptomAssessmentTemplateRepo: ISymptomAssessmentTemplateRepo,
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -67,8 +83,9 @@ export class Seeder {
         this._userService = Loader.container.resolve(UserService);
         this._roleService = Loader.container.resolve(RoleService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
-
-        //this._fileResourceService = Loader.container.resolve(FileResourceService);
+        this._fileResourceService = Loader.container.resolve(FileResourceService);
+        this._symptomTypeService = Loader.container.resolve(SymptomTypeService);
+        this._symptomAssessmentTemplateService = Loader.container.resolve(SymptomAssessmentTemplateService);
     }
 
     public init = async (): Promise<void> => {
@@ -79,6 +96,8 @@ export class Seeder {
             await this.seedSystemAdmin();
             await this.seedInternalPatients();
             await this.seedMedicationStockImages();
+            await this.seedSymptomTypes();
+            await this.seedSymptomAsseessmentTemplates();
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -349,6 +368,81 @@ export class Seeder {
         //         Logger.instance().log('Error occurred while seeding medication stock images!');
         //     }
         // }
+    }
+
+    public seedSymptomTypes = async () => {
+
+        const count = await this._symptomTypeRepo.totalCount();
+        if (count > 0) {
+            Logger.instance().log("Symptom types have already been seeded!");
+            return;
+        }
+
+        Logger.instance().log('Seeding symptom types...');
+
+        const arr = SeededSymptomTypes['default'];
+
+        for (let i = 0; i < arr.length; i++) {
+            var t = arr[i];
+            var tokens = t['Tags'] ? t['Tags'].split(',') : [];
+
+            //TODO: Commented till storage is enabled
+            //var imageName = t['Image'] ? t['Image'] : null;
+            //var resourceId = await this.getImageResourceIdForSymptomType(imageName);
+            var resourceId = null;
+
+            const model: SymptomTypeDomainModel = {
+                Symptom         : t['Symptom'],
+                Description     : t['Description'],
+                Tags            : tokens,
+                ImageResourceId : resourceId
+            };
+            await this._symptomTypeService.create(model);
+        }
+    }
+    
+    getImageResourceIdForSymptomType = async (fileName) => {
+        if (fileName === null) {
+            return null;
+        }
+        var storagePath = 'assets/images/symptom_images/' + fileName;
+        var sourceFileLocation = path.join(process.cwd(), "./assets/images/symptom.images/", fileName);
+        var uploaded = await this._fileResourceService.uploadLocal(sourceFileLocation, storagePath, true);
+        return uploaded.id;
+    }
+
+    public seedSymptomAsseessmentTemplates = async () => {
+    
+        const count = await this._symptomAssessmentTemplateRepo.totalCount();
+        if (count > 0) {
+            Logger.instance().log("Symptom based assessment templates have already been seeded!");
+            return;
+        }
+        Logger.instance().log('Seeding symptom assessment templates...');
+
+        const arr = SeededAssessmentTemplates['default'];
+
+        for (let i = 0; i < arr.length; i++) {
+            var t = arr[i];
+            var tokens = t['Tags'] ? t['Tags'].split(',').map(x => x.trim()) : [];
+            const model: SymptomAssessmentTemplateDomainModel = {
+                Title       : t['Title'],
+                Description : t['Description'],
+                Tags        : tokens,
+            };
+            var template = await this._symptomAssessmentTemplateService.create(model);
+
+            if (template.Title === 'Heart Failure Symptoms Assessment') {
+                var filters: SymptomTypeSearchFilters = {
+                    Tag : 'Heart failure'
+                };
+                var searchResults = await this._symptomTypeService.search(filters);
+                var symptomTypeIds = searchResults.Items.map(x => x.id);
+                if (symptomTypeIds.length > 0) {
+                    await this._symptomAssessmentTemplateService.addSymptomTypes(template.id, symptomTypeIds);
+                }
+            }
+        }
     }
 
 }

@@ -19,12 +19,16 @@ import { register as registerBodyTemperatureRoutes } from './biometrics/body.tem
 import { register as registerMoveMinutesRoutes } from './daily.records/move.minutes.routes';
 import { register as registerCalorieBalanceRoute } from './daily.records/calorie.balance.routes';
 import { register as registerComplaintRoutes } from './patient/complaint.routes';
-import { register as registerAllergyRoutes } from './patient/allergy.route';
+import { register as registerAllergyRoutes } from './patient/allergy.routes';
 import { register as registerHeartPointRoutes } from './daily.records/heart.points.routes';
 import { register as registerSleepRoutes } from './daily.records/sleep.routes';
 import { register as registerEmergencyEventRoutes } from './emergency.event.routes';
 import { register as registerMeditationtRoutes } from './exercise/meditation.routes';
 import { register as registerPatientDocumentRoutes } from './patient/document.routes';
+import { register as registerSymptomTypeRoutes } from './clinical/symptom/symptom.type.routes';
+import { register as registerSymptomRoutes } from './clinical/symptom/symptom.routes';
+import { register as registerSymptomAssessmentRoutes } from './clinical/symptom/symptom.assessment.routes';
+import { register as registerSymptomAssessmentTemplateRoutes } from './clinical/symptom/symptom.assessment.template.routes';
 
 import { Logger } from "../../common/logger";
 
@@ -75,6 +79,10 @@ export class Router {
                 registerEmergencyEventRoutes(this._app);
                 registerMeditationtRoutes(this._app);
                 registerPatientDocumentRoutes(this._app);
+                registerSymptomTypeRoutes(this._app);
+                registerSymptomRoutes(this._app);
+                registerSymptomAssessmentRoutes(this._app);
+                registerSymptomAssessmentTemplateRoutes(this._app);
 
                 resolve(true);
 

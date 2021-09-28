@@ -1,0 +1,37 @@
+[
+    {
+        "ClientCode": "REANINTR",
+        "ClientName": "REAN Foundation - Internal API client",
+        "Email": "kiran.kharade@reanfoundation.org",
+        "Password": "iSPqAb0A",
+        "ApiKey": "V7W1WE8-Y2GMGXT-G78VZPB-HBC3AWH"
+    },
+    {
+        "ClientCode": "REANPTNT",
+        "ClientName": "REAN Foundation - Patient App",
+        "Email": "tushar.katakdound@reanfoundation.org",
+        "Password": "iAWM2O3X",
+        "ApiKey": "MNTYPFS-2X049S2-NEC7RAB-A53M8KY"
+    },
+    {
+        "ClientCode": "REANDCTR",
+        "ClientName": "REAN Foundation - Doctor App",
+        "Email": "tushar.katakdound@reanfoundation.org",
+        "Password": "UEkmueVB",
+        "ApiKey": "CWCVF4H-84Y4ZJH-M9HQRJV-S0QYBAJ"
+    },
+    {
+        "ClientCode": "REANALAB",
+        "ClientName": "REAN Foundation - Lab App",
+        "Email": "kiran.kharade@reanfoundation.org",
+        "Password": "kru4fvz6",
+        "ApiKey": "SE2AGSS-Q724P27-PZ5VFZP-PXQ2995"
+    },
+    {
+        "ClientCode": "REANPHRM",
+        "ClientName": "REAN Foundation - Pharmacy App",
+        "Email": "kiran.kharade@reanfoundation.org",
+        "Password": "ihJVaqO9",
+        "ApiKey": "2N4PZFK-P9HMJFZ-MNVXYER-BJ4PEP8"
+    }
+]

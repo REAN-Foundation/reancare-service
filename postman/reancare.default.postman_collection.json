@@ -15061,6 +15061,35 @@
 									"catch (error) {\r",
 									"    console.log(error.message);\r",
 									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"File is uploaded\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('FileResources');\r",
+									"    pm.expect(jsonRes.Data.FileResources.length).greaterThan(0);\r",
+									"\r",
+									"    var resource = jsonRes.Data.FileResources[0];\r",
+									"\r",
+									"    pm.expect(resource).to.have.property('id');\r",
+									"    pm.expect(resource).to.have.property('FileName');\r",
+									"    pm.expect(resource).to.have.property('Url');\r",
+									"    pm.expect(resource).to.have.property('UploadedByUserId');\r",
+									"    pm.expect(resource).to.have.property('MimeType');\r",
+									"    pm.expect(resource).to.have.property('Versions');\r",
+									"    pm.expect(resource).to.have.property('Tags');\r",
+									"    pm.expect(resource).to.have.property('References');\r",
+									"    pm.expect(resource).to.have.property('DefaultVersion');\r",
+									"\r",
+									"    pm.expect(resource.Versions.length).greaterThan(0);\r",
+									"});\r",
+									"\r",
 									""
 								],
 								"type": "text/javascript"
@@ -15126,6 +15155,36 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"File is uploaded as public resource\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('FileResources');\r",
+									"    pm.expect(jsonRes.Data.FileResources.length).greaterThan(0);\r",
+									"\r",
+									"    var resource = jsonRes.Data.FileResources[0];\r",
+									"\r",
+									"    pm.expect(resource).to.have.property('id');\r",
+									"    pm.expect(resource).to.have.property('FileName');\r",
+									"    pm.expect(resource).to.have.property('Url');\r",
+									"    pm.expect(resource).to.have.property('UploadedByUserId');\r",
+									"    pm.expect(resource).to.have.property('MimeType');\r",
+									"    pm.expect(resource).to.have.property('Versions');\r",
+									"    pm.expect(resource).to.have.property('Tags');\r",
+									"    pm.expect(resource).to.have.property('References');\r",
+									"    pm.expect(resource).to.have.property('IsPublicResource');\r",
+									"    pm.expect(resource).to.have.property('DefaultVersion');\r",
+									"\r",
+									"    pm.expect(resource.Versions.length).greaterThan(0);\r",
+									"    pm.expect(resource.IsPublicResource).equals(true);\r",
+									"});\r",
+									"\r",
 									""
 								],
 								"type": "text/javascript"
@@ -15157,7 +15216,7 @@
 								{
 									"key": "name",
 									"type": "file",
-									"src": "/C:/Users/kiran/Pictures/bhaiyya.png"
+									"src": "test.data/profile.images/female/7.jpg"
 								},
 								{
 									"key": "IsPublicResource",
@@ -15187,6 +15246,54 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"File is uploaded as multi-resolution image\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('FileResources');\r",
+									"    pm.expect(jsonRes.Data.FileResources.length).greaterThan(0);\r",
+									"\r",
+									"    var resource = jsonRes.Data.FileResources[0];\r",
+									"\r",
+									"    pm.expect(resource).to.have.property('id');\r",
+									"    pm.expect(resource).to.have.property('FileName');\r",
+									"    pm.expect(resource).to.have.property('Url');\r",
+									"    pm.expect(resource).to.have.property('UploadedByUserId');\r",
+									"    pm.expect(resource).to.have.property('MimeType');\r",
+									"    pm.expect(resource).to.have.property('Versions');\r",
+									"    pm.expect(resource).to.have.property('Tags');\r",
+									"    pm.expect(resource).to.have.property('References');\r",
+									"    pm.expect(resource).to.have.property('IsPublicResource');\r",
+									"    pm.expect(resource).to.have.property('DefaultVersion');\r",
+									"\r",
+									"    pm.expect(resource.Versions.length).equals(3);\r",
+									"\r",
+									"    var firstVersion = resource.Versions[0];\r",
+									"    var secondVersion = resource.Versions[1];\r",
+									"    var thirdVersion = resource.Versions[2];\r",
+									"    \r",
+									"    pm.expect(firstVersion).to.have.property('VersionId');\r",
+									"    pm.expect(firstVersion).to.have.property('ResourceId');\r",
+									"    pm.expect(firstVersion).to.have.property('Version');\r",
+									"    pm.expect(firstVersion).to.have.property('Url');\r",
+									"    \r",
+									"    pm.expect(secondVersion).to.have.property('VersionId');\r",
+									"    pm.expect(secondVersion).to.have.property('ResourceId');\r",
+									"    pm.expect(secondVersion).to.have.property('Version');\r",
+									"    pm.expect(secondVersion).to.have.property('Url');\r",
+									"    \r",
+									"    pm.expect(thirdVersion).to.have.property('VersionId');\r",
+									"    pm.expect(thirdVersion).to.have.property('ResourceId');\r",
+									"    pm.expect(thirdVersion).to.have.property('Version');\r",
+									"    pm.expect(thirdVersion).to.have.property('Url');\r",
+									"\r",
+									"});\r",
 									""
 								],
 								"type": "text/javascript"
@@ -15218,7 +15325,7 @@
 								{
 									"key": "name",
 									"type": "file",
-									"src": "test.data/profile.images/female/1.jpg"
+									"src": "test.data/profile.images/female/23.jpg"
 								},
 								{
 									"key": "IsPublicResource",
@@ -15271,6 +15378,35 @@
 									"catch (error) {\r",
 									"    console.log(error.message);\r",
 									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"References and tags are added to resource\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('FileResource');\r",
+									"\r",
+									"    var resource = jsonRes.Data.FileResource;\r",
+									"\r",
+									"    pm.expect(resource).to.have.property('id');\r",
+									"    pm.expect(resource).to.have.property('FileName');\r",
+									"    pm.expect(resource).to.have.property('Url');\r",
+									"    pm.expect(resource).to.have.property('UploadedByUserId');\r",
+									"    pm.expect(resource).to.have.property('MimeType');\r",
+									"    pm.expect(resource).to.have.property('Versions');\r",
+									"    pm.expect(resource).to.have.property('Tags');\r",
+									"    pm.expect(resource).to.have.property('References');\r",
+									"    pm.expect(resource).to.have.property('IsPublicResource');\r",
+									"    pm.expect(resource).to.have.property('DefaultVersion');\r",
+									"\r",
+									"    pm.expect(resource.References.length).greaterThan(0);\r",
+									"    pm.expect(resource.Tags.length).greaterThan(0);\r",
+									"\r",
+									"});\r",
 									""
 								],
 								"type": "text/javascript"
@@ -15331,7 +15467,36 @@
 									"}\r",
 									"catch (error) {\r",
 									"    console.log(error.message);\r",
-									"}"
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"A new file version is uploaded\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('FileResource');\r",
+									"\r",
+									"    var resource = jsonRes.Data.FileResource;\r",
+									"\r",
+									"    pm.expect(resource).to.have.property('id');\r",
+									"    pm.expect(resource).to.have.property('FileName');\r",
+									"    pm.expect(resource).to.have.property('Url');\r",
+									"    pm.expect(resource).to.have.property('UploadedByUserId');\r",
+									"    pm.expect(resource).to.have.property('MimeType');\r",
+									"    pm.expect(resource).to.have.property('Versions');\r",
+									"    pm.expect(resource).to.have.property('Tags');\r",
+									"    pm.expect(resource).to.have.property('References');\r",
+									"    pm.expect(resource).to.have.property('IsPublicResource');\r",
+									"    pm.expect(resource).to.have.property('DefaultVersion');\r",
+									"\r",
+									"    pm.expect(resource.Versions.length).greaterThan(0);\r",
+									"\r",
+									"});\r",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -15388,6 +15553,21 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"File is renamed with new namee\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Renamed');\r",
+									"    var status = jsonRes.Data.Renamed;\r",
+									"    pm.expect(status).equals(true);\r",
+									"\r",
+									"});\r",
 									""
 								],
 								"type": "text/javascript"
@@ -15398,7 +15578,7 @@
 							"script": {
 								"exec": [
 									"\r",
-									"pm.environment.set(\"RESOURCE_NEW_FILE_NAME\", \"Lab_order_y.pdf\");"
+									"pm.environment.set(\"RESOURCE_NEW_FILE_NAME\", \"2_new_name.jpg\");"
 								],
 								"type": "text/javascript"
 							}
@@ -15443,7 +15623,77 @@
 					"response": []
 				},
 				{
+					"name": "Get resource by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"A file resource by id is returned with new name\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('FileResource');\r",
+									"    var resource = jsonRes.Data.FileResource;\r",
+									"    var expectedNewFileName = pm.environment.get(\"RESOURCE_NEW_FILE_NAME\");\r",
+									"    pm.expect(resource.FileName).equals(expectedNewFileName);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{RESOURCE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Download by resource id as an attachment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -15485,6 +15735,20 @@
 				},
 				{
 					"name": "Download by respurce id for inline display",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -15526,6 +15790,20 @@
 				},
 				{
 					"name": "Download by version name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -15557,6 +15835,20 @@
 				},
 				{
 					"name": "Download by version id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -15588,6 +15880,20 @@
 				},
 				{
 					"name": "Search and download",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -15623,6 +15929,31 @@
 				},
 				{
 					"name": "Search",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Searched resources are returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('FileResources');\r",
+									"    pm.expect(resource.FileResources.TotalCount).greaterThan(0);\r",
+									"    pm.expect(resource.FileResources.Items.length).greaterThan(0);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -15658,6 +15989,37 @@
 				},
 				{
 					"name": "Get version by version id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"A file resource version is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('FileResourceVersion');\r",
+									"    var version = jsonRes.Data.FileResourceVersion;\r",
+									"    pm.expect(version).to.have.property('VersionId');\r",
+									"    pm.expect(version).to.have.property('ResourceId');\r",
+									"    pm.expect(version).to.have.property('Version');\r",
+									"    pm.expect(version).to.have.property('FileName');\r",
+									"    pm.expect(version).to.have.property('MimeType');\r",
+									"    pm.expect(version).to.have.property('OriginalName');\r",
+									"    pm.expect(version).to.have.property('Url');\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [
@@ -15689,6 +16051,29 @@
 				},
 				{
 					"name": "Get versions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"A list of file resource versions is returned\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('FileResourceVersions');\r",
+									"    var versions = jsonRes.Data.FileResourceVersions;\r",
+									"    pm.expect(versions.length).greaterThan(0);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [

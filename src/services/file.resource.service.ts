@@ -110,7 +110,9 @@ export class FileResourceService {
         if (resource === null) {
             throw new ApiError(404, "File resource not found!");
         }
-        await this._storageService.rename(resource.DefaultVersion.StorageKey, newFileName);
+
+        //await this._storageService.rename(resource.DefaultVersion.StorageKey, newFileName);
+        
         return await this._fileResourceRepo.rename(id, newFileName);
     }
 

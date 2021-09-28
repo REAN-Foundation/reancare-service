@@ -112,7 +112,12 @@
             "Biometrics.BloodPressure.GetById",
             "Biometrics.BloodPressure.Update",
             "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete"
+            "Biometrics.BloodPressure.Delete",
+            "HowDoYouFeel.Create",
+            "HowDoYouFeel.GetById",
+            "HowDoYouFeel.Search",
+            "HowDoYouFeel.Update",
+            "HowDoYouFeel.Delete"
         ]
     },
     {
@@ -229,7 +234,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "HowDoYouFeel.Create",
+            "HowDoYouFeel.GetById",
+            "HowDoYouFeel.Search",
+            "HowDoYouFeel.Update",
+            "HowDoYouFeel.Delete"
         ]
     },
     {
@@ -349,7 +359,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "HowDoYouFeel.Create",
+            "HowDoYouFeel.GetById",
+            "HowDoYouFeel.Search",
+            "HowDoYouFeel.Update",
+            "HowDoYouFeel.Delete"
         ]
     },
     {
@@ -459,7 +474,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "HowDoYouFeel.Create",
+            "HowDoYouFeel.GetById",
+            "HowDoYouFeel.Search",
+            "HowDoYouFeel.Update",
+            "HowDoYouFeel.Delete"
         ]
     },
     {
@@ -569,7 +589,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "HowDoYouFeel.Create",
+            "HowDoYouFeel.GetById",
+            "HowDoYouFeel.Search",
+            "HowDoYouFeel.Update",
+            "HowDoYouFeel.Delete"
         ]
     }
 ]

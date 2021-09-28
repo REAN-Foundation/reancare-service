@@ -85,7 +85,7 @@ export default class HowDoYouFeel extends Model {
     @ForeignKey(() => SymptomAssessment)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     SymptomAssessmentId: string;
 

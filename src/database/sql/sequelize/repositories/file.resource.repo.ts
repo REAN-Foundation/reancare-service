@@ -19,10 +19,10 @@ export class FileResourceRepo implements IFileResourceRepo {
         try {
 
             const entity = {
-                FileName               : domainModel.FileMetadata.FileName,
+                FileName               : domainModel.FileMetadata.OriginalName,
                 OwnerUserId            : domainModel.OwnerUserId ?? null,
                 UploadedByUserId       : domainModel.UploadedByUserId ?? null,
-                IsPublic               : domainModel.IsPublicResource ?? false,
+                IsPublicResource       : domainModel.IsPublicResource ?? false,
                 IsMultiResolutionImage : domainModel.IsMultiResolutionImage ?? false,
                 Tags                   : null,
                 MimeType               : domainModel.MimeType ?? null,
@@ -82,9 +82,10 @@ export class FileResourceRepo implements IFileResourceRepo {
         if (addReferences) {
             for await (var reference of model.References) {
                 const ref = await FileResourceReference.create({
-                    ResourceId      : id,
-                    ReferenceItemId : reference.ItemId,
-                    ReferenceType   : reference.ItemType
+                    ResourceId  : id,
+                    ReferenceId : reference.ItemId,
+                    Type        : reference.ItemType,
+                    Keyword     : reference.Keyword
                 });
                 references.push(ref);
             }
@@ -116,7 +117,7 @@ export class FileResourceRepo implements IFileResourceRepo {
             },
             order : [['UpdatedAt', 'DESC']]
         });
-        dto.Versions = FileResourceMapper.toFileVersionDtos(versions);
+        dto.Versions = FileResourceMapper.toFileVersionDtos(versions, true);
         
         return dto;
     }
@@ -385,6 +386,8 @@ export class FileResourceRepo implements IFileResourceRepo {
                 as    : 'DefaultVersion'
             }
         ];
+
+        search['distinct'] = true;
 
         return search;
     }

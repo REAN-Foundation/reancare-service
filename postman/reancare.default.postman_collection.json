@@ -15049,17 +15049,19 @@
 							"script": {
 								"exec": [
 									"try {\r",
-									"    var jsonRespData = pm.response.json();\r",
-									"    var resources = jsonRespData.Data.FileResources;\r",
-									"    var resource = images[0];\r",
+									"    var jasonRes = pm.response.json();\r",
+									"    var resources = jasonRes.Data.FileResources;\r",
+									"    var resource = resources[0];\r",
 									"    var resourceId = resource.id;\r",
 									"\r",
 									"    pm.environment.set(\"PATIENT_PROFILE_IMAGE_RESOURCE_ID\", resourceId);\r",
 									"    pm.environment.set(\"UPLOADED_RESOURCE_ID\", resourceId);\r",
+									"    pm.environment.set(\"RESOURCE_ID\", resourceId);\r",
 									"}\r",
 									"catch (error) {\r",
 									"    console.log(error.message);\r",
-									"}"
+									"}\r",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -15077,6 +15079,11 @@
 								"key": "Authorization",
 								"value": "Bearer {{PATIENT_USER_JWT}}",
 								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -15085,7 +15092,7 @@
 								{
 									"key": "Name",
 									"type": "file",
-									"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/male/14.jpg"
+									"src": "test.data/profile.images/female/2.jpg"
 								},
 								{
 									"key": "IsPublicResource",
@@ -15096,54 +15103,30 @@
 									"key": "IsMultiResolutionImage",
 									"value": "false",
 									"type": "text"
-								},
-								{
-									"key": "References",
-									"value": "",
-									"contentType": "",
-									"type": "text",
-									"disabled": true
 								}
-							],
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							]
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/file-resources/upload/",
+							"raw": "{{BASE_URL}}/file-resources/upload",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"file-resources",
-								"upload",
-								""
+								"upload"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Upload file to public",
+					"name": "Upload file as public resource",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"try {\r",
-									"    var jsonRespData = pm.response.json();\r",
-									"    var images = jsonRespData.data.details;\r",
-									"    var imageurl = images[0].Url_Public;\r",
-									"    var resourceId = images[0].ResourceId;\r",
-									"\r",
-									"    pm.environment.set(\"PATIENT_ROLE_PROFILE_IMAGE_URL\", imageurl);\r",
-									"    pm.environment.set(\"UPLOADED_RESOURCE_ID\", resourceId);\r",
-									"}\r",
-									"catch (error) {\r",
-									"    console.log(error.message);\r",
-									"}"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -15159,7 +15142,12 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{PATIENT_ROLE_JWT}}",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
 								"type": "text"
 							}
 						],
@@ -15169,10 +15157,10 @@
 								{
 									"key": "name",
 									"type": "file",
-									"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/male/14.jpg"
+									"src": "/C:/Users/kiran/Pictures/bhaiyya.png"
 								},
 								{
-									"key": "isPublicResource",
+									"key": "IsPublicResource",
 									"value": "true",
 									"type": "text"
 								}
@@ -15199,18 +15187,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"try {\r",
-									"    var jsonRespData = pm.response.json();\r",
-									"    var images = jsonRespData.data.details;\r",
-									"    var imageurl = images[0].Url_Public;\r",
-									"    var resourceId = images[0].ResourceId;\r",
-									"\r",
-									"    pm.environment.set(\"PATIENT_ROLE_PROFILE_IMAGE_URL\", imageurl);\r",
-									"    pm.environment.set(\"UPLOADED_RESOURCE_ID\", resourceId);\r",
-									"}\r",
-									"catch (error) {\r",
-									"    console.log(error.message);\r",
-									"}"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -15226,7 +15203,12 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{PATIENT_ROLE_JWT}}",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
 								"type": "text"
 							}
 						],
@@ -15236,10 +15218,15 @@
 								{
 									"key": "name",
 									"type": "file",
-									"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/male/14.jpg"
+									"src": "test.data/profile.images/female/1.jpg"
 								},
 								{
-									"key": "isPublicResource",
+									"key": "IsPublicResource",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "IsMultiResolutionImage",
 									"value": "true",
 									"type": "text"
 								}
@@ -15266,27 +15253,24 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"try {\r",
+									"    var jasonRes = pm.response.json();\r",
+									"    var resource = jasonRes.Data.FileResource;\r",
 									"\r",
-									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Status).to.eql('success');\r",
-									"});\r",
+									"    var reference = resource.References[0];\r",
+									"    var referenceId = reference.ItemId;\r",
+									"    var referenceType = reference.ItemType;\r",
+									"    var referenceKeyword = reference.Keyword;\r",
+									"    pm.environment.set(\"RESOURCE_REFERENCE_ID\", referenceId);\r",
+									"    pm.environment.set(\"RESOURCE_REFERENCE_TYPE\", referenceType);\r",
+									"    pm.environment.set(\"RESOURCE_REFERENCE_KEYWORD\", referenceKeyword);\r",
 									"\r",
-									"pm.test(\"Assessment template is updated\", function () {\r",
-									"\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.expect(jsonRes.Data).to.have.property('SymptomAssessmentTemplate');\r",
-									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('id');\r",
-									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Title');\r",
-									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Description');\r",
-									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Tags');\r",
-									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('TemplateSymptomTypes');\r",
-									"\r",
-									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate.Description).equals(\"This is updated description of the template.\");\r",
-									"    var previousTagCount = 2;\r",
-									"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate.Tags.length).greaterThan(previousTagCount);\r",
-									"});\r",
+									"    var tag = resource.Tags[0];\r",
+									"    pm.environment.set(\"RESOURCE_TAG\", tag);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
 									""
 								],
 								"type": "text/javascript"
@@ -15317,13 +15301,13 @@
 							"raw": "{\n    \"References\": [\n        {\n            \"ItemId\": \"{{BIOMETRICS_BLOOD_PRESSURE_ID}}\",\n            \"ItemType\": \"Biometrics\",\n            \"Keyword\": \"Blood pressure\"\n        }\n    ],\n    \"Tags\": [\n        \"First tag\",\n        \"Second tag\"\n    ]\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/file-resources/{{UPLOADED_RESOURCE_ID}}",
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"file-resources",
-								"{{UPLOADED_RESOURCE_ID}}"
+								"{{RESOURCE_ID}}"
 							]
 						}
 					},
@@ -15337,13 +15321,13 @@
 							"script": {
 								"exec": [
 									"try {\r",
-									"    var jsonRespData = pm.response.json();\r",
-									"    var images = jsonRespData.data.details;\r",
-									"    var imageurl = images[0].Url_Public;\r",
-									"    var resourceId = images[0].ResourceId;\r",
+									"    var jasonRes = pm.response.json();\r",
+									"    var resource = jasonRes.Data.FileResource;\r",
+									"    var version = resource.DefaultVersion;\r",
 									"\r",
-									"    pm.environment.set(\"PATIENT_ROLE_PROFILE_IMAGE_URL\", imageurl);\r",
-									"    pm.environment.set(\"UPLOADED_RESOURCE_ID\", resourceId);\r",
+									"    pm.environment.set(\"RESOURCE_VERSION\", version.Version);\r",
+									"    pm.environment.set(\"RESOURCE_VERSION_ID\", version.VersionId);\r",
+									"\r",
 									"}\r",
 									"catch (error) {\r",
 									"    console.log(error.message);\r",
@@ -15363,7 +15347,12 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{PATIENT_ROLE_JWT}}",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
 								"type": "text"
 							}
 						],
@@ -15373,22 +15362,18 @@
 								{
 									"key": "name",
 									"type": "file",
-									"src": "/D:/1x_ReanFoundation/code/reancare-api-internal/postman/profile_images/male/14.jpg"
-								},
-								{
-									"key": "isPublicResource",
-									"value": "true",
-									"type": "text"
+									"src": "test.data/profile.images/female/4.jpg"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/file-resources/upload-version/",
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}/upload-version/",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"file-resources",
+								"{{RESOURCE_ID}}",
 								"upload-version",
 								""
 							]
@@ -15397,19 +15382,396 @@
 					"response": []
 				},
 				{
-					"name": "Download file",
+					"name": "Rename file",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.environment.set(\"RESOURCE_NEW_FILE_NAME\", \"Lab_order_y.pdf\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
-						"method": "GET",
-						"header": [],
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
-							"raw": "{{BASE_URL}}/resources/download-public/{{UPLOADED_RESOURCE_ID}}",
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}/rename/{{RESOURCE_NEW_FILE_NAME}}",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"resources",
-								"download-public",
-								"{{UPLOADED_RESOURCE_ID}}"
+								"file-resources",
+								"{{RESOURCE_ID}}",
+								"rename",
+								"{{RESOURCE_NEW_FILE_NAME}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download by resource id as an attachment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}/download?disposition=attachment",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{RESOURCE_ID}}",
+								"download"
+							],
+							"query": [
+								{
+									"key": "disposition",
+									"value": "attachment"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download by respurce id for inline display",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}/download?disposition=inline",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{RESOURCE_ID}}",
+								"download"
+							],
+							"query": [
+								{
+									"key": "disposition",
+									"value": "inline"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download by version name",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}/download-by-version-name/{{RESOURCE_VERSION}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{RESOURCE_ID}}",
+								"download-by-version-name",
+								"{{RESOURCE_VERSION}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download by version id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}/download-by-version-id/{{RESOURCE_VERSION_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{RESOURCE_ID}}",
+								"download-by-version-id",
+								"{{RESOURCE_VERSION_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search and download",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/search-download?referenceId={{RESOURCE_REFERENCE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"search-download"
+							],
+							"query": [
+								{
+									"key": "referenceId",
+									"value": "{{RESOURCE_REFERENCE_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/search?referenceId={{RESOURCE_REFERENCE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"search"
+							],
+							"query": [
+								{
+									"key": "referenceId",
+									"value": "{{RESOURCE_REFERENCE_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get version by version id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}/versions/{{RESOURCE_VERSION_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{RESOURCE_ID}}",
+								"versions",
+								"{{RESOURCE_VERSION_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get versions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}/versions",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{RESOURCE_ID}}",
+								"versions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete version by version id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}/versions/{{RESOURCE_VERSION_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{RESOURCE_ID}}",
+								"versions",
+								"{{RESOURCE_VERSION_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete resource",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{RESOURCE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{RESOURCE_ID}}"
 							]
 						}
 					},

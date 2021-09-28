@@ -48,6 +48,7 @@ export interface TemporaryFoldersConfig {
 }
 
 export interface Configurations {
+    BaseUrl: string;
     Auth: AuthConfig;
     Database: DatabaseConfig;
     Ehr: EHRConfig;

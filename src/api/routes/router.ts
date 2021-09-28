@@ -28,6 +28,7 @@ import { register as registerSymptomTypeRoutes } from './clinical/symptom/sympto
 import { register as registerSymptomRoutes } from './clinical/symptom/symptom.routes';
 import { register as registerSymptomAssessmentRoutes } from './clinical/symptom/symptom.assessment.routes';
 import { register as registerSymptomAssessmentTemplateRoutes } from './clinical/symptom/symptom.assessment.template.routes';
+import { register as registerFileResourceRoutes } from './file.resource.routes';
 
 import { Logger } from "../../common/logger";
 
@@ -81,6 +82,7 @@ export class Router {
                 registerSymptomRoutes(this._app);
                 registerSymptomAssessmentRoutes(this._app);
                 registerSymptomAssessmentTemplateRoutes(this._app);
+                registerFileResourceRoutes(this._app);
 
                 resolve(true);
 

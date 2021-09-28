@@ -262,7 +262,7 @@ export class FileResourceController {
             });
 
             ResponseHandler.success(request, response, 'File resource retrieved successfully!', 200, {
-                FileResource : searchResults,
+                FileResources : searchResults,
             });
 
         } catch (error) {
@@ -313,6 +313,9 @@ export class FileResourceController {
 
             //Sanitize the metadata before sending
             var sanitizedVersions = versions.map(x => {
+                if (x === null) {
+                    return null;
+                }
                 x.StorageKey = null;
                 x.SourceFilePath = null;
                 return x;
@@ -421,17 +424,23 @@ export class FileResourceController {
     }
 
     private sanitizeDto(dto: FileResourceDto): FileResourceDto {
-        dto.DefaultVersion.StorageKey = null;
-        dto.DefaultVersion.SourceFilePath = null;
+        if (dto !== null && dto.DefaultVersion) {
+            dto.DefaultVersion.StorageKey = null;
+            dto.DefaultVersion.SourceFilePath = null;
+        }
         return dto;
     }
 
     private sanitizeDetailsDto(dto: FileResourceDetailsDto): FileResourceDetailsDto {
-        dto.DefaultVersion.StorageKey = null;
+        if (dto && dto.DefaultVersion) {
+            dto.DefaultVersion.StorageKey = null;
+        }
         if (dto.Versions && dto.Versions.length > 0) {
             dto.Versions.forEach(x => {
-                x.StorageKey = null;
-                x.SourceFilePath = null;
+                if (x !== null) {
+                    x.StorageKey = null;
+                    x.SourceFilePath = null;
+                }
             });
         }
         return dto;

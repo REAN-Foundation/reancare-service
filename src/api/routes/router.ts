@@ -21,10 +21,14 @@ import { register as registerCalorieBalanceRoute } from './daily.records/calorie
 import { register as registerComplaintRoutes } from './patient/complaint.routes';
 import { register as registerAllergyRoutes } from './patient/allergy.route';
 import { register as registerHeartPointRoutes } from './daily.records/heart.points.routes';
+import { register as registerWaterConsumptionRoutes } from './nutrition/water.consumption.routes';
+import { register as registerEmergencyContactRoutes } from './patient/emergency.contact.route';
 import { register as registerSleepRoutes } from './daily.records/sleep.routes';
 import { register as registerEmergencyEventRoutes } from './emergency.event.routes';
 import { register as registerMeditationtRoutes } from './exercise/meditation.routes';
 import { register as registerHowDoYouFeelRoutes } from './symptom/howDoYouFeel/howDoYouFeel.routes';
+import { register as registerDrugRoutes } from './medication/drug.routes';
+import { register as registerUserDeviceDetailsRoutes } from './user.device.details.routes';
 
 import { Logger } from "../../common/logger";
 
@@ -71,10 +75,14 @@ export class Router {
                 registerComplaintRoutes(this._app);
                 registerAllergyRoutes(this._app);
                 registerHeartPointRoutes(this._app);
+                registerWaterConsumptionRoutes(this._app);
+                registerEmergencyContactRoutes(this._app);
                 registerSleepRoutes(this._app);
                 registerEmergencyEventRoutes(this._app);
                 registerMeditationtRoutes(this._app);
                 registerHowDoYouFeelRoutes(this._app);
+                registerDrugRoutes(this._app);
+                registerUserDeviceDetailsRoutes(this._app);
 
                 resolve(true);
 

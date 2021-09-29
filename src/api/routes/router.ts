@@ -29,6 +29,7 @@ import { register as registerMeditationtRoutes } from './exercise/meditation.rou
 import { register as registerHowDoYouFeelRoutes } from './symptom/howDoYouFeel/howDoYouFeel.routes';
 import { register as registerDrugRoutes } from './medication/drug.routes';
 import { register as registerUserDeviceDetailsRoutes } from './user.device.details.routes';
+import { register as registerDiagnosisRoutes } from './diagnosis.routes';
 
 import { Logger } from "../../common/logger";
 
@@ -80,6 +81,7 @@ export class Router {
                 registerSleepRoutes(this._app);
                 registerEmergencyEventRoutes(this._app);
                 registerMeditationtRoutes(this._app);
+                registerDiagnosisRoutes(this._app);
                 registerHowDoYouFeelRoutes(this._app);
                 registerDrugRoutes(this._app);
                 registerUserDeviceDetailsRoutes(this._app);

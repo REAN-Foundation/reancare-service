@@ -39,17 +39,6 @@ export default class DailyRecordsSleep extends Model {
     id: string;
 
     @IsUUID(4)
-    @ForeignKey(() => Person)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    PersonId: string;
-
-    @BelongsTo(() => Person)
-    Person: Person;
-
-    @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,

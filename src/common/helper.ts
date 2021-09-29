@@ -6,6 +6,7 @@ import { generate } from 'generate-password';
 import { hashSync, compareSync, genSaltSync } from 'bcryptjs';
 import * as crypto from 'crypto';
 import express from 'express';
+import path from 'path';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -389,6 +390,15 @@ export class Helper {
             possiblePhoneNumbers.push(phoneTemp);
         }
         return possiblePhoneNumbers;
+    }
+
+    public static getFileExtension = (filename: string) => {
+        var ext = /^.+\.([^.]+)$/.exec(filename);
+        return ext == null ? "" : ext[1];
+    }
+
+    public static getFilenameFromFilePath = (filepath: string) => {
+        return path.basename(filepath);
     }
 
 }

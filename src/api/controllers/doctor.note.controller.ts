@@ -103,7 +103,7 @@ export class DoctorNoteController {
                     ? 'No records found!'
                     : `Total ${count} Doctor Note records retrieved successfully!`;
                     
-            ResponseHandler.success(request, response, message, 200, { DoctorNote: searchResults });
+            ResponseHandler.success(request, response, message, 200, { DoctorNotes: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

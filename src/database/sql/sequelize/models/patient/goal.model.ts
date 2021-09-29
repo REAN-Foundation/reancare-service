@@ -6,31 +6,25 @@ import {
     CreatedAt,
     UpdatedAt,
     DeletedAt,
+    IsUUID,
     PrimaryKey,
     Length,
     ForeignKey,
-    IsUUID,
-    IsDate,
 } from 'sequelize-typescript';
 
-import {
-    SymptomsProgressList,
-    SymptomsProgress
-} from '../../../../../domain.types/symptom/how.do.you.feel/symptom.progress.types';
 import { v4 } from 'uuid';
 import User from '../user.model';
-import SymptomAssessment from './symptom.assessment.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'HowDoYouFeel',
-    tableName       : 'symptom_how_do_you_feel',
+    modelName       : 'Goal',
+    tableName       : 'patient_goals',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class HowDoYouFeel extends Model {
+export default class Goal extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -43,13 +37,6 @@ export default class HowDoYouFeel extends Model {
     })
     id: string;
 
-    @Length({ max: 128 })
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
-    })
-    EhrId: string;
-
     @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
@@ -58,36 +45,45 @@ export default class HowDoYouFeel extends Model {
     })
     PatientUserId: string;
 
-    @Length({ max: 128 })
     @Column({
-        type         : DataType.STRING(128),
-        allowNull    : false,
-        values       : SymptomsProgressList,
-        defaultValue : SymptomsProgress.Same
+        type      : DataType.INTEGER,
+        allowNull : true,
     })
-    Feeling: string;
-    
-    @IsDate
+    CarePlanId: number;
+
     @Column({
-        type      : DataType.DATE,
-        allowNull : false,
+        type      : DataType.INTEGER,
+        allowNull : true,
     })
-    RecordDate: string;
-    
-    @Length({ max: 256 })
+    TypeCode: number;
+
+    @Length({ max: 512 })
     @Column({
-        type      : DataType.STRING(256),
-        allowNull : false,
+        type      : DataType.STRING(512),
+        allowNull : true,
     })
-    Comments: string;
-    
+    TypeName: string;
+
     @IsUUID(4)
-    @ForeignKey(() => SymptomAssessment)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    SymptomAssessmentId: string;
+    GoalId: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    GoalAchieved: boolean;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false ,
+    })
+    GoalAbandoned: boolean;
 
     @Column
     @CreatedAt
@@ -100,3 +96,4 @@ export default class HowDoYouFeel extends Model {
     DeletedAt: Date;
 
 }
+

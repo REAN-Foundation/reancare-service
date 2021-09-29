@@ -122,7 +122,12 @@
             "Biometrics.BloodPressure.GetById",
             "Biometrics.BloodPressure.Update",
             "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete"
+            "Biometrics.BloodPressure.Delete",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -249,7 +254,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -379,7 +389,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -499,7 +514,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -619,7 +639,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     }
 ]

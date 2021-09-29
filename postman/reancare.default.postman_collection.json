@@ -12701,7 +12701,366 @@
 		},
 		{
 			"name": "Nutrition",
-			"item": []
+			"item": [
+				{
+					"name": "Water consumption",
+					"item": [
+						{
+							"name": "Add water consumption record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"try {",
+											"    pm.environment.set(\"NUTRITION_WATER_CONSUMPTION_ID\", jsonRes.Data.WaterConsumption.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"pm.test(\"New water consumption record is created\", function () {",
+											"    var expectedValue = 7;",
+											"    var expectedTime = \"2021-09-21T00:00:00.000Z\";",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('WaterConsumption');",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.have.property('Volume');",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.have.property('PatientUserId');",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.have.property('Time');",
+											"",
+											"",
+											"    pm.expect(jsonRes.Data.WaterConsumption.Volume).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.WaterConsumption.PatientUserId).equals(expectedPatientUserId);",
+											"    pm.expect(jsonRes.Data.WaterConsumption.Time).equals(expectedTime);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Volume\": 7,\n    \"Time\": \"2021-09-21\"\n\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/water-consumption",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"water-consumption"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get water consumption record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"pm.test(\"Water consumption record is returned\", function () {",
+											"    var expectedValue = 7;",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('WaterConsumption');",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.have.property('Volume');",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.WaterConsumption.Volume).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.WaterConsumption.PatientUserId).equals(expectedPatientUserId);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/water-consumption/{{NUTRITION_WATER_CONSUMPTION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"water-consumption",
+										"{{NUTRITION_WATER_CONSUMPTION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update water consumption record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"pm.test(\"Updated water consumption record is returned\", function () {",
+											"    var expectedValue = 10;",
+											"    var expectedTime= \"2021-09-21T00:00:00.000Z\";",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('WaterConsumption');",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.have.property('Volume');",
+											"    pm.expect(jsonRes.Data.WaterConsumption).to.have.property('Time');",
+											"",
+											"    pm.expect(jsonRes.Data.WaterConsumption.Volume).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.WaterConsumption.Time).equals(expectedTime);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Volume\": 10,\n    \"Time\": \"2021-09-21\"\n\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/water-consumption/{{NUTRITION_WATER_CONSUMPTION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"water-consumption",
+										"{{NUTRITION_WATER_CONSUMPTION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search water consumption records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"pm.test(\"List of water consumption records is returned\", function () {",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('WaterConsumptionRecords');",
+											"    pm.expect(jsonRes.Data.WaterConsumptionRecords.Items.length).to.be.greaterThan(0);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/water-consumption/search?dailyVolumeFrom=5&dailyVolumeTo=12&order=ascending&pageIndex=0&itemsPerPage=25&orderBy=volume&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"water-consumption",
+										"search"
+									],
+									"query": [
+										{
+											"key": "dailyVolumeFrom",
+											"value": "5"
+										},
+										{
+											"key": "dailyVolumeTo",
+											"value": "12"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "orderBy",
+											"value": "volume"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete water consumption record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"pm.test(\"Water consumption record is deleted\", function () {",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/water-consumption/{{NUTRITION_WATER_CONSUMPTION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"water-consumption",
+										"{{NUTRITION_WATER_CONSUMPTION_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "Clinical",

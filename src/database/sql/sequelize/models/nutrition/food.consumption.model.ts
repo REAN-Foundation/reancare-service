@@ -91,7 +91,7 @@ export default class FoodConsumption extends Model {
     @ForeignKey(() => FileResource)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     ImageResourceId: string;
 

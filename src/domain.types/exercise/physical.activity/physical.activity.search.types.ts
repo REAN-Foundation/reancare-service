@@ -13,6 +13,7 @@ export interface PhysicalActivitySearchFilters {
 }
 
 export interface PhysicalActivitySearchResults {
+    length: any;
     TotalCount: number;
     RetrievedCount: number;
     PageIndex: number;

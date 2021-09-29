@@ -21,6 +21,7 @@ import { register as registerCalorieBalanceRoute } from './daily.records/calorie
 import { register as registerComplaintRoutes } from './patient/complaint.routes';
 import { register as registerAllergyRoutes } from './patient/allergy.route';
 import { register as registerHeartPointRoutes } from './daily.records/heart.points.routes';
+import { register as registerKnowledgeNuggetRoutes } from './static.types/knowledge.nugget.routes';
 import { register as registerOrderRoutes } from './order/order.routes';
 import { register as registerWaterConsumptionRoutes } from './nutrition/water.consumption.routes';
 import { register as registerEmergencyContactRoutes } from './patient/emergency.contact.route';
@@ -78,6 +79,7 @@ export class Router {
                 registerComplaintRoutes(this._app);
                 registerAllergyRoutes(this._app);
                 registerHeartPointRoutes(this._app);
+                registerKnowledgeNuggetRoutes(this._app);
                 registerOrderRoutes(this._app);
                 registerWaterConsumptionRoutes(this._app);
                 registerEmergencyContactRoutes(this._app);

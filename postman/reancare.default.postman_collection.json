@@ -15688,6 +15688,370 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Static types",
+			"item": [
+				{
+					"name": "Knowledge nuggets",
+					"item": [
+						{
+							"name": "Add knowledge nugget record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"KNOWLEDGE_NUGGET_ID\", jsonRes.Data.KnowledgeNugget.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Knowledge nugget record is created\", function () {",
+											"",
+											"    var expectedValue = \"Heart Failure\";",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('KnowledgeNugget');",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('TopicName');",
+											"    ",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget.TopicName).equals(expectedValue);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"TopicName\": \"Heart Failure\",\n    \"BriefInformation\": \"Heart failure means that the heart isn’t pumping as well as it should be\",\n    \"DetailedInformation\": \"Heart failure means that the heart isn’t pumping as well as it should be\",\n    \"AdditionalResources\": \"\",\n    \"Tags\": [\n        \"BP\"\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/static-types/knowledge-nuggets",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"static-types",
+										"knowledge-nuggets"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get knowledge nugget by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Knowledge nugget record is returned\", function () {",
+											"",
+											"    var expectedValue = \"Heart Failure\";",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('KnowledgeNugget');",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('TopicName');",
+											"",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget.TopicName).equals(expectedValue);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/static-types/knowledge-nuggets/{{KNOWLEDGE_NUGGET_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"static-types",
+										"knowledge-nuggets",
+										"{{KNOWLEDGE_NUGGET_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update knowledge nugget record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated knowledge nugget record is returned\", function () {",
+											"",
+											"    var expectedValue = \"Hypertension\";",
+											" ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('KnowledgeNugget');",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('TopicName');",
+											"",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget.TopicName).equals(expectedValue);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"TopicName\": \"Hypertension\"   \n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/static-types/knowledge-nuggets/{{KNOWLEDGE_NUGGET_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"static-types",
+										"knowledge-nuggets",
+										"{{KNOWLEDGE_NUGGET_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search knowledge nugget by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of knowledge nugget records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('KnowledgeNuggetRecords');",
+											"    pm.expect(jsonRes.Data.KnowledgeNuggetRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/static-types/knowledge-nuggets/search?TopicName=Heart failure&Tag=Heart&orderBy=TopicName&order=ascending&pageIndex=0",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"static-types",
+										"knowledge-nuggets",
+										"search"
+									],
+									"query": [
+										{
+											"key": "TopicName",
+											"value": "Heart failure"
+										},
+										{
+											"key": "Tag",
+											"value": "Heart"
+										},
+										{
+											"key": "orderBy",
+											"value": "TopicName"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete knowledge nugget record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Knowledge nugget record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/static-types/knowledge-nuggets/{{KNOWLEDGE_NUGGET_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"static-types",
+										"knowledge-nuggets",
+										"{{KNOWLEDGE_NUGGET_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
 		}
 	]
 }

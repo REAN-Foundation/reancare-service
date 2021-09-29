@@ -15865,6 +15865,394 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Dooctor Note",
+					"item": [
+						{
+							"name": "Add doctor note",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"DOCTOR_NOTE_ID\", jsonRes.Data.DoctorNote.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"A New doctor note record is created\", function () {\r",
+											"\r",
+											"    var expectedValidationStatus = \"Confirmed\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DoctorNote');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('VisitId');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('ValidationStatus');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('Notes');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('RecordDate');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.ValidationStatus).equals(expectedValidationStatus);\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var userId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"pm.environment.set(\"DOCTOR_NOTE_VISIT_ID\", userId);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"VisitId\": \"{{DOCTOR_NOTE_VISIT_ID}}\",\r\n    \"ValidationStatus\": \"Confirmed\",\r\n    \"Notes\": \"Prescribing two days bed rest and more liquid no fried food\",\r\n    \"RecordDate\": \"2021-09-22\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/doctor-notes",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"doctor-notes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get doctor note by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Doctor note record is returned\", function () {\r",
+											"\r",
+											"    var expectedValidationStatus = \"Confirmed\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DoctorNote');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('VisitId');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('ValidationStatus');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('Notes');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('RecordDate');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.ValidationStatus).equals(expectedValidationStatus);\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/doctor-notes/{{DOCTOR_NOTE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"doctor-notes",
+										"{{DOCTOR_NOTE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update doctor note",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated doctor note record is returned\", function () {\r",
+											"\r",
+											"    var expectedValidationStatus = \"Preliminary\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DoctorNote');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('VisitId');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('ValidationStatus');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('Notes');\r",
+											"    pm.expect(jsonRes.Data.DoctorNote).to.have.property('RecordDate');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.ValidationStatus).equals(expectedValidationStatus);\r",
+											"    pm.expect(jsonRes.Data.DoctorNote.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"VisitId\": \"{{DOCTOR_NOTE_VISIT_ID}}\",\r\n    \"ValidationStatus\": \"Preliminary\",\r\n    \"Notes\": \"Prescribing rest at home and light food\",\r\n    \"RecordDate\": \"2021-09-16\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/doctor-notes/{{DOCTOR_NOTE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"doctor-notes",
+										"{{DOCTOR_NOTE_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search doctor note",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of doctor note is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DoctorNotes');\r",
+											"    pm.expect(jsonRes.Data.DoctorNotes.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/doctor-notes/search/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"doctor-notes",
+										"search",
+										"{{PATIENT_USER_ID}}"
+									],
+									"query": [
+										{
+											"key": "recordDateFrom",
+											"value": "2021-09-01",
+											"disabled": true
+										},
+										{
+											"key": "recordDateTo",
+											"value": "2021-10-14",
+											"disabled": true
+										},
+										{
+											"key": "orderBy",
+											"value": "RecordDate",
+											"disabled": true
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"disabled": true
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"disabled": true
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete doctor note",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Doctor note record is deleted\", function () {\r",
+											"\r",
+											"    var expectedValue = true;\r",
+											"    var jsonRes = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/doctor-notes/{{DOCTOR_NOTE_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"doctor-notes",
+										"{{DOCTOR_NOTE_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},

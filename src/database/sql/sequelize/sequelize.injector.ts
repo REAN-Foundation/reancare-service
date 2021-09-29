@@ -27,6 +27,7 @@ import { CalorieBalanceRepo } from './repositories/daily.records/calorie.balance
 import { HeartPointsRepo } from './repositories/daily.records/heart.points.repo';
 import { ComplaintRepo } from './repositories/patient/complaint.repo';
 import { AllergyRepo } from './repositories/patient/allergy.repo';
+import { DoctorNoteRepo } from './repositories/doctor.note.repo';
 import { PhysicalActivityRepo } from './repositories/exercise/physical.activity.repo';
 import { KnowledgeNuggetRepo } from './repositories/static.types/knowledge.nugget.repo';
 import { OrderRepo } from './repositories/order/order.repo';
@@ -77,6 +78,7 @@ export class SequelizeInjector {
         container.register('IMedicationStockImageRepo', MedicationStockImageRepo);
         container.register('IComplaintRepo', ComplaintRepo);
         container.register('IAllergyRepo', AllergyRepo);
+        container.register('IDoctorNoteRepo', DoctorNoteRepo);
         container.register('IPhysicalActivityRepo', PhysicalActivityRepo);
         container.register('IKnowledgeNuggetRepo', KnowledgeNuggetRepo);
         container.register('IOrderRepo', OrderRepo);

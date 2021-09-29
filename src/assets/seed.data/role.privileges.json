@@ -167,7 +167,12 @@
             "UserDeviceDetails.GetById",
             "UserDeviceDetails.Update",
             "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete"
+            "UserDeviceDetails.Delete",
+            "Goal.Create",
+            "Goal.GetById",
+            "Goal.Update",
+            "Goal.Search",
+            "Goal.Delete"
         ]
     },
     {
@@ -339,7 +344,12 @@
             "UserDeviceDetails.GetById",
             "UserDeviceDetails.Update",
             "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete"
+            "UserDeviceDetails.Delete",
+            "Goal.Create",
+            "Goal.GetById",
+            "Goal.Update",
+            "Goal.Search",
+            "Goal.Delete"
         ]
     },
     {
@@ -514,7 +524,12 @@
             "UserDeviceDetails.GetById",
             "UserDeviceDetails.Update",
             "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete"
+            "UserDeviceDetails.Delete",
+            "Goal.Create",
+            "Goal.GetById",
+            "Goal.Update",
+            "Goal.Search",
+            "Goal.Delete"
         ]
     },
     {
@@ -679,7 +694,12 @@
             "UserDeviceDetails.GetById",
             "UserDeviceDetails.Update",
             "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete"
+            "UserDeviceDetails.Delete",
+            "Goal.Create",
+            "Goal.GetById",
+            "Goal.Update",
+            "Goal.Search",
+            "Goal.Delete"
         ]
     },
     {
@@ -843,7 +863,12 @@
             "UserDeviceDetails.GetById",
             "UserDeviceDetails.Update",
             "UserDeviceDetails.Search",
-            "UserDeviceDetails.Delete"
+            "UserDeviceDetails.Delete",
+            "Goal.Create",
+            "Goal.GetById",
+            "Goal.Update",
+            "Goal.Search",
+            "Goal.Delete"
         ]
     }
 ]

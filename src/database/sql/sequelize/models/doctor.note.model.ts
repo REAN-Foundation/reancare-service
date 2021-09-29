@@ -21,7 +21,7 @@ import { ClinicalValidationStatus, ClinicalValidationStatusList } from '../../..
 
 @Table({
     timestamps      : true,
-    modelName       : 'DoctorNote',
+    modelName       : '',
     tableName       : 'doctor_notes',
     paranoid        : true,
     freezeTableName : true,

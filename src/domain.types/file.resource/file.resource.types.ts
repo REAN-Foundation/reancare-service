@@ -4,6 +4,12 @@ export interface ResourceReference {
     Keyword : string;
 }
 
+export enum DownloadDisposition {
+    Inline     = 'inline',
+    Attachment = 'attachment',
+    Stream     = 'stream',
+    Auto       = 'auto',
+}
 export interface FileResourceMetadata {
     ResourceId?      : string;
     VersionId?       : string;
@@ -16,4 +22,6 @@ export interface FileResourceMetadata {
     StorageKey?      : string;
     IsDefaultVersion?: boolean;
     IsPublicResource?: boolean;
+    Disposition?     : DownloadDisposition;
+    Url?             : string;
 }

@@ -27,6 +27,8 @@ import { CalorieBalanceRepo } from './repositories/daily.records/calorie.balance
 import { HeartPointsRepo } from './repositories/daily.records/heart.points.repo';
 import { ComplaintRepo } from './repositories/patient/complaint.repo';
 import { AllergyRepo } from './repositories/patient/allergy.repo';
+import { WaterConsumptionRepo } from './repositories/nutrition/water.consumption.repo';
+import { EmergencyContactRepo } from './repositories/patient/emergency.contact.repo';
 import { SleepRepo } from './repositories/daily.records/sleep.repo';
 import { EmergencyEventRepo } from './repositories/emergency.event.repo';
 import { MeditationRepo } from './repositories/exercise/meditation.repo';
@@ -68,6 +70,8 @@ export class SequelizeInjector {
         container.register('IMedicationStockImageRepo', MedicationStockImageRepo);
         container.register('IComplaintRepo', ComplaintRepo);
         container.register('IAllergyRepo', AllergyRepo);
+        container.register('IWaterConsumptionRepo', WaterConsumptionRepo);
+        container.register('IEmergencyContactRepo', EmergencyContactRepo);
         container.register('ISleepRepo', SleepRepo);
         container.register('IEmergencyEventRepo', EmergencyEventRepo);
         container.register('IMeditationRepo', MeditationRepo);

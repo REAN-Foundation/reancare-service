@@ -16,6 +16,7 @@ export interface DoctorNoteSearchFilters {
 }
 
 export interface DoctorNoteSearchResults {
+    length: any;
     TotalCount: number;
     RetrievedCount: number;
     PageIndex: number;

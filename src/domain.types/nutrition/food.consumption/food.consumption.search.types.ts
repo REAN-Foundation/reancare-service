@@ -7,8 +7,6 @@ export interface FoodConsumptionSearchFilters {
     PatientUserId?: string;
     Food?: string;
     ConsumedAs?: FoodConsumptionEvents;
-    ContactPhone?: string;
-    ContactEmail?: string;
     TimeFrom: Date;
     TimeTo: Date;
     ForDay: Date;

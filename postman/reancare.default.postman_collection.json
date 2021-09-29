@@ -2118,15 +2118,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
 											"host": [
@@ -2641,10 +2632,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 											"host": [
@@ -6705,6 +6692,734 @@
 									]
 								},
 								"description": "Deletes PatientAllergy using ID"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Patient Emergency Contact",
+					"item": [
+						{
+							"name": "Create patient emergency contact",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
+											"let doctorId = pm.environment.get('DOCTOR_USER_ID');\r",
+											"let addressId = pm.environment.get('ADDRESS_ID');\r",
+											"let orgId = pm.environment.get('ORGANIZATION_ID');\r",
+											"pm.environment.set(\"PATIENT_EMERGENCY_CONTACT_PATIENTUSERID\", patientUserId);\r",
+											"pm.environment.set(\"PATIENT_EMERGENCY_CONTACT_CONTACTPERSONID\", doctorId);\r",
+											"pm.environment.set(\"PATIENT_EMERGENCY_CONTACT_CONTACTRELATION\", 'Doctor');\r",
+											"pm.environment.set(\"PATIENT_EMERGENCY_CONTACT_ADDRESSID\", addressId);\r",
+											"pm.environment.set(\"PATIENT_EMERGENCY_CONTACT_ORGANIZATIONID\", orgId);\r",
+											"pm.environment.set(\"PATIENT_EMERGENCY_CONTACT_ISAVAILABLEFOREMERGENCY\", true);\r",
+											"pm.environment.set(\"PATIENT_EMERGENCY_CONTACT_TIMEOFAVAILABILITY\", '12-1pm');\r",
+											"pm.environment.set(\"PATIENT_EMERGENCY_CONTACT_DESCRIPTION\", 'Memory issues');\r",
+											"pm.environment.set(\"PATIENT_EMERGENCY_CONTACT_ADDITIONALPHONENUMBERS\", '9999999999');"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"PATIENT_EMERGENCY_CONTACT_ID\", jsonRes.Data.EmergencyContact.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New patient emergency contact is created\", function () {\r",
+											"\r",
+											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_PATIENTUSERID\");\r",
+											"    let expectedContactRelation = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_CONTACTRELATION\");\r",
+											"    let expectedIsAvailableForEmergency = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_ISAVAILABLEFOREMERGENCY\");\r",
+											"    let expectedTimeOfAvailability = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_TIMEOFAVAILABILITY\");\r",
+											"    let expectedDescription = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_DESCRIPTION\");\r",
+											"    let expectedAdditionalPhoneNumbers = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_ADDITIONALPHONENUMBERS\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('EmergencyContact');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('ContactRelation');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('IsAvailableForEmergency');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('Description');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.ContactRelation).equals(expectedContactRelation);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.IsAvailableForEmergency).equals(expectedIsAvailableForEmergency);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.TimeOfAvailability).equals(expectedTimeOfAvailability);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.Description).equals(expectedDescription);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.AdditionalPhoneNumbers).equals(expectedAdditionalPhoneNumbers);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\":\"{{PATIENT_EMERGENCY_CONTACT_PATIENTUSERID}}\",\r\n    \"ContactPersonId\":\"{{PATIENT_EMERGENCY_CONTACT_CONTACTPERSONID}}\",\r\n    \"ContactRelation\":\"{{PATIENT_EMERGENCY_CONTACT_CONTACTRELATION}}\",\r\n    \"AddressId\":\"{{PATIENT_EMERGENCY_CONTACT_ADDRESSID}}\",\r\n    \"OrganizationId\":\"{{PATIENT_EMERGENCY_CONTACT_ORGANIZATIONID}}\",\r\n    \"IsAvailableForEmergency\":\"{{PATIENT_EMERGENCY_CONTACT_ISAVAILABLEFOREMERGENCY}}\",\r\n    \"TimeOfAvailability\":\"{{PATIENT_EMERGENCY_CONTACT_TIMEOFAVAILABILITY}}\",\r\n    \"Description\":\"{{PATIENT_EMERGENCY_CONTACT_DESCRIPTION}}\",\r\n    \"AdditionalPhoneNumbers\":\"{{PATIENT_EMERGENCY_CONTACT_ADDITIONALPHONENUMBERS}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/emergency-contact",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"emergency-contact"
+									]
+								},
+								"description": "Add an emergency contact."
+							},
+							"response": []
+						},
+						{
+							"name": "Get patient emergency contact by id",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient Allergy should have correct data\", function () {\r",
+											"\r",
+											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_PATIENTUSERID\");\r",
+											"    let expectedContactRelation = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_CONTACTRELATION\");\r",
+											"    let expectedIsAvailableForEmergency = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_ISAVAILABLEFOREMERGENCY\");\r",
+											"    let expectedTimeOfAvailability = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_TIMEOFAVAILABILITY\");\r",
+											"    let expectedDescription = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_DESCRIPTION\");\r",
+											"    let expectedAdditionalPhoneNumbers = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_ADDITIONALPHONENUMBERS\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('EmergencyContact');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('ContactRelation');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('IsAvailableForEmergency');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('TimeOfAvailability');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('Description');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('AdditionalPhoneNumbers');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.ContactRelation).equals(expectedContactRelation);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.IsAvailableForEmergency).equals(expectedIsAvailableForEmergency);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.TimeOfAvailability).equals(expectedTimeOfAvailability);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.Description).equals(expectedDescription);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.AdditionalPhoneNumbers).equals(expectedAdditionalPhoneNumbers);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/emergency-contact/{{PATIENT_EMERGENCY_CONTACT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"emergency-contact",
+										"{{PATIENT_EMERGENCY_CONTACT_ID}}"
+									]
+								},
+								"description": "Get an emergency contact by emergency contact id."
+							},
+							"response": []
+						},
+						{
+							"name": "Update an patient emergency contact",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"PATIENT_EMERGENCY_CONTACT_DESCRIPTION\", 'Speech issues');"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Correct updates should be reflected\", function () {\r",
+											"\r",
+											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_PATIENTUSERID\");\r",
+											"    let expectedContactRelation = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_CONTACTRELATION\");\r",
+											"    let expectedIsAvailableForEmergency = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_ISAVAILABLEFOREMERGENCY\");\r",
+											"    let expectedTimeOfAvailability = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_TIMEOFAVAILABILITY\");\r",
+											"    let expectedDescription = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_DESCRIPTION\");\r",
+											"    let expectedAdditionalPhoneNumbers = pm.environment.get(\"PATIENT_EMERGENCY_CONTACT_ADDITIONALPHONENUMBERS\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('EmergencyContact');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('ContactRelation');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('IsAvailableForEmergency');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('TimeOfAvailability');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('Description');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact).to.have.property('AdditionalPhoneNumbers');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.ContactRelation).equals(expectedContactRelation);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.IsAvailableForEmergency).equals(expectedIsAvailableForEmergency);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.TimeOfAvailability).equals(expectedTimeOfAvailability);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.Description).equals(expectedDescription);\r",
+											"    pm.expect(jsonRes.Data.EmergencyContact.AdditionalPhoneNumbers).equals(expectedAdditionalPhoneNumbers);\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\":\"{{PATIENT_EMERGENCY_CONTACT_PATIENTUSERID}}\",\r\n    \"ContactPersonId\":\"{{PATIENT_EMERGENCY_CONTACT_CONTACTPERSONID}}\",\r\n    \"ContactRelation\":\"{{PATIENT_EMERGENCY_CONTACT_CONTACTRELATION}}\",\r\n    \"AddressId\":\"{{PATIENT_EMERGENCY_CONTACT_ADDRESSID}}\",\r\n    \"OrganizationId\":\"{{PATIENT_EMERGENCY_CONTACT_ORGANIZATIONID}}\",\r\n    \"IsAvailableForEmergency\":\"{{PATIENT_EMERGENCY_CONTACT_ISAVAILABLEFOREMERGENCY}}\",\r\n    \"TimeOfAvailability\":\"{{PATIENT_EMERGENCY_CONTACT_TIMEOFAVAILABILITY}}\",\r\n    \"Description\":\"{{PATIENT_EMERGENCY_CONTACT_DESCRIPTION}}\",\r\n    \"AdditionalPhoneNumbers\":\"{{PATIENT_EMERGENCY_CONTACT_ADDITIONALPHONENUMBERS}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/emergency-contact/{{PATIENT_EMERGENCY_CONTACT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"emergency-contact",
+										"{{PATIENT_EMERGENCY_CONTACT_ID}}"
+									]
+								},
+								"description": "Update the details for an emergency contact."
+							},
+							"response": []
+						},
+						{
+							"name": "Search patient emergency contact",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of Calorie Record is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('EmergencyContacts');\r",
+											"    pm.expect(jsonRes.Data.EmergencyContacts.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/emergency-contact/search?createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=IsAvailableForEmergency&order=ascending&pageIndex=0&itemsPerPage=25",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"emergency-contact",
+										"search"
+									],
+									"query": [
+										{
+											"key": "createdDateFrom",
+											"value": "2021-05-01"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-12-12"
+										},
+										{
+											"key": "orderBy",
+											"value": "IsAvailableForEmergency"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "PatientUserId",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "ContactPersonId",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "IsAvailableForEmergency",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "ContactRelation",
+											"value": "Doctor",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Search emergency contact using query parameters."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete patient emergency contact record",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Deleted is true\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(true);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/emergency-contact/{{PATIENT_EMERGENCY_CONTACT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"emergency-contact",
+										"{{PATIENT_EMERGENCY_CONTACT_ID}}"
+									]
+								},
+								"description": "Deletes emergency contact using ID"
+							},
+							"response": []
+						},
+						{
+							"name": "Search addresses Copy",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var str = '';\r",
+											"var search = '';\r",
+											"var num = 0.0;\r",
+											"\r",
+											"var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+											"var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
+											"var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
+											"var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+											"var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+											"var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+											"var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+											"var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+											"var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_LINE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_LINE_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_CITY\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_CITY_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_DISTRICT_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_STATE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_STATE_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_COUNTRY_SEARCH_STRING\", search);\r",
+											"\r",
+											"str = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
+											"search = str.substring(0, 3).toLowerCase();\r",
+											"pm.environment.set(\"ADDRESS_POSTAL_CODE_SEARCH_STRING\", search);\r",
+											"\r",
+											"num = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
+											"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_FROM\", num - 1);\r",
+											"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_TO\", num + 1);\r",
+											"\r",
+											"num = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+											"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_FROM\", num - 1);\r",
+											"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_TO\", num + 1);\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of addresses is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Addresses');\r",
+											"    pm.expect(jsonRes.Data.Addresses.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "Session token (JWT) for the user",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API client secret key",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/addresses/search?type=Official&city=Mum&district={{ADDRESS_DISTRICT_SEARCH_STRING}}&state={{ADDRESS_STATE_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&postalCode=412&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"addresses",
+										"search"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "Official",
+											"description": "Type of the address"
+										},
+										{
+											"key": "addressLine",
+											"value": "{{ADDRESS_LINE_SEARCH_STRING}}",
+											"description": "Search string to match address line",
+											"disabled": true
+										},
+										{
+											"key": "city",
+											"value": "Mum",
+											"description": "Search string for city"
+										},
+										{
+											"key": "district",
+											"value": "{{ADDRESS_DISTRICT_SEARCH_STRING}}",
+											"description": "Search string for district"
+										},
+										{
+											"key": "state",
+											"value": "{{ADDRESS_STATE_SEARCH_STRING}}",
+											"description": "Search string for state"
+										},
+										{
+											"key": "country",
+											"value": "{{ADDRESS_COUNTRY_SEARCH_STRING}}",
+											"description": "Search string for country"
+										},
+										{
+											"key": "postalCode",
+											"value": "412",
+											"description": "Search string for "
+										},
+										{
+											"key": "longitudeFrom",
+											"value": "{{ADDRESS_LONGITUDE_SEARCH_FROM}}",
+											"description": "Format: float value. \nStart of the range for longitude based search",
+											"disabled": true
+										},
+										{
+											"key": "longitudeTo",
+											"value": "{{ADDRESS_LONGITUDE_SEARCH_TO}}",
+											"description": "Format: float value. \nEnd of the range for longitude based search",
+											"disabled": true
+										},
+										{
+											"key": "lattitudeFrom",
+											"value": "{{ADDRESS_LATTITUDE_SEARCH_FROM}}",
+											"description": "Format: float value.\nStart of the range for lattitude based search",
+											"disabled": true
+										},
+										{
+											"key": "lattitudeTo",
+											"value": "{{ADDRESS_LATTITUDE_SEARCH_TO}}",
+											"description": "Format: float value.\nEnd of the range for lattitude based search",
+											"disabled": true
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-05-01",
+											"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-12-12",
+											"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
+										},
+										{
+											"key": "orderBy",
+											"value": "City",
+											"description": "The name of the Parameter to order by"
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"description": "'ascending' or 'descending'"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"description": "Page index for pagination"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"description": "Items per page"
+										}
+									]
+								},
+								"description": "Search addresses using query parameters."
 							},
 							"response": []
 						}

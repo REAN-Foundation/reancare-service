@@ -103,7 +103,7 @@ export class PhysicalActivityController {
                     ? 'No records found!'
                     : `Total ${count} Physical activity records retrieved successfully!`;
                     
-            ResponseHandler.success(request, response, message, 200, { PhysicalActivity: searchResults });
+            ResponseHandler.success(request, response, message, 200, { PhysicalActivities: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

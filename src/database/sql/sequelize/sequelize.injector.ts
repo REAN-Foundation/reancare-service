@@ -19,6 +19,7 @@ import { PersonRoleRepo } from './repositories/person.role.repo';
 import { RolePrivilegeRepo } from './repositories/role.privilege.repo';
 import { RoleRepo } from './repositories/role.repo';
 import { UserRepo } from './repositories/user.repo';
+import { BloodPressureRepo } from './repositories/biometrics/blood.pressure.repo';
 import { StepCountRepo } from './repositories/daily.records/step.count.repo';
 import { BodyWeightRepo } from './repositories/biometrics/body.weight.repo';
 import { BodyHeightRepo } from './repositories/biometrics/body.height.repo';
@@ -27,6 +28,18 @@ import { HeartPointsRepo } from './repositories/daily.records/heart.points.repo'
 import { ComplaintRepo } from './repositories/patient/complaint.repo';
 import { AllergyRepo } from './repositories/patient/allergy.repo';
 import { PhysicalActivityRepo } from './repositories/exercise/physical.activity.repo';
+import { KnowledgeNuggetRepo } from './repositories/static.types/knowledge.nugget.repo';
+import { OrderRepo } from './repositories/order/order.repo';
+import { WaterConsumptionRepo } from './repositories/nutrition/water.consumption.repo';
+import { EmergencyContactRepo } from './repositories/patient/emergency.contact.repo';
+import { SleepRepo } from './repositories/daily.records/sleep.repo';
+import { EmergencyEventRepo } from './repositories/emergency.event.repo';
+import { MeditationRepo } from './repositories/exercise/meditation.repo';
+import { BloodGlucoseRepo } from './repositories/biometrics/blood.glucose.repo';
+import { DiagnosisRepo } from './repositories/diagnosis.repo';
+import { HowDoYouFeelRepo } from './repositories/symptom/howDoYouFeel/howDoYouFeel.repo';
+import { DrugRepo } from './repositories/medication/drug.repo';
+import { UserDeviceDetailsRepo } from './repositories/user.device.details.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +60,7 @@ export class SequelizeInjector {
         container.register('IRolePrivilegeRepo', RolePrivilegeRepo);
         container.register('IOrganizationRepo', OrganizationRepo);
         container.register('IDoctorRepo', DoctorRepo);
+        container.register('IBloodPressureRepo', BloodPressureRepo);
         container.register('IBodyWeightRepo', BodyWeightRepo);
         container.register('IBodyHeightRepo', BodyHeightRepo);
         container.register('IPatientHealthProfileRepo', HealthProfileRepo);
@@ -64,7 +78,18 @@ export class SequelizeInjector {
         container.register('IComplaintRepo', ComplaintRepo);
         container.register('IAllergyRepo', AllergyRepo);
         container.register('IPhysicalActivityRepo', PhysicalActivityRepo);
-        
+        container.register('IKnowledgeNuggetRepo', KnowledgeNuggetRepo);
+        container.register('IOrderRepo', OrderRepo);
+        container.register('IWaterConsumptionRepo', WaterConsumptionRepo);
+        container.register('IEmergencyContactRepo', EmergencyContactRepo);
+        container.register('ISleepRepo', SleepRepo);
+        container.register('IEmergencyEventRepo', EmergencyEventRepo);
+        container.register('IMeditationRepo', MeditationRepo);
+        container.register('IBloodGlucoseRepo', BloodGlucoseRepo);
+        container.register('IDiagnosisRepo', DiagnosisRepo);
+        container.register('IHowDoYouFeelRepo', HowDoYouFeelRepo);
+        container.register('IDrugRepo', DrugRepo);
+        container.register('IUserDeviceDetailsRepo', UserDeviceDetailsRepo);
     }
 
 }

@@ -13,6 +13,7 @@ import { register as registerBodyHeightRoutes } from './biometrics/body.height.r
 import { register as registerPatientHealthProfileRoutes } from './patient/health.profile.routes';
 import { register as registerBiometricsBloodOxygenSaturationRoutes } from './biometrics/blood.oxygen.saturation.routes';
 import { register as registerHealthProfileRoutes } from './patient/health.profile.routes';
+import { register as registerNutritionFoodConsumptionRoutes } from './nutrition/food.consumption.routes';
 import { register as registerStepCountRoutes } from './daily.records/step.count.routes';
 import { register as registerBiometricsPulse } from './biometrics/pulse.routes';
 import { register as registerBodyTemperatureRoutes } from './biometrics/body.temperature.routes';
@@ -74,6 +75,7 @@ export class Router {
                 registerBodyHeightRoutes(this._app);
                 registerPatientHealthProfileRoutes(this._app);
                 registerHealthProfileRoutes(this._app);
+                registerNutritionFoodConsumptionRoutes(this._app);
                 registerStepCountRoutes(this._app);
                 registerBiometricsPulse(this._app);
                 registerBodyTemperatureRoutes(this._app);

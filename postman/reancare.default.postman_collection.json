@@ -14735,6 +14735,543 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Food Consumption",
+					"item": [
+						{
+							"name": "Add food consumption record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"NUTRITION_FOOD_CONSUMPTION_ID\", jsonRes.Data.FoodConsumption.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Food consumption record is created\", function () {",
+											"",
+											"    var expectedValue = \"roti\";",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('FoodConsumption');",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.have.property('Food');",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.have.property('PatientUserId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.FoodConsumption.Food).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.FoodConsumption.PatientUserId).equals(expectedPatientUserId);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Food\": \"roti\",\n    \"Description\": \"mins\",\n    \"ConsumedAs\": \"Lunch\",\n    \"Calories\": 100,\n    \"StartTime\": \"2021-09-16T09:45:00.000Z\",\n    \"EndTime\": \"2021-09-16T09:50:00.000Z\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/food-consumption",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"food-consumption"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get food consumption record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Food consumption record is returned\", function () {",
+											"",
+											"    var expectedValue = \"roti\";",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('FoodConsumption');",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.have.property('Food');",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.FoodConsumption.Food).equals(expectedValue);",
+											"    pm.expect(jsonRes.Data.FoodConsumption.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/food-consumption/{{NUTRITION_FOOD_CONSUMPTION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"food-consumption",
+										"{{NUTRITION_FOOD_CONSUMPTION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get food consumption records by event name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Food consumption record is returned\", function () {",
+											"",
+											"    var expectedValue = \"Lunch\";",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('FoodConsumptionEvent');",
+											"    pm.expect(jsonRes.Data.FoodConsumptionEvent).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.FoodConsumptionEvent).to.have.property('Foods');",
+											"    pm.expect(jsonRes.Data.FoodConsumptionEvent).to.have.property('PatientUserId');",
+											"",
+											"    pm.expect(jsonRes.Data.FoodConsumptionEvent.Foods.length).greaterThan(0);",
+											"    pm.expect(jsonRes.Data.FoodConsumptionEvent.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/food-consumption/{{PATIENT_USER_ID}}/by-event/lunch",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"food-consumption",
+										"{{PATIENT_USER_ID}}",
+										"by-event",
+										"lunch"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update food consumption record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated food consumption record is returned\", function () {",
+											"",
+											"    var expectedFood = \"Rice\";",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('FoodConsumption');",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.have.property('Food');",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.have.property('StartTime');",
+											"    pm.expect(jsonRes.Data.FoodConsumption).to.have.property('EndTime');",
+											"",
+											"    pm.expect(jsonRes.Data.FoodConsumption.Food).equals(expectedFood);",
+											"    pm.expect(jsonRes.Data.FoodConsumption.ConsumedAs).equals(\"Dinner\");",
+											"   ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Food\": \"Rice\",\n    \"Description\": \"mins\",\n    \"ConsumedAs\": \"Dinner\",\n    \"Calories\": 200,\n    \"StartTime\": \"2021-09-16T09:45:00.000Z\",\n    \"EndTime\": \"2021-09-16T09:50:00.000Z\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/food-consumption/{{NUTRITION_FOOD_CONSUMPTION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"food-consumption",
+										"{{NUTRITION_FOOD_CONSUMPTION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search food consumption records",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of food consumption records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('FoodConsumptionRecords');",
+											"    pm.expect(jsonRes.Data.FoodConsumptionRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/food-consumption/search?pageIndex=0&itemsPerPage=25&forDay=2021-09-16&orderBy=Food&order=ascending",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"food-consumption",
+										"search"
+									],
+									"query": [
+										{
+											"key": "food",
+											"value": "Basundi",
+											"disabled": true
+										},
+										{
+											"key": "consumedAs",
+											"value": "Lunch",
+											"disabled": true
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "timeFrom",
+											"value": "60",
+											"disabled": true
+										},
+										{
+											"key": "timeTo",
+											"value": "95",
+											"disabled": true
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}",
+											"disabled": true
+										},
+										{
+											"key": "forDay",
+											"value": "2021-09-16"
+										},
+										{
+											"key": "orderBy",
+											"value": "Food"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get food consumption records for day",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Food consumption records are returned\", function () {",
+											"",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('FoodConsumptionForDay');",
+											"    pm.expect(jsonRes.Data.FoodConsumptionForDay).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.FoodConsumptionForDay).to.have.property('Events');",
+											"    pm.expect(jsonRes.Data.FoodConsumptionForDay).to.have.property('PatientUserId');",
+											"    pm.expect(jsonRes.Data.FoodConsumptionForDay).to.have.property('Date');",
+											"",
+											"    pm.expect(jsonRes.Data.FoodConsumptionForDay.Events.length).greaterThan(0);",
+											"    pm.expect(jsonRes.Data.FoodConsumptionForDay.PatientUserId).equals(expectedPatientUserId);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/food-consumption/{{PATIENT_USER_ID}}/for-day/2021-09-16",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"food-consumption",
+										"{{PATIENT_USER_ID}}",
+										"for-day",
+										"2021-09-16"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete food consumption by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Food consumption record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/nutrition/food-consumption/{{NUTRITION_FOOD_CONSUMPTION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"nutrition",
+										"food-consumption",
+										"{{NUTRITION_FOOD_CONSUMPTION_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},

@@ -69,7 +69,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 DurationInMin : await FoodConsumptionRepo.calculateEventDuration(foodConsumptions),
             };
 
-            const event = await FoodConsumptionMapper.event(entity);
+            const event = await FoodConsumptionMapper.toEventDto(entity);
             return event;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -130,7 +130,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
             const entity = {
                 PatientUserId : PatientUserId,
-                Event         : foodConsumptionsEvents,
+                Events        : foodConsumptionsEvents,
                 Date          : date,
                 TotalCalories : await FoodConsumptionRepo.calculateTotalCaloriesForDay(foodConsumptionsEvents),
                 StartTime     : await FoodConsumptionRepo.calculateStartTimeForDay(foodConsumptionsEvents),
@@ -138,7 +138,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 DurationInMin : await FoodConsumptionRepo.calculateDurationForDay(foodConsumptionsEvents),
             };
 
-            const eventsForDay = await FoodConsumptionMapper.eventForDay(entity);
+            const eventsForDay = await FoodConsumptionMapper.toConsumptionForDayDto(entity);
             return eventsForDay;
 
         } catch (error) {

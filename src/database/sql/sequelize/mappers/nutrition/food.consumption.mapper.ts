@@ -27,7 +27,7 @@ export class FoodConsumptionMapper {
         return dto;
     }
 
-    static event = (
+    static toEventDto = (
         foodConsumptionEvent: FoodConsumptionEventDto): FoodConsumptionEventDto => {
         if (foodConsumptionEvent == null) {
             return null;
@@ -45,14 +45,14 @@ export class FoodConsumptionMapper {
         return event;
     }
 
-    static eventForDay = (
+    static toConsumptionForDayDto = (
         foodConsumptionEvent: FoodConsumptionForDayDto): FoodConsumptionForDayDto => {
         if (foodConsumptionEvent == null) {
             return null;
         }
         const eventsForDay: FoodConsumptionForDayDto = {
             PatientUserId : foodConsumptionEvent.PatientUserId,
-            Event         : foodConsumptionEvent.Event,
+            Events        : foodConsumptionEvent.Events,
             Date          : foodConsumptionEvent.Date,
             TotalCalories : foodConsumptionEvent.TotalCalories,
             StartTime     : foodConsumptionEvent.StartTime,

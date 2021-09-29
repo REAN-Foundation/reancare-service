@@ -16,7 +16,7 @@ import {
 
 import { FoodConsumptionEventList, FoodConsumptionEvents } from '../../../../../domain.types/nutrition/food.consumption/food.consumption.types';
 import { v4 } from 'uuid';
-import FileResource from '../file.resource.model';
+import FileResource from '../file.resource/file.resource.model';
 import User from '../user.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ export default class FoodConsumption extends Model {
     @ForeignKey(() => FileResource)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     ImageResourceId: string;
 

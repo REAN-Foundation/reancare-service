@@ -27,7 +27,7 @@ export interface FoodConsumptionEventDto {
 export interface FoodConsumptionForDayDto {
     PatientUserId?: string;
     Date: Date;
-    Event: FoodConsumptionEventDto[];
+    Events: FoodConsumptionEventDto[];
     TotalCalories: number;
     StartTime?: Date;
     EndTime?: Date;

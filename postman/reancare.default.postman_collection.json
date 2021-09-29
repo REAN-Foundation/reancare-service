@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3f328f0d-014b-4291-8290-15185ae76490",
+		"_postman_id": "6c534789-46a4-495a-9fcd-a3e49227c81a",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -7490,17 +7490,17 @@
 										},
 										{
 											"key": "PatientUserId",
-											"value": "",
+											"value": null,
 											"disabled": true
 										},
 										{
 											"key": "ContactPersonId",
-											"value": "",
+											"value": null,
 											"disabled": true
 										},
 										{
 											"key": "IsAvailableForEmergency",
-											"value": "",
+											"value": null,
 											"disabled": true
 										},
 										{
@@ -7800,6 +7800,490 @@
 									]
 								},
 								"description": "Search addresses using query parameters."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Patient Goal",
+					"item": [
+						{
+							"name": "Add Goal record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"GOAL_ID\", jsonRes.Data.Goal.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New Goal record is created\", function () {",
+											"",
+											"    var expectedPatientUserId = pm.environment.get(\"GOAL_PATIENTUSERID\");",
+											"    var expectedCarePlanId = pm.environment.get(\"GOAL_CAREPLANID\");",
+											"    var expectedTypeCode = pm.environment.get(\"GOAL_TYPECODE\");",
+											"    var expectedTypeName = pm.environment.get(\"GOAL_TYPENAME\");",
+											"    var expectedGoalAchieved = pm.environment.get(\"GOAL_GOALACHIEVED\");",
+											"    var expectedGoalAbandoned = pm.environment.get(\"GOAL_GOALABANDONED\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Goal');",
+											"    pm.expect(jsonRes.Data.Goal).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('PatientUserId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('CarePlanId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('TypeCode');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('TypeName');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalAchieved');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalAbandoned');",
+											"",
+											"    pm.expect(jsonRes.Data.Goal.PatientUserId).equals(expectedPatientUserId);",
+											"    pm.expect(jsonRes.Data.Goal.CarePlanId).equals('' + expectedCarePlanId);",
+											"    pm.expect(jsonRes.Data.Goal.TypeCode).equals('' + expectedTypeCode);",
+											"    pm.expect(jsonRes.Data.Goal.TypeName).equals(expectedTypeName);",
+											"    pm.expect(jsonRes.Data.Goal.GoalAchieved).equals(expectedGoalAchieved);",
+											"    pm.expect(jsonRes.Data.Goal.GoalAbandoned).equals(expectedGoalAbandoned);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var userId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"pm.environment.set(\"GOAL_PATIENTUSERID\", userId);\r",
+											"pm.environment.set(\"GOAL_CAREPLANID\", 1);\r",
+											"pm.environment.set(\"GOAL_TYPECODE\", 1);\r",
+											"pm.environment.set(\"GOAL_TYPENAME\", \"Name\");\r",
+											"pm.environment.set(\"GOAL_GOALACHIEVED\", true);\r",
+											"pm.environment.set(\"GOAL_GOALABANDONED\",false);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{GOAL_PATIENTUSERID}}\",\n    \"CarePlanId\": {{GOAL_CAREPLANID}},\n    \"TypeCode\": {{GOAL_TYPECODE}},\n    \"TypeName\": \"{{GOAL_TYPENAME}}\",\n    \"GoalAchieved\": {{GOAL_GOALACHIEVED}},\n    \"GoalAbandoned\": {{GOAL_GOALABANDONED}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/goal",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"goal"
+									]
+								},
+								"description": "Create new Goal record"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Goal by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Goal record is returned\", function () {",
+											"",
+											"    var expectedPatientUserId = pm.environment.get(\"GOAL_PATIENTUSERID\");",
+											"    var expectedCarePlanId = pm.environment.get(\"GOAL_CAREPLANID\");",
+											"    var expectedTypeCode = pm.environment.get(\"GOAL_TYPECODE\");",
+											"    var expectedTypeName = pm.environment.get(\"GOAL_TYPENAME\");",
+											"    var expectedGoalAchieved = pm.environment.get(\"GOAL_GOALACHIEVED\");",
+											"    var expectedGoalAbandoned = pm.environment.get(\"GOAL_GOALABANDONED\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Goal');",
+											"    pm.expect(jsonRes.Data.Goal).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('PatientUserId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('CarePlanId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('TypeCode');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('TypeName');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalAchieved');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalAbandoned');",
+											"",
+											"    pm.expect(jsonRes.Data.Goal.PatientUserId).equals(expectedPatientUserId);",
+											"    pm.expect(jsonRes.Data.Goal.CarePlanId).equals(expectedCarePlanId);",
+											"    pm.expect(jsonRes.Data.Goal.TypeCode).equals(expectedTypeCode);",
+											"    pm.expect(jsonRes.Data.Goal.TypeName).equals(expectedTypeName);",
+											"    pm.expect(jsonRes.Data.Goal.GoalAchieved).equals(expectedGoalAchieved);",
+											"    pm.expect(jsonRes.Data.Goal.GoalAbandoned).equals(expectedGoalAbandoned);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/patient/goal/{{GOAL_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"goal",
+										"{{GOAL_ID}}"
+									]
+								},
+								"description": "Gets list of Goal records"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Goal by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated Goal record is returned\", function () {",
+											"",
+											"    var expectedPatientUserId = pm.environment.get(\"GOAL_PATIENTUSERID\");",
+											"    var expectedCarePlanId = pm.environment.get(\"GOAL_CAREPLANID\");",
+											"    var expectedTypeCode = pm.environment.get(\"GOAL_TYPECODE\");",
+											"    var expectedTypeName = pm.environment.get(\"GOAL_TYPENAME\");",
+											"    var expectedGoalAchieved = pm.environment.get(\"GOAL_GOALACHIEVED\");",
+											"    var expectedGoalAbandoned = pm.environment.get(\"GOAL_GOALABANDONED\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Goal');",
+											"    pm.expect(jsonRes.Data.Goal).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('PatientUserId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('CarePlanId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('TypeCode');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('TypeName');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalAchieved');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalAbandoned');",
+											"",
+											"    pm.expect(jsonRes.Data.Goal.PatientUserId).equals(expectedPatientUserId);",
+											"    pm.expect(jsonRes.Data.Goal.CarePlanId).equals('' + expectedCarePlanId);",
+											"    pm.expect(jsonRes.Data.Goal.TypeCode).equals('' + expectedTypeCode);",
+											"    pm.expect(jsonRes.Data.Goal.TypeName).equals(expectedTypeName);",
+											"    pm.expect(jsonRes.Data.Goal.GoalAchieved).equals(expectedGoalAchieved);",
+											"    pm.expect(jsonRes.Data.Goal.GoalAbandoned).equals(expectedGoalAbandoned);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"GOAL_TYPENAME\", \"Better\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{GOAL_PATIENTUSERID}}\",\n    \"CarePlanId\": {{GOAL_CAREPLANID}},\n    \"TypeCode\": {{GOAL_TYPECODE}},\n    \"TypeName\": \"{{GOAL_TYPENAME}}\",\n    \"GoalAchieved\": {{GOAL_GOALACHIEVED}},\n    \"GoalAbandoned\": {{GOAL_GOALABANDONED}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient/goal/{{GOAL_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"goal",
+										"{{GOAL_ID}}"
+									]
+								},
+								"description": "Update Goal record with id"
+							},
+							"response": []
+						},
+						{
+							"name": "Search Goal record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of Goal records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Goals');",
+											"    pm.expect(jsonRes.Data.Goals.Items.length).greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/patient/goal/search?createdDateFrom=2021-09-01&createdDateTo=2021-10-14&orderBy=&order=ascending&pageIndex=0&itemsPerPage=25&goalAbandoned=false&goalAchieved=true",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"goal",
+										"search"
+									],
+									"query": [
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-01"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-14"
+										},
+										{
+											"key": "orderBy",
+											"value": ""
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "goalAbandoned",
+											"value": "false"
+										},
+										{
+											"key": "goalAchieved",
+											"value": "true"
+										},
+										{
+											"key": "PatientUserId",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "CarePlanId",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "TypeCode",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "TypeName",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "GoalId",
+											"value": null,
+											"disabled": true
+										}
+									]
+								},
+								"description": "Search Goal records with filters"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Goal record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Goal record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/patient/goal/{{GOAL_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient",
+										"goal",
+										"{{GOAL_ID}}"
+									]
+								},
+								"description": "Delete Goal record with id"
 							},
 							"response": []
 						}
@@ -14268,388 +14752,6 @@
 										"medication",
 										"drugs",
 										"{{MEDICATION_DRUG_ID}}"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Symptom",
-					"item": []
-				},
-				{
-					"name": "Diagnosis",
-					"item": [
-						{
-							"name": "Add diagnosis details",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var jsonRes = pm.response.json();\r",
-											"\r",
-											"try {\r",
-											"    pm.environment.set(\"DIAGNOSIS_ID\", jsonRes.Data.Diagnosis.id);\r",
-											"}\r",
-											"catch (error) {\r",
-											"    console.log(error.message);\r",
-											"}\r",
-											"\r",
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(201);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"New diagnosis record is created\", function () {\r",
-											"\r",
-											"    var expectedValue = false;\r",
-											"    var expectedDiagnosisId = pm.environment.get(\"DIAGNOSIS_ID\");\r",
-											"    \r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Diagnosis');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('IsClinicallyActive');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('ValidationStatus');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('Interpretation');\r",
-											"    \r",
-											"    pm.expect(jsonRes.Data.Diagnosis.IsClinicallyActive).equals(expectedValue);\r",
-											"    pm.expect(jsonRes.Data.Diagnosis.id).equals(expectedDiagnosisId);\r",
-											"    \r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"MedicalPractitionerUserId\": \"0652a79e-c549-478d-bc99-42187dd91d30\",\r\n    \"MedicalConditionId\": \"06fbc6fd-b819-416e-8dc9-e20bb59c11c9\",\r\n    \"Comments\": \"better than earlier\",\r\n    \"IsClinicallyActive\": false,\r\n    \"ValidationStatus\": \"Confirmed\",\r\n    \"Interpretation\": \"Significant change up\",\r\n    \"OnsetDate\": \"2021-09-15\",\r\n    \"EndDate\": \"2021-09-25\"\r\n}"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/diagnosis",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"diagnosis"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get diagnosis by Id",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Diagnosis record is returned\", function () {\r",
-											"\r",
-											"    var expectedValue = false;\r",
-											"    var expectedDiagnosisId = pm.environment.get(\"DIAGNOSIS_ID\");\r",
-											"    \r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Diagnosis');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('IsClinicallyActive');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('ValidationStatus');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('Interpretation');\r",
-											"    \r",
-											"    pm.expect(jsonRes.Data.Diagnosis.IsClinicallyActive).equals(expectedValue);\r",
-											"    pm.expect(jsonRes.Data.Diagnosis.id).equals(expectedDiagnosisId);\r",
-											"    \r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/diagnosis/{{DIAGNOSIS_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"diagnosis",
-										"{{DIAGNOSIS_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update diagnosis record",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Updated Diagnosis record is returned\", function () {\r",
-											"\r",
-											"    var expectedValue = true;\r",
-											"    var expectedDiagnosisId = pm.environment.get(\"DIAGNOSIS_ID\");\r",
-											"    \r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Diagnosis');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('IsClinicallyActive');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('ValidationStatus');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('Interpretation');\r",
-											"    \r",
-											"    pm.expect(jsonRes.Data.Diagnosis.IsClinicallyActive).equals(expectedValue);\r",
-											"    pm.expect(jsonRes.Data.Diagnosis.id).equals(expectedDiagnosisId);\r",
-											"    \r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"MedicalPractitionerUserId\": \"0652a79e-c549-478d-bc99-42187dd91d30\",\r\n    \"MedicalConditionId\": \"06fbc6fd-b819-416e-8dc9-e20bb59c11c9\",\r\n    \"Comments\": \"Condition becomes worse day by day\",\r\n    \"IsClinicallyActive\": true,\r\n    \"ValidationStatus\": \"Negated\",\r\n    \"Interpretation\": \"Critically abnormal\",\r\n    \"OnsetDate\": \"2021-09-05\",\r\n    \"EndDate\": \"2021-09-12\"\r\n}"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/diagnosis/{{DIAGNOSIS_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"diagnosis",
-										"{{DIAGNOSIS_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search diagnosis records",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"List of diagnosis records is returned\", function () {\r",
-											"\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Diagnosis');\r",
-											"    pm.expect(jsonRes.Data.Diagnosis.Items.length).to.be.greaterThan(0);\r",
-											"\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/diagnosis/search?onSetDateFrom=2021-09-14&onSetDateTo=2021-10-15&orderBy=IsClinicallyActive&order=ascending&pageIndex=0&itemsPerPage=25&patientUserId={{PATIENT_USER_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"diagnosis",
-										"search"
-									],
-									"query": [
-										{
-											"key": "onSetDateFrom",
-											"value": "2021-09-14"
-										},
-										{
-											"key": "onSetDateTo",
-											"value": "2021-10-15"
-										},
-										{
-											"key": "orderBy",
-											"value": "IsClinicallyActive"
-										},
-										{
-											"key": "order",
-											"value": "ascending"
-										},
-										{
-											"key": "pageIndex",
-											"value": "0"
-										},
-										{
-											"key": "itemsPerPage",
-											"value": "25"
-										},
-										{
-											"key": "patientUserId",
-											"value": "{{PATIENT_USER_ID}}"
-										},
-										{
-											"key": "",
-											"value": null,
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete diagnosis records",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Diagnosis record is deleted\", function () {\r",
-											"\r",
-											"    var expectedValue = true;\r",
-											"    \r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
-											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
-											"\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/diagnosis/{{DIAGNOSIS_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"diagnosis",
-										"{{DIAGNOSIS_ID}}"
 									]
 								}
 							},

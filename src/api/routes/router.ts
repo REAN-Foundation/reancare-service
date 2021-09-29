@@ -30,6 +30,7 @@ import { register as registerHowDoYouFeelRoutes } from './symptom/howDoYouFeel/h
 import { register as registerDrugRoutes } from './medication/drug.routes';
 import { register as registerUserDeviceDetailsRoutes } from './user.device.details.routes';
 import { register as registerDiagnosisRoutes } from './diagnosis.routes';
+import { register as registerGoalRoutes } from './patient/goal.route';
 
 import { Logger } from "../../common/logger";
 
@@ -85,6 +86,7 @@ export class Router {
                 registerHowDoYouFeelRoutes(this._app);
                 registerDrugRoutes(this._app);
                 registerUserDeviceDetailsRoutes(this._app);
+                registerGoalRoutes(this._app);
 
                 resolve(true);
 

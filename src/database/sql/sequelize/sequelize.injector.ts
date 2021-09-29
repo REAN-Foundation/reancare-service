@@ -36,6 +36,7 @@ import { DiagnosisRepo } from './repositories/diagnosis.repo';
 import { HowDoYouFeelRepo } from './repositories/symptom/howDoYouFeel/howDoYouFeel.repo';
 import { DrugRepo } from './repositories/medication/drug.repo';
 import { UserDeviceDetailsRepo } from './repositories/user.device.details.repo';
+import { GoalRepo } from './repositories/patient/goal.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -82,6 +83,7 @@ export class SequelizeInjector {
         container.register('IHowDoYouFeelRepo', HowDoYouFeelRepo);
         container.register('IDrugRepo', DrugRepo);
         container.register('IUserDeviceDetailsRepo', UserDeviceDetailsRepo);
+        container.register('IGoalRepo', GoalRepo);
     }
 
 }

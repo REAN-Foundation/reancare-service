@@ -27,10 +27,16 @@ import { CalorieBalanceRepo } from './repositories/daily.records/calorie.balance
 import { HeartPointsRepo } from './repositories/daily.records/heart.points.repo';
 import { ComplaintRepo } from './repositories/patient/complaint.repo';
 import { AllergyRepo } from './repositories/patient/allergy.repo';
+import { WaterConsumptionRepo } from './repositories/nutrition/water.consumption.repo';
+import { EmergencyContactRepo } from './repositories/patient/emergency.contact.repo';
 import { SleepRepo } from './repositories/daily.records/sleep.repo';
 import { EmergencyEventRepo } from './repositories/emergency.event.repo';
 import { MeditationRepo } from './repositories/exercise/meditation.repo';
 import { BloodGlucoseRepo } from './repositories/biometrics/blood.glucose.repo';
+import { DiagnosisRepo } from './repositories/diagnosis.repo';
+import { HowDoYouFeelRepo } from './repositories/symptom/howDoYouFeel/howDoYouFeel.repo';
+import { DrugRepo } from './repositories/medication/drug.repo';
+import { UserDeviceDetailsRepo } from './repositories/user.device.details.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -68,10 +74,16 @@ export class SequelizeInjector {
         container.register('IMedicationStockImageRepo', MedicationStockImageRepo);
         container.register('IComplaintRepo', ComplaintRepo);
         container.register('IAllergyRepo', AllergyRepo);
+        container.register('IWaterConsumptionRepo', WaterConsumptionRepo);
+        container.register('IEmergencyContactRepo', EmergencyContactRepo);
         container.register('ISleepRepo', SleepRepo);
         container.register('IEmergencyEventRepo', EmergencyEventRepo);
         container.register('IMeditationRepo', MeditationRepo);
         container.register('IBloodGlucoseRepo', BloodGlucoseRepo);
+        container.register('IDiagnosisRepo', DiagnosisRepo);
+        container.register('IHowDoYouFeelRepo', HowDoYouFeelRepo);
+        container.register('IDrugRepo', DrugRepo);
+        container.register('IUserDeviceDetailsRepo', UserDeviceDetailsRepo);
     }
 
 }

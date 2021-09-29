@@ -112,7 +112,12 @@
             "Biometrics.BloodPressure.GetById",
             "Biometrics.BloodPressure.Update",
             "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete"
+            "Biometrics.BloodPressure.Delete",
+            "Medication.Drug.Create",
+            "Medication.Drug.GetById",
+            "Medication.Drug.Update",
+            "Medication.Drug.Delete",
+            "Medication.Drug.Search"
         ]
     },
     {
@@ -229,7 +234,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Medication.Drug.Create",
+            "Medication.Drug.GetById",
+            "Medication.Drug.Update",
+            "Medication.Drug.Delete",
+            "Medication.Drug.Search"
         ]
     },
     {
@@ -349,7 +359,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Medication.Drug.Create",
+            "Medication.Drug.GetById",
+            "Medication.Drug.Update",
+            "Medication.Drug.Delete",
+            "Medication.Drug.Search"
         ]
     },
     {
@@ -459,7 +474,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Medication.Drug.Create",
+            "Medication.Drug.GetById",
+            "Medication.Drug.Update",
+            "Medication.Drug.Delete",
+            "Medication.Drug.Search"
         ]
     },
     {
@@ -569,7 +589,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "Medication.Drug.Create",
+            "Medication.Drug.GetById",
+            "Medication.Drug.Update",
+            "Medication.Drug.Delete",
+            "Medication.Drug.Search"
         ]
     }
 ]

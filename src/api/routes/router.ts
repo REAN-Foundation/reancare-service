@@ -42,6 +42,7 @@ import { register as registerDrugRoutes } from './medication/drug.routes';
 import { register as registerUserDeviceDetailsRoutes } from './user.device.details.routes';
 import { register as registerDiagnosisRoutes } from './diagnosis.routes';
 import { register as registerGoalRoutes } from './patient/goal.route';
+import { register as registerFileResourceRoutes } from './file.resource.routes';
 
 import { Logger } from "../../common/logger";
 
@@ -109,6 +110,7 @@ export class Router {
                 registerDrugRoutes(this._app);
                 registerUserDeviceDetailsRoutes(this._app);
                 registerGoalRoutes(this._app);
+                registerFileResourceRoutes(this._app);
 
                 resolve(true);
 

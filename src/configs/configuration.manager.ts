@@ -8,7 +8,13 @@ import {
     EHRSpecification,
     AuthenticationType,
     AuthorizationType,
+    FileStorageProvider,
+    SMSServiceProvider,
+    EmailServiceProvider,
+    InAppNotificationServiceProvider,
 } from './configs';
+
+import path from 'path';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +37,20 @@ export class ConfigurationManager {
             Ehr : {
                 Specification : configuration.Ehr.Specification as EHRSpecification,
                 Provider      : configuration.Ehr.Provider as EHRProvider,
+            },
+            FileStorage : {
+                Provider : configuration.FileStorage.Provider as FileStorageProvider,
+            },
+            Communication : {
+                SMSProvider               : configuration.Communication.SMS.Provider as SMSServiceProvider,
+                EmailProvider             : configuration.Communication.Email.Provider as EmailServiceProvider,
+                // eslint-disable-next-line max-len
+                InAppNotificationProvider : configuration.Communication.InAppNotifications.Provider as InAppNotificationServiceProvider,
+            },
+            TemporaryFolders : {
+                Upload                     : configuration.TemporaryFolders.Upload as string,
+                Download                   : configuration.TemporaryFolders.Download as string,
+                CleanupFolderBeforeMinutes : configuration.TemporaryFolders.CleanupFolderBeforeMinutes as number,
             },
             MaxUploadFileSize : configuration.MaxUploadFileSize,
         };
@@ -68,6 +88,36 @@ export class ConfigurationManager {
 
     public static MaxUploadFileSize = (): number => {
         return ConfigurationManager._config.MaxUploadFileSize;
+    };
+
+    public static FileStorageProvider = (): FileStorageProvider => {
+        return ConfigurationManager._config.FileStorage.Provider;
+    };
+    
+    public static SMSServiceProvider = (): SMSServiceProvider => {
+        return ConfigurationManager._config.Communication.SMSProvider;
+    };
+    
+    public static EmailServiceProvider = (): EmailServiceProvider => {
+        return ConfigurationManager._config.Communication.EmailProvider;
+    };
+    
+    public static UploadTemporaryFolder = (): string => {
+        var location = ConfigurationManager._config.TemporaryFolders.Upload;
+        return path.join(process.cwd(), location);
+    };
+    
+    public static DownloadTemporaryFolder = (): string => {
+        var location = ConfigurationManager._config.TemporaryFolders.Download;
+        return path.join(process.cwd(), location);
+    };
+    
+    public static TemporaryFolderCleanupBefore = (): number => {
+        return ConfigurationManager._config.TemporaryFolders.CleanupFolderBeforeMinutes;
+    };
+    
+    public static InAppNotificationServiceProvider = (): InAppNotificationServiceProvider => {
+        return ConfigurationManager._config.Communication.InAppNotificationProvider;
     };
 
     private static checkConfigSanity() {

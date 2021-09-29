@@ -107,7 +107,6 @@ export class KnowledgeNuggetValidator {
             .run(request);
 
         await body('Tags').optional()
-            .trim()
             .isArray()
             .run(request);
 

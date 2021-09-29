@@ -7,6 +7,7 @@ import { register as registerDoctorRoutes } from "./doctor.routes";
 import { register as registerOrganizationRoutes } from './organization.routes';
 import { register as registerPersonRoutes } from './person.routes';
 import { register as registerTypesRoutes } from './types.routes';
+import { register as registerBloodPressureRoutes } from './biometrics/blood.pressure.routes';
 import { register as registerBodyWeightRoutes } from './biometrics/body.weight.routes';
 import { register as registerBodyHeightRoutes } from './biometrics/body.height.routes';
 import { register as registerPatientHealthProfileRoutes } from './patient/health.profile.routes';
@@ -21,6 +22,18 @@ import { register as registerComplaintRoutes } from './patient/complaint.routes'
 import { register as registerAllergyRoutes } from './patient/allergy.route';
 import { register as registerHeartPointRoutes } from './daily.records/heart.points.routes';
 import { register as registerKnowledgeNuggetRoutes } from './static.types/knowledge.nugget.routes';
+import { register as registerOrderRoutes } from './order/order.routes';
+import { register as registerWaterConsumptionRoutes } from './nutrition/water.consumption.routes';
+import { register as registerEmergencyContactRoutes } from './patient/emergency.contact.route';
+import { register as registerSleepRoutes } from './daily.records/sleep.routes';
+import { register as registerEmergencyEventRoutes } from './emergency.event.routes';
+import { register as registerMeditationtRoutes } from './exercise/meditation.routes';
+import { register as registerBloodGlucoseRoutes } from './biometrics/blood.glucose.routes';
+import { register as registerHowDoYouFeelRoutes } from './symptom/howDoYouFeel/howDoYouFeel.routes';
+import { register as registerDrugRoutes } from './medication/drug.routes';
+import { register as registerUserDeviceDetailsRoutes } from './user.device.details.routes';
+import { register as registerDiagnosisRoutes } from './diagnosis.routes';
+
 import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +67,7 @@ export class Router {
                 registerBiometricsBloodOxygenSaturationRoutes(this._app);
                 registerPersonRoutes(this._app);
                 registerOrganizationRoutes(this._app);
+                registerBloodPressureRoutes(this._app);
                 registerBodyHeightRoutes(this._app);
                 registerPatientHealthProfileRoutes(this._app);
                 registerHealthProfileRoutes(this._app);
@@ -66,6 +80,17 @@ export class Router {
                 registerAllergyRoutes(this._app);
                 registerHeartPointRoutes(this._app);
                 registerKnowledgeNuggetRoutes(this._app);
+                registerOrderRoutes(this._app);
+                registerWaterConsumptionRoutes(this._app);
+                registerEmergencyContactRoutes(this._app);
+                registerSleepRoutes(this._app);
+                registerEmergencyEventRoutes(this._app);
+                registerMeditationtRoutes(this._app);
+                registerBloodGlucoseRoutes(this._app);
+                registerDiagnosisRoutes(this._app);
+                registerHowDoYouFeelRoutes(this._app);
+                registerDrugRoutes(this._app);
+                registerUserDeviceDetailsRoutes(this._app);
 
                 resolve(true);
 

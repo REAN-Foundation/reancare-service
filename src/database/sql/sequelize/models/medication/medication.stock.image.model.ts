@@ -12,7 +12,7 @@ import {
     IsInt,
     ForeignKey,
 } from 'sequelize-typescript';
-import FileResource from '../file.resource.model';
+import FileResource from '../file.resource/file.resource.model';
 
 ///////////////////////////////////////////////////////////////////////
 

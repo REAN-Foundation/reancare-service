@@ -8,8 +8,6 @@ import { MysqlClient } from './dialect.clients/mysql.client';
 import { execSync } from 'child_process';
 import { ConfigurationManager } from '../../../configs/configuration.manager';
 
-//const execSync = require('child_process').execSync;
-
 //////////////////////////////////////////////////////////////
 
 export class DatabaseConnector_Sequelize implements IDatabaseConnector {

@@ -13911,6 +13911,369 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Medication",
+					"item": [
+						{
+							"name": "Drugs",
+							"item": []
+						},
+						{
+							"name": "Add drug details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"MEDICATION_DRUG_ID\", jsonRes.Data.Drug.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New drug record is created\", function () {",
+											"",
+											"    var expectedDrugName = \"aciloc\";",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Drug');",
+											"    pm.expect(jsonRes.Data.Drug).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Drug).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Drug).to.have.property('DrugName');",
+											"    ",
+											"    pm.expect(jsonRes.Data.Drug.DrugName).equals(expectedDrugName);    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"DrugName\": \"aciloc\",\n    \"GenericName\": \"Paracetamol\",\n    \"Ingredients\": \"levocetrizine\",\n    \"Strength\": \"high\",\n    \"OtherCommercialNames\":\"LP\",\n    \"Manufacturer\": \"abc lab\",\n    \"OtherInformation\": \"aaaa\"  \n}\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/medication/drugs",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"medication",
+										"drugs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get drug details by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Drug record is returned\", function () {",
+											"",
+											"    var expectedDrugName = \"aciloc\";",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Drug');",
+											"    pm.expect(jsonRes.Data.Drug).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Drug).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Drug).to.have.property('DrugName');",
+											"    ",
+											"    pm.expect(jsonRes.Data.Drug.DrugName).equals(expectedDrugName);    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/medication/drugs/{{MEDICATION_DRUG_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"medication",
+										"drugs",
+										"{{MEDICATION_DRUG_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update drug details by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated drug record is returned\", function () {",
+											"",
+											"    var expectedDrugName = \"sinarest\";",
+											"    var expectedGenericName = \"crocin\";",
+											"    var expectedStrength = \"high\";",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Drug');",
+											"    pm.expect(jsonRes.Data.Drug).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Drug).to.have.property('DrugName');",
+											"    pm.expect(jsonRes.Data.Drug).to.have.property('GenericName');",
+											"    pm.expect(jsonRes.Data.Drug).to.have.property('Strength');",
+											"",
+											"    pm.expect(jsonRes.Data.Drug.DrugName).equals(expectedDrugName);",
+											"    pm.expect(jsonRes.Data.Drug.GenericName).equals(expectedGenericName);",
+											"    pm.expect(jsonRes.Data.Drug.Strength).equals(expectedStrength);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"DrugName\": \"sinarest\",\n    \"GenericName\": \"crocin\",\n    \"Ingredients\": \"parac\",\n    \"Strength\": \"high\",\n    \"OtherCommercialNames\":\"LP\",\n    \"Manufacturer\": \"abc lab\",\n    \"OtherInformation\": \"llll\"  \n}\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/medication/drugs/{{MEDICATION_DRUG_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"medication",
+										"drugs",
+										"{{MEDICATION_DRUG_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search drug details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of drug records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('DrugRecords');",
+											"    pm.expect(jsonRes.Data.DrugRecords.Items.length).to.be.greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/medication/drugs/search?name=sinarest&order=ascending&pageIndex=0&itemsPerPage=25",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"medication",
+										"drugs",
+										"search"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "sinarest"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete drug details by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Drug record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/medication/drugs/{{MEDICATION_DRUG_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"medication",
+										"drugs",
+										"{{MEDICATION_DRUG_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},

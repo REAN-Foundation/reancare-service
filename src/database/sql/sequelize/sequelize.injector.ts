@@ -32,6 +32,7 @@ import { EmergencyContactRepo } from './repositories/patient/emergency.contact.r
 import { SleepRepo } from './repositories/daily.records/sleep.repo';
 import { EmergencyEventRepo } from './repositories/emergency.event.repo';
 import { MeditationRepo } from './repositories/exercise/meditation.repo';
+import { DrugRepo } from './repositories/medication/drug.repo';
 import { UserDeviceDetailsRepo } from './repositories/user.device.details.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -75,6 +76,7 @@ export class SequelizeInjector {
         container.register('ISleepRepo', SleepRepo);
         container.register('IEmergencyEventRepo', EmergencyEventRepo);
         container.register('IMeditationRepo', MeditationRepo);
+        container.register('IDrugRepo', DrugRepo);
         container.register('IUserDeviceDetailsRepo', UserDeviceDetailsRepo);
     }
 

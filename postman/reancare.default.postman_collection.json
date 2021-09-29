@@ -11194,6 +11194,392 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Physical activity",
+					"item": [
+						{
+							"name": "Add physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"EXERCISE_PHYSICAL_ACTIVITY_ID\", jsonRes.Data.PhysicalActivity.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New physical activity record is created\", function () {\r",
+											"\r",
+											"    var expectedExercise = \"Dead lift\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivity');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Exercise');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Category');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Exercise).equals(expectedExercise);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Exercise\": \"Dead lift\",\r\n    \"Description\": \"30 kg\",\r\n    \"Category\": \"Strength training\",\r\n    \"CaloriesBurned\": 120,\r\n    \"Intensity\": \"Moderate\",\r\n    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\r\n    \"EndTime\": \"2021-09-20T00:15:00.000Z\",\r\n    \"DurationInMin\": 15\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activities",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get physical activity by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Physical activity record is returned\", function () {\r",
+											"\r",
+											"    var expectedExercise = \"Dead lift\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivity');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Exercise');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Category');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Exercise).equals(expectedExercise);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activities/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activities",
+										"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated physical activity record is returned\", function () {\r",
+											"\r",
+											"    var expectedExercise = \"Push up\";\r",
+											"    var expectedIntensity = \"Vigorous\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivity');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Exercise');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('Category');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('CaloriesBurned');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity).to.have.property('PatientUserId');\r",
+											"    \r",
+											"\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Exercise).equals(expectedExercise);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.Intensity).equals(expectedIntensity);\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivity.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"Exercise\": \"Push up\",\r\n    \"Description\": \"Straight\",\r\n    \"Category\": \"Strength training\",\r\n    \"CaloriesBurned\": 40,\r\n    \"Intensity\": \"Vigorous\",\r\n    \"StartTime\": \"2021-09-20T00:00:00.000Z\",\r\n    \"EndTime\": \"2021-09-20T00:00:05.000Z\",\r\n    \"DurationInMin\": 5\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activities/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activities",
+										"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of physical activity is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PhysicalActivities');\r",
+											"    pm.expect(jsonRes.Data.PhysicalActivities.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activities/search?orderBy=Category&order=ascending&pageIndex=0&itemsPerPage=25",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activities",
+										"search"
+									],
+									"query": [
+										{
+											"key": "exercise",
+											"value": "Dead lift",
+											"disabled": true
+										},
+										{
+											"key": "category",
+											"value": "Strength training",
+											"disabled": true
+										},
+										{
+											"key": "orderBy",
+											"value": "Category"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete physical activity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Physical activity record is deleted\", function () {\r",
+											"\r",
+											"    var expectedValue = true;\r",
+											"    var jsonRes = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/exercise/physical-activities/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"exercise",
+										"physical-activities",
+										"{{EXERCISE_PHYSICAL_ACTIVITY_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},

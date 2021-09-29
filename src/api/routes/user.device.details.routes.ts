@@ -1,6 +1,7 @@
+/* eslint-disable max-len */
 import express from 'express';
-import { DrugController } from '../../controllers/medication/drug.controller';
-import { Loader } from '../../../startup/loader';
+import { UserDeviceDetailsController } from '../controllers/user.device.details.controller ';
+import { Loader } from '../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -8,7 +9,7 @@ export const register = (app: express.Application): void => {
 
     const router = express.Router();
     const authenticator = Loader.authenticator;
-    const controller = new DrugController();
+    const controller = new UserDeviceDetailsController();
 
     router.post('/', authenticator.authenticateClient, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
@@ -16,5 +17,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 
-    app.use('/api/v1/medication/drugs', router);
+    app.use('/api/v1/user-device-details', router);
 };

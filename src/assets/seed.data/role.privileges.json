@@ -93,6 +93,11 @@
             "Complaint.Search",
             "Complaint.Update",
             "Complaint.Delete",
+            "Nutrition.WaterConsumption.Create",
+            "Nutrition.WaterConsumption.GetById",
+            "Nutrition.WaterConsumption.Update",
+            "Nutrition.WaterConsumption.Delete",
+            "Nutrition.WaterConsumption.Search",
             "Emergency.Contact.Create",
             "Emergency.Contact.GetById",
             "Emergency.Contact.Search",
@@ -122,7 +127,12 @@
             "Medication.Drug.GetById",
             "Medication.Drug.Update",
             "Medication.Drug.Delete",
-            "Medication.Drug.Search"
+            "Medication.Drug.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -225,6 +235,11 @@
             "Complaint.Search",
             "Complaint.Update",
             "Complaint.Delete",
+            "Nutrition.WaterConsumption.Create",
+            "Nutrition.WaterConsumption.GetById",
+            "Nutrition.WaterConsumption.Update",
+            "Nutrition.WaterConsumption.Delete",
+            "Nutrition.WaterConsumption.Search",
             "Emergency.Contact.Create",
             "Emergency.Contact.GetById",
             "Emergency.Contact.Search",
@@ -249,7 +264,12 @@
             "Medication.Drug.GetById",
             "Medication.Drug.Update",
             "Medication.Drug.Delete",
-            "Medication.Drug.Search"
+            "Medication.Drug.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -355,6 +375,11 @@
             "Complaint.Search",
             "Complaint.Update",
             "Complaint.Delete",
+            "Nutrition.WaterConsumption.Create",
+            "Nutrition.WaterConsumption.GetById",
+            "Nutrition.WaterConsumption.Update",
+            "Nutrition.WaterConsumption.Delete",
+            "Nutrition.WaterConsumption.Search",
             "Emergency.Contact.Create",
             "Emergency.Contact.GetById",
             "Emergency.Contact.Search",
@@ -379,7 +404,12 @@
             "Medication.Drug.GetById",
             "Medication.Drug.Update",
             "Medication.Drug.Delete",
-            "Medication.Drug.Search"
+            "Medication.Drug.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -475,6 +505,11 @@
             "DailyRecords.StepCount.Search",
             "DailyRecords.StepCount.Update",
             "DailyRecords.StepCount.Delete",
+            "Nutrition.WaterConsumption.Create",
+            "Nutrition.WaterConsumption.GetById",
+            "Nutrition.WaterConsumption.Update",
+            "Nutrition.WaterConsumption.Delete",
+            "Nutrition.WaterConsumption.Search",
             "Emergency.Contact.Create",
             "Emergency.Contact.GetById",
             "Emergency.Contact.Search",
@@ -499,7 +534,12 @@
             "Medication.Drug.GetById",
             "Medication.Drug.Update",
             "Medication.Drug.Delete",
-            "Medication.Drug.Search"
+            "Medication.Drug.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     },
     {
@@ -595,6 +635,11 @@
             "Biometrics.Pulse.Update",
             "Biometrics.Pulse.Delete",
             "Biometrics.Pulse.Search",
+            "Nutrition.WaterConsumption.Create",
+            "Nutrition.WaterConsumption.GetById",
+            "Nutrition.WaterConsumption.Update",
+            "Nutrition.WaterConsumption.Delete",
+            "Nutrition.WaterConsumption.Search",
             "Emergency.Contact.Create",
             "Emergency.Contact.GetById",
             "Emergency.Contact.Search",
@@ -619,7 +664,12 @@
             "Medication.Drug.GetById",
             "Medication.Drug.Update",
             "Medication.Drug.Delete",
-            "Medication.Drug.Search"
+            "Medication.Drug.Search",
+            "UserDeviceDetails.Create",
+            "UserDeviceDetails.GetById",
+            "UserDeviceDetails.Update",
+            "UserDeviceDetails.Search",
+            "UserDeviceDetails.Delete"
         ]
     }
 ]

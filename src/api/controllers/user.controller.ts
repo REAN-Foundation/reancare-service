@@ -72,7 +72,8 @@ export class UserController {
     generateOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.GenerateOtp';
-            const obj = UserValidator.generateOtp(request, response);
+
+            const obj = await UserValidator.generateOtp(request, response);
             const entity = await this._service.generateOtp(obj);
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {
                 entity : entity,

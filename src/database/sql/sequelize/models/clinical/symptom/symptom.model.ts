@@ -23,7 +23,7 @@ import {
 import { v4 } from 'uuid';
 import { SeverityList, Severity } from '../../../../../../domain.types/miscellaneous/system.types';
 import User from '../../user.model';
-import Visit from '../../visit.model';
+import Visit from '../visit.model';
 import SymptomAssessment from './symptom.assessment.model';
 import SymptomAssessmentTemplate from './symptom.assessment.template.model';
 import SymptomType from './symptom.type.model';

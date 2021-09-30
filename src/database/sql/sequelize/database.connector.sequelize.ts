@@ -1,12 +1,12 @@
-import { Sequelize } from 'sequelize-typescript';
-import { Dialect } from 'sequelize';
-import { DbConfig } from './database.config';
-import { Logger } from '../../../common/logger';
-import { IDatabaseConnector } from '../../database.connector.interface';
-import { PostgresqlClient } from './dialect.clients/postgresql.client';
-import { MysqlClient } from './dialect.clients/mysql.client';
 import { execSync } from 'child_process';
+import { Dialect } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
+import { Logger } from '../../../common/logger';
 import { ConfigurationManager } from '../../../configs/configuration.manager';
+import { IDatabaseConnector } from '../../database.connector.interface';
+import { DbConfig } from './database.config';
+import { MysqlClient } from './dialect.clients/mysql.client';
+import { PostgresqlClient } from './dialect.clients/postgresql.client';
 
 //////////////////////////////////////////////////////////////
 
@@ -21,17 +21,16 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
             const dialect: Dialect = this.getDialect();
             const modelsPath = [
                 __dirname + '/models',
-                __dirname + '/models/biometrics',
-                __dirname + '/models/daily.records',
-                __dirname + '/models/patient',
-                __dirname + '/models/exercise',
-                __dirname + '/models/medication',
-                __dirname + '/models/nutrition',
-                __dirname + '/models/static.types',
-                __dirname + '/models/symptom',
+                __dirname + '/models/clinical',
+                __dirname + '/models/clinical/biometrics',
                 __dirname + '/models/clinical/medication',
                 __dirname + '/models/clinical/symptom',
+                __dirname + '/models/educational',
                 __dirname + '/models/file.resource',
+                __dirname + '/models/patient',
+                __dirname + '/models/wellness/daily.records',
+                __dirname + '/models/wellness/exercise',
+                __dirname + '/models/wellness/nutrition',
             ];
             const options = {
                 host    : config.host,

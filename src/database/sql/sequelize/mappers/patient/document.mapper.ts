@@ -1,9 +1,9 @@
-import DocumentModel from '../../models/patient/document.model';
+import { OrderTypes } from '../../../../../domain.types/clinical/order/order.types';
+import { VisitTypes } from '../../../../../domain.types/miscellaneous/system.types';
 import { DocumentDto } from '../../../../../domain.types/patient/document/document.dto';
 import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
 import { Roles } from '../../../../../domain.types/role/role.types';
-import { VisitTypes } from '../../../../../domain.types/miscellaneous/system.types';
-import { OrderTypes } from '../../../../../domain.types/order/order.types';
+import DocumentModel from '../../models/patient/document.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

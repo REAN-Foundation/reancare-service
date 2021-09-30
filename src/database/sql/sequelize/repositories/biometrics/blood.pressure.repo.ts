@@ -1,12 +1,12 @@
-import { IBloodPressureRepo } from '../../../../repository.interfaces/biometrics/blood.pressure.repo.interface';
-import BloodPressureModel from '../../models/biometrics/blood.pressure.model';
 import { Op } from 'sequelize';
-import { BloodPressureMapper } from '../../mappers/biometrics/blood.pressure.mapper';
-import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
-import { BloodPressureDomainModel } from "../../../../../domain.types/biometrics/blood.pressure/blood.pressure.domain.model";
-import { BloodPressureDto } from "../../../../../domain.types/biometrics/blood.pressure/blood.pressure.dto";
-import { BloodPressureSearchFilters, BloodPressureSearchResults } from "../../../../../domain.types/biometrics/blood.pressure/blood.pressure.search.types";
+import { Logger } from '../../../../../common/logger';
+import { BloodPressureDomainModel } from "../../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model";
+import { BloodPressureDto } from "../../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto";
+import { BloodPressureSearchFilters, BloodPressureSearchResults } from "../../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.search.types";
+import { IBloodPressureRepo } from '../../../../repository.interfaces/clinical/biometrics/blood.pressure.repo.interface';
+import { BloodPressureMapper } from '../../mappers/clinical/biometrics/blood.pressure.mapper';
+import BloodPressureModel from '../../models/clinical/biometrics/blood.pressure.model';
 
 ///////////////////////////////////////////////////////////////////////
 

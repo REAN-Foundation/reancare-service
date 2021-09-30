@@ -29,9 +29,9 @@ import {
 } from '../../../../../../domain.types/clinical/medication/medication/medication.types';
 
 import FileResource from '../../file.resource/file.resource.model';
-import Order from '../../order.model';
+import Order from '../order.model';
 import User from '../../user.model';
-import Visit from '../../visit.model';
+import Visit from '../visit.model';
 import Drug from './drug.model';
 import { v4 } from 'uuid';
 

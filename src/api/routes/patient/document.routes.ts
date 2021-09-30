@@ -1,6 +1,6 @@
 import express from 'express';
-import { DocumentController } from '../../controllers/patient/document.controller';
 import { Loader } from '../../../startup/loader';
+import { DocumentController } from '../../controllers/patient/document.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -15,5 +15,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 
-    app.use('/api/v1/patient/document', router);
+    app.use('/api/v1/patient-documents', router);
 };

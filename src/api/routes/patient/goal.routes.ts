@@ -1,6 +1,6 @@
 import express from 'express';
-import { GoalController } from '../../controllers/patient/goal.controller';
 import { Loader } from '../../../startup/loader';
+import { GoalController } from '../../controllers/patient/goal.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -16,5 +16,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
     
-    app.use('/api/v1/patient/goal', router);
+    app.use('/api/v1/patient-goals', router);
 };

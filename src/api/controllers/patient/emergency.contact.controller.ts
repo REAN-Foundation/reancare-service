@@ -10,7 +10,7 @@ import { ApiError } from '../../../common/api.error';
 import { EmergencyContactValidator } from '../../validators/patient/emergency.contact.validator';
 import { EmergencyContactService } from '../../../services/patient/emergency.contact.service';
 import { RoleService } from '../../../services/role.service';
-import { UserService } from '../../../services/user.service';
+import { UserService } from '../../../services/user/user.service';
 import { OrganizationService } from '../../../services/organization.service';
 import { AddressService } from '../../../services/address.service';
 

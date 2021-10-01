@@ -1,22 +1,22 @@
-import { Loader } from '../startup/loader';
-import { IUserRepo } from '../database/repository.interfaces/user.repo.interface';
-import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
-import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
-import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
-import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserLoginDetails, UserDomainModel } from '../domain.types/user/user/user.domain.model';
-import { injectable, inject } from 'tsyringe';
-import { Logger } from '../common/logger';
-import { ApiError } from '../common/api.error';
-import { CurrentUser } from '../domain.types/miscellaneous/current.user';
-import { OtpPersistenceEntity } from '../domain.types/otp/otp.domain.types';
-import { Roles } from '../domain.types/role/role.types';
 import { generate } from 'generate-password';
-import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
-import { PersonDetailsDto } from '../domain.types/person/person.dto';
-import { Helper } from '../common/helper';
-import { UserDetailsDto, UserDto } from '../domain.types/user/user/user.dto';
-import { IInternalTestUserRepo } from '../database/repository.interfaces/internal.test.user.repo.interface';
+import { inject, injectable } from 'tsyringe';
+import { ApiError } from '../../common/api.error';
+import { Helper } from '../../common/helper';
+import { Logger } from '../../common/logger';
+import { IInternalTestUserRepo } from '../../database/repository.interfaces/internal.test.user.repo.interface';
+import { IOtpRepo } from '../../database/repository.interfaces/otp.repo.interface';
+import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
+import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
+import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
+import { IUserRepo } from '../../database/repository.interfaces/user.repo.interface';
+import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
+import { OtpPersistenceEntity } from '../../domain.types/otp/otp.domain.types';
+import { PersonDetailsDto } from '../../domain.types/person/person.dto';
+import { Roles } from '../../domain.types/role/role.types';
+import { UserDomainModel, UserLoginDetails } from '../../domain.types/user/user/user.domain.model';
+import { UserDetailsDto, UserDto } from '../../domain.types/user/user/user.dto';
+import { IMessagingService } from '../../modules/communication/interfaces/messaging.service.interface';
+import { Loader } from '../../startup/loader';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

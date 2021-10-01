@@ -1,6 +1,6 @@
 import express from 'express';
 import { Loader } from '../../../../startup/loader';
-import { DrugController } from '../../../controllers/clinical/medication/drug.controller';
+import { MedicationController } from '../../../controllers/clinical/medication/medication.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -8,13 +8,18 @@ export const register = (app: express.Application): void => {
 
     const router = express.Router();
     const authenticator = Loader.authenticator;
-    const controller = new DrugController();
+    const controller = new MedicationController();
 
+    router.get('/stock-images', authenticator.authenticateClient, authenticator.authenticateUser, controller.getStockMedicationImages);
+    router.get('/stock-images/:imageId/download', authenticator.authenticateClient, authenticator.authenticateUser, controller.getStockMedicationImageById);
+    router.get('/stock-images/:imageId', authenticator.authenticateClient, authenticator.authenticateUser, controller.downloadStockMedicationImageById);
+    
     router.post('/', authenticator.authenticateClient, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
+    router.get('/current', authenticator.authenticateClient, authenticator.authenticateUser, controller.getCurrentMedications);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 
-    app.use('/api/v1/drugs', router);
+    app.use('/api/v1/medications', router);
 };

@@ -1,4 +1,7 @@
 {
+    "ServiceIdentifier" : {
+        "Name": "REAN Health Guru"
+    },
     "Auth" : {
         "Authentication": "Custom",
         "Authorization": "Custom"

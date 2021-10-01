@@ -10,7 +10,7 @@ import { ApiError } from '../../../common/api.error';
 import { DoctorNoteValidator } from '../../validators/clinical/doctor.note.validator';
 import { DoctorNoteService } from '../../../services/clinical/doctor.note.service';
 import { RoleService } from '../../../services/role.service';
-import { UserService } from '../../../services/user.service';
+import { UserService } from '../../../services/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

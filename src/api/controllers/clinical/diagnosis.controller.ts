@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { DiagnosisService } from '../../../services/clinical/diagnosis.service';
-import { UserService } from '../../../services/user.service';
+import { UserService } from '../../../services/user/user.service';
 import { PersonService } from '../../../services/person.service';
 import { PatientService } from '../../../services/patient/patient.service';
 import { Helper } from '../../../common/helper';

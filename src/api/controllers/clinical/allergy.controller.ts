@@ -10,7 +10,7 @@ import { ApiError } from '../../../common/api.error';
 import { PatientAllergyValidator } from '../../validators/clinical/allergy.validator';
 import { AllergyService } from '../../../services/clinical/allergy.service';
 import { RoleService } from '../../../services/role.service';
-import { UserService } from '../../../services/user.service';
+import { UserService } from '../../../services/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

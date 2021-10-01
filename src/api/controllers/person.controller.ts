@@ -6,7 +6,7 @@ import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
 import { AddressDto } from '../../domain.types/address/address.dto';
 import { PersonValidator } from '../validators/person.validator';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/user/user.service';
 import { AddressService } from '../../services/address.service';
 import { OrganizationService } from '../../services/organization.service';
 import { ApiError } from '../../common/api.error';

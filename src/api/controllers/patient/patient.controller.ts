@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { PatientService } from '../../../services/patient/patient.service';
-import { UserService } from '../../../services/user.service';
+import { UserService } from '../../../services/user/user.service';
 import { PersonService } from '../../../services/person.service';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';

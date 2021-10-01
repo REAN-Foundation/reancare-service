@@ -10,7 +10,7 @@ import { ApiError } from '../../../../common/api.error';
 import { PhysicalActivityValidator } from '../../../validators/wellness/exercise/physical.activity.validator';
 import { PhysicalActivityService } from '../../../../services/wellness/exercise/physical.activity.service';
 import { RoleService } from '../../../../services/role.service';
-import { UserService } from '../../../../services/user.service';
+import { UserService } from '../../../../services/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

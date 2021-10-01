@@ -1,46 +1,42 @@
-import { Roles } from "../domain.types/role/role.types";
-import { injectable, inject } from "tsyringe";
+import * as fs from "fs";
 import path from "path";
-import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
-import { IRolePrivilegeRepo } from "../database/repository.interfaces/role.privilege.repo.interface";
-import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
-import { ApiClientService } from "../services/api.client.service";
-import { IUserRepo } from "../database/repository.interfaces/user.repo.interface";
-import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
-import { Logger } from "../common/logger";
-import { UserDomainModel } from "../domain.types/user/user/user.domain.model";
-import { PatientDomainModel } from "../domain.types/patient/patient/patient.domain.model";
-import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
-import { Loader } from "./loader";
-import { PatientService } from "../services/patient/patient.service";
-import { UserService } from "../services/user.service";
-import { RoleService } from "../services/role.service";
-import { SymptomAssessmentTemplateService } from "../services/clinical/symptom/symptom.assessment.template.service";
+import { inject, injectable } from "tsyringe";
 import { Helper } from "../common/helper";
-import { PersonService } from "../services/person.service";
-import { HealthProfileService } from "../services/patient/health.profile.service";
-import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
-import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
+import { Logger } from "../common/logger";
+import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
 import { IMedicationStockImageRepo } from "../database/repository.interfaces/clinical/medication/medication.stock.image.repo.interface";
-import { ISymptomTypeRepo } from "../database/repository.interfaces/clinical/symptom/symptom.type.repo.interface";
 import { ISymptomAssessmentTemplateRepo } from "../database/repository.interfaces/clinical/symptom/symptom.assessment.template.repo.interface";
+import { ISymptomTypeRepo } from "../database/repository.interfaces/clinical/symptom/symptom.type.repo.interface";
+import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
+import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
+import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
+import { IRolePrivilegeRepo } from "../database/repository.interfaces/role.privilege.repo.interface";
+import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
+import { IUserRepo } from "../database/repository.interfaces/user.repo.interface";
+import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
+import { MedicationStockImageDomainModel } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
+import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model";
+import { SymptomTypeDomainModel } from "../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model";
+import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/symptom.type/symptom.type.search.types";
+import { PatientDomainModel } from "../domain.types/patient/patient/patient.domain.model";
+import { Roles } from "../domain.types/role/role.types";
+import { UserDomainModel } from "../domain.types/user/user/user.domain.model";
+import * as SeededInternalClients from '../seed.data/internal.clients.seed.json';
+import * as SeededInternalTestsUsers from '../seed.data/internal.test.users.seed.sample.json';
+import * as RolePrivilegesList from '../seed.data/role.privileges.json';
+import * as SeededAssessmentTemplates from '../seed.data/symptom.assessment.templates.json';
+import * as SeededSymptomTypes from '../seed.data/symptom.types.json';
+import * as SeededSystemAdmin from '../seed.data/system.admin.seed.json';
+import { ApiClientService } from "../services/api.client.service";
+import { SymptomAssessmentTemplateService } from "../services/clinical/symptom/symptom.assessment.template.service";
 import { SymptomTypeService } from "../services/clinical/symptom/symptom.type.service";
 import { FileResourceService } from "../services/file.resource.service";
-import { SymptomTypeDomainModel } from "../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model";
-import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model";
-import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/symptom.type/symptom.type.search.types";
-
-import * as RolePrivilegesList from '../seed.data/role.privileges.json';
-import * as SeededInternalClients from '../seed.data/internal.clients.seed.json';
-import * as SeededSystemAdmin from '../seed.data/system.admin.seed.json';
-import * as SeededInternalTestsUsers from '../seed.data/internal.test.users.seed.sample.json';
-import * as SeededSymptomTypes from '../seed.data/symptom.types.json';
-import * as SeededAssessmentTemplates from '../seed.data/symptom.assessment.templates.json';
-
-// import * as fs from "fs";
-// import {
-//     MedicationStockImageDomainModel
-// } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
+import { HealthProfileService } from "../services/patient/health.profile.service";
+import { PatientService } from "../services/patient/patient.service";
+import { PersonService } from "../services/person.service";
+import { RoleService } from "../services/role.service";
+import { UserService } from "../services/user/user.service";
+import { Loader } from "./loader";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -339,35 +335,35 @@ export class Seeder {
             return;
         }
 
-        // var cloudStoragePath = 'assets/images/stock.medication.images/';
-        // var sourceFilePath = path.join(process.cwd(), "./assets/images/stock.medication.images/");
-        // var files = fs.readdirSync(sourceFilePath);
-        // var imageFiles = files.filter((f) => {
-        //     return path.extname(f).toLowerCase() === '.png';
-        // });
+        var cloudStoragePath = 'assets/images/stock.medication.images/';
+        var sourceFilePath = path.join(process.cwd(), "./assets/images/stock.medication.images/");
+        var files = fs.readdirSync(sourceFilePath);
+        var imageFiles = files.filter((f) => {
+            return path.extname(f).toLowerCase() === '.png';
+        });
 
-        // for await (const fileName of imageFiles) {
+        for await (const fileName of imageFiles) {
 
-        //     var sourceFileLocation = path.join(sourceFilePath, fileName);
-        //     var storageFileLocation = cloudStoragePath + fileName;
+            var sourceFileLocation = path.join(sourceFilePath, fileName);
+            var storageFileLocation = cloudStoragePath + fileName;
 
-        //     var uploaded = await this._fileResourceService.UploadLocalFile(
-        //         sourceFileLocation,
-        //         storageFileLocation,
-        //         true);
+            var uploaded = await this._fileResourceService.uploadLocal(
+                sourceFileLocation,
+                storageFileLocation,
+                true);
 
-        //     var domainModel: MedicationStockImageDomainModel = {
-        //         Code       : fileName.replace('.png', ''),
-        //         FileName   : fileName,
-        //         ResourceId : uploaded.ResourceId,
-        //         PublicUrl  : uploaded.UrlPublic
-        //     };
+            var domainModel: MedicationStockImageDomainModel = {
+                Code       : fileName.replace('.png', ''),
+                FileName   : fileName,
+                ResourceId : uploaded.DefaultVersion.ResourceId,
+                PublicUrl  : uploaded.DefaultVersion.Url
+            };
             
-        //     var medStockImage = await this._medicationStockImageRepo.create(domainModel);
-        //     if (!medStockImage) {
-        //         Logger.instance().log('Error occurred while seeding medication stock images!');
-        //     }
-        // }
+            var medStockImage = await this._medicationStockImageRepo.create(domainModel);
+            if (!medStockImage) {
+                Logger.instance().log('Error occurred while seeding medication stock images!');
+            }
+        }
     }
 
     public seedSymptomTypes = async () => {

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/user/user.service';
 import { ResponseHandler } from '../../common/response.handler';
 import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';

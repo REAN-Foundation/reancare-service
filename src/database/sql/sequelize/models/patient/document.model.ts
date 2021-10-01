@@ -9,7 +9,7 @@ import { Roles } from '../../../../../domain.types/role/role.types';
 import Order from '../clinical/order.model';
 import Visit from '../clinical/visit.model';
 import FileResource from '../file.resource/file.resource.model';
-import User from '../user.model';
+import User from '../user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 

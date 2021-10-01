@@ -2,8 +2,8 @@ import express from 'express';
 import { query, body, oneOf, validationResult, param } from 'express-validator';
 import { ResponseHandler } from '../../common/response.handler';
 import { Helper } from '../../common/helper';
-import { UserLoginDetails } from '../../domain.types/user/user.domain.model';
-import { UserSearchFilters } from '../../domain.types/user/user.search.types';
+import { UserLoginDetails } from '../../domain.types/user/user/user.domain.model';
+import { UserSearchFilters } from '../../domain.types/user/user/user.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,8 +1,8 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 import { Helper } from '../../common/helper';
-import { UserDeviceDetailsDomainModel } from '../../domain.types/user.device.details/user.device.domain.model';
-import { UserDeviceDetailsSearchFilters } from '../../domain.types/user.device.details/user.device.search.types';
+import { UserDeviceDetailsDomainModel } from '../../domain.types/user/user.device.details/user.device.domain.model';
+import { UserDeviceDetailsSearchFilters } from '../../domain.types/user/user.device.details/user.device.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

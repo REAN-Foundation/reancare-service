@@ -4,7 +4,7 @@ import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.r
 import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserLoginDetails, UserDomainModel } from '../domain.types/user/user.domain.model';
+import { UserLoginDetails, UserDomainModel } from '../domain.types/user/user/user.domain.model';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
@@ -15,7 +15,7 @@ import { generate } from 'generate-password';
 import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
 import { PersonDetailsDto } from '../domain.types/person/person.dto';
 import { Helper } from '../common/helper';
-import { UserDetailsDto, UserDto } from '../domain.types/user/user.dto';
+import { UserDetailsDto, UserDto } from '../domain.types/user/user/user.dto';
 import { IInternalTestUserRepo } from '../database/repository.interfaces/internal.test.user.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

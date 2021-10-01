@@ -15,8 +15,8 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import Person from './person.model';
-import Role from './role.model';
+import Person from '../person.model';
+import Role from '../role.model';
 
 ///////////////////////////////////////////////////////////////////////
 

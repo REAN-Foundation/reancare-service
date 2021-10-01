@@ -17,7 +17,7 @@ import {
 import { FoodConsumptionEventList, FoodConsumptionEvents } from '../../../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.types';
 import { v4 } from 'uuid';
 import FileResource from '../../file.resource/file.resource.model';
-import User from '../../user.model';
+import User from '../../user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 

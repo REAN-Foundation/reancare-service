@@ -30,7 +30,7 @@ import {
 
 import FileResource from '../../file.resource/file.resource.model';
 import Order from '../order.model';
-import User from '../../user.model';
+import User from '../../user/user.model';
 import Visit from '../visit.model';
 import Drug from './drug.model';
 import { v4 } from 'uuid';

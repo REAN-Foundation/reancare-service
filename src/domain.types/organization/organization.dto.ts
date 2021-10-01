@@ -1,5 +1,5 @@
 import { AddressDto } from "../address/address.dto";
-import { UserDto } from "../user/user.dto";
+import { UserDto } from "../user/user/user.dto";
 
 export interface OrganizationDto {
     id: string;

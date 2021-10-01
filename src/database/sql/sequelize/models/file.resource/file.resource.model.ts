@@ -16,7 +16,7 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import User from '../user.model';
+import User from '../user/user.model';
 import FileResourceReference from './file.resource.reference.model';
 import FileResourceVersion from './file.resource.version.model';
 

@@ -1,27 +1,13 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    PrimaryKey,
-    Length,
-    IsUUID,
-    ForeignKey,
-    IsDate,
-    HasMany,
-    BelongsTo,
+    BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey, HasMany,
+    IsDate, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
-import {
-    ProgressStatusList,
-    ProgressStatus
-} from '../../../../../../domain.types/miscellaneous/system.types';
-import User from '../../user.model';
-import SymptomAssessmentTemplate from './symptom.assessment.template.model';
 import { v4 } from 'uuid';
+import {
+    ProgressStatus, ProgressStatusList
+} from '../../../../../../domain.types/miscellaneous/system.types';
+import User from '../../user/user.model';
+import SymptomAssessmentTemplate from './symptom.assessment.template.model';
 import Symptom from './symptom.model';
 
 ///////////////////////////////////////////////////////////////////////

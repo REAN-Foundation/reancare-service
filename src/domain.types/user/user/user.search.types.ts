@@ -1,4 +1,4 @@
-import { Gender } from "../miscellaneous/system.types";
+import { Gender } from "../../miscellaneous/system.types";
 
 export interface UserSearchFilters {
     Phone: string;

@@ -1,31 +1,22 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    Length,
-    IsDate,
-    ForeignKey,
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsUUID,
+    Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
 import { v4 } from 'uuid';
-import User from '../user.model';
+import { UserActionStatusTypes, UserActionStatusTypesList } from '../../../../../domain.types/user/user.task/user.action.types';
+import User from './user.model';
+import UserTaskCategory from './user.task.category.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'Task',
-    tableName       : 'patient_tasks',
+    modelName       : 'UserTask',
+    tableName       : 'user_tasks',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class Task extends Model {
+export default class UserTask extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -38,14 +29,6 @@ export default class Task extends Model {
     })
     id: string;
 
-    @IsUUID(4)
-    @ForeignKey(() => User)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : false,
-    })
-    PatientUserId: string;
-
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
@@ -53,40 +36,59 @@ export default class Task extends Model {
     })
     DisplayId: string;
 
-    @Length({ max: 512 })
+    @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
-        type      : DataType.STRING(512),
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    UserId: string;
+
+    @Length({ max: 128 })
+    @ForeignKey(() => User)
+    @Column({
+        type      : DataType.STRING(128),
         allowNull : true,
     })
-    Name: string;
+    TaskName: string;
 
+    @ForeignKey(() => UserTaskCategory)
     @Column({
         type      : DataType.INTEGER,
         allowNull : false,
     })
     CategoryId: number;
 
-    @Length({ max: 256 })
+    @Length({ max: 128 })
     @Column({
-        type      : DataType.STRING(256),
+        type      : DataType.STRING(128),
         allowNull : false,
     })
-    Type: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    SubType: string;
+    ActionType: string;
 
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    ReferenceItemId: string;
+    ActionItemId: string;
+
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : false,
+    })
+    ActionDetails: string;
+
+    @Length({ max: 32 })
+    @Column({
+        type         : DataType.ENUM,
+        values       : UserActionStatusTypesList,
+        defaultValue : UserActionStatusTypes.Unknown,
+        allowNull    : false,
+
+    })
+    ActionState: string;
 
     @IsDate
     @Column({
@@ -143,6 +145,35 @@ export default class Task extends Model {
         defaultValue : false,
     })
     Cancelled: boolean;
+
+    @IsDate
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    CancelledAt: Date
+
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : false,
+    })
+    CancellationReason: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    IsRecurrent: boolean;
+
+    @IsUUID(4)
+    @ForeignKey(() => User)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    RecurrenceScheduleId: string;
 
     @Column
     @CreatedAt

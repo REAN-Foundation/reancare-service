@@ -14,7 +14,7 @@ import {
     IsInt } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import User from '../../user.model';
+import User from '../../user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 

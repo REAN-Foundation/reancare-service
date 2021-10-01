@@ -16,7 +16,7 @@ import {
 import { VisitStates, VisitTypes } from '../../../../../domain.types/miscellaneous/system.types';
 import { v4 } from 'uuid';
 import Organization from '../organization.model';
-import User from '../user.model';
+import User from '../user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 

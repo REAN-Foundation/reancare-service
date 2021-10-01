@@ -8,7 +8,7 @@ import { ApiClientService } from "../services/api.client.service";
 import { IUserRepo } from "../database/repository.interfaces/user.repo.interface";
 import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
 import { Logger } from "../common/logger";
-import { UserDomainModel } from "../domain.types/user/user.domain.model";
+import { UserDomainModel } from "../domain.types/user/user/user.domain.model";
 import { PatientDomainModel } from "../domain.types/patient/patient/patient.domain.model";
 import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
 import { Loader } from "./loader";

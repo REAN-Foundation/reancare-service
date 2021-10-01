@@ -1,5 +1,5 @@
-import UserDeviceDetailsModel from '../models/user.device.details.model';
-import { UserDeviceDetailsDto } from '../../../../domain.types/user.device.details/user.device.dto';
+import UserDeviceDetailsModel from '../models/user/user.device.details.model';
+import { UserDeviceDetailsDto } from '../../../../domain.types/user/user.device.details/user.device.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

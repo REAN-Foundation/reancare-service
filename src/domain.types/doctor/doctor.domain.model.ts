@@ -1,6 +1,6 @@
 import { AddressDomainModel } from '../address/address.domain.model';
 import { HealthcareServiceSchedule } from '../healthcare.service/healthcare.service.domain.types';
-import { UserDomainModel } from '../user/user.domain.model';
+import { UserDomainModel } from '../user/user/user.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

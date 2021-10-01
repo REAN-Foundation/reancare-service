@@ -254,7 +254,13 @@ export class UserValidator {
                 .trim()
                 .run(request);
 
+            await body('RoleId').optional()
+                .trim()
+                .toInt()
+                .run(request);
+
             const result = validationResult(request);
+
             if (!result.isEmpty()) {
                 Helper.handleValidationError(result);
             }
@@ -264,6 +270,7 @@ export class UserValidator {
                 Email   : null,
                 UserId  : null,
                 Purpose : 'Login',
+                RoleId  : null
             };
 
             if (typeof request.body.Phone !== 'undefined') {
@@ -278,8 +285,12 @@ export class UserValidator {
             if (typeof request.body.Purpose !== 'undefined') {
                 obj.Purpose = request.body.Purpose;
             }
+            if (typeof request.body.RoleId !== 'undefined') {
+                obj.RoleId = request.body.RoleId;
+            }
 
             return obj;
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

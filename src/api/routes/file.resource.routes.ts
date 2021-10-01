@@ -31,6 +31,8 @@ export const register = (app: express.Application): void => {
     router.post('/upload', authenticator.authenticateClient, authenticator.authenticateUser, controller.upload);
     router.post('/:id/rename/:newFileName', authenticator.authenticateClient, authenticator.authenticateUser, controller.rename);
 
+    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
+
     //#endregion
 
     //#region Download routes
@@ -44,9 +46,9 @@ export const register = (app: express.Application): void => {
     //4. tag=<>
 
     router.get('/search-download', authenticator.authenticateClient, authenticator.authenticateUser, controller.searchAndDownload);
-    router.get('/:id/download-by-version-name/:version', authenticator.authenticateClient, authenticator.authenticateUser, controller.downloadByVersionName);
-    router.get('/:id/download-by-version-id/:versionId', authenticator.authenticateClient, authenticator.authenticateUser, controller.downloadByVersionId);
-    router.get('/:id/download', authenticator.authenticateClient, authenticator.authenticateUser, controller.downloadById);
+    router.get('/:id/download-by-version-name/:version', controller.downloadByVersionName);
+    router.get('/:id/download-by-version-id/:versionId', controller.downloadByVersionId);
+    router.get('/:id/download', controller.downloadById);
 
     //#endregion
 

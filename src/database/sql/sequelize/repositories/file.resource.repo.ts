@@ -2,7 +2,7 @@ import { Op } from 'sequelize';
 import { FileResourceMapper } from '../mappers/file.resource.mapper';
 import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
-import { FileResourceUploadDomainModel } from '../../../../domain.types/file.resource/file.resource.domain.model';
+import { FileResourceUpdateModel, FileResourceUploadDomainModel } from '../../../../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceDetailsDto, FileResourceDto } from '../../../../domain.types/file.resource/file.resource.dto';
 import { FileResourceSearchFilters, FileResourceSearchResults } from '../../../../domain.types/file.resource/file.resource.search.types';
 import { IFileResourceRepo } from '../../../../database/repository.interfaces/file.resource.repo.interface';
@@ -18,15 +18,13 @@ export class FileResourceRepo implements IFileResourceRepo {
     create = async (domainModel: FileResourceUploadDomainModel): Promise<FileResourceDetailsDto> => {
         try {
 
-            var tags = domainModel.Tags && domainModel.Tags.length  > 0 ? JSON.stringify(domainModel.Tags) : null;
-
             const entity = {
-                FileName               : domainModel.FileMetadata.FileName,
+                FileName               : domainModel.FileMetadata.OriginalName,
                 OwnerUserId            : domainModel.OwnerUserId ?? null,
                 UploadedByUserId       : domainModel.UploadedByUserId ?? null,
-                IsPublic               : domainModel.IsPublicResource ?? false,
+                IsPublicResource       : domainModel.IsPublicResource ?? false,
                 IsMultiResolutionImage : domainModel.IsMultiResolutionImage ?? false,
-                Tags                   : tags,
+                Tags                   : null,
                 MimeType               : domainModel.MimeType ?? null,
                 UploadedDate           : new Date(),
                 DefaultVersionId       : domainModel.DefaultVersionId
@@ -36,22 +34,8 @@ export class FileResourceRepo implements IFileResourceRepo {
                 throw new Error('Error creating file resource');
             }
 
-            var references: FileResourceReference[] = [];
-            var addReferences = domainModel.References && domainModel.References.length > 0;
-            if (addReferences) {
-                for await (var reference of domainModel.References) {
-                    const ref = await FileResourceReference.create({
-                        ResourceId      : resource.id,
-                        ReferenceItemId : reference.ItemId,
-                        ReferenceType   : reference.ItemType
-                    });
-                    references.push(ref);
-                }
-            }
-        
             var dto = FileResourceMapper.toDetailsDto(resource);
-            dto.References = FileResourceMapper.toFileReferenceDtos(references);
-            
+
             return dto;
 
         } catch (error) {
@@ -87,6 +71,53 @@ export class FileResourceRepo implements IFileResourceRepo {
             order : [['UpdatedAt', 'DESC']]
         });
         dto.Versions = FileResourceMapper.toFileVersionDtos(versions);
+        
+        return dto;
+    }
+
+    update = async (id: string, model: FileResourceUpdateModel): Promise<FileResourceDetailsDto> => {
+
+        var references: FileResourceReference[] = [];
+        var addReferences = model.References && model.References.length > 0;
+        if (addReferences) {
+            for await (var reference of model.References) {
+                const ref = await FileResourceReference.create({
+                    ResourceId  : id,
+                    ReferenceId : reference.ItemId,
+                    Type        : reference.ItemType,
+                    Keyword     : reference.Keyword
+                });
+                references.push(ref);
+            }
+        }
+
+        var resource = await FileResource.findByPk(id);
+        if (resource === null) {
+            throw new Error('Cannot find the resource!');
+        }
+        if (model.Tags != null && model.Tags.length > 0) {
+            var existingTags = resource.Tags ? JSON.parse(resource.Tags) as Array<string> : [];
+            existingTags.push(...model.Tags);
+            existingTags = [...new Set(existingTags)];
+            resource.Tags = JSON.stringify(existingTags);
+            await resource.save();
+        }
+
+        var dto = FileResourceMapper.toDetailsDto(resource);
+        dto.References = FileResourceMapper.toFileReferenceDtos(references);
+
+        if (resource.DefaultVersionId) {
+            var defaultVersion = await FileResourceVersion.findByPk(resource.DefaultVersionId);
+            dto.DefaultVersion = FileResourceMapper.toFileVersionDto(defaultVersion);
+        }
+
+        var versions = await FileResourceVersion.findAll({
+            where : {
+                ResourceId : id
+            },
+            order : [['UpdatedAt', 'DESC']]
+        });
+        dto.Versions = FileResourceMapper.toFileVersionDtos(versions, true);
         
         return dto;
     }
@@ -355,6 +386,8 @@ export class FileResourceRepo implements IFileResourceRepo {
                 as    : 'DefaultVersion'
             }
         ];
+
+        search['distinct'] = true;
 
         return search;
     }

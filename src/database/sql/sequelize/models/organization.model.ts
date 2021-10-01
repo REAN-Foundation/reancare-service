@@ -19,7 +19,7 @@ import {
 import { OrganizationTypeList } from '../../../../domain.types/organization/organization.types';
 import { v4 } from 'uuid';
 import Address from './address.model';
-import User from './user.model';
+import User from './user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 

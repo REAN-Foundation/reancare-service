@@ -1,12 +1,12 @@
-import { IBloodOxygenSaturationRepo } from '../../../../repository.interfaces/biometrics/blood.oxygen.saturation.repo.interface';
-import BloodOxygenSaturationModel from '../../models/biometrics/blood.oxygen.saturation.model';
 import { Op } from 'sequelize';
-import { BloodOxygenSaturationMapper } from '../../mappers/biometrics/blood.oxygen.saturation.mapper';
-import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
-import { BloodOxygenSaturationDomainModel } from "../../../../../domain.types/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model";
-import { BloodOxygenSaturationDto } from "../../../../../domain.types/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto";
-import { BloodOxygenSaturationSearchFilters, BloodOxygenSaturationSearchResults } from "../../../../../domain.types/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.search.types";
+import { Logger } from '../../../../../common/logger';
+import { BloodOxygenSaturationDomainModel } from "../../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model";
+import { BloodOxygenSaturationDto } from "../../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto";
+import { BloodOxygenSaturationSearchFilters, BloodOxygenSaturationSearchResults } from "../../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.search.types";
+import { IBloodOxygenSaturationRepo } from '../../../../repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface';
+import { BloodOxygenSaturationMapper } from '../../mappers/clinical/biometrics/blood.oxygen.saturation.mapper';
+import BloodOxygenSaturationModel from '../../models/clinical/biometrics/blood.oxygen.saturation.model';
 
 ///////////////////////////////////////////////////////////////////////
 

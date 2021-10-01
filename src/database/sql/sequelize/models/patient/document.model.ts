@@ -1,27 +1,15 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    Length,
-    IsDate,
-    ForeignKey,
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-import { Roles } from '../../../../../domain.types/role/role.types';
-
 import { v4 } from 'uuid';
-import User from '../user.model';
-import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
+import { OrderTypes } from '../../../../../domain.types/clinical/order/order.types';
 import { VisitTypes } from '../../../../../domain.types/miscellaneous/system.types';
-import { OrderTypes } from '../../../../../domain.types/order/order.types';
-import Order from '../order.model';
-import Visit from '../visit.model';
+import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
+import { Roles } from '../../../../../domain.types/role/role.types';
+import Order from '../clinical/order.model';
+import Visit from '../clinical/visit.model';
 import FileResource from '../file.resource/file.resource.model';
+import User from '../user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 

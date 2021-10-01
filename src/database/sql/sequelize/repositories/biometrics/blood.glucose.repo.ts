@@ -1,12 +1,12 @@
-import { IBloodGlucoseRepo } from "../../../../repository.interfaces/biometrics/blood.glucose.repo.interface";
-import BloodGlucoseModel from "../../models/biometrics/blood.glucose.model";
 import { Op } from 'sequelize';
-import { BloodGlucoseMapper } from "../../mappers/biometrics/blood.glucose.mapper";
-import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
-import { BloodGlucoseDomainModel } from "../../../../../domain.types/biometrics/blood.glucose/blood.glucose.domain.model";
-import { BloodGlucoseDto } from "../../../../../domain.types/biometrics/blood.glucose/blood.glucose.dto";
-import { BloodGlucoseSearchFilters, BloodGlucoseSearchResults } from "../../../../../domain.types/biometrics/blood.glucose/blood.glucose.search.types";
+import { Logger } from '../../../../../common/logger';
+import { BloodGlucoseDomainModel } from "../../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model";
+import { BloodGlucoseDto } from "../../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
+import { BloodGlucoseSearchFilters, BloodGlucoseSearchResults } from "../../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.search.types";
+import { IBloodGlucoseRepo } from "../../../../repository.interfaces/clinical/biometrics/blood.glucose.repo.interface";
+import { BloodGlucoseMapper } from "../../mappers/clinical/biometrics/blood.glucose.mapper";
+import BloodGlucoseModel from "../../models/clinical/biometrics/blood.glucose.model";
 
 ///////////////////////////////////////////////////////////////////////
 

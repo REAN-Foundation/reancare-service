@@ -1,21 +1,9 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    Length,
-    ForeignKey,
-    BelongsTo,
+    BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
 import { v4 } from 'uuid';
 import Person from './person.model';
-import User from './user.model';
+import User from './user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 

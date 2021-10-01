@@ -1,9 +1,8 @@
 import express from 'express';
-
-import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
 import { ApiError } from '../../common/api.error';
+import { ResponseHandler } from '../../common/response.handler';
 import { TypesService } from '../../services/types.service';
+import { Loader } from '../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

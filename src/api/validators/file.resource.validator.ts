@@ -1,7 +1,7 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
-import { FileResourceMetadata, ResourceReference } from '../../domain.types/file.resource/file.resource.types';
-import { FileResourceRenameDomainModel, FileResourceUploadDomainModel } from '../../domain.types/file.resource/file.resource.domain.model';
+import { DownloadDisposition, FileResourceMetadata, ResourceReference } from '../../domain.types/file.resource/file.resource.types';
+import { FileResourceRenameDomainModel, FileResourceUpdateModel, FileResourceUploadDomainModel } from '../../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
 import * as _ from 'lodash';
 import { ValidationError } from 'sequelize';
@@ -21,42 +21,21 @@ export class FileResourceValidator {
     static getUploadDomainModel = (request: express.Request): FileResourceUploadDomainModel[] => {
 
         var currentUserId = request.currentUser.UserId;
-
-        var references: ResourceReference[] = [];
-        if (request.body.References !== undefined && request.body.References.length > 0) {
-            request.body.References.array.forEach((element) => {
-                var item: ResourceReference = {
-                    ItemId   : element.ItemId,
-                    ItemType : element.ItemType ?? null,
-                    Keyword  : element.Keyword ?? null
-                };
-                references.push(item);
-            });
-        }
-        var tags: string[] = [];
-        if (request.body.Tags !== undefined && request.body.Tags.length > 0) {
-            request.body.Tags.array.forEach((element) => {
-                references.push(element);
-            });
-        }
-
         var models: FileResourceUploadDomainModel[] = [];
-
         var fileMetadataList = FileResourceValidator.getFileMetadataList(request);
 
         var mimeType = null;
         if (fileMetadataList.length > 0) {
             mimeType = fileMetadataList[0].MimeType;
         }
+
         for (var x of fileMetadataList) {
             const model: FileResourceUploadDomainModel = {
                 FileMetadata           : x,
                 OwnerUserId            : request.body.OwnerUserId ?? currentUserId,
                 UploadedByUserId       : currentUserId,
-                IsPublicResource       : request.body.IsPublicResource ?? false,
-                IsMultiResolutionImage : request.body.IsMultiResolutionImage ?? false,
-                References             : references,
-                Tags                   : tags,
+                IsPublicResource       : request.body.IsPublicResource && request.body.IsPublicResource === 'true' ? true : false,
+                IsMultiResolutionImage : request.body.IsMultiResolutionImage && request.body.IsMultiResolutionImage === 'true' ? true : false,
                 MimeType               : mimeType,
             };
             models.push(model);
@@ -71,6 +50,53 @@ export class FileResourceValidator {
         }
         await FileResourceValidator.validateBody(request);
         return FileResourceValidator.getUploadDomainModel(request);
+    };
+
+    static update = async (request: express.Request): Promise<FileResourceUpdateModel> => {
+
+        await param('id').exists()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await body('References').optional()
+            .run(request);
+
+        await body('Tags').optional()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+    
+        var references: ResourceReference[] = [];
+        if (request.body.References !== undefined && request.body.References.length > 0) {
+            request.body.References.forEach((element) => {
+                var item: ResourceReference = {
+                    ItemId   : element.ItemId,
+                    ItemType : element.ItemType ?? null,
+                    Keyword  : element.Keyword ?? null
+                };
+                references.push(item);
+            });
+        }
+        
+        var tags: string[] = [];
+        if (request.body.Tags !== undefined && request.body.Tags.length > 0) {
+            request.body.Tags.forEach((element) => {
+                tags.push(element);
+            });
+        }
+
+        var updateModel : FileResourceUpdateModel = {
+            ResourceId : request.params.id,
+            References : references,
+            Tags       : tags
+        };
+        
+        return updateModel;
     };
 
     static uploadVersion = async (request: express.Request): Promise<FileResourceMetadata> => {
@@ -149,9 +175,8 @@ export class FileResourceValidator {
             .trim()
             .run(request);
 
-        await query('public').optional()
+        await query('disposition').optional()
             .trim()
-            .isBoolean()
             .run(request);
 
         const result = validationResult(request);
@@ -160,10 +185,12 @@ export class FileResourceValidator {
             Helper.handleValidationError(result);
         }
 
+        var disposition = FileResourceValidator.getDownloadDisposition(request);
+        
         var metadata: FileResourceMetadata = {
-            ResourceId       : request.params.id,
-            Version          : request.params.version,
-            IsPublicResource : request.query.public === 'true' ? true : false
+            ResourceId  : request.params.id,
+            Version     : request.params.version,
+            Disposition : disposition
         };
 
         return metadata;
@@ -181,9 +208,8 @@ export class FileResourceValidator {
             .isUUID()
             .run(request);
 
-        await query('public').optional()
+        await query('disposition').optional()
             .trim()
-            .isBoolean()
             .run(request);
 
         const result = validationResult(request);
@@ -192,10 +218,12 @@ export class FileResourceValidator {
             Helper.handleValidationError(result);
         }
 
+        var disposition = FileResourceValidator.getDownloadDisposition(request);
+        
         var metadata: FileResourceMetadata = {
-            ResourceId       : request.params.id,
-            VersionId        : request.params.versionId,
-            IsPublicResource : request.query.public === 'true' ? true : false
+            ResourceId  : request.params.id,
+            VersionId   : request.params.versionId,
+            Disposition : disposition
         };
 
         return metadata;
@@ -208,9 +236,8 @@ export class FileResourceValidator {
             .isUUID()
             .run(request);
 
-        await query('public').optional()
+        await query('disposition').optional()
             .trim()
-            .isBoolean()
             .run(request);
 
         const result = validationResult(request);
@@ -219,9 +246,11 @@ export class FileResourceValidator {
             Helper.handleValidationError(result);
         }
 
+        var disposition = FileResourceValidator.getDownloadDisposition(request);
+        
         var metadata: FileResourceMetadata = {
-            ResourceId       : request.params.id,
-            IsPublicResource : request.query.public === 'true' ? true : false
+            ResourceId  : request.params.id,
+            Disposition : disposition
         };
 
         return metadata;
@@ -254,6 +283,22 @@ export class FileResourceValidator {
         }
         return request.params.referenceId;
     };
+
+    private static getDownloadDisposition(request) {
+        var disposition = DownloadDisposition.Auto;
+        if (request.query.disposition) {
+            if (request.query.disposition === 'inline') {
+                disposition = DownloadDisposition.Inline;
+            }
+            else if (request.query.disposition === 'stream') {
+                disposition = DownloadDisposition.Stream;
+            }
+            else {
+                disposition = DownloadDisposition.Attachment;
+            }
+        }
+        return disposition;
+    }
 
     private static getFileMetadataList(request) {
         var timestamp = TimeHelper.timestamp(new Date());
@@ -372,15 +417,15 @@ export class FileResourceValidator {
 
     private static getFilter(request): FileResourceSearchFilters {
 
-        const pageIndex = request.query.pageIndex !== 'undefined' ?
+        const pageIndex = request.query.pageIndex ?
             parseInt(request.query.pageIndex as string, 10) : 0;
 
         const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
+            request.query.itemsPerPage ? parseInt(request.query.itemsPerPage as string, 10) : 25;
 
         const filters: FileResourceSearchFilters = {
             OwnerUserId      : request.query.ownerUserId ?? null,
-            IsPublicResource : request.query.isPublicResource ?? false,
+            IsPublicResource : request.query.isPublicResource ?? null,
             ReferenceId      : request.query.referenceId ?? null,
             ReferenceType    : request.query.referenceType ?? null,
             ReferenceKeyword : request.query.referenceKeyword ?? null,

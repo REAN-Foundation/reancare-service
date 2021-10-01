@@ -15,7 +15,7 @@ import {
 
 import { Severity, SeverityList } from '../../../../../domain.types/miscellaneous/system.types';
 import { v4 } from 'uuid';
-import User from '../user.model';
+import User from '../user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 

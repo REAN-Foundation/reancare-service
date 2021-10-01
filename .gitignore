@@ -111,6 +111,7 @@ dist
 .vs/config/applicationhost.config
 .vs/v16/.suo
 .vs/service-x/v17/.suo
-src/assets/seed.data/internal.clients.seed.json
-src/assets/seed.data/system.admin.seed.json
-src/assets/seed.data/internal.test.users.seed.json
+src/seed.data/internal.clients.seed.json
+src/seed.data/system.admin.seed.json
+src/seed.data/internal.test.users.seed.json
+tmp/

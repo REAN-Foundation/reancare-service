@@ -1,6 +1,6 @@
 import express from 'express';
-import { HealthProfileController } from '../../controllers/patient/health.profile.controller';
 import { Loader } from '../../../startup/loader';
+import { HealthProfileController } from '../../controllers/patient/health.profile.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

@@ -1,6 +1,6 @@
 import express from 'express';
-import { PatientController } from '../../controllers/patient/patient.controller';
 import { Loader } from '../../../startup/loader';
+import { PatientController } from '../../controllers/patient/patient.controller';
 
 export const register = (app: express.Application): void => {
 

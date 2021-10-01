@@ -1,6 +1,6 @@
-import User from '../models/user.model';
+import User from '../models/user/user.model';
 import { PersonDetailsDto, PersonDto } from '../../../../domain.types/person/person.dto';
-import { UserDetailsDto, UserDto } from '../../../../domain.types/user/user.dto';
+import { UserDetailsDto, UserDto } from '../../../../domain.types/user/user/user.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

@@ -114,3 +114,4 @@ dist
 src/seed.data/internal.clients.seed.json
 src/seed.data/internal.test.users.seed.json
 src/seed.data/system.admin.seed.json
+tmp/

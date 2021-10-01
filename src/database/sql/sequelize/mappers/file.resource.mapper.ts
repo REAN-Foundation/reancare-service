@@ -4,6 +4,7 @@ import FileResourceReference from '../models/file.resource/file.resource.referen
 import FileResourceVersion from '../models/file.resource/file.resource.version.model';
 import { ResourceReference } from '../../../../domain.types/file.resource/file.resource.types';
 import { FileResourceMetadata } from '../../../../domain.types/file.resource/file.resource.types';
+import { ConfigurationManager } from '../../../../configs/configuration.manager';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -15,9 +16,12 @@ export class FileResourceMapper {
             return null;
         }
 
+        var url = ConfigurationManager.BaseUrl() + '/api/v1/file-resources/' + fileResource.id + '/download';
+
         const dto: FileResourceDetailsDto = {
             id               : fileResource.id,
             FileName         : fileResource.FileName,
+            Url              : url,
             OwnerUserId      : fileResource.OwnerUserId,
             UploadedByUserId : fileResource.UploadedByUserId,
             IsPublicResource : fileResource.IsPublicResource,
@@ -67,20 +71,22 @@ export class FileResourceMapper {
         return dtos;
     }
 
-    static toFileVersionDtos = (fileVersions ?: FileResourceVersion[]): FileResourceMetadata[] => {
+    static toFileVersionDtos = (fileVersions ?: FileResourceVersion[], sanitize = false): FileResourceMetadata[] => {
 
         var dtos = fileVersions.map(x => {
-            return FileResourceMapper.toFileVersionDto(x);
+            return FileResourceMapper.toFileVersionDto(x, sanitize);
         });
         
         return dtos;
     }
 
-    static toFileVersionDto = (fileVersion ?: FileResourceVersion): FileResourceMetadata => {
+    static toFileVersionDto = (fileVersion ?: FileResourceVersion, sanitize = false): FileResourceMetadata => {
 
         if (fileVersion == null){
             return null;
         }
+
+        var url = ConfigurationManager.BaseUrl() + '/api/v1/file-resources/' + fileVersion.ResourceId + '/download-by-version-name/' + fileVersion.Version;
 
         var v: FileResourceMetadata = {
             VersionId    : fileVersion.id,
@@ -91,7 +97,12 @@ export class FileResourceMapper {
             OriginalName : fileVersion.OriginalFileName,
             Size         : fileVersion.SizeInKB,
             StorageKey   : fileVersion.StorageKey,
+            Url          : url
         };
+
+        if (sanitize) {
+            v.StorageKey = null;
+        }
 
         return v;
     }

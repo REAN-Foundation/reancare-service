@@ -1,12 +1,12 @@
-import { UserDomainModel } from "../../../../domain.types/user/user.domain.model";
+import { UserDomainModel } from "../../../../domain.types/user/user/user.domain.model";
 import { IUserRepo } from "../../../repository.interfaces/user.repo.interface";
-import User from '../models/user.model';
+import User from '../models/user/user.model';
 import { UserMapper } from "../mappers/user.mapper";
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { Op } from 'sequelize';
 import { Helper } from "../../../../common/helper";
-import { UserDetailsDto } from "../../../../domain.types/user/user.dto";
+import { UserDetailsDto } from "../../../../domain.types/user/user/user.dto";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

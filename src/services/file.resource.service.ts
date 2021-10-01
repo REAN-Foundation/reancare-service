@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { FileResourceUploadDomainModel } from '../domain.types/file.resource/file.resource.domain.model';
+import { FileResourceUpdateModel, FileResourceUploadDomainModel } from '../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceDetailsDto, FileResourceDto } from '../domain.types/file.resource/file.resource.dto';
 import { FileResourceSearchResults, FileResourceSearchFilters } from '../domain.types/file.resource/file.resource.search.types';
 import { IFileResourceRepo } from "../database/repository.interfaces/file.resource.repo.interface";
@@ -42,9 +42,13 @@ export class FileResourceService {
             
             var imageVersions = await this.generateImageVersions(domainModel);
             for await (var versionMetadata of imageVersions) {
-                var storageKey = await this.uploadFileToStorage(domainModel.FileMetadata);
+                var storageKey = await this.uploadFileToStorage(versionMetadata);
                 versionMetadata.StorageKey = storageKey;
                 var versionDetails = await this._fileResourceRepo.addVersion(versionMetadata, false);
+                versionDetails.StorageKey = null;
+                versionDetails.SourceFilePath = null;
+                var url = ConfigurationManager.BaseUrl() + '/api/v1/file-resources/' + versionMetadata.ResourceId + '/download-by-version-name/' + versionDetails.Version;
+                versionDetails.Url = url;
                 resource.Versions.push(versionDetails);
             }
         }
@@ -106,8 +110,19 @@ export class FileResourceService {
         if (resource === null) {
             throw new ApiError(404, "File resource not found!");
         }
-        await this._storageService.rename(resource.DefaultVersion.StorageKey, newFileName);
+
+        //await this._storageService.rename(resource.DefaultVersion.StorageKey, newFileName);
+        
         return await this._fileResourceRepo.rename(id, newFileName);
+    }
+
+    update = async (id: string, updateModel: FileResourceUpdateModel): Promise<FileResourceDto> => {
+
+        var resource = await this._fileResourceRepo.update(id, updateModel);
+        if (resource === null) {
+            throw new ApiError(404, "File resource not found!");
+        }
+        return resource;
     }
 
     searchAndDownload = async (filters: FileResourceSearchFilters)
@@ -165,15 +180,30 @@ export class FileResourceService {
     };
 
     getVersionByVersionId = async (id: string, versionId: string): Promise<FileResourceMetadata> => {
-        return await this._fileResourceRepo.getVersionByVersionId(id, versionId);
+        var version = await this._fileResourceRepo.getVersionByVersionId(id, versionId);
+        version.SourceFilePath = null;
+        version.StorageKey = null;
+        var url = ConfigurationManager.BaseUrl() + '/api/v1/file-resources/' + id + '/download-by-version-id/' + version.VersionId;
+        version.Url = url;
+        return version;
     };
 
     getVersionByVersionName = async (id: string, versionName: string): Promise<FileResourceMetadata> => {
-        return await this._fileResourceRepo.getVersionByVersionId(id, versionName);
+        var version = await this._fileResourceRepo.getVersionByVersionId(id, versionName);
+        version.SourceFilePath = null;
+        version.StorageKey = null;
+        var url = ConfigurationManager.BaseUrl() + '/api/v1/file-resources/' + id + '/download-by-version-name/' + version.Version;
+        version.Url = url;
+        return version;
     };
 
     getLatestVersion = async (id: string): Promise<FileResourceMetadata> => {
-        return await this._fileResourceRepo.getLatestVersion(id);
+        var version = await this._fileResourceRepo.getLatestVersion(id);
+        version.SourceFilePath = null;
+        version.StorageKey = null;
+        var url = ConfigurationManager.BaseUrl() + '/api/v1/file-resources/' + id + '/download-by-version-id/' + version.VersionId;
+        version.Url = url;
+        return version;
     };
 
     getVersions = async (id: string): Promise<FileResourceMetadata[]> => {
@@ -241,6 +271,7 @@ export class FileResourceService {
         domainModel.FileMetadata.StorageKey = storageKey;
 
         var versions = [];
+        domainModel.FileMetadata.ResourceId = resource.id;
         var version = await this._fileResourceRepo.addVersion(domainModel.FileMetadata, true);
         resource.DefaultVersion = version;
 
@@ -332,25 +363,19 @@ export class FileResourceService {
         var height = imageMetadata.height;
         var aspectRatio = width / height;
 
+        var metadataList: FileResourceMetadata[] = [];
+
         var thumbnailHeight = aspectRatio < 1.0 ? 200 : 200 * aspectRatio;
         var thumbnailWidth = aspectRatio < 1.0 ? aspectRatio * 200 : 200;
-        var thumbnailFilename = path.join(folder, strippedFilename, '_thumbnail', extension);
+        var tempFile = strippedFilename + '_thumbnail' + extension;
+        var thumbnailFilename = path.join(folder, tempFile);
         await sharp(sourceFilePath)
             .resize(thumbnailWidth, thumbnailHeight)
             .toFile(thumbnailFilename);
         var thumbnailStats = fs.statSync(thumbnailFilename);
 
-        var previewHeight = aspectRatio < 1.0 ? 640 : 640 * aspectRatio;
-        var previewWidth = aspectRatio < 1.0 ? aspectRatio * 640 : 640;
-        var previewFilename = path.join(folder, strippedFilename, '_preview', extension);
-        await sharp(sourceFilePath)
-            .resize(previewWidth, previewHeight)
-            .toFile(previewFilename);
-        var previewStats = fs.statSync(previewFilename);
-
-        var metadataList: FileResourceMetadata[] = [];
-
         var thumbnailMetadata: FileResourceMetadata = {
+            ResourceId     : metadata.ResourceId,
             Version        : '1:Thumbnail',
             FileName       : path.basename(thumbnailFilename),
             OriginalName   : path.basename(sourceFilePath),
@@ -361,7 +386,17 @@ export class FileResourceService {
         };
         metadataList.push(thumbnailMetadata);
 
+        var previewHeight = aspectRatio < 1.0 ? 640 : 640 * aspectRatio;
+        var previewWidth = aspectRatio < 1.0 ? aspectRatio * 640 : 640;
+        tempFile = strippedFilename + '_preview' + extension;
+        var previewFilename = path.join(folder, tempFile);
+        await sharp(sourceFilePath)
+            .resize(previewWidth, previewHeight)
+            .toFile(previewFilename);
+        var previewStats = fs.statSync(previewFilename);
+
         var previewMetadata: FileResourceMetadata = {
+            ResourceId     : metadata.ResourceId,
             Version        : '1:Preview',
             FileName       : path.basename(previewFilename),
             OriginalName   : path.basename(sourceFilePath),

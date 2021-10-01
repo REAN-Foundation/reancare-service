@@ -4,7 +4,7 @@ import { UserService } from '../../services/user.service';
 import { ResponseHandler } from '../../common/response.handler';
 import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
-import { UserDetailsDto } from '../../domain.types/user/user.dto';
+import { UserDetailsDto } from '../../domain.types/user/user/user.dto';
 import { UserValidator } from '../validators/user.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,8 @@ export class UserController {
     generateOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.GenerateOtp';
-            const obj = UserValidator.generateOtp(request, response);
+
+            const obj = await UserValidator.generateOtp(request, response);
             const entity = await this._service.generateOtp(obj);
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {
                 entity : entity,

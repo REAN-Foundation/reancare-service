@@ -1,12 +1,12 @@
-import { IBodyHeightRepo } from '../../../../repository.interfaces/biometrics/body.height.repo.interface';
-import BodyHeight from '../../models/biometrics/body.height.model';
 import { Op } from 'sequelize';
-import { BodyHeightMapper } from '../../mappers/biometrics/body.height.mapper';
-import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
-import { BodyHeightDomainModel } from '../../../../../domain.types/biometrics/body.height/body.height.domain.model';
-import { BodyHeightDto } from '../../../../../domain.types/biometrics/body.height/body.height.dto';
-import { BodyHeightSearchFilters, BodyHeightSearchResults } from '../../../../../domain.types/biometrics/body.height/body.height.search.types';
+import { Logger } from '../../../../../common/logger';
+import { BodyHeightDomainModel } from '../../../../../domain.types/clinical/biometrics/body.height/body.height.domain.model';
+import { BodyHeightDto } from '../../../../../domain.types/clinical/biometrics/body.height/body.height.dto';
+import { BodyHeightSearchFilters, BodyHeightSearchResults } from '../../../../../domain.types/clinical/biometrics/body.height/body.height.search.types';
+import { IBodyHeightRepo } from '../../../../repository.interfaces/clinical/biometrics/body.height.repo.interface';
+import { BodyHeightMapper } from '../../mappers/clinical/biometrics/body.height.mapper';
+import BodyHeight from '../../models/clinical/biometrics/body.height.model';
 
 ///////////////////////////////////////////////////////////////////////
 

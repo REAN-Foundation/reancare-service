@@ -1,12 +1,12 @@
-import { IBodyWeightRepo } from '../../../../repository.interfaces/biometrics/body.weight.repo.interface';
-import BodyWeight from '../../models/biometrics/body.weight.model';
 import { Op } from 'sequelize';
-import { BodyWeightMapper } from '../../mappers/biometrics/body.weight.mapper';
-import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
-import { BodyWeightDomainModel } from '../../../../../domain.types/biometrics/body.weight/body.weight.domain.model';
-import { BodyWeightDto } from '../../../../../domain.types/biometrics/body.weight/body.weight.dto';
-import { BodyWeightSearchFilters, BodyWeightSearchResults } from '../../../../../domain.types/biometrics/body.weight/body.weight.search.types';
+import { Logger } from '../../../../../common/logger';
+import { BodyWeightDomainModel } from '../../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
+import { BodyWeightDto } from '../../../../../domain.types/clinical/biometrics/body.weight/body.weight.dto';
+import { BodyWeightSearchFilters, BodyWeightSearchResults } from '../../../../../domain.types/clinical/biometrics/body.weight/body.weight.search.types';
+import { IBodyWeightRepo } from '../../../../repository.interfaces/clinical/biometrics/body.weight.repo.interface';
+import { BodyWeightMapper } from '../../mappers/clinical/biometrics/body.weight.mapper';
+import BodyWeight from '../../models/clinical/biometrics/body.weight.model';
 
 ///////////////////////////////////////////////////////////////////////
 

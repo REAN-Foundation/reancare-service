@@ -1,12 +1,12 @@
-import { IPulseRepo } from '../../../../repository.interfaces/biometrics/pulse.repo.interface ';
-import PulseModel  from '../../models/biometrics/pulse.model';
 import { Op } from 'sequelize';
-import { PulseMapper } from '../../mappers/biometrics/pulse.mapper';
-import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
-import { PulseDomainModel } from "../../../../../domain.types/biometrics/pulse/pulse.domain.model";
-import { PulseDto } from "../../../../../domain.types/biometrics/pulse/pulse.dto";
-import { PulseSearchFilters, PulseSearchResults } from "../../../../../domain.types/biometrics/pulse/pulse.search.types";
+import { Logger } from '../../../../../common/logger';
+import { PulseDomainModel } from "../../../../../domain.types/clinical/biometrics/pulse/pulse.domain.model";
+import { PulseDto } from "../../../../../domain.types/clinical/biometrics/pulse/pulse.dto";
+import { PulseSearchFilters, PulseSearchResults } from "../../../../../domain.types/clinical/biometrics/pulse/pulse.search.types";
+import { IPulseRepo } from '../../../../repository.interfaces/clinical/biometrics/pulse.repo.interface ';
+import { PulseMapper } from '../../mappers/clinical/biometrics/pulse.mapper';
+import PulseModel from '../../models/clinical/biometrics/pulse.model';
 
 ///////////////////////////////////////////////////////////////////////
 

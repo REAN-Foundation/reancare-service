@@ -4,7 +4,7 @@ import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.r
 import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
 import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
 import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserLoginDetails, UserDomainModel } from '../domain.types/user/user.domain.model';
+import { UserLoginDetails, UserDomainModel } from '../domain.types/user/user/user.domain.model';
 import { injectable, inject } from 'tsyringe';
 import { Logger } from '../common/logger';
 import { ApiError } from '../common/api.error';
@@ -15,7 +15,7 @@ import { generate } from 'generate-password';
 import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
 import { PersonDetailsDto } from '../domain.types/person/person.dto';
 import { Helper } from '../common/helper';
-import { UserDetailsDto, UserDto } from '../domain.types/user/user.dto';
+import { UserDetailsDto, UserDto } from '../domain.types/user/user/user.dto';
 import { IInternalTestUserRepo } from '../database/repository.interfaces/internal.test.user.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ export class UserService {
         };
 
         const otpDto = await this._otpRepo.create(otpEntity);
-        const message = `Hello ${user.Person.DisplayName}, ${otp} is OTP for your REANCare account and will expire in 5 minutes. If you have not requested this OTP, please contact REANCare support.`;
+        const message = `Hello ${user.Person.DisplayName}, ${otp} is OTP for your REAN HealthGuru account and will expire in 3 minutes. If you have not requested this OTP, please contact REAN HealthGuru support.`;
         const sendStatus = await this._messagingService.sendSMS(user.Person.Phone, message);
         if (sendStatus) {
             Logger.instance().log('Otp sent successfully.\n ' + JSON.stringify(otpDto, null, 2));

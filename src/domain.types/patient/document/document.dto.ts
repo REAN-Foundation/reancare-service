@@ -1,6 +1,6 @@
 import { Roles } from "../../role/role.types";
 import { VisitTypes } from "../../miscellaneous/system.types";
-import { OrderTypes } from "../../order/order.types";
+import { OrderTypes } from "../../clinical/order/order.types";
 import { DocumentTypes } from "./document.types";
 
 export interface DocumentDto {

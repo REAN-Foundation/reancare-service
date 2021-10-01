@@ -11,7 +11,7 @@ import { DoctorValidator } from '../validators/doctor.validator';
 import { DoctorDomainModel } from '../../domain.types/doctor/doctor.domain.model';
 
 import { Roles } from '../../domain.types/role/role.types';
-import { UserDomainModel } from '../../domain.types/user/user.domain.model';
+import { UserDomainModel } from '../../domain.types/user/user/user.domain.model';
 import { ApiError } from '../../common/api.error';
 import { AddressDomainModel } from '../../domain.types/address/address.domain.model';
 import { AddressValidator } from '../validators/address.validator';

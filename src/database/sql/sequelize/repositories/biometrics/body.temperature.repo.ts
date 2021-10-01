@@ -1,12 +1,12 @@
-import { IBodyTemperatureRepo } from '../../../../repository.interfaces/biometrics/body.temperature.repo.interface';
-import BodyTemperatureModel from '../../models/biometrics/body.temperature.model';
 import { Op } from 'sequelize';
-import { BodyTemperatureMapper } from '../../mappers/biometrics/body.temperature.mapper';
-import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
-import { BodyTemperatureDomainModel } from "../../../../../domain.types/biometrics/body.temperature/body.temperature.domain.model";
-import { BodyTemperatureDto } from "../../../../../domain.types/biometrics/body.temperature/body.temperature.dto";
-import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from "../../../../../domain.types/biometrics/body.temperature/body.temperature.search.types";
+import { Logger } from '../../../../../common/logger';
+import { BodyTemperatureDomainModel } from "../../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model";
+import { BodyTemperatureDto } from "../../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.dto";
+import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from "../../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.search.types";
+import { IBodyTemperatureRepo } from '../../../../repository.interfaces/clinical/biometrics/body.temperature.repo.interface';
+import { BodyTemperatureMapper } from '../../mappers/clinical/biometrics/body.temperature.mapper';
+import BodyTemperatureModel from '../../models/clinical/biometrics/body.temperature.model';
 
 ///////////////////////////////////////////////////////////////////////
 

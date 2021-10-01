@@ -7,8 +7,6 @@ export interface FileResourceUploadDomainModel {
     UploadedByUserId?      : string;
     IsPublicResource?      : boolean;
     IsMultiResolutionImage?: boolean;
-    References?            : ResourceReference[];
-    Tags?                  : string[];
     MimeType?              : string;
     DefaultVersionId?      : string;
 }
@@ -16,4 +14,10 @@ export interface FileResourceUploadDomainModel {
 export interface FileResourceRenameDomainModel {
     id?        : string,
     NewFileName: string;
+}
+
+export interface FileResourceUpdateModel {
+    ResourceId: string;
+    References: ResourceReference[];
+    Tags      : string[];
 }

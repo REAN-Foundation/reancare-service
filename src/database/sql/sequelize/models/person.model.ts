@@ -18,7 +18,7 @@ import {
 import { PersonIdentificationType } from '../../../../domain.types/person/person.types';
 
 import { v4 } from 'uuid';
-import User from './user.model';
+import User from './user/user.model';
 import Address from './address.model';
 
 ///////////////////////////////////////////////////////////////////////

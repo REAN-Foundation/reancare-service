@@ -1,39 +1,17 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    PrimaryKey,
-    Length,
-    IsInt,
-    IsUUID,
-    ForeignKey,
-    IsDecimal,
-    IsDate,
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsDecimal, IsInt,
+    IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
+import { v4 } from 'uuid';
 import {
-    MedicationDosageUnitsList,
-    MedicationDosageUnits,
-    MedicationTimeSchedulesList,
-    MedicationTimeSchedules,
-    MedicationDurationUnitsList,
-    MedicationDurationUnits,
     MedicationAdministrationRoutes,
-    MedicationAdministrationRoutesList,
-    MedicationFrequencyUnitsList,
-    MedicationFrequencyUnits
+    MedicationAdministrationRoutesList, MedicationDosageUnits, MedicationDosageUnitsList, MedicationDurationUnits, MedicationDurationUnitsList, MedicationFrequencyUnits, MedicationFrequencyUnitsList, MedicationTimeSchedules, MedicationTimeSchedulesList
 } from '../../../../../../domain.types/clinical/medication/medication/medication.types';
-
 import FileResource from '../../file.resource/file.resource.model';
-import Order from '../order.model';
 import User from '../../user/user.model';
+import Order from '../order.model';
 import Visit from '../visit.model';
 import Drug from './drug.model';
-import { v4 } from 'uuid';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -132,7 +110,7 @@ export default class Medication extends Model {
         values       : MedicationTimeSchedulesList,
         defaultValue : MedicationTimeSchedules.Afternoon
     })
-    TimeSchedule: string;
+    TimeSchedules: string;
 
     @IsInt
     @Column({

@@ -8,6 +8,8 @@ export interface IDrugRepo {
 
     getById(id: string): Promise<DrugDto>;
     
+    getByName(drugName: string): Promise<DrugDto>;
+    
     search(filters: DrugSearchFilters): Promise<DrugSearchResults>;
 
     update(id: string, drugDomainModel: DrugDomainModel):

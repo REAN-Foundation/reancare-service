@@ -1,6 +1,6 @@
 import express from 'express';
-import { UserController } from '../controllers/user.controller';
 import { Loader } from '../../startup/loader';
+import { UserController } from '../controllers/user.controller';
 
 export const register = (app: express.Application): void => {
 
@@ -24,4 +24,3 @@ export const register = (app: express.Application): void => {
 
     app.use('/api/v1/users', router);
 };
-

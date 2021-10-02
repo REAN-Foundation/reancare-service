@@ -24,3 +24,10 @@ export interface UserLoginDetails {
     Otp?: string,
     LoginRoleId: number
 }
+
+export interface UserExistanceModel {
+    Phone?: string,
+    Email?: string,
+    UserName?: string;
+    RoleId: number
+}

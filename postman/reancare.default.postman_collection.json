@@ -1347,6 +1347,240 @@
 					"name": "Patients",
 					"item": [
 						{
+							"name": "Mobile patient registration and login",
+							"item": [
+								{
+									"name": "Get user roles",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    var personRoles = jsonRes.Data.PersonRoleTypes;\r",
+													"    for(var i = 0; i < personRoles.length; i++) {\r",
+													"        var r = personRoles[i];\r",
+													"        var name = r.RoleName;\r",
+													"        var id = r.id;\r",
+													"        var str = \"ROLE_\" + name.toUpperCase();\r",
+													"        console.log(str);\r",
+													"        console.log(id);\r",
+													"        pm.environment.set(str, id);\r",
+													"    }\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"description": "API key for client app authentication",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/types/person-roles",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"types",
+												"person-roles"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get user with phone and role",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.environment.set(\"PHONE\", \"+91-1234567890\");\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"description": "API key for client app authentication",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/users/by-phone/{{PHONE}}/role/{{ROLE_PATIENT}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"users",
+												"by-phone",
+												"{{PHONE}}",
+												"role",
+												"{{ROLE_PATIENT}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Register patient- with only a phone",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text",
+												"description": "API key for client app authentication"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"Phone\": \"{{PHONE}}\"\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/patients",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"patients"
+											]
+										},
+										"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+									},
+									"response": []
+								},
+								{
+									"name": "Patient log-in with otp",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.environment.set(\"PATIENT_USER_JWT\", jsonRes.Data.AccessToken);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Patient login: Access token is returned\", function () {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
+													"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"description": "API key for client app authentication",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"Phone\": \"{{PHONE}}\",\r\n    \"Otp\": \"169943\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/users/login-with-otp",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"users",
+												"login-with-otp"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
 							"name": "Register patient- with only a phone number",
 							"event": [
 								{
@@ -1390,27 +1624,6 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"//Randomly generated user details\r",
-											"\r",
-											"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
-											"\r",
-											"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
-											"\r",
-											"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
-											"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
-											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
-											"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
-											"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
-											"var password = \"Test@123\";\r",
-											"\r",
-											"pm.environment.set(\"FIRST_NAME\", first);\r",
-											"pm.environment.set(\"LAST_NAME\", last);\r",
-											"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
-											"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");\r",
-											"pm.environment.set(\"EMAIL\", email);\r",
-											"pm.environment.set(\"PASSWORD\", password);\r",
-											"\r",
-											"//Profile images\r",
 											""
 										],
 										"type": "text/javascript"
@@ -1434,7 +1647,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\"\r\n}"
+									"raw": "{\r\n    \"Phone\": \"+91-9970155165\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patients",
@@ -1447,114 +1660,7 @@
 								},
 								"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
 							},
-							"response": [
-								{
-									"name": "Register patient- with only a phone number",
-									"originalRequest": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\"\r\n}"
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/patients",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"patients"
-											]
-										}
-									},
-									"status": "Created",
-									"code": 201,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "X-DNS-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "Expect-CT",
-											"value": "max-age=0"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "X-XSS-Protection",
-											"value": "0"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "904"
-										},
-										{
-											"key": "ETag",
-											"value": "W/\"388-ZkB5OKUvnee2O8d2F/CCLl1RRgQ\""
-										},
-										{
-											"key": "Date",
-											"value": "Mon, 02 Aug 2021 07:38:31 GMT"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Keep-Alive",
-											"value": "timeout=5"
-										}
-									],
-									"cookie": [],
-									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Patient created successfully!\",\n    \"HttpCode\": 201,\n    \"Data\": {\n        \"Patient\": {\n            \"id\": \"d365387c-e297-4a0f-b722-1e7f6a7c33dc\",\n            \"User\": {\n                \"id\": \"32a16f4b-3e65-4353-9297-65308a56d8da\",\n                \"UserName\": \"amseta1420\",\n                \"Person\": {\n                    \"id\": \"6fc754e4-f557-451c-bd8e-cf18e34fa919\",\n                    \"Prefix\": \"\",\n                    \"FirstName\": null,\n                    \"MiddleName\": null,\n                    \"LastName\": null,\n                    \"DisplayName\": \"unknown\",\n                    \"Gender\": \"Unknown\",\n                    \"BirthDate\": null,\n                    \"Age\": \"\",\n                    \"Phone\": \"+91-1423755609\",\n                    \"Email\": null,\n                    \"ImageResourceId\": null,\n                    \"ActiveSince\": \"2021-08-02T07:38:31.000Z\",\n                    \"Roles\": []\n                },\n                \"LastLogin\": null,\n                \"DefaultTimeZone\": \"+05:30\",\n                \"CurrentTimeZone\": \"+05:30\",\n                \"Role\": {\n                    \"id\": 2,\n                    \"RoleName\": \"Patient\"\n                }\n            },\n            \"DisplayId\": \"PT#1-1423755609\",\n            \"Addresses\": [],\n            \"MedicalProfile\": null,\n            \"Insurances\": [],\n            \"EmergencyContacts\": []\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"Context\": \"Patient.Create\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
-								}
-							]
+							"response": []
 						},
 						{
 							"name": "Register patient- with same phone number - should fail",
@@ -1723,117 +1829,93 @@
 									]
 								}
 							},
-							"response": [
-								{
-									"name": "Register patient- with phone and password",
-									"originalRequest": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\"\r\n}"
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/patients",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"patients"
-											]
-										}
-									},
-									"status": "Created",
-									"code": 201,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "X-DNS-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "Expect-CT",
-											"value": "max-age=0"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "X-XSS-Protection",
-											"value": "0"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "904"
-										},
-										{
-											"key": "ETag",
-											"value": "W/\"388-+QstBHEhnm7bio7FIB8nk3HOmY0\""
-										},
-										{
-											"key": "Date",
-											"value": "Mon, 02 Aug 2021 07:48:11 GMT"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Keep-Alive",
-											"value": "timeout=5"
-										}
-									],
-									"cookie": [],
-									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Patient created successfully!\",\n    \"HttpCode\": 201,\n    \"Data\": {\n        \"Patient\": {\n            \"id\": \"c7e4a0c4-0410-47a4-b40f-e3bca222ac2d\",\n            \"User\": {\n                \"id\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n                \"UserName\": \"tnkert2002\",\n                \"Person\": {\n                    \"id\": \"0663bf1a-d169-4db5-a087-1c6dc456e4e9\",\n                    \"Prefix\": \"\",\n                    \"FirstName\": null,\n                    \"MiddleName\": null,\n                    \"LastName\": null,\n                    \"DisplayName\": \"unknown\",\n                    \"Gender\": \"Unknown\",\n                    \"BirthDate\": null,\n                    \"Age\": \"\",\n                    \"Phone\": \"+91-8126671387\",\n                    \"Email\": null,\n                    \"ImageResourceId\": null,\n                    \"ActiveSince\": \"2021-08-02T07:48:11.000Z\",\n                    \"Roles\": []\n                },\n                \"LastLogin\": null,\n                \"DefaultTimeZone\": \"+05:30\",\n                \"CurrentTimeZone\": \"+05:30\",\n                \"Role\": {\n                    \"id\": 2,\n                    \"RoleName\": \"Patient\"\n                }\n            },\n            \"DisplayId\": \"PT#1-8126671387\",\n            \"Addresses\": [],\n            \"MedicalProfile\": null,\n            \"Insurances\": [],\n            \"EmergencyContacts\": []\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"Context\": \"Patient.Create\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
-								}
-							]
+							"response": []
 						},
 						{
-							"name": "Patient log-in with password",
+							"name": "Get user with phone and role",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    var personRoles = jsonRes.Data.PersonRoleTypes;\r",
+											"    for(var i = 0; i < personRoles.length; i++) {\r",
+											"        var r = personRoles[i];\r",
+											"        var name = r.RoleName;\r",
+											"        var id = r.id;\r",
+											"        var str = \"ROLE_\" + name.toUpperCase();\r",
+											"        console.log(str);\r",
+											"        console.log(id);\r",
+											"        pm.environment.set(str, id);\r",
+											"    }\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Person roles are retrieved\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PersonRoleTypes');\r",
+											"    pm.expect(jsonRes.Data.PersonRoleTypes).to.not.be.empty;\r",
+											"    var count = jsonRes.Data.PersonRoleTypes.length;\r",
+											"    pm.expect(count).greaterThan(0);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/users/by-phone/{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}/role/{{ROLE_PATIENT}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"by-phone",
+										"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}",
+										"role",
+										"{{ROLE_PATIENT}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Generate otp",
 							"event": [
 								{
 									"listen": "test",
@@ -1881,128 +1963,84 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
+									"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Purpose\": \"Login\"\r\n}\r\n"
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/users/login-with-password",
+									"raw": "{{BASE_URL}}/users/generate-otp",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"users",
-										"login-with-password"
+										"generate-otp"
 									]
 								}
 							},
-							"response": [
+							"response": []
+						},
+						{
+							"name": "Patient log-in with otp",
+							"event": [
 								{
-									"name": "Patient log-in with password",
-									"originalRequest": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											}
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PATIENT_USER_JWT\", jsonRes.Data.AccessToken);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient login: Access token is returned\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
+											"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
+											"});\r",
+											""
 										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/users/login-with-password",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"users",
-												"login-with-password"
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "X-DNS-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "Expect-CT",
-											"value": "max-age=0"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "X-XSS-Protection",
-											"value": "0"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "1234"
-										},
-										{
-											"key": "ETag",
-											"value": "W/\"4d2-pHha66gNIOAPmG3hY3eezjeWyEQ\""
-										},
-										{
-											"key": "Date",
-											"value": "Mon, 02 Aug 2021 07:48:17 GMT"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Keep-Alive",
-											"value": "timeout=5"
-										}
-									],
-									"cookie": [],
-									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"User 'unknown' logged in successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"AccessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiJmOWYyYmFhZC04YWFjLTQwNTUtYThmMS02NzVlODYzMDNhM2EiLCJEaXNwbGF5TmFtZSI6InVua25vd24iLCJQaG9uZSI6Iis5MS04MTI2NjcxMzg3IiwiRW1haWwiOm51bGwsIlVzZXJOYW1lIjoidG5rZXJ0MjAwMiIsIkN1cnJlbnRSb2xlSWQiOjIsImlhdCI6MTYyNzg5MDQ5NywiZXhwIjoxNjM1NjY2NDk3fQ.n9ps_cuOLSwZcgEkDg59LwkeX9k0YuEcttFKNHFKDz0\",\n        \"User\": {\n            \"id\": \"f9f2baad-8aac-4055-a8f1-675e86303a3a\",\n            \"UserName\": \"tnkert2002\",\n            \"Person\": {\n                \"id\": \"0663bf1a-d169-4db5-a087-1c6dc456e4e9\",\n                \"Prefix\": \"\",\n                \"FirstName\": null,\n                \"MiddleName\": null,\n                \"LastName\": null,\n                \"DisplayName\": \"unknown\",\n                \"Gender\": \"Unknown\",\n                \"BirthDate\": null,\n                \"Age\": \"\",\n                \"Phone\": \"+91-8126671387\",\n                \"Email\": null,\n                \"ImageResourceId\": null,\n                \"ActiveSince\": \"2021-08-02T07:48:11.000Z\",\n                \"Roles\": [\n                    {\n                        \"id\": \"01742aba-5212-430d-9200-6ab492fdca1e\",\n                        \"PersonId\": \"0663bf1a-d169-4db5-a087-1c6dc456e4e9\",\n                        \"RoleId\": 2,\n                        \"RoleName\": \"Patient\"\n                    }\n                ]\n            },\n            \"LastLogin\": null,\n            \"DefaultTimeZone\": \"+05:30\",\n            \"CurrentTimeZone\": \"+05:30\",\n            \"Role\": {\n                \"id\": 2,\n                \"RoleName\": \"Patient\"\n            }\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"Context\": \"User.LoginWithPassword\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
+										"type": "text/javascript"
+									}
 								}
-							]
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Otp\": \"424376\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/users/login-with-otp",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"login-with-otp"
+									]
+								}
+							},
+							"response": []
 						},
 						{
 							"name": "Get patient by user id",
@@ -2206,6 +2244,70 @@
 									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Patient retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Patient\": {\n            \"id\": \"e66f8dda-a724-4ebe-b904-bcec548cf782\",\n            \"User\": {\n                \"id\": \"e291b0a2-6bec-4af9-b05f-29f9acefca41\",\n                \"UserName\": \"xvylkb7136\",\n                \"Person\": {\n                    \"id\": \"2ee6a612-cd50-4177-878c-09d4a3472e6c\",\n                    \"Prefix\": \"\",\n                    \"FirstName\": null,\n                    \"MiddleName\": null,\n                    \"LastName\": null,\n                    \"DisplayName\": \"unknown\",\n                    \"Gender\": \"Unknown\",\n                    \"BirthDate\": null,\n                    \"Age\": \"\",\n                    \"Phone\": \"+91-3283072998\",\n                    \"Email\": null,\n                    \"ImageResourceId\": null,\n                    \"ActiveSince\": \"2021-08-02T07:46:29.000Z\",\n                    \"Roles\": [\n                        {\n                            \"id\": \"43329a2b-7f0d-4b61-9a2b-a52412fdd911\",\n                            \"PersonId\": \"2ee6a612-cd50-4177-878c-09d4a3472e6c\",\n                            \"RoleId\": 2,\n                            \"RoleName\": \"Patient\"\n                        }\n                    ]\n                },\n                \"LastLogin\": null,\n                \"DefaultTimeZone\": \"+05:30\",\n                \"CurrentTimeZone\": \"+05:30\",\n                \"Role\": {\n                    \"id\": 2,\n                    \"RoleName\": \"Patient\"\n                }\n            },\n            \"DisplayId\": \"PT#1-3283072998\",\n            \"EhrId\": null,\n            \"Addresses\": [],\n            \"MedicalProfile\": null,\n            \"Insurances\": [],\n            \"EmergencyContacts\": []\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"1c353c97-437a-489c-ad00-c83d6e07ebd8\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-6238056610\",\n        \"Email\": null,\n        \"UserName\": \"cbixyx9006\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627844993,\n        \"exp\": 1635620993\n    },\n    \"Context\": \"Patient.GetByUserId\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
 								}
 							]
+						},
+						{
+							"name": "Patient log-in with password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PATIENT_USER_JWT\", jsonRes.Data.AccessToken);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient login: Access token is returned\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
+											"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/users/login-with-password",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"login-with-password"
+									]
+								}
+							},
+							"response": []
 						},
 						{
 							"name": "Update patient details",

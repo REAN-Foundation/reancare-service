@@ -7,6 +7,7 @@ import { ApiError } from "../../../../common/api.error";
 import { Op } from 'sequelize';
 import { Helper } from "../../../../common/helper";
 import { UserDetailsDto } from "../../../../domain.types/user/user/user.dto";
+import Person from "../models/person.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -27,6 +28,51 @@ export class UserRepo implements IUserRepo {
         }
         return null;
     };
+    
+    getByEmailAndRole = async (email: any, roleId: number): Promise<UserDetailsDto> => {
+        
+        const person = await Person.findOne({
+            where : {
+                Email : { [Op.like]: '%' + email + '%' },
+            },
+        });
+
+        if (person === null) {
+            return null;
+        }
+
+        const user = await User.findOne({
+            where : {
+                RoleId   : roleId,
+                PersonId : person.id,
+            },
+        });
+
+        return await UserMapper.toDetailsDto(user);
+    }
+
+    getByPhoneAndRole = async (phone: string, roleId: number) => {
+        
+        const person = await Person.findOne({
+            where : {
+                Phone : { [Op.like]: '%' + phone + '%' }
+            }
+        });
+
+        if (person === null) {
+            return null;
+        }
+
+        const user = await User.findOne(
+            {
+                where : {
+                    RoleId   : roleId,
+                    PersonId : person.id
+                },
+            });
+
+        return await UserMapper.toDetailsDto(user);
+    }
 
     userExistsWithUsername = async (userName: string): Promise<boolean> => {
         if (userName != null && typeof userName !== 'undefined') {

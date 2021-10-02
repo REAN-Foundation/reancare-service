@@ -17,6 +17,7 @@ import { UserDomainModel, UserLoginDetails } from '../../domain.types/user/user/
 import { UserDetailsDto, UserDto } from '../../domain.types/user/user/user.dto';
 import { IMessagingService } from '../../modules/communication/interfaces/messaging.service.interface';
 import { Loader } from '../../startup/loader';
+import { ConfigurationManager } from '../../configs/configuration.manager';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +48,18 @@ export class UserService {
 
     public getById = async (id: string): Promise<UserDetailsDto> => {
         var dto = await this._userRepo.getById(id);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
+    };
+
+    public getByPhoneAndRole = async (phone: string, roleId: number): Promise<UserDetailsDto> => {
+        var dto = await this._userRepo.getByPhoneAndRole(phone, roleId);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
+    };
+
+    public getByEmailAndRole = async (email: string, roleId: number): Promise<UserDetailsDto> => {
+        var dto = await this._userRepo.getByEmailAndRole(email, roleId);
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
@@ -132,7 +145,8 @@ export class UserService {
         };
 
         const otpDto = await this._otpRepo.create(otpEntity);
-        const message = `Hello ${user.Person.DisplayName}, ${otp} is OTP for your REAN HealthGuru account and will expire in 3 minutes. If you have not requested this OTP, please contact REAN HealthGuru support.`;
+        const systemIdentifier = ConfigurationManager.SystemIdentifier();
+        const message = `Hello ${user.Person.FirstName}, ${otp} is OTP for your ${systemIdentifier} account and will expire in 3 minutes.`;
         const sendStatus = await this._messagingService.sendSMS(user.Person.Phone, message);
         if (sendStatus) {
             Logger.instance().log('Otp sent successfully.\n ' + JSON.stringify(otpDto, null, 2));

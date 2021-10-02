@@ -25,8 +25,9 @@ export class ConfigurationManager {
     public static loadConfigurations = (): void => {
 
         ConfigurationManager._config = {
-            BaseUrl : process.env.BASE_URL,
-            Auth    : {
+            SystemIdentifier : configuration.SystemIdentifier,
+            BaseUrl          : process.env.BASE_URL,
+            Auth             : {
                 Authentication : configuration.Auth.Authentication as AuthenticationType,
                 Authorization  : configuration.Auth.Authorization as AuthorizationType,
             },
@@ -61,6 +62,10 @@ export class ConfigurationManager {
 
     public static BaseUrl = (): string => {
         return ConfigurationManager._config.BaseUrl;
+    };
+
+    public static SystemIdentifier = (): string => {
+        return ConfigurationManager._config.SystemIdentifier;
     };
 
     public static Authentication = (): AuthenticationType => {

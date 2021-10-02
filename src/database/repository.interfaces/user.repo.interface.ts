@@ -1,7 +1,13 @@
-import { UserDetailsDto } from '../../domain.types/user/user/user.dto';
 import { UserDomainModel } from '../../domain.types/user/user/user.domain.model';
+import { UserDetailsDto } from '../../domain.types/user/user/user.dto';
+
+////////////////////////////////////////////////////////////////////////////////////
 
 export interface IUserRepo {
+
+    getByEmailAndRole(email: any, roleId: number);
+
+    getByPhoneAndRole(phone: string, roleId: number);
 
     create(userDomainModel: UserDomainModel): Promise<UserDetailsDto>;
 

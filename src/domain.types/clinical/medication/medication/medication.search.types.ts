@@ -14,6 +14,8 @@ export interface MedicationSearchFilters {
     StartDateTo?              : Date;
     EndDateFrom?              : Date;
     EndDateTo?                : Date;
+    CreatedDateFrom?          : Date;
+    CreatedDateTo?            : Date;
     OrderBy                   : string;
     Order                     : string;
     PageIndex                 : number;

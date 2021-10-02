@@ -1,147 +1,431 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
+import { body, oneOf, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../../common/helper';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
 import { MedicationSearchFilters } from '../../../../domain.types/clinical/medication/medication/medication.search.types';
+import {
+    MedicationAdministrationRoutes, MedicationDurationUnits
+} from "../../../../domain.types/clinical/medication/medication/medication.types";
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class MedicationValidator {
 
-    static getDomainModel = (request: express.Request): MedicationDomainModel => {
+    static getCreateDomainModel = (request: express.Request): MedicationDomainModel => {
 
         const model: MedicationDomainModel = {
-            Type           : request.body.Type ?? 'Home',
-            PersonId       : request.body.PersonId ?? null,
-            OrganizationId : request.body.OrganizationId ?? null,
-            MedicationLine : request.body.MedicationLine,
-            City           : request.body.City ?? null,
-            District       : request.body.District ?? null,
-            State          : request.body.State ?? null,
-            Country        : request.body.Country ?? null,
-            PostalCode     : request.body.PostalCode ?? null,
-            Longitude      : request.body.Longitude ?? null,
-            Lattitude      : request.body.Lattitude ?? null,
+            PatientUserId             : request.body.PatientUserId,
+            MedicalPractitionerUserId : request.body.MedicalPractitionerUserId ?? null,
+            VisitId                   : request.body.VisitId ?? null,
+            OrderId                   : request.body.OrderId ?? null,
+            DrugName                  : request.body.DrugName ?? null,
+            DrugId                    : request.body.DrugId,
+            Dose                      : request.body.Dose,
+            DosageUnit                : request.body.DosageUnit,
+            TimeSchedules             : request.body.TimeSchedules,
+            Frequency                 : request.body.Frequency,
+            FrequencyUnit             : request.body.FrequencyUnit,
+            Route                     : request.body.Route ?? MedicationAdministrationRoutes.Oral,
+            Duration                  : request.body.Duration ?? 1,
+            DurationUnit              : request.body.DurationUnit ?? MedicationDurationUnits.Weeks,
+            StartDate                 : request.body.StartDate ?? null,
+            EndDate                   : request.body.EndDate ?? null,
+            RefillNeeded              : request.body.RefillNeeded ?? false,
+            RefillCount               : request.body.RefillCount ?? 0,
+            Instructions              : request.body.Instructions ?? null,
+            ImageResourceId           : request.body.ImageResourceId ?? null,
+            IsExistingMedication      : request.body.IsExistingMedication ?? false,
+            TakenForLastNDays         : request.body.TakenForLastNDays ?? 0,
+            ToBeTakenForNextNDays     : request.body.ToBeTakenForNextNDays ?? 0,
+            IsCancelled               : request.body.IsCancelled ?? false,
         };
 
         return model;
     };
 
+    static getUpdateDomainModel = (request: express.Request): MedicationDomainModel => {
+
+        const model: MedicationDomainModel = {
+            id                        : request.params.id,
+            PatientUserId             : request.body.PatientUserId ?? null,
+            MedicalPractitionerUserId : request.body.MedicalPractitionerUserId ?? null,
+            VisitId                   : request.body.VisitId ?? null,
+            OrderId                   : request.body.OrderId ?? null,
+            DrugName                  : request.body.DrugName ?? null,
+            DrugId                    : request.body.DrugId ?? null,
+            Dose                      : request.body.Dose ?? null,
+            DosageUnit                : request.body.DosageUnit ?? null,
+            TimeSchedules             : request.body.TimeSchedules ?? null,
+            Frequency                 : request.body.Frequency ?? null,
+            FrequencyUnit             : request.body.FrequencyUnit ?? null,
+            Route                     : request.body.Route ?? null,
+            Duration                  : request.body.Duration ?? null,
+            DurationUnit              : request.body.DurationUnit ?? null,
+            StartDate                 : request.body.StartDate ?? null,
+            EndDate                   : request.body.EndDate ?? null,
+            RefillNeeded              : request.body.RefillNeeded ?? null,
+            RefillCount               : request.body.RefillCount ?? null,
+            Instructions              : request.body.Instructions ?? null,
+            ImageResourceId           : request.body.ImageResourceId ?? null,
+            IsExistingMedication      : request.body.IsExistingMedication ?? null,
+            TakenForLastNDays         : request.body.TakenForLastNDays ?? null,
+            ToBeTakenForNextNDays     : request.body.ToBeTakenForNextNDays ?? null,
+            IsCancelled               : request.body.IsCancelled ?? null,
+        };
+
+        return model;
+    };
+    
     static create = async (request: express.Request): Promise<MedicationDomainModel> => {
-        await MedicationValidator.validateBody(request);
-        return MedicationValidator.getDomainModel(request);
+        await MedicationValidator.validateCreateBody(request);
+        return MedicationValidator.getCreateDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await MedicationValidator.getParamId(request);
+    static update = async (request: express.Request): Promise<MedicationDomainModel> => {
+        const id = await MedicationValidator.getParamId(request);
+        await MedicationValidator.validateUpdateBody(request);
+        const domainModel = MedicationValidator.getUpdateDomainModel(request);
+        domainModel.id = id;
+        return domainModel;
     };
-    
-    static getByOrganizationId = async (request: express.Request): Promise<string> => {
 
-        await param('organizationId').trim()
+    private static async validateCreateBody(request) {
+
+        await body('PatientUserId').optional()
+            .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        
-        return request.params.organizationId;
-    };
-    
-    static getByPersonId = async (request: express.Request): Promise<string> => {
-
-        await param('personId').trim()
+        await body('MedicalPractitionerUserId').optional()
+            .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        const result = validationResult(request);
+        await body('VisitId').optional()
+            .trim()
+            .escape()
+            .isUUID()
+            .run(request);
 
+        await body('OrderId').optional()
+            .trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await oneOf([
+            body('DrugName').optional()
+                .trim(),
+            body('DrugId').optional()
+                .trim()
+                .escape()
+                .isUUID()
+        ]).run(request);
+
+        await body('Dose').exists()
+            .isDecimal()
+            .run(request);
+
+        await body('DosageUnit').exists()
+            .trim()
+            .run(request);
+
+        await body('TimeSchedules').exists()
+            .trim()
+            .isArray()
+            .isLength({ min: 1 })
+            .run(request);
+
+        await body('Frequency').exists()
+            .isInt()
+            .run(request);
+
+        await body('FrequencyUnit').exists()
+            .trim()
+            .run(request);
+
+        await body('Route').optional()
+            .trim()
+            .run(request);
+
+        await body('Duration').exists()
+            .isInt()
+            .run(request);
+
+        await body('DurationUnit').optional()
+            .trim()
+            .run(request);
+
+        await body('StartDate').optional()
+            .trim()
+            .isDate()
+            .run(request);
+
+        await body('EndDate').optional()
+            .trim()
+            .isDate()
+            .run(request);
+
+        await body('RefillNeeded').optional()
+            .isBoolean()
+            .run(request);
+
+        await body('RefillCount').optional()
+            .trim()
+            .isInt()
+            .run(request);
+
+        await body('Instructions').optional()
+            .trim()
+            .run(request);
+
+        await body('ImageResourceId').optional()
+            .trim()
+            .isUUID()
+            .run(request);
+
+        await body('IsExistingMedication').optional()
+            .trim()
+            .isBoolean()
+            .run(request);
+
+        await body('TakenForLastNDays').optional()
+            .trim()
+            .isInt()
+            .run(request);
+
+        await body('ToBeTakenForNextNDays').optional()
+            .trim()
+            .isInt()
+            .run(request);
+
+        await body('IsCancelled').optional()
+            .trim()
+            .isBoolean()
+            .run(request);
+
+        const result = validationResult(request);
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        
-        return request.params.personId;
-    };
+    }
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await MedicationValidator.getParamId(request);
-    };
+    private static async validateUpdateBody(request) {
+
+        await param('id').exists()
+            .trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await body('MedicalPractitionerUserId').optional()
+            .trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await body('VisitId').optional()
+            .trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await body('OrderId').optional()
+            .trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await body('DrugId').optional()
+            .trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await body('DrugName').optional()
+            .trim()
+            .run(request);
+
+        await body('Dose').optional()
+            .isDecimal()
+            .run(request);
+
+        await body('DosageUnit').optional()
+            .trim()
+            .run(request);
+
+        await body('TimeSchedules').optional()
+            .trim()
+            .isArray()
+            .run(request);
+
+        await body('Frequency').optional()
+            .isInt()
+            .run(request);
+
+        await body('FrequencyUnit').optional()
+            .trim()
+            .run(request);
+
+        await body('Route').optional()
+            .trim()
+            .run(request);
+
+        await body('Duration').optional()
+            .isInt()
+            .run(request);
+
+        await body('DurationUnit').optional()
+            .trim()
+            .run(request);
+
+        await body('StartDate').optional()
+            .trim()
+            .isDate()
+            .run(request);
+
+        await body('EndDate').optional()
+            .trim()
+            .isDate()
+            .run(request);
+
+        await body('RefillNeeded').optional()
+            .isBoolean()
+            .run(request);
+
+        await body('RefillCount').optional()
+            .trim()
+            .isInt()
+            .run(request);
+
+        await body('Instructions').optional()
+            .trim()
+            .run(request);
+
+        await body('ImageResourceId').optional()
+            .trim()
+            .isUUID()
+            .run(request);
+
+        await body('IsExistingMedication').optional()
+            .trim()
+            .isBoolean()
+            .run(request);
+
+        await body('TakenForLastNDays').optional()
+            .trim()
+            .isInt()
+            .run(request);
+
+        await body('ToBeTakenForNextNDays').optional()
+            .trim()
+            .isInt()
+            .run(request);
+
+        await body('IsCancelled').optional()
+            .trim()
+            .isBoolean()
+            .run(request);
+
+        const result = validationResult(request);
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+    }
+
+    private static getFilter(request): MedicationSearchFilters {
+        
+        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
+
+        const itemsPerPage =
+            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
+
+        const filters: MedicationSearchFilters = {
+            DrugName                  : request.query.drugName ?? null,
+            PatientUserId             : request.query.patientUserId ?? null,
+            MedicalPractitionerUserId : request.query.medicalPractitionerUserId ?? null,
+            VisitId                   : request.query.visitId ?? null,
+            OrderId                   : request.query.orderId ?? null,
+            RefillNeeded              : request.query.refillNeeded ?? null,
+            IsExistingMedication      : request.query.isExistingMedication ?? null,
+            StartDateFrom             : request.query.startDateFrom ?? null,
+            StartDateTo               : request.query.startDateTo ?? null,
+            EndDateFrom               : request.query.endDateFrom ?? null,
+            EndDateTo                 : request.query.endDateTo ?? null,
+            CreatedDateFrom           : request.query.createdDateFrom ?? null,
+            CreatedDateTo             : request.query.createdDateTo ?? null,
+            OrderBy                   : request.query.orderBy ?? 'CreatedAt',
+            Order                     : request.query.order ?? 'descending',
+            PageIndex                 : pageIndex,
+            ItemsPerPage              : itemsPerPage,
+        };
+        return filters;
+    }
 
     static search = async (request: express.Request): Promise<MedicationSearchFilters> => {
 
-        await query('personId').optional()
+        await query('patientUserId').optional()
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await query('organizationId').optional()
+        await query('medicalPractitionerUserId').optional()
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await query('type').optional()
+        await query('visitId').optional()
             .trim()
             .escape()
+            .isUUID()
             .run(request);
 
-        await query('addressLine').optional()
-            .trim()
-            .run(request);
-
-        await query('city').optional()
+        await query('orderId').optional()
             .trim()
             .escape()
+            .isUUID()
             .run(request);
 
-        await query('district').optional()
+        await query('drugName').optional()
             .trim()
-            .escape()
             .run(request);
 
-        await query('state').optional()
+        await query('refillNeeded').optional()
             .trim()
-            .escape()
+            .isBoolean()
             .run(request);
 
-        await query('country').optional()
+        await query('isExistingMedication').optional()
             .trim()
-            .escape()
+            .isBoolean()
             .run(request);
 
-        await query('postalCode').optional()
+        await query('startDateFrom').optional()
             .trim()
             .escape()
+            .toDate()
             .run(request);
 
-        await query('longitudeFrom').optional()
+        await query('startDateTo').optional()
             .trim()
             .escape()
-            .isDecimal()
+            .toDate()
             .run(request);
 
-        await query('longitudeTo').optional()
+        await query('endDateFrom').optional()
             .trim()
             .escape()
-            .isDecimal()
+            .toDate()
             .run(request);
 
-        await query('lattitudeFrom').optional()
+        await query('endDateTo').optional()
             .trim()
             .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('lattitudeTo').optional()
-            .trim()
-            .escape()
-            .isDecimal()
+            .toDate()
             .run(request);
 
         await query('createdDateFrom').optional()
@@ -186,114 +470,7 @@ export class MedicationValidator {
         return MedicationValidator.getFilter(request);
     };
 
-    static update = async (request: express.Request): Promise<MedicationDomainModel> => {
-
-        const id = await MedicationValidator.getParamId(request);
-        await MedicationValidator.validateBody(request);
-
-        const domainModel = MedicationValidator.getDomainModel(request);
-        domainModel.id = id;
-
-        return domainModel;
-    };
-
-    private static async validateBody(request) {
-
-        await body('PersonId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('OrganizationId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('Type').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('MedicationLine').exists()
-            .trim()
-            .run(request);
-
-        await body('City').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('District').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('State').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Country').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('PostalCode').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Longitude').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await body('Lattitude').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-    }
-
-    private static getFilter(request): MedicationSearchFilters {
-        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
-
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
-
-        const filters: MedicationSearchFilters = {
-            Type            : request.query.type ?? null,
-            PersonId        : request.query.personId ?? null,
-            OrganizationId  : request.query.organizationId ?? null,
-            MedicationLine  : request.query.addressLine ?? null,
-            City            : request.query.city ?? null,
-            District        : request.query.district ?? null,
-            State           : request.query.state ?? null,
-            Country         : request.query.country ?? null,
-            PostalCode      : request.query.postalCode ?? null,
-            LongitudeFrom   : request.query.longitudeFrom ?? null,
-            LongitudeTo     : request.query.longitudeTo ?? null,
-            LattitudeFrom   : request.query.lattitudeFrom ?? null,
-            LattitudeTo     : request.query.lattitudeTo ?? null,
-            CreatedDateFrom : request.query.createdDateFrom ?? null,
-            CreatedDateTo   : request.query.createdDateTo ?? null,
-            OrderBy         : request.query.orderBy ?? 'CreatedAt',
-            Order           : request.query.order ?? 'descending',
-            PageIndex       : pageIndex,
-            ItemsPerPage    : itemsPerPage,
-        };
-        return filters;
-    }
-
-    private static async getParamId(request) {
+    static async getParamId(request) {
 
         await param('id').trim()
             .escape()
@@ -306,6 +483,36 @@ export class MedicationValidator {
             Helper.handleValidationError(result);
         }
         return request.params.id;
+    }
+
+    static async getParamImageId(request) {
+
+        await param('imageId').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+        return request.params.imageId;
+    }
+
+    static async getPatientUserId(request) {
+
+        await param('patientUserId').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+        return request.params.patientUserId;
     }
 
 }

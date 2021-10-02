@@ -12,7 +12,7 @@ import { FileResourceService } from '../../../../services/file.resource.service'
 import { PatientService } from '../../../../services/patient/patient.service';
 import { UserService } from '../../../../services/user/user.service';
 import { Loader } from '../../../../startup/loader';
-import { MedicationValidator } from '../../../validators/medication.validator';
+import { MedicationValidator } from '../../../validators/clinical/medication/medication.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -56,9 +56,23 @@ export class MedicationController {
             if (user == null) {
                 throw new ApiError(404, `Patient with an id ${domainModel.PatientUserId} cannot be found.`);
             }
-            const drug = await this._userService.getById(domainModel.DrugId);
-            if (drug == null) {
-                throw new ApiError(404, `Drug with an id ${domainModel.DrugId} cannot be found.`);
+            
+            if (domainModel.DrugId === null) {
+                if (domainModel.DrugName) {
+                    var existingDrug = await this._drugService.getByName(domainModel.DrugName);
+                    if (existingDrug) {
+                        domainModel.DrugId = existingDrug.id;
+                    }
+                }
+                else {
+                    throw new ApiError(404, `Drug for the medication is not specified.`);
+                }
+            }
+            else {
+                const drug = await this._drugService.getById(domainModel.DrugId);
+                if (drug == null) {
+                    throw new ApiError(404, `Drug with an id ${domainModel.DrugId} cannot be found.`);
+                }
             }
 
             const medication = await this._service.create(domainModel);
@@ -80,7 +94,7 @@ export class MedicationController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const id: string = await MedicationValidator.getById(request);
+            const id: string = await MedicationValidator.getParamId(request);
 
             const medication = await this._service.getById(id);
             if (medication == null) {
@@ -123,14 +137,14 @@ export class MedicationController {
             await this._authorizer.authorize(request, response);
 
             const domainModel = await MedicationValidator.update(request);
-            const id: string = await MedicationValidator.getById(request);
+            const id: string = await MedicationValidator.getParamId(request);
 
             const existingMedication = await this._service.getById(id);
             if (existingMedication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update medication record!');
             }
@@ -148,7 +162,7 @@ export class MedicationController {
             request.context = 'Medication.Delete';
             await this._authorizer.authorize(request, response);
 
-            const id: string = await MedicationValidator.getById(request);
+            const id: string = await MedicationValidator.getParamId(request);
             const existingMedication = await this._service.getById(id);
             if (existingMedication == null) {
                 throw new ApiError(404, 'Medication not found.');
@@ -173,7 +187,7 @@ export class MedicationController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const patientUserId: string = await MedicationValidator.getCurrentMedications(request);
+            const patientUserId: string = await MedicationValidator.getPatientUserId(request);
 
             const medications = await this._service.getCurrentMedications(patientUserId);
 
@@ -207,7 +221,7 @@ export class MedicationController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const imageId: string = await MedicationValidator.getImageId(request);
+            const imageId: string = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {
                 throw new ApiError(404, 'Medication stock image not found.');
@@ -226,7 +240,7 @@ export class MedicationController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const imageId: string = await MedicationValidator.getImageId(request);
+            const imageId: string = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {
                 throw new ApiError(404, 'Medication stock image not found.');

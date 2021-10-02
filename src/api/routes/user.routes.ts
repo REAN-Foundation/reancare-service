@@ -13,6 +13,8 @@ export const register = (app: express.Application): void => {
     //User will not be directly created/updated/deleted, but through user type specific
     //entity controllers such patient, doctor, etc.
 
+    router.get('/by-phone/:phone/role/:roleId', authenticator.authenticateClient, controller.getByPhoneAndRole);
+    router.get('/by-email/:email/role/:roleId', authenticator.authenticateClient, controller.getByEmailAndRole);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
 
     //router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
@@ -24,4 +26,3 @@ export const register = (app: express.Application): void => {
 
     app.use('/api/v1/users', router);
 };
-

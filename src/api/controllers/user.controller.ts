@@ -1,9 +1,9 @@
 import express from 'express';
-
 import { UserService } from '../../services/user.service';
 import { ResponseHandler } from '../../common/response.handler';
 import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
+import { ApiError } from '../../common/api.error';
 import { UserDetailsDto } from '../../domain.types/user/user/user.dto';
 import { UserValidator } from '../validators/user.validator';
 
@@ -34,6 +34,40 @@ export class UserController {
             if (user == null) {
                 ResponseHandler.failure(request, response, 'User not found.', 404);
                 return;
+            }
+            ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
+                user : user,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
+    getByPhoneAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'User.GetByPhoneAndRole';
+
+            const model = await UserValidator.userExistsCheck(request);
+            const user = await this._service.getByPhoneAndRole(model.Phone, model.RoleId);
+            if (user == null) {
+                throw new ApiError(404, 'User not found.');
+            }
+            ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
+                user : user,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
+    getByEmailAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'User.GetByEmailAndRole';
+
+            const model = await UserValidator.userExistsCheck(request);
+            const user = await this._service.getByEmailAndRole(model.Email, model.RoleId);
+            if (user == null) {
+                throw new ApiError(404, 'User not found.');
             }
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
                 user : user,

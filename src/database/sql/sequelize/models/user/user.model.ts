@@ -1,19 +1,7 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    BelongsTo,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    Length,
-    IsDate,
-    ForeignKey,
+    BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey,
+    IsDate, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
 import { v4 } from 'uuid';
 import Person from '../person.model';
 import Role from '../role.model';
@@ -47,6 +35,9 @@ export default class User extends Model {
         allowNull : false,
     })
     PersonId: string;
+    
+    @BelongsTo(() => Person)
+    Person: Person;
     
     @ForeignKey(() => Role)
     @Column({
@@ -92,9 +83,6 @@ export default class User extends Model {
         defaultValue : '+05:30',
     })
     CurrentTimeZone: string;
-
-    @BelongsTo(() => Person)
-    Person: Person;
 
     @Column
     @CreatedAt

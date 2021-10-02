@@ -128,6 +128,17 @@ export class PatientController {
             //Create address
             await this.createAddress(request, patient);
 
+            if (person.Phone !== null) {
+                var otpDetails = {
+                    Phone   : person.Phone,
+                    Email   : null,
+                    UserId  : null,
+                    Purpose : 'Login',
+                    RoleId  : role.id
+                };
+                await this._userService.generateOtp(otpDetails);
+            }
+
             ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
                 Patient : patient,
             });

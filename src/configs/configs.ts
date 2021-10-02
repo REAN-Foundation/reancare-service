@@ -48,6 +48,7 @@ export interface TemporaryFoldersConfig {
 }
 
 export interface Configurations {
+    SystemIdentifier: string;
     BaseUrl: string;
     Auth: AuthConfig;
     Database: DatabaseConfig;

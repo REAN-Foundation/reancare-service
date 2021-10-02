@@ -2,7 +2,7 @@ import express from 'express';
 import { query, body, oneOf, validationResult, param } from 'express-validator';
 import { ResponseHandler } from '../../common/response.handler';
 import { Helper } from '../../common/helper';
-import { UserLoginDetails } from '../../domain.types/user/user/user.domain.model';
+import { UserExistanceModel, UserLoginDetails } from '../../domain.types/user/user/user.domain.model';
 import { UserSearchFilters } from '../../domain.types/user/user/user.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -193,6 +193,43 @@ export class UserValidator {
             ResponseHandler.handleError(request, response, error);
         }
     };
+    
+    static userExistsCheck = async (
+        request: express.Request): Promise<UserExistanceModel> => {
+
+        await oneOf([
+            param('phone').optional()
+                .trim()
+                .escape(),
+            param('email').optional()
+                .trim()
+                .escape(),
+        ]).run(request);
+
+        await param('roleId').exists()
+            .trim()
+            .isNumeric()
+            .run(request);
+
+        const result = validationResult(request);
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        const userDetails: UserExistanceModel = {
+            Phone  : null,
+            Email  : null,
+            RoleId : parseInt(request.params.roleId, 10)
+        };
+        if (typeof request.params.phone !== 'undefined') {
+            userDetails.Phone = request.params.phone;
+        }
+        if (typeof request.params.email !== 'undefined') {
+            userDetails.Email = request.params.email;
+        }
+
+        return userDetails;
+    };
 
     static resetPassword = async (request: express.Request, response: express.Response): Promise<any> => {
         try {
@@ -328,7 +365,7 @@ export class UserValidator {
                 Email       : null,
                 Password    : null,
                 Otp         : request.body.Otp,
-                LoginRoleId : request.body.LoginRoleId,
+                LoginRoleId : parseInt(request.body.LoginRoleId),
             };
             if (typeof request.body.Phone !== 'undefined') {
                 loginObject.Phone = request.body.Phone;

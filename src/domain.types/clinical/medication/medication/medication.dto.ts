@@ -17,7 +17,7 @@ export interface MedicationDto {
     DrugId?                   : string;
     Dose?                     : number;
     DosageUnit?               : MedicationDosageUnits;
-    TimeSchedule?             : MedicationTimeSchedules;
+    TimeSchedules?            : MedicationTimeSchedules[];
     Frequency?                : number;
     FrequencyUnit?            : MedicationFrequencyUnits;
     Route?                    : MedicationAdministrationRoutes;

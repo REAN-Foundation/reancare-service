@@ -12,22 +12,35 @@ import Medication from '../../../models/clinical/medication/medication.model';
 
 export class MedicationRepo implements IMedicationRepo {
 
-    create = async (medicationDomainModel: MedicationDomainModel): Promise<MedicationDto> => {
+    create = async (model: MedicationDomainModel): Promise<MedicationDto> => {
         try {
             const entity = {
-                Type           : medicationDomainModel.Type,
-                MedicationLine : medicationDomainModel.MedicationLine ?? null,
-                City           : medicationDomainModel.City ?? null,
-                District       : medicationDomainModel.District ?? null,
-                State          : medicationDomainModel.State ?? null,
-                Country        : medicationDomainModel.Country ?? null,
-                PostalCode     : medicationDomainModel.PostalCode ?? null,
-                Longitude      : medicationDomainModel.Longitude ?? null,
-                Lattitude      : medicationDomainModel.Lattitude ?? null,
+                PatientUserId             : model.PatientUserId,
+                MedicalPractitionerUserId : model.MedicalPractitionerUserId ?? null,
+                VisitId                   : model.VisitId ?? null,
+                OrderId                   : model.OrderId ?? null,
+                DrugId                    : model.DrugId,
+                Dose                      : model.Dose,
+                DosageUnit                : model.DosageUnit,
+                TimeSchedules             : JSON.stringify(model.TimeSchedules),
+                Frequency                 : model.Frequency,
+                FrequencyUnit             : model.FrequencyUnit,
+                Route                     : model.Route,
+                Duration                  : model.Duration,
+                DurationUnit              : model.DurationUnit,
+                StartDate                 : model.StartDate,
+                EndDate                   : model.EndDate,
+                RefillNeeded              : model.RefillNeeded,
+                RefillCount               : model.RefillCount,
+                Instructions              : model.Instructions,
+                ImageResourceId           : model.ImageResourceId,
+                IsExistingMedication      : model.IsExistingMedication,
+                TakenForLastNDays         : model.TakenForLastNDays,
+                ToBeTakenForNextNDays     : model.ToBeTakenForNextNDays,
+                IsCancelled               : model.IsCancelled,
             };
             const medication = await Medication.create(entity);
-            const dto = await MedicationMapper.toDto(medication);
-            return dto;
+            return await MedicationMapper.toDto(medication);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -45,7 +58,7 @@ export class MedicationRepo implements IMedicationRepo {
         }
     };
 
-    getCurrentMedications = async (patientUserId: string): Promise<MedicationDto> => {
+    getCurrentMedications = async (patientUserId: string): Promise<MedicationDto[]> => {
         try {
             
             var today = new Date();

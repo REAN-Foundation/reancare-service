@@ -24,7 +24,7 @@ export class MedicationService {
         return await this._medicationRepo.getById(id);
     };
 
-    getCurrentMedications = async (patientUserId: string): Promise<MedicationDto> => {
+    getCurrentMedications = async (patientUserId: string): Promise<MedicationDto[]> => {
         return await this._medicationRepo.getCurrentMedications(patientUserId);
     };
 

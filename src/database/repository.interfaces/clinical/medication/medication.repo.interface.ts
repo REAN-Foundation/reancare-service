@@ -10,7 +10,7 @@ export interface IMedicationRepo {
 
     getById(id: string): Promise<MedicationDto>;
 
-    getCurrentMedications(patientUserId: string): Promise<MedicationDto>;
+    getCurrentMedications(patientUserId: string): Promise<MedicationDto[]>;
 
     search(filters: MedicationSearchFilters): Promise<MedicationSearchResults>;
 

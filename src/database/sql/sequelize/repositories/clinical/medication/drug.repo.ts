@@ -1,4 +1,4 @@
-import { Op } from 'sequelize/types';
+import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { DrugDomainModel } from "../../../../../../domain.types/clinical/medication/drug/drug.domain.model";

@@ -1,4 +1,6 @@
 import { Op } from 'sequelize';
+import { MedicationConsumptionDomainModel } from 'src/domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
+import { MedicationConsumptionDto } from 'src/domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { MedicationDomainModel } from '../../../../../../domain.types/clinical/medication/medication/medication.domain.model';
@@ -11,8 +13,11 @@ import Medication from '../../../models/clinical/medication/medication.model';
 ///////////////////////////////////////////////////////////////////////
 
 export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
+    create(model: MedicationConsumptionDomainModel): Promise<MedicationConsumptionDto> {
+        throw new Error('Method not implemented.');
+    }
 
-    create = async (model: MedicationDomainModel): Promise<MedicationDto> => {
+    markListAsTaken = async (consumptionIds: string[]): Promise<MedicationDto> => {
         try {
             const entity = {
                 PatientUserId             : model.PatientUserId,

@@ -21,7 +21,9 @@ export class MedicationConsumptionController {
 
     //#region member variables and constructors
 
-    _service: MedicationService = null;
+    _service: MedicationConsumptionService = null;
+
+    _medicationService: MedicationService = null;
 
     _patientService: PatientService = null;
 
@@ -29,16 +31,13 @@ export class MedicationConsumptionController {
 
     _drugService: DrugService = null;
 
-    _fileResourceService: FileResourceService = null;
-
     _authorizer: Authorizer = null;
 
     constructor() {
-        this._service = Loader.container.resolve(MedicationService);
+        this._service = Loader.container.resolve(MedicationConsumptionService);
+        this._medicationService = Loader.container.resolve(MedicationService);
         this._patientService = Loader.container.resolve(PatientService);
-        this._userService = Loader.container.resolve(UserService);
         this._drugService = Loader.container.resolve(DrugService);
-        this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -46,43 +45,162 @@ export class MedicationConsumptionController {
 
     //#region Action methods
 
-    create = async (request: express.Request, response: express.Response): Promise<void> => {
+    markListAsTaken = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Create';
+            request.context = 'MedicationConsumption.MarkListAsTaken';
             await this._authorizer.authorize(request, response);
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+
+            const consumptionIds = await MedicationConsumptionValidator.markListAsTaken(request);
+            if(consumptionIds.length === 0) {
+                throw new ApiError(422, `Medication consumption ids list is either empty or missing.`);
+            }
+            const dtos = await this._service.markListAsTaken(consumptionIds);
+            if (dtos.length === 0) {
+                throw new ApiError(422, `Unable to update medication consumptions.`);
+            }
             
-            const domainModel = await MedicationConsumptionValidator.create(request);
+            ResponseHandler.success(request, response, 'Medication consumptions marked as taken successfully!', 200, {
+                MedicationConsumptions : dtos,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
-            const user = await this._userService.getById(domainModel.PatientUserId);
-            if (user == null) {
-                throw new ApiError(404, `Patient with an id ${domainModel.PatientUserId} cannot be found.`);
+    markListAsMissed = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'MedicationConsumption.MarkListAsMissed';
+            await this._authorizer.authorize(request, response);
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+
+            const consumptionIds = await MedicationConsumptionValidator.markListAsMissed(request);
+            if(consumptionIds.length === 0) {
+                throw new ApiError(422, `Medication consumption ids list is either empty or missing.`);
+            }
+            const dtos = await this._service.markListAsMissed(consumptionIds);
+            if (dtos.length === 0) {
+                throw new ApiError(422, `Unable to update medication consumptions.`);
             }
             
-            if (domainModel.DrugId === null) {
-                if (domainModel.DrugName) {
-                    var existingDrug = await this._drugService.getByName(domainModel.DrugName);
-                    if (existingDrug) {
-                        domainModel.DrugId = existingDrug.id;
-                    }
-                }
-                else {
-                    throw new ApiError(404, `Drug for the medication is not specified.`);
-                }
+            ResponseHandler.success(request, response, 'Medication consumptions marked as missed successfully!', 200, {
+                MedicationConsumptions : dtos,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    markAsTaken = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'MedicationConsumption.MarkAsTaken';
+            await this._authorizer.authorize(request, response);
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+
+            const consumptionId = await MedicationConsumptionValidator.markAsTaken(request);
+            if(consumptionId === null) {
+                throw new ApiError(422, `Medication consumption id is invalid.`);
             }
-            else {
-                const drug = await this._drugService.getById(domainModel.DrugId);
-                if (drug == null) {
-                    throw new ApiError(404, `Drug with an id ${domainModel.DrugId} cannot be found.`);
-                }
+            const dto = await this._service.markAsTaken(consumptionId);
+            if (dto === null) {
+                throw new ApiError(422, `Unable to update medication consumption.`);
+            }
+            
+            ResponseHandler.success(request, response, 'Medication consumptions marked as taken successfully!', 200, {
+                MedicationConsumption : dto,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    markAsMissed = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'MedicationConsumption.MarkAsMissed';
+            await this._authorizer.authorize(request, response);
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+
+            const consumptionId = await MedicationConsumptionValidator.markAsMissed(request);
+            if(consumptionId === null) {
+                throw new ApiError(422, `Medication consumption id is invalid.`);
+            }
+            const dto = await this._service.markAsMissed(consumptionId);
+            if (dto === null) {
+                throw new ApiError(422, `Unable to update medication consumption.`);
+            }
+            
+            ResponseHandler.success(request, response, 'Medication consumptions marked as missed successfully!', 200, {
+                MedicationConsumption : dto,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    cancelFutureMedicationSchedules = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'MedicationConsumption.CancelFutureMedicationSchedules';
+            await this._authorizer.authorize(request, response);
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+
+            const medicationId = await MedicationConsumptionValidator.cancelFutureMedicationSchedules(request);
+            if(medicationId === null) {
+                throw new ApiError(422, `Medication id is invalid.`);
+            }
+            const dtos = await this._service.cancelFutureMedicationSchedules(medicationId);
+            if (dtos === null) {
+                throw new ApiError(422, `Unable to update medication consumptions.`);
+            }
+            
+            ResponseHandler.success(request, response, 'Cancelled future medication schedules successfully!', 200, {
+                MedicationConsumptions : dtos,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    deleteFutureMedicationSchedules = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'MedicationConsumption.DeleteFutureMedicationSchedules';
+            await this._authorizer.authorize(request, response);
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+
+            const medicationId = await MedicationConsumptionValidator.deleteFutureMedicationSchedules(request);
+            if(medicationId === null) {
+                throw new ApiError(422, `Medication id is invalid.`);
+            }
+            const dtos = await this._service.deleteFutureMedicationSchedules(medicationId);
+            if (dtos === null) {
+                throw new ApiError(422, `Unable to delete medication consumptions.`);
+            }
+            
+            ResponseHandler.success(request, response, 'Deleted future medication schedules successfully!', 200, {
+                MedicationConsumptions : dtos,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateFutureMedicationSchedulesForTimeZone = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'MedicationConsumption.UpdateFutureMedicationSchedulesForTimeZone';
+            await this._authorizer.authorize(request, response);
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+
+            const medicationId = await MedicationConsumptionValidator.updateFutureMedicationSchedulesForTimeZone(request);
+            if(medicationId === null) {
+                throw new ApiError(422, `Medication id is invalid.`);
             }
 
-            const medication = await this._service.create(domainModel);
-            if (medication == null) {
-                throw new ApiError(400, 'Cannot create medication!');
+            const dtos = await this._service.updateFutureMedicationSchedulesForTimeZone(medicationId);
+            if (dtos === null) {
+                throw new ApiError(422, `Unable to delete medication consumptions.`);
             }
-
-            ResponseHandler.success(request, response, 'Medication created successfully!', 201, {
-                Medication : medication,
+            
+            ResponseHandler.success(request, response, 'Deleted future medication schedules successfully!', 200, {
+                MedicationConsumptions : dtos,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -91,28 +209,28 @@ export class MedicationConsumptionController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetById';
+            request.context = 'MedicationConsumption.GetById';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
             const id: string = await MedicationConsumptionValidator.getParamId(request);
 
-            const medication = await this._service.getById(id);
-            if (medication == null) {
-                throw new ApiError(404, 'Medication not found.');
+            const medicationConsumption = await this._service.getById(id);
+            if (medicationConsumption == null) {
+                throw new ApiError(404, 'Medication consumption not found.');
             }
 
-            ResponseHandler.success(request, response, 'Medication retrieved successfully!', 200, {
-                Medication : medication,
+            ResponseHandler.success(request, response, 'Medication consumption retrieved successfully!', 200, {
+                MedicationConsumption : medicationConsumption,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    search = async (request: express.Request, response: express.Response): Promise<void> => {
+    searchForPatient = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Search';
+            request.context = 'MedicationConsumption.Search';
             await this._authorizer.authorize(request, response);
 
             const filters = await MedicationConsumptionValidator.search(request);
@@ -123,141 +241,113 @@ export class MedicationConsumptionController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} medication records retrieved successfully!`;
+                    : `Total ${count} medication consumption records retrieved successfully!`;
                     
-            ResponseHandler.success(request, response, message, 200, { Medications: searchResults });
+            ResponseHandler.success(request, response, message, 200, { MedicationConsumptions: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    update = async (request: express.Request, response: express.Response): Promise<void> => {
+    getMedicationSchedule = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Update';
-            await this._authorizer.authorize(request, response);
-
-            const domainModel = await MedicationConsumptionValidator.update(request);
-            const id: string = await MedicationConsumptionValidator.getParamId(request);
-
-            const existingMedication = await this._service.getById(id);
-            if (existingMedication == null) {
-                throw new ApiError(404, 'Medication not found.');
-            }
-
-            const updated = await this._service.update(id, domainModel);
-            if (updated == null) {
-                throw new ApiError(400, 'Unable to update medication record!');
-            }
-
-            ResponseHandler.success(request, response, 'Medication record updated successfully!', 200, {
-                Medication : updated,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    delete = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'Medication.Delete';
-            await this._authorizer.authorize(request, response);
-
-            const id: string = await MedicationConsumptionValidator.getParamId(request);
-            const existingMedication = await this._service.getById(id);
-            if (existingMedication == null) {
-                throw new ApiError(404, 'Medication not found.');
-            }
-
-            const deleted = await this._service.delete(id);
-            if (!deleted) {
-                throw new ApiError(400, 'Medication cannot be deleted.');
-            }
-
-            ResponseHandler.success(request, response, 'Medication record deleted successfully!', 200, {
-                Deleted : true,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    getCurrentMedications = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'Medication.GetCurrentMedications';
+            request.context = 'MedicationConsumption.GetMedicationSchedule';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const patientUserId: string = await MedicationConsumptionValidator.getPatientUserId(request);
+            const model = await MedicationConsumptionValidator.getMedicationSchedule(request);
 
-            const medications = await this._service.getCurrentMedications(patientUserId);
+            const dtos = await this._service.getMedicationSchedule(
+                model.PatientUserId,
+                model.Duration,
+                model.When);
 
-            ResponseHandler.success(request, response, 'Current medications retrieved successfully!', 200, {
-                CurrentMedications : medications,
+            if (dtos.length === 0) {
+                throw new ApiError(404, 'Medication consumptions not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Medication consumptions retrieved successfully!', 200, {
+                MedicationConsumptions : dtos,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
-    getStockMedicationImages = async (request: express.Request, response: express.Response): Promise<void> => {
+
+    getMedicationScheduleForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.GetStockMedicationImages';
-            await this._authorizer.authorize(request, response);
 
-            const images = await this._service.getStockMedicationImages();
-
-            ResponseHandler.success(request, response, 'Medication stock images retrieved successfully!', 200, {
-                MedicationStockImages : images,
-            });
-
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    getStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'Medication.GetStockMedicationImageById';
+            request.context = 'MedicationConsumption.GetMedicationScheduleForDay';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const imageId: string = await MedicationConsumptionValidator.getParamImageId(request);
-            const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
-            if (image == null) {
-                throw new ApiError(404, 'Medication stock image not found.');
+            const model = await MedicationConsumptionValidator.getMedicationScheduleForDay(request);
+
+            const dtos = await this._service.getMedicationScheduleForDay(
+                model.PatientUserId,
+                model.Date,
+                model.GroupByDrug);
+
+            if (dtos.length === 0) {
+                throw new ApiError(404, 'Medication consumptions not found.');
             }
-            ResponseHandler.success(request, response, 'Medication retrieved successfully!', 200, {
-                MedicationStockImage : image,
+
+            ResponseHandler.success(request, response, 'Medication consumptions retrieved successfully!', 200, {
+                MedicationConsumptions : dtos,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
-    downloadStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
+
+    getMedicationConsumptionSummaryForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.DownloadStockMedicationImageById';
+            request.context = 'MedicationConsumption.GetMedicationConsumptionSummaryForDay';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const imageId: string = await MedicationConsumptionValidator.getParamImageId(request);
-            const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
-            if (image == null) {
-                throw new ApiError(404, 'Medication stock image not found.');
+            const model = await MedicationConsumptionValidator.getMedicationConsumptionSummaryForDay(request);
+
+            const summary = await this._service.getMedicationConsumptionSummaryForDay(
+                model.PatientUserId,
+                model.Date);
+
+            if (summary === null) {
+                throw new ApiError(404, 'Medication consumption summary cannot be retrieved.');
             }
 
-            const localDestination = await this._fileResourceService.downloadById(image.ResourceId);
-            if (localDestination == null) {
-                throw new ApiError(404, 'File resource not found.');
-            }
-    
-            var mimeType = mime.lookup(localDestination);
-            response.setHeader('Content-type', mimeType);
-            response.setHeader('Content-disposition', 'inline');
-            var filestream = fs.createReadStream(localDestination);
-            filestream.pipe(response);
+            ResponseHandler.success(request, response, 'Medication consumption summary retrieved successfully!', 200, {
+                MedicationConsumptionSummary : summary,
+            });
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getSummaryByCalendarMonths = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'MedicationConsumption.GetSummaryByCalendarMonths';
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            await this._authorizer.authorize(request, response);
+
+            const model = await MedicationConsumptionValidator.getSummaryByCalendarMonths(request);
+
+            const summary = await this._service.getSummaryByCalendarMonths(
+                model.PatientUserId,
+                model.PastMonthsCount,
+                model.FutureMonthsCount);
+
+            if (summary === null) {
+                throw new ApiError(404, 'Monthly medication consumption summary cannot be retrieved.');
+            }
+
+            ResponseHandler.success(request, response, 'Monthly medication consumption summary retrieved successfully!', 200, {
+                MedicationConsumptionSummary : summary,
+            });
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

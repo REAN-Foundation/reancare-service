@@ -132,8 +132,10 @@ export class UserController {
             const user: UserDetailsDto = userDetails.user;
             const accessToken = userDetails.accessToken;
 
-            const isProfileComplete = user.Person.FirstName && user.Person.LastName &&
-                                      user.Person.Gender && user.Person.BirthDate;
+            const isProfileComplete = user.Person.FirstName &&
+                                      user.Person.LastName &&
+                                      user.Person.Gender &&
+                                      user.Person.BirthDate ? true : false;
             const data = {
                 AccessToken       : accessToken,
                 User              : user,

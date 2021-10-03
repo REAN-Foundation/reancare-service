@@ -291,7 +291,7 @@ export class UserValidator {
                 .trim()
                 .run(request);
 
-            await body('RoleId').optional()
+            await body('RoleId').exists()
                 .trim()
                 .toInt()
                 .run(request);
@@ -307,7 +307,7 @@ export class UserValidator {
                 Email   : null,
                 UserId  : null,
                 Purpose : 'Login',
-                RoleId  : null
+                RoleId  : request.body.RoleId
             };
 
             if (typeof request.body.Phone !== 'undefined') {

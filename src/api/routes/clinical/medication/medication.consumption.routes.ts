@@ -19,9 +19,9 @@ export const register = (app: express.Application): void => {
     router.post('/delete-future-schedules/:medicationId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteFutureMedicationSchedules);
 
     router.get('/search-for-patient/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.searchForPatient);
-    router.get('/schedule-for-duration/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getMedicationSchedule);
-    router.get('/schedule-for-day/:patientUserId/:date', authenticator.authenticateClient, authenticator.authenticateUser, controller.getMedicationScheduleForDay);
-    router.get('/summary-for-day/:patientUserId/:date', authenticator.authenticateClient, authenticator.authenticateUser, controller.getMedicationConsumptionSummaryForDay);
+    router.get('/schedule-for-duration/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getScheduleForDuration);
+    router.get('/schedule-for-day/:patientUserId/:date', authenticator.authenticateClient, authenticator.authenticateUser, controller.getScheduleForDay);
+    router.get('/summary-for-day/:patientUserId/:date', authenticator.authenticateClient, authenticator.authenticateUser, controller.getSummaryForDay);
     router.get('/summary-for-calendar-months/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getSummaryByCalendarMonths);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
 

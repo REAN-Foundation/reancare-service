@@ -1,5 +1,7 @@
 import { Op } from 'sequelize';
 import { MedicationConsumptionDomainModel } from 'src/domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
+import { MedicationConsumptionDomainModel } from 'src/domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
+import { MedicationConsumptionDto } from 'src/domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { MedicationConsumptionDto } from 'src/domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
@@ -8,14 +10,71 @@ import { MedicationDto } from '../../../../../../domain.types/clinical/medicatio
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../../../../domain.types/clinical/medication/medication/medication.search.types';
 import { IMedicationConsumptionRepo } from '../../../../../repository.interfaces/clinical/medication/medication.consumption.repo.interface';
 import { MedicationMapper } from '../../../mappers/clinical/medication/medication.mapper';
+import MedicationConsumption from '../../../models/clinical/medication/medication.consumption.model';
 import Medication from '../../../models/clinical/medication/medication.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
+    markAsMissed(id: string): Promise<MedicationConsumptionDto> {
+        throw new Error('Method not implemented.');
+    }
     create(model: MedicationConsumptionDomainModel): Promise<MedicationConsumptionDto> {
         throw new Error('Method not implemented.');
     }
+
+
+    markAsTaken = async (id: string): Promise<MedicationConsumptionDto> => {
+        try {
+
+            const medConsumption = await MedicationConsumption.findByPk(id);
+            if (medConsumption === null) {
+                Logger.instance().log(`Medication consumption instance with given id ${id} cannot be found.`);
+                return null;
+            }
+            
+            if (medConsumption. == 'missed') {
+                Logger.Log('Medication consumption instance with given id already marked as missed.');
+                continue;
+            }
+
+            if (medConsumption.Status == 'taken') {
+                Logger.Log('Medication consumption instance with given id already marked as taken.');
+                continue;
+            }
+
+            const entity = {
+                PatientUserId             : model.PatientUserId,
+                MedicalPractitionerUserId : model.MedicalPractitionerUserId ?? null,
+                VisitId                   : model.VisitId ?? null,
+                OrderId                   : model.OrderId ?? null,
+                DrugId                    : model.DrugId,
+                Dose                      : model.Dose,
+                DosageUnit                : model.DosageUnit,
+                TimeSchedules             : JSON.stringify(model.TimeSchedules),
+                Frequency                 : model.Frequency,
+                FrequencyUnit             : model.FrequencyUnit,
+                Route                     : model.Route,
+                Duration                  : model.Duration,
+                DurationUnit              : model.DurationUnit,
+                StartDate                 : model.StartDate,
+                EndDate                   : model.EndDate,
+                RefillNeeded              : model.RefillNeeded,
+                RefillCount               : model.RefillCount,
+                Instructions              : model.Instructions,
+                ImageResourceId           : model.ImageResourceId,
+                IsExistingMedication      : model.IsExistingMedication,
+                TakenForLastNDays         : model.TakenForLastNDays,
+                ToBeTakenForNextNDays     : model.ToBeTakenForNextNDays,
+                IsCancelled               : model.IsCancelled,
+            };
+            const medication = await Medication.create(entity);
+            return await MedicationMapper.toDto(medication);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
     markListAsTaken = async (consumptionIds: string[]): Promise<MedicationDto> => {
         try {

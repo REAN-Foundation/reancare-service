@@ -1,7 +1,4 @@
 import express from 'express';
-import fs from 'fs';
-import mime from 'mime';
-import { MedicationStockImageDto } from '../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
@@ -9,7 +6,6 @@ import { ResponseHandler } from '../../../../common/response.handler';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
-import { FileResourceService } from '../../../../services/file.resource.service';
 import { PatientService } from '../../../../services/patient/patient.service';
 import { UserService } from '../../../../services/user/user.service';
 import { Loader } from '../../../../startup/loader';
@@ -51,8 +47,8 @@ export class MedicationConsumptionController {
             await this._authorizer.authorize(request, response);
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
-            const consumptionIds = await MedicationConsumptionValidator.markListAsTaken(request);
-            if(consumptionIds.length === 0) {
+            const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
+            if (consumptionIds.length === 0) {
                 throw new ApiError(422, `Medication consumption ids list is either empty or missing.`);
             }
             const dtos = await this._service.markListAsTaken(consumptionIds);
@@ -74,8 +70,8 @@ export class MedicationConsumptionController {
             await this._authorizer.authorize(request, response);
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
-            const consumptionIds = await MedicationConsumptionValidator.markListAsMissed(request);
-            if(consumptionIds.length === 0) {
+            const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
+            if (consumptionIds.length === 0) {
                 throw new ApiError(422, `Medication consumption ids list is either empty or missing.`);
             }
             const dtos = await this._service.markListAsMissed(consumptionIds);
@@ -97,10 +93,7 @@ export class MedicationConsumptionController {
             await this._authorizer.authorize(request, response);
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
-            const consumptionId = await MedicationConsumptionValidator.markAsTaken(request);
-            if(consumptionId === null) {
-                throw new ApiError(422, `Medication consumption id is invalid.`);
-            }
+            const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsTaken(consumptionId);
             if (dto === null) {
                 throw new ApiError(422, `Unable to update medication consumption.`);
@@ -120,10 +113,7 @@ export class MedicationConsumptionController {
             await this._authorizer.authorize(request, response);
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
-            const consumptionId = await MedicationConsumptionValidator.markAsMissed(request);
-            if(consumptionId === null) {
-                throw new ApiError(422, `Medication consumption id is invalid.`);
-            }
+            const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsMissed(consumptionId);
             if (dto === null) {
                 throw new ApiError(422, `Unable to update medication consumption.`);
@@ -143,10 +133,7 @@ export class MedicationConsumptionController {
             await this._authorizer.authorize(request, response);
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
-            const medicationId = await MedicationConsumptionValidator.cancelFutureMedicationSchedules(request);
-            if(medicationId === null) {
-                throw new ApiError(422, `Medication id is invalid.`);
-            }
+            const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
             const dtos = await this._service.cancelFutureMedicationSchedules(medicationId);
             if (dtos === null) {
                 throw new ApiError(422, `Unable to update medication consumptions.`);
@@ -166,10 +153,7 @@ export class MedicationConsumptionController {
             await this._authorizer.authorize(request, response);
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
-            const medicationId = await MedicationConsumptionValidator.deleteFutureMedicationSchedules(request);
-            if(medicationId === null) {
-                throw new ApiError(422, `Medication id is invalid.`);
-            }
+            const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
             const dtos = await this._service.deleteFutureMedicationSchedules(medicationId);
             if (dtos === null) {
                 throw new ApiError(422, `Unable to delete medication consumptions.`);
@@ -183,23 +167,22 @@ export class MedicationConsumptionController {
         }
     };
 
-    updateFutureMedicationSchedulesForTimeZone = async (request: express.Request, response: express.Response): Promise<void> => {
+    updateTimeZoneForFutureMedicationSchedules = async (request: express.Request, response: express.Response)
+        : Promise<void> => {
         try {
             request.context = 'MedicationConsumption.UpdateFutureMedicationSchedulesForTimeZone';
             await this._authorizer.authorize(request, response);
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
-            const medicationId = await MedicationConsumptionValidator.updateFutureMedicationSchedulesForTimeZone(request);
-            if(medicationId === null) {
-                throw new ApiError(422, `Medication id is invalid.`);
-            }
+            const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
+            const newTimeZone = await MedicationConsumptionValidator.getParam(request, 'newTimeZone');
 
-            const dtos = await this._service.updateFutureMedicationSchedulesForTimeZone(medicationId);
+            const dtos = await this._service.updateTimeZoneForFutureMedicationSchedules(medicationId, newTimeZone);
             if (dtos === null) {
                 throw new ApiError(422, `Unable to delete medication consumptions.`);
             }
             
-            ResponseHandler.success(request, response, 'Deleted future medication schedules successfully!', 200, {
+            ResponseHandler.success(request, response, 'Updated time-zone for future medication schedules successfully!', 200, {
                 MedicationConsumptions : dtos,
             });
         } catch (error) {
@@ -213,7 +196,7 @@ export class MedicationConsumptionController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const id: string = await MedicationConsumptionValidator.getParamId(request);
+            const id: string = await MedicationConsumptionValidator.getParam(request, 'id');
 
             const medicationConsumption = await this._service.getById(id);
             if (medicationConsumption == null) {
@@ -233,7 +216,7 @@ export class MedicationConsumptionController {
             request.context = 'MedicationConsumption.Search';
             await this._authorizer.authorize(request, response);
 
-            const filters = await MedicationConsumptionValidator.search(request);
+            const filters = await MedicationConsumptionValidator.searchForPatient(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -250,15 +233,15 @@ export class MedicationConsumptionController {
         }
     };
 
-    getMedicationSchedule = async (request: express.Request, response: express.Response): Promise<void> => {
+    getScheduleForDuration = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'MedicationConsumption.GetMedicationSchedule';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const model = await MedicationConsumptionValidator.getMedicationSchedule(request);
+            const model = await MedicationConsumptionValidator.getScheduleForDuration(request);
 
-            const dtos = await this._service.getMedicationSchedule(
+            const dtos = await this._service.getScheduleForDuration(
                 model.PatientUserId,
                 model.Duration,
                 model.When);
@@ -275,16 +258,16 @@ export class MedicationConsumptionController {
         }
     };
 
-    getMedicationScheduleForDay = async (request: express.Request, response: express.Response): Promise<void> => {
+    getScheduleForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
             request.context = 'MedicationConsumption.GetMedicationScheduleForDay';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const model = await MedicationConsumptionValidator.getMedicationScheduleForDay(request);
+            const model = await MedicationConsumptionValidator.getScheduleForDay(request);
 
-            const dtos = await this._service.getMedicationScheduleForDay(
+            const dtos = await this._service.getScheduleForDay(
                 model.PatientUserId,
                 model.Date,
                 model.GroupByDrug);
@@ -302,15 +285,15 @@ export class MedicationConsumptionController {
         }
     };
 
-    getMedicationConsumptionSummaryForDay = async (request: express.Request, response: express.Response): Promise<void> => {
+    getSummaryForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'MedicationConsumption.GetMedicationConsumptionSummaryForDay';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const model = await MedicationConsumptionValidator.getMedicationConsumptionSummaryForDay(request);
+            const model = await MedicationConsumptionValidator.getSummaryForDay(request);
 
-            const summary = await this._service.getMedicationConsumptionSummaryForDay(
+            const summary = await this._service.getSummaryForDay(
                 model.PatientUserId,
                 model.Date);
 

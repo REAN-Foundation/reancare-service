@@ -17,3 +17,19 @@ export interface MedicationConsumptionDomainModel {
     CancelledOn?      : Date;
     Note?             : string;
 }
+
+export interface MedicationConsumptionScheduleDomainModel {
+    PatientUserId?: string;
+    Duration?     : string;
+    When?         : string;
+    Date?         : Date;
+    GroupByDrug?  : boolean;
+}
+
+
+export interface MedicationConsumptionSummaryDomainModel {
+    PatientUserId?    : string;
+    Date?             : Date;
+    PastMonthsCount?  : number;
+    FutureMonthsCount?: number;
+}

@@ -6,6 +6,9 @@ import { MedicationStockImageDto } from "../../../domain.types/clinical/medicati
 import { MedicationDomainModel } from '../../../domain.types/clinical/medication/medication/medication.domain.model';
 import { MedicationDto } from '../../../domain.types/clinical/medication/medication/medication.dto';
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
+import { ConsumptionSummaryByDrugDto, ConsumptionSummaryDto, ConsumptionSummaryForMonthDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
+import { Logger } from "../../../common/logger";
+import { MedicationConsumptionScheduleDomainModel } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,36 +21,182 @@ export class MedicationConsumptionService {
         @inject('IMedicationConsumptionRepo') private _medicationConsumptionRepo: IMedicationConsumptionRepo,
     ) {}
 
-    create = async (medicationDomainModel: MedicationDomainModel): Promise<MedicationDto> => {
-        return await this._medicationRepo.create(medicationDomainModel);
+    markListAsTaken = async (consumptionIds: string[]): Promise<MedicationConsumptionDto[]> => {
+
+        try {
+
+            var takenMeds = [];
+    
+            for await (var id of consumptionIds) {
+                
+                var medConsumption = await this._medicationConsumptionRepo.getById(id);
+                if (medConsumption === null) {
+                    Logger.instance().log('Medication consumption instance with given id cannot be found.');
+                    continue;
+                }
+    
+                if (medConsumption.Status == 'missed') {
+                    Logger.Log('Medication consumption instance with given id already marked as missed.');
+                    continue;
+                }
+    
+                if (medConsumption.Status == 'taken') {
+                    Logger.Log('Medication consumption instance with given id already marked as taken.');
+                    continue;
+                }
+    
+                var takenAt = Date.now();
+                if (moment(Date.now()).isAfter(moment(medConsumption.TimeScheduleEnd))) {
+                    takenAt = medConsumption.TimeScheduleEnd;
+                }
+                var value = {
+                    IsMissed    : false,
+                    IsTaken     : true,
+                    TakenAt     : takenAt,
+                    IsCancelled : false,
+                    CancelledOn : null
+                };
+    
+                var res = await MedicationConsumption.update(value, {
+                    where : { id: id }
+                });
+                if (res.length != 1) {
+                    Logger.Log('Unable to mark medication as taken!');
+                    continue;
+                }
+    
+                try {
+                    await PatientTaskHandler.UpdatePatientTask(medConsumption.id, true, takenAt, true, takenAt, true);
+                }
+                catch (updateError) {
+                    Logger.Log("Medication consumption missing corresponding parent task!");
+                }
+    
+                var entity = await this.GetMedicationConsumption(id);
+                var obj = GetMedicationConsumptionObject(entity);
+                takenMeds.push(obj);
+            }
+            return takenMeds;
+        }
+        catch (error) {
+            var msg = 'Unable to mark medication as taken!';
+            ErrorHandler.ThrowServiceError(error, msg);
+        }
+
+        //return await this._medicationRepo.create(medicationDomainModel);
     };
 
-    getById = async (id: string): Promise<MedicationDto> => {
-        return await this._medicationRepo.getById(id);
+    markListAsMissed = async (consumptionIds: string[]): Promise<MedicationConsumptionDto[]> => {
+
+        try {
+
+            var takenMeds = [];
+    
+            for await (var id of consumptionIds) {
+                
+                var medConsumption = await this._medicationConsumptionRepo.getById(id);
+                if (medConsumption === null) {
+                    Logger.instance().log('Medication consumption instance with given id cannot be found.');
+                    continue;
+                }
+    
+                if (medConsumption.Status == 'missed') {
+                    Logger.Log('Medication consumption instance with given id already marked as missed.');
+                    continue;
+                }
+    
+                if (medConsumption.Status == 'taken') {
+                    Logger.Log('Medication consumption instance with given id already marked as taken.');
+                    continue;
+                }
+    
+                var takenAt = Date.now();
+                if (moment(Date.now()).isAfter(moment(medConsumption.TimeScheduleEnd))) {
+                    takenAt = medConsumption.TimeScheduleEnd;
+                }
+                var value = {
+                    IsMissed    : false,
+                    IsTaken     : true,
+                    TakenAt     : takenAt,
+                    IsCancelled : false,
+                    CancelledOn : null
+                };
+    
+                var res = await MedicationConsumption.update(value, {
+                    where : { id: id }
+                });
+                if (res.length != 1) {
+                    Logger.Log('Unable to mark medication as taken!');
+                    continue;
+                }
+    
+                try {
+                    await PatientTaskHandler.UpdatePatientTask(medConsumption.id, true, takenAt, true, takenAt, true);
+                }
+                catch (updateError) {
+                    Logger.Log("Medication consumption missing corresponding parent task!");
+                }
+    
+                var entity = await this.GetMedicationConsumption(id);
+                var obj = GetMedicationConsumptionObject(entity);
+                takenMeds.push(obj);
+            }
+            return takenMeds;
+        }
+        catch (error) {
+            var msg = 'Unable to mark medication as taken!';
+            ErrorHandler.ThrowServiceError(error, msg);
+        }
+
+        //return await this._medicationRepo.create(medicationDomainModel);
     };
 
-    getCurrentMedications = async (patientUserId: string): Promise<MedicationDto[]> => {
-        return await this._medicationRepo.getCurrentMedications(patientUserId);
+    markAsTaken = async (id: string): Promise<MedicationConsumptionDto> => {
+        return await this._medicationConsumptionRepo.getById(id);
+    };
+
+    markAsMissed = async (id: string): Promise<MedicationConsumptionDto> => {
+        return await this._medicationConsumptionRepo.getById(id);
+    };
+
+    cancelFutureMedicationSchedules = async (medicationId: string): Promise<MedicationConsumptionDto> => {
+        return await this._medicationConsumptionRepo.cancelFutureMedicationSchedules(medicationId);
+    };
+
+    deleteFutureMedicationSchedules = async (medicationId: string): Promise<MedicationConsumptionDto> => {
+        return await this._medicationConsumptionRepo.deleteFutureMedicationSchedules(medicationId);
+    };
+
+    updateTimeZoneForFutureMedicationSchedules = async (medicationId: string, newTimeZone: string): Promise<MedicationConsumptionDto> => {
+        return await this._medicationConsumptionRepo.updateTimeZoneForFutureMedicationSchedules(medicationId);
+    };
+
+    getById = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
+        return await this._medicationConsumptionRepo.getById(id);
     };
 
     search = async (filters: MedicationSearchFilters): Promise<MedicationSearchResults> => {
-        return await this._medicationRepo.search(filters);
+        return await this._medicationConsumptionRepo.search(filters);
     };
 
-    update = async (id: string, medicationDomainModel: MedicationDomainModel): Promise<MedicationDto> => {
-        return await this._medicationRepo.update(id, medicationDomainModel);
+    getScheduleForDuration = async (patientUserId: string, duration: string, when: string): Promise<MedicationConsumptionDto[]> => {
+        return await this._medicationConsumptionRepo.getScheduleForDuration(medicationId);
     };
 
-    delete = async (id: string): Promise<boolean> => {
-        return await this._medicationRepo.delete(id);
+    getScheduleForDay = async (patientUserId: string, date: Date, groupByDrug: boolean): Promise<MedicationConsumptionDto[]> => {
+        return await this._medicationConsumptionRepo.getSummaryForDay(medicationId);
     };
 
-    getStockMedicationImages = async(): Promise<MedicationStockImageDto[]> => {
-        return await this._medicationStockImageRepo.getAll();
-    }
+    getSummaryForDay = async (patientUserId: string, date: Date): Promise<ConsumptionSummaryDto> => {
+        return await this._medicationConsumptionRepo.getScheduleForDuration(medicationId);
+    };
 
-    getStockMedicationImageById = async(imageId: string): Promise<MedicationStockImageDto> => {
-        return await this._medicationStockImageRepo.getById(imageId);
-    }
+    getSummaryByCalendarMonths = async (
+        patientUserId: string,
+        pastMonthsCount: number,
+        futureMonthsCount: number): Promise<ConsumptionSummaryForMonthDto[]> => {
+            
+        return await this._medicationConsumptionRepo.getById(id);
+    };
 
 }

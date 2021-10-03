@@ -6,6 +6,14 @@ import { MedicationConsumptionSearchFilters, MedicationConsumptionSearchResults 
 
 export interface IMedicationConsumptionRepo {
 
+    markAsTaken(id: string): Promise<MedicationConsumptionDto>;
+
+    markAsMissed(id: string): Promise<MedicationConsumptionDto>;
+
+    // markListAsTaken(ids: string[]): Promise<MedicationConsumptionDto>;
+
+    // markListAsMissed(ids: string[]): Promise<MedicationConsumptionDto>;
+
     create(model: MedicationConsumptionDomainModel): Promise<MedicationConsumptionDto>;
 
     getById(id: string): Promise<MedicationConsumptionDto>;

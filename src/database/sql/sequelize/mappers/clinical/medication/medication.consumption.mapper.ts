@@ -1,80 +1,101 @@
-import { MedicationAdministrationRoutes, MedicationDosageUnits, MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from '../../../../../../domain.types/clinical/medication/medication/medication.types';
-import { MedicationDto } from '../../../../../../domain.types/clinical/medication/medication/medication.dto';
 import MedicationConsumptionModel from '../../../models/clinical/medication/medication.consumption.model';
-import { MedicationConsumptionDto } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
+import { MedicationConsumptionDetailsDto, MedicationConsumptionDto } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { MedicationConsumptionStatus } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class MedicationConsumptionMapper {
 
-    static getConsumptionStatus = (medicationConsumption: MedicationConsumptionModel): MedicationConsumptionStatus => {
+    static getConsumptionStatus = (consumption: MedicationConsumptionModel): MedicationConsumptionStatus => {
         
-        var status = 'none';
+        var status = MedicationConsumptionStatus.Unknown;
 
-        if (element.IsTaken == false &&
-            element.IsMissed == false &&
-            element.IsCancelled == false &&
-            moment(Date.now()).isAfter(moment(element.TimeScheduleStart))) {
+        var overdueOnsetDurationInHours = 3;
+        var pastScheduledStart = TimeHelper.isAfter(new Date(), consumption.TimeScheduleStart);
+        var overdueOnsetTime = TimeHelper.addDuration(
+            consumption.TimeScheduleEnd,
+            overdueOnsetDurationInHours,
+            DurationType.Hours);
+        var pastOverdueOnset = TimeHelper.isAfter(new Date(), overdueOnsetTime);
+        var beforeScheduledStart = TimeHelper.isBefore(new Date(), consumption.TimeScheduleStart);
 
-            if (moment(Date.now()).isAfter(moment(element.TimeScheduleEnd).add(3, 'hours'))) {
-                status = 'unknown';
+        if (consumption.IsTaken === false &&
+            consumption.IsMissed === false &&
+            consumption.IsCancelled === false &&
+            pastScheduledStart) {
+
+            if (pastOverdueOnset) {
+                status = MedicationConsumptionStatus.Unknown; //'unknown';
             }
             else {
-                status = 'overdue';
+                status = MedicationConsumptionStatus.Overdue; //'overdue';
             }
         }
-        else if (element.IsCancelled == true && element.CancelledOn != null) {
-            status = 'cancelled';
+        else if (consumption.IsCancelled === true && consumption.CancelledOn !== null) {
+            status = MedicationConsumptionStatus.Cancelled; //'cancelled';
         }
-        else if (element.IsTaken == true && element.TakenAt != null) {
-            status = 'taken';
+        else if (consumption.IsTaken === true && consumption.TakenAt !== null) {
+            status = MedicationConsumptionStatus.Taken; //'taken';
         }
-        else if (element.IsMissed == true) {
-            status = 'missed';
+        else if (consumption.IsMissed === true) {
+            status = MedicationConsumptionStatus.Missed; //'missed';
         }
-        else if (moment(Date.now()).isBefore(moment(element.TimeScheduleStart))) {
-            status = 'upcoming';
+        else if (beforeScheduledStart) {
+            status = MedicationConsumptionStatus.Upcoming; //'upcoming';
         }
         return status;
     }
 
-    static toDto = (medicationConsumption: MedicationConsumptionModel): MedicationConsumptionDto => {
+    static toDto = (consumption: MedicationConsumptionModel): MedicationConsumptionDto => {
         
-        if (medicationConsumption == null) {
+        if (consumption == null) {
             return null;
         }
 
-        
-        var schedules: MedicationTimeSchedules[] = JSON.parse(medicationConsumption.TimeSchedules) as MedicationTimeSchedules[];
+        var status = MedicationConsumptionMapper.getConsumptionStatus(consumption);
 
-        const dto: MedicationDto = {
-            id                        : medicationConsumption.id,
-            EhrId                     : medicationConsumption.EhrId,
-            PatientUserId             : medicationConsumption.PatientUserId,
-            MedicalPractitionerUserId : medicationConsumption.MedicalPractitionerUserId,
-            VisitId                   : medicationConsumption.VisitId,
-            OrderId                   : medicationConsumption.OrderId,
-            DrugId                    : medicationConsumption.DrugId,
-            Dose                      : medicationConsumption.Dose,
-            DosageUnit                : medicationConsumption.DosageUnit as MedicationDosageUnits,
-            TimeSchedules             : schedules,
-            Frequency                 : medicationConsumption.Frequency,
-            FrequencyUnit             : medicationConsumption.FrequencyUnit as MedicationFrequencyUnits,
-            Route                     : medicationConsumption.Route as MedicationAdministrationRoutes,
-            Duration                  : medicationConsumption.Duration,
-            DurationUnit              : medicationConsumption.DurationUnit as MedicationDurationUnits,
-            StartDate                 : medicationConsumption.StartDate,
-            EndDate                   : medicationConsumption.EndDate,
-            RefillNeeded              : medicationConsumption.RefillNeeded,
-            RefillCount               : medicationConsumption.RefillCount,
-            Instructions              : medicationConsumption.Instructions,
-            ImageResourceId           : medicationConsumption.ImageResourceId,
-            IsExistingMedication      : medicationConsumption.IsExistingMedication,
-            TakenForLastNDays         : medicationConsumption.TakenForLastNDays,
-            ToBeTakenForNextNDays     : medicationConsumption.ToBeTakenForNextNDays,
-            IsCancelled               : medicationConsumption.IsCancelled,
+        const dto: MedicationConsumptionDto = {
+            id                : consumption.id,
+            DrugName          : consumption.DrugName,
+            Details           : consumption.Details,
+            TimeScheduleStart : consumption.TimeScheduleStart,
+            TimeScheduleEnd   : consumption.TimeScheduleEnd,
+            Status            : status,
         };
+        
+        return dto;
+    }
+    
+    static toDetailsDto = (consumption: MedicationConsumptionModel): MedicationConsumptionDetailsDto => {
+        
+        if (consumption == null) {
+            return null;
+        }
+
+        var status = MedicationConsumptionMapper.getConsumptionStatus(consumption);
+
+        const dto: MedicationConsumptionDetailsDto = {
+            id                : consumption.id,
+            EhrId             : consumption.EhrId,
+            PatientUserId     : consumption.PatientUserId,
+            MedicationId      : consumption.MedicationId,
+            DrugName          : consumption.DrugName,
+            DrugId            : consumption.DrugId,
+            Dose              : consumption.Dose,
+            Details           : consumption.Details,
+            TimeScheduleStart : consumption.TimeScheduleStart,
+            TimeScheduleEnd   : consumption.TimeScheduleEnd,
+            IsTaken           : consumption.IsTaken,
+            TakenAt           : consumption.TakenAt,
+            IsMissed          : consumption.IsMissed,
+            IsCancelled       : consumption.IsCancelled,
+            CancelledOn       : consumption.CancelledOn,
+            Note              : consumption.Note,
+            Status            : status,
+        };
+
         return dto;
     }
 

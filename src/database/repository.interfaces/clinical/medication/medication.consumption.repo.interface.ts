@@ -1,29 +1,37 @@
 import { MedicationConsumptionDomainModel } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
-import { MedicationConsumptionDto } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
+import { ConsumptionSummaryDto, ConsumptionSummaryForMonthDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionSearchFilters, MedicationConsumptionSearchResults } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types";
 
 ///////////////////////////////////////////////////////////////////////
 
 export interface IMedicationConsumptionRepo {
 
-    markAsTaken(id: string): Promise<MedicationConsumptionDto>;
-
-    markAsMissed(id: string): Promise<MedicationConsumptionDto>;
-
-    // markListAsTaken(ids: string[]): Promise<MedicationConsumptionDto>;
-
-    // markListAsMissed(ids: string[]): Promise<MedicationConsumptionDto>;
-
     create(model: MedicationConsumptionDomainModel): Promise<MedicationConsumptionDto>;
 
-    getById(id: string): Promise<MedicationConsumptionDto>;
+    getById(id: string): Promise<MedicationConsumptionDetailsDto>;
 
-    getCurrentMedications(patientUserId: string): Promise<MedicationConsumptionDto[]>;
+    markAsTaken(id: string, takenAt: Date): Promise<MedicationConsumptionDetailsDto>;
+
+    markAsMissed(id: string): Promise<MedicationConsumptionDetailsDto>;
+
+    cancelFutureMedicationSchedules(medicationId: string): Promise<number>;
+
+    deleteFutureMedicationSchedules(medicationId: string): Promise<number>;
+
+    // updateTimeZoneForFutureMedicationSchedules(
+    //     medicationId: string,
+    //     currentTimeZone: string,
+    //     newTimeZone: string): Promise<number>;
 
     search(filters: MedicationConsumptionSearchFilters): Promise<MedicationConsumptionSearchResults>;
 
-    update(id: string, model: MedicationConsumptionDomainModel): Promise<MedicationConsumptionDto>;
+    getScheduleForDuration(patientUserId: string, duration: string, when: string): Promise<MedicationConsumptionDto[]>;
 
-    delete(id: string): Promise<boolean>;
+    getScheduleForDay(patientUserId: string, date: Date, groupByDrug: boolean): Promise<MedicationConsumptionDto[]>;
+
+    getSummaryForDay(patientUserId: string, date: Date): Promise<ConsumptionSummaryDto>;
+
+    getSummaryByCalendarMonths(patientUserId: string, pastMonthsCount: number,
+        futureMonthsCount: number): Promise<ConsumptionSummaryForMonthDto[]>;
 
 }

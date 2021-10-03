@@ -1,14 +1,11 @@
 import { Op } from 'sequelize';
-import { MedicationConsumptionDomainModel } from 'src/domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
-import { MedicationConsumptionDomainModel } from 'src/domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
-import { MedicationConsumptionDto } from 'src/domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
-import { MedicationConsumptionDto } from 'src/domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
-import { MedicationDomainModel } from '../../../../../../domain.types/clinical/medication/medication/medication.domain.model';
-import { MedicationDto } from '../../../../../../domain.types/clinical/medication/medication/medication.dto';
-import { MedicationSearchFilters, MedicationSearchResults } from '../../../../../../domain.types/clinical/medication/medication/medication.search.types';
+import { MedicationConsumptionDomainModel } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
+import { MedicationConsumptionDetailsDto, MedicationConsumptionDto } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
+import { MedicationConsumptionSearchFilters, MedicationConsumptionSearchResults } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
 import { IMedicationConsumptionRepo } from '../../../../../repository.interfaces/clinical/medication/medication.consumption.repo.interface';
+import { MedicationConsumptionMapper } from '../../../mappers/clinical/medication/medication.consumption.mapper';
 import { MedicationMapper } from '../../../mappers/clinical/medication/medication.mapper';
 import MedicationConsumption from '../../../models/clinical/medication/medication.consumption.model';
 import Medication from '../../../models/clinical/medication/medication.model';
@@ -16,208 +13,162 @@ import Medication from '../../../models/clinical/medication/medication.model';
 ///////////////////////////////////////////////////////////////////////
 
 export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
-    markAsMissed(id: string): Promise<MedicationConsumptionDto> {
+
+    update(id: string, model: MedicationConsumptionDomainModel): Promise<MedicationConsumptionDto> {
         throw new Error('Method not implemented.');
     }
+
     create(model: MedicationConsumptionDomainModel): Promise<MedicationConsumptionDto> {
         throw new Error('Method not implemented.');
     }
 
-
-    markAsTaken = async (id: string): Promise<MedicationConsumptionDto> => {
+    markAsTaken = async(id: string, takenAt: Date): Promise<MedicationConsumptionDetailsDto> => {
         try {
+            const consumption = await MedicationConsumption.findByPk(id);
 
-            const medConsumption = await MedicationConsumption.findByPk(id);
-            if (medConsumption === null) {
-                Logger.instance().log(`Medication consumption instance with given id ${id} cannot be found.`);
+            if (consumption === null) {
                 return null;
             }
+            consumption.IsMissed = false;
+            consumption.IsTaken = true;
+            consumption.TakenAt = takenAt;
+            consumption.IsCancelled = false;
+            consumption.CancelledOn = null;
             
-            if (medConsumption. == 'missed') {
-                Logger.Log('Medication consumption instance with given id already marked as missed.');
-                continue;
-            }
+            await consumption.save();
 
-            if (medConsumption.Status == 'taken') {
-                Logger.Log('Medication consumption instance with given id already marked as taken.');
-                continue;
-            }
-
-            const entity = {
-                PatientUserId             : model.PatientUserId,
-                MedicalPractitionerUserId : model.MedicalPractitionerUserId ?? null,
-                VisitId                   : model.VisitId ?? null,
-                OrderId                   : model.OrderId ?? null,
-                DrugId                    : model.DrugId,
-                Dose                      : model.Dose,
-                DosageUnit                : model.DosageUnit,
-                TimeSchedules             : JSON.stringify(model.TimeSchedules),
-                Frequency                 : model.Frequency,
-                FrequencyUnit             : model.FrequencyUnit,
-                Route                     : model.Route,
-                Duration                  : model.Duration,
-                DurationUnit              : model.DurationUnit,
-                StartDate                 : model.StartDate,
-                EndDate                   : model.EndDate,
-                RefillNeeded              : model.RefillNeeded,
-                RefillCount               : model.RefillCount,
-                Instructions              : model.Instructions,
-                ImageResourceId           : model.ImageResourceId,
-                IsExistingMedication      : model.IsExistingMedication,
-                TakenForLastNDays         : model.TakenForLastNDays,
-                ToBeTakenForNextNDays     : model.ToBeTakenForNextNDays,
-                IsCancelled               : model.IsCancelled,
-            };
-            const medication = await Medication.create(entity);
-            return await MedicationMapper.toDto(medication);
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    markListAsTaken = async (consumptionIds: string[]): Promise<MedicationDto> => {
-        try {
-            const entity = {
-                PatientUserId             : model.PatientUserId,
-                MedicalPractitionerUserId : model.MedicalPractitionerUserId ?? null,
-                VisitId                   : model.VisitId ?? null,
-                OrderId                   : model.OrderId ?? null,
-                DrugId                    : model.DrugId,
-                Dose                      : model.Dose,
-                DosageUnit                : model.DosageUnit,
-                TimeSchedules             : JSON.stringify(model.TimeSchedules),
-                Frequency                 : model.Frequency,
-                FrequencyUnit             : model.FrequencyUnit,
-                Route                     : model.Route,
-                Duration                  : model.Duration,
-                DurationUnit              : model.DurationUnit,
-                StartDate                 : model.StartDate,
-                EndDate                   : model.EndDate,
-                RefillNeeded              : model.RefillNeeded,
-                RefillCount               : model.RefillCount,
-                Instructions              : model.Instructions,
-                ImageResourceId           : model.ImageResourceId,
-                IsExistingMedication      : model.IsExistingMedication,
-                TakenForLastNDays         : model.TakenForLastNDays,
-                ToBeTakenForNextNDays     : model.ToBeTakenForNextNDays,
-                IsCancelled               : model.IsCancelled,
-            };
-            const medication = await Medication.create(entity);
-            return await MedicationMapper.toDto(medication);
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    getById = async (id: string): Promise<MedicationDto> => {
-        try {
-            const medication = await Medication.findByPk(id);
-            const dto = await MedicationMapper.toDto(medication);
+            var dto = MedicationConsumptionMapper.toDetailsDto(consumption);
             return dto;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    };
+    }
 
-    getCurrentMedications = async (patientUserId: string): Promise<MedicationDto[]> => {
+    markAsMissed = async(id: string): Promise<MedicationConsumptionDetailsDto> => {
         try {
-            
-            var today = new Date();
-            const medications = await Medication.findAll({
-                where : {
-                    PatientUserId : patientUserId,
-                    StartDate     : {
-                        [Op.lte] : today
-                    },
-                    EndDate : {
-                        [Op.gte] : today
-                    }
-                }
-            });
+            const consumption = await MedicationConsumption.findByPk(id);
 
-            return medications.map(x => MedicationMapper.toDto(x));
+            if (consumption === null) {
+                return null;
+            }
+            consumption.IsMissed = true;
+            consumption.IsTaken = false;
+            consumption.TakenAt = null;
+            consumption.IsCancelled = false;
+            consumption.CancelledOn = null;
+            
+            await consumption.save();
+
+            var dto = MedicationConsumptionMapper.toDetailsDto(consumption);
+            return dto;
 
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    };
+    }
 
-    search = async (filters: MedicationSearchFilters): Promise<MedicationSearchResults> => {
+    cancelFutureMedicationSchedules = async(medicationId: string): Promise<number> => {
+        try {
+
+            var selector = {
+                where : {
+                    IsCancelled       : false,
+                    MedicationId      : medicationId,
+                    TimeScheduleStart : { [Op.gte]: Date.now() }
+                }
+            };
+
+            var value = {
+                IsMissed    : false,
+                IsTaken     : false,
+                TakenAt     : null,
+                IsCancelled : true,
+                CancelledOn : Date.now()
+            };
+            
+            const result = await MedicationConsumption.update(value, selector);
+
+            var updatedCount = result[0];
+
+            var updatedConsumptions = result[1];
+            var ids = updatedConsumptions.length > 0 ? updatedConsumptions.map(x => x.id) : [];
+            var idsStr = JSON.stringify(ids, null, 2);
+            Logger.instance().log('Cancelled consumption Ids are - \n ' + idsStr);
+
+            return updatedCount;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    deleteFutureMedicationSchedules = async(medicationId: string): Promise<number> => {
+        try {
+
+            var selector = {
+                where : {
+                    MedicationId      : medicationId,
+                    TimeScheduleStart : { [Op.gte]: Date.now() }
+                }
+            };
+            
+            const deletedCount = await MedicationConsumption.destroy(selector);
+            Logger.instance().log(`Deleted ${deletedCount} medication consumptions`);
+
+            return deletedCount;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    // updateTimeZoneForFutureMedicationSchedules = async(
+    //     medicationId: string,
+    //     currentTimeZone: string,
+    //     newTimeZone: string): Promise<number> => {
+
+    // }
+    getById = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
+        try {
+            const consumption = await MedicationConsumption.findByPk(id);
+            return await MedicationConsumptionMapper.toDetailsDto(consumption);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+    
+    search = async (filters: MedicationConsumptionSearchFilters): Promise<MedicationConsumptionSearchResults> => {
         try {
             const search = { where: {} };
 
-            if (filters.DrugName != null) {
-                search.where['DrugName'] = { [Op.like]: '%' + filters.DrugName + '%' };
-            }
             if (filters.PatientUserId != null) {
                 search.where['PatientUserId'] = filters.PatientUserId;
             }
-            if (filters.MedicalPractitionerUserId != null) {
-                search.where['MedicalPractitionerUserId'] = filters.MedicalPractitionerUserId;
-            }
-            if (filters.VisitId != null) {
-                search.where['VisitId'] = filters.VisitId;
+            if (filters.MedicationId != null) {
+                search.where['MedicationId'] = filters.MedicationId;
             }
             if (filters.OrderId != null) {
                 search.where['OrderId'] = filters.OrderId;
             }
-            if (filters.RefillNeeded != null) {
-                search.where['RefillNeeded'] = filters.RefillNeeded;
-            }
-            if (filters.IsExistingMedication != null) {
-                search.where['IsExistingMedication'] = filters.IsExistingMedication;
-            }
 
-            if (filters.StartDateFrom != null && filters.StartDateTo != null) {
-                search.where['StartDate'] = {
-                    [Op.gte] : filters.StartDateFrom,
-                    [Op.lte] : filters.StartDateTo,
+            if (filters.DateFrom != null && filters.DateTo != null) {
+                search.where['TimeScheduleStart'] = {
+                    [Op.gte] : filters.DateFrom,
+                    [Op.lte] : filters.DateTo,
                 };
-            } else if (filters.StartDateFrom === null && filters.StartDateTo !== null) {
-                search.where['StartDate'] = {
-                    [Op.lte] : filters.StartDateTo,
-                };
-            } else if (filters.StartDateFrom !== null && filters.StartDateTo === null) {
-                search.where['StartDate'] = {
-                    [Op.gte] : filters.StartDateFrom,
+            } else {
+                search.where['TimeScheduleStart'] = {
+                    [Op.gte] : new Date(),
                 };
             }
 
-            if (filters.EndDateFrom != null && filters.EndDateTo != null) {
-                search.where['EndDate'] = {
-                    [Op.gte] : filters.EndDateFrom,
-                    [Op.lte] : filters.EndDateTo,
-                };
-            } else if (filters.EndDateFrom === null && filters.EndDateTo !== null) {
-                search.where['EndDate'] = {
-                    [Op.lte] : filters.EndDateTo,
-                };
-            } else if (filters.EndDateFrom !== null && filters.EndDateTo === null) {
-                search.where['EndDate'] = {
-                    [Op.gte] : filters.EndDateFrom,
-                };
-            }
-            
-            if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
-                search.where['CreatedAt'] = {
-                    [Op.gte] : filters.CreatedDateFrom,
-                    [Op.lte] : filters.CreatedDateTo,
-                };
-            } else if (filters.CreatedDateFrom === null && filters.CreatedDateTo !== null) {
-                search.where['CreatedAt'] = {
-                    [Op.lte] : filters.CreatedDateTo,
-                };
-            } else if (filters.CreatedDateFrom !== null && filters.CreatedDateTo === null) {
-                search.where['CreatedAt'] = {
-                    [Op.gte] : filters.CreatedDateFrom,
-                };
-            }
-
-            let orderByColum = 'DrugName';
+            let orderByColum = 'TimeScheduleStart';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }
@@ -240,15 +191,15 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            const foundResults = await Medication.findAndCountAll(search);
+            const foundResults = await MedicationConsumption.findAndCountAll(search);
 
-            const dtos: MedicationDto[] = [];
-            for (const medication of foundResults.rows) {
-                const dto = await MedicationMapper.toDto(medication);
+            const dtos: MedicationConsumptionDto[] = [];
+            for (const consumption of foundResults.rows) {
+                const dto = await MedicationConsumptionMapper.toDetailsDto(consumption);
                 dtos.push(dto);
             }
 
-            const searchResults: MedicationSearchResults = {
+            const searchResults: MedicationConsumptionSearchResults = {
                 TotalCount     : foundResults.count,
                 RetrievedCount : dtos.length,
                 PageIndex      : pageIndex,
@@ -259,13 +210,21 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             };
 
             return searchResults;
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    update = async (id: string, model: MedicationDomainModel): Promise<MedicationDto> => {
+    getScheduleForDay(patientUserId: string, date: Date, groupByDrug: boolean): Promise<MedicationConsumptionDto[]>;
+
+    getSummaryForDay(patientUserId: string, date: Date): Promise<ConsumptionSummaryDto>;
+
+    getSummaryByCalendarMonths(patientUserId: string, pastMonthsCount: number,
+        futureMonthsCount: number): Promise<ConsumptionSummaryForMonthDto[]>;
+
+    getScheduleForDuration = async (patientUserId: string, duration: string, when: string): Promise<MedicationConsumptionDto[]> => {
         try {
             const medication = await Medication.findByPk(id);
 

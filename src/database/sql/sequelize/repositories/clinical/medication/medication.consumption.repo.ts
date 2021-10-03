@@ -2,7 +2,7 @@ import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { MedicationConsumptionDomainModel } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
-import { MedicationConsumptionDetailsDto, MedicationConsumptionDto } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
+import { ConsumptionSummaryDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { MedicationConsumptionSearchFilters, MedicationConsumptionSearchResults } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
 import { IMedicationConsumptionRepo } from '../../../../../repository.interfaces/clinical/medication/medication.consumption.repo.interface';
 import { MedicationConsumptionMapper } from '../../../mappers/clinical/medication/medication.consumption.mapper';
@@ -14,12 +14,24 @@ import Medication from '../../../models/clinical/medication/medication.model';
 
 export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
 
-    update(id: string, model: MedicationConsumptionDomainModel): Promise<MedicationConsumptionDto> {
-        throw new Error('Method not implemented.');
-    }
-
-    create(model: MedicationConsumptionDomainModel): Promise<MedicationConsumptionDto> {
-        throw new Error('Method not implemented.');
+    create = async (model: MedicationConsumptionDomainModel): Promise<MedicationConsumptionDto> => {
+        try {
+            var entity = {
+                PatientUserId     : model.PatientUserId,
+                MedicationId      : model.id,
+                DrugName          : model.DrugName,
+                DrugId            : model.DrugId,
+                Dose              : model.Dose,
+                Details           : model.Details,
+                TimeScheduleStart : model.TimeScheduleStart,
+                TimeScheduleEnd   : model.TimeScheduleEnd,
+            };
+            const consumption = await MedicationConsumption.create(entity);
+            return MedicationConsumptionMapper.toDto(consumption);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
     markAsTaken = async(id: string, takenAt: Date): Promise<MedicationConsumptionDetailsDto> => {
@@ -217,14 +229,37 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    getScheduleForDay(patientUserId: string, date: Date, groupByDrug: boolean): Promise<MedicationConsumptionDto[]>;
+    getScheduleForDay = async(patientUserId: string, date: Date, groupByDrug: boolean)
+        : Promise<MedicationConsumptionDto[]> => {
+        try {
+            
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
-    getSummaryForDay(patientUserId: string, date: Date): Promise<ConsumptionSummaryDto>;
+    getSummaryForDay = async (patientUserId: string, date: Date): Promise<ConsumptionSummaryDto> => {
+        try {
+            
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
-    getSummaryByCalendarMonths(patientUserId: string, pastMonthsCount: number,
-        futureMonthsCount: number): Promise<ConsumptionSummaryForMonthDto[]>;
+    getSummaryByCalendarMonths = (patientUserId: string, pastMonthsCount: number,
+        futureMonthsCount: number): Promise<ConsumptionSummaryForMonthDto[]> => {
+        try {
+        
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
-    getScheduleForDuration = async (patientUserId: string, duration: string, when: string): Promise<MedicationConsumptionDto[]> => {
+    getScheduleForDuration = async (patientUserId: string, duration: string, when: string)
+    : Promise<MedicationConsumptionDto[]> => {
         try {
             const medication = await Medication.findByPk(id);
 
@@ -239,69 +274,6 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             }
             if (model.OrderId != null) {
                 medication.OrderId = model.OrderId;
-            }
-
-            // if (model.DrugName != null) {
-            //     medication.DrugName = model.DrugName;
-            // }
-            
-            if (model.DrugId != null) {
-                medication.DrugId = model.DrugId;
-            }
-            if (model.Dose != null) {
-                medication.Dose = model.Dose;
-            }
-            if (model.DosageUnit != null) {
-                medication.DosageUnit = model.DosageUnit;
-            }
-            if (model.TimeSchedules != null) {
-                var schedules = JSON.stringify(model.TimeSchedules);
-                medication.TimeSchedules = schedules;
-            }
-            if (model.Frequency != null) {
-                medication.Frequency = model.Frequency;
-            }
-            if (model.FrequencyUnit != null) {
-                medication.FrequencyUnit = model.FrequencyUnit;
-            }
-            if (model.Route != null) {
-                medication.Route = model.Route;
-            }
-            if (model.Duration != null) {
-                medication.Duration = model.Duration;
-            }
-            if (model.DurationUnit != null) {
-                medication.DurationUnit = model.DurationUnit;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
-            }
-            if (model.StartDate != null) {
-                medication.StartDate = model.StartDate;
             }
 
             await medication.save();

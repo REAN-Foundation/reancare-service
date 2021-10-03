@@ -5,9 +5,13 @@ import { TimeHelper } from "../../../common/time.helper";
 import { IMedicationConsumptionRepo } from "../../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface";
 import { IMedicationRepo } from "../../../database/repository.interfaces/clinical/medication/medication.repo.interface";
 import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
+import { MedicationConsumptionDomainModel } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
 import { ConsumptionSummaryDto, ConsumptionSummaryForMonthDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionStatus } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types";
+import { MedicationDto } from "../../../domain.types/clinical/medication/medication/medication.dto";
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
+import { MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from "../../../domain.types/clinical/medication/medication/medication.types";
+import { DurationType } from "../../../domain.types/miscellaneous/time.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +26,68 @@ export class MedicationConsumptionService {
         //@inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
     ) {}
 
+    create = async (medication: MedicationDto, customStartDate = null): Promise<MedicationConsumptionDto[]> => {
+
+        var timeZone = await this.getPatientTimeZone(medication.PatientUserId);
+        if (timeZone == null) {
+            timeZone = "+05:30";
+        }
+
+        var scheduleTimings = this.getScheduleSlots(medication);
+        var startDate = customStartDate ? customStartDate : medication.StartDate;
+        if (startDate == null) {
+            throw new ApiError(422, 'Medication consumption instances cannot be added as start date is invalid.');
+        }
+        
+        var duration = medication.Duration;
+        var durationUnit = medication.DurationUnit;
+        var frequency = medication.Frequency;
+        var frequencyUnit = medication.FrequencyUnit;
+        var dose = medication.Dose;
+        var dosageUnit = medication.DosageUnit;
+        var refills = medication.RefillCount;
+
+        var days = this.getDurationInDays(duration, durationUnit, refills);
+        var dayStep = this.getDayStep(frequency, frequencyUnit);
+
+        var consumptions: MedicationConsumptionDto[] = [];
+        var i = 0;
+        while (i < days) {
+
+            var day = TimeHelper.addDuration(startDate, i, DurationType.Days);
+
+            for (var j = 0; j < scheduleTimings.length; j++) {
+
+                var details = this.getMedicationDetails(dose, dosageUnit, scheduleTimings[j].schedule);
+                var start_minutes = scheduleTimings[j].start;
+                var end_minutes = scheduleTimings[j].end;
+                var start = TimeHelper.addDuration(day, start_minutes, DurationType.Minutes);
+                var end = TimeHelper.addDuration(day, end_minutes, DurationType.Minutes);
+
+                var domainModel: MedicationConsumptionDomainModel = {
+                    PatientUserId     : medication.PatientUserId,
+                    MedicationId      : medication.id,
+                    DrugName          : medication.DrugName,
+                    DrugId            : medication.DrugId,
+                    Dose              : dose,
+                    Details           : details,
+                    TimeScheduleStart : start,
+                    TimeScheduleEnd   : end,
+                    TakenAt           : null,
+                    IsTaken           : false,
+                    IsCancelled       : false,
+                    Note              : null
+                };
+
+                var savedRecord = await this._medicationConsumptionRepo.create(domainModel);
+                consumptions.push(savedRecord);
+            }
+
+            i = i + dayStep;
+        }
+        return consumptions;
+    }
+    
     markListAsTaken = async (consumptionIds: string[]): Promise<MedicationConsumptionDto[]> => {
 
         try {
@@ -283,31 +349,57 @@ export class MedicationConsumptionService {
         var schedules = JSON.parse(medication.TimeSchedule) as string[];
 
         // If the frequency is defined weekly or monthly, by default return afternoon schedule
-        if (medication.FrequencyUnit.toLowerCase() == 'weekly' || medication.FrequencyUnit.toLowerCase() == 'monthly') {
-            scheduleSlots.push({ schedule: 'afternoon', start: (11 * 60) + 30, end: (60 * 13) + 30 });
+        if (medication.FrequencyUnit === MedicationFrequencyUnits.Weekly ||
+            medication.FrequencyUnit === MedicationFrequencyUnits.Monthly) {
+            scheduleSlots.push(
+                {
+                    schedule : MedicationTimeSchedules.Afternoon,
+                    start    : (11 * 60) + 30,
+                    end      : (60 * 13) + 30
+                });
             return scheduleSlots;
         }
 
         for (var s of schedules) {
-            if (s == 'Morning') {
+            if (s === MedicationTimeSchedules.Morning) {
 
                 //7:30 am to 9:30 am
-                scheduleSlots.push({ schedule: 'morning', start: (7 * 60) + 30, end: (60 * 9) + 30 });
+                scheduleSlots.push(
+                    {
+                        schedule : MedicationTimeSchedules.Morning,
+                        start    : (7 * 60) + 30,
+                        end      : (60 * 9) + 30
+                    });
             }
-            if (s == 'Afternoon') {
+            if (s === MedicationTimeSchedules.Afternoon) {
 
                 //11:30 am to 1:30 pm
-                scheduleSlots.push({ schedule: 'afternoon', start: (11 * 60) + 30, end: (60 * 13) + 30 });
+                scheduleSlots.push(
+                    {
+                        schedule : MedicationTimeSchedules.Afternoon,
+                        start    : (11 * 60) + 30,
+                        end      : (60 * 13) + 30
+                    });
             }
-            if (s == 'Evening') {
+            if (s === MedicationTimeSchedules.Evening) {
 
                 //5:00 pm to 7:00 pm
-                scheduleSlots.push({ schedule: 'evening', start: (17 * 60), end: (60 * 19) });
+                scheduleSlots.push(
+                    {
+                        schedule : MedicationTimeSchedules.Evening,
+                        start    : (17 * 60),
+                        end      : (60 * 19)
+                    });
             }
-            if (s == 'Night') {
+            if (s === MedicationTimeSchedules.Night) {
 
                 //8:30 pm to 10:30 pm
-                scheduleSlots.push({ schedule: 'night', start: (20 * 60) + 30, end: (60 * 22) + 30 });
+                scheduleSlots.push(
+                    {
+                        schedule : MedicationTimeSchedules.Night,
+                        start    : (20 * 60) + 30,
+                        end      : (60 * 22) + 30
+                    });
             }
         }
         return scheduleSlots;
@@ -319,13 +411,13 @@ export class MedicationConsumptionService {
         if (refillsCount) {
             refills = refillsCount;
         }
-        if (durationUnit.toLowerCase() === 'days') {
+        if (durationUnit === MedicationDurationUnits.Days) {
             return duration * 1 * (refills + 1);
         }
-        if (durationUnit.toLowerCase() === 'weeks') {
+        if (durationUnit === MedicationDurationUnits.Weeks) {
             return duration * 7 * (refills + 1);
         }
-        if (durationUnit.toLowerCase() === 'months') {
+        if (durationUnit === MedicationDurationUnits.Months) {
             return duration * 30 * (refills + 1);
         }
         return 1;
@@ -333,19 +425,19 @@ export class MedicationConsumptionService {
 
     private getDayStep = (frequency, frequencyUnit) => {
 
-        if (frequencyUnit.toLowerCase() === 'daily') {
+        if (frequencyUnit === MedicationFrequencyUnits.Daily) {
             return 1;
         }
-        if (frequencyUnit.toLowerCase() === 'weekly') {
+        if (frequencyUnit === MedicationFrequencyUnits.Weekly) {
             return Math.round(7 / frequency);
         }
-        if (frequencyUnit.toLowerCase() === 'monthly') {
+        if (frequencyUnit === MedicationFrequencyUnits.Monthly) {
             return Math.round(30 / frequency);
         }
         return 1;
     }
 
-    private getSummary = (medConsumptions) => {
+    private getSummary = (medConsumptions: MedicationConsumptionDetailsDto[]) => {
 
         var summary = {
             Missed   : 0,
@@ -356,20 +448,20 @@ export class MedicationConsumptionService {
         };
 
         for (var i = 0; i < medConsumptions.length; i++) {
-            var med = medConsumptions[i];
-            if (med.Status === 'missed') {
+            var consumption = medConsumptions[i];
+            if (consumption.Status === MedicationConsumptionStatus.Missed) {
                 summary['Missed']++;
             }
-            if (med.Status === 'taken') {
+            if (consumption.Status === MedicationConsumptionStatus.Taken) {
                 summary['Taken']++;
             }
-            if (med.Status === 'unknown') {
+            if (consumption.Status === MedicationConsumptionStatus.Unknown) {
                 summary['Unknown']++;
             }
-            if (med.Status === 'overdue') {
+            if (consumption.Status === MedicationConsumptionStatus.Overdue) {
                 summary['Overdue']++;
             }
-            if (med.Status === 'upcoming') {
+            if (consumption.Status === MedicationConsumptionStatus.Upcoming) {
                 summary['Upcoming']++;
             }
         }

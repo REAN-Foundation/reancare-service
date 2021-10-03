@@ -1,16 +1,15 @@
 
-import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
-
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import relativeTime  from 'dayjs/plugin/relativeTime';
-import isBetween   from 'dayjs/plugin/isBetween';
-import weekOfYear from 'dayjs/plugin/weekOfYear';
-import dayOfYear from 'dayjs/plugin/dayOfYear';
-import weekday from 'dayjs/plugin/weekday';
-import duration from 'dayjs/plugin/duration';
 import calendar from 'dayjs/plugin/calendar';
+import dayOfYear from 'dayjs/plugin/dayOfYear';
+import duration from 'dayjs/plugin/duration';
+import isBetween from 'dayjs/plugin/isBetween';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import weekday from 'dayjs/plugin/weekday';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -246,6 +245,12 @@ export class TimeHelper {
             return offsetMinutes / (24.0 * 60 * 365);
         }
         return offsetMinutes;
+    }
+
+    static strToUtc = (dateStr: string, timeZoneOffsetMinutes?: number): Date => {
+        var d = timeZoneOffsetMinutes !== undefined ?
+            dayjs.utc(dateStr).utcOffset(timeZoneOffsetMinutes, true) : dayjs.utc(dateStr);
+        return d.toDate();
     }
 
 }

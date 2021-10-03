@@ -1,17 +1,37 @@
 import express from 'express';
 import { body, oneOf, param, query, validationResult } from 'express-validator';
+import { ValidationError } from 'sequelize';
 import { Helper } from '../../../../common/helper';
+import { TimeHelper } from '../../../../common/time.helper';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
 import { MedicationSearchFilters } from '../../../../domain.types/clinical/medication/medication/medication.search.types';
 import {
     MedicationAdministrationRoutes, MedicationDurationUnits
 } from "../../../../domain.types/clinical/medication/medication/medication.types";
+import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { PatientService } from '../../../../services/patient/patient.service';
+import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class MedicationValidator {
 
-    static getCreateDomainModel = (request: express.Request): MedicationDomainModel => {
+    static getCreateDomainModel = async (request: express.Request): Promise<MedicationDomainModel> => {
+
+        var patientService = Loader.container.resolve(PatientService);
+        var patient = await patientService.getByUserId(request.body.PatientUserId);
+        if (patient === null) {
+            throw new ValidationError('Invalid patient user id.');
+        }
+        var timezoneOffset = '+05:30';
+        if (patient.User.CurrentTimeZone !== null) {
+            timezoneOffset = patient.User.CurrentTimeZone;
+        }
+        var todayStr = new Date().toISOString();
+        var startDateStr = request.body.StartDate ? (request.body.StartDate).split('T')[0] : todayStr.split('T')[0];
+
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minutes);
+        var startDate = TimeHelper.strToUtc(startDateStr, offsetMinutes);
 
         const model: MedicationDomainModel = {
             PatientUserId             : request.body.PatientUserId,
@@ -28,7 +48,7 @@ export class MedicationValidator {
             Route                     : request.body.Route ?? MedicationAdministrationRoutes.Oral,
             Duration                  : request.body.Duration ?? 1,
             DurationUnit              : request.body.DurationUnit ?? MedicationDurationUnits.Weeks,
-            StartDate                 : request.body.StartDate ?? null,
+            StartDate                 : startDate,
             EndDate                   : request.body.EndDate ?? null,
             RefillNeeded              : request.body.RefillNeeded ?? false,
             RefillCount               : request.body.RefillCount ?? 0,
@@ -78,7 +98,7 @@ export class MedicationValidator {
     
     static create = async (request: express.Request): Promise<MedicationDomainModel> => {
         await MedicationValidator.validateCreateBody(request);
-        return MedicationValidator.getCreateDomainModel(request);
+        return await MedicationValidator.getCreateDomainModel(request);
     };
 
     static update = async (request: express.Request): Promise<MedicationDomainModel> => {

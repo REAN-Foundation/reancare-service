@@ -131,6 +131,9 @@ export class UserService {
         if (person == null) {
             throw new ApiError(404, 'Cannot find user with the given role.');
         }
+        
+        var str = JSON.stringify(user, null, 2);
+        Logger.instance().log(str);
 
         const otp = (Math.floor(Math.random() * 900000) + 100000).toString();
         const currMillsecs = Date.now();

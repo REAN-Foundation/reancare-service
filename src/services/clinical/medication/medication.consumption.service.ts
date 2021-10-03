@@ -1,14 +1,9 @@
 import { inject, injectable } from "tsyringe";
 import { IMedicationRepo } from "../../../database/repository.interfaces/clinical/medication/medication.repo.interface";
 import { IMedicationConsumptionRepo } from "../../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface";
-import { IMedicationStockImageRepo } from "../../../database/repository.interfaces/clinical/medication/medication.stock.image.repo.interface";
-import { MedicationStockImageDto } from "../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto";
-import { MedicationDomainModel } from '../../../domain.types/clinical/medication/medication/medication.domain.model';
-import { MedicationDto } from '../../../domain.types/clinical/medication/medication/medication.dto';
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
-import { ConsumptionSummaryByDrugDto, ConsumptionSummaryDto, ConsumptionSummaryForMonthDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
+import { ConsumptionSummaryDto, ConsumptionSummaryForMonthDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { Logger } from "../../../common/logger";
-import { MedicationConsumptionScheduleDomainModel } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +12,6 @@ export class MedicationConsumptionService {
 
     constructor(
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,
-        @inject('IMedicationStockImageRepo') private _medicationStockImageRepo: IMedicationStockImageRepo,
         @inject('IMedicationConsumptionRepo') private _medicationConsumptionRepo: IMedicationConsumptionRepo,
     ) {}
 

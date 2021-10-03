@@ -184,7 +184,7 @@ export class UserService {
             UserName      : user.UserName,
             CurrentRoleId : loginModel.LoginRoleId,
         };
-        const accessToken = Loader.authorizer.generateUserSessionToken(currentUser);
+        const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
 
         return { user: user, accessToken: accessToken };
     };

@@ -1,3 +1,4 @@
+import { Utils } from 'sequelize';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { KnowledgeNuggetDomainModel } from "../../../../../domain.types/educational/knowledge.nugget/knowledge.nugget.domain.model";
@@ -5,30 +6,60 @@ import { KnowledgeNuggetDto } from "../../../../../domain.types/educational/know
 import { KnowledgeNuggetSearchFilters, KnowledgeNuggetSearchResults } from "../../../../../domain.types/educational/knowledge.nugget/knowledge.nugget.search.types";
 import { IKnowledgeNuggetRepo } from '../../../../repository.interfaces/educational/knowledge.nugget.repo.interface';
 import { KnowledgeNuggetMapper } from '../../mappers/educational/knowledge.nugget.mapper';
-import KnowledgeNuggetModel from '../../models/educational/knowledge.nugget.model';
+import KnowledgeNugget from '../../models/educational/knowledge.nugget.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
 
-    create = async (knowledgeNuggetDomainModel: KnowledgeNuggetDomainModel):
+    totalCount = async (): Promise<number> => {
+        try {
+            return await KnowledgeNugget.count();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getRandom = async(): Promise<KnowledgeNuggetDto> => {
+
+        //NOTE: The following literal is for MySQL, for PostGreSQL, please use `var literal = 'random()';`
+        var literal = new Utils.Literal('rand()');
+
+        const topic = await KnowledgeNugget.findOne(
+            {
+                order      : literal,
+                limit      : 1,
+                attributes : [
+                    "id",
+                    "TopicName",
+                    "BriefInformation"
+                ]
+            });
+        return KnowledgeNuggetMapper.toDto(topic);
+    }
+
+    create = async (model: KnowledgeNuggetDomainModel):
     Promise<KnowledgeNuggetDto> => {
 
-        var tags = knowledgeNuggetDomainModel.Tags && knowledgeNuggetDomainModel.Tags.length > 0 ?
-            JSON.stringify(knowledgeNuggetDomainModel.Tags) : '[]';
+        var tags = model.Tags && model.Tags.length > 0 ?
+            JSON.stringify(model.Tags) : '[]';
+
+        var additionalResources = model.AdditionalResources && model.AdditionalResources.length > 0 ?
+            JSON.stringify(model.AdditionalResources) : '[]';
 
         try {
             const entity = {
-                TopicName           : knowledgeNuggetDomainModel.TopicName,
-                BriefInformation    : knowledgeNuggetDomainModel.BriefInformation,
-                DetailedInformation : knowledgeNuggetDomainModel.DetailedInformation,
-                AdditionalResources : knowledgeNuggetDomainModel.AdditionalResources,
+                TopicName           : model.TopicName,
+                BriefInformation    : model.BriefInformation,
+                DetailedInformation : model.DetailedInformation,
+                AdditionalResources : additionalResources,
                 Tags                : tags
             };
 
-            const knowledgeNugget = await KnowledgeNuggetModel.create(entity);
-            const dto = await KnowledgeNuggetMapper.toDto(knowledgeNugget);
-            return dto;
+            const knowledgeNugget = await KnowledgeNugget.create(entity);
+            return KnowledgeNuggetMapper.toDto(knowledgeNugget);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -37,7 +68,7 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
 
     getById = async (id: string): Promise<KnowledgeNuggetDto> => {
         try {
-            const knowledgeNugget = await KnowledgeNuggetModel.findByPk(id);
+            const knowledgeNugget = await KnowledgeNugget.findByPk(id);
             const dto = await KnowledgeNuggetMapper.toDto(knowledgeNugget);
             return dto;
         } catch (error) {
@@ -80,7 +111,7 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            const foundResults = await KnowledgeNuggetModel.findAndCountAll(search);
+            const foundResults = await KnowledgeNugget.findAndCountAll(search);
 
             const dtos: KnowledgeNuggetDto[] = [];
             for (const knowledgeNugget of foundResults.rows) {
@@ -108,7 +139,7 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
     update = async (id: string, knowledgeNuggetDomainModel: KnowledgeNuggetDomainModel):
     Promise<KnowledgeNuggetDto> => {
         try {
-            const knowledgeNugget = await KnowledgeNuggetModel.findByPk(id);
+            const knowledgeNugget = await KnowledgeNugget.findByPk(id);
 
             if (knowledgeNuggetDomainModel.TopicName != null) {
                 knowledgeNugget.TopicName = knowledgeNuggetDomainModel.TopicName;
@@ -120,7 +151,11 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
                 knowledgeNugget.DetailedInformation = knowledgeNuggetDomainModel.DetailedInformation;
             }
             if (knowledgeNuggetDomainModel.AdditionalResources != null) {
-                knowledgeNugget.AdditionalResources = knowledgeNuggetDomainModel.AdditionalResources;
+                
+                var additionalResources = knowledgeNuggetDomainModel.AdditionalResources.length > 0 ?
+                    JSON.stringify(knowledgeNuggetDomainModel.AdditionalResources) : '[]';
+
+                knowledgeNugget.AdditionalResources = additionalResources;
             }
             if (knowledgeNuggetDomainModel.Tags != null && knowledgeNuggetDomainModel.Tags.length > 0) {
 
@@ -144,7 +179,7 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
         try {
             Logger.instance().log(id);
 
-            const result = await KnowledgeNuggetModel.destroy({ where: { id: id } });
+            const result = await KnowledgeNugget.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);

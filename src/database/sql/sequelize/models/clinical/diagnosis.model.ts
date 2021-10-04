@@ -1,28 +1,12 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    Length,
-    IsDate,
-    ForeignKey,
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
-import {
-    ClinicalValidationStatusList,
-    ClinicalValidationStatus,
-    ClinicalInterpretationList,
-    ClinicalInterpretation
-} from '../../../../../domain.types/miscellaneous/clinical.types';
-
 import { v4 } from 'uuid';
+import {
+    ClinicalInterpretation, ClinicalInterpretationList, ClinicalValidationStatus, ClinicalValidationStatusList
+} from '../../../../../domain.types/miscellaneous/clinical.types';
 import User from '../user/user.model';
-import MedicalCondition from '../educational/medical.condition.model';
+import MedicalCondition from './medical.condition.model';
 
 ///////////////////////////////////////////////////////////////////////
 

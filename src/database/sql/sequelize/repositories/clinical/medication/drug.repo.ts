@@ -5,11 +5,20 @@ import { DrugDto } from "../../../../../../domain.types/clinical/medication/drug
 import { DrugSearchFilters, DrugSearchResults } from "../../../../../../domain.types/clinical/medication/drug/drug.search.types";
 import { IDrugRepo } from '../../../../../repository.interfaces/clinical/medication/drug.repo.interface';
 import { DrugMapper } from '../../../mappers/clinical/medication/drug.mapper';
-import DrugModel from '../../../models/clinical/medication/drug.model';
+import Drug from '../../../models/clinical/medication/drug.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 export class DrugRepo implements IDrugRepo {
+
+    totalCount = async (): Promise<number> => {
+        try {
+            return await Drug.count();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
     create = async (drugDomainModel: DrugDomainModel):
     Promise<DrugDto> => {
@@ -24,7 +33,7 @@ export class DrugRepo implements IDrugRepo {
                 OtherInformation     : drugDomainModel.OtherInformation
             };
 
-            const drug = await DrugModel.create(entity);
+            const drug = await Drug.create(entity);
             const dto = await DrugMapper.toDto(drug);
             return dto;
         } catch (error) {
@@ -35,7 +44,7 @@ export class DrugRepo implements IDrugRepo {
 
     getById = async (id: string): Promise<DrugDto> => {
         try {
-            const drug = await DrugModel.findByPk(id);
+            const drug = await Drug.findByPk(id);
             const dto = await DrugMapper.toDto(drug);
             return dto;
         } catch (error) {
@@ -74,7 +83,7 @@ export class DrugRepo implements IDrugRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            const foundResults = await DrugModel.findAndCountAll(search);
+            const foundResults = await Drug.findAndCountAll(search);
 
             const dtos: DrugDto[] = [];
             for (const drug of foundResults.rows) {
@@ -102,7 +111,7 @@ export class DrugRepo implements IDrugRepo {
     update = async (id: string, drugDomainModel: DrugDomainModel):
     Promise<DrugDto> => {
         try {
-            const drug = await DrugModel.findByPk(id);
+            const drug = await Drug.findByPk(id);
 
             if (drugDomainModel.DrugName != null) {
                 drug.DrugName = drugDomainModel.DrugName;
@@ -140,7 +149,7 @@ export class DrugRepo implements IDrugRepo {
         try {
             Logger.instance().log(id);
 
-            const result = await DrugModel.destroy({ where: { id: id } });
+            const result = await Drug.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);

@@ -1,14 +1,5 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    PrimaryKey,
-    Length,
-    IsUUID,
+    Column, CreatedAt, DataType, DeletedAt, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 
@@ -17,7 +8,7 @@ import { v4 } from 'uuid';
 @Table({
     timestamps      : true,
     modelName       : 'Drug',
-    tableName       : 'medication_drugs',
+    tableName       : 'drugs',
     paranoid        : true,
     freezeTableName : true,
 })

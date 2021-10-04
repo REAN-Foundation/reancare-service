@@ -1,8 +1,10 @@
 import express from 'express';
 import { body, param, query, validationResult } from 'express-validator';
-import { MedicationConsumptionSearchFilters } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
 import { Helper } from '../../../../common/helper';
 import { MedicationConsumptionScheduleDomainModel, MedicationConsumptionSummaryDomainModel } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
+import { MedicationConsumptionSearchFilters } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
+import { UserService } from '../../../../services/user/user.service';
+import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -63,22 +65,28 @@ export class MedicationConsumptionValidator {
         return model;
     };
 
-    static getScheduleForDay = (request: express.Request): MedicationConsumptionScheduleDomainModel => {
+    static getScheduleForDay = async (request: express.Request): Promise<MedicationConsumptionScheduleDomainModel> => {
+        
+        var userService = Loader.container.resolve(UserService);
+        var date = await userService.getDateInUserTimeZone(request.params.PatientUserId, request.query.date as string);
 
         const model: MedicationConsumptionScheduleDomainModel = {
             PatientUserId : request.params.PatientUserId,
-            Date          : request.query.date ? new Date(request.query.date as string) : new Date(),
+            Date          : date,
             GroupByDrug   : request.query.groupByDrug && request.query.groupByDrug === 'true' ? true : false
         };
 
         return model;
     };
 
-    static getSummaryForDay = (request: express.Request): MedicationConsumptionSummaryDomainModel => {
+    static getSummaryForDay = async (request: express.Request): Promise<MedicationConsumptionSummaryDomainModel> => {
+        
+        var userService = Loader.container.resolve(UserService);
+        var date = await userService.getDateInUserTimeZone(request.params.PatientUserId, request.query.date as string);
 
         const model: MedicationConsumptionSummaryDomainModel = {
             PatientUserId : request.params.PatientUserId,
-            Date          : request.query.date ? new Date(request.query.date as string) : new Date(),
+            Date          : date,
         };
 
         return model;

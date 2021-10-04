@@ -1,12 +1,13 @@
 import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
+import { TimeHelper } from '../../../../../../common/time.helper';
 import { MedicationConsumptionDomainModel } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
 import { ConsumptionSummaryDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { MedicationConsumptionSearchFilters, MedicationConsumptionSearchResults } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { IMedicationConsumptionRepo } from '../../../../../repository.interfaces/clinical/medication/medication.consumption.repo.interface';
 import { MedicationConsumptionMapper } from '../../../mappers/clinical/medication/medication.consumption.mapper';
-import { MedicationMapper } from '../../../mappers/clinical/medication/medication.mapper';
 import MedicationConsumption from '../../../models/clinical/medication/medication.consumption.model';
 import Medication from '../../../models/clinical/medication/medication.model';
 
@@ -233,6 +234,19 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         : Promise<MedicationConsumptionDto[]> => {
         try {
             
+            var consumptions = await this.forDay(patientUserId, date);
+            if (groupByDrug) {
+                var listByDrugName = {};
+                for (i = 0; i < meds.length; i++) {
+                    var drug = meds[i].DrugName;
+                    if (!listByDrugName[drug]) {
+                        listByDrugName[drug] = [];
+                    }
+                    listByDrugName[drug].push(meds[i]);
+                }
+                return listByDrugName;
+            }
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -258,28 +272,68 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     }
 
-    getScheduleForDuration = async (patientUserId: string, duration: string, when: string)
+    getScheduleForDuration = async (patientUserId: string, durationInHours: number, when: string)
     : Promise<MedicationConsumptionDto[]> => {
         try {
-            const medication = await Medication.findByPk(id);
+   
+            var search = {};
+    
+            if (when === 'past') {
+                var from = TimeHelper.subtractDuration(new Date(), durationInHours, DurationType.Hours);
+                search = {
+                    PatientUserId     : patientUserId,
+                    TimeScheduleStart : {
+                        [Op.lte] : Date.now(),
+                        [Op.gte] : from
+                    },
+                    IsCancelled : false
+                };
+            }
+            if (when === 'future') {
+                var to = TimeHelper.addDuration(new Date(), durationInHours, DurationType.Hours);
+                search = {
+                    PatientUserId     : patientUserId,
+                    TimeScheduleStart : {
+                        [Op.gte] : Date.now(),
+                        [Op.lte] : to
+                    },
+                    IsCancelled : false
+                };
+            }
+            if (when === 'current') {
 
-            if (model.EhrId != null) {
-                medication.EhrId = model.EhrId;
-            }
-            if (model.MedicalPractitionerUserId != null) {
-                medication.MedicalPractitionerUserId = model.MedicalPractitionerUserId;
-            }
-            if (model.VisitId != null) {
-                medication.VisitId = model.VisitId;
-            }
-            if (model.OrderId != null) {
-                medication.OrderId = model.OrderId;
-            }
+                var currentDurationSlotHrs = 2;
+                var from = TimeHelper.subtractDuration(new Date(), currentDurationSlotHrs, DurationType.Hours);
+                var to = TimeHelper.addDuration(new Date(), currentDurationSlotHrs, DurationType.Hours);
 
-            await medication.save();
+                search = {
+                    PatientUserId     : patientUserId,
+                    TimeScheduleStart : {
+                        [Op.gte] : from,
+                        [Op.lte] : to
+                    },
+                    IsCancelled : false
+                };
+            }
+    
+            const entities = await MedicationConsumption.findAll({
+                where : search
+            });
+    
+            var dtos = entities.map(x => MedicationConsumptionMapper.toDto(x));
 
-            const dto = await MedicationMapper.toDto(medication);
-            return dto;
+            var fn = (a: MedicationConsumptionDto, b: MedicationConsumptionDto): any => {
+                return a.TimeScheduleStart - b.TimeScheduleStart;
+            };
+            if (when === 'past') {
+                fn = (a, b) => {
+                    return b.TimeScheduleStart - a.TimeScheduleStart;
+                };
+            }
+            dtos.sort(fn);
+    
+            return dtos;
+    
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -295,5 +349,41 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    //#region Privates
+
+    private forDay = async(patientUserId: string, date: Date): Promise<MedicationConsumptionDto[]> => {
+        try {
+
+            var dayStart = date;
+            var dayEnd = TimeHelper.addDuration(dayStart, 24, DurationType.Hours);
+    
+            var search = {
+                PatientUserId     : patientUserId,
+                TimeScheduleStart : {
+                    [Op.gte] : dayStart,
+                    [Op.lte] : dayEnd
+                },
+                IsCancelled : false
+            };
+    
+            const entities = await MedicationConsumption.findAll({
+                where : search
+            });
+    
+            var dtos = entities.map(x => MedicationConsumptionMapper.toDto(x));
+    
+            var fn = (a, b) => { return new Date(a.TimeScheduleStart) - new Date(b.TimeScheduleStart); };
+            dtos.sort(fn);
+    
+            return dtos;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+    
+    //#endregion
 
 }

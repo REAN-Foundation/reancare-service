@@ -1,8 +1,11 @@
 import { generate } from 'generate-password';
+import { TimeHelper } from 'src/common/time.helper';
+import { DurationType } from 'src/domain.types/miscellaneous/time.types';
 import { inject, injectable } from 'tsyringe';
 import { ApiError } from '../../common/api.error';
 import { Helper } from '../../common/helper';
 import { Logger } from '../../common/logger';
+import { ConfigurationManager } from '../../configs/configuration.manager';
 import { IInternalTestUserRepo } from '../../database/repository.interfaces/internal.test.user.repo.interface';
 import { IOtpRepo } from '../../database/repository.interfaces/otp.repo.interface';
 import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
@@ -17,7 +20,6 @@ import { UserDomainModel, UserLoginDetails } from '../../domain.types/user/user/
 import { UserDetailsDto, UserDto } from '../../domain.types/user/user/user.dto';
 import { IMessagingService } from '../../modules/communication/interfaces/messaging.service.interface';
 import { Loader } from '../../startup/loader';
-import { ConfigurationManager } from '../../configs/configuration.manager';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -249,6 +251,26 @@ export class UserService {
     
         const displayId = prefix + str;
         return displayId;
+    }
+
+    getDateInUserTimeZone = async(userId, dateStr: string, useCurrent = true) => {
+
+        var user = await this.getById(userId);
+        if (user === null) {
+            throw new ApiError(422, 'Invalid user id.');
+        }
+        var timezoneOffset = '+05:30';
+        if (user.CurrentTimeZone !== null && useCurrent) {
+            timezoneOffset = user.CurrentTimeZone;
+        }
+        else if (user.DefaultTimeZone !== null) {
+            timezoneOffset = user.DefaultTimeZone;
+        }
+        var todayStr = new Date().toISOString();
+        var str = dateStr ? dateStr.split('T')[0] : todayStr.split('T')[0];
+
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minutes);
+        return TimeHelper.strToUtc(str, offsetMinutes);
     }
 
     //#endregion

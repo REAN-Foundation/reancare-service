@@ -1,15 +1,12 @@
 import express from 'express';
 import { body, oneOf, param, query, validationResult } from 'express-validator';
-import { ValidationError } from 'sequelize';
 import { Helper } from '../../../../common/helper';
-import { TimeHelper } from '../../../../common/time.helper';
 import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
 import { MedicationSearchFilters } from '../../../../domain.types/clinical/medication/medication/medication.search.types';
 import {
     MedicationAdministrationRoutes, MedicationDurationUnits
 } from "../../../../domain.types/clinical/medication/medication/medication.types";
-import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
-import { PatientService } from '../../../../services/patient/patient.service';
+import { UserService } from '../../../../services/user/user.service';
 import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -18,20 +15,8 @@ export class MedicationValidator {
 
     static getCreateDomainModel = async (request: express.Request): Promise<MedicationDomainModel> => {
 
-        var patientService = Loader.container.resolve(PatientService);
-        var patient = await patientService.getByUserId(request.body.PatientUserId);
-        if (patient === null) {
-            throw new ValidationError('Invalid patient user id.');
-        }
-        var timezoneOffset = '+05:30';
-        if (patient.User.CurrentTimeZone !== null) {
-            timezoneOffset = patient.User.CurrentTimeZone;
-        }
-        var todayStr = new Date().toISOString();
-        var startDateStr = request.body.StartDate ? (request.body.StartDate).split('T')[0] : todayStr.split('T')[0];
-
-        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minutes);
-        var startDate = TimeHelper.strToUtc(startDateStr, offsetMinutes);
+        var userService = Loader.container.resolve(UserService);
+        var startDate = await userService.getDateInUserTimeZone(request.body.PatientUserId, request.body.StartDate);
 
         const model: MedicationDomainModel = {
             PatientUserId             : request.body.PatientUserId,

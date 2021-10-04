@@ -73,10 +73,6 @@ export class MedicationConsumptionService {
                     Details           : details,
                     TimeScheduleStart : start,
                     TimeScheduleEnd   : end,
-                    TakenAt           : null,
-                    IsTaken           : false,
-                    IsCancelled       : false,
-                    Note              : null
                 };
 
                 var savedRecord = await this._medicationConsumptionRepo.create(domainModel);
@@ -232,15 +228,6 @@ export class MedicationConsumptionService {
         return await this._medicationConsumptionRepo.deleteFutureMedicationSchedules(medicationId);
     };
 
-    // updateTimeZoneForFutureMedicationSchedules = async (
-    //     medicationId: string,
-    //     currentTimeZone: string,
-    //     newTimeZone: string): Promise<string[]> => {
-    //     var updatedConsumptionIds = await this._medicationConsumptionRepo.updateTimeZoneForFutureMedicationSchedules(
-    //         medicationId, currentTimeZone, newTimeZone);
-    //     return updatedConsumptionIds;
-    // };
-
     getById = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
         return await this._medicationConsumptionRepo.getById(id);
     };
@@ -251,10 +238,8 @@ export class MedicationConsumptionService {
 
     getScheduleForDuration = async (patientUserId: string, duration: string, when: string)
         : Promise<MedicationConsumptionDto[]> => {
-        
         var hours: number = this.parseDurationInHours(duration);
-
-        return await this._medicationConsumptionRepo.getScheduleForDuration(patientUserId, duration, when);
+        return await this._medicationConsumptionRepo.getScheduleForDuration(patientUserId, hours, when);
     };
 
     getScheduleForDay = async (patientUserId: string, date: Date, groupByDrug: boolean)

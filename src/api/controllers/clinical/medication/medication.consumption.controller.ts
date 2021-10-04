@@ -267,7 +267,7 @@ export class MedicationConsumptionController {
 
             const model = await MedicationConsumptionValidator.getScheduleForDay(request);
 
-            const dtos = await this._service.getScheduleForDay(
+            const dtos = await this._service.getSchedulesForDay(
                 model.PatientUserId,
                 model.Date,
                 model.GroupByDrug);

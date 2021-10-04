@@ -3,7 +3,7 @@ import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { MedicationConsumptionDomainModel } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
-import { ConsumptionSummaryDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
+import { MedicationConsumptionDetailsDto, MedicationConsumptionDto } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { MedicationConsumptionSearchFilters, MedicationConsumptionSearchResults } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { IMedicationConsumptionRepo } from '../../../../../repository.interfaces/clinical/medication/medication.consumption.repo.interface';
@@ -144,8 +144,8 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
     //     medicationId: string,
     //     currentTimeZone: string,
     //     newTimeZone: string): Promise<number> => {
-
     // }
+    
     getById = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
         try {
             const consumption = await MedicationConsumption.findByPk(id);
@@ -230,22 +230,32 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    getScheduleForDay = async(patientUserId: string, date: Date, groupByDrug: boolean)
+    getSchedulesForDay = async(patientUserId: string, date: Date)
         : Promise<MedicationConsumptionDto[]> => {
         try {
             
-            var consumptions = await this.forDay(patientUserId, date);
-            if (groupByDrug) {
-                var listByDrugName = {};
-                for (i = 0; i < meds.length; i++) {
-                    var drug = meds[i].DrugName;
-                    if (!listByDrugName[drug]) {
-                        listByDrugName[drug] = [];
-                    }
-                    listByDrugName[drug].push(meds[i]);
-                }
-                return listByDrugName;
-            }
+            var dayStart = date;
+            var dayEnd = TimeHelper.addDuration(dayStart, 24, DurationType.Hours);
+    
+            var search = {
+                PatientUserId     : patientUserId,
+                TimeScheduleStart : {
+                    [Op.gte] : dayStart,
+                    [Op.lte] : dayEnd
+                },
+                IsCancelled : false
+            };
+    
+            const entities = await MedicationConsumption.findAll({
+                where : search
+            });
+    
+            var dtos = entities.map(x => MedicationConsumptionMapper.toDto(x));
+    
+            var fn = (a, b) => { return new Date(a.TimeScheduleStart) - new Date(b.TimeScheduleStart); };
+            dtos.sort(fn);
+    
+            return dtos;
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -253,26 +263,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     }
 
-    getSummaryForDay = async (patientUserId: string, date: Date): Promise<ConsumptionSummaryDto> => {
-        try {
-            
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    }
-
-    getSummaryByCalendarMonths = (patientUserId: string, pastMonthsCount: number,
-        futureMonthsCount: number): Promise<ConsumptionSummaryForMonthDto[]> => {
-        try {
-        
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    }
-
-    getScheduleForDuration = async (patientUserId: string, durationInHours: number, when: string)
+    getSchedulesForDuration = async (patientUserId: string, durationInHours: number, when: string)
     : Promise<MedicationConsumptionDto[]> => {
         try {
    
@@ -349,41 +340,5 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             throw new ApiError(500, error.message);
         }
     };
-
-    //#region Privates
-
-    private forDay = async(patientUserId: string, date: Date): Promise<MedicationConsumptionDto[]> => {
-        try {
-
-            var dayStart = date;
-            var dayEnd = TimeHelper.addDuration(dayStart, 24, DurationType.Hours);
-    
-            var search = {
-                PatientUserId     : patientUserId,
-                TimeScheduleStart : {
-                    [Op.gte] : dayStart,
-                    [Op.lte] : dayEnd
-                },
-                IsCancelled : false
-            };
-    
-            const entities = await MedicationConsumption.findAll({
-                where : search
-            });
-    
-            var dtos = entities.map(x => MedicationConsumptionMapper.toDto(x));
-    
-            var fn = (a, b) => { return new Date(a.TimeScheduleStart) - new Date(b.TimeScheduleStart); };
-            dtos.sort(fn);
-    
-            return dtos;
-        }
-        catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    }
-    
-    //#endregion
 
 }

@@ -1,5 +1,5 @@
 import { MedicationConsumptionDomainModel } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
-import { ConsumptionSummaryDto, ConsumptionSummaryForMonthDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
+import { MedicationConsumptionDetailsDto, MedicationConsumptionDto } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionSearchFilters, MedicationConsumptionSearchResults } from "../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types";
 
 ///////////////////////////////////////////////////////////////////////
@@ -25,16 +25,11 @@ export interface IMedicationConsumptionRepo {
 
     search(filters: MedicationConsumptionSearchFilters): Promise<MedicationConsumptionSearchResults>;
 
-    getScheduleForDuration(
+    getSchedulesForDuration(
         patientUserId: string,
         durationHours: number,
         when: string): Promise<MedicationConsumptionDto[]>;
 
-    getScheduleForDay(patientUserId: string, date: Date, groupByDrug: boolean): Promise<MedicationConsumptionDto[]>;
-
-    getSummaryForDay(patientUserId: string, date: Date): Promise<ConsumptionSummaryDto>;
-
-    getSummaryByCalendarMonths(patientUserId: string, pastMonthsCount: number,
-        futureMonthsCount: number): Promise<ConsumptionSummaryForMonthDto[]>;
+    getSchedulesForDay(patientUserId: string, date: Date): Promise<MedicationConsumptionDto[]>;
 
 }

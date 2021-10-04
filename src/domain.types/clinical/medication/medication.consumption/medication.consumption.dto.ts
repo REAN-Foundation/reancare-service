@@ -1,5 +1,5 @@
 import {
-    MedicationConsumptionStatus,
+    MedicationConsumptionStatus
 } from "./medication.consumption.types";
 
 export interface MedicationConsumptionDetailsDto {
@@ -31,7 +31,7 @@ export interface MedicationConsumptionDto {
     Status?           : MedicationConsumptionStatus;
 }
 
-export interface ConsumptionSummaryDto {
+export interface StatusSummaryDto {
     Missed  : number,
     Taken   : number,
     Unknown : number,
@@ -39,13 +39,23 @@ export interface ConsumptionSummaryDto {
     Overdue : number
 }
 
-export interface ConsumptionSummaryByDrugDto {
-    Drug?       : string;
-    DrugSummary?: ConsumptionSummaryDto;
-    Schedule?   : MedicationConsumptionDto[];
+export interface SummarizedScheduleDto {
+    Drug?          : string;
+    SummaryForDrug?: StatusSummaryDto;
+    Schedule?      : MedicationConsumptionDto[];
 }
 
-export interface ConsumptionSummaryForMonthDto {
+export interface SchedulesForDayDto {
+    Day?     : Date;
+    Schedules: MedicationConsumptionDto[];
+}
+
+export interface SummaryForDayDto {
+    Day?         : Date;
+    SummaryForDay: SummarizedScheduleDto[];
+}
+
+export interface SummaryForMonthDto {
     Month?          : string;
-    SummaryForMonth?: ConsumptionSummaryByDrugDto[];
+    SummaryForMonth?: SummarizedScheduleDto;
 }

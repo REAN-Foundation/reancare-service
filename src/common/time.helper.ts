@@ -253,4 +253,8 @@ export class TimeHelper {
         return d.toDate();
     }
 
+    static format = (date: Date, formatTemplate: string): string => {
+        return dayjs(date).format(formatTemplate);
+    }
+
 }

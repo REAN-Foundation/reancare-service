@@ -6,7 +6,7 @@ import { IMedicationConsumptionRepo } from "../../../database/repository.interfa
 import { IMedicationRepo } from "../../../database/repository.interfaces/clinical/medication/medication.repo.interface";
 import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
 import { MedicationConsumptionDomainModel } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
-import { ConsumptionSummaryDto, ConsumptionSummaryForMonthDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
+import { MedicationConsumptionDetailsDto, MedicationConsumptionDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionStatus } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types";
 import { MedicationDto } from "../../../domain.types/clinical/medication/medication/medication.dto";
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
@@ -239,22 +239,35 @@ export class MedicationConsumptionService {
     getScheduleForDuration = async (patientUserId: string, duration: string, when: string)
         : Promise<MedicationConsumptionDto[]> => {
         var hours: number = this.parseDurationInHours(duration);
-        return await this._medicationConsumptionRepo.getScheduleForDuration(patientUserId, hours, when);
+        return await this._medicationConsumptionRepo.getSchedulesForDuration(patientUserId, hours, when);
     };
 
-    getScheduleForDay = async (patientUserId: string, date: Date, groupByDrug: boolean)
-        : Promise<MedicationConsumptionDto[]> => {
-        return await this._medicationConsumptionRepo.getScheduleForDay(patientUserId, date, groupByDrug);
+    getSchedulesForDay = async (patientUserId: string, date: Date)
+        : Promise<SchedulesForDayDto> => {
+        var consumptions = await this._medicationConsumptionRepo.getSchedulesForDay(patientUserId, date);
+        var schedules : SchedulesForDayDto = {
+            Day       : date,
+            Schedules : consumptions
+        };
+        return schedules;
     };
 
-    getSummaryForDay = async (patientUserId: string, date: Date): Promise<ConsumptionSummaryDto> => {
-        return await this._medicationConsumptionRepo.getSummaryForDay(patientUserId, date);
+    getSchedulesForDayByDrugs = async (patientUserId: string, date: Date)
+    : Promise<SummaryForDayDto> => {
+    
+        var consumptions = await this._medicationConsumptionRepo.getSchedulesForDay(patientUserId, date);
+        var classifiedList = this.classifyByDrugs(consumptions);
+        var summary: SummaryForDayDto = {
+            Day           : date,
+            SummaryForDay : classifiedList
+        };
+        return summary;
     };
 
     getSummaryByCalendarMonths = async (
         patientUserId: string,
         pastMonthsCount: number,
-        futureMonthsCount: number): Promise<ConsumptionSummaryForMonthDto[]> => {
+        futureMonthsCount: number): Promise<SummaryForMonthDto[]> => {
             
         if (futureMonthsCount > 2) {
             futureMonthsCount = 2;
@@ -262,8 +275,61 @@ export class MedicationConsumptionService {
         if (pastMonthsCount > 6) {
             pastMonthsCount = 6;
         }
-        return await this._medicationConsumptionRepo.getSummaryByCalendarMonths(
-            patientUserId, pastMonthsCount, futureMonthsCount);
+        
+        //Get summary of last 6 months
+        var summaryByMonth = [];
+
+        for (var i = 0; i < 6; i++) {
+
+            var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Months);
+            var str = TimeHelper.format(date, 'YYYY-MM');
+
+            var str = moment().subtract(i, "month")
+                .startOf("month")
+                .format('YYYY-MM');
+                
+            var monthName = moment().subtract(i, "month")
+                .startOf("month")
+                .format('MMMM, YYYY');
+            var daysInMonth = moment(str, "YYYY-MM").daysInMonth();
+
+            var medConsumptionsForMonth = await GetMedicationsForCalendarMonth(str, daysInMonth, patientUserId);
+            var fn = (a, b) => { return new Date(a.TimeScheduleStart) - new Date(b.TimeScheduleStart); };
+            medConsumptionsForMonth.sort(fn);
+
+            // for (var d = 1; d <= daysInMonth; d++) {
+            //     var dateStr = str + '-' + String(d).padStart(2, '0');
+            //     var date = moment(dateStr).toDate();
+            //     var meds = await this.GetMedicationScheduleForDay(patientUserId, date);
+            //     medsForMonth.push(...meds);
+            // }
+
+            var listByDrugName = {};
+            for (var k = 0; k < medConsumptionsForMonth.length; k++) {
+                var drug = medConsumptionsForMonth[k].DrugName;
+                if (!listByDrugName[drug]) {
+                    listByDrugName[drug] = [];
+                }
+                listByDrugName[drug].push(medConsumptionsForMonth[k]);
+            }
+            var drugs = Object.keys(listByDrugName);
+            var summaryByDrug = [];
+            for (var drug of drugs) {
+                var summary = GetSummary(listByDrugName[drug]);
+                summaryByDrug.push({
+                    Drug        : drug,
+                    DrugSummary : summary,
+                    Schedule    : listByDrugName[drug]
+                }
+                );
+            }
+            summaryByMonth.push({
+                Month           : monthName,
+                SummaryForMonth : summaryByDrug
+            });
+
+        }
+        return summaryByMonth;
     };
 
     // private async completeAssociatedTask(medConsumption: MedicationConsumptionDetailsDto) {
@@ -452,6 +518,42 @@ export class MedicationConsumptionService {
         }
 
         return summary;
+    }
+
+    private classifyByDrugs = (medConsumptions: MedicationConsumptionDto[])
+        : SummarizedScheduleDto[] => {
+
+        var arrangedByDrugList: SummarizedScheduleDto[] = [];
+        
+        var listByDrugName = this.segregateByDrugName(medConsumptions);
+        for (const key in listByDrugName) {
+            var drug = key;
+            var consumptions = listByDrugName[key];
+            var summary = this.getSummary(consumptions);
+            var summarizedSchedule : SummarizedScheduleDto = {
+                Drug           : drug,
+                SummaryForDrug : summary,
+                Schedule       : consumptions
+            };
+            arrangedByDrugList.push(summarizedSchedule);
+        }
+
+        return arrangedByDrugList;
+    }
+
+    private segregateByDrugName = (medConsumptions: MedicationConsumptionDetailsDto[]) => {
+
+        var listByDrugName = {};
+        
+        for (var i = 0; i < medConsumptions.length; i++) {
+            var drug = medConsumptions[i].DrugName;
+            if (!listByDrugName[drug]) {
+                listByDrugName[drug] = [];
+            }
+            listByDrugName[drug].push(medConsumptions[i]);
+        }
+        
+        return listByDrugName;
     }
 
     //#endregion

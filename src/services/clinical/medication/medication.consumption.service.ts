@@ -5,8 +5,9 @@ import { TimeHelper } from "../../../common/time.helper";
 import { IMedicationConsumptionRepo } from "../../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface";
 import { IMedicationRepo } from "../../../database/repository.interfaces/clinical/medication/medication.repo.interface";
 import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
+import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/user.device.details.repo.interface ";
 import { MedicationConsumptionDomainModel } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
-import { MedicationConsumptionDetailsDto, MedicationConsumptionDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
+import { MedicationConsumptionCreateSummaryDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionStatus } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types";
 import { MedicationDto } from "../../../domain.types/clinical/medication/medication/medication.dto";
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
@@ -22,11 +23,13 @@ export class MedicationConsumptionService {
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,
         @inject('IMedicationConsumptionRepo') private _medicationConsumptionRepo: IMedicationConsumptionRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
+        @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
 
         //@inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
     ) {}
 
-    create = async (medication: MedicationDto, customStartDate = null): Promise<MedicationConsumptionDto[]> => {
+    create = async (medication: MedicationDto, customStartDate = null)
+        :Promise<MedicationConsumptionCreateSummaryDto> => {
 
         var timeZone = await this.getPatientTimeZone(medication.PatientUserId);
         if (timeZone == null) {
@@ -50,8 +53,14 @@ export class MedicationConsumptionService {
         var days = this.getDurationInDays(duration, durationUnit, refills);
         var dayStep = this.getDayStep(frequency, frequencyUnit);
 
+        var totalCount = 0;
+        var pendingCount = 0;
+        var now = new Date();
+        
         var consumptions: MedicationConsumptionDto[] = [];
+        
         var i = 0;
+
         while (i < days) {
 
             var day = TimeHelper.addDuration(startDate, i, DurationType.Day);
@@ -76,12 +85,25 @@ export class MedicationConsumptionService {
                 };
 
                 var savedRecord = await this._medicationConsumptionRepo.create(domainModel);
+
+                totalCount++;
+                
+                if (TimeHelper.isAfter(now, start)) {
+                    pendingCount++;
+                }
+                
                 consumptions.push(savedRecord);
             }
 
             i = i + dayStep;
         }
-        return consumptions;
+
+        var creationSummary: MedicationConsumptionCreateSummaryDto = {
+            TotalConsumptionCount   : totalCount,
+            PendingConsumptionCount : pendingCount
+        };
+
+        return creationSummary;
     }
     
     markListAsTaken = async (consumptionIds: string[]): Promise<MedicationConsumptionDto[]> => {
@@ -247,17 +269,19 @@ export class MedicationConsumptionService {
     
             if (when === 'past') {
                 var from = TimeHelper.subtractDuration(new Date(), durationInHours, DurationType.Hour);
-                dtos = await this._medicationConsumptionRepo.getSchedulesForDuration(patientUserId, from, new Date());
+                dtos = await this._medicationConsumptionRepo.getSchedulesForPatientForDuration(
+                    patientUserId, from, new Date());
             }
             if (when === 'future') {
                 var to = TimeHelper.addDuration(new Date(), durationInHours, DurationType.Hour);
-                dtos = await this._medicationConsumptionRepo.getSchedulesForDuration(patientUserId, new Date(), to);
+                dtos = await this._medicationConsumptionRepo.getSchedulesForPatientForDuration(
+                    patientUserId, new Date(), to);
             }
             if (when === 'current') {
                 var currentDurationSlotHrs = 2;
                 var from = TimeHelper.subtractDuration(new Date(), currentDurationSlotHrs, DurationType.Hour);
                 var to = TimeHelper.addDuration(new Date(), currentDurationSlotHrs, DurationType.Hour);
-                dtos = await this._medicationConsumptionRepo.getSchedulesForDuration(patientUserId, from, to);
+                dtos = await this._medicationConsumptionRepo.getSchedulesForPatientForDuration(patientUserId, from, to);
             }
 
             var fn = (a: MedicationConsumptionDto, b: MedicationConsumptionDto): any => {
@@ -325,8 +349,8 @@ export class MedicationConsumptionService {
 
             // var str = TimeHelper.format(date, 'YYYY-MM');
             
-            var medConsumptionsForMonth =
-                await this._medicationConsumptionRepo.getSchedulesForDuration(patientUserId, startOfMonth, endOfMonth);
+            var medConsumptionsForMonth = await this._medicationConsumptionRepo.getSchedulesForPatientForDuration(
+                patientUserId, startOfMonth, endOfMonth);
             var fn = (a, b) => {
                 return a.TimeScheduleStart.getTime() - b.TimeScheduleStart.getTime();
             };
@@ -342,6 +366,18 @@ export class MedicationConsumptionService {
         }
         return consumptionSummaryForMonths;
     };
+
+    sendMedicationReminders = async (upcomingInMinutes: number): Promise<number> => {
+        var count = 0;
+        var from = new Date();
+        var to = TimeHelper.addDuration(from, upcomingInMinutes, DurationType.Minute);
+        var schedules = await this._medicationConsumptionRepo.getSchedulesForDuration(from, to);
+        for await (var a of schedules) {
+            await this.sendMedicationReminder(a);
+            count++;
+        }
+        return count;
+    }
 
     // private async completeAssociatedTask(medConsumption: MedicationConsumptionDetailsDto) {
     //     var task = await this._userTaskRepo.getTaskForUserWithReference(
@@ -565,6 +601,30 @@ export class MedicationConsumptionService {
         }
         
         return listByDrugName;
+    }
+
+    sendMedicationReminder = async (medicationSchedule) => {
+
+        var patientUserId = medicationSchedule.PatientUserId;
+
+        var deviceList = await this._userDeviceDetailsRepo.getByUserId(patientUserId);
+        var deviceListsStr = JSON.stringify(deviceList, null, 2);
+        Logger.instance().log(`Sent medication reminders to following devices - ${deviceListsStr}`);
+
+        // var message = NotificationService.FormatMessage_notification_with_data(
+        //     'Upcoming medication',
+        //     'You have upcoming scheduled medication!',
+        //     {
+        //         ScheduleStart : medicationSchedule.TimeScheduleStart.toUTCString(),
+        //         ScheduleEnd   : medicationSchedule.TimeScheduleEnd.toUTCString(),
+        //         DrugName      : medicationSchedule.DrugName,
+        //         Details       : medicationSchedule.Details
+        //     }
+        // );
+        // for await (var device of deviceList) {
+        //     await NotificationService.SendMessage_device(device.Token, message);
+        // }
+
     }
 
     //#endregion

@@ -1,11 +1,11 @@
-import { IUserDeviceDetailsRepo } from '../../../repository.interfaces/user.device.details.repo.interface ';
-import UserDeviceDetailsModel  from '../models/user/user.device.details.model';
-import { UserDeviceDetailsMapper } from '../mappers/user.device.details.mapper';
-import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
+import { Logger } from '../../../../common/logger';
 import { UserDeviceDetailsDomainModel } from "../../../../domain.types/user/user.device.details/user.device.domain.model";
 import { UserDeviceDetailsDto } from "../../../../domain.types/user/user.device.details/user.device.dto";
 import { UserDeviceDetailsSearchFilters, UserDeviceDetailsSearchResults } from "../../../../domain.types/user/user.device.details/user.device.search.types";
+import { IUserDeviceDetailsRepo } from '../../../repository.interfaces/user.device.details.repo.interface ';
+import { UserDeviceDetailsMapper } from '../mappers/user.device.details.mapper';
+import UserDeviceDetailsModel from '../models/user/user.device.details.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -25,7 +25,7 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             };
 
             const userDeviceDetails = await UserDeviceDetailsModel.create(entity);
-            const dto = await UserDeviceDetailsMapper.toDto(userDeviceDetails);
+            const dto = UserDeviceDetailsMapper.toDto(userDeviceDetails);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -36,8 +36,22 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
     getById = async (id: string): Promise<UserDeviceDetailsDto> => {
         try {
             const userDeviceDetails = await UserDeviceDetailsModel.findByPk(id);
-            const dto = await UserDeviceDetailsMapper.toDto(userDeviceDetails);
+            const dto = UserDeviceDetailsMapper.toDto(userDeviceDetails);
             return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getByUserId = async (userId: string): Promise<UserDeviceDetailsDto[]> => {
+        try {
+            const userDeviceDetailsList = await UserDeviceDetailsModel.findAll({
+                where : {
+                    UserId : userId
+                }
+            });
+            return userDeviceDetailsList.map(x => UserDeviceDetailsMapper.toDto(x));
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -93,7 +107,7 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
 
             const dtos: UserDeviceDetailsDto[] = [];
             for (const userDeviceDetails of foundResults.rows) {
-                const dto = await UserDeviceDetailsMapper.toDto(userDeviceDetails);
+                const dto = UserDeviceDetailsMapper.toDto(userDeviceDetails);
                 dtos.push(dto);
             }
 
@@ -142,7 +156,7 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             }
             await userDeviceDetails.save();
 
-            const dto = await UserDeviceDetailsMapper.toDto(userDeviceDetails);
+            const dto = UserDeviceDetailsMapper.toDto(userDeviceDetails);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);

@@ -1,11 +1,10 @@
 import { generate } from 'generate-password';
-import { TimeHelper } from 'src/common/time.helper';
-import { DurationType } from 'src/domain.types/miscellaneous/time.types';
 import { inject, injectable } from 'tsyringe';
 import { ApiError } from '../../common/api.error';
 import { Helper } from '../../common/helper';
 import { Logger } from '../../common/logger';
-import { ConfigurationManager } from '../../configs/configuration.manager';
+import { TimeHelper } from '../../common/time.helper';
+import { ConfigurationManager } from '../../config/configuration.manager';
 import { IInternalTestUserRepo } from '../../database/repository.interfaces/internal.test.user.repo.interface';
 import { IOtpRepo } from '../../database/repository.interfaces/otp.repo.interface';
 import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
@@ -13,6 +12,7 @@ import { IPersonRoleRepo } from '../../database/repository.interfaces/person.rol
 import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
 import { IUserRepo } from '../../database/repository.interfaces/user.repo.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
+import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { OtpPersistenceEntity } from '../../domain.types/otp/otp.domain.types';
 import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { Roles } from '../../domain.types/role/role.types';
@@ -269,7 +269,7 @@ export class UserService {
         var todayStr = new Date().toISOString();
         var str = dateStr ? dateStr.split('T')[0] : todayStr.split('T')[0];
 
-        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minutes);
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
         return TimeHelper.strToUtc(str, offsetMinutes);
     }
 

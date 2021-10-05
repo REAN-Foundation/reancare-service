@@ -10,7 +10,7 @@ import mime from 'mime';
 import path from 'path';
 import { Helper } from "../../common/helper";
 import { TimeHelper } from '../../common/time.helper';
-import { ConfigurationManager } from '../../configs/configuration.manager';
+import { ConfigurationManager } from '../../config/configuration.manager';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

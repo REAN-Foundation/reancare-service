@@ -44,6 +44,7 @@
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.2.5",
     "needle": "^2.6.0",
+    "node-cron": "^3.0.0",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.3",
     "reflect-metadata": "^0.1.13",

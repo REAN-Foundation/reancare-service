@@ -73,7 +73,6 @@ export class MedicationConsumptionValidator {
         const model: MedicationConsumptionScheduleDomainModel = {
             PatientUserId : request.params.PatientUserId,
             Date          : date,
-            GroupByDrug   : request.query.groupByDrug && request.query.groupByDrug === 'true' ? true : false
         };
 
         return model;

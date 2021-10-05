@@ -138,9 +138,7 @@ export class MedicationValidator {
             .run(request);
 
         await body('TimeSchedules').exists()
-            .trim()
             .isArray()
-            .isLength({ min: 1 })
             .run(request);
 
         await body('Frequency').exists()
@@ -262,7 +260,6 @@ export class MedicationValidator {
             .run(request);
 
         await body('TimeSchedules').optional()
-            .trim()
             .isArray()
             .run(request);
 

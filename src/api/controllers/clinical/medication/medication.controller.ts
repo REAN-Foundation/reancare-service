@@ -6,7 +6,9 @@ import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
+import { ConsumptionSummaryDto } from '../../../../domain.types/clinical/medication/medication/medication.dto';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
+import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { FileResourceService } from '../../../../services/file.resource.service';
 import { PatientService } from '../../../../services/patient/patient.service';
@@ -30,6 +32,8 @@ export class MedicationController {
 
     _fileResourceService: FileResourceService = null;
 
+    _medicationConsumptionService: MedicationConsumptionService = null;
+
     _authorizer: Authorizer = null;
 
     constructor() {
@@ -38,6 +42,7 @@ export class MedicationController {
         this._userService = Loader.container.resolve(UserService);
         this._drugService = Loader.container.resolve(DrugService);
         this._fileResourceService = Loader.container.resolve(FileResourceService);
+        this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -73,16 +78,29 @@ export class MedicationController {
                 if (drug == null) {
                     throw new ApiError(404, `Drug with an id ${domainModel.DrugId} cannot be found.`);
                 }
+                domainModel.DrugName = drug.DrugName;
             }
 
-            const medication = await this._service.create(domainModel);
+            var medication = await this._service.create(domainModel);
             if (medication == null) {
                 throw new ApiError(400, 'Cannot create medication!');
             }
 
+            var medConsumptions = await this._medicationConsumptionService.create(medication);
+
+            var consumptionSummary: ConsumptionSummaryDto = {
+                TotalConsumptionCount   : medConsumptions.TotalConsumptionCount,
+                PendingConsumptionCount : medConsumptions.TotalConsumptionCount * medication.Dose,
+                TotalDoseCount          : medConsumptions.PendingConsumptionCount,
+                PendingDoseCount        : medConsumptions.PendingConsumptionCount * medication.Dose,
+            };
+
+            medication.ConsumptionSummary = consumptionSummary;
+            
             ResponseHandler.success(request, response, 'Medication created successfully!', 201, {
                 Medication : medication,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

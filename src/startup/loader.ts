@@ -1,13 +1,13 @@
 import 'reflect-metadata';
 import { container, DependencyContainer } from 'tsyringe';
-
-import { DatabaseConnector } from '../database/database.connector';
 import { Authenticator } from '../auth/authenticator';
 import { Authorizer } from '../auth/authorizer';
-import { Injector } from './injector';
-import { Seeder } from './seeder';
-import { StorageService } from '../modules/ehr/services/storage.service';
 import { Logger } from '../common/logger';
+import { DatabaseConnector } from '../database/database.connector';
+import { StorageService } from '../modules/ehr/services/storage.service';
+import { Injector } from './injector';
+import { Scheduler } from './scheduler';
+import { Seeder } from './seeder';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,6 +20,8 @@ export class Loader {
     private static _databaseConnector: DatabaseConnector = null;
 
     private static _seeder: Seeder = null;
+    
+    private static _scheduler: Scheduler = Scheduler.instance();
 
     private static _ehrStore: StorageService = null;
 
@@ -39,6 +41,10 @@ export class Loader {
 
     public static get seeder() {
         return Loader._seeder;
+    }
+
+    public static get scheduler() {
+        return Loader._scheduler;
     }
 
     public static get storage() {

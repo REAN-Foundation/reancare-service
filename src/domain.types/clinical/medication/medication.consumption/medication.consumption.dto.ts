@@ -31,6 +31,11 @@ export interface MedicationConsumptionDto {
     Status?           : MedicationConsumptionStatus;
 }
 
+export interface MedicationConsumptionCreateSummaryDto {
+    TotalConsumptionCount?  : number,
+    PendingConsumptionCount?: number;
+}
+
 export interface StatusSummaryDto {
     Missed  : number,
     Taken   : number,

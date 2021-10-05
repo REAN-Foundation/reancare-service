@@ -8,7 +8,7 @@ import { TimeHelper } from "../common/time.helper";
 import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
 import { ApiError } from "../common/api.error";
 import { Logger } from "../common/logger";
-import { ConfigurationManager } from "../configs/configuration.manager";
+import { ConfigurationManager } from "../config/configuration.manager";
 import { FileResourceMetadata } from "../domain.types/file.resource/file.resource.types";
 
 import mime from 'mime';

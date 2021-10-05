@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ConfigurationManager } from '../../configs/configuration.manager';
+import { ConfigurationManager } from '../../config/configuration.manager';
 import { DependencyContainer } from 'tsyringe';
 import { AWSS3FileStorageService } from './providers/aws.s3.file.storage.service';
 

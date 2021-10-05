@@ -8,6 +8,8 @@ export interface IUserDeviceDetailsRepo {
 
     getById(id: string): Promise<UserDeviceDetailsDto>;
     
+    getByUserId(userId: string): Promise<UserDeviceDetailsDto[]>;
+    
     search(filters: UserDeviceDetailsSearchFilters): Promise<UserDeviceDetailsSearchResults>;
 
     update(id: string, userDeviceDetailsDomainModel: UserDeviceDetailsDomainModel):

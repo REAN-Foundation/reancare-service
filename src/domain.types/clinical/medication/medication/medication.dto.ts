@@ -1,10 +1,14 @@
 import {
-    MedicationDosageUnits,
-    MedicationTimeSchedules,
-    MedicationAdministrationRoutes,
-    MedicationDurationUnits,
-    MedicationFrequencyUnits
+    MedicationAdministrationRoutes, MedicationDosageUnits, MedicationDurationUnits,
+    MedicationFrequencyUnits, MedicationTimeSchedules
 } from "./medication.types";
+
+export interface ConsumptionSummaryDto {
+    TotalConsumptionCount   ?: number;
+    TotalDoseCount          ?: number;
+    PendingConsumptionCount ?: number;
+    PendingDoseCount        ?: number;
+}
 
 export interface MedicationDto {
     id?                       : string,
@@ -25,6 +29,7 @@ export interface MedicationDto {
     DurationUnit?             : MedicationDurationUnits;
     StartDate?                : Date;
     EndDate?                  : Date;
+    ConsumptionSummary?       : ConsumptionSummaryDto;
     RefillNeeded?             : boolean;
     RefillCount?              : number;
     Instructions?             : string;

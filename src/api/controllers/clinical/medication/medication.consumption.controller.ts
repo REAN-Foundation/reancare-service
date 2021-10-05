@@ -3,9 +3,10 @@ import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
+import { SchedulesForDayDto } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
-import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
+import { MedicationService } from '../../../../services/clinical/medication/medication.service';
 import { PatientService } from '../../../../services/patient/patient.service';
 import { UserService } from '../../../../services/user/user.service';
 import { Loader } from '../../../../startup/loader';
@@ -167,28 +168,29 @@ export class MedicationConsumptionController {
         }
     };
 
-    updateTimeZoneForFutureMedicationSchedules = async (request: express.Request, response: express.Response)
-        : Promise<void> => {
-        try {
-            request.context = 'MedicationConsumption.UpdateFutureMedicationSchedulesForTimeZone';
-            await this._authorizer.authorize(request, response);
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+    // updateTimeZoneForFutureMedicationSchedules = async (request: express.Request, response: express.Response)
+    //     : Promise<void> => {
+    //     try {
+    //         request.context = 'MedicationConsumption.UpdateFutureMedicationSchedulesForTimeZone';
+    //         await this._authorizer.authorize(request, response);
+    //         request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
-            const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
-            const newTimeZone = await MedicationConsumptionValidator.getParam(request, 'newTimeZone');
+    //         const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
+    //         const newTimeZone = await MedicationConsumptionValidator.getParam(request, 'newTimeZone');
 
-            const dtos = await this._service.updateTimeZoneForFutureMedicationSchedules(medicationId, newTimeZone);
-            if (dtos === null) {
-                throw new ApiError(422, `Unable to delete medication consumptions.`);
-            }
+    //         const dtos = await this._service.updateTimeZoneForFutureMedicationSchedules(medicationId, newTimeZone);
+    //         if (dtos === null) {
+    //             throw new ApiError(422, `Unable to delete medication consumptions.`);
+    //         }
             
-            ResponseHandler.success(request, response, 'Updated time-zone for future medication schedules successfully!', 200, {
-                MedicationConsumptions : dtos,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
+    //         ResponseHandler.success(request, response,
+    //              'Updated time-zone for future medication schedules successfully!', 200, {
+    //             MedicationConsumptions : dtos,
+    //         });
+    //     } catch (error) {
+    //         ResponseHandler.handleError(request, response, error);
+    //     }
+    // };
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
@@ -267,17 +269,16 @@ export class MedicationConsumptionController {
 
             const model = await MedicationConsumptionValidator.getScheduleForDay(request);
 
-            const dtos = await this._service.getSchedulesForDay(
+            const schedules: SchedulesForDayDto = await this._service.getSchedulesForDay(
                 model.PatientUserId,
-                model.Date,
-                model.GroupByDrug);
+                model.Date);
 
-            if (dtos.length === 0) {
-                throw new ApiError(404, 'Medication consumptions not found.');
+            if (schedules.Schedules.length === 0) {
+                throw new ApiError(404, 'Medication consumption schedules for day not found.');
             }
 
             ResponseHandler.success(request, response, 'Medication consumptions retrieved successfully!', 200, {
-                MedicationConsumptions : dtos,
+                MedicationSchedulesForDay : schedules,
             });
 
         } catch (error) {
@@ -293,7 +294,7 @@ export class MedicationConsumptionController {
 
             const model = await MedicationConsumptionValidator.getSummaryForDay(request);
 
-            const summary = await this._service.getSummaryForDay(
+            const summary = await this._service.getSchedulesForDayByDrugs(
                 model.PatientUserId,
                 model.Date);
 

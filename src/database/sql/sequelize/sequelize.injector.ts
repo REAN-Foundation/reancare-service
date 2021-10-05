@@ -16,6 +16,8 @@ import { DiagnosisRepo } from './repositories/clinical/diagnosis.repo';
 import { DoctorNoteRepo } from './repositories/clinical/doctor.note.repo';
 import { EmergencyEventRepo } from './repositories/clinical/emergency.event.repo';
 import { DrugRepo } from './repositories/clinical/medication/drug.repo';
+import { MedicationConsumptionRepo } from './repositories/clinical/medication/medication.consumption.repo';
+import { MedicationRepo } from './repositories/clinical/medication/medication.repo';
 import { MedicationStockImageRepo } from './repositories/clinical/medication/medication.stock.image.repo';
 import { OrderRepo } from './repositories/clinical/order.repo';
 import { HowDoYouFeelRepo } from './repositories/clinical/symptom/how.do.you.feel.repo';
@@ -84,7 +86,6 @@ export class SequelizeInjector {
         container.register('IMoveMinutesRepo', MoveMinutesRepo);
         container.register('ICalorieBalanceRepo', CalorieBalanceRepo);
         container.register('IHeartPointsRepo', HeartPointsRepo);
-        container.register('IMedicationStockImageRepo', MedicationStockImageRepo);
         container.register('IComplaintRepo', ComplaintRepo);
         container.register('IAllergyRepo', AllergyRepo);
         container.register('IDoctorNoteRepo', DoctorNoteRepo);
@@ -108,6 +109,8 @@ export class SequelizeInjector {
         container.register('IDrugRepo', DrugRepo);
         container.register('IUserDeviceDetailsRepo', UserDeviceDetailsRepo);
         container.register('IGoalRepo', GoalRepo);
+        container.register('IMedicationRepo', MedicationRepo);
+        container.register('IMedicationConsumptionRepo', MedicationConsumptionRepo);
     }
 
 }

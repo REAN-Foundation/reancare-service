@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import { Dialect } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { Logger } from '../../../common/logger';
-import { ConfigurationManager } from '../../../configs/configuration.manager';
+import { ConfigurationManager } from '../../../config/configuration.manager';
 import { IDatabaseConnector } from '../../database.connector.interface';
 import { DbConfig } from './database.config';
 import { MysqlClient } from './dialect.clients/mysql.client';

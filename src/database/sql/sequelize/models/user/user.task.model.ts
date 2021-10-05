@@ -3,9 +3,12 @@ import {
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import { UserActionStatusTypes, UserActionStatusTypesList } from '../../../../../domain.types/user/user.task/user.action.types';
+
+// eslint-disable-next-line max-len
+// import { UserActionStatusTypes, UserActionStatusTypesList } from '../../../../../domain.types/user/user.task/user.action.types';
 import User from './user.model';
-import UserTaskCategory from './user.task.category.model';
+
+// import UserTaskCategory from './user.task.category.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -52,43 +55,43 @@ export default class UserTask extends Model {
     })
     TaskName: string;
 
-    @ForeignKey(() => UserTaskCategory)
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : false,
-    })
-    CategoryId: number;
+    // @ForeignKey(() => UserTaskCategory)
+    // @Column({
+    //     type      : DataType.INTEGER,
+    //     allowNull : false,
+    // })
+    // CategoryId: number;
 
-    @Length({ max: 128 })
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : false,
-    })
-    ActionType: string;
+    // @Length({ max: 128 })
+    // @Column({
+    //     type      : DataType.STRING(128),
+    //     allowNull : false,
+    // })
+    // ActionType: string;
 
-    @IsUUID(4)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    ActionItemId: string;
+    // @IsUUID(4)
+    // @Column({
+    //     type      : DataType.UUID,
+    //     allowNull : true,
+    // })
+    // ActionItemId: string;
 
-    @Length({ max: 128 })
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : false,
-    })
-    ActionDetails: string;
+    // @Length({ max: 128 })
+    // @Column({
+    //     type      : DataType.STRING(128),
+    //     allowNull : false,
+    // })
+    // ActionDetails: string;
 
-    @Length({ max: 32 })
-    @Column({
-        type         : DataType.ENUM,
-        values       : UserActionStatusTypesList,
-        defaultValue : UserActionStatusTypes.Unknown,
-        allowNull    : false,
+    // @Length({ max: 32 })
+    // @Column({
+    //     type         : DataType.ENUM,
+    //     values       : UserActionStatusTypesList,
+    //     defaultValue : UserActionStatusTypes.Unknown,
+    //     allowNull    : false,
 
-    })
-    ActionState: string;
+    // })
+    // ActionState: string;
 
     @IsDate
     @Column({

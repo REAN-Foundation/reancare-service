@@ -49,6 +49,7 @@ import { MeditationRepo } from './repositories/wellness/exercise/meditation.repo
 import { PhysicalActivityRepo } from './repositories/wellness/exercise/physical.activity.repo';
 import { FoodConsumptionRepo } from './repositories/wellness/nutrition/food.consumption.repo';
 import { WaterConsumptionRepo } from './repositories/wellness/nutrition/water.consumption.repo';
+import { UserTaskRepo } from './repositories/user.task.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -108,6 +109,7 @@ export class SequelizeInjector {
         container.register('IDrugRepo', DrugRepo);
         container.register('IUserDeviceDetailsRepo', UserDeviceDetailsRepo);
         container.register('IGoalRepo', GoalRepo);
+        container.register('IUserTaskRepo', UserTaskRepo);
     }
 
 }

@@ -220,7 +220,15 @@
             "Goal.GetById",
             "Goal.Update",
             "Goal.Search",
-            "Goal.Delete"
+            "Goal.Delete",
+            "UserTask.Create",
+            "UserTask.GetById",
+            "UserTask.Update",
+            "UserTask.Search",
+            "UserTask.Delete",
+            "UserTask.StartTask",
+            "UserTask.FinishTask",
+            "UserTask.Summary"
         ]
     },
     {
@@ -467,7 +475,15 @@
             "Medication.GetCurrentMedications",
             "Medication.GetStockMedicationImages",
             "Medication.GetStockMedicationImageById",
-            "Medication.DownloadStockMedicationImageById"
+            "Medication.DownloadStockMedicationImageById",
+            "UserTask.Create",
+            "UserTask.GetById",
+            "UserTask.Update",
+            "UserTask.Search",
+            "UserTask.Delete",
+            "UserTask.StartTask",
+            "UserTask.FinishTask",
+            "UserTask.Summary"
         ]
     },
     {
@@ -718,7 +734,15 @@
             "Medication.GetCurrentMedications",
             "Medication.GetStockMedicationImages",
             "Medication.GetStockMedicationImageById",
-            "Medication.DownloadStockMedicationImageById"
+            "Medication.DownloadStockMedicationImageById",
+            "UserTask.Create",
+            "UserTask.GetById",
+            "UserTask.Update",
+            "UserTask.Search",
+            "UserTask.Delete",
+            "UserTask.StartTask",
+            "UserTask.FinishTask",
+            "UserTask.Summary"
         ]
     },
     {
@@ -914,7 +938,15 @@
             "Goal.GetById",
             "Goal.Update",
             "Goal.Search",
-            "Goal.Delete"
+            "Goal.Delete",
+            "UserTask.Create",
+            "UserTask.GetById",
+            "UserTask.Update",
+            "UserTask.Search",
+            "UserTask.Delete",
+            "UserTask.StartTask",
+            "UserTask.FinishTask",
+            "UserTask.Summary"
         ]
     },
     {
@@ -1109,7 +1141,15 @@
             "Goal.GetById",
             "Goal.Update",
             "Goal.Search",
-            "Goal.Delete"
+            "Goal.Delete",
+            "UserTask.Create",
+            "UserTask.GetById",
+            "UserTask.Update",
+            "UserTask.Search",
+            "UserTask.Delete",
+            "UserTask.StartTask",
+            "UserTask.FinishTask",
+            "UserTask.Summary"
         ]
     }
 ]

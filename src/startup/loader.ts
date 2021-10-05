@@ -4,6 +4,8 @@ import { Authenticator } from '../auth/authenticator';
 import { Authorizer } from '../auth/authorizer';
 import { Logger } from '../common/logger';
 import { DatabaseConnector } from '../database/database.connector';
+import { MessagingService } from '../modules/communication/messaging.service/messaging.service';
+import { NotificationService } from '../modules/communication/notification.service/notification.service';
 import { StorageService } from '../modules/ehr/services/storage.service';
 import { Injector } from './injector';
 import { Scheduler } from './scheduler';
@@ -22,6 +24,10 @@ export class Loader {
     private static _seeder: Seeder = null;
     
     private static _scheduler: Scheduler = Scheduler.instance();
+
+    private static _messagingService: MessagingService = null;
+
+    private static _notificationService: NotificationService = null;
 
     private static _ehrStore: StorageService = null;
 
@@ -51,6 +57,14 @@ export class Loader {
         return Loader._ehrStore;
     }
 
+    public static get messagingService() {
+        return Loader._messagingService;
+    }
+
+    public static get notificationService() {
+        return Loader._notificationService;
+    }
+
     public static get container() {
         return Loader._container;
     }
@@ -68,6 +82,12 @@ export class Loader {
             
             Loader._ehrStore = container.resolve(StorageService);
             await Loader._ehrStore.init();
+
+            Loader._notificationService = container.resolve(NotificationService);
+            Loader._notificationService.init();
+
+            Loader._messagingService = container.resolve(MessagingService);
+            Loader._messagingService.init();
 
             return true;
 

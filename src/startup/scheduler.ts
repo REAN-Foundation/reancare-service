@@ -23,6 +23,8 @@ export class Scheduler {
 
     //#endregion
 
+    //#region Publics
+
     public static instance(): Scheduler {
         return this._instance || (this._instance = new this());
     }
@@ -43,6 +45,8 @@ export class Scheduler {
             }
         });
     };
+
+    //#endregion
 
     //#region Privates
 

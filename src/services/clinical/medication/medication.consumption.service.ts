@@ -13,6 +13,7 @@ import { MedicationDto } from "../../../domain.types/clinical/medication/medicat
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
 import { MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from "../../../domain.types/clinical/medication/medication/medication.types";
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
+import { Loader } from "../../../startup/loader";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -391,6 +392,7 @@ export class MedicationConsumptionService {
     //#region Privates
 
     private parseDurationInHours = (duration: string): number => {
+        
         var durationInHours = 0;
         var tokens = duration.toLowerCase().split(":");
 
@@ -611,19 +613,19 @@ export class MedicationConsumptionService {
         var deviceListsStr = JSON.stringify(deviceList, null, 2);
         Logger.instance().log(`Sent medication reminders to following devices - ${deviceListsStr}`);
 
-        // var message = NotificationService.FormatMessage_notification_with_data(
-        //     'Upcoming medication',
-        //     'You have upcoming scheduled medication!',
-        //     {
-        //         ScheduleStart : medicationSchedule.TimeScheduleStart.toUTCString(),
-        //         ScheduleEnd   : medicationSchedule.TimeScheduleEnd.toUTCString(),
-        //         DrugName      : medicationSchedule.DrugName,
-        //         Details       : medicationSchedule.Details
-        //     }
-        // );
-        // for await (var device of deviceList) {
-        //     await NotificationService.SendMessage_device(device.Token, message);
-        // }
+        var message = Loader.notificationService.formatNotificationMessage(
+            'Upcoming medication',
+            'You have upcoming scheduled medication!',
+            {
+                ScheduleStart : medicationSchedule.TimeScheduleStart.toUTCString(),
+                ScheduleEnd   : medicationSchedule.TimeScheduleEnd.toUTCString(),
+                DrugName      : medicationSchedule.DrugName,
+                Details       : medicationSchedule.Details
+            }
+        );
+        for await (var device of deviceList) {
+            await Loader.notificationService.sendMessageToTopic(device.Token, message);
+        }
 
     }
 

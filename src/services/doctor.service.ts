@@ -1,20 +1,19 @@
-import { Loader } from '../startup/loader';
+import { inject, injectable } from 'tsyringe';
+import { ApiError } from '../common/api.error';
+import { IAddressRepo } from '../database/repository.interfaces/address.repo.interface';
 import { IDoctorRepo } from '../database/repository.interfaces/doctor.repo.interface';
-import { IUserRepo } from '../database/repository.interfaces/user.repo.interface';
+import { IOrganizationRepo } from '../database/repository.interfaces/organization.repo.interface';
+import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
+import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
 import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
-import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
-import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { injectable, inject } from 'tsyringe';
-import { ApiError } from '../common/api.error';
-import { Roles } from '../domain.types/role/role.types';
-import { DoctorStore } from '../modules/ehr/services/doctor.store';
-import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
-import { IAddressRepo } from '../database/repository.interfaces/address.repo.interface';
-import { IOrganizationRepo } from '../database/repository.interfaces/organization.repo.interface';
+import { IUserRepo } from '../database/repository.interfaces/user.repo.interface';
 import { DoctorDomainModel } from '../domain.types/doctor/doctor.domain.model';
 import { DoctorDetailsDto, DoctorDto } from '../domain.types/doctor/doctor.dto';
-import { DoctorSearchFilters, DoctorDetailsSearchResults, DoctorSearchResults } from '../domain.types/doctor/doctor.search.types';
+import { DoctorDetailsSearchResults, DoctorSearchFilters, DoctorSearchResults } from '../domain.types/doctor/doctor.search.types';
+import { Roles } from '../domain.types/role/role.types';
+import { DoctorStore } from '../modules/ehr/services/doctor.store';
+import { Loader } from '../startup/loader';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,8 +30,7 @@ export class DoctorService {
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IOtpRepo') private _otpRepo: IOtpRepo,
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
-        @inject('IOrganizationRepo') private _organizationRepo: IOrganizationRepo,
-        @inject('IMessagingService') private _messagingService: IMessagingService
+        @inject('IOrganizationRepo') private _organizationRepo: IOrganizationRepo
     ) {
         this._ehrDoctorStore = Loader.container.resolve(DoctorStore);
     }

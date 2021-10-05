@@ -1,24 +1,22 @@
 import express from 'express';
-import path from 'path';
 import fs from 'fs';
 import mime from 'mime';
-import AdmZip = require ('adm-zip');
-
+import path from 'path';
+import { Authenticator } from '../../auth/authenticator';
+import { Authorizer } from '../../auth/authorizer';
+import { ApiError } from '../../common/api.error';
 import { Helper } from '../../common/helper';
 import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
-import { Authorizer } from '../../auth/authorizer';
-import { Authenticator } from '../../auth/authenticator';
-import { PersonService } from '../../services/person.service';
-import { ApiError } from '../../common/api.error';
-import { FileResourceValidator } from '../validators/file.resource.validator';
-import { FileResourceService } from '../../services/file.resource.service';
-import { RoleService } from '../../services/role.service';
+import { TimeHelper } from '../../common/time.helper';
+import { FileResourceDetailsDto, FileResourceDto } from '../../domain.types/file.resource/file.resource.dto';
 import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
 import { DownloadDisposition, FileResourceMetadata } from '../../domain.types/file.resource/file.resource.types';
-import { TimeHelper } from '../../common/time.helper';
-import { FileResourceDto } from '../../domain.types/file.resource/file.resource.dto';
-import { FileResourceDetailsDto } from '../../domain.types/file.resource/file.resource.dto';
+import { FileResourceService } from '../../services/file.resource.service';
+import { PersonService } from '../../services/person.service';
+import { RoleService } from '../../services/role.service';
+import { Loader } from '../../startup/loader';
+import { FileResourceValidator } from '../validators/file.resource.validator';
+import AdmZip = require ('adm-zip');
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

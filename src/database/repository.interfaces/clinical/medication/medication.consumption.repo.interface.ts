@@ -25,10 +25,7 @@ export interface IMedicationConsumptionRepo {
 
     search(filters: MedicationConsumptionSearchFilters): Promise<MedicationConsumptionSearchResults>;
 
-    getSchedulesForDuration(
-        patientUserId: string,
-        durationHours: number,
-        when: string): Promise<MedicationConsumptionDto[]>;
+    getSchedulesForDuration(patientUserId: string, from: Date, to: Date): Promise<MedicationConsumptionDto[]>;
 
     getSchedulesForDay(patientUserId: string, date: Date): Promise<MedicationConsumptionDto[]>;
 

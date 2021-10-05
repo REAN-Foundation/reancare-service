@@ -17,7 +17,7 @@ export class MedicationConsumptionMapper {
         var overdueOnsetTime = TimeHelper.addDuration(
             consumption.TimeScheduleEnd,
             overdueOnsetDurationInHours,
-            DurationType.Hours);
+            DurationType.Hour);
         var pastOverdueOnset = TimeHelper.isAfter(new Date(), overdueOnsetTime);
         var beforeScheduledStart = TimeHelper.isBefore(new Date(), consumption.TimeScheduleStart);
 

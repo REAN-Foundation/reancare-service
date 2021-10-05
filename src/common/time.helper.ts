@@ -43,35 +43,35 @@ export class TimeHelper {
 
         var date_ = dayjs(date);
 
-        if (durationType === DurationType.Miliseconds) {
+        if (durationType === DurationType.Milisecond) {
             var newDate_ = date_.add(durationValue, 'milliseconds');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Seconds) {
+        if (durationType === DurationType.Second) {
             var newDate_ = date_.add(durationValue, 'seconds');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Minutes) {
+        if (durationType === DurationType.Minute) {
             var newDate_ = date_.add(durationValue, 'minutes');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Hours) {
+        if (durationType === DurationType.Hour) {
             var newDate_ = date_.add(durationValue, 'hours');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Days) {
+        if (durationType === DurationType.Day) {
             var newDate_ = date_.add(durationValue, 'days');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Weeks) {
+        if (durationType === DurationType.Week) {
             var newDate_ = date_.add(durationValue, 'weeks');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Months) {
+        if (durationType === DurationType.Month) {
             var newDate_ = date_.add(durationValue, 'months');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Years) {
+        if (durationType === DurationType.Year) {
             var newDate_ = date_.add(durationValue, 'years');
             return newDate_.toDate();
         }
@@ -82,35 +82,35 @@ export class TimeHelper {
 
         var date_ = dayjs(date);
 
-        if (durationType === DurationType.Miliseconds) {
+        if (durationType === DurationType.Milisecond) {
             var newDate_ = date_.subtract(durationValue, 'milliseconds');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Seconds) {
+        if (durationType === DurationType.Second) {
             var newDate_ = date_.subtract(durationValue, 'seconds');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Minutes) {
+        if (durationType === DurationType.Minute) {
             var newDate_ = date_.subtract(durationValue, 'minutes');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Hours) {
+        if (durationType === DurationType.Hour) {
             var newDate_ = date_.subtract(durationValue, 'hours');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Days) {
+        if (durationType === DurationType.Day) {
             var newDate_ = date_.subtract(durationValue, 'days');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Weeks) {
+        if (durationType === DurationType.Week) {
             var newDate_ = date_.subtract(durationValue, 'weeks');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Months) {
+        if (durationType === DurationType.Month) {
             var newDate_ = date_.subtract(durationValue, 'months');
             return newDate_.toDate();
         }
-        if (durationType === DurationType.Years) {
+        if (durationType === DurationType.Year) {
             var newDate_ = date_.subtract(durationValue, 'years');
             return newDate_.toDate();
         }
@@ -156,28 +156,28 @@ export class TimeHelper {
             }
         }
 
-        if (durationType === DurationType.Miliseconds) {
+        if (durationType === DurationType.Milisecond) {
             return durationInHours * 60 * 60 * 1000;
         }
-        if (durationType === DurationType.Seconds) {
+        if (durationType === DurationType.Second) {
             return durationInHours * 60 * 60;
         }
-        if (durationType === DurationType.Minutes) {
+        if (durationType === DurationType.Minute) {
             return durationInHours * 60;
         }
-        if (durationType === DurationType.Hours) {
+        if (durationType === DurationType.Hour) {
             return durationInHours;
         }
-        if (durationType === DurationType.Days) {
+        if (durationType === DurationType.Day) {
             return durationInHours / 24.0;
         }
-        if (durationType === DurationType.Weeks) {
+        if (durationType === DurationType.Week) {
             return durationInHours / (24.0 * 7);
         }
-        if (durationType === DurationType.Months) {
+        if (durationType === DurationType.Month) {
             return durationInHours / (24.0 * 30);
         }
-        if (durationType === DurationType.Years) {
+        if (durationType === DurationType.Year) {
             return durationInHours / (24.0 * 365);
         }
         return durationInHours;
@@ -220,28 +220,28 @@ export class TimeHelper {
             offsetMinutes = (offset_hours * 60) + offset_minutes;
         }
 
-        if (durationType === DurationType.Miliseconds) {
+        if (durationType === DurationType.Milisecond) {
             return offsetMinutes * 60 * 1000;
         }
-        if (durationType === DurationType.Seconds) {
+        if (durationType === DurationType.Second) {
             return offsetMinutes * 60 ;
         }
-        if (durationType === DurationType.Minutes) {
+        if (durationType === DurationType.Minute) {
             return offsetMinutes;
         }
-        if (durationType === DurationType.Hours) {
+        if (durationType === DurationType.Hour) {
             return offsetMinutes / 60.0;
         }
-        if (durationType === DurationType.Days) {
+        if (durationType === DurationType.Day) {
             return offsetMinutes / (24.0 * 60);
         }
-        if (durationType === DurationType.Weeks) {
+        if (durationType === DurationType.Week) {
             return offsetMinutes / (24.0 * 60 * 7);
         }
-        if (durationType === DurationType.Months) {
+        if (durationType === DurationType.Month) {
             return offsetMinutes / (24.0 * 60 * 30);
         }
-        if (durationType === DurationType.Years) {
+        if (durationType === DurationType.Year) {
             return offsetMinutes / (24.0 * 60 * 365);
         }
         return offsetMinutes;
@@ -255,6 +255,90 @@ export class TimeHelper {
 
     static format = (date: Date, formatTemplate: string): string => {
         return dayjs(date).format(formatTemplate);
+    }
+
+    static startOf = (date: Date, durationType: DurationType): Date => {
+
+        if (durationType === DurationType.Second) {
+            return dayjs(date)
+                .startOf('second')
+                .toDate();
+        }
+        if (durationType === DurationType.Minute) {
+            return dayjs(date)
+                .startOf('minute')
+                .toDate();
+        }
+        if (durationType === DurationType.Hour) {
+            return dayjs(date)
+                .startOf('hour')
+                .toDate();
+        }
+        if (durationType === DurationType.Day) {
+            return dayjs(date)
+                .startOf('day')
+                .toDate();
+        }
+        if (durationType === DurationType.Week) {
+            return dayjs(date)
+                .startOf('week')
+                .toDate();
+        }
+        if (durationType === DurationType.Month) {
+            return dayjs(date)
+                .startOf('month')
+                .toDate();
+        }
+        if (durationType === DurationType.Year) {
+            return dayjs(date)
+                .startOf('year')
+                .toDate();
+        }
+        return date;
+    }
+
+    static endOf = (date: Date, durationType: DurationType): Date => {
+
+        if (durationType === DurationType.Second) {
+            return dayjs(date)
+                .endOf('second')
+                .toDate();
+        }
+        if (durationType === DurationType.Minute) {
+            return dayjs(date)
+                .endOf('minute')
+                .toDate();
+        }
+        if (durationType === DurationType.Hour) {
+            return dayjs(date)
+                .endOf('hour')
+                .toDate();
+        }
+        if (durationType === DurationType.Day) {
+            return dayjs(date)
+                .endOf('day')
+                .toDate();
+        }
+        if (durationType === DurationType.Week) {
+            return dayjs(date)
+                .endOf('week')
+                .toDate();
+        }
+        if (durationType === DurationType.Month) {
+            return dayjs(date)
+                .endOf('month')
+                .toDate();
+        }
+        if (durationType === DurationType.Year) {
+            return dayjs(date)
+                .endOf('year')
+                .toDate();
+        }
+        return date;
+    }
+
+    static daysInMonthContainingDate = (date: Date): number => {
+        return dayjs(date).daysInMonth();
     }
 
 }

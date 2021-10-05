@@ -42,7 +42,7 @@ export interface StatusSummaryDto {
 export interface SummarizedScheduleDto {
     Drug?          : string;
     SummaryForDrug?: StatusSummaryDto;
-    Schedule?      : MedicationConsumptionDto[];
+    Schedules?     : MedicationConsumptionDto[];
 }
 
 export interface SchedulesForDayDto {
@@ -57,5 +57,6 @@ export interface SummaryForDayDto {
 
 export interface SummaryForMonthDto {
     Month?          : string;
-    SummaryForMonth?: SummarizedScheduleDto;
+    DaysInMonth?    : number,
+    SummaryForMonth?: SummarizedScheduleDto[];
 }

@@ -303,7 +303,7 @@ export class FileResourceService {
             var cleanupBeforeInMinutes = ConfigurationManager.TemporaryFolderCleanupBefore();
             
             var cleanupBefore = TimeHelper.subtractDuration(
-                new Date(), cleanupBeforeInMinutes, DurationType.Minutes);
+                new Date(), cleanupBeforeInMinutes, DurationType.Minute);
 
             var directories = getDirectories(parentFolder);
     

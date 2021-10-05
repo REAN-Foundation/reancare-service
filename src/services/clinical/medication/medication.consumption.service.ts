@@ -54,15 +54,15 @@ export class MedicationConsumptionService {
         var i = 0;
         while (i < days) {
 
-            var day = TimeHelper.addDuration(startDate, i, DurationType.Days);
+            var day = TimeHelper.addDuration(startDate, i, DurationType.Day);
 
             for (var j = 0; j < scheduleTimings.length; j++) {
 
                 var details = this.getMedicationDetails(dose, dosageUnit, scheduleTimings[j].schedule);
                 var start_minutes = scheduleTimings[j].start;
                 var end_minutes = scheduleTimings[j].end;
-                var start = TimeHelper.addDuration(day, start_minutes, DurationType.Minutes);
-                var end = TimeHelper.addDuration(day, end_minutes, DurationType.Minutes);
+                var start = TimeHelper.addDuration(day, start_minutes, DurationType.Minute);
+                var end = TimeHelper.addDuration(day, end_minutes, DurationType.Minute);
 
                 var domainModel: MedicationConsumptionDomainModel = {
                     PatientUserId     : medication.PatientUserId,
@@ -238,8 +238,44 @@ export class MedicationConsumptionService {
 
     getScheduleForDuration = async (patientUserId: string, duration: string, when: string)
         : Promise<MedicationConsumptionDto[]> => {
-        var hours: number = this.parseDurationInHours(duration);
-        return await this._medicationConsumptionRepo.getSchedulesForDuration(patientUserId, hours, when);
+            
+        var durationInHours: number = this.parseDurationInHours(duration);
+
+        try {
+    
+            var dtos: MedicationConsumptionDto[] = [];
+    
+            if (when === 'past') {
+                var from = TimeHelper.subtractDuration(new Date(), durationInHours, DurationType.Hour);
+                dtos = await this._medicationConsumptionRepo.getSchedulesForDuration(patientUserId, from, new Date());
+            }
+            if (when === 'future') {
+                var to = TimeHelper.addDuration(new Date(), durationInHours, DurationType.Hour);
+                dtos = await this._medicationConsumptionRepo.getSchedulesForDuration(patientUserId, new Date(), to);
+            }
+            if (when === 'current') {
+                var currentDurationSlotHrs = 2;
+                var from = TimeHelper.subtractDuration(new Date(), currentDurationSlotHrs, DurationType.Hour);
+                var to = TimeHelper.addDuration(new Date(), currentDurationSlotHrs, DurationType.Hour);
+                dtos = await this._medicationConsumptionRepo.getSchedulesForDuration(patientUserId, from, to);
+            }
+
+            var fn = (a: MedicationConsumptionDto, b: MedicationConsumptionDto): any => {
+                return a.TimeScheduleStart.getTime() - b.TimeScheduleStart.getTime();
+            };
+            if (when === 'past') {
+                fn = (a, b) => {
+                    return b.TimeScheduleStart.getTime() - a.TimeScheduleStart.getTime();
+                };
+            }
+            dtos.sort(fn);
+            return dtos;
+    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    
     };
 
     getSchedulesForDay = async (patientUserId: string, date: Date)
@@ -277,59 +313,34 @@ export class MedicationConsumptionService {
         }
         
         //Get summary of last 6 months
-        var summaryByMonth = [];
+        var consumptionSummaryForMonths = [];
 
         for (var i = 0; i < 6; i++) {
 
-            var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Months);
-            var str = TimeHelper.format(date, 'YYYY-MM');
+            var date = TimeHelper.subtractDuration(new Date(), i, DurationType.Month);
+            var startOfMonth = TimeHelper.startOf(date, DurationType.Month);
+            var endOfMonth = TimeHelper.endOf(date, DurationType.Month);
+            var monthName = TimeHelper.format(date, 'MMMM, YYYY');
+            var daysInMonth = TimeHelper.daysInMonthContainingDate(date);
 
-            var str = moment().subtract(i, "month")
-                .startOf("month")
-                .format('YYYY-MM');
-                
-            var monthName = moment().subtract(i, "month")
-                .startOf("month")
-                .format('MMMM, YYYY');
-            var daysInMonth = moment(str, "YYYY-MM").daysInMonth();
-
-            var medConsumptionsForMonth = await GetMedicationsForCalendarMonth(str, daysInMonth, patientUserId);
-            var fn = (a, b) => { return new Date(a.TimeScheduleStart) - new Date(b.TimeScheduleStart); };
+            // var str = TimeHelper.format(date, 'YYYY-MM');
+            
+            var medConsumptionsForMonth =
+                await this._medicationConsumptionRepo.getSchedulesForDuration(patientUserId, startOfMonth, endOfMonth);
+            var fn = (a, b) => {
+                return a.TimeScheduleStart.getTime() - b.TimeScheduleStart.getTime();
+            };
             medConsumptionsForMonth.sort(fn);
 
-            // for (var d = 1; d <= daysInMonth; d++) {
-            //     var dateStr = str + '-' + String(d).padStart(2, '0');
-            //     var date = moment(dateStr).toDate();
-            //     var meds = await this.GetMedicationScheduleForDay(patientUserId, date);
-            //     medsForMonth.push(...meds);
-            // }
-
-            var listByDrugName = {};
-            for (var k = 0; k < medConsumptionsForMonth.length; k++) {
-                var drug = medConsumptionsForMonth[k].DrugName;
-                if (!listByDrugName[drug]) {
-                    listByDrugName[drug] = [];
-                }
-                listByDrugName[drug].push(medConsumptionsForMonth[k]);
-            }
-            var drugs = Object.keys(listByDrugName);
-            var summaryByDrug = [];
-            for (var drug of drugs) {
-                var summary = GetSummary(listByDrugName[drug]);
-                summaryByDrug.push({
-                    Drug        : drug,
-                    DrugSummary : summary,
-                    Schedule    : listByDrugName[drug]
-                }
-                );
-            }
-            summaryByMonth.push({
+            var classified = this.classifyByDrugs(medConsumptionsForMonth);
+            var summaryForMonth: SummaryForMonthDto = {
                 Month           : monthName,
-                SummaryForMonth : summaryByDrug
-            });
-
+                DaysInMonth     : daysInMonth,
+                SummaryForMonth : classified
+            };
+            consumptionSummaryForMonths.push(summaryForMonth);
         }
-        return summaryByMonth;
+        return consumptionSummaryForMonths;
     };
 
     // private async completeAssociatedTask(medConsumption: MedicationConsumptionDetailsDto) {
@@ -533,7 +544,7 @@ export class MedicationConsumptionService {
             var summarizedSchedule : SummarizedScheduleDto = {
                 Drug           : drug,
                 SummaryForDrug : summary,
-                Schedule       : consumptions
+                Schedules      : consumptions
             };
             arrangedByDrugList.push(summarizedSchedule);
         }

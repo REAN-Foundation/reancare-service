@@ -235,7 +235,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         try {
             
             var dayStart = date;
-            var dayEnd = TimeHelper.addDuration(dayStart, 24, DurationType.Hours);
+            var dayEnd = TimeHelper.addDuration(dayStart, 24, DurationType.Hour);
     
             var search = {
                 PatientUserId     : patientUserId,
@@ -251,10 +251,10 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             });
     
             var dtos = entities.map(x => MedicationConsumptionMapper.toDto(x));
-    
-            var fn = (a, b) => { return new Date(a.TimeScheduleStart) - new Date(b.TimeScheduleStart); };
+            var fn = (a, b) => {
+                return a.TimeScheduleStart.getTime() - b.TimeScheduleStart.getTime();
+            };
             dtos.sort(fn);
-    
             return dtos;
 
         } catch (error) {
@@ -263,67 +263,22 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     }
 
-    getSchedulesForDuration = async (patientUserId: string, durationInHours: number, when: string)
+    getSchedulesForDuration = async (patientUserId: string, from: Date, to: Date)
     : Promise<MedicationConsumptionDto[]> => {
         try {
    
-            var search = {};
-    
-            if (when === 'past') {
-                var from = TimeHelper.subtractDuration(new Date(), durationInHours, DurationType.Hours);
-                search = {
+            const entities = await MedicationConsumption.findAll({
+                where : {
                     PatientUserId     : patientUserId,
                     TimeScheduleStart : {
-                        [Op.lte] : Date.now(),
+                        [Op.lte] : to,
                         [Op.gte] : from
                     },
                     IsCancelled : false
-                };
-            }
-            if (when === 'future') {
-                var to = TimeHelper.addDuration(new Date(), durationInHours, DurationType.Hours);
-                search = {
-                    PatientUserId     : patientUserId,
-                    TimeScheduleStart : {
-                        [Op.gte] : Date.now(),
-                        [Op.lte] : to
-                    },
-                    IsCancelled : false
-                };
-            }
-            if (when === 'current') {
-
-                var currentDurationSlotHrs = 2;
-                var from = TimeHelper.subtractDuration(new Date(), currentDurationSlotHrs, DurationType.Hours);
-                var to = TimeHelper.addDuration(new Date(), currentDurationSlotHrs, DurationType.Hours);
-
-                search = {
-                    PatientUserId     : patientUserId,
-                    TimeScheduleStart : {
-                        [Op.gte] : from,
-                        [Op.lte] : to
-                    },
-                    IsCancelled : false
-                };
-            }
-    
-            const entities = await MedicationConsumption.findAll({
-                where : search
+                }
             });
-    
-            var dtos = entities.map(x => MedicationConsumptionMapper.toDto(x));
-
-            var fn = (a: MedicationConsumptionDto, b: MedicationConsumptionDto): any => {
-                return a.TimeScheduleStart - b.TimeScheduleStart;
-            };
-            if (when === 'past') {
-                fn = (a, b) => {
-                    return b.TimeScheduleStart - a.TimeScheduleStart;
-                };
-            }
-            dtos.sort(fn);
-    
-            return dtos;
+            
+            return entities.map(x => MedicationConsumptionMapper.toDto(x));
     
         } catch (error) {
             Logger.instance().log(error.message);

@@ -67,7 +67,16 @@ export class FileResourceService {
         if (!exists) {
             Logger.instance().log('Source file location does not exist!');
         }
-        var storageKey = await this._storageService.upload(storageLocation, sourceLocation);
+        
+        var storageKey:string = null;
+        var existingStorageKey = await this._storageService.exists(storageLocation);
+        if (existingStorageKey !== undefined && existingStorageKey !== null) {
+            storageKey = existingStorageKey;
+        }
+        else {
+            storageKey = await this._storageService.upload(storageLocation, sourceLocation);
+        }
+
         var stats = fs.statSync(sourceLocation);
         var filename = path.basename(sourceLocation);
         

@@ -9,6 +9,25 @@ export class AWSS3FileStorageService implements IFileStorageService {
 
     //#region Publics
 
+    exists = async (storageKey: string): Promise<string> => {
+        try {
+            const s3 = this.getS3Client();
+            const params = {
+                Bucket : process.env.RESOURCES_S3_BUCKET_NAME,
+                Key    : storageKey,
+            };
+            var stored = await s3.headObject(params).promise();
+
+            Logger.instance().log(JSON.stringify(stored, null, 2));
+
+            return storageKey;
+        }
+        catch (error) {
+            Logger.instance().log(JSON.stringify(error, null, 2));
+            return null;
+        }
+    }
+    
     upload = async (storageKey: string, localFilePath?: string): Promise<string> => {
 
         try {

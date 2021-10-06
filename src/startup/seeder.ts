@@ -397,31 +397,33 @@ export class Seeder {
         const arr = SeededSymptomTypes['default'];
 
         for (let i = 0; i < arr.length; i++) {
-            var t = arr[i];
-            var tokens = t['Tags'] ? t['Tags'].split(',') : [];
-
-            //TODO: Commented till storage is enabled
-            //var imageName = t['Image'] ? t['Image'] : null;
-            //var resourceId = await this.getImageResourceIdForSymptomType(imageName);
-            var resourceId = null;
+            var symptomType = arr[i];
+            var tokens = symptomType['Tags'] ? symptomType['Tags'].split(',') : [];
+            var imageName = symptomType['Image'] ? symptomType['Image'] : null;
+            var resourceId = await this.getImageResourceIdForSymptomType(imageName);
 
             const model: SymptomTypeDomainModel = {
-                Symptom         : t['Symptom'],
-                Description     : t['Description'],
+                Symptom         : symptomType['Symptom'],
+                Description     : symptomType['Description'],
                 Tags            : tokens,
                 ImageResourceId : resourceId
             };
             await this._symptomTypeService.create(model);
         }
     }
-    
+
     getImageResourceIdForSymptomType = async (fileName) => {
         if (fileName === null) {
             return null;
         }
-        var storagePath = 'assets/images/symptom_images/' + fileName;
+        var storagePath = 'assets/images/symptom.images/' + fileName;
         var sourceFileLocation = path.join(process.cwd(), "./assets/images/symptom.images/", fileName);
-        var uploaded = await this._fileResourceService.uploadLocal(sourceFileLocation, storagePath, true);
+        
+        var uploaded = await this._fileResourceService.uploadLocal(
+            sourceFileLocation,
+            storagePath,
+            true);
+
         return uploaded.id;
     }
 

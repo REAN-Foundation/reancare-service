@@ -7,7 +7,7 @@ import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
 import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
 import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
-import { IUserRepo } from '../database/repository.interfaces/user.repo.interface';
+import { IUserRepo } from '../database/repository.interfaces/user/user.repo.interface';
 import { DoctorDomainModel } from '../domain.types/doctor/doctor.domain.model';
 import { DoctorDetailsDto, DoctorDto } from '../domain.types/doctor/doctor.dto';
 import { DoctorDetailsSearchResults, DoctorSearchFilters, DoctorSearchResults } from '../domain.types/doctor/doctor.search.types';

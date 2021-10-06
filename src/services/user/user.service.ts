@@ -10,7 +10,7 @@ import { IOtpRepo } from '../../database/repository.interfaces/otp.repo.interfac
 import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
 import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
-import { IUserRepo } from '../../database/repository.interfaces/user.repo.interface';
+import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { OtpPersistenceEntity } from '../../domain.types/otp/otp.domain.types';
@@ -184,7 +184,7 @@ export class UserService {
             UserName      : user.UserName,
             CurrentRoleId : loginModel.LoginRoleId,
         };
-        const accessToken = Loader.authorizer.generateUserSessionToken(currentUser);
+        const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
 
         return { user: user, accessToken: accessToken };
     };

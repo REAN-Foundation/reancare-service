@@ -1,6 +1,6 @@
 import express from 'express';
-import { BodyTemperatureController } from '../../../controllers/clinical/biometrics/body.temperature.controller';
 import { Loader } from '../../../../startup/loader';
+import { BodyTemperatureController } from '../../../controllers/clinical/biometrics/body.temperature.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -16,5 +16,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 
-    app.use('/api/v1/biometrics/body-temperature', router);
+    app.use('/api/v1/clinical/biometrics/body-temperatures', router);
 };

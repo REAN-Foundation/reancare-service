@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import express from 'express';
-import { UserDeviceDetailsController } from '../controllers/user.device.details.controller ';
-import { Loader } from '../../startup/loader';
+import { UserDeviceDetailsController } from '../../controllers/user/user.device.details.controller ';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

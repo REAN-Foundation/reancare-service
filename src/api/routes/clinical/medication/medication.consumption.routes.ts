@@ -25,5 +25,5 @@ export const register = (app: express.Application): void => {
     router.get('/summary-for-calendar-months/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getSummaryByCalendarMonths);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
 
-    app.use('/api/v1/medication-consumptions', router);
+    app.use('/api/v1/clinical/medication-consumptions', router);
 };

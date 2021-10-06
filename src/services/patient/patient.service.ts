@@ -1,6 +1,6 @@
 import { Loader } from '../../startup/loader';
 import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
-import { IUserRepo } from '../../database/repository.interfaces/user.repo.interface';
+import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
 import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
 import { IAddressRepo } from '../../database/repository.interfaces/address.repo.interface';

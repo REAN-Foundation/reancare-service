@@ -1,11 +1,11 @@
-import { ApiError } from '../../../../common/api.error';
-import { Logger } from '../../../../common/logger';
-import { UserDeviceDetailsDomainModel } from "../../../../domain.types/user/user.device.details/user.device.domain.model";
-import { UserDeviceDetailsDto } from "../../../../domain.types/user/user.device.details/user.device.dto";
-import { UserDeviceDetailsSearchFilters, UserDeviceDetailsSearchResults } from "../../../../domain.types/user/user.device.details/user.device.search.types";
-import { IUserDeviceDetailsRepo } from '../../../repository.interfaces/user.device.details.repo.interface ';
-import { UserDeviceDetailsMapper } from '../mappers/user.device.details.mapper';
-import UserDeviceDetailsModel from '../models/user/user.device.details.model';
+import { ApiError } from '../../../../../common/api.error';
+import { Logger } from '../../../../../common/logger';
+import { UserDeviceDetailsDomainModel } from "../../../../../domain.types/user/user.device.details/user.device.domain.model";
+import { UserDeviceDetailsDto } from "../../../../../domain.types/user/user.device.details/user.device.dto";
+import { UserDeviceDetailsSearchFilters, UserDeviceDetailsSearchResults } from "../../../../../domain.types/user/user.device.details/user.device.search.types";
+import { IUserDeviceDetailsRepo } from '../../../../repository.interfaces/user/user.device.details.repo.interface ';
+import { UserDeviceDetailsMapper } from '../../mappers/user/user.device.details.mapper';
+import UserDeviceDetailsModel from '../../models/user/user.device.details.model';
 
 ///////////////////////////////////////////////////////////////////////
 

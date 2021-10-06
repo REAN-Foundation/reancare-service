@@ -1,10 +1,10 @@
 export enum ClinicalValidationStatus {
     Preliminary = 'Preliminary',
-    Confirmed = 'Confirmed',
-    Amended = 'Amended',
-    Negated = 'Negated',
-    Probable = 'Probable',
-    Unknown = 'Unknown'
+    Confirmed   = 'Confirmed',
+    Amended     = 'Amended',
+    Negated     = 'Negated',
+    Probable    = 'Probable',
+    Unknown     = 'Unknown'
 }
 
 export const ClinicalValidationStatusList: ClinicalValidationStatus[] = [
@@ -17,23 +17,23 @@ export const ClinicalValidationStatusList: ClinicalValidationStatus[] = [
 ];
 
 export enum ClinicalInterpretation {
-    Normal = 'Normal',
-    Abnormal = 'Abnormal',
-    CriticallyAbnormal = 'Critically abnormal',
-    Negative = 'Negative',
-    Positive = 'Positive',
-    CriticallyLow = 'Critically low',
-    Low = 'Low',
-    High = 'High',
-    CriticallyHigh = 'Critically high',
-    VerySusceptible = 'Very susceptible',
-    Susceptible = 'Susceptible',
-    Intermediate = 'Intermediate',
-    Resistant = 'Resistant',
+    Normal                = 'Normal',
+    Abnormal              = 'Abnormal',
+    CriticallyAbnormal    = 'Critically abnormal',
+    Negative              = 'Negative',
+    Positive              = 'Positive',
+    CriticallyLow         = 'Critically low',
+    Low                   = 'Low',
+    High                  = 'High',
+    CriticallyHigh        = 'Critically high',
+    VerySusceptible       = 'Very susceptible',
+    Susceptible           = 'Susceptible',
+    Intermediate          = 'Intermediate',
+    Resistant             = 'Resistant',
     SignificantChangeDown = 'Significant change down',
-    SignificantChangeUp = 'Significant change up',
-    OffScaleLow = 'Off scale low',
-    OffScaleHigh = 'Off scale high'
+    SignificantChangeUp   = 'Significant change up',
+    OffScaleLow           = 'Off scale low',
+    OffScaleHigh          = 'Off scale high'
 }
 
 export const ClinicalInterpretationList: ClinicalInterpretation[] = [
@@ -54,4 +54,19 @@ export const ClinicalInterpretationList: ClinicalInterpretation[] = [
     ClinicalInterpretation.SignificantChangeUp,
     ClinicalInterpretation.OffScaleLow,
     ClinicalInterpretation.OffScaleHigh,
+];
+
+//Visit/Encounter types
+export enum VisitType {
+    DoctorVisit = 'Doctor visit',
+    LabVisit    = 'Lab visit',
+    TeleVisit   = 'Tele visit',
+    Unknown     = 'Unknown'
+}
+
+export const VisitTypeList: VisitType[] = [
+    VisitType.DoctorVisit,
+    VisitType.LabVisit,
+    VisitType.TeleVisit,
+    VisitType.Unknown
 ];

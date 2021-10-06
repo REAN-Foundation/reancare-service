@@ -7,6 +7,7 @@ import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { ConsumptionSummaryDto } from '../../../../domain.types/clinical/medication/medication/medication.dto';
+import { MedicationAdministrationRoutesList, MedicationDosageUnitsList, MedicationDurationUnitsList, MedicationFrequencyUnitsList, MedicationTimeSchedulesList } from '../../../../domain.types/clinical/medication/medication/medication.types';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
@@ -49,6 +50,61 @@ export class MedicationController {
     //#endregion
 
     //#region Action methods
+
+    getTimeSchedules = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            ResponseHandler.success(request, response, 'Medication time schedules retrieved successfully!', 200, {
+                MedicationTimeSchedules : MedicationTimeSchedulesList,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getFrequencyUnits = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            ResponseHandler.success(request, response, 'Medication frequency units retrieved successfully!', 200, {
+                MedicationFrequencyUnits : MedicationFrequencyUnitsList,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getDosageUnits = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            ResponseHandler.success(request, response, 'Medication dosage units retrieved successfully!', 200, {
+                MedicationDosageUnits : MedicationDosageUnitsList,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getDurationUnits = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            ResponseHandler.success(request, response, 'Medication duration units retrieved successfully!', 200, {
+                MedicationDurationUnits : MedicationDurationUnitsList,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getAdministrationRoutes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            ResponseHandler.success(request, response, 'Medication administration routes retrieved successfully!', 200, {
+                MedicationAdministrationRoutes : MedicationAdministrationRoutesList,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

@@ -32,8 +32,8 @@ import { register as registerPatientHealthProfileRoutes } from './patient/health
 import { register as registerPatientRoutes } from "./patient/patient.routes";
 import { register as registerPersonRoutes } from './person.routes';
 import { register as registerTypesRoutes } from './types.routes';
-import { register as registerUserDeviceDetailsRoutes } from './user.device.details.routes';
-import { register as registerUserRoutes } from "./user.routes";
+import { register as registerUserDeviceDetailsRoutes } from './user/user.device.details.routes';
+import { register as registerUserRoutes } from "./user/user.routes";
 import { register as registerCalorieBalanceRoute } from './wellness/daily.records/calorie.balance.routes';
 import { register as registerHeartPointRoutes } from './wellness/daily.records/heart.points.routes';
 import { register as registerMoveMinutesRoutes } from './wellness/daily.records/move.minutes.routes';

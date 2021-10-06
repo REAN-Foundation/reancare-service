@@ -1,6 +1,6 @@
 import express from 'express';
-import { FileResourceController } from '../controllers/file.resource.controller';
 import { Loader } from '../../startup/loader';
+import { FileResourceController } from '../controllers/file.resource.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

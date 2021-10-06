@@ -16,5 +16,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
     
-    app.use('/api/v1/symptoms/how-do.you-feel', router);
+    app.use('/api/v1/clinical/symptoms/how-do.you-feel', router);
 };

@@ -5,7 +5,7 @@ import { TimeHelper } from "../../../common/time.helper";
 import { IMedicationConsumptionRepo } from "../../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface";
 import { IMedicationRepo } from "../../../database/repository.interfaces/clinical/medication/medication.repo.interface";
 import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
-import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/user.device.details.repo.interface ";
+import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/user/user.device.details.repo.interface ";
 import { MedicationConsumptionDomainModel } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
 import { MedicationConsumptionCreateSummaryDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionStatus } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types";

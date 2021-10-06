@@ -1,6 +1,6 @@
 import express from 'express';
-import { SymptomAssessmentController } from '../../../controllers/clinical/symptom/symptom.assessment.controller';
 import { Loader } from '../../../../startup/loader';
+import { SymptomAssessmentController } from '../../../controllers/clinical/symptom/symptom.assessment.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

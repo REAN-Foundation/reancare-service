@@ -4,7 +4,7 @@ import { IDiagnosisRepo } from '../../database/repository.interfaces/clinical/di
 import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
 import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
 import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
-import { IUserRepo } from '../../database/repository.interfaces/user.repo.interface';
+import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
 import { DiagnosisDomainModel } from '../../domain.types/clinical/diagnosis/diagnosis.domain.model';
 import { DiagnosisDto } from '../../domain.types/clinical/diagnosis/diagnosis.dto';
 import { DiagnosisSearchFilters, DiagnosisSearchResults } from '../../domain.types/clinical/diagnosis/diagnosis.search.types';

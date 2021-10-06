@@ -1,11 +1,11 @@
 import express from 'express';
-import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
-import { ApiError } from '../../common/api.error';
-import { UserDeviceDetailsService } from '../../services/user/user.device.details.service';
-import { Authorizer } from '../../auth/authorizer';
-import { UserDeviceDetailsValidator } from '../validators/user.device.details.validator';
-import { Helper } from '../../common/helper';
+import { Authorizer } from '../../../auth/authorizer';
+import { ApiError } from '../../../common/api.error';
+import { Helper } from '../../../common/helper';
+import { ResponseHandler } from '../../../common/response.handler';
+import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
+import { Loader } from '../../../startup/loader';
+import { UserDeviceDetailsValidator } from '../../validators/user.device.details.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

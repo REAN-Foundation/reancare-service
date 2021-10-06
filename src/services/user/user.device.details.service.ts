@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { IUserDeviceDetailsRepo } from "../../database/repository.interfaces/user.device.details.repo.interface ";
+import { IUserDeviceDetailsRepo } from "../../database/repository.interfaces/user/user.device.details.repo.interface ";
 import { UserDeviceDetailsDomainModel } from '../../domain.types/user/user.device.details/user.device.domain.model';
 import { UserDeviceDetailsDto } from '../../domain.types/user/user.device.details/user.device.dto';
 import { UserDeviceDetailsSearchResults, UserDeviceDetailsSearchFilters } from '../../domain.types/user/user.device.details/user.device.search.types';

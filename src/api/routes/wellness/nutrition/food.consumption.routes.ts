@@ -18,5 +18,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 
-    app.use('/api/v1/nutrition/food-consumption', router);
+    app.use('/api/v1/wellness/nutrition/food-consumptions', router);
 };

@@ -4,7 +4,7 @@ import { IOrganizationRepo } from "../database/repository.interfaces/organizatio
 import { OrganizationDomainModel } from '../domain.types/organization/organization.domain.model';
 import { OrganizationDto } from '../domain.types/organization/organization.dto';
 import { OrganizationSearchFilters, OrganizationSearchResults } from '../domain.types/organization/organization.search.types';
-import { IUserRepo } from '../database/repository.interfaces/user.repo.interface';
+import { IUserRepo } from '../database/repository.interfaces/user/user.repo.interface';
 import { IAddressRepo } from '../database/repository.interfaces/address.repo.interface';
 import { PersonDto } from "../domain.types/person/person.dto";
 import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";

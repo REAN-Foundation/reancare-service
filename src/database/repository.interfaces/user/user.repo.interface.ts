@@ -1,5 +1,5 @@
-import { UserDomainModel } from '../../domain.types/user/user/user.domain.model';
-import { UserDetailsDto } from '../../domain.types/user/user/user.dto';
+import { UserDomainModel } from '../../../domain.types/user/user/user.domain.model';
+import { UserDetailsDto } from '../../../domain.types/user/user/user.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,16 +1,15 @@
 import express from 'express';
-
+import { Authorizer } from '../../../auth/authorizer';
+import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { Authorizer } from '../../../auth/authorizer';
-import { PersonService } from '../../../services/person.service';
-
-import { ApiError } from '../../../common/api.error';
-import { PatientAllergyValidator } from '../../validators/clinical/allergy.validator';
+import { AllergenCategoriesList, AllergenExposureRoutesList } from '../../../domain.types/clinical/allergy/allergy.types';
 import { AllergyService } from '../../../services/clinical/allergy.service';
+import { PersonService } from '../../../services/person.service';
 import { RoleService } from '../../../services/role.service';
 import { UserService } from '../../../services/user/user.service';
+import { Loader } from '../../../startup/loader';
+import { PatientAllergyValidator } from '../../validators/clinical/allergy.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,6 +38,28 @@ export class PatientAllergyController {
     //#endregion
 
     //#region Action methods
+    
+    getAllergenCategories = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            ResponseHandler.success(request, response, 'Allergen categories retrieved successfully!', 200, {
+                AllergenCategories : AllergenCategoriesList,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getAllergenExposureRoutes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            ResponseHandler.success(request, response, 'Allergen exposure routes retrieved successfully!', 200, {
+                AllergenExposureRoutes : AllergenExposureRoutesList,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

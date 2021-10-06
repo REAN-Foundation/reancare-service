@@ -12,7 +12,7 @@ import { IPersonRepo } from "../database/repository.interfaces/person.repo.inter
 import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
 import { IRolePrivilegeRepo } from "../database/repository.interfaces/role.privilege.repo.interface";
 import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
-import { IUserRepo } from "../database/repository.interfaces/user.repo.interface";
+import { IUserRepo } from "../database/repository.interfaces/user/user.repo.interface";
 import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
 import { MedicationStockImageDomainModel } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
 import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model";

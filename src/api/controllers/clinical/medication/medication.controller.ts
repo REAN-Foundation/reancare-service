@@ -295,7 +295,7 @@ export class MedicationController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const imageId: string = await MedicationValidator.getParamImageId(request);
+            const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {
                 throw new ApiError(404, 'Medication stock image not found.');
@@ -314,7 +314,7 @@ export class MedicationController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const imageId: string = await MedicationValidator.getParamImageId(request);
+            const imageId: number = await MedicationValidator.getParamImageId(request);
             const image: MedicationStockImageDto = await this._service.getStockMedicationImageById(imageId);
             if (image == null) {
                 throw new ApiError(404, 'Medication stock image not found.');

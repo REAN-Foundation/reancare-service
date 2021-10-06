@@ -1,11 +1,11 @@
 import express from 'express';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
-import { ApiError } from '../../../../common/api.error';
-import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { Authorizer } from '../../../../auth/authorizer';
-import { DrugValidator } from '../../../validators/clinical/medication/drug.validator';
+import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
+import { ResponseHandler } from '../../../../common/response.handler';
+import { DrugService } from '../../../../services/clinical/medication/drug.service';
+import { Loader } from '../../../../startup/loader';
+import { DrugValidator } from '../../../validators/clinical/medication/drug.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

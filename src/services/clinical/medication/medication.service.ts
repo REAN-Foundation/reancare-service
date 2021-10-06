@@ -70,7 +70,7 @@ export class MedicationService {
         return await this._medicationStockImageRepo.getAll();
     }
 
-    getStockMedicationImageById = async(imageId: string): Promise<MedicationStockImageDto> => {
+    getStockMedicationImageById = async(imageId: number): Promise<MedicationStockImageDto> => {
         return await this._medicationStockImageRepo.getById(imageId);
     }
 

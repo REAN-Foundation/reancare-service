@@ -5,7 +5,7 @@ export interface IMedicationStockImageRepo {
 
     create(addressDomainModel: MedicationStockImageDomainModel): Promise<MedicationStockImageDto>;
 
-    getById(id: string): Promise<MedicationStockImageDto>;
+    getById(id: number): Promise<MedicationStockImageDto>;
 
     getByCode(id: string): Promise<MedicationStockImageDto>;
 

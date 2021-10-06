@@ -27,7 +27,7 @@ export class MedicationStockImageRepo implements IMedicationStockImageRepo {
         }
     };
 
-    getById = async (id: string): Promise<MedicationStockImageDto> => {
+    getById = async (id: number): Promise<MedicationStockImageDto> => {
         try {
             const stockImage = await MedicationStockImage.findByPk(id);
             const dto = await MedicationStockImageMapper.toDto(stockImage);

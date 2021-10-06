@@ -767,13 +767,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{BASE_URL}}/types/organizations",
+							"raw": "{{BASE_URL}}/types/organization-types",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"types",
-								"organizations"
+								"organization-types"
 							]
 						}
 					},
@@ -1422,7 +1422,7 @@
 											"listen": "prerequest",
 											"script": {
 												"exec": [
-													"pm.environment.set(\"PHONE\", \"+91-1234567890\");\r",
+													"pm.environment.set(\"PHONE\", \"+91-9970155165\");\r",
 													""
 												],
 												"type": "text/javascript"
@@ -1467,7 +1467,16 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													""
+													"try {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.environment.set(\"PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+													"    pm.environment.set(\"PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+													"    pm.environment.set(\"PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+													"    pm.environment.set(\"PERSON_ID_1\", jsonRes.Data.Patient.User.Person.id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}"
 												],
 												"type": "text/javascript"
 											}
@@ -1563,7 +1572,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"Phone\": \"{{PHONE}}\",\r\n    \"Otp\": \"169943\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
+											"raw": "{\r\n    \"Phone\": \"{{PHONE}}\",\r\n    \"Otp\": \"180291\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/users/login-with-otp",
@@ -1573,6 +1582,70 @@
 											"path": [
 												"users",
 												"login-with-otp"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Generate otp",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.environment.set(\"PATIENT_USER_JWT\", jsonRes.Data.AccessToken);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Patient login: Access token is returned\", function () {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
+													"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"description": "API key for client app authentication",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Purpose\": \"Login\",\r\n    \"RoleId\": 2\r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/users/generate-otp",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"users",
+												"generate-otp"
 											]
 										}
 									},
@@ -1909,70 +1982,6 @@
 										"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}",
 										"role",
 										"{{ROLE_PATIENT}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Generate otp",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.environment.set(\"PATIENT_USER_JWT\", jsonRes.Data.AccessToken);\r",
-											"}\r",
-											"catch (error) {\r",
-											"    console.log(error.message);\r",
-											"}\r",
-											"\r",
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Patient login: Access token is returned\", function () {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
-											"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"description": "API key for client app authentication",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Purpose\": \"Login\"\r\n}\r\n"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/users/generate-otp",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"users",
-										"generate-otp"
 									]
 								}
 							},
@@ -2393,120 +2402,7 @@
 									]
 								}
 							},
-							"response": [
-								{
-									"name": "Update patient details",
-									"originalRequest": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{PATIENT_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"John\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"Doe\",\r\n    \"Email\": \"john.doe@gmail.com\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\r\n}"
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"patients",
-												"{{PATIENT_USER_ID}}"
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "X-DNS-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "Expect-CT",
-											"value": "max-age=0"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "X-XSS-Protection",
-											"value": "0"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "1355"
-										},
-										{
-											"key": "ETag",
-											"value": "W/\"54b-oMCmX5zwQTpqqYuaNKZfRH2Rk8M\""
-										},
-										{
-											"key": "Date",
-											"value": "Mon, 02 Aug 2021 06:29:32 GMT"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Keep-Alive",
-											"value": "timeout=5"
-										}
-									],
-									"cookie": [],
-									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Patient records updated successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Patient\": {\n            \"id\": \"4e8a8e80-72f2-4a83-87c2-1159c74e6c98\",\n            \"User\": {\n                \"id\": \"c60d6508-5002-4748-adfe-b81bf60e3b92\",\n                \"UserName\": \"mgihsm9697\",\n                \"Person\": {\n                    \"id\": \"e88266d4-b5af-499f-b1e4-b237b999becb\",\n                    \"Prefix\": \"Mr.\",\n                    \"FirstName\": \"John\",\n                    \"MiddleName\": null,\n                    \"LastName\": \"Doe\",\n                    \"DisplayName\": \"Mr. John Doe\",\n                    \"Gender\": \"Male\",\n                    \"BirthDate\": \"1979-01-01T00:00:00.000Z\",\n                    \"Age\": \"42 years and 7 months\",\n                    \"Phone\": \"+91-8125681676\",\n                    \"Email\": \"johndoe@gmail.com\",\n                    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\",\n                    \"ActiveSince\": \"2021-08-02T05:14:04.000Z\",\n                    \"Roles\": [\n                        {\n                            \"id\": \"255cf801-a0ef-454d-a5d0-6c2c73c2160c\",\n                            \"PersonId\": \"e88266d4-b5af-499f-b1e4-b237b999becb\",\n                            \"RoleId\": 2,\n                            \"RoleName\": \"Patient\"\n                        }\n                    ]\n                },\n                \"LastLogin\": null,\n                \"DefaultTimeZone\": \"+05:30\",\n                \"CurrentTimeZone\": \"+05:30\",\n                \"Role\": {\n                    \"id\": 2,\n                    \"RoleName\": \"Patient\"\n                }\n            },\n            \"DisplayId\": \"PT#1-8125681676\",\n            \"EhrId\": null,\n            \"Addresses\": [],\n            \"MedicalProfile\": null,\n            \"Insurances\": [],\n            \"EmergencyContacts\": []\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"1c353c97-437a-489c-ad00-c83d6e07ebd8\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-6238056610\",\n        \"Email\": null,\n        \"UserName\": \"cbixyx9006\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627844993,\n        \"exp\": 1635620993\n    },\n    \"Context\": \"Patient.UpdateByUserId\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
-								}
-							]
+							"response": []
 						},
 						{
 							"name": "Update patient details - only email and first name",
@@ -7589,15 +7485,16 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"EhrId\":\"{{EMERGENCY_EHRID}}\",\r\n    \"PatientUserId\":\"{{EMERGENCY_PATIENTUSERID}}\",\r\n    \"Details\":\"{{EMERGENCY_DETAILS}}\",\r\n    \"EmergencyDate\":\"{{EMERGENCY_EMERGENCYDATE}}\"\r\n}"
+									"raw": "{\r\n    \"EhrId\":\"{{EMERGENCY_EHRID}}\",\r\n    \"PatientUserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"Details\":\"{{EMERGENCY_DETAILS}}\",\r\n    \"EmergencyDate\":\"{{EMERGENCY_EMERGENCYDATE}}\"\r\n}"
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/emergency-event",
+									"raw": "{{BASE_URL}}/clinical/emergency-events",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"emergency-event"
+										"clinical",
+										"emergency-events"
 									]
 								},
 								"description": "Add an emergency event."
@@ -7681,12 +7578,13 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/emergency-event/{{EMERGENCY_EVENT_ID}}",
+									"raw": "{{BASE_URL}}/clinical/emergency-events/{{EMERGENCY_EVENT_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"emergency-event",
+										"clinical",
+										"emergency-events",
 										"{{EMERGENCY_EVENT_ID}}"
 									]
 								},
@@ -7769,12 +7667,13 @@
 									"raw": "{\r\n    \"EhrId\":\"{{EMERGENCY_EHRID}}\",\r\n    \"PatientUserId\":\"{{EMERGENCY_PATIENTUSERID}}\",\r\n    \"Details\":\"{{EMERGENCY_DETAILS}}\",\r\n    \"EmergencyDate\":\"{{EMERGENCY_EMERGENCYDATE}}\"\r\n}"
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/emergency-event/{{EMERGENCY_EVENT_ID}}",
+									"raw": "{{BASE_URL}}/clinical/emergency-events/{{EMERGENCY_EVENT_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"emergency-event",
+										"clinical",
+										"emergency-events",
 										"{{EMERGENCY_EVENT_ID}}"
 									]
 								},
@@ -7846,12 +7745,13 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/emergency-event/search?EmergencyDateFrom=2021-05-01&EmergencyDateTo=2021-12-12&orderBy=EmergencyDate&order=ascending&pageIndex=0&itemsPerPage=25",
+									"raw": "{{BASE_URL}}/clinical/emergency-events/search?EmergencyDateFrom=2021-05-01&EmergencyDateTo=2021-12-12&orderBy=EmergencyDate&order=ascending&pageIndex=0&itemsPerPage=25",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"emergency-event",
+										"clinical",
+										"emergency-events",
 										"search"
 									],
 									"query": [
@@ -7955,12 +7855,13 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/emergency-event/{{EMERGENCY_EVENT_ID}}",
+									"raw": "{{BASE_URL}}/clinical/emergency-events/{{EMERGENCY_EVENT_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"emergency-event",
+										"clinical",
+										"emergency-events",
 										"{{EMERGENCY_EVENT_ID}}"
 									]
 								},
@@ -7975,361 +7876,2072 @@
 					"item": [
 						{
 							"name": "Drugs",
-							"item": []
-						},
-						{
-							"name": "Add drug details",
-							"event": [
+							"item": [
 								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var jsonRes = pm.response.json();",
-											"",
-											"try {",
-											"    pm.environment.set(\"MEDICATION_DRUG_ID\", jsonRes.Data.Drug.id);",
-											"}",
-											"catch (error) {",
-											"    console.log(error.message);",
-											"}",
-											"",
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(201);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"New drug record is created\", function () {",
-											"",
-											"    var expectedDrugName = \"aciloc\";",
-											"    ",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('Drug');",
-											"    pm.expect(jsonRes.Data.Drug).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.Drug).to.have.property('id');",
-											"    pm.expect(jsonRes.Data.Drug).to.have.property('DrugName');",
-											"    ",
-											"    pm.expect(jsonRes.Data.Drug.DrugName).equals(expectedDrugName);    ",
-											"});",
-											""
+									"name": "Add drug",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonRes = pm.response.json();",
+													"",
+													"try {",
+													"    pm.environment.set(\"DRUG_ID\", jsonRes.Data.Drug.id);",
+													"}",
+													"catch (error) {",
+													"    console.log(error.message);",
+													"}",
+													"",
+													"pm.test(\"Request is successfull\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Status).to.eql('success');",
+													"});",
+													"",
+													"pm.test(\"New drug record is created\", function () {",
+													"",
+													"    var expectedDrugName = \"aciloc\";",
+													"    ",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Data).to.have.property('Drug');",
+													"    pm.expect(jsonRes.Data.Drug).to.not.be.empty;",
+													"    pm.expect(jsonRes.Data.Drug).to.have.property('id');",
+													"    pm.expect(jsonRes.Data.Drug).to.have.property('DrugName');",
+													"    ",
+													"    pm.expect(jsonRes.Data.Drug.DrugName).equals(expectedDrugName);    ",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
 										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"DrugName\": \"aciloc\",\n    \"GenericName\": \"Paracetamol\",\n    \"Ingredients\": \"levocetrizine\",\n    \"Strength\": \"high\",\n    \"OtherCommercialNames\":\"LP\",\n    \"Manufacturer\": \"abc lab\",\n    \"OtherInformation\": \"aaaa\"  \n}\n"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/drugs",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"drugs"
+											]
+										}
 									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"DrugName\": \"aciloc\",\n    \"GenericName\": \"Paracetamol\",\n    \"Ingredients\": \"levocetrizine\",\n    \"Strength\": \"high\",\n    \"OtherCommercialNames\":\"LP\",\n    \"Manufacturer\": \"abc lab\",\n    \"OtherInformation\": \"aaaa\"  \n}\n"
+									"response": []
 								},
-								"url": {
-									"raw": "{{BASE_URL}}/medication/drugs",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"medication",
-										"drugs"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get drug details by id",
-							"event": [
 								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"Drug record is returned\", function () {",
-											"",
-											"    var expectedDrugName = \"aciloc\";",
-											"    ",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('Drug');",
-											"    pm.expect(jsonRes.Data.Drug).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.Drug).to.have.property('id');",
-											"    pm.expect(jsonRes.Data.Drug).to.have.property('DrugName');",
-											"    ",
-											"    pm.expect(jsonRes.Data.Drug.DrugName).equals(expectedDrugName);    ",
-											"});",
-											"",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/medication/drugs/{{MEDICATION_DRUG_ID}}",
-									"host": [
-										"{{BASE_URL}}"
+									"name": "Get drug details by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Request is successfull\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Status).to.eql('success');",
+													"});",
+													"",
+													"pm.test(\"Drug record is returned\", function () {",
+													"",
+													"    var expectedDrugName = \"aciloc\";",
+													"    ",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Data).to.have.property('Drug');",
+													"    pm.expect(jsonRes.Data.Drug).to.not.be.empty;",
+													"    pm.expect(jsonRes.Data.Drug).to.have.property('id');",
+													"    pm.expect(jsonRes.Data.Drug).to.have.property('DrugName');",
+													"    ",
+													"    pm.expect(jsonRes.Data.Drug.DrugName).equals(expectedDrugName);    ",
+													"});",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
 									],
-									"path": [
-										"medication",
-										"drugs",
-										"{{MEDICATION_DRUG_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update drug details by id",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"Updated drug record is returned\", function () {",
-											"",
-											"    var expectedDrugName = \"sinarest\";",
-											"    var expectedGenericName = \"crocin\";",
-											"    var expectedStrength = \"high\";",
-											"    ",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('Drug');",
-											"    pm.expect(jsonRes.Data.Drug).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.Drug).to.have.property('DrugName');",
-											"    pm.expect(jsonRes.Data.Drug).to.have.property('GenericName');",
-											"    pm.expect(jsonRes.Data.Drug).to.have.property('Strength');",
-											"",
-											"    pm.expect(jsonRes.Data.Drug.DrugName).equals(expectedDrugName);",
-											"    pm.expect(jsonRes.Data.Drug.GenericName).equals(expectedGenericName);",
-											"    pm.expect(jsonRes.Data.Drug.Strength).equals(expectedStrength);",
-											"    ",
-											"});",
-											"",
-											""
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
 										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/drugs/{{DRUG_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"drugs",
+												"{{DRUG_ID}}"
+											]
+										}
 									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"DrugName\": \"sinarest\",\n    \"GenericName\": \"crocin\",\n    \"Ingredients\": \"parac\",\n    \"Strength\": \"high\",\n    \"OtherCommercialNames\":\"LP\",\n    \"Manufacturer\": \"abc lab\",\n    \"OtherInformation\": \"llll\"  \n}\n"
+									"response": []
 								},
-								"url": {
-									"raw": "{{BASE_URL}}/medication/drugs/{{MEDICATION_DRUG_ID}}",
-									"host": [
-										"{{BASE_URL}}"
+								{
+									"name": "Update drug details by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Request is successfull\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Status).to.eql('success');",
+													"});",
+													"",
+													"pm.test(\"Updated drug record is returned\", function () {",
+													"",
+													"    var expectedDrugName = \"sinarest\";",
+													"    var expectedGenericName = \"crocin\";",
+													"    var expectedStrength = \"high\";",
+													"    ",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Data).to.have.property('Drug');",
+													"    pm.expect(jsonRes.Data.Drug).to.not.be.empty;",
+													"    pm.expect(jsonRes.Data.Drug).to.have.property('DrugName');",
+													"    pm.expect(jsonRes.Data.Drug).to.have.property('GenericName');",
+													"    pm.expect(jsonRes.Data.Drug).to.have.property('Strength');",
+													"",
+													"    pm.expect(jsonRes.Data.Drug.DrugName).equals(expectedDrugName);",
+													"    pm.expect(jsonRes.Data.Drug.GenericName).equals(expectedGenericName);",
+													"    pm.expect(jsonRes.Data.Drug.Strength).equals(expectedStrength);",
+													"    ",
+													"});",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
 									],
-									"path": [
-										"medication",
-										"drugs",
-										"{{MEDICATION_DRUG_ID}}"
-									]
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"DrugName\": \"sinarest\",\n    \"GenericName\": \"crocin\",\n    \"Ingredients\": \"parac\",\n    \"Strength\": \"high\",\n    \"OtherCommercialNames\":\"LP\",\n    \"Manufacturer\": \"abc lab\",\n    \"OtherInformation\": \"llll\"  \n}\n"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/drugs/{{DRUG_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"drugs",
+												"{{DRUG_ID}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Search drug details",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Request is successfull\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Status).to.eql('success');",
+													"});",
+													"",
+													"pm.test(\"List of drug records is returned\", function () {",
+													"",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Data).to.have.property('DrugRecords');",
+													"    pm.expect(jsonRes.Data.DrugRecords.Items.length).to.be.greaterThan(0);",
+													"",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/drugs/search?order=ascending&pageIndex=0&itemsPerPage=25",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"drugs",
+												"search"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "sinarest",
+													"disabled": true
+												},
+												{
+													"key": "order",
+													"value": "ascending"
+												},
+												{
+													"key": "pageIndex",
+													"value": "0"
+												},
+												{
+													"key": "itemsPerPage",
+													"value": "25"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete drug details by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Request is successfull\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Status).to.eql('success');",
+													"});",
+													"",
+													"pm.test(\"Drug record is deleted\", function () {",
+													"",
+													"    var expectedValue = true;",
+													"    ",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+													"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+													"",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/drugs/{{DRUG_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"drugs",
+												"{{DRUG_ID}}"
+											]
+										}
+									},
+									"response": []
 								}
-							},
-							"response": []
+							]
 						},
 						{
-							"name": "Search drug details",
-							"event": [
+							"name": "Medication",
+							"item": [
 								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"List of drug records is returned\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('DrugRecords');",
-											"    pm.expect(jsonRes.Data.DrugRecords.Items.length).to.be.greaterThan(0);",
-											"",
-											"});",
-											""
+									"name": "Get a list of drugs from database",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonRes = pm.response.json();\r",
+													"\r",
+													"try {\r",
+													"    pm.environment.set(\"DRUG_ID\", jsonRes.Data.DrugRecords.Items[0].id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
 										],
-										"type": "text/javascript"
-									}
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/drugs/search",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"drugs",
+												"search"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "para",
+													"disabled": true
+												}
+											]
+										},
+										"description": "Returns the list of drugs/medicines stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Get a list of drugs from database with name",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/drugs/search?name=cres",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"drugs",
+												"search"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "cres"
+												}
+											]
+										},
+										"description": "Returns the list of drugs/medicines stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Get a list of drug-dose-units",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications/dosage-units",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												"dosage-units"
+											]
+										},
+										"description": "Returns the list of drugs/medicines stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Get a list of medication-routes",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications/administration-routes/",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												"administration-routes",
+												""
+											]
+										},
+										"description": "Returns the list of medication routes for administration stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Get a list of medication-duration-units",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications/duration-units",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												"duration-units"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "da",
+													"disabled": true
+												}
+											]
+										},
+										"description": "Returns the list of medication duration units stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Get a list of medication-frequency units",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications/frequency-units/",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												"frequency-units",
+												""
+											]
+										},
+										"description": "Returns the list of drugs/medicines stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Get medication stock images",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var id = jsonData.Data.MedicationStockImages[5].id;\r",
+													"    var resourceId = jsonData.Data.MedicationStockImages[5].ResourceId;\r",
+													"    pm.environment.set(\"STOCK_MEDICATION_IMAGE_ID\", id);\r",
+													"    pm.environment.set(\"STOCK_MEDICATION_IMAGE_RESOURCE_ID\", resourceId);\r",
+													"\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications/stock-images",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												"stock-images"
+											]
+										},
+										"description": "Returns the list of drugs/medicines stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Get medication stock image by id",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications/stock-images/{{STOCK_MEDICATION_IMAGE_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												"stock-images",
+												"{{STOCK_MEDICATION_IMAGE_ID}}"
+											]
+										},
+										"description": "Returns the list of drugs/medicines stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Download medication stock image by id",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications/stock-images/{{STOCK_MEDICATION_IMAGE_ID}}/download",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												"stock-images",
+												"{{STOCK_MEDICATION_IMAGE_ID}}",
+												"download"
+											]
+										},
+										"description": "Returns the list of drugs/medicines stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Add new medication by drug name",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var id = jsonData.data.medication.id;\r",
+													"    pm.environment.set(\"MEDICATION_ID\", id);\r",
+													"\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"Date.prototype.addDays = function(days) {\r",
+													"    var date = new Date(this.valueOf());\r",
+													"    date.setDate(date.getDate() + days);\r",
+													"    return date;\r",
+													"}\r",
+													"\r",
+													"function formatDate(date) {\r",
+													"    var d = new Date(date),\r",
+													"        month = '' + (d.getMonth() + 1),\r",
+													"        day = '' + d.getDate(),\r",
+													"        year = d.getFullYear();\r",
+													"\r",
+													"    if (month.length < 2) \r",
+													"        month = '0' + month;\r",
+													"    if (day.length < 2) \r",
+													"        day = '0' + day;\r",
+													"\r",
+													"    return [year, month, day].join('-');\r",
+													"}\r",
+													"\r",
+													"var start_date = formatDate((new Date()).addDays(1));\r",
+													"\r",
+													"pm.environment.set(\"MEDICATION_START_DATE\", start_date);\r",
+													"\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Drug\": \"Tylenol 8 HR Arthritis Pain: 650 mg\",\n    \"Dose\": 1,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedule\": \"Morning, Afternoon, Evening, Night\",\n    \"Frequency\": 4,\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 100,\n    \"DurationUnit\": \"Days\",\n    \"StartDate\": \"2021-04-25\",\n    \"RefillNeeded\": false,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\",\n    \"MedicationImageResourceId\": \"{{STOCK_MEDICATION_IMAGE_RESOURCE_ID}}\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications/",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												""
+											]
+										},
+										"description": "Create a new drug order (medication list) for a patient for the visit."
+									},
+									"response": []
+								},
+								{
+									"name": "Add new medication by drug id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var id = jsonData.data.medication.id;\r",
+													"    pm.environment.set(\"MEDICATION_ID\", id);\r",
+													"\r",
+													"    var medication_consumption_id = jsonData.data.medication.scheduled_consumptions[0].id;\r",
+													"    pm.environment.set(\"MEDICATION_CONSUMPTION_ID\", medication_consumption_id);\r",
+													"\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"Date.prototype.addDays = function(days) {\r",
+													"    var date = new Date(this.valueOf());\r",
+													"    date.setDate(date.getDate() + days);\r",
+													"    return date;\r",
+													"}\r",
+													"\r",
+													"function formatDate(date) {\r",
+													"    var d = new Date(date),\r",
+													"        month = '' + (d.getMonth() + 1),\r",
+													"        day = '' + d.getDate(),\r",
+													"        year = d.getFullYear();\r",
+													"\r",
+													"    if (month.length < 2) \r",
+													"        month = '0' + month;\r",
+													"    if (day.length < 2) \r",
+													"        day = '0' + day;\r",
+													"\r",
+													"    return [year, month, day].join('-');\r",
+													"}\r",
+													"\r",
+													"var start_date = formatDate((new Date()).addDays(1));\r",
+													"\r",
+													"pm.environment.set(\"MEDICATION_START_DATE\", start_date);\r",
+													"\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_ROLE_USER_ID}}\",\n    \"DrugId\": \"{{DRUG_ID}}\",\n    \"Dose\": 1.5,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedule\": \"Morning, Evening\",\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 2,\n    \"DurationUnit\": \"Weeks\",\n    \"StartDate\": \"2021-04-25\",\n    \"RefillNeeded\": true,\n    \"RefillCount\": 3,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications/",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												""
+											]
+										},
+										"description": "Create a new drug order (medication list) for a patient for the visit."
+									},
+									"response": []
+								},
+								{
+									"name": "Get patient medications",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications/search?patientUserId={{PATIENT_USER_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												"search"
+											],
+											"query": [
+												{
+													"key": "patientUserId",
+													"value": "{{PATIENT_USER_ID}}"
+												}
+											]
+										},
+										"description": "Returns the list of drugs/medicines stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Get current patient medications",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications//current/{{PATIENT_USER_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												"",
+												"current",
+												"{{PATIENT_USER_ID}}"
+											]
+										},
+										"description": "Returns the list of drugs/medicines stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Get medication by id",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/medication/{{MEDICATION_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"medication",
+												"{{MEDICATION_ID}}"
+											]
+										},
+										"description": "Returns the list of drugs/medicines stored in the system."
+									},
+									"response": []
+								},
+								{
+									"name": "Update medication",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"Duration\": 10\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/medication/{{MEDICATION_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"medication",
+												"{{MEDICATION_ID}}"
+											]
+										},
+										"description": "Update the already existing drug order."
+									},
+									"response": []
+								},
+								{
+									"name": "Delete medication",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/medication/{{MEDICATION_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"medication",
+												"{{MEDICATION_ID}}"
+											]
+										},
+										"description": "Delete an already existing drug order."
+									},
+									"response": []
 								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/medication/drugs/search?name=sinarest&order=ascending&pageIndex=0&itemsPerPage=25",
-									"host": [
-										"{{BASE_URL}}"
+							]
+						},
+						{
+							"name": "Medication consumption",
+							"item": [
+								{
+									"name": "My medications",
+									"item": [
+										{
+											"name": "Get medication consumption list",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"\r",
+															"Date.prototype.addDays = function(days) {\r",
+															"    var date = new Date(this.valueOf());\r",
+															"    date.setDate(date.getDate() + days);\r",
+															"    return date;\r",
+															"}\r",
+															"\r",
+															"function formatDate(date) {\r",
+															"    var d = new Date(date),\r",
+															"        month = '' + (d.getMonth() + 1),\r",
+															"        day = '' + d.getDate(),\r",
+															"        year = d.getFullYear();\r",
+															"\r",
+															"    if (month.length < 2) \r",
+															"        month = '0' + month;\r",
+															"    if (day.length < 2) \r",
+															"        day = '0' + day;\r",
+															"\r",
+															"    return [year, month, day].join('-');\r",
+															"}\r",
+															"\r",
+															"var d = new Date();\r",
+															"\r",
+															"var fromDate = formatDate(d);\r",
+															"var toDate = formatDate((new Date()).addDays(10));\r",
+															"\r",
+															"pm.environment.set(\"MEDICATION_CONSUMPTION_SCHEDULE_FROM\", fromDate);\r",
+															"pm.environment.set(\"MEDICATION_CONSUMPTION_SCHEDULE_TO\", toDate);"
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"try {\r",
+															"\r",
+															"    var jsonData = pm.response.json();\r",
+															"    var medication_consumption_id = jsonData.data.medConsumptions[0].id;\r",
+															"    pm.environment.set(\"MEDICATION_CONSUMPTION_ID\", medication_consumption_id);\r",
+															"\r",
+															"}\r",
+															"catch (error) {\r",
+															"    console.log(error.message);\r",
+															"}"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{BASE_URL}}/medication-consumption/all/{{PATIENT_ROLE_USER_ID}}?drugOrderId={{DRUG_ORDER_ID}}&fromDate=2021-05-21&toDate=2021-06-21",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"medication-consumption",
+														"all",
+														"{{PATIENT_ROLE_USER_ID}}"
+													],
+													"query": [
+														{
+															"key": "drugOrderId",
+															"value": "{{DRUG_ORDER_ID}}"
+														},
+														{
+															"key": "medicationId",
+															"value": "{{MEDICATION_ID}}",
+															"disabled": true
+														},
+														{
+															"key": "fromDate",
+															"value": "{{MEDICATION_CONSUMPTION_SCHEDULE_FROM}}",
+															"disabled": true
+														},
+														{
+															"key": "toDate",
+															"value": "{{MEDICATION_CONSUMPTION_SCHEDULE_TO}}",
+															"disabled": true
+														},
+														{
+															"key": "fromDate",
+															"value": "2021-05-21"
+														},
+														{
+															"key": "toDate",
+															"value": "2021-06-21"
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get medication consumption by id",
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{BASE_URL}}/medication-consumption/{{MEDICATION_CONSUMPTION_ID}}",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"medication-consumption",
+														"{{MEDICATION_CONSUMPTION_ID}}"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get medication consumption schedule for duration",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"\r",
+															"Date.prototype.addDays = function(days) {\r",
+															"    var date = new Date(this.valueOf());\r",
+															"    date.setDate(date.getDate() + days);\r",
+															"    return date;\r",
+															"}\r",
+															"\r",
+															"function formatDate(date) {\r",
+															"    var d = new Date(date),\r",
+															"        month = '' + (d.getMonth() + 1),\r",
+															"        day = '' + d.getDate(),\r",
+															"        year = d.getFullYear();\r",
+															"\r",
+															"    if (month.length < 2) \r",
+															"        month = '0' + month;\r",
+															"    if (day.length < 2) \r",
+															"        day = '0' + day;\r",
+															"\r",
+															"    return [year, month, day].join('-');\r",
+															"}\r",
+															"\r",
+															"var d = new Date();\r",
+															"\r",
+															"var fromDate = formatDate(d);\r",
+															"var toDate = formatDate((new Date()).addDays(10));\r",
+															"\r",
+															"pm.environment.set(\"MEDICATION_CONSUMPTION_SCHEDULE_FROM\", fromDate);\r",
+															"pm.environment.set(\"MEDICATION_CONSUMPTION_SCHEDULE_TO\", toDate);"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{BASE_URL}}/medication-consumption/schedule-for-duration/{{PATIENT_ROLE_USER_ID}}?duration=3w&when=future",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"medication-consumption",
+														"schedule-for-duration",
+														"{{PATIENT_ROLE_USER_ID}}"
+													],
+													"query": [
+														{
+															"key": "duration",
+															"value": "3w"
+														},
+														{
+															"key": "when",
+															"value": "future"
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get medication consumption schedule for day",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"\r",
+															"Date.prototype.addDays = function(days) {\r",
+															"    var date = new Date(this.valueOf());\r",
+															"    date.setDate(date.getDate() + days);\r",
+															"    return date;\r",
+															"}\r",
+															"\r",
+															"function formatDate(date) {\r",
+															"    var d = new Date(date),\r",
+															"        month = '' + (d.getMonth() + 1),\r",
+															"        day = '' + d.getDate(),\r",
+															"        year = d.getFullYear();\r",
+															"\r",
+															"    if (month.length < 2) \r",
+															"        month = '0' + month;\r",
+															"    if (day.length < 2) \r",
+															"        day = '0' + day;\r",
+															"\r",
+															"    return [year, month, day].join('-');\r",
+															"}\r",
+															"\r",
+															"var date = formatDate((new Date()).addDays(4));\r",
+															"\r",
+															"pm.environment.set(\"MEDICATION_CONSUMPTION_FOR_DATE\", date);\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{BASE_URL}}/medication-consumption/schedule-for-day/{{PATIENT_ROLE_USER_ID}}/{{MEDICATION_CONSUMPTION_FOR_DATE}}?groupByDrug=true",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"medication-consumption",
+														"schedule-for-day",
+														"{{PATIENT_ROLE_USER_ID}}",
+														"{{MEDICATION_CONSUMPTION_FOR_DATE}}"
+													],
+													"query": [
+														{
+															"key": "groupByDrug",
+															"value": "true"
+														}
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get medication consumption schedule summary",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"\r",
+															"Date.prototype.addDays = function(days) {\r",
+															"    var date = new Date(this.valueOf());\r",
+															"    date.setDate(date.getDate() + days);\r",
+															"    return date;\r",
+															"}\r",
+															"\r",
+															"function formatDate(date) {\r",
+															"    var d = new Date(date),\r",
+															"        month = '' + (d.getMonth() + 1),\r",
+															"        day = '' + d.getDate(),\r",
+															"        year = d.getFullYear();\r",
+															"\r",
+															"    if (month.length < 2) \r",
+															"        month = '0' + month;\r",
+															"    if (day.length < 2) \r",
+															"        day = '0' + day;\r",
+															"\r",
+															"    return [year, month, day].join('-');\r",
+															"}\r",
+															"\r",
+															"var date = formatDate((new Date()).addDays(4));\r",
+															"\r",
+															"pm.environment.set(\"MEDICATION_CONSUMPTION_FOR_DATE\", date);\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{BASE_URL}}/medication-consumption/summary-for-calendar-months/{{PATIENT_ROLE_USER_ID}}",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"medication-consumption",
+														"summary-for-calendar-months",
+														"{{PATIENT_ROLE_USER_ID}}"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Mark as taken",
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{BASE_URL}}/medication-consumption/mark-as-taken/{{MEDICATION_CONSUMPTION_ID}}",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"medication-consumption",
+														"mark-as-taken",
+														"{{MEDICATION_CONSUMPTION_ID}}"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Mark list of med consumptions as taken",
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"ids\": [\r\n        \"6d0b099d-13fd-4297-ba29-bbbd004696a9\",\r\n        \"58528027-5be3-4ed2-b174-edfa0391dd6e\"\r\n    ]\r\n}"
+												},
+												"url": {
+													"raw": "{{BASE_URL}}/medication-consumption/mark-list-as-taken",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"medication-consumption",
+														"mark-list-as-taken"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Mark as missed",
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{BASE_URL}}/medication-consumption/mark-as-missed/{{MEDICATION_CONSUMPTION_ID}}",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"medication-consumption",
+														"mark-as-missed",
+														"{{MEDICATION_CONSUMPTION_ID}}"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Mark list of med consumptions as missed",
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"ids\": [\r\n        \"6d0b099d-13fd-4297-ba29-bbbd004696a9\",\r\n        \"58528027-5be3-4ed2-b174-edfa0391dd6e\"\r\n    ]\r\n}"
+												},
+												"url": {
+													"raw": "{{BASE_URL}}/medication-consumption/mark-list-as-missed",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"medication-consumption",
+														"mark-list-as-missed"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Delete future medication consumptions",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{BASE_URL}}/medication-consumption/delete-future-schedules/{{MEDICATION_ID}}",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"medication-consumption",
+														"delete-future-schedules",
+														"{{MEDICATION_ID}}"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Cancel future medication consumptions",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{BASE_URL}}/medication-consumption/cancel-future-schedules/{{MEDICATION_ID}}",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"medication-consumption",
+														"cancel-future-schedules",
+														"{{MEDICATION_ID}}"
+													]
+												}
+											},
+											"response": []
+										}
 									],
-									"path": [
-										"medication",
-										"drugs",
-										"search"
-									],
-									"query": [
+									"event": [
 										{
-											"key": "name",
-											"value": "sinarest"
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													""
+												]
+											}
 										},
 										{
-											"key": "order",
-											"value": "ascending"
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"exec": [
+													""
+												]
+											}
+										}
+									]
+								},
+								{
+									"name": "Drug prescriptions: Active and past",
+									"item": [
+										{
+											"name": "Get active drug prescriptions for patient",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{BASE_URL}}/drug-order/active-for-patient/{{PATIENT_ROLE_USER_ID}}",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"drug-order",
+														"active-for-patient",
+														"{{PATIENT_ROLE_USER_ID}}"
+													]
+												}
+											},
+											"response": []
 										},
 										{
-											"key": "pageIndex",
-											"value": "0"
-										},
-										{
-											"key": "itemsPerPage",
-											"value": "25"
+											"name": "Get past drug prescriptions for patient",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{PATIENT_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "{{BASE_URL}}/drug-order/past-for-patient/{{PATIENT_ROLE_USER_ID}}",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"drug-order",
+														"past-for-patient",
+														"{{PATIENT_ROLE_USER_ID}}"
+													]
+												}
+											},
+											"response": []
 										}
 									]
 								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete drug details by id",
+							],
 							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								},
 								{
 									"listen": "test",
 									"script": {
+										"type": "text/javascript",
 										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"Drug record is deleted\", function () {",
-											"",
-											"    var expectedValue = true;",
-											"    ",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
-											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
-											"",
-											"});",
 											""
-										],
-										"type": "text/javascript"
+										]
 									}
 								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/medication/drugs/{{MEDICATION_DRUG_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"medication",
-										"drugs",
-										"{{MEDICATION_DRUG_ID}}"
-									]
-								}
-							},
-							"response": []
+							]
 						}
 					]
 				},
@@ -11906,13 +13518,13 @@
 											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_ROLE_USER_ID}}\",\n    \"Feeling\": 1,\n    \"RecordDate\": \"2021-06-20\",\n    \"Comments\": \"abcd66\",\n    \"SymptomAssessmentId\": null\n}"
 										},
 										"url": {
-											"raw": "{{BASE_URL}}/how-do-you-feel/",
+											"raw": "{{BASE_URL}}/symptoms/how-do.you-feel",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"how-do-you-feel",
-												""
+												"symptoms",
+												"how-do.you-feel"
 											]
 										}
 									},
@@ -11940,12 +13552,13 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/how-do-you-feel/{{HOW_DO_YOU_FEEL_ID}}",
+											"raw": "{{BASE_URL}}/symptoms/how-do.you-feel/{{HOW_DO_YOU_FEEL_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"how-do-you-feel",
+												"symptoms",
+												"how-do.you-feel",
 												"{{HOW_DO_YOU_FEEL_ID}}"
 											]
 										}
@@ -11974,12 +13587,13 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/how-do-you-feel/{{PATIENT_ROLE_USER_ID}}/search?startDate=2021-06-15&endDate=2021-06-21",
+											"raw": "{{BASE_URL}}/symptoms/how-do.you-feel/{{PATIENT_ROLE_USER_ID}}/search?startDate=2021-06-15&endDate=2021-06-21",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"how-do-you-feel",
+												"symptoms",
+												"how-do.you-feel",
 												"{{PATIENT_ROLE_USER_ID}}",
 												"search"
 											],
@@ -12023,12 +13637,13 @@
 											"raw": "{\n    \"Feeling\": 1,\n    \"RecordDate\": \"2021-06-21\",\n    \"Comments\": \"abcd22\",\n    \"SymptomAssessmentId\": null\n}"
 										},
 										"url": {
-											"raw": "{{BASE_URL}}/how-do-you-feel/{{HOW_DO_YOU_FEEL_ID}}",
+											"raw": "{{BASE_URL}}/symptoms/how-do.you-feel/{{HOW_DO_YOU_FEEL_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"how-do-you-feel",
+												"symptoms",
+												"how-do.you-feel",
 												"{{HOW_DO_YOU_FEEL_ID}}"
 											]
 										}
@@ -12057,12 +13672,13 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/how-do-you-feel/{{HOW_DO_YOU_FEEL_ID}}",
+											"raw": "{{BASE_URL}}/symptoms/how-do.you-feel/{{HOW_DO_YOU_FEEL_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"how-do-you-feel",
+												"symptoms",
+												"how-do.you-feel",
 												"{{HOW_DO_YOU_FEEL_ID}}"
 											]
 										},
@@ -16104,15 +17720,15 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"TopicName\": \"Heart Failure\",\n    \"BriefInformation\": \"Heart failure means that the heart isn’t pumping as well as it should be\",\n    \"DetailedInformation\": \"Heart failure means that the heart isn’t pumping as well as it should be\",\n    \"AdditionalResources\": \"\",\n    \"Tags\": [\n        \"BP\"\n    ]\n}"
+									"raw": "{\n    \"TopicName\": \"Some topic\",\n    \"BriefInformation\": \"Brief information for topic\",\n    \"DetailedInformation\": \"Detailed information for the topic\",\n    \"AdditionalResources\": [],\n    \"Tags\": [\n        \"BP\"\n    ]\n}"
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/static-types/knowledge-nuggets",
+									"raw": "{{BASE_URL}}/educational/knowledge-nuggets",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"static-types",
+										"educational",
 										"knowledge-nuggets"
 									]
 								}
@@ -16120,7 +17736,79 @@
 							"response": []
 						},
 						{
-							"name": "Get knowledge nugget by id",
+							"name": "Get today's topic",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"KNOWLEDGE_NUGGET_ID\", jsonRes.Data.KnowledgeNugget.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Random knowledge nugget record is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('KnowledgeNugget');",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('TopicName');",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/educational/knowledge-nuggets/today/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"educational",
+										"knowledge-nuggets",
+										"today",
+										"{{PATIENT_USER_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get knowledge nugget by id Copy",
 							"event": [
 								{
 									"listen": "test",
@@ -16171,12 +17859,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/static-types/knowledge-nuggets/{{KNOWLEDGE_NUGGET_ID}}",
+									"raw": "{{BASE_URL}}/educational/knowledge-nuggets/{{KNOWLEDGE_NUGGET_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"static-types",
+										"educational",
 										"knowledge-nuggets",
 										"{{KNOWLEDGE_NUGGET_ID}}"
 									]
@@ -16241,12 +17929,12 @@
 									"raw": "{\n    \"TopicName\": \"Hypertension\"   \n}"
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/static-types/knowledge-nuggets/{{KNOWLEDGE_NUGGET_ID}}",
+									"raw": "{{BASE_URL}}/educational/knowledge-nuggets/{{KNOWLEDGE_NUGGET_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"static-types",
+										"educational",
 										"knowledge-nuggets",
 										"{{KNOWLEDGE_NUGGET_ID}}"
 									]
@@ -16300,12 +17988,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/static-types/knowledge-nuggets/search?TopicName=Heart failure&Tag=Heart&orderBy=TopicName&order=ascending&pageIndex=0",
+									"raw": "{{BASE_URL}}/educational/knowledge-nuggets/search?TopicName=Heart failure&Tag=Heart&orderBy=TopicName&order=ascending&pageIndex=0",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"static-types",
+										"educational",
 										"knowledge-nuggets",
 										"search"
 									],
@@ -16383,12 +18071,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/static-types/knowledge-nuggets/{{KNOWLEDGE_NUGGET_ID}}",
+									"raw": "{{BASE_URL}}/educational/knowledge-nuggets/{{KNOWLEDGE_NUGGET_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"static-types",
+										"educational",
 										"knowledge-nuggets",
 										"{{KNOWLEDGE_NUGGET_ID}}"
 									]

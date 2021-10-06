@@ -491,7 +491,7 @@ export class MedicationValidator {
 
         await param('imageId').trim()
             .escape()
-            .isUUID()
+            .isInt()
             .run(request);
 
         const result = validationResult(request);
@@ -499,7 +499,7 @@ export class MedicationValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        return request.params.imageId;
+        return parseInt(request.params.imageId);
     }
 
     static async getPatientUserId(request) {

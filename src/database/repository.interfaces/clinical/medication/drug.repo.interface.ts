@@ -17,4 +17,5 @@ export interface IDrugRepo {
 
     delete(id: string): Promise<boolean>;
 
+    totalCount(): Promise<number>;
 }

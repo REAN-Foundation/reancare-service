@@ -4,6 +4,8 @@ import { KnowledgeNuggetSearchFilters, KnowledgeNuggetSearchResults } from "../.
 
 export interface IKnowledgeNuggetRepo {
 
+    getRandom(): Promise<KnowledgeNuggetDto>;
+
     create(knowledgeNuggetDomainModel: KnowledgeNuggetDomainModel): Promise<KnowledgeNuggetDto>;
 
     getById(id: string): Promise<KnowledgeNuggetDto>;
@@ -14,5 +16,7 @@ export interface IKnowledgeNuggetRepo {
     Promise<KnowledgeNuggetDto>;
 
     delete(id: string): Promise<boolean>;
+
+    totalCount(): Promise<number>;
 
 }

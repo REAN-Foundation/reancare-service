@@ -4,9 +4,11 @@ import { inject, injectable } from "tsyringe";
 import { Helper } from "../common/helper";
 import { Logger } from "../common/logger";
 import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
+import { IDrugRepo } from "../database/repository.interfaces/clinical/medication/drug.repo.interface";
 import { IMedicationStockImageRepo } from "../database/repository.interfaces/clinical/medication/medication.stock.image.repo.interface";
 import { ISymptomAssessmentTemplateRepo } from "../database/repository.interfaces/clinical/symptom/symptom.assessment.template.repo.interface";
 import { ISymptomTypeRepo } from "../database/repository.interfaces/clinical/symptom/symptom.type.repo.interface";
+import { IKnowledgeNuggetRepo } from "../database/repository.interfaces/educational/knowledge.nugget.repo.interface";
 import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
 import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
 import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
@@ -14,22 +16,28 @@ import { IRolePrivilegeRepo } from "../database/repository.interfaces/role.privi
 import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
 import { IUserRepo } from "../database/repository.interfaces/user/user.repo.interface";
 import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
+import { DrugDomainModel } from "../domain.types/clinical/medication/drug/drug.domain.model";
 import { MedicationStockImageDomainModel } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
 import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model";
 import { SymptomTypeDomainModel } from "../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model";
 import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/symptom.type/symptom.type.search.types";
+import { KnowledgeNuggetDomainModel } from "../domain.types/educational/knowledge.nugget/knowledge.nugget.domain.model";
 import { PatientDomainModel } from "../domain.types/patient/patient/patient.domain.model";
 import { Roles } from "../domain.types/role/role.types";
 import { UserDomainModel } from "../domain.types/user/user/user.domain.model";
+import * as SeededDrugs from '../seed.data/drugs.seed.json';
 import * as SeededInternalClients from '../seed.data/internal.clients.seed.json';
 import * as SeededInternalTestsUsers from '../seed.data/internal.test.users.seed.sample.json';
+import * as SeededKnowledgeNuggets from '../seed.data/knowledge.nuggets.seed.json';
 import * as RolePrivilegesList from '../seed.data/role.privileges.json';
 import * as SeededAssessmentTemplates from '../seed.data/symptom.assessment.templates.json';
 import * as SeededSymptomTypes from '../seed.data/symptom.types.json';
 import * as SeededSystemAdmin from '../seed.data/system.admin.seed.json';
 import { ApiClientService } from "../services/api.client.service";
+import { DrugService } from "../services/clinical/medication/drug.service";
 import { SymptomAssessmentTemplateService } from "../services/clinical/symptom/symptom.assessment.template.service";
 import { SymptomTypeService } from "../services/clinical/symptom/symptom.type.service";
+import { KnowledgeNuggetService } from "../services/educational/knowledge.nugget.service";
 import { FileResourceService } from "../services/file.resource.service";
 import { HealthProfileService } from "../services/patient/health.profile.service";
 import { PatientService } from "../services/patient/patient.service";
@@ -61,6 +69,10 @@ export class Seeder {
 
     _fileResourceService: FileResourceService = null;
 
+    _knowledgeNuggetsService: KnowledgeNuggetService = null;
+
+    _drugService: DrugService = null;
+
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IApiClientRepo') private _apiClientRepo: IApiClientRepo,
@@ -72,6 +84,8 @@ export class Seeder {
         @inject('ISymptomTypeRepo') private _symptomTypeRepo: ISymptomTypeRepo,
         @inject('IInternalTestUserRepo') private _internalTestUserRepo: IInternalTestUserRepo,
         @inject('ISymptomAssessmentTemplateRepo') private _symptomAssessmentTemplateRepo: ISymptomAssessmentTemplateRepo,
+        @inject('IKnowledgeNuggetRepo') private _knowledgeNuggetRepo: IKnowledgeNuggetRepo,
+        @inject('IDrugRepo') private _drugRepo: IDrugRepo,
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -82,6 +96,8 @@ export class Seeder {
         this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._symptomTypeService = Loader.container.resolve(SymptomTypeService);
         this._symptomAssessmentTemplateService = Loader.container.resolve(SymptomAssessmentTemplateService);
+        this._knowledgeNuggetsService = Loader.container.resolve(KnowledgeNuggetService);
+        this._drugService = Loader.container.resolve(DrugService);
     }
 
     public init = async (): Promise<void> => {
@@ -94,6 +110,8 @@ export class Seeder {
             await this.seedMedicationStockImages();
             await this.seedSymptomTypes();
             await this.seedSymptomAsseessmentTemplates();
+            await this.seedKnowledgeNuggets();
+            await this.seedDrugs();
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -438,6 +456,58 @@ export class Seeder {
                     await this._symptomAssessmentTemplateService.addSymptomTypes(template.id, symptomTypeIds);
                 }
             }
+        }
+    }
+
+    public seedKnowledgeNuggets = async () => {
+
+        const count = await this._knowledgeNuggetRepo.totalCount();
+        if (count > 0) {
+            Logger.instance().log("Knowledge nuggets have already been seeded!");
+            return;
+        }
+
+        Logger.instance().log('Seeding knowledge nuggets...');
+
+        const arr = SeededKnowledgeNuggets['default'];
+
+        for (let i = 0; i < arr.length; i++) {
+
+            var t = arr[i];
+            var tokens = t['Tags'] ? t['Tags'].split(',') : [];
+            const temp = t['AdditionalResources'];
+
+            var additionalResources: string[] = temp.map(x => x);
+
+            const model: KnowledgeNuggetDomainModel = {
+                TopicName           : t['TopicName'],
+                BriefInformation    : t['BriefInformation'],
+                DetailedInformation : t['DetailedInformation'],
+                Tags                : tokens,
+                AdditionalResources : additionalResources
+            };
+            await this._knowledgeNuggetsService.create(model);
+        }
+    }
+
+    public seedDrugs = async () => {
+        
+        const count = await this._drugRepo.totalCount();
+        if (count > 0) {
+            Logger.instance().log("Drugs have already been seeded!");
+            return;
+        }
+
+        Logger.instance().log('Seeding drugs...');
+
+        const arr = SeededDrugs['default'];
+
+        for (let i = 0; i < arr.length; i++) {
+            var drugName = arr[i];
+            const model: DrugDomainModel = {
+                DrugName : drugName
+            };
+            await this._drugService.create(model);
         }
     }
 

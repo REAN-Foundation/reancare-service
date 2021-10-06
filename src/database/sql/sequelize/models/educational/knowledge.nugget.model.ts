@@ -1,16 +1,7 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    Length,
+    Column, CreatedAt, DataType, DeletedAt,
+    IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
 import { v4 } from 'uuid';
 
 ///////////////////////////////////////////////////////////////////////

@@ -1,11 +1,11 @@
 import express from 'express';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { ApiError } from '../../../common/api.error';
-import { KnowledgeNuggetService } from '../../../services/educational/knowledge.nugget.service';
 import { Authorizer } from '../../../auth/authorizer';
-import { KnowledgeNuggetValidator } from '../../validators/educational/knowledge.nugget.validator';
+import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
+import { ResponseHandler } from '../../../common/response.handler';
+import { KnowledgeNuggetService } from '../../../services/educational/knowledge.nugget.service';
+import { Loader } from '../../../startup/loader';
+import { KnowledgeNuggetValidator } from '../../validators/educational/knowledge.nugget.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,19 +29,39 @@ export class KnowledgeNuggetController {
 
     //#region Action methods
 
+    getTodaysTopic = async(request: express.Request, response: express.Response) => {
+        try {
+            request.context = 'KnowledgeNugget.GetTodaysTopic';
+
+            const patientUserId = await KnowledgeNuggetValidator.getPatientUserId(request);
+    
+            const nugget = await this._service.getTodaysTopic(patientUserId);
+            if (nugget == null) {
+                throw new ApiError(400, 'Cannot create record for knowledge nugget!');
+            }
+            
+            ResponseHandler.success(request, response, 'Knowledge nugget record created successfully!', 200, {
+                KnowledgeNugget : nugget,
+            });
+        }
+        catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'StaticTypes.KnowledgeNugget.Create';
+            request.context = 'KnowledgeNugget.Create';
 
-            const knowledgeNuggetDomainModel = await KnowledgeNuggetValidator.create(request);
+            const domainModel = await KnowledgeNuggetValidator.create(request);
 
-            const KnowledgeNugget = await this._service.create(knowledgeNuggetDomainModel);
-            if (KnowledgeNugget == null) {
+            const knowledgeNugget = await this._service.create(domainModel);
+            if (knowledgeNugget == null) {
                 throw new ApiError(400, 'Cannot create record for knowledge nugget!');
             }
 
             ResponseHandler.success(request, response, 'Knowledge nugget record created successfully!', 201, {
-                KnowledgeNugget : KnowledgeNugget,
+                KnowledgeNugget : knowledgeNugget,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -50,19 +70,19 @@ export class KnowledgeNuggetController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'StaticTypes.KnowledgeNugget.GetById';
+            request.context = 'KnowledgeNugget.GetById';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
             const id: string = await KnowledgeNuggetValidator.getById(request);
 
-            const KnowledgeNugget = await this._service.getById(id);
-            if (KnowledgeNugget == null) {
+            const knowledgeNugget = await this._service.getById(id);
+            if (knowledgeNugget == null) {
                 throw new ApiError(404, ' Knowledge nugget record not found.');
             }
 
             ResponseHandler.success(request, response, 'Knowledge nugget record retrieved successfully!', 200, {
-                KnowledgeNugget : KnowledgeNugget,
+                KnowledgeNugget : knowledgeNugget,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -71,7 +91,7 @@ export class KnowledgeNuggetController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'StaticTypes.KnowledgeNugget.Search';
+            request.context = 'KnowledgeNugget.Search';
             await this._authorizer.authorize(request, response);
 
             const filters = await KnowledgeNuggetValidator.search(request);
@@ -95,7 +115,7 @@ export class KnowledgeNuggetController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'StaticTypes.KnowledgeNugget.Update';
+            request.context = 'KnowledgeNugget.Update';
 
             await this._authorizer.authorize(request, response);
 
@@ -122,7 +142,7 @@ export class KnowledgeNuggetController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'StaticTypes.KnowledgeNugget.Delete';
+            request.context = 'KnowledgeNugget.Delete';
             await this._authorizer.authorize(request, response);
 
             const id: string = await KnowledgeNuggetValidator.getById(request);

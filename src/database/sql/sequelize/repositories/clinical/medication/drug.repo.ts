@@ -12,6 +12,15 @@ import Drug from '../../../models/clinical/medication/drug.model';
 
 export class DrugRepo implements IDrugRepo {
 
+    totalCount = async (): Promise<number> => {
+        try {
+            return await Drug.count();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     create = async (drugDomainModel: DrugDomainModel):
     Promise<DrugDto> => {
         try {
@@ -26,8 +35,7 @@ export class DrugRepo implements IDrugRepo {
             };
 
             const drug = await Drug.create(entity);
-            const dto = await DrugMapper.toDto(drug);
-            return dto;
+            return DrugMapper.toDto(drug);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -37,8 +45,7 @@ export class DrugRepo implements IDrugRepo {
     getById = async (id: string): Promise<DrugDto> => {
         try {
             const drug = await Drug.findByPk(id);
-            const dto = await DrugMapper.toDto(drug);
-            return dto;
+            return DrugMapper.toDto(drug);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -52,8 +59,7 @@ export class DrugRepo implements IDrugRepo {
                     DrugName : { [Op.like]: '%' + drugName + '%' }
                 }
             });
-            const dto = await DrugMapper.toDto(drug);
-            return dto;
+            return DrugMapper.toDto(drug);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -144,8 +150,8 @@ export class DrugRepo implements IDrugRepo {
     
             await drug.save();
 
-            const dto = await DrugMapper.toDto(drug);
-            return dto;
+            return DrugMapper.toDto(drug);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

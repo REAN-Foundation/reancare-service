@@ -1,5 +1,5 @@
 import express from 'express';
-import { body, param, validationResult, query } from 'express-validator';
+import { body, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../common/helper';
 import { KnowledgeNuggetDomainModel } from '../../../domain.types/educational/knowledge.nugget/knowledge.nugget.domain.model';
 import { KnowledgeNuggetSearchFilters } from '../../../domain.types/educational/knowledge.nugget/knowledge.nugget.search.types';
@@ -14,9 +14,8 @@ export class KnowledgeNuggetValidator {
             TopicName           : request.body.TopicName ?? null,
             BriefInformation    : request.body.BriefInformation ?? null,
             DetailedInformation : request.body.DetailedInformation ?? null,
-            AdditionalResources : request.body.AdditionalResources ?? null,
-            Tags                : request.body.Tags ?? null,
-
+            AdditionalResources : request.body.AdditionalResources ?? [],
+            Tags                : request.body.Tags ?? [],
         };
 
         return KnowledgeNuggetModel;
@@ -103,7 +102,7 @@ export class KnowledgeNuggetValidator {
             .run(request);
 
         await body('AdditionalResources').optional()
-            .trim()
+            .isArray()
             .run(request);
 
         await body('Tags').optional()
@@ -146,6 +145,21 @@ export class KnowledgeNuggetValidator {
             Helper.handleValidationError(result);
         }
         return request.params.id;
+    }
+
+    static async getPatientUserId(request) {
+
+        await param('patientUserId').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+        return request.params.patientUserId;
     }
 
 }

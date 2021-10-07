@@ -1,12 +1,11 @@
-import { IMessagingService } from '../interfaces/messaging.service.interface';
-import { Logger } from '../../../common/logger';
 import { Twilio } from 'twilio';
+import { Logger } from '../../../common/logger';
+import { IMessagingService } from '../interfaces/messaging.service.interface';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 const account_sid = process.env.TWILIO_ACCOUNT_SID;
 const auth_token = process.env.TWILIO_AUTH_TOKEN;
-const serviceFromPhone = process.env.SYSTEM_PHONE_NUMBER;
 const client = new Twilio(account_sid, auth_token);
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -33,6 +32,8 @@ export class TwilioMessagingService implements IMessagingService {
                 to   : to_phone_tmp,
             });
 
+            Logger.instance().log(`SMS sent response: ${JSON.stringify(smsResponse, null, 2)}`);
+            
             return true;
 
         } catch (error) {
@@ -50,13 +51,6 @@ export class TwilioMessagingService implements IMessagingService {
                 Logger.instance().log('Twilio access details not available');
                 resolve(true);
             });
-
-            await client.messages.create({
-                body : message,
-                from : `whatsapp:${serviceFromPhone}`,
-                to   : `whatsapp:${toPhone}`,
-            });
-            return true;
 
         } catch (error) {
             Logger.instance().log(error.message);

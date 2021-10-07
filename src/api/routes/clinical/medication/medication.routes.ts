@@ -20,7 +20,7 @@ export const register = (app: express.Application): void => {
     router.get('/stock-images/:imageId/download', authenticator.authenticateClient, authenticator.authenticateUser, controller.downloadStockMedicationImageById);
     router.get('/stock-images/:imageId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getStockMedicationImageById);
     
-    router.post('/', authenticator.authenticateClient, controller.create);
+    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/current', authenticator.authenticateClient, authenticator.authenticateUser, controller.getCurrentMedications);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);

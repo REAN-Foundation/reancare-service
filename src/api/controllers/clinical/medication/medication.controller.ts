@@ -1,11 +1,13 @@
 import express from 'express';
 import fs from 'fs';
 import mime from 'mime';
-import { MedicationStockImageDto } from '../../../..//domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
+import { DrugDomainModel } from '../../../../domain.types/clinical/medication/drug/drug.domain.model';
+import { MedicationStockImageDto } from '../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
+import { MedicationDomainModel } from '../../../../domain.types/clinical/medication/medication/medication.domain.model';
 import { ConsumptionSummaryDto } from '../../../../domain.types/clinical/medication/medication/medication.dto';
 import { MedicationAdministrationRoutesList, MedicationDosageUnitsList, MedicationDurationUnitsList, MedicationFrequencyUnitsList, MedicationTimeSchedulesList } from '../../../../domain.types/clinical/medication/medication/medication.types';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
@@ -118,24 +120,7 @@ export class MedicationController {
                 throw new ApiError(404, `Patient with an id ${domainModel.PatientUserId} cannot be found.`);
             }
             
-            if (domainModel.DrugId === null) {
-                if (domainModel.DrugName) {
-                    var existingDrug = await this._drugService.getByName(domainModel.DrugName);
-                    if (existingDrug) {
-                        domainModel.DrugId = existingDrug.id;
-                    }
-                }
-                else {
-                    throw new ApiError(404, `Drug for the medication is not specified.`);
-                }
-            }
-            else {
-                const drug = await this._drugService.getById(domainModel.DrugId);
-                if (drug == null) {
-                    throw new ApiError(404, `Drug with an id ${domainModel.DrugId} cannot be found.`);
-                }
-                domainModel.DrugName = drug.DrugName;
-            }
+            await this.updateDrugDetails(domainModel);
 
             var medication = await this._service.create(domainModel);
             if (medication == null) {
@@ -335,6 +320,36 @@ export class MedicationController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#region Privates
+    
+    private async updateDrugDetails(domainModel: MedicationDomainModel) {
+        if (domainModel.DrugId === null || domainModel.DrugId === undefined) {
+            if (domainModel.DrugName) {
+                var existingDrug = await this._drugService.getByName(domainModel.DrugName);
+                if (existingDrug) {
+                    domainModel.DrugId = existingDrug.id;
+                }
+                else {
+                    var drugDomainModel: DrugDomainModel = {
+                        DrugName : domainModel.DrugName
+                    };
+                    const drug = await this._drugService.create(drugDomainModel);
+                    domainModel.DrugId = drug.id;
+                }
+            }
+            else {
+                throw new ApiError(404, `Drug for the medication is not specified.`);
+            }
+        }
+        else {
+            const drug = await this._drugService.getById(domainModel.DrugId);
+            if (drug == null) {
+                throw new ApiError(404, `Drug with an id ${domainModel.DrugId} cannot be found.`);
+            }
+            domainModel.DrugName = drug.DrugName;
+        }
+    }
 
     //#endregion
 

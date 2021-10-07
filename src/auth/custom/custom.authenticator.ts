@@ -1,12 +1,11 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-
 import { Logger } from '../../common/logger';
-import { IAuthenticator } from '../authenticator.interface';
+import { AuthenticationResult } from '../../domain.types/auth/auth.domain.types';
+import { CurrentClient } from '../../domain.types/miscellaneous/current.client';
 import { ApiClientService } from '../../services/api.client.service';
 import { Loader } from '../../startup/loader';
-import { CurrentClient } from '../../domain.types/miscellaneous/current.client';
-import { AuthenticationResult } from '../../domain.types/auth/auth.domain.types';
+import { IAuthenticator } from '../authenticator.interface';
 
 //////////////////////////////////////////////////////////////
 
@@ -51,6 +50,7 @@ export class CustomAuthenticator implements IAuthenticator {
                 }
                 request.currentUser = user;
             });
+            
         } catch (err) {
             Logger.instance().log(JSON.stringify(err, null, 2));
             res = {

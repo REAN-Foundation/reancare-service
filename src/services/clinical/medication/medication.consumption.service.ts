@@ -6,6 +6,7 @@ import { IMedicationConsumptionRepo } from "../../../database/repository.interfa
 import { IMedicationRepo } from "../../../database/repository.interfaces/clinical/medication/medication.repo.interface";
 import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
 import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/user/user.device.details.repo.interface ";
+import { IUserRepo } from "../../../database/repository.interfaces/user/user.repo.interface";
 import { MedicationConsumptionDomainModel } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
 import { MedicationConsumptionCreateSummaryDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionStatus } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types";
@@ -25,6 +26,7 @@ export class MedicationConsumptionService {
         @inject('IMedicationConsumptionRepo') private _medicationConsumptionRepo: IMedicationConsumptionRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
+        @inject('IUserRepo') private _userRepo: IUserRepo,
 
         //@inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
     ) {}
@@ -59,6 +61,8 @@ export class MedicationConsumptionService {
         var now = new Date();
         
         var consumptions: MedicationConsumptionDto[] = [];
+
+        Logger.instance().log(startDate.toISOString());
         
         var i = 0;
 
@@ -73,6 +77,12 @@ export class MedicationConsumptionService {
                 var end_minutes = scheduleTimings[j].end;
                 var start = TimeHelper.addDuration(day, start_minutes, DurationType.Minute);
                 var end = TimeHelper.addDuration(day, end_minutes, DurationType.Minute);
+
+                Logger.instance().log(start.toISOString());
+                Logger.instance().log(end.toISOString());
+                
+                // var stra = start.toISOString();
+                // var strb = end.toISOString();
 
                 var domainModel: MedicationConsumptionDomainModel = {
                     PatientUserId     : medication.PatientUserId,
@@ -426,9 +436,9 @@ export class MedicationConsumptionService {
     }
     
     private getPatientTimeZone = async(patientUserId) => {
-        var patient = await this._patientRepo.getByUserId(patientUserId);
-        if (patient != null) {
-            return patient.User.CurrentTimeZone;
+        var user = await this._userRepo.getById(patientUserId);
+        if (user != null) {
+            return user.CurrentTimeZone;
         }
         return "+05:30";
     }
@@ -446,8 +456,6 @@ export class MedicationConsumptionService {
 
         var scheduleSlots = [];
 
-        var schedules = JSON.parse(medication.TimeSchedule) as string[];
-
         // If the frequency is defined weekly or monthly, by default return afternoon schedule
         if (medication.FrequencyUnit === MedicationFrequencyUnits.Weekly ||
             medication.FrequencyUnit === MedicationFrequencyUnits.Monthly) {
@@ -460,7 +468,7 @@ export class MedicationConsumptionService {
             return scheduleSlots;
         }
 
-        for (var s of schedules) {
+        for (var s of medication.TimeSchedules) {
             if (s === MedicationTimeSchedules.Morning) {
 
                 //7:30 am to 9:30 am

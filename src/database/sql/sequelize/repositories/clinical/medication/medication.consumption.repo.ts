@@ -19,7 +19,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         try {
             var entity = {
                 PatientUserId     : model.PatientUserId,
-                MedicationId      : model.id,
+                MedicationId      : model.MedicationId,
                 DrugName          : model.DrugName,
                 DrugId            : model.DrugId,
                 Dose              : model.Dose,

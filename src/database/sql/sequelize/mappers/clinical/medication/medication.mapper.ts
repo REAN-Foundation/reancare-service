@@ -1,5 +1,5 @@
-import { MedicationAdministrationRoutes, MedicationDosageUnits, MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from '../../../../../../domain.types/clinical/medication/medication/medication.types';
 import { MedicationDto } from '../../../../../../domain.types/clinical/medication/medication/medication.dto';
+import { MedicationAdministrationRoutes, MedicationDosageUnits, MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from '../../../../../../domain.types/clinical/medication/medication/medication.types';
 import MedicationModel from '../../../models/clinical/medication/medication.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@ export class MedicationMapper {
             VisitId                   : medication.VisitId,
             OrderId                   : medication.OrderId,
             DrugId                    : medication.DrugId,
+            DrugName                  : medication.DrugName,
             Dose                      : medication.Dose,
             DosageUnit                : medication.DosageUnit as MedicationDosageUnits,
             TimeSchedules             : schedules,

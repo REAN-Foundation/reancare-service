@@ -4,7 +4,6 @@ import { Helper } from '../../../../common/helper';
 import { BodyHeightDomainModel } from '../../../../domain.types/clinical/biometrics/body.height/body.height.domain.model';
 import { BodyHeightSearchFilters } from '../../../../domain.types/clinical/biometrics/body.height/body.height.search.types';
 
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class BodyHeightValidator {

@@ -4,7 +4,6 @@ import { Helper } from '../../../../common/helper';
 import { BodyWeightDomainModel } from '../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
 import { BodyWeightSearchFilters } from '../../../../domain.types/clinical/biometrics/body.weight/body.weight.search.types';
 
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class BodyWeightValidator {

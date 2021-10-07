@@ -1,18 +1,19 @@
 import express from 'express';
-
+import { Authorizer } from '../../../auth/authorizer';
+import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { Authorizer } from '../../../auth/authorizer';
-import { PersonService } from '../../../services/person.service';
-
-import { ApiError } from '../../../common/api.error';
-import { EmergencyContactValidator } from '../../validators/patient/emergency.contact.validator';
+import { AddressDomainModel } from '../../../domain.types/address/address.domain.model';
+import { EmergencyContactRoleList } from '../../../domain.types/patient/emergency.contact/emergency.contact.types';
+import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
+import { AddressService } from '../../../services/address.service';
+import { OrganizationService } from '../../../services/organization.service';
 import { EmergencyContactService } from '../../../services/patient/emergency.contact.service';
+import { PersonService } from '../../../services/person.service';
 import { RoleService } from '../../../services/role.service';
 import { UserService } from '../../../services/user.service';
-import { OrganizationService } from '../../../services/organization.service';
-import { AddressService } from '../../../services/address.service';
+import { Loader } from '../../../startup/loader';
+import { EmergencyContactValidator } from '../../validators/patient/emergency.contact.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,6 +49,17 @@ export class EmergencyContactController {
 
     //#region Action methods
 
+    getContactRoles = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            ResponseHandler.success(request, response, 'Medication time schedules retrieved successfully!', 200, {
+                EmergencyContactRoles : EmergencyContactRoleList,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Emergency.Contact.Create';
@@ -56,22 +68,28 @@ export class EmergencyContactController {
             const domainModel = await EmergencyContactValidator.create(request);
 
             if (domainModel.PatientUserId != null) {
-                const person = await this._userService.getById(domainModel.PatientUserId);
-                if (person == null) {
+                const user = await this._userService.getById(domainModel.PatientUserId);
+                if (user == null) {
                     throw new ApiError(404, `User with an id ${domainModel.PatientUserId} cannot be found.`);
                 }
             }
 
             if (domainModel.ContactPersonId != null) {
-                const person = await this._userService.getById(domainModel.ContactPersonId);
+                const person = await this._personService.getById(domainModel.ContactPersonId);
                 if (person == null) {
                     throw new ApiError(404, `User with an id ${domainModel.ContactPersonId} cannot be found.`);
                 }
-            } else {
-                const person = await this._personService.create({
-                    Phone : domainModel.AdditionalPhoneNumbers
-                });
+            } else if (domainModel.ContactPerson != null) {
+                var personDomainModel: PersonDomainModel = {
+                    Prefix    : domainModel.ContactPerson.Prefix ?? null,
+                    FirstName : domainModel.ContactPerson.FirstName ?? null,
+                    LastName  : domainModel.ContactPerson.LastName ?? null,
+                    Phone     : domainModel.ContactPerson.Phone
+                };
+                const person = await this._personService.create(personDomainModel);
                 domainModel.ContactPersonId = person.id;
+            } else {
+                throw new ApiError(400, "Emergency contact details are incomplete.");
             }
 
             if (domainModel.AddressId != null) {
@@ -79,6 +97,16 @@ export class EmergencyContactController {
                 if (person == null) {
                     throw new ApiError(404, `Address with an id ${domainModel.AddressId} cannot be found.`);
                 }
+            } else if (domainModel.Address != null) {
+                var addressDomainModel: AddressDomainModel = {
+                    Type        : "Official",
+                    AddressLine : domainModel.Address.AddressLine,
+                    City        : domainModel.Address.City ?? null,
+                    Country     : domainModel.Address.Country ?? null,
+                    PostalCode  : domainModel.Address.PostalCode ?? null
+                };
+                const address = await this._addressService.create(addressDomainModel);
+                domainModel.AddressId = address.id;
             }
 
             if (domainModel.OrganizationId != null) {

@@ -8,6 +8,10 @@ export interface IEmergencyContactRepo {
 
     getById(id: string): Promise<EmergencyContactDto>;
 
+    checkIfContactPersonExists(patientUserId: string, contactPersonId: string) : Promise<boolean>;
+
+    getContactsCountWithRole(patientUserId: string, contactRole: string) : Promise<number>;
+
     search(filters: EmergencyContactSearchFilters): Promise<EmergencyContactSearchResults>;
 
     update(id: string, contactDomainModel: EmergencyContactDomainModel): Promise<EmergencyContactDto>;

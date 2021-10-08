@@ -67,6 +67,14 @@ export class EmergencyContactController {
             
             const domainModel = await EmergencyContactValidator.create(request);
 
+            const existingContactRoles = await this._service.getContactsCountWithRole(
+                domainModel.PatientUserId, domainModel.ContactRelation);
+
+            if (existingContactRoles === 2) {
+                const msg = `Number of emergency contacts with role -${domainModel.ContactRelation} cannot be more than 2.`;
+                throw new ApiError(409, msg);
+            }
+
             if (domainModel.PatientUserId != null) {
                 const user = await this._userService.getById(domainModel.PatientUserId);
                 if (user == null) {
@@ -79,25 +87,49 @@ export class EmergencyContactController {
                 if (person == null) {
                     throw new ApiError(404, `User with an id ${domainModel.ContactPersonId} cannot be found.`);
                 }
+                var alreadyExists = await this._service.checkIfContactPersonExists(
+                    domainModel.PatientUserId,
+                    domainModel.ContactPersonId);
+                if (alreadyExists) {
+                    throw new ApiError(409 , 'The contact person already exists in the contact list of the patient!');
+                }
             } else if (domainModel.ContactPerson != null) {
+                
                 var personDomainModel: PersonDomainModel = {
                     Prefix    : domainModel.ContactPerson.Prefix ?? null,
                     FirstName : domainModel.ContactPerson.FirstName ?? null,
                     LastName  : domainModel.ContactPerson.LastName ?? null,
                     Phone     : domainModel.ContactPerson.Phone
                 };
-                const person = await this._personService.create(personDomainModel);
-                domainModel.ContactPersonId = person.id;
+                
+                var existingPerson = await this._personService.getPersonWithPhone(domainModel.ContactPerson.Phone);
+                if (existingPerson !== null) {
+                    
+                    domainModel.ContactPersonId = existingPerson.id;
+
+                    var alreadyExists = await this._service.checkIfContactPersonExists(
+                        domainModel.PatientUserId,
+                        domainModel.ContactPersonId);
+                    if (alreadyExists) {
+                        throw new ApiError(409 , 'The contact person already exists in the contact list of the patient!');
+                    }
+                }
+                else {
+                    const person = await this._personService.create(personDomainModel);
+                    domainModel.ContactPersonId = person.id;
+                }
+
             } else {
                 throw new ApiError(400, "Emergency contact details are incomplete.");
             }
 
             if (domainModel.AddressId != null) {
-                const person = await this._addressService.getById(domainModel.AddressId);
-                if (person == null) {
+                const address = await this._addressService.getById(domainModel.AddressId);
+                if (address == null) {
                     throw new ApiError(404, `Address with an id ${domainModel.AddressId} cannot be found.`);
                 }
             } else if (domainModel.Address != null) {
+                
                 var addressDomainModel: AddressDomainModel = {
                     Type        : "Official",
                     AddressLine : domainModel.Address.AddressLine,
@@ -110,8 +142,8 @@ export class EmergencyContactController {
             }
 
             if (domainModel.OrganizationId != null) {
-                const person = await this._orgService.getById(domainModel.OrganizationId);
-                if (person == null) {
+                const organization = await this._orgService.getById(domainModel.OrganizationId);
+                if (organization == null) {
                     throw new ApiError(404, `Organization with an id ${domainModel.OrganizationId} cannot be found.`);
                 }
             }
@@ -121,7 +153,7 @@ export class EmergencyContactController {
                 throw new ApiError(400, 'Cannot create patientEmergencyContact!');
             }
 
-            ResponseHandler.success(request, response, 'EmergencyContact created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Emergency contact created successfully!', 201, {
                 EmergencyContact : patientEmergencyContact,
             });
         } catch (error) {
@@ -139,10 +171,10 @@ export class EmergencyContactController {
 
             const patientEmergencyContact = await this._service.getById(id);
             if (patientEmergencyContact == null) {
-                throw new ApiError(404, 'EmergencyContact not found.');
+                throw new ApiError(404, 'Emergency contact not found.');
             }
 
-            ResponseHandler.success(request, response, 'EmergencyContact retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Emergency contact retrieved successfully!', 200, {
                 EmergencyContact : patientEmergencyContact,
             });
         } catch (error) {
@@ -182,7 +214,7 @@ export class EmergencyContactController {
             const id: string = await EmergencyContactValidator.getById(request);
             const existingEmergencyContact = await this._service.getById(id);
             if (existingEmergencyContact == null) {
-                throw new ApiError(404, 'EmergencyContact not found.');
+                throw new ApiError(404, 'Emergency contact not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
@@ -190,7 +222,7 @@ export class EmergencyContactController {
                 throw new ApiError(400, 'Unable to update patientEmergencyContact record!');
             }
 
-            ResponseHandler.success(request, response, 'EmergencyContact record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Emergency contact record updated successfully!', 200, {
                 EmergencyContact : updated,
             });
         } catch (error) {
@@ -206,15 +238,15 @@ export class EmergencyContactController {
             const id: string = await EmergencyContactValidator.getById(request);
             const existingEmergencyContact = await this._service.getById(id);
             if (existingEmergencyContact == null) {
-                throw new ApiError(404, 'EmergencyContact not found.');
+                throw new ApiError(404, 'Emergency contact not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'EmergencyContact cannot be deleted.');
+                throw new ApiError(400, 'Emergency contact cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'EmergencyContact record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Emergency contact record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

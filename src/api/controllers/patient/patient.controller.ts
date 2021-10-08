@@ -1,27 +1,25 @@
 import express from 'express';
-
-import { PatientService } from '../../../services/patient/patient.service';
-import { UserService } from '../../../services/user.service';
-import { PersonService } from '../../../services/person.service';
+import { Authorizer } from '../../../auth/authorizer';
+import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { Authorizer } from '../../../auth/authorizer';
-import { PatientValidator } from '../../validators/patient/patient.validator';
+import { AddressDomainModel } from '../../../domain.types/address/address.domain.model';
+import { Severity } from '../../../domain.types/miscellaneous/system.types';
+import { HealthProfileDomainModel } from '../../../domain.types/patient/health.profile/health.profile.domain.model';
 import { PatientDomainModel } from '../../../domain.types/patient/patient/patient.domain.model';
-
+import { PatientDetailsDto } from '../../../domain.types/patient/patient/patient.dto';
+import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../domain.types/user/user/user.domain.model';
-import { ApiError } from '../../../common/api.error';
-import { AddressDomainModel } from '../../../domain.types/address/address.domain.model';
-import { AddressValidator } from '../../validators/address.validator';
 import { AddressService } from '../../../services/address.service';
-import { RoleService } from '../../../services/role.service';
 import { HealthProfileService } from '../../../services/patient/health.profile.service';
-import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
-import { PatientDetailsDto } from '../../../domain.types/patient/patient/patient.dto';
-import { HealthProfileDomainModel } from '../../../domain.types/patient/health.profile/health.profile.domain.model';
-import { Severity } from '../../../domain.types/miscellaneous/system.types';
+import { PatientService } from '../../../services/patient/patient.service';
+import { PersonService } from '../../../services/person.service';
+import { RoleService } from '../../../services/role.service';
+import { UserService } from '../../../services/user.service';
+import { Loader } from '../../../startup/loader';
+import { AddressValidator } from '../../validators/address.validator';
+import { PatientValidator } from '../../validators/patient/patient.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

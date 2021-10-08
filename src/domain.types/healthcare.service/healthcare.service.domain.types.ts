@@ -2,9 +2,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export interface TimeSlot {
-    id?: string;
-    StartTime: Date;
-    EndTime: Date;
+    StartTime: string;
+    EndTime: string;
     Location?: string;
 }
 

@@ -1,19 +1,8 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    ForeignKey,
-    Length } from 'sequelize-typescript';
-
-import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.types';
-
+    BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
+} from 'sequelize-typescript';
 import { v4 } from 'uuid';
+import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.types';
 import Address from '../address.model';
 import Organization from '../organization.model';
 import Person from '../person.model';
@@ -46,6 +35,9 @@ export default class EmergencyContact extends Model {
         allowNull : false,
     })
     PatientUserId: string;
+
+    @BelongsTo(() => User)
+    PatientUser: User;
     
     @IsUUID(4)
     @ForeignKey(() => Person)
@@ -54,6 +46,9 @@ export default class EmergencyContact extends Model {
         allowNull : false,
     })
     ContactPersonId: string;
+
+    @BelongsTo(() => Person)
+    ContactPerson: Person;
 
     @Column({
         type         : DataType.STRING(64),
@@ -71,6 +66,9 @@ export default class EmergencyContact extends Model {
     })
     AddressId: string;
 
+    @BelongsTo(() => Address)
+    Address: Address;
+
     @IsUUID(4)
     @ForeignKey(() => Organization)
     @Column({
@@ -78,6 +76,9 @@ export default class EmergencyContact extends Model {
         allowNull : true,
     })
     OrganizationId: string;
+
+    @BelongsTo(() => Organization)
+    Organization: Organization;
 
     @Column({
         type         : DataType.BOOLEAN,

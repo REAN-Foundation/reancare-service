@@ -5,7 +5,15 @@ import {
 import { v4 } from 'uuid';
 import {
     MedicationAdministrationRoutes,
-    MedicationAdministrationRoutesList, MedicationDosageUnits, MedicationDosageUnitsList, MedicationDurationUnits, MedicationDurationUnitsList, MedicationFrequencyUnits, MedicationFrequencyUnitsList, MedicationTimeSchedules, MedicationTimeSchedulesList
+    MedicationAdministrationRoutesList,
+    MedicationDosageUnits,
+    MedicationDosageUnitsList,
+    MedicationDurationUnits,
+    MedicationDurationUnitsList,
+    MedicationFrequencyUnits,
+    MedicationFrequencyUnitsList,
+    MedicationTimeSchedules,
+    MedicationTimeSchedulesList
 } from '../../../../../../domain.types/clinical/medication/medication/medication.types';
 import FileResource from '../../file.resource/file.resource.model';
 import User from '../../user/user.model';

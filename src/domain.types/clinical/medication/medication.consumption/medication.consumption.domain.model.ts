@@ -26,7 +26,6 @@ export interface MedicationConsumptionScheduleDomainModel {
     GroupByDrug?  : boolean;
 }
 
-
 export interface MedicationConsumptionSummaryDomainModel {
     PatientUserId?    : string;
     Date?             : Date;

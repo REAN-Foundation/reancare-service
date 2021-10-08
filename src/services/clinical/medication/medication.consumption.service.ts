@@ -62,7 +62,7 @@ export class MedicationConsumptionService {
         
         var consumptions: MedicationConsumptionDto[] = [];
 
-        Logger.instance().log(startDate.toISOString());
+        //Logger.instance().log(startDate.toISOString());
         
         var i = 0;
 
@@ -78,8 +78,8 @@ export class MedicationConsumptionService {
                 var start = TimeHelper.addDuration(day, start_minutes, DurationType.Minute);
                 var end = TimeHelper.addDuration(day, end_minutes, DurationType.Minute);
 
-                Logger.instance().log(start.toISOString());
-                Logger.instance().log(end.toISOString());
+                // Logger.instance().log(start.toISOString());
+                // Logger.instance().log(end.toISOString());
                 
                 // var stra = start.toISOString();
                 // var strb = end.toISOString();

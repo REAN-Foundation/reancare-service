@@ -141,7 +141,7 @@ export class MedicationValidator {
             .isArray()
             .run(request);
 
-        await body('Frequency').exists()
+        await body('Frequency').optional()
             .isInt()
             .run(request);
 

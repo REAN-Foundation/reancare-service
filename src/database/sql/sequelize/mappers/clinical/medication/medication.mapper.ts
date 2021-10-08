@@ -14,6 +14,8 @@ export class MedicationMapper {
 
         var schedules: MedicationTimeSchedules[] = JSON.parse(medication.TimeSchedules) as MedicationTimeSchedules[];
 
+        var refillCount = typeof medication.RefillCount === 'string' ? parseInt(medication.RefillCount) : medication.RefillCount;
+
         const dto: MedicationDto = {
             id                        : medication.id,
             EhrId                     : medication.EhrId,
@@ -34,7 +36,7 @@ export class MedicationMapper {
             StartDate                 : medication.StartDate,
             EndDate                   : medication.EndDate,
             RefillNeeded              : medication.RefillNeeded,
-            RefillCount               : medication.RefillCount,
+            RefillCount               : refillCount,
             Instructions              : medication.Instructions,
             ImageResourceId           : medication.ImageResourceId,
             IsExistingMedication      : medication.IsExistingMedication,

@@ -192,7 +192,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             search['order'] = [[orderByColum, order]];
 
             let limit = 25;
-            if (filters.ItemsPerPage) {
+            if (filters.ItemsPerPage > 0) {
                 limit = filters.ItemsPerPage;
             }
             let offset = 0;

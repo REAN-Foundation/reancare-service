@@ -131,8 +131,8 @@ export class MedicationController {
 
             var consumptionSummary: ConsumptionSummaryDto = {
                 TotalConsumptionCount   : medConsumptions.TotalConsumptionCount,
-                PendingConsumptionCount : medConsumptions.TotalConsumptionCount * medication.Dose,
-                TotalDoseCount          : medConsumptions.PendingConsumptionCount,
+                TotalDoseCount          : medConsumptions.TotalConsumptionCount * medication.Dose,
+                PendingConsumptionCount : medConsumptions.PendingConsumptionCount,
                 PendingDoseCount        : medConsumptions.PendingConsumptionCount * medication.Dose,
             };
 
@@ -202,10 +202,34 @@ export class MedicationController {
             if (existingMedication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
-
+            
             const updated = await this._service.update(id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update medication record!');
+            }
+
+            if (domainModel.DrugId !== null ||
+                domainModel.RefillCount !== null ||
+                domainModel.RefillNeeded !== null ||
+                domainModel.Duration !== null ||
+                domainModel.DurationUnit !== null ||
+                domainModel.Frequency !== null ||
+                domainModel.FrequencyUnit !== null ||
+                domainModel.TimeSchedules !== null ||
+                domainModel.StartDate !== null) {
+
+                await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
+
+                var medConsumptions = await this._medicationConsumptionService.create(updated);
+
+                var consumptionSummary: ConsumptionSummaryDto = {
+                    TotalConsumptionCount   : medConsumptions.TotalConsumptionCount,
+                    PendingConsumptionCount : medConsumptions.TotalConsumptionCount * updated.Dose,
+                    TotalDoseCount          : medConsumptions.PendingConsumptionCount,
+                    PendingDoseCount        : medConsumptions.PendingConsumptionCount * updated.Dose,
+                };
+    
+                updated.ConsumptionSummary = consumptionSummary;
             }
 
             ResponseHandler.success(request, response, 'Medication record updated successfully!', 200, {
@@ -231,6 +255,8 @@ export class MedicationController {
             if (!deleted) {
                 throw new ApiError(400, 'Medication cannot be deleted.');
             }
+            
+            await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
 
             ResponseHandler.success(request, response, 'Medication record deleted successfully!', 200, {
                 Deleted : true,

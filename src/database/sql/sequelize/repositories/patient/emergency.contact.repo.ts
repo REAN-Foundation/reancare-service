@@ -1,12 +1,12 @@
-import { IEmergencyContactRepo } from '../../../../repository.interfaces/patient/emergency.contact.repo.interface';
-import EmergencyContact from '../../models/patient/emergency.contact.model';
 import { Op } from 'sequelize';
-import { EmergencyContactMapper } from '../../mappers/patient/emergency.contact.mapper';
-import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
+import { Logger } from '../../../../../common/logger';
 import { EmergencyContactDomainModel } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.domain.model';
 import { EmergencyContactDto } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.dto';
 import { EmergencyContactSearchFilters, EmergencyContactSearchResults } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.search.types';
+import { IEmergencyContactRepo } from '../../../../repository.interfaces/patient/emergency.contact.repo.interface';
+import { EmergencyContactMapper } from '../../mappers/patient/emergency.contact.mapper';
+import EmergencyContact from '../../models/patient/emergency.contact.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -36,9 +36,44 @@ export class EmergencyContactRepo implements IEmergencyContactRepo {
 
     getById = async (id: string): Promise<EmergencyContactDto> => {
         try {
-            const contact = await EmergencyContact.findByPk(id);
+            const contact = await EmergencyContact.findOne({
+                where : {
+                    id : id
+                }
+            });
             const dto = await EmergencyContactMapper.toDto(contact);
             return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    checkIfContactPersonExists = async (patientUserId: string, contactPersonId: string)
+        : Promise<boolean> => {
+        try {
+            const contact = await EmergencyContact.findOne({
+                where : {
+                    PatientUserId   : patientUserId,
+                    ContactPersonId : contactPersonId
+                }
+            });
+            return contact !== null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getContactsCountWithRole = async (patientUserId: string, contactRole: string)
+        : Promise<number> => {
+        try {
+            return await EmergencyContact.count({
+                where : {
+                    PatientUserId   : patientUserId,
+                    ContactRelation : { [Op.like]: '%' + contactRole + '%' }
+                }
+            });
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

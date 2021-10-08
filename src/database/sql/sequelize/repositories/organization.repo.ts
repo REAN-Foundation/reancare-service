@@ -1,20 +1,20 @@
-import { IOrganizationRepo } from '../../../repository.interfaces/organization.repo.interface';
-import Organization from '../models/organization.model';
 import { Op } from 'sequelize';
-import { OrganizationMapper } from '../mappers/organization.mapper';
-import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
-import { PersonDto } from '../../../../domain.types/person/person.dto';
-import { PersonMapper } from '../mappers/person.mapper';
-import { AddressMapper } from '../mappers/address.mapper';
+import { Logger } from '../../../../common/logger';
 import { AddressDto } from '../../../../domain.types/address/address.dto';
 import { OrganizationDomainModel } from '../../../../domain.types/organization/organization.domain.model';
 import { OrganizationDto } from '../../../../domain.types/organization/organization.dto';
 import { OrganizationSearchFilters, OrganizationSearchResults } from '../../../../domain.types/organization/organization.search.types';
-import Person from '../models/person.model';
+import { PersonDto } from '../../../../domain.types/person/person.dto';
+import { IOrganizationRepo } from '../../../repository.interfaces/organization.repo.interface';
+import { AddressMapper } from '../mappers/address.mapper';
+import { OrganizationMapper } from '../mappers/organization.mapper';
+import { PersonMapper } from '../mappers/person.mapper';
 import Address from '../models/address.model';
-import OrganizationPersons from '../models/organization.persons.model';
 import OrganizationAddresses from '../models/organization.addresses.model';
+import Organization from '../models/organization.model';
+import OrganizationPersons from '../models/organization.persons.model';
+import Person from '../models/person.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -63,7 +63,9 @@ export class OrganizationRepo implements IOrganizationRepo {
     getById = async (id: string): Promise<OrganizationDto> => {
         try {
             const organization = await Organization.findByPk(id);
-
+            if (organization === null) {
+                return null;
+            }
             var parentOrganization = null;
             if (organization.ParentOrganizationId != null) {
                 parentOrganization = await Organization.findByPk(organization.ParentOrganizationId);

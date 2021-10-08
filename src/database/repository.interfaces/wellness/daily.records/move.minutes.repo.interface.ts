@@ -5,7 +5,6 @@ import { MoveMinutesDomainModel } from "../../../../domain.types/wellness/daily.
 import { MoveMinutesDto } from "../../../../domain.types/wellness/daily.records/move.minutes/move.minutes.dto";
 import { MoveMinutesSearchFilters, MoveMinutesSearchResults } from "../../../../domain.types/wellness/daily.records/move.minutes/move.minutes.search.types";
 
-
 export interface IMoveMinutesRepo {
 
     create(moveMinutesDomainModel: MoveMinutesDomainModel): Promise<MoveMinutesDto>;

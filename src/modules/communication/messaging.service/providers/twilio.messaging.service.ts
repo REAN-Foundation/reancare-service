@@ -29,12 +29,14 @@ export class TwilioMessagingService implements IMessagingService {
                 from_phone_tmp = process.env.SYSTEM_US_PHONE_NUMBER;
             }
 
-            await this._client.messages.create({
+            const smsResponse = await this._client.messages.create({
                 body : message,
                 from : from_phone_tmp,
                 to   : to_phone_tmp,
             });
 
+            Logger.instance().log(`SMS sent response: ${JSON.stringify(smsResponse, null, 2)}`);
+            
             return true;
 
         } catch (error) {

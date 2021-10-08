@@ -1,6 +1,9 @@
-import EmergencyContact from '../../models/patient/emergency.contact.model';
 import { EmergencyContactDto } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.dto';
 import { EmergencyContactRoles } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.types';
+import EmergencyContact from '../../models/patient/emergency.contact.model';
+import { AddressMapper } from '../address.mapper';
+import { OrganizationMapper } from '../organization.mapper';
+import { PersonMapper } from '../person.mapper';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -14,10 +17,13 @@ export class EmergencyContactMapper {
         const dto: EmergencyContactDto = {
             id                      : contact.id,
             PatientUserId           : contact.PatientUserId,
-            ContactPerson           : undefined,
+            ContactPersonId         : contact.ContactPersonId,
+            ContactPerson           : PersonMapper.toDto(contact.ContactPerson),
             ContactRelation         : contact.ContactRelation as EmergencyContactRoles,
-            Address                 : undefined,
-            Organization            : undefined,
+            AddressId               : contact.AddressId,
+            Address                 : AddressMapper.toDto(contact.Address),
+            OrganizationId          : contact.OrganizationId,
+            Organization            : OrganizationMapper.toDto(contact.Organization),
             IsAvailableForEmergency : contact.IsAvailableForEmergency,
             TimeOfAvailability      : contact.TimeOfAvailability,
             Description             : contact.Description,

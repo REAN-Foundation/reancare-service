@@ -14,8 +14,6 @@ export interface IMedicationConsumptionRepo {
 
     markAsMissed(id: string): Promise<MedicationConsumptionDetailsDto>;
 
-    cancelFutureMedicationSchedules(medicationId: string): Promise<number>;
-
     deleteFutureMedicationSchedules(medicationId: string): Promise<number>;
 
     // updateTimeZoneForFutureMedicationSchedules(

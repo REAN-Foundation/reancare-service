@@ -15,7 +15,6 @@ export const register = (app: express.Application): void => {
     router.put('/mark-as-taken/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.markAsTaken);
     router.put('/mark-as-missed/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.markAsMissed);
 
-    router.post('/cancel-future-schedules/:medicationId', authenticator.authenticateClient, authenticator.authenticateUser, controller.cancelFutureMedicationSchedules);
     router.post('/delete-future-schedules/:medicationId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteFutureMedicationSchedules);
 
     router.get('/search-for-patient/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.searchForPatient);

@@ -8994,7 +8994,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugName\": \"Tylenol 8 HR Arthritis Pain: 650 mg\",\n    \"Dose\": 1,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\", \n        \"Evening\", \n        \"Night\"\n    ],\n    \"Frequency\": 4,\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 100,\n    \"DurationUnit\": \"Days\",\n    \"StartDate\": \"2021-04-25\",\n    \"RefillNeeded\": false,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\",\n    \"MedicationImageResourceId\": \"{{STOCK_MEDICATION_IMAGE_RESOURCE_ID}}\"\n}",
+											"raw": "{\n\t\"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugName\": \"Tylenol 8 HR Arthritis Pain: 650 mg\",\n    \"Dose\": 1,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\", \n        \"Evening\", \n        \"Night\"\n    ],\n    \"Frequency\": 4,\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 25,\n    \"DurationUnit\": \"Days\",\n    \"StartDate\": \"2021-04-25\",\n    \"RefillNeeded\": false,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\",\n    \"MedicationImageResourceId\": \"{{STOCK_MEDICATION_IMAGE_RESOURCE_ID}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -9026,11 +9026,8 @@
 													"try {\r",
 													"\r",
 													"    var jsonData = pm.response.json();\r",
-													"    var id = jsonData.data.medication.id;\r",
+													"    var id = jsonData.Data.Medication.id;\r",
 													"    pm.environment.set(\"MEDICATION_ID\", id);\r",
-													"\r",
-													"    var medication_consumption_id = jsonData.data.medication.scheduled_consumptions[0].id;\r",
-													"    pm.environment.set(\"MEDICATION_CONSUMPTION_ID\", medication_consumption_id);\r",
 													"\r",
 													"}\r",
 													"catch (error) {\r",
@@ -9064,10 +9061,9 @@
 													"    return [year, month, day].join('-');\r",
 													"}\r",
 													"\r",
-													"var start_date = formatDate((new Date()).addDays(1));\r",
+													"var start_date = formatDate((new Date()).addDays(-2));\r",
 													"\r",
 													"pm.environment.set(\"MEDICATION_START_DATE\", start_date);\r",
-													"\r",
 													"\r",
 													""
 												],
@@ -9096,7 +9092,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugId\": \"{{DRUG_ID}}\",\n    \"Dose\": 1.5,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\"\n    ],\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 3,\n    \"DurationUnit\": \"Weeks\",\n    \"StartDate\": \"2021-09-25\",\n    \"RefillNeeded\": true,\n    \"RefillCount\": 3,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\"\n}",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugId\": \"{{DRUG_ID}}\",\n    \"Dose\": 1.5,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\"\n    ],\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 2,\n    \"DurationUnit\": \"Weeks\",\n    \"StartDate\": \"{{MEDICATION_START_DATE}}\",\n    \"RefillNeeded\": true,\n    \"RefillCount\": 2,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -9394,8 +9390,8 @@
 													"\r",
 													"var d = new Date();\r",
 													"\r",
-													"var fromDate = formatDate(d);\r",
-													"var toDate = formatDate((new Date()).addDays(10));\r",
+													"var fromDate = formatDate(d.addDays(2));\r",
+													"var toDate = formatDate((new Date()).addDays(7));\r",
 													"\r",
 													"pm.environment.set(\"MEDICATION_CONSUMPTION_SCHEDULE_FROM\", fromDate);\r",
 													"pm.environment.set(\"MEDICATION_CONSUMPTION_SCHEDULE_TO\", toDate);"
@@ -9416,7 +9412,27 @@
 													"}\r",
 													"catch (error) {\r",
 													"    console.log(error.message);\r",
-													"}"
+													"}\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication consumptions for patient are returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationConsumptions');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions).to.have.property('TotalCount');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions).to.have.property('Items');\r",
+													"    \r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions.TotalCount).greaterThan(0);    \r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions.Items.length).greaterThan(0);    \r",
+													"});\r",
+													"\r",
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -9464,18 +9480,18 @@
 													"disabled": true
 												},
 												{
-													"key": "fromDate",
+													"key": "dateFrom",
 													"value": "{{MEDICATION_CONSUMPTION_SCHEDULE_FROM}}",
 													"disabled": true
 												},
 												{
-													"key": "toDate",
+													"key": "dateTo",
 													"value": "{{MEDICATION_CONSUMPTION_SCHEDULE_TO}}",
 													"disabled": true
 												},
 												{
 													"key": "fromDate",
-													"value": "2021-05-21",
+													"value": "2021-10-21",
 													"disabled": true
 												},
 												{
@@ -9490,6 +9506,44 @@
 								},
 								{
 									"name": "Get medication consumption by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication consumption is returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationConsumption');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.have.property('PatientUserId');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.have.property('MedicationId');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.have.property('DrugName');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.have.property('DrugId');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.have.property('Dose');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.have.property('Details');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.have.property('TimeScheduleStart');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.have.property('TimeScheduleEnd');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.have.property('Status');\r",
+													"    \r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption.Dose).greaterThan(0);    \r",
+													"  \r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"request": {
 										"method": "GET",
 										"header": [
@@ -9524,7 +9578,7 @@
 									"response": []
 								},
 								{
-									"name": "Get medication consumption schedule for duration",
+									"name": "Get med schedule for duration in future",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -9561,6 +9615,40 @@
 												],
 												"type": "text/javascript"
 											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication consumption for duration is returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationConsumptions');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions.length).greaterThan(0);\r",
+													"\r",
+													"    var firstMed = jsonRes.Data.MedicationConsumptions[0];\r",
+													"\r",
+													"    pm.expect(firstMed).to.have.property('id');\r",
+													"    pm.expect(firstMed).to.have.property('DrugName');\r",
+													"    pm.expect(firstMed).to.have.property('Details');\r",
+													"    pm.expect(firstMed).to.have.property('TimeScheduleStart');\r",
+													"    pm.expect(firstMed).to.have.property('TimeScheduleEnd');\r",
+													"    pm.expect(firstMed).to.have.property('Status');\r",
+													"  \r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
 										}
 									],
 									"request": {
@@ -9583,23 +9671,24 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/medication-consumption/schedule-for-duration/{{PATIENT_ROLE_USER_ID}}?duration=3w&when=future",
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/schedule-for-duration/{{PATIENT_USER_ID}}?duration=1w&when=past",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"medication-consumption",
+												"clinical",
+												"medication-consumptions",
 												"schedule-for-duration",
-												"{{PATIENT_ROLE_USER_ID}}"
+												"{{PATIENT_USER_ID}}"
 											],
 											"query": [
 												{
 													"key": "duration",
-													"value": "3w"
+													"value": "1w"
 												},
 												{
 													"key": "when",
-													"value": "future"
+													"value": "past"
 												}
 											]
 										}
@@ -9607,7 +9696,144 @@
 									"response": []
 								},
 								{
-									"name": "Get medication consumption schedule for day",
+									"name": "Get med schedule for duration in past",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"\r",
+													"Date.prototype.addDays = function(days) {\r",
+													"    var date = new Date(this.valueOf());\r",
+													"    date.setDate(date.getDate() + days);\r",
+													"    return date;\r",
+													"}\r",
+													"\r",
+													"function formatDate(date) {\r",
+													"    var d = new Date(date),\r",
+													"        month = '' + (d.getMonth() + 1),\r",
+													"        day = '' + d.getDate(),\r",
+													"        year = d.getFullYear();\r",
+													"\r",
+													"    if (month.length < 2) \r",
+													"        month = '0' + month;\r",
+													"    if (day.length < 2) \r",
+													"        day = '0' + day;\r",
+													"\r",
+													"    return [year, month, day].join('-');\r",
+													"}\r",
+													"\r",
+													"var d = new Date();\r",
+													"\r",
+													"var fromDate = formatDate(d);\r",
+													"var toDate = formatDate((new Date()).addDays(10));\r",
+													"\r",
+													"pm.environment.set(\"MEDICATION_CONSUMPTION_SCHEDULE_FROM\", fromDate);\r",
+													"pm.environment.set(\"MEDICATION_CONSUMPTION_SCHEDULE_TO\", toDate);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var consumptions = jsonData.Data.MedicationConsumptions;\r",
+													"\r",
+													"    var count = 1;\r",
+													"    for(var c of consumptions) {\r",
+													"        var name = \"MEDICATION_CONSUMPTION_ID_\" + String(count).padStart(2, '0');\r",
+													"        pm.environment.set(name, c.id);\r",
+													"        if(count > 5) {\r",
+													"            break;\r",
+													"        }\r",
+													"        count++;\r",
+													"    }\r",
+													"\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication consumption for duration is returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationConsumptions');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions.length).greaterThan(0);\r",
+													"\r",
+													"    var firstMed = jsonRes.Data.MedicationConsumptions[0];\r",
+													"\r",
+													"    pm.expect(firstMed).to.have.property('id');\r",
+													"    pm.expect(firstMed).to.have.property('DrugName');\r",
+													"    pm.expect(firstMed).to.have.property('Details');\r",
+													"    pm.expect(firstMed).to.have.property('TimeScheduleStart');\r",
+													"    pm.expect(firstMed).to.have.property('TimeScheduleEnd');\r",
+													"    pm.expect(firstMed).to.have.property('Status');\r",
+													"  \r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/schedule-for-duration/{{PATIENT_USER_ID}}?duration=1w&when=past",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medication-consumptions",
+												"schedule-for-duration",
+												"{{PATIENT_USER_ID}}"
+											],
+											"query": [
+												{
+													"key": "duration",
+													"value": "1w"
+												},
+												{
+													"key": "when",
+													"value": "past"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get med schedule for day",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -9641,6 +9867,42 @@
 												],
 												"type": "text/javascript"
 											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication consumption schedule for day is returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationSchedulesForDay');\r",
+													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay).to.have.property('Day');\r",
+													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay).to.have.property('Schedules');    \r",
+													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay.Schedules.length).greaterThan(0);\r",
+													"\r",
+													"    var firstMed = jsonRes.Data.MedicationSchedulesForDay.Schedules[0];\r",
+													"\r",
+													"    pm.expect(firstMed).to.have.property('id');\r",
+													"    pm.expect(firstMed).to.have.property('DrugName');\r",
+													"    pm.expect(firstMed).to.have.property('Details');\r",
+													"    pm.expect(firstMed).to.have.property('TimeScheduleStart');\r",
+													"    pm.expect(firstMed).to.have.property('TimeScheduleEnd');\r",
+													"    pm.expect(firstMed).to.have.property('Status');\r",
+													"  \r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
 										}
 									],
 									"request": {
@@ -9663,20 +9925,25 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/medication-consumption/schedule-for-day/{{PATIENT_ROLE_USER_ID}}/{{MEDICATION_CONSUMPTION_FOR_DATE}}?groupByDrug=true",
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/schedule-for-day/{{PATIENT_USER_ID}}/{{MEDICATION_CONSUMPTION_FOR_DATE}}?groupByDrug=true&date={{MEDICATION_CONSUMPTION_FOR_DATE}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"medication-consumption",
+												"clinical",
+												"medication-consumptions",
 												"schedule-for-day",
-												"{{PATIENT_ROLE_USER_ID}}",
+												"{{PATIENT_USER_ID}}",
 												"{{MEDICATION_CONSUMPTION_FOR_DATE}}"
 											],
 											"query": [
 												{
 													"key": "groupByDrug",
 													"value": "true"
+												},
+												{
+													"key": "date",
+													"value": "{{MEDICATION_CONSUMPTION_FOR_DATE}}"
 												}
 											]
 										}
@@ -9684,7 +9951,7 @@
 									"response": []
 								},
 								{
-									"name": "Get medication consumption schedule summary",
+									"name": "Get med consumption summary for calendar months",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -9718,6 +9985,47 @@
 												],
 												"type": "text/javascript"
 											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication consumption summary for calendar months is returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationConsumptionSummary');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptionSummary).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptionSummary.length).greaterThan(0);\r",
+													"\r",
+													"    var monthSummary = jsonRes.Data.MedicationConsumptionSummary[0];\r",
+													"\r",
+													"    pm.expect(monthSummary).to.have.property('Month');\r",
+													"    pm.expect(monthSummary).to.have.property('DaysInMonth');\r",
+													"    pm.expect(monthSummary).to.have.property('SummaryForMonth');\r",
+													"\r",
+													"    var monthSummaryForDrug = monthSummary.SummaryForMonth[0];\r",
+													"\r",
+													"    pm.expect(monthSummaryForDrug).to.have.property('Drug');\r",
+													"    pm.expect(monthSummaryForDrug).to.have.property('SummaryForDrug');\r",
+													"    pm.expect(monthSummaryForDrug.SummaryForDrug).to.have.property('Missed');\r",
+													"    pm.expect(monthSummaryForDrug.SummaryForDrug).to.have.property('Taken');\r",
+													"    pm.expect(monthSummaryForDrug.SummaryForDrug).to.have.property('Unknown');\r",
+													"    pm.expect(monthSummaryForDrug.SummaryForDrug).to.have.property('Upcoming');\r",
+													"    pm.expect(monthSummaryForDrug.SummaryForDrug).to.have.property('Overdue');\r",
+													"  \r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
 										}
 									],
 									"request": {
@@ -9740,14 +10048,15 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/medication-consumption/summary-for-calendar-months/{{PATIENT_ROLE_USER_ID}}",
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/summary-for-calendar-months/{{PATIENT_USER_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"medication-consumption",
+												"clinical",
+												"medication-consumptions",
 												"summary-for-calendar-months",
-												"{{PATIENT_ROLE_USER_ID}}"
+												"{{PATIENT_USER_ID}}"
 											]
 										}
 									},
@@ -9755,6 +10064,33 @@
 								},
 								{
 									"name": "Mark as taken",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication consumption schedule marked as taken\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationConsumption');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption.Status).eqls('Taken');\r",
+													"  \r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"request": {
 										"method": "PUT",
 										"header": [
@@ -9775,12 +10111,13 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/medication-consumption/mark-as-taken/{{MEDICATION_CONSUMPTION_ID}}",
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/mark-as-taken/{{MEDICATION_CONSUMPTION_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"medication-consumption",
+												"clinical",
+												"medication-consumptions",
 												"mark-as-taken",
 												"{{MEDICATION_CONSUMPTION_ID}}"
 											]
@@ -9790,6 +10127,38 @@
 								},
 								{
 									"name": "Mark list of med consumptions as taken",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication consumption schedules in list are marked as taken\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationConsumptions');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions.length).equals(2);\r",
+													"\r",
+													"    var firstMed = jsonRes.Data.MedicationConsumptions[0];\r",
+													"    var secondMed = jsonRes.Data.MedicationConsumptions[1];\r",
+													"\r",
+													"    pm.expect(firstMed.Status).equals(\"Taken\");\r",
+													"    pm.expect(secondMed.Status).equals(\"Taken\");\r",
+													"  \r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"request": {
 										"method": "PUT",
 										"header": [
@@ -9811,15 +10180,16 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"ids\": [\r\n        \"6d0b099d-13fd-4297-ba29-bbbd004696a9\",\r\n        \"58528027-5be3-4ed2-b174-edfa0391dd6e\"\r\n    ]\r\n}"
+											"raw": "{\r\n    \"MedicationConsumptionIds\": [\r\n        \"{{MEDICATION_CONSUMPTION_ID_03}}\",\r\n        \"{{MEDICATION_CONSUMPTION_ID_05}}\"\r\n    ]\r\n}"
 										},
 										"url": {
-											"raw": "{{BASE_URL}}/medication-consumption/mark-list-as-taken",
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/mark-list-as-taken",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"medication-consumption",
+												"clinical",
+												"medication-consumptions",
 												"mark-list-as-taken"
 											]
 										}
@@ -9828,6 +10198,31 @@
 								},
 								{
 									"name": "Mark as missed",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication consumption schedule marked as missed\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationConsumption');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumption.Status).eqls('Missed');\r",
+													"  \r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"request": {
 										"method": "PUT",
 										"header": [
@@ -9848,14 +10243,15 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/medication-consumption/mark-as-missed/{{MEDICATION_CONSUMPTION_ID}}",
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/mark-as-missed/{{MEDICATION_CONSUMPTION_ID_02}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"medication-consumption",
+												"clinical",
+												"medication-consumptions",
 												"mark-as-missed",
-												"{{MEDICATION_CONSUMPTION_ID}}"
+												"{{MEDICATION_CONSUMPTION_ID_02}}"
 											]
 										}
 									},
@@ -9863,6 +10259,38 @@
 								},
 								{
 									"name": "Mark list of med consumptions as missed",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication consumption schedules in list are marked as missed\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationConsumptions');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptions.length).equals(2);\r",
+													"\r",
+													"    var firstMed = jsonRes.Data.MedicationConsumptions[0];\r",
+													"    var secondMed = jsonRes.Data.MedicationConsumptions[1];\r",
+													"\r",
+													"    pm.expect(firstMed.Status).equals(\"Missed\");\r",
+													"    pm.expect(secondMed.Status).equals(\"Missed\");\r",
+													"  \r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"request": {
 										"method": "PUT",
 										"header": [
@@ -9884,15 +10312,16 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"ids\": [\r\n        \"6d0b099d-13fd-4297-ba29-bbbd004696a9\",\r\n        \"58528027-5be3-4ed2-b174-edfa0391dd6e\"\r\n    ]\r\n}"
+											"raw": "{\r\n    \"MedicationConsumptionIds\": [\r\n        \"{{MEDICATION_CONSUMPTION_ID_04}}\",\r\n        \"{{MEDICATION_CONSUMPTION_ID_06}}\"\r\n    ]\r\n}"
 										},
 										"url": {
-											"raw": "{{BASE_URL}}/medication-consumption/mark-list-as-missed",
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/mark-list-as-missed",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"medication-consumption",
+												"clinical",
+												"medication-consumptions",
 												"mark-list-as-missed"
 											]
 										}
@@ -9900,7 +10329,60 @@
 									"response": []
 								},
 								{
-									"name": "Delete future medication consumptions",
+									"name": "Add another medication by drug id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"\r",
+													"    var jsonData = pm.response.json();\r",
+													"    var id = jsonData.Data.Medication.id;\r",
+													"    pm.environment.set(\"MEDICATION_ID\", id);\r",
+													"\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"Date.prototype.addDays = function(days) {\r",
+													"    var date = new Date(this.valueOf());\r",
+													"    date.setDate(date.getDate() + days);\r",
+													"    return date;\r",
+													"}\r",
+													"\r",
+													"function formatDate(date) {\r",
+													"    var d = new Date(date),\r",
+													"        month = '' + (d.getMonth() + 1),\r",
+													"        day = '' + d.getDate(),\r",
+													"        year = d.getFullYear();\r",
+													"\r",
+													"    if (month.length < 2) \r",
+													"        month = '0' + month;\r",
+													"    if (day.length < 2) \r",
+													"        day = '0' + day;\r",
+													"\r",
+													"    return [year, month, day].join('-');\r",
+													"}\r",
+													"\r",
+													"var start_date = formatDate((new Date()).addDays(-2));\r",
+													"\r",
+													"pm.environment.set(\"MEDICATION_START_DATE\", start_date);\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"request": {
 										"method": "POST",
 										"header": [
@@ -9920,22 +10402,56 @@
 												"type": "text"
 											}
 										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugId\": \"{{DRUG_ID}}\",\n    \"Dose\": 1.5,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\"\n    ],\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 2,\n    \"DurationUnit\": \"Weeks\",\n    \"StartDate\": \"{{MEDICATION_START_DATE}}\",\n    \"RefillNeeded\": true,\n    \"RefillCount\": 2,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
 										"url": {
-											"raw": "{{BASE_URL}}/medication-consumption/delete-future-schedules/{{MEDICATION_ID}}",
+											"raw": "{{BASE_URL}}/clinical/medications/",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"medication-consumption",
-												"delete-future-schedules",
-												"{{MEDICATION_ID}}"
+												"clinical",
+												"medications",
+												""
 											]
-										}
+										},
+										"description": "Create a new drug order (medication list) for a patient for the visit."
 									},
 									"response": []
 								},
 								{
-									"name": "Cancel future medication consumptions",
+									"name": "Delete future medication consumptions",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Future medication consumption schedules are deleted\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+													"    pm.expect(jsonRes.Data).to.have.property('DeletedCount');\r",
+													"    pm.expect(jsonRes.Data.DeletedCount).greaterThan(0);\r",
+													"  \r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"request": {
 										"method": "POST",
 										"header": [
@@ -9956,13 +10472,14 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/medication-consumption/cancel-future-schedules/{{MEDICATION_ID}}",
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/delete-future-schedules/{{MEDICATION_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
-												"medication-consumption",
-												"cancel-future-schedules",
+												"clinical",
+												"medication-consumptions",
+												"delete-future-schedules",
 												"{{MEDICATION_ID}}"
 											]
 										}

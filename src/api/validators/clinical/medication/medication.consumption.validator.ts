@@ -57,7 +57,7 @@ export class MedicationConsumptionValidator {
     static getScheduleForDuration = (request: express.Request): MedicationConsumptionScheduleDomainModel => {
 
         const model: MedicationConsumptionScheduleDomainModel = {
-            PatientUserId : request.params.PatientUserId,
+            PatientUserId : request.params.patientUserId,
             Duration      : request.query.duration as string ?? null,
             When          : request.query.when as string ?? null,
         };
@@ -68,10 +68,10 @@ export class MedicationConsumptionValidator {
     static getScheduleForDay = async (request: express.Request): Promise<MedicationConsumptionScheduleDomainModel> => {
         
         var userService = Loader.container.resolve(UserService);
-        var date = await userService.getDateInUserTimeZone(request.params.PatientUserId, request.query.date as string);
+        var date = await userService.getDateInUserTimeZone(request.params.patientUserId, request.query.date as string);
 
         const model: MedicationConsumptionScheduleDomainModel = {
-            PatientUserId : request.params.PatientUserId,
+            PatientUserId : request.params.patientUserId,
             Date          : date,
         };
 
@@ -81,10 +81,10 @@ export class MedicationConsumptionValidator {
     static getSummaryForDay = async (request: express.Request): Promise<MedicationConsumptionSummaryDomainModel> => {
         
         var userService = Loader.container.resolve(UserService);
-        var date = await userService.getDateInUserTimeZone(request.params.PatientUserId, request.query.date as string);
+        var date = await userService.getDateInUserTimeZone(request.params.patientUserId, request.query.date as string);
 
         const model: MedicationConsumptionSummaryDomainModel = {
-            PatientUserId : request.params.PatientUserId,
+            PatientUserId : request.params.patientUserId,
             Date          : date,
         };
 
@@ -94,7 +94,7 @@ export class MedicationConsumptionValidator {
     static getSummaryByCalendarMonths = (request: express.Request): MedicationConsumptionSummaryDomainModel => {
 
         const model: MedicationConsumptionSummaryDomainModel = {
-            PatientUserId     : request.params.PatientUserId,
+            PatientUserId     : request.params.patientUserId,
             PastMonthsCount   : request.query.pastMonthsCount ? parseInt(request.query.pastMonthsCount as string) : 6,
             FutureMonthsCount : 0
         };
@@ -113,10 +113,10 @@ export class MedicationConsumptionValidator {
             PatientUserId : request.params.patientUserId ?? null,
             OrderId       : request.query.orderId ?? null,
             MedicationId  : request.query.medicationId ?? null,
-            DateFrom      : request.query.startDateFrom ?? null,
-            DateTo        : request.query.startDateTo ?? null,
-            OrderBy       : request.query.orderBy ?? 'MedicationId',
-            Order         : request.query.order ?? 'descending',
+            DateFrom      : request.query.dateFrom ?? null,
+            DateTo        : request.query.dateTo ?? null,
+            OrderBy       : request.query.orderBy ?? 'TimeScheduleStart',
+            Order         : request.query.order ?? 'ascending',
             PageIndex     : pageIndex,
             ItemsPerPage  : itemsPerPage,
         };

@@ -128,26 +128,6 @@ export class MedicationConsumptionController {
         }
     };
 
-    cancelFutureMedicationSchedules = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'MedicationConsumption.CancelFutureMedicationSchedules';
-            await this._authorizer.authorize(request, response);
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
-
-            const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
-            const dtos = await this._service.cancelFutureMedicationSchedules(medicationId);
-            if (dtos === null) {
-                throw new ApiError(422, `Unable to update medication consumptions.`);
-            }
-            
-            ResponseHandler.success(request, response, 'Cancelled future medication schedules successfully!', 200, {
-                MedicationConsumptions : dtos,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
     deleteFutureMedicationSchedules = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'MedicationConsumption.DeleteFutureMedicationSchedules';
@@ -155,13 +135,11 @@ export class MedicationConsumptionController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
             const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
-            const dtos = await this._service.deleteFutureMedicationSchedules(medicationId);
-            if (dtos === null) {
-                throw new ApiError(422, `Unable to delete medication consumptions.`);
-            }
+            const deletedCount = await this._service.deleteFutureMedicationSchedules(medicationId);
             
             ResponseHandler.success(request, response, 'Deleted future medication schedules successfully!', 200, {
-                MedicationConsumptions : dtos,
+                Deleted      : true,
+                DeletedCount : deletedCount
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

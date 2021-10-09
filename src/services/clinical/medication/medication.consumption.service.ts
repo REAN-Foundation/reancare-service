@@ -253,10 +253,6 @@ export class MedicationConsumptionService {
         return updatedDto;
     };
 
-    cancelFutureMedicationSchedules = async (medicationId: string): Promise<number> => {
-        return await this._medicationConsumptionRepo.cancelFutureMedicationSchedules(medicationId);
-    };
-
     deleteFutureMedicationSchedules = async (medicationId: string): Promise<number> => {
         return await this._medicationConsumptionRepo.deleteFutureMedicationSchedules(medicationId);
     };

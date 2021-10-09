@@ -83,49 +83,13 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     }
 
-    cancelFutureMedicationSchedules = async(medicationId: string): Promise<number> => {
-        try {
-
-            var selector = {
-                where : {
-                    IsCancelled       : false,
-                    MedicationId      : medicationId,
-                    TimeScheduleStart : { [Op.gte]: Date.now() }
-                }
-            };
-
-            var value = {
-                IsMissed    : false,
-                IsTaken     : false,
-                TakenAt     : null,
-                IsCancelled : true,
-                CancelledOn : Date.now()
-            };
-            
-            const result = await MedicationConsumption.update(value, selector);
-
-            var updatedCount = result[0];
-
-            var updatedConsumptions = result[1];
-            var ids = updatedConsumptions.length > 0 ? updatedConsumptions.map(x => x.id) : [];
-            var idsStr = JSON.stringify(ids, null, 2);
-            Logger.instance().log('Cancelled consumption Ids are - \n ' + idsStr);
-
-            return updatedCount;
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    }
-
     deleteFutureMedicationSchedules = async(medicationId: string): Promise<number> => {
         try {
 
             var selector = {
                 where : {
                     MedicationId      : medicationId,
-                    TimeScheduleStart : { [Op.gte]: Date.now() }
+                    TimeScheduleStart : { [Op.gte]: new Date() }
                 }
             };
             
@@ -176,7 +140,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     [Op.lte] : filters.DateTo,
                 };
             } else {
-                search.where['TimeScheduleStart'] = {
+                search.where['TimeScheduleEnd'] = {
                     [Op.gte] : new Date(),
                 };
             }

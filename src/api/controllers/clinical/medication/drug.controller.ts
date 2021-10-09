@@ -86,7 +86,7 @@ export class DrugController {
                     : `Total ${count} drug records retrieved successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, {
-                DrugRecords : searchResults });
+                Drugs : searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

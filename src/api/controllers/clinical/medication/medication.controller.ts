@@ -127,13 +127,13 @@ export class MedicationController {
                 throw new ApiError(400, 'Cannot create medication!');
             }
 
-            var medConsumptions = await this._medicationConsumptionService.create(medication);
+            var stats = await this._medicationConsumptionService.create(medication);
 
             var consumptionSummary: ConsumptionSummaryDto = {
-                TotalConsumptionCount   : medConsumptions.TotalConsumptionCount,
-                TotalDoseCount          : medConsumptions.TotalConsumptionCount * medication.Dose,
-                PendingConsumptionCount : medConsumptions.PendingConsumptionCount,
-                PendingDoseCount        : medConsumptions.PendingConsumptionCount * medication.Dose,
+                TotalConsumptionCount   : stats.TotalConsumptionCount,
+                TotalDoseCount          : stats.TotalConsumptionCount * medication.Dose,
+                PendingConsumptionCount : stats.PendingConsumptionCount,
+                PendingDoseCount        : stats.PendingConsumptionCount * medication.Dose,
             };
 
             medication.ConsumptionSummary = consumptionSummary;
@@ -159,6 +159,17 @@ export class MedicationController {
             if (medication == null) {
                 throw new ApiError(404, 'Medication not found.');
             }
+            
+            var stats = await this._medicationConsumptionService.getConsumptionStatusForMedication(id);
+
+            var consumptionSummary: ConsumptionSummaryDto = {
+                TotalConsumptionCount   : stats.TotalConsumptionCount,
+                TotalDoseCount          : stats.TotalConsumptionCount * medication.Dose,
+                PendingConsumptionCount : stats.PendingConsumptionCount,
+                PendingDoseCount        : stats.PendingConsumptionCount * medication.Dose,
+            };
+
+            medication.ConsumptionSummary = consumptionSummary;
 
             ResponseHandler.success(request, response, 'Medication retrieved successfully!', 200, {
                 Medication : medication,
@@ -220,13 +231,13 @@ export class MedicationController {
 
                 await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
 
-                var medConsumptions = await this._medicationConsumptionService.create(updated);
+                var stats = await this._medicationConsumptionService.create(updated);
 
                 var consumptionSummary: ConsumptionSummaryDto = {
-                    TotalConsumptionCount   : medConsumptions.TotalConsumptionCount,
-                    PendingConsumptionCount : medConsumptions.TotalConsumptionCount * updated.Dose,
-                    TotalDoseCount          : medConsumptions.PendingConsumptionCount,
-                    PendingDoseCount        : medConsumptions.PendingConsumptionCount * updated.Dose,
+                    TotalConsumptionCount   : stats.TotalConsumptionCount,
+                    PendingConsumptionCount : stats.TotalConsumptionCount * updated.Dose,
+                    TotalDoseCount          : stats.PendingConsumptionCount,
+                    PendingDoseCount        : stats.PendingConsumptionCount * updated.Dose,
                 };
     
                 updated.ConsumptionSummary = consumptionSummary;

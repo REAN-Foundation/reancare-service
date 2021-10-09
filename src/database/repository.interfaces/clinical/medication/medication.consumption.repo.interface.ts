@@ -6,6 +6,10 @@ import { MedicationConsumptionSearchFilters, MedicationConsumptionSearchResults 
 
 export interface IMedicationConsumptionRepo {
 
+    getPendingConsumptionCountForMedication(medicationId: string): Promise<number>;
+
+    getTotalConsumptionCountForMedication(medicationId: string): Promise<number>;
+
     create(model: MedicationConsumptionDomainModel): Promise<MedicationConsumptionDto>;
 
     getById(id: string): Promise<MedicationConsumptionDetailsDto>;

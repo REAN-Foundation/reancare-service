@@ -8432,67 +8432,32 @@
 													"}\r",
 													"catch (error) {\r",
 													"    console.log(error.message);\r",
-													"}"
+													"}\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Drugs are returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Drugs');\r",
+													"    pm.expect(jsonRes.Data.Drugs).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.Drugs).to.have.property('TotalCount');\r",
+													"    pm.expect(jsonRes.Data.Drugs).to.have.property('Items');\r",
+													"    \r",
+													"    pm.expect(jsonRes.Data.Drugs.TotalCount).greaterThan(0);    \r",
+													"    pm.expect(jsonRes.Data.Drugs.Items.length).greaterThan(0);    \r",
+													"});\r",
+													"\r",
+													""
 												],
 												"type": "text/javascript"
 											}
 										}
 									],
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{PATIENT_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/clinical/drugs/search",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"clinical",
-												"drugs",
-												"search"
-											],
-											"query": [
-												{
-													"key": "name",
-													"value": "para",
-													"disabled": true
-												}
-											]
-										},
-										"description": "Returns the list of drugs/medicines stored in the system."
-									},
-									"response": []
-								},
-								{
-									"name": "Get a list of drugs from database with name",
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -8547,6 +8512,32 @@
 								},
 								{
 									"name": "Get a list of drug-dose-units",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication dosage units are returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationDosageUnits');\r",
+													"    pm.expect(jsonRes.Data.MedicationDosageUnits).to.not.be.empty; \r",
+													"    pm.expect(jsonRes.Data.MedicationDosageUnits.length).greaterThan(0);    \r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -8595,6 +8586,31 @@
 								},
 								{
 									"name": "Get a list of medication-routes",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication administration routes are returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationAdministrationRoutes');\r",
+													"    pm.expect(jsonRes.Data.MedicationAdministrationRoutes).to.not.be.empty; \r",
+													"    pm.expect(jsonRes.Data.MedicationAdministrationRoutes.length).greaterThan(0);    \r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -8644,6 +8660,31 @@
 								},
 								{
 									"name": "Get a list of medication-duration-units",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication duration units are returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationDurationUnits');\r",
+													"    pm.expect(jsonRes.Data.MedicationDurationUnits).to.not.be.empty; \r",
+													"    pm.expect(jsonRes.Data.MedicationDurationUnits.length).greaterThan(0);    \r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -8699,6 +8740,31 @@
 								},
 								{
 									"name": "Get a list of medication-frequency units",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication frequency units are returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationFrequencyUnits');\r",
+													"    pm.expect(jsonRes.Data.MedicationFrequencyUnits).to.not.be.empty; \r",
+													"    pm.expect(jsonRes.Data.MedicationFrequencyUnits.length).greaterThan(0);    \r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -8766,6 +8832,21 @@
 													"    console.log(error.message);\r",
 													"}\r",
 													"\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication medication stock image list is returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationStockImages');\r",
+													"    pm.expect(jsonRes.Data.MedicationStockImages).to.not.be.empty; \r",
+													"    pm.expect(jsonRes.Data.MedicationStockImages.length).greaterThan(0);    \r",
+													"});\r",
+													"\r",
 													""
 												],
 												"type": "text/javascript"
@@ -8820,6 +8901,36 @@
 								},
 								{
 									"name": "Get medication stock image by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication stock image details are returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationStockImage');\r",
+													"    pm.expect(jsonRes.Data.MedicationStockImage).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationStockImage).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.MedicationStockImage).to.have.property('Code');\r",
+													"    pm.expect(jsonRes.Data.MedicationStockImage).to.have.property('FileName');\r",
+													"    pm.expect(jsonRes.Data.MedicationStockImage).to.have.property('ResourceId');\r",
+													"    pm.expect(jsonRes.Data.MedicationStockImage).to.have.property('PublicUrl');\r",
+													"\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -8869,6 +8980,21 @@
 								},
 								{
 									"name": "Download medication stock image by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -8933,7 +9059,50 @@
 													"}\r",
 													"catch (error) {\r",
 													"    console.log(error.message);\r",
-													"}"
+													"}\r",
+													"\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(201);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"A newly created medication is returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Medication');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('PatientUserId');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DrugName');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DrugId');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Dose');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Dose');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DosageUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('TimeSchedules');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Frequency');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('FrequencyUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Route');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Duration');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DurationUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('StartDate');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('RefillNeeded');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('IsExistingMedication');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('ConsumptionSummary');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalConsumptionCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalDoseCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingConsumptionCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingDoseCount');\r",
+													"    \r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary.TotalConsumptionCount).greaterThan(0);    \r",
+													"    pm.expect(jsonRes.Data.Medication.TimeSchedules.length).greaterThan(0); \r",
+													"\r",
+													"    var expectedDrugName = \"Tylenol 8 HR Arthritis Pain: 650 mg\";\r",
+													"    pm.expect(jsonRes.Data.Medication.DrugName).equals(expectedDrugName);    \r",
+													"  \r",
+													"});\r",
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -9032,7 +9201,50 @@
 													"}\r",
 													"catch (error) {\r",
 													"    console.log(error.message);\r",
-													"}"
+													"}\r",
+													"\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(201);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"A newly created medication is returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Medication');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('PatientUserId');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DrugName');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DrugId');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Dose');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Dose');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DosageUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('TimeSchedules');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Frequency');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('FrequencyUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Route');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Duration');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DurationUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('StartDate');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('RefillNeeded');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('IsExistingMedication');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('ConsumptionSummary');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalConsumptionCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalDoseCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingConsumptionCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingDoseCount');\r",
+													"    \r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary.TotalConsumptionCount).greaterThan(0);    \r",
+													"    pm.expect(jsonRes.Data.Medication.TimeSchedules.length).greaterThan(0); \r",
+													"\r",
+													"    var expectedDrugId = pm.environment.get(\"DRUG_ID\");\r",
+													"    pm.expect(jsonRes.Data.Medication.DrugId).equals(expectedDrugId);    \r",
+													"  \r",
+													"});\r",
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -9115,7 +9327,45 @@
 									"response": []
 								},
 								{
-									"name": "Get patient medications",
+									"name": "Search patient medications",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonRes = pm.response.json();\r",
+													"\r",
+													"try {\r",
+													"    pm.environment.set(\"DRUG_ID\", jsonRes.Data.DrugRecords.Items[3].id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Searched medications are returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Medications');\r",
+													"    pm.expect(jsonRes.Data.Medications).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.Medications).to.have.property('TotalCount');\r",
+													"    pm.expect(jsonRes.Data.Medications).to.have.property('Items');\r",
+													"    \r",
+													"    pm.expect(jsonRes.Data.Medications.TotalCount).greaterThan(0);    \r",
+													"    pm.expect(jsonRes.Data.Medications.Items.length).greaterThan(0);    \r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -9170,6 +9420,32 @@
 								},
 								{
 									"name": "Get current patient medications",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Current medications for the patient are returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('CurrentMedications');\r",
+													"    pm.expect(jsonRes.Data.CurrentMedications).to.not.be.empty; \r",
+													"    pm.expect(jsonRes.Data.CurrentMedications.length).greaterThan(0);    \r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -9219,6 +9495,61 @@
 								},
 								{
 									"name": "Get medication by id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication with given id is returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Medication');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('PatientUserId');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DrugName');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DrugId');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Dose');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Dose');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DosageUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('TimeSchedules');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Frequency');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('FrequencyUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Route');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Duration');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DurationUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('StartDate');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('RefillNeeded');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('IsExistingMedication');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('ConsumptionSummary');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalConsumptionCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalDoseCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingConsumptionCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingDoseCount');\r",
+													"    \r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary.TotalConsumptionCount).greaterThan(0);    \r",
+													"    pm.expect(jsonRes.Data.Medication.TimeSchedules.length).greaterThan(0); \r",
+													"\r",
+													"    var expectedDrugId = pm.environment.get(\"DRUG_ID\");\r",
+													"    pm.expect(jsonRes.Data.Medication.DrugId).equals(expectedDrugId);    \r",
+													"  \r",
+													"    var expectedDuration = 2;\r",
+													"    pm.expect(jsonRes.Data.Medication.Duration).equals(expectedDuration);    \r",
+													"  \r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -9267,6 +9598,61 @@
 								},
 								{
 									"name": "Update medication",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Updated medication is returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Medication');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('id');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('PatientUserId');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DrugName');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DrugId');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Dose');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Dose');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DosageUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('TimeSchedules');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Frequency');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('FrequencyUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Route');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('Duration');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('DurationUnit');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('StartDate');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('RefillNeeded');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('IsExistingMedication');\r",
+													"    pm.expect(jsonRes.Data.Medication).to.have.property('ConsumptionSummary');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalConsumptionCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalDoseCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingConsumptionCount');\r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingDoseCount');\r",
+													"    \r",
+													"    pm.expect(jsonRes.Data.Medication.ConsumptionSummary.TotalConsumptionCount).greaterThan(0);    \r",
+													"    pm.expect(jsonRes.Data.Medication.TimeSchedules.length).greaterThan(0); \r",
+													"\r",
+													"    var expectedDrugId = pm.environment.get(\"DRUG_ID\");\r",
+													"    pm.expect(jsonRes.Data.Medication.DrugId).equals(expectedDrugId);    \r",
+													"  \r",
+													"    var expectedDuration = 10;\r",
+													"    pm.expect(jsonRes.Data.Medication.Duration).equals(expectedDuration);    \r",
+													"  \r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"request": {
 										"method": "PUT",
 										"header": [
@@ -9307,51 +9693,6 @@
 											]
 										},
 										"description": "Update the already existing drug order."
-									},
-									"response": []
-								},
-								{
-									"name": "Delete medication",
-									"request": {
-										"method": "DELETE",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{PATIENT_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/clinical/medications/{{MEDICATION_ID}}",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"clinical",
-												"medications",
-												"{{MEDICATION_ID}}"
-											]
-										},
-										"description": "Delete an already existing drug order."
 									},
 									"response": []
 								}
@@ -10483,6 +10824,76 @@
 												"{{MEDICATION_ID}}"
 											]
 										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete medication",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication is deleted\", function () {\r",
+													"\r",
+													"    var expectedValue = true;\r",
+													"    \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+													"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
+													"\r",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medications/{{MEDICATION_ID}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medications",
+												"{{MEDICATION_ID}}"
+											]
+										},
+										"description": "Delete an already existing drug order."
 									},
 									"response": []
 								}

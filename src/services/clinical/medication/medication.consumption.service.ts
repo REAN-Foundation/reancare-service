@@ -8,7 +8,7 @@ import { IPatientRepo } from "../../../database/repository.interfaces/patient/pa
 import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/user/user.device.details.repo.interface ";
 import { IUserRepo } from "../../../database/repository.interfaces/user/user.repo.interface";
 import { MedicationConsumptionDomainModel } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
-import { MedicationConsumptionCreateSummaryDto, MedicationConsumptionDetailsDto, MedicationConsumptionDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
+import { MedicationConsumptionDetailsDto, MedicationConsumptionDto, MedicationConsumptionStatsDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionStatus } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types";
 import { MedicationDto } from "../../../domain.types/clinical/medication/medication/medication.dto";
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
@@ -32,7 +32,7 @@ export class MedicationConsumptionService {
     ) {}
 
     create = async (medication: MedicationDto, customStartDate = null)
-        :Promise<MedicationConsumptionCreateSummaryDto> => {
+        :Promise<MedicationConsumptionStatsDto> => {
 
         var timeZone = await this.getPatientTimeZone(medication.PatientUserId);
         if (timeZone == null) {
@@ -78,12 +78,6 @@ export class MedicationConsumptionService {
                 var start = TimeHelper.addDuration(day, start_minutes, DurationType.Minute);
                 var end = TimeHelper.addDuration(day, end_minutes, DurationType.Minute);
 
-                // Logger.instance().log(start.toISOString());
-                // Logger.instance().log(end.toISOString());
-                
-                // var stra = start.toISOString();
-                // var strb = end.toISOString();
-
                 var domainModel: MedicationConsumptionDomainModel = {
                     PatientUserId     : medication.PatientUserId,
                     MedicationId      : medication.id,
@@ -109,7 +103,7 @@ export class MedicationConsumptionService {
             i = i + dayStep;
         }
 
-        var creationSummary: MedicationConsumptionCreateSummaryDto = {
+        var creationSummary: MedicationConsumptionStatsDto = {
             TotalConsumptionCount   : totalCount,
             PendingConsumptionCount : pendingCount
         };
@@ -117,6 +111,20 @@ export class MedicationConsumptionService {
         return creationSummary;
     }
     
+    getConsumptionStatusForMedication = async (medicationId: string)
+        : Promise<MedicationConsumptionStatsDto> => {
+
+        var totalCount = await this._medicationConsumptionRepo.getTotalConsumptionCountForMedication(medicationId);
+        var pendingCount = await this._medicationConsumptionRepo.getPendingConsumptionCountForMedication(medicationId);
+
+        var creationSummary: MedicationConsumptionStatsDto = {
+            TotalConsumptionCount   : totalCount,
+            PendingConsumptionCount : pendingCount
+        };
+
+        return creationSummary;
+    }
+
     markListAsTaken = async (consumptionIds: string[]): Promise<MedicationConsumptionDto[]> => {
 
         try {

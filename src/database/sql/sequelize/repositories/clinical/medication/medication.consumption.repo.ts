@@ -282,4 +282,47 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
+    getPendingConsumptionCountForMedication = async (medicationId: string): Promise<number> => {
+        
+        try {
+   
+            const count = await MedicationConsumption.count({
+                where : {
+                    MedicationId      : medicationId,
+                    IsCancelled       : false,
+                    TimeScheduleStart : {
+                        [Op.gte] : new Date()
+                    },
+                }
+            });
+            
+            return count;
+    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+
+    }
+
+    getTotalConsumptionCountForMedication = async (medicationId: string): Promise<number> => {
+
+        try {
+   
+            const count = await MedicationConsumption.count({
+                where : {
+                    MedicationId : medicationId,
+                    IsCancelled  : false
+                }
+            });
+            
+            return count;
+    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+
+    }
+
 }

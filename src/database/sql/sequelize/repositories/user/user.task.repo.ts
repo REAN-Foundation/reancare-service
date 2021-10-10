@@ -1,16 +1,16 @@
 /* eslint-disable max-len */
-import { IUserTaskRepo } from '../../../repository.interfaces/user.task.repo.interface';
-import UserTask from '../models/user/user.task.model';
-import { Op } from 'sequelize';
-import { UserTaskMapper } from '../mappers/user.task.mapper';
-import { Logger } from '../../../../common/logger';
-import { ApiError } from '../../../../common/api.error';
-import { UserTaskDomainModel } from '../../../../domain.types/user/user.task/user.task.domain.model';
-import { UserTaskDto } from '../../../../domain.types/user/user.task/user.task.dto';
-import { UserTaskSearchFilters, UserTaskSearchResults } from '../../../../domain.types/user/user.task/user.task.search.types';
 import moment from 'moment';
-import { TimeHelper } from '../../../../common/time.helper';
-import { DurationType } from '../../../../domain.types/miscellaneous/time.types';
+import { Op } from 'sequelize';
+import { ApiError } from '../../../../../common/api.error';
+import { Logger } from '../../../../../common/logger';
+import { TimeHelper } from '../../../../../common/time.helper';
+import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
+import { UserTaskDomainModel } from '../../../../../domain.types/user/user.task/user.task.domain.model';
+import { UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
+import { UserTaskSearchFilters, UserTaskSearchResults } from '../../../../../domain.types/user/user.task/user.task.search.types';
+import { IUserTaskRepo } from '../../../../repository.interfaces/user/user.task.repo.interface';
+import { UserTaskMapper } from '../../mappers/user/user.task.mapper';
+import UserTask from '../../models/user/user.task.model';
 import { UserRepo } from './user.repo';
 
 // import { UserTaskCategoryDomainModel } from '../../../../domain.types/user/user.task/user.task.category.domain.model';
@@ -244,7 +244,7 @@ export class UserTaskRepo implements IUserTaskRepo {
                 timeZone = "+05:30";
             }
 
-            var offset = await TimeHelper.getTimezoneOffsets(timeZone, DurationType.Seconds);
+            var offset = await TimeHelper.getTimezoneOffsets(timeZone, DurationType.Second);
 
             var day_start = m.clone().utc()
                 .add(offset, 'seconds')

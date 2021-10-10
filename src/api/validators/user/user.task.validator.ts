@@ -1,9 +1,9 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
 
-import { Helper } from '../../common/helper';
-import { UserTaskDomainModel } from '../../domain.types/user/user.task/user.task.domain.model';
-import { UserTaskSearchFilters } from '../../domain.types/user/user.task/user.task.search.types';
+import { Helper } from '../../../common/helper';
+import { UserTaskDomainModel } from '../../../domain.types/user/user.task/user.task.domain.model';
+import { UserTaskSearchFilters } from '../../../domain.types/user/user.task/user.task.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

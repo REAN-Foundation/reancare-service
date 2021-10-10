@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
-import { IUserTaskRepo } from "../database/repository.interfaces/user.task.repo.interface";
-import { UserTaskDomainModel } from '../domain.types/user/user.task/user.task.domain.model';
-import { UserTaskDto } from '../domain.types/user/user.task/user.task.dto';
-import { UserTaskSearchResults, UserTaskSearchFilters } from '../domain.types/user/user.task/user.task.search.types';
+import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
+import { UserTaskDomainModel } from '../../domain.types/user/user.task/user.task.domain.model';
+import { UserTaskDto } from '../../domain.types/user/user.task/user.task.dto';
+import { UserTaskSearchFilters, UserTaskSearchResults } from '../../domain.types/user/user.task/user.task.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

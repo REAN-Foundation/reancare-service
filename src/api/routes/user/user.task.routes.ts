@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import express from 'express';
-import { UserTaskController } from '../controllers/user.task.controller';
-import { Loader } from '../../startup/loader';
+import { UserTaskController } from '../../controllers/user/user.task.controller';
+import { Loader } from '../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

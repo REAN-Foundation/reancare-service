@@ -1,9 +1,9 @@
 import express from 'express';
 import { body, oneOf, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../common/helper';
-import { ResponseHandler } from '../../common/response.handler';
-import { UserExistanceModel, UserLoginDetails } from '../../domain.types/user/user/user.domain.model';
-import { UserSearchFilters } from '../../domain.types/user/user/user.search.types';
+import { Helper } from '../../../common/helper';
+import { ResponseHandler } from '../../../common/response.handler';
+import { UserExistanceModel, UserLoginDetails } from '../../../domain.types/user/user/user.domain.model';
+import { UserSearchFilters } from '../../../domain.types/user/user/user.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

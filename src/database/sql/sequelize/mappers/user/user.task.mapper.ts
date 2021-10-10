@@ -1,5 +1,5 @@
-import UserTask from '../models/user/user.task.model';
-import { UserTaskDto } from '../../../../domain.types/user/user.task/user.task.dto';
+import UserTask from '../../models/user/user.task.model';
+import { UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

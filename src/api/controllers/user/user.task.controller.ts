@@ -1,16 +1,16 @@
 import express from 'express';
+import { Authorizer } from '../../../auth/authorizer';
+import { ApiError } from '../../../common/api.error';
+import { Helper } from '../../../common/helper';
+import { ResponseHandler } from '../../../common/response.handler';
+import { OrganizationService } from '../../../services/organization.service';
+import { PersonService } from '../../../services/person.service';
+import { RoleService } from '../../../services/role.service';
+import { UserTaskService } from '../../../services/user/user.task.service';
+import { Loader } from '../../../startup/loader';
+import { UserTaskValidator } from '../../validators/user/user.task.validator';
 
-import { Helper } from '../../common/helper';
-import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
-import { Authorizer } from '../../auth/authorizer';
-import { PersonService } from '../../services/person.service';
 
-import { ApiError } from '../../common/api.error';
-import { UserTaskValidator } from '../validators/user.task.validator';
-import { UserTaskService } from '../../services/user.task.service';
-import { RoleService } from '../../services/role.service';
-import { OrganizationService } from '../../services/organization.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

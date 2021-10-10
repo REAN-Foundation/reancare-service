@@ -40,7 +40,7 @@ import { PersonRepo } from './repositories/person.repo';
 import { PersonRoleRepo } from './repositories/person.role.repo';
 import { RolePrivilegeRepo } from './repositories/role.privilege.repo';
 import { RoleRepo } from './repositories/role.repo';
-import { UserTaskRepo } from './repositories/user.task.repo';
+import { UserTaskRepo } from './repositories/user/user.task.repo';
 import { UserDeviceDetailsRepo } from './repositories/user/user.device.details.repo';
 import { UserRepo } from './repositories/user/user.repo';
 import { CalorieBalanceRepo } from './repositories/wellness/daily.records/calorie.balance.repo';

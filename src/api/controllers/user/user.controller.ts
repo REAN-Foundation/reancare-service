@@ -5,7 +5,7 @@ import { ResponseHandler } from '../../../common/response.handler';
 import { UserDetailsDto } from '../../../domain.types/user/user/user.dto';
 import { UserService } from '../../../services/user/user.service';
 import { Loader } from '../../../startup/loader';
-import { UserValidator } from '../../validators/user.validator';
+import { UserValidator } from '../../validators/user/user.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,16 +1,15 @@
 
-import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
-
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
-import relativeTime  from 'dayjs/plugin/relativeTime';
-import isBetween   from 'dayjs/plugin/isBetween';
-import weekOfYear from 'dayjs/plugin/weekOfYear';
-import dayOfYear from 'dayjs/plugin/dayOfYear';
-import weekday from 'dayjs/plugin/weekday';
-import duration from 'dayjs/plugin/duration';
 import calendar from 'dayjs/plugin/calendar';
+import dayOfYear from 'dayjs/plugin/dayOfYear';
+import duration from 'dayjs/plugin/duration';
+import isBetween from 'dayjs/plugin/isBetween';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import weekday from 'dayjs/plugin/weekday';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,82 +39,72 @@ export class TimeHelper {
         return date.toISOString().split('T')[0];
     }
 
-    static addDuration = (date: Date, durationValue: number, durationType: DurationType): Date => {
+    static addDuration = (date: Date, durationValue: number, durationType: DurationType, utc = false): Date => {
 
-        var date_ = dayjs(date);
+        var date_ = utc === true ? dayjs(date).utc() : dayjs(date);
+        var newDate_ = date_;
+        
+        if (durationType === DurationType.Milisecond) {
+            newDate_ = date_.add(durationValue, 'milliseconds');
+        }
+        if (durationType === DurationType.Second) {
+            newDate_ = date_.add(durationValue, 'seconds');
+        }
+        if (durationType === DurationType.Minute) {
+            newDate_ = date_.add(durationValue, 'minutes');
+        }
+        if (durationType === DurationType.Hour) {
+            newDate_ = date_.add(durationValue, 'hours');
+        }
+        if (durationType === DurationType.Day) {
+            newDate_ = date_.add(durationValue, 'days');
+        }
+        if (durationType === DurationType.Week) {
+            newDate_ = date_.add(durationValue, 'weeks');
+        }
+        if (durationType === DurationType.Month) {
+            newDate_ = date_.add(durationValue, 'months');
+        }
+        if (durationType === DurationType.Year) {
+            newDate_ = date_.add(durationValue, 'years');
+        }
 
-        if (durationType === DurationType.Miliseconds) {
-            var newDate_ = date_.add(durationValue, 'milliseconds');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Seconds) {
-            var newDate_ = date_.add(durationValue, 'seconds');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Minutes) {
-            var newDate_ = date_.add(durationValue, 'minutes');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Hours) {
-            var newDate_ = date_.add(durationValue, 'hours');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Days) {
-            var newDate_ = date_.add(durationValue, 'days');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Weeks) {
-            var newDate_ = date_.add(durationValue, 'weeks');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Months) {
-            var newDate_ = date_.add(durationValue, 'months');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Years) {
-            var newDate_ = date_.add(durationValue, 'years');
-            return newDate_.toDate();
-        }
-        return date;
+        var str = newDate_.format();
+        return new Date(str);
     }
 
-    static subtractDuration = (date: Date, durationValue: number, durationType: DurationType): Date => {
+    static subtractDuration = (date: Date, durationValue: number, durationType: DurationType, utc = false): Date => {
 
-        var date_ = dayjs(date);
+        var date_ = utc === true ? dayjs(date).utc() : dayjs(date);
+        var newDate_ = dayjs().utc();
+        
+        if (durationType === DurationType.Milisecond) {
+            newDate_ = date_.subtract(durationValue, 'milliseconds');
+        }
+        if (durationType === DurationType.Second) {
+            newDate_ = date_.subtract(durationValue, 'seconds');
+        }
+        if (durationType === DurationType.Minute) {
+            newDate_ = date_.subtract(durationValue, 'minutes');
+        }
+        if (durationType === DurationType.Hour) {
+            newDate_ = date_.subtract(durationValue, 'hours');
+        }
+        if (durationType === DurationType.Day) {
+            newDate_ = date_.subtract(durationValue, 'days');
+        }
+        if (durationType === DurationType.Week) {
+            newDate_ = date_.subtract(durationValue, 'weeks');
+        }
+        if (durationType === DurationType.Month) {
+            newDate_ = date_.subtract(durationValue, 'months');
+        }
+        if (durationType === DurationType.Year) {
+            newDate_ = date_.subtract(durationValue, 'years');
+        }
 
-        if (durationType === DurationType.Miliseconds) {
-            var newDate_ = date_.subtract(durationValue, 'milliseconds');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Seconds) {
-            var newDate_ = date_.subtract(durationValue, 'seconds');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Minutes) {
-            var newDate_ = date_.subtract(durationValue, 'minutes');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Hours) {
-            var newDate_ = date_.subtract(durationValue, 'hours');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Days) {
-            var newDate_ = date_.subtract(durationValue, 'days');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Weeks) {
-            var newDate_ = date_.subtract(durationValue, 'weeks');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Months) {
-            var newDate_ = date_.subtract(durationValue, 'months');
-            return newDate_.toDate();
-        }
-        if (durationType === DurationType.Years) {
-            var newDate_ = date_.subtract(durationValue, 'years');
-            return newDate_.toDate();
-        }
-        return date;
+        var str = newDate_.format();
+        return new Date(str);
     }
 
     static isBefore = (first: Date, second: Date): boolean => {
@@ -157,28 +146,28 @@ export class TimeHelper {
             }
         }
 
-        if (durationType === DurationType.Miliseconds) {
+        if (durationType === DurationType.Milisecond) {
             return durationInHours * 60 * 60 * 1000;
         }
-        if (durationType === DurationType.Seconds) {
+        if (durationType === DurationType.Second) {
             return durationInHours * 60 * 60;
         }
-        if (durationType === DurationType.Minutes) {
+        if (durationType === DurationType.Minute) {
             return durationInHours * 60;
         }
-        if (durationType === DurationType.Hours) {
+        if (durationType === DurationType.Hour) {
             return durationInHours;
         }
-        if (durationType === DurationType.Days) {
+        if (durationType === DurationType.Day) {
             return durationInHours / 24.0;
         }
-        if (durationType === DurationType.Weeks) {
+        if (durationType === DurationType.Week) {
             return durationInHours / (24.0 * 7);
         }
-        if (durationType === DurationType.Months) {
+        if (durationType === DurationType.Month) {
             return durationInHours / (24.0 * 30);
         }
-        if (durationType === DurationType.Years) {
+        if (durationType === DurationType.Year) {
             return durationInHours / (24.0 * 365);
         }
         return durationInHours;
@@ -221,31 +210,134 @@ export class TimeHelper {
             offsetMinutes = (offset_hours * 60) + offset_minutes;
         }
 
-        if (durationType === DurationType.Miliseconds) {
+        if (durationType === DurationType.Milisecond) {
             return offsetMinutes * 60 * 1000;
         }
-        if (durationType === DurationType.Seconds) {
+        if (durationType === DurationType.Second) {
             return offsetMinutes * 60 ;
         }
-        if (durationType === DurationType.Minutes) {
+        if (durationType === DurationType.Minute) {
             return offsetMinutes;
         }
-        if (durationType === DurationType.Hours) {
+        if (durationType === DurationType.Hour) {
             return offsetMinutes / 60.0;
         }
-        if (durationType === DurationType.Days) {
+        if (durationType === DurationType.Day) {
             return offsetMinutes / (24.0 * 60);
         }
-        if (durationType === DurationType.Weeks) {
+        if (durationType === DurationType.Week) {
             return offsetMinutes / (24.0 * 60 * 7);
         }
-        if (durationType === DurationType.Months) {
+        if (durationType === DurationType.Month) {
             return offsetMinutes / (24.0 * 60 * 30);
         }
-        if (durationType === DurationType.Years) {
+        if (durationType === DurationType.Year) {
             return offsetMinutes / (24.0 * 60 * 365);
         }
         return offsetMinutes;
+    }
+
+    static strToUtc = (dateStr: string, timeZoneOffsetMinutes?: number): Date => {
+
+        if (timeZoneOffsetMinutes !== undefined) {
+            var d = new Date(dateStr + 'T00:00:00.000Z').getTime();
+            var correction = d + (timeZoneOffsetMinutes * 60000);
+            var corrected = (new Date()).setTime(correction);
+            return new Date(corrected);
+        }
+        else {
+            var d = new Date(dateStr + 'T00:00:00.000Z').getTime();
+            var corrected = (new Date()).setTime(d);
+            return new Date(corrected);
+        }
+    }
+
+    static format = (date: Date, formatTemplate: string): string => {
+        return dayjs(date).format(formatTemplate);
+    }
+
+    static startOf = (date: Date, durationType: DurationType): Date => {
+
+        if (durationType === DurationType.Second) {
+            return dayjs(date)
+                .startOf('second')
+                .toDate();
+        }
+        if (durationType === DurationType.Minute) {
+            return dayjs(date)
+                .startOf('minute')
+                .toDate();
+        }
+        if (durationType === DurationType.Hour) {
+            return dayjs(date)
+                .startOf('hour')
+                .toDate();
+        }
+        if (durationType === DurationType.Day) {
+            return dayjs(date)
+                .startOf('day')
+                .toDate();
+        }
+        if (durationType === DurationType.Week) {
+            return dayjs(date)
+                .startOf('week')
+                .toDate();
+        }
+        if (durationType === DurationType.Month) {
+            return dayjs(date)
+                .startOf('month')
+                .toDate();
+        }
+        if (durationType === DurationType.Year) {
+            return dayjs(date)
+                .startOf('year')
+                .toDate();
+        }
+        return date;
+    }
+
+    static endOf = (date: Date, durationType: DurationType): Date => {
+
+        if (durationType === DurationType.Second) {
+            return dayjs(date)
+                .endOf('second')
+                .toDate();
+        }
+        if (durationType === DurationType.Minute) {
+            return dayjs(date)
+                .endOf('minute')
+                .toDate();
+        }
+        if (durationType === DurationType.Hour) {
+            return dayjs(date)
+                .endOf('hour')
+                .toDate();
+        }
+        if (durationType === DurationType.Day) {
+            return dayjs(date)
+                .endOf('day')
+                .toDate();
+        }
+        if (durationType === DurationType.Week) {
+            return dayjs(date)
+                .endOf('week')
+                .toDate();
+        }
+        if (durationType === DurationType.Month) {
+            return dayjs(date)
+                .endOf('month')
+                .toDate();
+        }
+        if (durationType === DurationType.Year) {
+            return dayjs(date)
+                .endOf('year')
+                .toDate();
+        }
+        return date;
+    }
+
+    static daysInMonthContainingDate = (date: Date): number => {
+        return dayjs(date).daysInMonth();
     }
 
 }

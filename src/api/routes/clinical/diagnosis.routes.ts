@@ -1,6 +1,6 @@
 import express from 'express';
-import { DiagnosisController } from '../../controllers/clinical/diagnosis.controller';
 import { Loader } from '../../../startup/loader';
+import { DiagnosisController } from '../../controllers/clinical/diagnosis.controller';
 
 export const register = (app: express.Application): void => {
 
@@ -14,5 +14,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
     
-    app.use('/api/v1/diagnosis', router);
+    app.use('/api/v1/clinical/diagnoses', router);
 };

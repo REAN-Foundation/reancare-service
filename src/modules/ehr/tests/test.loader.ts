@@ -4,7 +4,7 @@ import { StorageService } from '../services/storage.service';
 import { PatientStore } from '../services/patient.store';
 import { DoctorStore } from '../services/doctor.store';
 import { Logger } from '../../../common/logger';
-import { ConfigurationManager } from '../../../configs/configuration.manager';
+import { ConfigurationManager } from '../../../config/configuration.manager';
 
 // import { ClinicOrganizationStore } from '../services/clinic.organization.store';
 // import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';

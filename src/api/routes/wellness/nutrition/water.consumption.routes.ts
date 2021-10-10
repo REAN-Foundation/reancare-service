@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import express from 'express';
-import { WaterConsumptionController } from '../../../controllers/wellness/nutrition/water.consumption.controller';
 import { Loader } from '../../../../startup/loader';
+import { WaterConsumptionController } from '../../../controllers/wellness/nutrition/water.consumption.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -17,5 +17,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 
-    app.use('/api/v1/nutrition/water-consumption', router);
+    app.use('/api/v1/wellness/nutrition/water-consumptions', router);
 };

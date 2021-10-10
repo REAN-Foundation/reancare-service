@@ -1,8 +1,7 @@
-import { IFileStorageService } from '../interfaces/file.storage.service.interface';
-
 import * as aws from 'aws-sdk';
 import fs from 'fs';
 import { Logger } from '../../../common/logger';
+import { IFileStorageService } from '../interfaces/file.storage.service.interface';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -10,21 +9,45 @@ export class AWSS3FileStorageService implements IFileStorageService {
 
     //#region Publics
 
+    exists = async (storageKey: string): Promise<string> => {
+        try {
+            const s3 = this.getS3Client();
+            const params = {
+                Bucket : process.env.RESOURCES_S3_BUCKET_NAME,
+                Key    : storageKey,
+            };
+            var stored = await s3.headObject(params).promise();
+
+            Logger.instance().log(JSON.stringify(stored, null, 2));
+
+            return storageKey;
+        }
+        catch (error) {
+            Logger.instance().log(JSON.stringify(error, null, 2));
+            return null;
+        }
+    }
+    
     upload = async (storageKey: string, localFilePath?: string): Promise<string> => {
 
-        const fileContent = fs.readFileSync(localFilePath);
+        try {
+            const fileContent = fs.readFileSync(localFilePath);
 
-        const s3 = this.getS3Client();
-        const params = {
-            Bucket : process.env.RESOURCES_S3_BUCKET_NAME,
-            Key    : storageKey,
-            Body   : fileContent
-        };
-        var stored = await s3.upload(params).promise();
+            const s3 = this.getS3Client();
+            const params = {
+                Bucket : process.env.RESOURCES_S3_BUCKET_NAME,
+                Key    : storageKey,
+                Body   : fileContent
+            };
+            var stored = await s3.upload(params).promise();
 
-        Logger.instance().log(JSON.stringify(stored, null, 2));
+            Logger.instance().log(JSON.stringify(stored, null, 2));
 
-        return storageKey;
+            return storageKey;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+        }
     };
 
     download = async (storageKey: string, localFilePath: string): Promise<string> => {

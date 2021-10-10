@@ -1,20 +1,19 @@
-import { inject, injectable } from "tsyringe";
-import { FileResourceUpdateModel, FileResourceUploadDomainModel } from '../domain.types/file.resource/file.resource.domain.model';
-import { FileResourceDetailsDto, FileResourceDto } from '../domain.types/file.resource/file.resource.dto';
-import { FileResourceSearchResults, FileResourceSearchFilters } from '../domain.types/file.resource/file.resource.search.types';
-import { IFileResourceRepo } from "../database/repository.interfaces/file.resource.repo.interface";
-import { IFileStorageService } from '../modules/storage/interfaces/file.storage.service.interface';
-import { TimeHelper } from "../common/time.helper";
-import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
-import { ApiError } from "../common/api.error";
-import { Logger } from "../common/logger";
-import { ConfigurationManager } from "../configs/configuration.manager";
-import { FileResourceMetadata } from "../domain.types/file.resource/file.resource.types";
-
+import fs from 'fs';
 import mime from 'mime';
 import path from 'path';
-import fs from 'fs';
 import sharp from 'sharp';
+import { inject, injectable } from "tsyringe";
+import { ApiError } from "../common/api.error";
+import { Logger } from "../common/logger";
+import { TimeHelper } from "../common/time.helper";
+import { ConfigurationManager } from "../config/configuration.manager";
+import { IFileResourceRepo } from "../database/repository.interfaces/file.resource.repo.interface";
+import { FileResourceUpdateModel, FileResourceUploadDomainModel } from '../domain.types/file.resource/file.resource.domain.model';
+import { FileResourceDetailsDto, FileResourceDto } from '../domain.types/file.resource/file.resource.dto';
+import { FileResourceSearchFilters, FileResourceSearchResults } from '../domain.types/file.resource/file.resource.search.types';
+import { FileResourceMetadata } from "../domain.types/file.resource/file.resource.types";
+import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
+import { IFileStorageService } from '../modules/storage/interfaces/file.storage.service.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -68,7 +67,16 @@ export class FileResourceService {
         if (!exists) {
             Logger.instance().log('Source file location does not exist!');
         }
-        var storageKey = await this._storageService.upload(storageLocation, sourceLocation);
+        
+        var storageKey:string = null;
+        var existingStorageKey = await this._storageService.exists(storageLocation);
+        if (existingStorageKey !== undefined && existingStorageKey !== null) {
+            storageKey = existingStorageKey;
+        }
+        else {
+            storageKey = await this._storageService.upload(storageLocation, sourceLocation);
+        }
+
         var stats = fs.statSync(sourceLocation);
         var filename = path.basename(sourceLocation);
         
@@ -88,7 +96,18 @@ export class FileResourceService {
             MimeType               : mime.lookup(sourceLocation),
             IsPublicResource       : isPublicResource,
         };
-        return await this._fileResourceRepo.create(domainModel);
+        
+        var resource = await this._fileResourceRepo.create(domainModel);
+
+        var versions = [];
+        domainModel.FileMetadata.ResourceId = resource.id;
+        var version = await this._fileResourceRepo.addVersion(domainModel.FileMetadata, true);
+        resource.DefaultVersion = version;
+
+        versions.push(version);
+        resource.Versions = versions;
+
+        return resource;
     };
 
     uploadVersion = async (metadata: FileResourceMetadata, makeDefaultVersion: boolean): Promise<FileResourceDto> => {
@@ -303,7 +322,7 @@ export class FileResourceService {
             var cleanupBeforeInMinutes = ConfigurationManager.TemporaryFolderCleanupBefore();
             
             var cleanupBefore = TimeHelper.subtractDuration(
-                new Date(), cleanupBeforeInMinutes, DurationType.Minutes);
+                new Date(), cleanupBeforeInMinutes, DurationType.Minute);
 
             var directories = getDirectories(parentFolder);
     

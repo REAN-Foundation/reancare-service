@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import express from 'express';
-import { BodyWeightController } from '../../../controllers/clinical/biometrics/body.weight.controller';
 import { Loader } from '../../../../startup/loader';
+import { BodyWeightController } from '../../../controllers/clinical/biometrics/body.weight.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -18,5 +18,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
     
-    app.use('/api/v1/biometrics/body-weight', router);
+    app.use('/api/v1/clinical/biometrics/body-weights', router);
 };

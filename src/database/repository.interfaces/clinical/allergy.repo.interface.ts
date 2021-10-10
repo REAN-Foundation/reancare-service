@@ -1,5 +1,6 @@
 import { AllergyDomainModel } from "../../../domain.types/clinical/allergy/allergy.domain.model";
 import { AllergyDto } from "../../../domain.types/clinical/allergy/allergy.dto";
+import { AllergySearchFilters, AllergySearchResults } from "../../../domain.types/clinical/allergy/allergy.search.types";
 
 export interface IAllergyRepo {
 
@@ -7,7 +8,9 @@ export interface IAllergyRepo {
 
     getById(id: string): Promise<AllergyDto>;
 
-    search(id: string): Promise<AllergyDto[]>;
+    getForPatient(id: string): Promise<AllergyDto[]>;
+
+    search(filters: AllergySearchFilters): Promise<AllergySearchResults>;
 
     update(id: string, allergyDomainModel: AllergyDomainModel): Promise<AllergyDto>;
 

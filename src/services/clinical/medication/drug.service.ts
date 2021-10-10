@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { IDrugRepo } from "../../../database/repository.interfaces/clinical/medication/drug.repo.interface";
 import { DrugDomainModel } from '../../../domain.types/clinical/medication/drug/drug.domain.model';
 import { DrugDto } from '../../../domain.types/clinical/medication/drug/drug.dto';
-import { DrugSearchResults, DrugSearchFilters } from '../../../domain.types/clinical/medication/drug/drug.search.types';
+import { DrugSearchFilters, DrugSearchResults } from '../../../domain.types/clinical/medication/drug/drug.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,6 +20,10 @@ export class DrugService {
 
     getById = async (id: string): Promise<DrugDto> => {
         return await this._drugRepo.getById(id);
+    };
+
+    getByName = async (drugName: string): Promise<DrugDto> => {
+        return await this._drugRepo.getByName(drugName);
     };
 
     search = async (filters: DrugSearchFilters): Promise<DrugSearchResults> => {

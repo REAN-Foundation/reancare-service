@@ -1,11 +1,11 @@
 import express from 'express';
-import { UserService } from '../../services/user.service';
-import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
-import { Authorizer } from '../../auth/authorizer';
-import { ApiError } from '../../common/api.error';
-import { UserDetailsDto } from '../../domain.types/user/user/user.dto';
-import { UserValidator } from '../validators/user.validator';
+import { Authorizer } from '../../../auth/authorizer';
+import { ApiError } from '../../../common/api.error';
+import { ResponseHandler } from '../../../common/response.handler';
+import { UserDetailsDto } from '../../../domain.types/user/user/user.dto';
+import { UserService } from '../../../services/user/user.service';
+import { Loader } from '../../../startup/loader';
+import { UserValidator } from '../../validators/user.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,7 +53,7 @@ export class UserController {
                 throw new ApiError(404, 'User not found.');
             }
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
-                user : user,
+                User : user,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -70,7 +70,7 @@ export class UserController {
                 throw new ApiError(404, 'User not found.');
             }
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
-                user : user,
+                User : user,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -110,7 +110,7 @@ export class UserController {
             const obj = await UserValidator.generateOtp(request, response);
             const entity = await this._service.generateOtp(obj);
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {
-                entity : entity,
+                GenerateOTPResult : entity,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

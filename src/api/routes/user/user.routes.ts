@@ -1,6 +1,6 @@
 import express from 'express';
-import { UserController } from '../controllers/user.controller';
-import { Loader } from '../../startup/loader';
+import { Loader } from '../../../startup/loader';
+import { UserController } from '../../controllers/user/user.controller';
 
 export const register = (app: express.Application): void => {
 

@@ -1,5 +1,5 @@
 import { OrderTypes } from '../../../../../domain.types/clinical/order/order.types';
-import { VisitTypes } from '../../../../../domain.types/miscellaneous/system.types';
+import { VisitType } from '../../../../../domain.types/miscellaneous/clinical.types';
 import { DocumentDto } from '../../../../../domain.types/patient/document/document.dto';
 import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
 import { Roles } from '../../../../../domain.types/role/role.types';
@@ -23,7 +23,7 @@ export class DocumentMapper {
             MedicalPractionerRole     : Roles[document.MedicalPractionerRole],
             UploadedByUserId          : document.UploadedByUserId,
             AssociatedVisitId         : document.AssociatedVisitId,
-            AssociatedVisitType       : VisitTypes[document.AssociatedVisitType],
+            AssociatedVisitType       : VisitType[document.AssociatedVisitType],
             AssociatedOrderId         : document.AssociatedOrderId,
             AssociatedOrderType       : OrderTypes[document.AssociatedOrderType],
             FileName                  : document.FileName,

@@ -11,7 +11,7 @@ import { OrganizationService } from '../../../services/organization.service';
 import { EmergencyContactService } from '../../../services/patient/emergency.contact.service';
 import { PersonService } from '../../../services/person.service';
 import { RoleService } from '../../../services/role.service';
-import { UserService } from '../../../services/user.service';
+import { UserService } from '../../../services/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { EmergencyContactValidator } from '../../validators/patient/emergency.contact.validator';
 

@@ -4,7 +4,7 @@ import FileResourceReference from '../models/file.resource/file.resource.referen
 import FileResourceVersion from '../models/file.resource/file.resource.version.model';
 import { ResourceReference } from '../../../../domain.types/file.resource/file.resource.types';
 import { FileResourceMetadata } from '../../../../domain.types/file.resource/file.resource.types';
-import { ConfigurationManager } from '../../../../configs/configuration.manager';
+import { ConfigurationManager } from '../../../../config/configuration.manager';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

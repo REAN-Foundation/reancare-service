@@ -1,16 +1,14 @@
 import express from 'express';
-
+import { Authorizer } from '../../../auth/authorizer';
+import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
-import { Authorizer } from '../../../auth/authorizer';
-import { PersonService } from '../../../services/person.service';
-
-import { ApiError } from '../../../common/api.error';
-import { DoctorNoteValidator } from '../../validators/clinical/doctor.note.validator';
 import { DoctorNoteService } from '../../../services/clinical/doctor.note.service';
+import { PersonService } from '../../../services/person.service';
 import { RoleService } from '../../../services/role.service';
-import { UserService } from '../../../services/user.service';
+import { UserService } from '../../../services/user/user.service';
+import { Loader } from '../../../startup/loader';
+import { DoctorNoteValidator } from '../../validators/clinical/doctor.note.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -97,7 +95,7 @@ export class DoctorNoteController {
 
             const searchResults = await this._service.search(filters);
 
-            const count = searchResults.length;
+            const count = searchResults.Items.length;
             const message =
                 count === 0
                     ? 'No records found!'

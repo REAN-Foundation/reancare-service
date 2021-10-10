@@ -1,13 +1,13 @@
-import { UserDomainModel } from "../../../../domain.types/user/user/user.domain.model";
-import { IUserRepo } from "../../../repository.interfaces/user.repo.interface";
-import User from '../models/user/user.model';
-import { UserMapper } from "../mappers/user.mapper";
-import { Logger } from "../../../../common/logger";
-import { ApiError } from "../../../../common/api.error";
 import { Op } from 'sequelize';
-import { Helper } from "../../../../common/helper";
-import { UserDetailsDto } from "../../../../domain.types/user/user/user.dto";
-import Person from "../models/person.model";
+import { ApiError } from "../../../../../common/api.error";
+import { Helper } from "../../../../../common/helper";
+import { Logger } from "../../../../../common/logger";
+import { UserDomainModel } from "../../../../../domain.types/user/user/user.domain.model";
+import { UserDetailsDto } from "../../../../../domain.types/user/user/user.dto";
+import { IUserRepo } from "../../../../repository.interfaces/user/user.repo.interface";
+import { UserMapper } from "../../mappers/user/user.mapper";
+import Person from "../../models/person.model";
+import User from '../../models/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

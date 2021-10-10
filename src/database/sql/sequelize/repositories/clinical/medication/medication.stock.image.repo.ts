@@ -1,10 +1,10 @@
-import { IMedicationStockImageRepo } from '../../../../../repository.interfaces/clinical/medication/medication.stock.image.repo.interface';
-import MedicationStockImage from '../../../models/clinical/medication/medication.stock.image.model';
-import { MedicationStockImageMapper } from '../../../mappers/clinical/medication/medication.stock.image.mapper';
-import { Logger } from '../../../../../../common/logger';
 import { ApiError } from '../../../../../../common/api.error';
+import { Logger } from '../../../../../../common/logger';
 import { MedicationStockImageDomainModel } from '../../../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model';
 import { MedicationStockImageDto } from '../../../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
+import { IMedicationStockImageRepo } from '../../../../../repository.interfaces/clinical/medication/medication.stock.image.repo.interface';
+import { MedicationStockImageMapper } from '../../../mappers/clinical/medication/medication.stock.image.mapper';
+import MedicationStockImage from '../../../models/clinical/medication/medication.stock.image.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -27,7 +27,7 @@ export class MedicationStockImageRepo implements IMedicationStockImageRepo {
         }
     };
 
-    getById = async (id: string): Promise<MedicationStockImageDto> => {
+    getById = async (id: number): Promise<MedicationStockImageDto> => {
         try {
             const stockImage = await MedicationStockImage.findByPk(id);
             const dto = await MedicationStockImageMapper.toDto(stockImage);

@@ -3,7 +3,7 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import { OrderTypes } from '../../../../../domain.types/clinical/order/order.types';
-import { VisitTypes } from '../../../../../domain.types/miscellaneous/system.types';
+import { VisitType, VisitTypeList } from '../../../../../domain.types/miscellaneous/clinical.types';
 import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
 import { Roles } from '../../../../../domain.types/role/role.types';
 import Order from '../clinical/order.model';
@@ -106,14 +106,10 @@ export default class Document extends Model {
 
     @Length({ max: 64 })
     @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-        values    : [
-            VisitTypes.DoctorVisit,
-            VisitTypes.LabVisit,
-            VisitTypes.TeleVisit,
-            VisitTypes.Unknown
-        ]
+        type         : DataType.STRING(64),
+        allowNull    : true,
+        values       : VisitTypeList,
+        defaultValue : VisitType.Unknown
     })
     AssociatedVisitType: string;
 
@@ -156,8 +152,9 @@ export default class Document extends Model {
 
     @Length({ max: 512 })
     @Column({
-        type      : DataType.STRING(512),
-        allowNull : false,
+        type         : DataType.STRING(512),
+        allowNull    : false,
+        defaultValue : ''
     })
     AuthenticatedUrl: string;
 

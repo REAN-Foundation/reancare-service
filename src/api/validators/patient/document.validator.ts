@@ -69,13 +69,13 @@ export class DocumentValidator {
             .isUUID()
             .run(request);
 
-        await body('MedicalPractitionerUserId').optional()
+        await body('MedicalPractitionerUserId').optional({ nullable: true })
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await body('MedicalPractionerRole').optional()
+        await body('MedicalPractionerRole').optional({ nullable: true })
             .trim()
             .escape()
             .run(request);
@@ -86,24 +86,24 @@ export class DocumentValidator {
             .isUUID()
             .run(request);
 
-        await body('AssociatedVisitId').optional()
+        await body('AssociatedVisitId').optional({ nullable: true })
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await body('AssociatedVisitType').optional()
+        await body('AssociatedVisitType').optional({ nullable: true })
             .trim()
             .escape()
             .run(request);
 
-        await body('AssociatedOrderId').optional()
+        await body('AssociatedOrderId').optional({ nullable: true })
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await body('AssociatedOrderType').optional()
+        await body('AssociatedOrderType').optional({ nullable: true })
             .trim()
             .escape()
             .run(request);
@@ -113,34 +113,34 @@ export class DocumentValidator {
             .escape()
             .run(request);
 
-        await body('ResourceId').optional()
+        await body('ResourceId').optional({ nullable: true })
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await body('AuthenticatedUrl').optional()
+        await body('AuthenticatedUrl').optional({ nullable: true })
             .trim()
             .run(request);
 
-        await body('MimeType').optional()
+        await body('MimeType').optional({ nullable: true })
             .trim()
             .escape()
             .run(request);
 
-        await body('SizeInKBytes').optional()
+        await body('SizeInKBytes').optional({ nullable: true })
             .trim()
             .escape()
             .isFloat()
             .run(request);
 
-        await body('RecordDate').optional()
+        await body('RecordDate').optional({ nullable: true })
             .trim()
             .escape()
             .toDate()
             .run(request);
 
-        await body('UploadedDate').optional()
+        await body('UploadedDate').optional({ nullable: true })
             .trim()
             .escape()
             .toDate()

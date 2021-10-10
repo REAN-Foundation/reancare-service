@@ -1,22 +1,10 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    PrimaryKey,
-    Length,
-    IsUUID,
-    ForeignKey,
-    IsDecimal,
-    IsDate,
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsDecimal, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
 import { v4 } from 'uuid';
 import User from '../../user/user.model';
 import Drug from './drug.model';
+
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -106,8 +94,9 @@ export default class MedicationConsumption extends Model {
 
     @IsDate
     @Column({
-        type      : DataType.DATE,
-        allowNull : true,
+        type         : DataType.DATE,
+        allowNull    : true,
+        defaultValue : null
     })
     TakenAt: Date
 
@@ -134,8 +123,9 @@ export default class MedicationConsumption extends Model {
 
     @IsDate
     @Column({
-        type      : DataType.DATE,
-        allowNull : true,
+        type         : DataType.DATE,
+        allowNull    : true,
+        defaultValue : null
     })
     CancelledOn: Date
 

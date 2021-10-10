@@ -1,20 +1,10 @@
+import path from 'path';
 import * as configuration from '../../reancare.config.json';
 import {
-    Configurations,
-    DatabaseType,
-    DatabaseORM,
-    DatabaseFlavour,
-    EHRProvider,
-    EHRSpecification,
     AuthenticationType,
-    AuthorizationType,
-    FileStorageProvider,
-    SMSServiceProvider,
-    EmailServiceProvider,
-    InAppNotificationServiceProvider,
-} from './configs';
-
-import path from 'path';
+    AuthorizationType, Configurations, DatabaseFlavour, DatabaseORM, DatabaseType, EHRProvider,
+    EHRSpecification, EmailServiceProvider, FileStorageProvider, InAppNotificationServiceProvider, SMSServiceProvider
+} from './configuration.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

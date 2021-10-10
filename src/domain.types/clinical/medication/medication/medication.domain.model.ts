@@ -1,9 +1,6 @@
 import {
-    MedicationDosageUnits,
-    MedicationTimeSchedules,
-    MedicationAdministrationRoutes,
-    MedicationDurationUnits,
-    MedicationFrequencyUnits
+    MedicationAdministrationRoutes, MedicationDosageUnits, MedicationDurationUnits,
+    MedicationFrequencyUnits, MedicationTimeSchedules
 } from "./medication.types";
 
 export interface MedicationDomainModel {
@@ -17,7 +14,7 @@ export interface MedicationDomainModel {
     DrugId?                   : string;
     Dose?                     : number;
     DosageUnit?               : MedicationDosageUnits;
-    TimeSchedule?             : MedicationTimeSchedules;
+    TimeSchedules?            : MedicationTimeSchedules[];
     Frequency?                : number;
     FrequencyUnit?            : MedicationFrequencyUnits;
     Route?                    : MedicationAdministrationRoutes;

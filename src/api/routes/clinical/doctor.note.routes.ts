@@ -1,6 +1,6 @@
 import express from 'express';
-import { DoctorNoteController } from '../../controllers/clinical/doctor.note.controller';
 import { Loader } from '../../../startup/loader';
+import { DoctorNoteController } from '../../controllers/clinical/doctor.note.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -16,5 +16,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
     
-    app.use('/api/v1/doctor-notes', router);
+    app.use('/api/v1/clinical/doctor-notes', router);
 };

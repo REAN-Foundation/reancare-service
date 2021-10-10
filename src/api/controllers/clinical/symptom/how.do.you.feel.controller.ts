@@ -4,7 +4,7 @@ import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { HowDoYouFeelService } from '../../../../services/clinical/symptom/how.do.you.feel.service';
-import { UserService } from '../../../../services/user.service';
+import { UserService } from '../../../../services/user/user.service';
 import { Loader } from '../../../../startup/loader';
 import { HowDoYouFeelValidator } from '../../../validators/clinical/symptom/how.do.you.feel.validator';
 

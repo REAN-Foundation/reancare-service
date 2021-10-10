@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import path from "path";
 import { inject, injectable } from "tsyringe";
 import { Helper } from "../common/helper";
@@ -13,9 +14,10 @@ import { IPersonRepo } from "../database/repository.interfaces/person.repo.inter
 import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
 import { IRolePrivilegeRepo } from "../database/repository.interfaces/role.privilege.repo.interface";
 import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
-import { IUserRepo } from "../database/repository.interfaces/user.repo.interface";
+import { IUserRepo } from "../database/repository.interfaces/user/user.repo.interface";
 import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
 import { DrugDomainModel } from "../domain.types/clinical/medication/drug/drug.domain.model";
+import { MedicationStockImageDomainModel } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
 import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model";
 import { SymptomTypeDomainModel } from "../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model";
 import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/symptom.type/symptom.type.search.types";
@@ -41,13 +43,8 @@ import { HealthProfileService } from "../services/patient/health.profile.service
 import { PatientService } from "../services/patient/patient.service";
 import { PersonService } from "../services/person.service";
 import { RoleService } from "../services/role.service";
-import { UserService } from "../services/user.service";
+import { UserService } from "../services/user/user.service";
 import { Loader } from "./loader";
-
-// import * as fs from "fs";
-// import {
-//     MedicationStockImageDomainModel
-// } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -356,35 +353,35 @@ export class Seeder {
             return;
         }
 
-        // var cloudStoragePath = 'assets/images/stock.medication.images/';
-        // var sourceFilePath = path.join(process.cwd(), "./assets/images/stock.medication.images/");
-        // var files = fs.readdirSync(sourceFilePath);
-        // var imageFiles = files.filter((f) => {
-        //     return path.extname(f).toLowerCase() === '.png';
-        // });
+        var cloudStoragePath = 'assets/images/stock.medication.images/';
+        var sourceFilePath = path.join(process.cwd(), "./assets/images/stock.medication.images/");
+        var files = fs.readdirSync(sourceFilePath);
+        var imageFiles = files.filter((f) => {
+            return path.extname(f).toLowerCase() === '.png';
+        });
 
-        // for await (const fileName of imageFiles) {
+        for await (const fileName of imageFiles) {
 
-        //     var sourceFileLocation = path.join(sourceFilePath, fileName);
-        //     var storageFileLocation = cloudStoragePath + fileName;
+            var sourceFileLocation = path.join(sourceFilePath, fileName);
+            var storageFileLocation = cloudStoragePath + fileName;
 
-        //     var uploaded = await this._fileResourceService.UploadLocalFile(
-        //         sourceFileLocation,
-        //         storageFileLocation,
-        //         true);
+            var uploaded = await this._fileResourceService.uploadLocal(
+                sourceFileLocation,
+                storageFileLocation,
+                true);
 
-        //     var domainModel: MedicationStockImageDomainModel = {
-        //         Code       : fileName.replace('.png', ''),
-        //         FileName   : fileName,
-        //         ResourceId : uploaded.ResourceId,
-        //         PublicUrl  : uploaded.UrlPublic
-        //     };
+            var domainModel: MedicationStockImageDomainModel = {
+                Code       : fileName.replace('.png', ''),
+                FileName   : fileName,
+                ResourceId : uploaded.DefaultVersion.ResourceId,
+                PublicUrl  : uploaded.DefaultVersion.Url
+            };
             
-        //     var medStockImage = await this._medicationStockImageRepo.create(domainModel);
-        //     if (!medStockImage) {
-        //         Logger.instance().log('Error occurred while seeding medication stock images!');
-        //     }
-        // }
+            var medStockImage = await this._medicationStockImageRepo.create(domainModel);
+            if (!medStockImage) {
+                Logger.instance().log('Error occurred while seeding medication stock images!');
+            }
+        }
     }
 
     public seedSymptomTypes = async () => {
@@ -400,31 +397,33 @@ export class Seeder {
         const arr = SeededSymptomTypes['default'];
 
         for (let i = 0; i < arr.length; i++) {
-            var t = arr[i];
-            var tokens = t['Tags'] ? t['Tags'].split(',') : [];
-
-            //TODO: Commented till storage is enabled
-            //var imageName = t['Image'] ? t['Image'] : null;
-            //var resourceId = await this.getImageResourceIdForSymptomType(imageName);
-            var resourceId = null;
+            var symptomType = arr[i];
+            var tokens = symptomType['Tags'] ? symptomType['Tags'].split(',') : [];
+            var imageName = symptomType['Image'] ? symptomType['Image'] : null;
+            var resourceId = await this.getImageResourceIdForSymptomType(imageName);
 
             const model: SymptomTypeDomainModel = {
-                Symptom         : t['Symptom'],
-                Description     : t['Description'],
+                Symptom         : symptomType['Symptom'],
+                Description     : symptomType['Description'],
                 Tags            : tokens,
                 ImageResourceId : resourceId
             };
             await this._symptomTypeService.create(model);
         }
     }
-    
+
     getImageResourceIdForSymptomType = async (fileName) => {
         if (fileName === null) {
             return null;
         }
-        var storagePath = 'assets/images/symptom_images/' + fileName;
+        var storagePath = 'assets/images/symptom.images/' + fileName;
         var sourceFileLocation = path.join(process.cwd(), "./assets/images/symptom.images/", fileName);
-        var uploaded = await this._fileResourceService.uploadLocal(sourceFileLocation, storagePath, true);
+        
+        var uploaded = await this._fileResourceService.uploadLocal(
+            sourceFileLocation,
+            storagePath,
+            true);
+
         return uploaded.id;
     }
 

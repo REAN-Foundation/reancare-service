@@ -32,8 +32,8 @@ import { register as registerPatientHealthProfileRoutes } from './patient/health
 import { register as registerPatientRoutes } from "./patient/patient.routes";
 import { register as registerPersonRoutes } from './person.routes';
 import { register as registerTypesRoutes } from './types.routes';
-import { register as registerUserDeviceDetailsRoutes } from './user.device.details.routes';
-import { register as registerUserRoutes } from "./user.routes";
+import { register as registerUserDeviceDetailsRoutes } from './user/user.device.details.routes';
+import { register as registerUserRoutes } from "./user/user.routes";
 import { register as registerCalorieBalanceRoute } from './wellness/daily.records/calorie.balance.routes';
 import { register as registerHeartPointRoutes } from './wellness/daily.records/heart.points.routes';
 import { register as registerMoveMinutesRoutes } from './wellness/daily.records/move.minutes.routes';
@@ -43,6 +43,8 @@ import { register as registerMeditationtRoutes } from './wellness/exercise/medit
 import { register as registerPhysicalActivityRoutes } from './wellness/exercise/physical.activity.routes';
 import { register as registerNutritionFoodConsumptionRoutes } from './wellness/nutrition/food.consumption.routes';
 import { register as registerWaterConsumptionRoutes } from './wellness/nutrition/water.consumption.routes';
+import { register as registerMedicationRoutes } from './clinical/medication/medication.routes';
+import { register as registerMedicationConsumptionRoutes } from './clinical/medication/medication.consumption.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -109,6 +111,8 @@ export class Router {
                 registerUserDeviceDetailsRoutes(this._app);
                 registerGoalRoutes(this._app);
                 registerFileResourceRoutes(this._app);
+                registerMedicationRoutes(this._app);
+                registerMedicationConsumptionRoutes(this._app);
 
                 resolve(true);
 

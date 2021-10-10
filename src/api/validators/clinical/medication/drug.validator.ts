@@ -1,5 +1,5 @@
 import express from 'express';
-import { body, param, validationResult, query } from 'express-validator';
+import { body, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../../common/helper';
 import { DrugDomainModel } from '../../../../domain.types/clinical/medication/drug/drug.domain.model';
 import { DrugSearchFilters } from '../../../../domain.types/clinical/medication/drug/drug.search.types';

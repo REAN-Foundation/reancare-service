@@ -1,12 +1,13 @@
+
 export enum DurationType {
-    Miliseconds = 'Milliseconds',
-    Seconds     = 'Seconds',
-    Minutes     = 'Minutes',
-    Hours       = 'Hours',
-    Days        = 'Days',
-    Weeks       = 'Weeks',
-    Months      = 'Months',
-    Years       = 'Years',
+    Milisecond = 'Millisecond',
+    Second     = 'Second',
+    Minute     = 'Minute',
+    Hour       = 'Hour',
+    Day        = 'Day',
+    Week       = 'Week',
+    Month      = 'Month',
+    Year       = 'Year',
 }
 
 export enum DateStringFormat {

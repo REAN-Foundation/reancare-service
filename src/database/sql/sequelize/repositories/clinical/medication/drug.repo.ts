@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { DrugDomainModel } from "../../../../../../domain.types/clinical/medication/drug/drug.domain.model";
@@ -34,8 +35,7 @@ export class DrugRepo implements IDrugRepo {
             };
 
             const drug = await Drug.create(entity);
-            const dto = await DrugMapper.toDto(drug);
-            return dto;
+            return DrugMapper.toDto(drug);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -45,8 +45,21 @@ export class DrugRepo implements IDrugRepo {
     getById = async (id: string): Promise<DrugDto> => {
         try {
             const drug = await Drug.findByPk(id);
-            const dto = await DrugMapper.toDto(drug);
-            return dto;
+            return DrugMapper.toDto(drug);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getByName = async (drugName: string): Promise<DrugDto> => {
+        try {
+            const drug = await Drug.findOne({
+                where : {
+                    DrugName : { [Op.like]: '%' + drugName + '%' }
+                }
+            });
+            return DrugMapper.toDto(drug);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -58,7 +71,7 @@ export class DrugRepo implements IDrugRepo {
             const search = { where: {} };
 
             if (filters.Name != null) {
-                search.where['DrugName'] = filters.Name;
+                search.where['DrugName'] = { [Op.like]: '%' + filters.Name + '%' };
             }
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
@@ -137,8 +150,8 @@ export class DrugRepo implements IDrugRepo {
     
             await drug.save();
 
-            const dto = await DrugMapper.toDto(drug);
-            return dto;
+            return DrugMapper.toDto(drug);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

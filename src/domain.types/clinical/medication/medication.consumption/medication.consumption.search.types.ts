@@ -3,9 +3,8 @@ import { MedicationConsumptionDto } from "./medication.consumption.dto";
 //////////////////////////////////////////////////////////////////////
 
 export interface MedicationConsumptionSearchFilters {
-    DrugName?     : string;
-    DrugId?       : string;
     PatientUserId?: string;
+    OrderId?      : string;
     MedicationId? : string;
     DateFrom?     : Date;
     DateTo?       : Date;

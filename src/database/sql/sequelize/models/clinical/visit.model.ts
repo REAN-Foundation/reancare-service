@@ -1,20 +1,9 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    Length,
-    IsDate,
-    ForeignKey,
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
-import { VisitStates, VisitTypes } from '../../../../../domain.types/miscellaneous/system.types';
 import { v4 } from 'uuid';
+import { VisitType, VisitTypeList } from '../../../../../domain.types/miscellaneous/clinical.types';
+import { ProgressStatus, ProgressStatusList } from '../../../../../domain.types/miscellaneous/system.types';
 import Organization from '../organization.model';
 import User from '../user/user.model';
 
@@ -42,14 +31,10 @@ export default class Visit extends Model {
     
     @Length({ max: 64 })
     @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-        values    : [
-            VisitTypes.DoctorVisit,
-            VisitTypes.LabVisit,
-            VisitTypes.TeleVisit,
-            VisitTypes.Unknown
-        ]
+        type         : DataType.STRING(64),
+        allowNull    : true,
+        values       : VisitTypeList,
+        defaultValue : VisitType.Unknown,
     })
     VisitType: string;
 
@@ -93,16 +78,10 @@ export default class Visit extends Model {
 
     @Length({ max: 32 })
     @Column({
-        type      : DataType.STRING(32),
-        allowNull : false,
-        values    : [
-            VisitStates.Started,
-            VisitStates.InProgress,
-            VisitStates.Cancelled,
-            VisitStates.Completed,
-            VisitStates.Unknown
-        ],
-        defaultValue : VisitStates.Unknown
+        type         : DataType.STRING(32),
+        allowNull    : false,
+        values       : ProgressStatusList,
+        defaultValue : ProgressStatus.Unknown
     })
     CurrentState: string;
 

@@ -1,23 +1,24 @@
-import { Loader } from '../startup/loader';
-import { IUserRepo } from '../database/repository.interfaces/user.repo.interface';
-import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
-import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
-import { IOtpRepo } from '../database/repository.interfaces/otp.repo.interface';
-import { IMessagingService } from '../modules/communication/interfaces/messaging.service.interface';
-import { UserLoginDetails, UserDomainModel } from '../domain.types/user/user/user.domain.model';
-import { injectable, inject } from 'tsyringe';
-import { Logger } from '../common/logger';
-import { ApiError } from '../common/api.error';
-import { CurrentUser } from '../domain.types/miscellaneous/current.user';
-import { OtpPersistenceEntity } from '../domain.types/otp/otp.domain.types';
-import { Roles } from '../domain.types/role/role.types';
 import { generate } from 'generate-password';
-import { IPersonRepo } from '../database/repository.interfaces/person.repo.interface';
-import { PersonDetailsDto } from '../domain.types/person/person.dto';
-import { Helper } from '../common/helper';
-import { UserDetailsDto, UserDto } from '../domain.types/user/user/user.dto';
-import { IInternalTestUserRepo } from '../database/repository.interfaces/internal.test.user.repo.interface';
-import { ConfigurationManager } from '../configs/configuration.manager';
+import { inject, injectable } from 'tsyringe';
+import { ApiError } from '../../common/api.error';
+import { Helper } from '../../common/helper';
+import { Logger } from '../../common/logger';
+import { TimeHelper } from '../../common/time.helper';
+import { ConfigurationManager } from '../../config/configuration.manager';
+import { IInternalTestUserRepo } from '../../database/repository.interfaces/internal.test.user.repo.interface';
+import { IOtpRepo } from '../../database/repository.interfaces/otp.repo.interface';
+import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
+import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
+import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
+import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
+import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
+import { DurationType } from '../../domain.types/miscellaneous/time.types';
+import { OtpPersistenceEntity } from '../../domain.types/otp/otp.domain.types';
+import { PersonDetailsDto } from '../../domain.types/person/person.dto';
+import { Roles } from '../../domain.types/role/role.types';
+import { UserDomainModel, UserLoginDetails } from '../../domain.types/user/user/user.domain.model';
+import { UserDetailsDto, UserDto } from '../../domain.types/user/user/user.dto';
+import { Loader } from '../../startup/loader';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,7 +32,6 @@ export class UserService {
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IOtpRepo') private _otpRepo: IOtpRepo,
         @inject('IInternalTestUserRepo') private _internalTestUserRepo: IInternalTestUserRepo,
-        @inject('IMessagingService') private _messagingService: IMessagingService
     ) {}
 
     //#region Publics
@@ -150,7 +150,7 @@ export class UserService {
         const otpDto = await this._otpRepo.create(otpEntity);
         const systemIdentifier = ConfigurationManager.SystemIdentifier();
         const message = `Hello ${user.Person.FirstName}, ${otp} is OTP for your ${systemIdentifier} account and will expire in 3 minutes.`;
-        const sendStatus = await this._messagingService.sendSMS(user.Person.Phone, message);
+        const sendStatus = await Loader.messagingService.sendSMS(user.Person.Phone, message);
         if (sendStatus) {
             Logger.instance().log('Otp sent successfully.\n ' + JSON.stringify(otpDto, null, 2));
         }
@@ -249,6 +249,26 @@ export class UserService {
     
         const displayId = prefix + str;
         return displayId;
+    }
+
+    getDateInUserTimeZone = async(userId, dateStr: string, useCurrent = true) => {
+
+        var user = await this.getById(userId);
+        if (user === null) {
+            throw new ApiError(422, 'Invalid user id.');
+        }
+        var timezoneOffset = '+05:30';
+        if (user.CurrentTimeZone !== null && useCurrent) {
+            timezoneOffset = user.CurrentTimeZone;
+        }
+        else if (user.DefaultTimeZone !== null) {
+            timezoneOffset = user.DefaultTimeZone;
+        }
+        var todayStr = new Date().toISOString();
+        var str = dateStr ? dateStr.split('T')[0] : todayStr.split('T')[0];
+
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
+        return TimeHelper.strToUtc(str, offsetMinutes);
     }
 
     //#endregion

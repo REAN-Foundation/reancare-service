@@ -11,18 +11,20 @@ import { register as registerBodyTemperatureRoutes } from './clinical/biometrics
 import { register as registerBodyWeightRoutes } from './clinical/biometrics/body.weight.routes';
 import { register as registerBiometricsPulse } from './clinical/biometrics/pulse.routes';
 import { register as registerComplaintRoutes } from './clinical/complaint.routes';
+import { register as registerDiagnosisRoutes } from './clinical/diagnosis.routes';
+import { register as registerDoctorNoteRoutes } from './clinical/doctor.note.routes';
+import { register as registerEmergencyEventRoutes } from './clinical/emergency.event.routes';
 import { register as registerDrugRoutes } from './clinical/medication/drug.routes';
+import { register as registerMedicationConsumptionRoutes } from './clinical/medication/medication.consumption.routes';
+import { register as registerMedicationRoutes } from './clinical/medication/medication.routes';
 import { register as registerOrderRoutes } from './clinical/order.routes';
 import { register as registerHowDoYouFeelRoutes } from './clinical/symptom/how.do.you.feel.routes';
 import { register as registerSymptomAssessmentRoutes } from './clinical/symptom/symptom.assessment.routes';
 import { register as registerSymptomAssessmentTemplateRoutes } from './clinical/symptom/symptom.assessment.template.routes';
 import { register as registerSymptomRoutes } from './clinical/symptom/symptom.routes';
 import { register as registerSymptomTypeRoutes } from './clinical/symptom/symptom.type.routes';
-import { register as registerDiagnosisRoutes } from './clinical/diagnosis.routes';
-import { register as registerDoctorNoteRoutes } from './clinical/doctor.note.routes';
 import { register as registerDoctorRoutes } from "./doctor.routes";
 import { register as registerKnowledgeNuggetRoutes } from './educational/knowledge.nugget.routes';
-import { register as registerEmergencyEventRoutes } from './clinical/emergency.event.routes';
 import { register as registerFileResourceRoutes } from './file.resource.routes';
 import { register as registerOrganizationRoutes } from './organization.routes';
 import { register as registerPatientDocumentRoutes } from './patient/document.routes';
@@ -32,6 +34,7 @@ import { register as registerPatientHealthProfileRoutes } from './patient/health
 import { register as registerPatientRoutes } from "./patient/patient.routes";
 import { register as registerPersonRoutes } from './person.routes';
 import { register as registerTypesRoutes } from './types.routes';
+import { register as registerUserTaskRoutes } from './user.task.routes';
 import { register as registerUserDeviceDetailsRoutes } from './user/user.device.details.routes';
 import { register as registerUserRoutes } from "./user/user.routes";
 import { register as registerCalorieBalanceRoute } from './wellness/daily.records/calorie.balance.routes';
@@ -43,8 +46,6 @@ import { register as registerMeditationtRoutes } from './wellness/exercise/medit
 import { register as registerPhysicalActivityRoutes } from './wellness/exercise/physical.activity.routes';
 import { register as registerNutritionFoodConsumptionRoutes } from './wellness/nutrition/food.consumption.routes';
 import { register as registerWaterConsumptionRoutes } from './wellness/nutrition/water.consumption.routes';
-import { register as registerMedicationRoutes } from './clinical/medication/medication.routes';
-import { register as registerMedicationConsumptionRoutes } from './clinical/medication/medication.consumption.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -113,6 +114,7 @@ export class Router {
                 registerFileResourceRoutes(this._app);
                 registerMedicationRoutes(this._app);
                 registerMedicationConsumptionRoutes(this._app);
+                registerUserTaskRoutes(this._app);
 
                 resolve(true);
 

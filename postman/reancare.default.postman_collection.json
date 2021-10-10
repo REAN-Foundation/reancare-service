@@ -3518,6 +3518,897 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "Task",
+					"item": [
+						{
+							"name": "Add User Task record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New User Task record is created\", function () {",
+											"",
+											"    let expectedDisplayId = pm.environment.get(\"USER_TASK_DISPLAYID\");",
+											"    let expectedUserId = pm.environment.get(\"USER_TASK_USERID\");",
+											"    let expectedUserRole = pm.environment.get(\"USER_TASK_USERROLE\");",
+											"    let expectedTaskName = pm.environment.get(\"USER_TASK_TASKNAME\");",
+											"    let expectedAction = pm.environment.get(\"USER_TASK_ACTION\");",
+											"    let expectedScheduledStartTime = pm.environment.get(\"USER_TASK_SCHEDULEDSTARTTIME\");",
+											"    let expectedScheduledendTime = pm.environment.get(\"USER_TASK_SCHEDULEDENDTIME\");",
+											"    let expectedStarted = pm.environment.get(\"USER_TASK_STARTED\");",
+											"    let expectedStartedAt = pm.environment.get(\"USER_TASK_STARTEDAT\");",
+											"    let expectedFinished = pm.environment.get(\"USER_TASK_FINISHED\");",
+											"    let expectedTaskIsSuccess = pm.environment.get(\"USER_TASK_TASKISSUCCESS\");",
+											"    let expectedCancelled = pm.environment.get(\"USER_TASK_CANCELLED\");",
+											"    let expectedCancellationReason = pm.environment.get(\"USER_TASK_CANCELLATIONREASON\");",
+											"    let expectedIsRecurrent = pm.environment.get(\"USER_TASK_ISRECURRENT\");",
+											"",
+											"    console.log(\"expectedTaskName\", expectedTaskName);",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"User\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"TaskName\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Action\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Started\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"StartedAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Finished\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"FinishedAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"TaskIsSuccess\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Cancelled\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"CancelledAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"CancellationReason\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"RecurrenceScheduleId\")",
+											"",
+											"    pm.expect(jsonRes.Data.UserTask.DisplayId).equals(expectedDisplayId);",
+											"    pm.expect(jsonRes.Data.UserTask.TaskName).equals(expectedTaskName);",
+											"    pm.expect(jsonRes.Data.UserTask.ScheduledStartTime).equals(expectedScheduledStartTime);",
+											"    pm.expect(jsonRes.Data.UserTask.ScheduledEndTime).equals(expectedScheduledendTime);",
+											"    pm.expect(jsonRes.Data.UserTask.Started).equals(expectedStarted);",
+											"    pm.expect(jsonRes.Data.UserTask.StartedAt).equals(expectedStartedAt);",
+											"    pm.expect(jsonRes.Data.UserTask.Finished).equals(expectedFinished);",
+											"    pm.expect(jsonRes.Data.UserTask.Cancelled).equals(expectedCancelled);",
+											"    pm.expect(jsonRes.Data.UserTask.CancellationReason).equals(expectedCancellationReason);",
+											"    pm.expect(jsonRes.Data.UserTask.IsRecurrent).equals(expectedIsRecurrent);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var userId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"pm.environment.set(\"USER_TASK_DISPLAYID\", \"1\");\r",
+											"pm.environment.set(\"USER_TASK_USERID\", userId);\r",
+											"pm.environment.set(\"USER_TASK_USERROLE\", 1);\r",
+											"pm.environment.set(\"USER_TASK_TASKNAME\", \"Take Medicine\");\r",
+											"//pm.environment.set(\"USER_TASK_CATEGORY\", null);\r",
+											"pm.environment.set(\"USER_TASK_ACTION\", \"Take Medicine\");\r",
+											"pm.environment.set(\"USER_TASK_SCHEDULEDSTARTTIME\", new Date(2021, 10, 1, 8, 30, 0, 0));\r",
+											"pm.environment.set(\"USER_TASK_SCHEDULEDENDTIME\", new Date(2021, 10, 10, 8, 30, 0, 0));\r",
+											"pm.environment.set(\"USER_TASK_STARTED\", false);\r",
+											"pm.environment.set(\"USER_TASK_STARTEDAT\", new Date(2021, 10, 5, 8, 30, 0, 0));\r",
+											"pm.environment.set(\"USER_TASK_FINISHED\", false);\r",
+											"//pm.environment.set(\"USER_TASK_FINISHEDAT\", userId);\r",
+											"pm.environment.set(\"USER_TASK_TASKISSUCCESS\", false);\r",
+											"pm.environment.set(\"USER_TASK_CANCELLED\", false);\r",
+											"//pm.environment.set(\"USER_TASK_CANCELLEDAT\", userId);\r",
+											"pm.environment.set(\"USER_TASK_CANCELLATIONREASON\", 'NA');\r",
+											"pm.environment.set(\"USER_TASK_ISRECURRENT\", false);\r",
+											"//pm.environment.set(\"USER_TASK_RECURRENCESCHEDULEID\", userId);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"DisplayId\": \"{{USER_TASK_DISPLAYID}}\",\n    \"UserId\": \"{{USER_TASK_USERID}}\",\n    \"UserRole\": \"{{USER_TASK_USERROLE}}\",\n    \"TaskName\": \"{{USER_TASK_TASKNAME}}\",\n    \"Action\": \"{{USER_TASK_ACTION}}\",\n    \"ScheduledStartTime\": \"{{USER_TASK_SCHEDULEDSTARTTIME}}\",\n    \"ScheduledEndTime\": \"{{USER_TASK_SCHEDULEDENDTIME}}\",\n    \"Started\": \"{{USER_TASK_STARTED}}\",\n    \"StartedAt\": \"{{USER_TASK_STARTEDAT}}\",\n    \"Finished\": \"{{USER_TASK_FINISHED}}\",\n    \"TaskIsSuccess\": \"{{USER_TASK_TASKISSUCCESS}}\",\n    \"Cancelled\": \"{{USER_TASK_CANCELLED}}\",\n    \"IsRecurrent\": \"{{USER_TASK_ISRECURRENT}}\",\n    \"CancellationReason\": \"{{USER_TASK_CANCELLATIONREASON}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/user-task",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"user-task"
+									]
+								},
+								"description": "Create new User Task record"
+							},
+							"response": []
+						},
+						{
+							"name": "Get User Task by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"User Task record is returned\", function () {",
+											"",
+											"    let expectedDisplayId = pm.environment.get(\"USER_TASK_DISPLAYID\");",
+											"    let expectedUserId = pm.environment.get(\"USER_TASK_USERID\");",
+											"    let expectedUserRole = pm.environment.get(\"USER_TASK_USERROLE\");",
+											"    let expectedTaskName = pm.environment.get(\"USER_TASK_TASKNAME\");",
+											"    let expectedAction = pm.environment.get(\"USER_TASK_ACTION\");",
+											"    let expectedScheduledStartTime = pm.environment.get(\"USER_TASK_SCHEDULEDSTARTTIME\");",
+											"    let expectedScheduledendTime = pm.environment.get(\"USER_TASK_SCHEDULEDENDTIME\");",
+											"    let expectedStarted = pm.environment.get(\"USER_TASK_STARTED\");",
+											"    let expectedStartedAt = pm.environment.get(\"USER_TASK_STARTEDAT\");",
+											"    let expectedFinished = pm.environment.get(\"USER_TASK_FINISHED\");",
+											"    let expectedTaskIsSuccess = pm.environment.get(\"USER_TASK_TASKISSUCCESS\");",
+											"    let expectedCancelled = pm.environment.get(\"USER_TASK_CANCELLED\");",
+											"    let expectedCancellationReason = pm.environment.get(\"USER_TASK_CANCELLATIONREASON\");",
+											"    let expectedIsRecurrent = pm.environment.get(\"USER_TASK_ISRECURRENT\");",
+											"",
+											"    console.log(\"expectedTaskName\", expectedTaskName);",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"User\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"TaskName\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Action\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Started\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"StartedAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Finished\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"FinishedAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"TaskIsSuccess\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Cancelled\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"CancelledAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"CancellationReason\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"RecurrenceScheduleId\")",
+											"",
+											"    pm.expect(jsonRes.Data.UserTask.DisplayId).equals(expectedDisplayId);",
+											"    pm.expect(jsonRes.Data.UserTask.TaskName).equals(expectedTaskName);",
+											"    pm.expect(jsonRes.Data.UserTask.ScheduledStartTime).equals(expectedScheduledStartTime);",
+											"    pm.expect(jsonRes.Data.UserTask.ScheduledEndTime).equals(expectedScheduledendTime);",
+											"    pm.expect(jsonRes.Data.UserTask.Started).equals(expectedStarted);",
+											"    pm.expect(jsonRes.Data.UserTask.StartedAt).equals(expectedStartedAt);",
+											"    pm.expect(jsonRes.Data.UserTask.Finished).equals(expectedFinished);",
+											"    pm.expect(jsonRes.Data.UserTask.Cancelled).equals(expectedCancelled);",
+											"    pm.expect(jsonRes.Data.UserTask.CancellationReason).equals(expectedCancellationReason);",
+											"    pm.expect(jsonRes.Data.UserTask.IsRecurrent).equals(expectedIsRecurrent);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/user-task/{{USER_TASK_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"user-task",
+										"{{USER_TASK_ID}}"
+									]
+								},
+								"description": "Gets list of User Task records"
+							},
+							"response": []
+						},
+						{
+							"name": "Update User Task by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated User Task record is returned\", function () {",
+											"",
+											"    let expectedDisplayId = pm.environment.get(\"USER_TASK_DISPLAYID\");",
+											"    let expectedUserId = pm.environment.get(\"USER_TASK_USERID\");",
+											"    let expectedUserRole = pm.environment.get(\"USER_TASK_USERROLE\");",
+											"    let expectedTaskName = pm.environment.get(\"USER_TASK_TASKNAME\");",
+											"    let expectedAction = pm.environment.get(\"USER_TASK_ACTION\");",
+											"    let expectedScheduledStartTime = pm.environment.get(\"USER_TASK_SCHEDULEDSTARTTIME\");",
+											"    let expectedScheduledendTime = pm.environment.get(\"USER_TASK_SCHEDULEDENDTIME\");",
+											"    let expectedStarted = pm.environment.get(\"USER_TASK_STARTED\");",
+											"    let expectedStartedAt = pm.environment.get(\"USER_TASK_STARTEDAT\");",
+											"    let expectedFinished = pm.environment.get(\"USER_TASK_FINISHED\");",
+											"    let expectedTaskIsSuccess = pm.environment.get(\"USER_TASK_TASKISSUCCESS\");",
+											"    let expectedCancelled = pm.environment.get(\"USER_TASK_CANCELLED\");",
+											"    let expectedCancellationReason = pm.environment.get(\"USER_TASK_CANCELLATIONREASON\");",
+											"    let expectedIsRecurrent = pm.environment.get(\"USER_TASK_ISRECURRENT\");",
+											"",
+											"    console.log(\"expectedTaskName\", expectedTaskName);",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"User\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"TaskName\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Action\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Started\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"StartedAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Finished\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"FinishedAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"TaskIsSuccess\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Cancelled\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"CancelledAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"CancellationReason\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"RecurrenceScheduleId\")",
+											"",
+											"    pm.expect(jsonRes.Data.UserTask.DisplayId).equals(expectedDisplayId);",
+											"    pm.expect(jsonRes.Data.UserTask.TaskName).equals(expectedTaskName);",
+											"    pm.expect(jsonRes.Data.UserTask.ScheduledStartTime).equals(expectedScheduledStartTime);",
+											"    pm.expect(jsonRes.Data.UserTask.ScheduledEndTime).equals(expectedScheduledendTime);",
+											"    pm.expect(jsonRes.Data.UserTask.Started).equals(expectedStarted);",
+											"    pm.expect(jsonRes.Data.UserTask.StartedAt).equals(expectedStartedAt);",
+											"    pm.expect(jsonRes.Data.UserTask.Finished).equals(expectedFinished);",
+											"    pm.expect(jsonRes.Data.UserTask.Cancelled).equals(expectedCancelled);",
+											"    pm.expect(jsonRes.Data.UserTask.CancellationReason).equals(expectedCancellationReason);",
+											"    pm.expect(jsonRes.Data.UserTask.IsRecurrent).equals(expectedIsRecurrent);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"USER_TASK_ISRECURRENT\", true);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"DisplayId\": \"{{USER_TASK_DISPLAYID}}\",\n    \"UserId\": \"{{USER_TASK_USERID}}\",\n    \"UserRole\": \"{{USER_TASK_USERROLE}}\",\n    \"TaskName\": \"{{USER_TASK_TASKNAME}}\",\n    \"Action\": \"{{USER_TASK_ACTION}}\",\n    \"ScheduledStartTime\": \"{{USER_TASK_SCHEDULEDSTARTTIME}}\",\n    \"ScheduledEndTime\": \"{{USER_TASK_SCHEDULEDENDTIME}}\",\n    \"Started\": \"{{USER_TASK_STARTED}}\",\n    \"StartedAt\": \"{{USER_TASK_STARTEDAT}}\",\n    \"Finished\": \"{{USER_TASK_FINISHED}}\",\n    \"TaskIsSuccess\": \"{{USER_TASK_TASKISSUCCESS}}\",\n    \"Cancelled\": \"{{USER_TASK_CANCELLED}}\",\n    \"IsRecurrent\": \"{{USER_TASK_ISRECURRENT}}\",\n    \"CancellationReason\": \"{{USER_TASK_CANCELLATIONREASON}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/user-task/{{USER_TASK_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"user-task",
+										"{{USER_TASK_ID}}"
+									]
+								},
+								"description": "Update User Task record with id"
+							},
+							"response": []
+						},
+						{
+							"name": "Start User Task by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated User Task record is returned\", function () {",
+											"",
+											"    let expectedDisplayId = pm.environment.get(\"USER_TASK_DISPLAYID\");",
+											"    let expectedUserId = pm.environment.get(\"USER_TASK_USERID\");",
+											"    let expectedUserRole = pm.environment.get(\"USER_TASK_USERROLE\");",
+											"    let expectedTaskName = pm.environment.get(\"USER_TASK_TASKNAME\");",
+											"    let expectedAction = pm.environment.get(\"USER_TASK_ACTION\");",
+											"    let expectedScheduledStartTime = pm.environment.get(\"USER_TASK_SCHEDULEDSTARTTIME\");",
+											"    let expectedScheduledendTime = pm.environment.get(\"USER_TASK_SCHEDULEDENDTIME\");",
+											"    let expectedStarted = pm.environment.get(\"USER_TASK_STARTED\");",
+											"    let expectedStartedAt = pm.environment.get(\"USER_TASK_STARTEDAT\");",
+											"    let expectedFinished = pm.environment.get(\"USER_TASK_FINISHED\");",
+											"    let expectedTaskIsSuccess = pm.environment.get(\"USER_TASK_TASKISSUCCESS\");",
+											"    let expectedCancelled = pm.environment.get(\"USER_TASK_CANCELLED\");",
+											"    let expectedCancellationReason = pm.environment.get(\"USER_TASK_CANCELLATIONREASON\");",
+											"    let expectedIsRecurrent = pm.environment.get(\"USER_TASK_ISRECURRENT\");",
+											"",
+											"    console.log(\"expectedTaskName\", expectedTaskName);",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"User\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"TaskName\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Action\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Started\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"StartedAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Finished\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"FinishedAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"TaskIsSuccess\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Cancelled\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"CancelledAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"CancellationReason\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"RecurrenceScheduleId\")",
+											"",
+											"    pm.expect(jsonRes.Data.UserTask.DisplayId).equals(expectedDisplayId);",
+											"    pm.expect(jsonRes.Data.UserTask.TaskName).equals(expectedTaskName);",
+											"    pm.expect(jsonRes.Data.UserTask.ScheduledStartTime).equals(expectedScheduledStartTime);",
+											"    pm.expect(jsonRes.Data.UserTask.ScheduledEndTime).equals(expectedScheduledendTime);",
+											"    pm.expect(jsonRes.Data.UserTask.Started).equals(expectedStarted);",
+											"    pm.expect(jsonRes.Data.UserTask.Finished).equals(expectedFinished);",
+											"    pm.expect(jsonRes.Data.UserTask.Cancelled).equals(expectedCancelled);",
+											"    pm.expect(jsonRes.Data.UserTask.CancellationReason).equals(expectedCancellationReason);",
+											"    pm.expect(jsonRes.Data.UserTask.IsRecurrent).equals(expectedIsRecurrent);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"USER_TASK_STARTED\", true);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/user-task/start/{{USER_TASK_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"user-task",
+										"start",
+										"{{USER_TASK_ID}}"
+									]
+								},
+								"description": "Starts User Task record with id"
+							},
+							"response": []
+						},
+						{
+							"name": "Finish User Task by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Updated User Task record is returned\", function () {",
+											"",
+											"    let expectedDisplayId = pm.environment.get(\"USER_TASK_DISPLAYID\");",
+											"    let expectedUserId = pm.environment.get(\"USER_TASK_USERID\");",
+											"    let expectedUserRole = pm.environment.get(\"USER_TASK_USERROLE\");",
+											"    let expectedTaskName = pm.environment.get(\"USER_TASK_TASKNAME\");",
+											"    let expectedAction = pm.environment.get(\"USER_TASK_ACTION\");",
+											"    let expectedScheduledStartTime = pm.environment.get(\"USER_TASK_SCHEDULEDSTARTTIME\");",
+											"    let expectedScheduledendTime = pm.environment.get(\"USER_TASK_SCHEDULEDENDTIME\");",
+											"    let expectedStarted = pm.environment.get(\"USER_TASK_STARTED\");",
+											"    let expectedStartedAt = pm.environment.get(\"USER_TASK_STARTEDAT\");",
+											"    let expectedFinished = pm.environment.get(\"USER_TASK_FINISHED\");",
+											"    let expectedTaskIsSuccess = pm.environment.get(\"USER_TASK_TASKISSUCCESS\");",
+											"    let expectedCancelled = pm.environment.get(\"USER_TASK_CANCELLED\");",
+											"    let expectedCancellationReason = pm.environment.get(\"USER_TASK_CANCELLATIONREASON\");",
+											"    let expectedIsRecurrent = pm.environment.get(\"USER_TASK_ISRECURRENT\");",
+											"",
+											"    console.log(\"expectedTaskName\", expectedTaskName);",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"User\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"TaskName\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Action\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Started\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"StartedAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Finished\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"FinishedAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"TaskIsSuccess\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Cancelled\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"CancelledAt\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"CancellationReason\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\")",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"RecurrenceScheduleId\")",
+											"",
+											"    pm.expect(jsonRes.Data.UserTask.DisplayId).equals(expectedDisplayId);",
+											"    pm.expect(jsonRes.Data.UserTask.TaskName).equals(expectedTaskName);",
+											"    pm.expect(jsonRes.Data.UserTask.ScheduledStartTime).equals(expectedScheduledStartTime);",
+											"    pm.expect(jsonRes.Data.UserTask.ScheduledEndTime).equals(expectedScheduledendTime);",
+											"    pm.expect(jsonRes.Data.UserTask.Started).equals(expectedStarted);",
+											"    pm.expect(jsonRes.Data.UserTask.Finished).equals(expectedFinished);",
+											"    pm.expect(jsonRes.Data.UserTask.Cancelled).equals(expectedCancelled);",
+											"    pm.expect(jsonRes.Data.UserTask.CancellationReason).equals(expectedCancellationReason);",
+											"    pm.expect(jsonRes.Data.UserTask.IsRecurrent).equals(expectedIsRecurrent);",
+											"    ",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"USER_TASK_FINISHED\", true);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/user-task/finish/{{USER_TASK_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"user-task",
+										"finish",
+										"{{USER_TASK_ID}}"
+									]
+								},
+								"description": "Finishes User Task record with id"
+							},
+							"response": []
+						},
+						{
+							"name": "Search User Task record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of User task records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTasks');",
+											"    pm.expect(jsonRes.Data.UserTasks.Items.length).greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/user-task/search?scheduledStartTimeFrom=2021-09-01&scheduledStartTimeTo=2021-10-14&order=ascending&pageIndex=0&itemsPerPage=25&categoryId=1&scheduledEndTimeFrom=2021-09-01&scheduledEndTimeTo=2021-10-14&started=true&finished=false&cancelled=false&createdDateFrom=2021-09-01&createdDateTo=2021-10-14",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"user-task",
+										"search"
+									],
+									"query": [
+										{
+											"key": "scheduledStartTimeFrom",
+											"value": "2021-09-01"
+										},
+										{
+											"key": "scheduledStartTimeTo",
+											"value": "2021-10-14"
+										},
+										{
+											"key": "orderBy",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "userId",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "userRole",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "categoryId",
+											"value": "1"
+										},
+										{
+											"key": "actionType",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "referenceItemId",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "scheduledEndTimeFrom",
+											"value": "2021-09-01"
+										},
+										{
+											"key": "scheduledEndTimeTo",
+											"value": "2021-10-14"
+										},
+										{
+											"key": "started",
+											"value": "true"
+										},
+										{
+											"key": "finished",
+											"value": "false"
+										},
+										{
+											"key": "cancelled",
+											"value": "false"
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-01"
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-14"
+										}
+									]
+								},
+								"description": "Search User Task records with filters"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Summary of User Task record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of User Task records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTasks');",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/user-task/patient/{{PATIENT_USER_ID}}/summary-for-today",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"user-task",
+										"patient",
+										"{{PATIENT_USER_ID}}",
+										"summary-for-today"
+									]
+								},
+								"description": "Get Summary of User Task record"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User Task record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"User Task record is deleted\", function () {",
+											"",
+											"    var expectedValue = true;",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/user-task/{{USER_TASK_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"user-task",
+										"{{USER_TASK_ID}}"
+									]
+								},
+								"description": "Delete User Task record with id"
+							},
+							"response": []
+						}
+					]
 				}
 			],
 			"description": "## APIs to manage users\n\nThese set of APIs are meant to add/retrieve/update/delete/search users for different types, such as patients' doctors, lab-users and pharmacists."

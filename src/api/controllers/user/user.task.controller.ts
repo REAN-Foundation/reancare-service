@@ -10,8 +10,6 @@ import { UserTaskService } from '../../../services/user/user.task.service';
 import { Loader } from '../../../startup/loader';
 import { UserTaskValidator } from '../../validators/user/user.task.validator';
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class UserTaskController {
@@ -110,17 +108,17 @@ export class UserTaskController {
 
             const id: string = await UserTaskValidator.startTask(request);
 
-            const existingUserTask = await this._service.getById(id);
-            if (existingUserTask == null) {
-                throw new ApiError(404, 'UserTask not found.');
+            const existing = await this._service.getById(id);
+            if (existing == null) {
+                throw new ApiError(404, 'User task not found.');
             }
 
-            const updated = await this._service.startTask(id, existingUserTask);
+            const updated = await this._service.startTask(id);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update userTask record!');
+                throw new ApiError(400, 'Unable to update user task record!');
             }
 
-            ResponseHandler.success(request, response, 'UserTask started successfully!', 200, {
+            ResponseHandler.success(request, response, 'User task started successfully!', 200, {
                 UserTask : updated,
             });
         } catch (error) {
@@ -135,17 +133,17 @@ export class UserTaskController {
 
             const id: string = await UserTaskValidator.finishTask(request);
 
-            const existingUserTask = await this._service.getById(id);
-            if (existingUserTask == null) {
+            const existing = await this._service.getById(id);
+            if (existing == null) {
                 throw new ApiError(404, 'UserTask not found.');
             }
 
-            const updated = await this._service.finishTask(id, existingUserTask);
+            const updated = await this._service.finishTask(id);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update userTask record!');
+                throw new ApiError(400, 'Unable to update user task record!');
             }
 
-            ResponseHandler.success(request, response, 'UserTask finished successfully!', 200, {
+            ResponseHandler.success(request, response, 'User task finished successfully!', 200, {
                 UserTask : updated,
             });
         } catch (error) {
@@ -153,22 +151,44 @@ export class UserTaskController {
         }
     };
 
-    getTasksForTodaySummary = async(request: express.Request, response: express.Response): Promise<void> => {
+    cancelTask = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'UserTask.CancelTask';
+            await this._authorizer.authorize(request, response);
+
+            const { id, reason } = await UserTaskValidator.cancelTask(request);
+
+            const existing = await this._service.getById(id);
+            if (existing == null) {
+                throw new ApiError(404, 'UserTask not found.');
+            }
+
+            const updated = await this._service.cancelTask(id, reason);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update user task record!');
+            }
+
+            ResponseHandler.success(request, response, 'User task cancelled successfully!', 200, {
+                UserTask : updated,
+            });
+            
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getTaskSummaryForDay = async(request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.Summary';
             await this._authorizer.authorize(request, response);
 
-            const patientUserId = await UserTaskValidator.getTasksForTodaySummary(request);
+            const { userId, dateStr } = await UserTaskValidator.getTaskSummaryForDay(request);
 
-            const searchResults = await this._service.getTasksForTodaySummary(patientUserId);
-
-            const count = searchResults.Items.length;
-            const message =
-                count === 0
-                    ? 'No records found!'
-                    : `Total ${count} userTask records retrieved successfully!`;
-                    
-            ResponseHandler.success(request, response, message, 200, { UserTasks: searchResults });
+            const summary = await this._service.getTaskSummaryForDay(userId, dateStr);
+                   
+            ResponseHandler.success(request, response, 'User task cancelled successfully!', 200, {
+                UserTaskSummaryForDay : summary
+            });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

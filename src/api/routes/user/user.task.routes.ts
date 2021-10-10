@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import express from 'express';
-import { UserTaskController } from '../../controllers/user/user.task.controller';
 import { Loader } from '../../../startup/loader';
+import { UserTaskController } from '../../controllers/user/user.task.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@ export const register = (app: express.Application): void => {
 
     router.put("/finish/:id", authenticator.authenticateClient, authenticator.authenticateUser, controller.finishTask);
 
-    router.get("/patient/:patientUserId/summary-for-today", authenticator.authenticateClient, authenticator.authenticateUser, controller.getTasksForTodaySummary);
+    router.get("/patient/:patientUserId/summary-for-today", authenticator.authenticateClient, authenticator.authenticateUser, controller.getTaskSummaryForDay);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);

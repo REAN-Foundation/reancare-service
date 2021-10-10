@@ -1,9 +1,9 @@
 import express from 'express';
-import { body, param, validationResult, query } from 'express-validator';
-
+import { body, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../common/helper';
 import { UserTaskDomainModel } from '../../../domain.types/user/user.task/user.task.domain.model';
 import { UserTaskSearchFilters } from '../../../domain.types/user/user.task/user.task.search.types';
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -217,7 +217,7 @@ export class UserTaskValidator {
         return await UserTaskValidator.getParamId(request);
     };
 
-    static getTasksForTodaySummary = async (request: express.Request): Promise<string> => {
+    static getTaskSummaryForDay = async (request: express.Request): Promise<string> => {
 
         return await UserTaskValidator.getParamPatientUserId(request);
     };

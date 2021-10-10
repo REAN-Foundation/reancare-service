@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
 import { UserTaskDomainModel } from '../../domain.types/user/user.task/user.task.domain.model';
-import { UserTaskDto } from '../../domain.types/user/user.task/user.task.dto';
+import { TaskSummaryDto, UserTaskDto } from '../../domain.types/user/user.task/user.task.dto';
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../domain.types/user/user.task/user.task.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,16 +33,20 @@ export class UserTaskService {
         return await this._userTaskRepo.delete(id);
     };
 
-    startTask = async (id: string, userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
-        return await this._userTaskRepo.startTask(id, userTaskDomainModel);
+    startTask = async (id: string): Promise<UserTaskDto> => {
+        return await this._userTaskRepo.startTask(id);
     }
 
-    finishTask = async (id: string, userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
-        return await this._userTaskRepo.finishTask(id, userTaskDomainModel);
+    finishTask = async (id: string): Promise<UserTaskDto> => {
+        return await this._userTaskRepo.finishTask(id);
     }
 
-    getTasksForTodaySummary = async (patientUserId: string): Promise<UserTaskSearchResults> => {
-        return await this._userTaskRepo.getTasksForTodaySummary(patientUserId);
+    cancelTask = async (id: string, reason?: string): Promise<UserTaskDto> => {
+        return await this._userTaskRepo.cancelTask(id, reason ?? null);
+    }
+
+    getTaskSummaryForDay = async (userId: string, dateStr: string): Promise<TaskSummaryDto> => {
+        return await this._userTaskRepo.getTaskSummaryForDay(userId, dateStr);
     }
 
 }

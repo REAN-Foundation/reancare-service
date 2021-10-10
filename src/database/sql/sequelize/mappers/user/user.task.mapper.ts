@@ -1,33 +1,54 @@
-import UserTask from '../../models/user/user.task.model';
+import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system.types';
+import { UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task..types';
 import { UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
+import UserTask from '../../models/user/user.task.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class UserTaskMapper {
 
-    static toDto = (userTask: UserTask): UserTaskDto => {
-        if (userTask == null){
+    static toDto = (task: UserTask): UserTaskDto => {
+
+        if (task == null) {
             return null;
         }
 
+        var status: ProgressStatus = ProgressStatus.Unknown;
+        if (task.Started === true && task.Finished === true) {
+            status = ProgressStatus.Completed;
+        }
+        if (task.Started === false && task.Finished === false) {
+            if (task.ScheduledEndTime < new Date()) {
+                status = ProgressStatus.Delayed;
+            }
+            else {
+                status = ProgressStatus.Pending;
+            }
+        }
+        if (task.Started === true && task.Finished === false) {
+            status = ProgressStatus.InProgress;
+        }
+
         const dto: UserTaskDto = {
-            id                   : userTask.id,
-            DisplayId            : userTask.DisplayId,
-            User                 : null,
-            TaskName             : userTask.TaskName,
-            Action               : null,
-            ScheduledStartTime   : userTask.ScheduledStartTime,
-            ScheduledEndTime     : userTask.ScheduledEndTime,
-            Started              : userTask.Started,
-            StartedAt            : userTask.StartedAt,
-            Finished             : userTask.Finished,
-            FinishedAt           : userTask.FinishedAt,
-            TaskIsSuccess        : userTask.TaskIsSuccess,
-            Cancelled            : userTask.Cancelled,
-            CancelledAt          : userTask.CancelledAt,
-            CancellationReason   : userTask.CancellationReason,
-            IsRecurrent          : userTask.IsRecurrent,
-            RecurrenceScheduleId : userTask.RecurrenceScheduleId,
+            id                   : task.id,
+            DisplayId            : task.DisplayId,
+            UserId               : task.UserId,
+            Task                 : task.Task,
+            Category             : task.Category as UserTaskCategory,
+            Action               : task.Action,
+            Description          : task.Description,
+            ScheduledStartTime   : task.ScheduledStartTime,
+            ScheduledEndTime     : task.ScheduledEndTime,
+            Status               : status,
+            Started              : task.Started,
+            StartedAt            : task.StartedAt,
+            Finished             : task.Finished,
+            FinishedAt           : task.FinishedAt,
+            Cancelled            : task.Cancelled,
+            CancelledAt          : task.CancelledAt,
+            CancellationReason   : task.CancellationReason,
+            IsRecurrent          : task.IsRecurrent,
+            RecurrenceScheduleId : task.RecurrenceScheduleId,
         };
         return dto;
     }

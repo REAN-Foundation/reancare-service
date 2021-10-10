@@ -1,51 +1,36 @@
 /* eslint-disable max-len */
-import moment from 'moment';
 import { Op } from 'sequelize';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { TimeHelper } from '../../../../../common/time.helper';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
+import { UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task..types';
 import { UserTaskDomainModel } from '../../../../../domain.types/user/user.task/user.task.domain.model';
-import { UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
+import { TaskSummaryDto, UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../../../../domain.types/user/user.task/user.task.search.types';
 import { IUserTaskRepo } from '../../../../repository.interfaces/user/user.task.repo.interface';
 import { UserTaskMapper } from '../../mappers/user/user.task.mapper';
+import User from '../../models/user/user.model';
 import UserTask from '../../models/user/user.task.model';
-import { UserRepo } from './user.repo';
-
-// import { UserTaskCategoryDomainModel } from '../../../../domain.types/user/user.task/user.task.category.domain.model';
 
 ///////////////////////////////////////////////////////////////////////
 
-const _userTaskRepo = new UserRepo();
-
 export class UserTaskRepo implements IUserTaskRepo {
 
-    create = async (userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
+    create = async (model: UserTaskDomainModel): Promise<UserTaskDto> => {
         try {
             const entity = {
-                DisplayId            : userTaskDomainModel.DisplayId ?? null,
-                UserId               : userTaskDomainModel.UserId ?? null,
-                UserRole             : userTaskDomainModel.UserRole ?? null,
-                TaskName             : userTaskDomainModel.TaskName ?? null,
-                Category             : userTaskDomainModel.Category ?? null,
-                Action               : userTaskDomainModel.Action ?? null,
-                ScheduledStartTime   : userTaskDomainModel.ScheduledStartTime ?? null,
-                ScheduledEndTime     : userTaskDomainModel.ScheduledEndTime ?? null,
-                Started              : userTaskDomainModel.Started ?? null,
-                StartedAt            : userTaskDomainModel.StartedAt ?? null,
-                Finished             : userTaskDomainModel.Finished ?? null,
-                FinishedAt           : userTaskDomainModel.FinishedAt ?? null,
-                TaskIsSuccess        : userTaskDomainModel.TaskIsSuccess ?? null,
-                Cancelled            : userTaskDomainModel.Cancelled ?? null,
-                CancelledAt          : userTaskDomainModel.CancelledAt ?? null,
-                CancellationReason   : userTaskDomainModel.CancellationReason ?? null,
-                IsRecurrent          : userTaskDomainModel.IsRecurrent ?? null,
-                RecurrenceScheduleId : userTaskDomainModel.RecurrenceScheduleId ?? null,
+                DisplayId          : model.DisplayId ?? null,
+                UserId             : model.UserId ?? null,
+                Task               : model.Task ?? null,
+                Category           : model.Category ?? null,
+                Action             : model.Action ?? null,
+                ReferenceItemId    : model.ReferenceItemId ?? null,
+                ScheduledStartTime : model.ScheduledStartTime ?? null,
+                ScheduledEndTime   : model.ScheduledEndTime ?? null,
             };
             const userTask = await UserTask.create(entity);
-            const dto = await UserTaskMapper.toDto(userTask);
-            return dto;
+            return UserTaskMapper.toDto(userTask);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -55,8 +40,7 @@ export class UserTaskRepo implements IUserTaskRepo {
     getById = async (id: string): Promise<UserTaskDto> => {
         try {
             const userTask = await UserTask.findByPk(id);
-            const dto = await UserTaskMapper.toDto(userTask);
-            return dto;
+            return UserTaskMapper.toDto(userTask);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -66,6 +50,41 @@ export class UserTaskRepo implements IUserTaskRepo {
     search = async (filters: UserTaskSearchFilters): Promise<UserTaskSearchResults> => {
         try {
             const search = { where: {} };
+
+            if (filters.ScheduledFrom != null) {
+                search.where['ScheduledStartTime'] = {
+                    [Op.gte] : filters.ScheduledFrom,
+                };
+            }
+            if (filters.ScheduledTo != null) {
+                search.where['ScheduledEndTime'] = {
+                    [Op.lte] : filters.ScheduledTo,
+                };
+            }
+            if (filters.UserId != null) {
+                search.where['UserId'] = filters.UserId;
+            }
+            if (filters.ReferenceItemId != null) {
+                search.where['ReferenceItemId'] = filters.ReferenceItemId;
+            }
+            if (filters.Task != null) {
+                search.where['Task'] = { [Op.like]: '%' + filters.Task + '%' };
+            }
+            if (filters.Category != null) {
+                search.where['Category'] = { [Op.like]: '%' + filters.Category + '%' };
+            }
+            if (filters.Action != null) {
+                search.where['Action'] = { [Op.like]: '%' + filters.Action + '%' };
+            }
+            if (filters.Started != null) {
+                search.where['Started'] = filters.Started;
+            }
+            if (filters.Finished != null) {
+                search.where['Finished'] = filters.Finished;
+            }
+            if (filters.Cancelled != null) {
+                search.where['Cancelled'] = filters.Cancelled;
+            }
 
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
                 search.where['CreatedAt'] = {
@@ -109,7 +128,7 @@ export class UserTaskRepo implements IUserTaskRepo {
 
             const dtos: UserTaskDto[] = [];
             for (const userTask of foundResults.rows) {
-                const dto = await UserTaskMapper.toDto(userTask);
+                const dto = UserTaskMapper.toDto(userTask);
                 dtos.push(dto);
             }
 
@@ -124,165 +143,216 @@ export class UserTaskRepo implements IUserTaskRepo {
             };
 
             return searchResults;
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    update = async (id: string, userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
+    update = async (id: string, model: UserTaskDomainModel): Promise<UserTaskDto> => {
         try {
             const userTask = await UserTask.findByPk(id);
 
-            if (userTaskDomainModel.DisplayId != null) {
-                userTask.DisplayId = userTaskDomainModel.DisplayId;
+            if (model.UserId != null) {
+                userTask.UserId = model.UserId;
             }
 
-            if (userTaskDomainModel.UserId != null) {
-                userTask.UserId = userTaskDomainModel.UserId;
+            if (model.Task != null) {
+                userTask.Task = model.Task;
             }
 
-            if (userTaskDomainModel.TaskName != null) {
-                userTask.TaskName = userTaskDomainModel.TaskName;
+            if (model.ScheduledStartTime != null) {
+                userTask.ScheduledStartTime = model.ScheduledStartTime;
             }
 
-            if (userTaskDomainModel.ScheduledStartTime != null) {
-                userTask.ScheduledStartTime = userTaskDomainModel.ScheduledStartTime;
+            if (model.ScheduledEndTime != null) {
+                userTask.ScheduledEndTime = model.ScheduledEndTime;
             }
 
-            if (userTaskDomainModel.ScheduledEndTime != null) {
-                userTask.ScheduledEndTime = userTaskDomainModel.ScheduledEndTime;
+            if (model.Task != null) {
+                userTask.Task = model.Task;
             }
 
-            if (userTaskDomainModel.Started != null) {
-                userTask.Started = userTaskDomainModel.Started;
+            if (model.Category != null) {
+                userTask.Category = model.Category as UserTaskCategory;
             }
 
-            if (userTaskDomainModel.StartedAt != null) {
-                userTask.StartedAt = userTaskDomainModel.StartedAt;
+            if (model.Action != null) {
+                userTask.Action = model.Action;
             }
 
-            if (userTaskDomainModel.Finished != null) {
-                userTask.Finished = userTaskDomainModel.Finished;
+            if (model.Description != null) {
+                userTask.Description = model.Description;
             }
 
-            if (userTaskDomainModel.FinishedAt != null) {
-                userTask.FinishedAt = userTaskDomainModel.FinishedAt;
+            if (model.ReferenceItemId != null) {
+                userTask.ReferenceItemId = model.ReferenceItemId;
             }
 
-            if (userTaskDomainModel.TaskIsSuccess != null) {
-                userTask.TaskIsSuccess = userTaskDomainModel.TaskIsSuccess;
+            if (model.IsRecurrent != null) {
+                userTask.IsRecurrent = model.IsRecurrent;
             }
 
-            if (userTaskDomainModel.Cancelled != null) {
-                userTask.Cancelled = userTaskDomainModel.Cancelled;
-            }
-
-            if (userTaskDomainModel.CancelledAt != null) {
-                userTask.CancelledAt = userTaskDomainModel.CancelledAt;
-            }
-
-            if (userTaskDomainModel.CancellationReason != null) {
-                userTask.CancellationReason = userTaskDomainModel.CancellationReason;
-            }
-
-            if (userTaskDomainModel.IsRecurrent != null) {
-                userTask.IsRecurrent = userTaskDomainModel.IsRecurrent;
-            }
-
-            if (userTaskDomainModel.RecurrenceScheduleId != null) {
-                userTask.RecurrenceScheduleId = userTaskDomainModel.RecurrenceScheduleId;
+            if (model.RecurrenceScheduleId != null) {
+                userTask.RecurrenceScheduleId = model.RecurrenceScheduleId;
             }
 
             await userTask.save();
 
-            const dto = await UserTaskMapper.toDto(userTask);
-            return dto;
+            return UserTaskMapper.toDto(userTask);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    startTask = async (id: string, userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
-        userTaskDomainModel.Started = true;
-        userTaskDomainModel.StartedAt = new Date();
-        const updatedRecord = await this.update(id, userTaskDomainModel);
+    startTask = async (id: string): Promise<UserTaskDto> => {
 
-        return updatedRecord;
+        var task = await UserTask.findByPk(id);
+        if (task === null) {
+            return null;
+        }
+        task.Started = true;
+        task.StartedAt = new Date();
+        task.Finished = false;
+        task.FinishedAt = null;
+        task.Cancelled = false;
+        task.CancelledAt = null;
+        task.CancellationReason = null;
+
+        task = await task.save();
+
+        return UserTaskMapper.toDto(task);
     }
 
-    finishTask = async (id: string, userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
-        userTaskDomainModel.Finished = true;
-        userTaskDomainModel.FinishedAt = new Date();
-        const updatedRecord = await this.update(id, userTaskDomainModel);
+    finishTask = async (id: string): Promise<UserTaskDto> => {
 
-        return updatedRecord;
+        var task = await UserTask.findByPk(id);
+        if (task === null) {
+            return null;
+        }
+        if (task.Started === false) {
+            task.Started = true;
+            task.StartedAt = new Date();
+        }
+
+        task.Finished = true;
+        task.FinishedAt = new Date();
+        task.Cancelled = false;
+        task.CancelledAt = null;
+        task.CancellationReason = null;
+
+        task = await task.save();
+
+        return UserTaskMapper.toDto(task);
+
+    }
+    
+    cancelTask = async (id: string, reason: string): Promise<UserTaskDto> => {
+
+        var task = await UserTask.findByPk(id);
+        if (task === null) {
+            return null;
+        }
+
+        task.Finished = false;
+        task.FinishedAt = null;
+
+        task.Cancelled = true;
+        task.CancelledAt = new Date();
+        task.CancellationReason = reason;
+
+        task = await task.save();
+
+        return UserTaskMapper.toDto(task);
+
     }
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            await UserTask.destroy({ where: { id: id } });
-            return true;
+            const deleted = await UserTask.destroy({ where: { id: id } });
+            return deleted === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    getTasksForTodaySummary = async (patientUserId: string): Promise<UserTaskSearchResults> => {
+    getTaskSummaryForDay = async (userId: string, dateStr: string): Promise<TaskSummaryDto> => {
         try {
-            const search = { where : {
-                userId : patientUserId,
-            } };
 
-            var str = new Date().toDateString();
-            var m = moment(str);
-            var existingUser = await _userTaskRepo.getById(patientUserId);
-            var timeZone = existingUser.CurrentTimeZone || existingUser.DefaultTimeZone;
-            if (timeZone == null) {
-                timeZone = "+05:30";
+            var user = await User.findByPk(userId);
+            if (user === null) {
+                throw new Error(`User cannot be found!`);
             }
-
-            var offset = await TimeHelper.getTimezoneOffsets(timeZone, DurationType.Second);
-
-            var day_start = m.clone().utc()
-                .add(offset, 'seconds')
-                .toDate();
-            var day_end = m.clone().utc()
-                .add(offset + 24 * 60 * 60, 'seconds')
-                .toDate();
-            search.where['ScheduledStartTime'] = {
-                [Op.gte] : day_start,
-                [Op.lte] : day_end,
+            var timezoneOffset = '+05:30';
+            if (user.CurrentTimeZone !== null) {
+                timezoneOffset = user.CurrentTimeZone;
+            }
+            else if (user.DefaultTimeZone !== null) {
+                timezoneOffset = user.DefaultTimeZone;
+            }
+            var todayStr = new Date().toISOString();
+            var str = dateStr ? dateStr.split('T')[0] : todayStr.split('T')[0];
+            var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
+            var dayStart = TimeHelper.strToUtc(str, offsetMinutes);
+            var dayEnd = TimeHelper.addDuration(dayStart, 24, DurationType.Hour);
+    
+            var searchForFinished = {
+                UserId             : userId,
+                ScheduledStartTime : {
+                    [Op.gte] : dayStart,
+                    [Op.lte] : dayEnd
+                },
+                Cancelled : false,
+                Finished  : true
             };
+            const completed = await UserTask.findAndCountAll({ where: searchForFinished });
+            const completedCount = completed.count;
+            const completedTasks = completed.rows.map(x => UserTaskMapper.toDto(x));
 
-            search.where['Finished'] = true;
-            var completedEntities = await UserTask.findAndCountAll(search);
-            const dtos: UserTaskDto[] = [];
-            for (const userTask of completedEntities.rows) {
-                const dto = await UserTaskMapper.toDto(userTask);
-                dtos.push(dto);
-            }
-
-            search.where['Finished'] = false;
-            var incompletedEntities = await UserTask.findAndCountAll(search);
-            for (const userTask of incompletedEntities.rows) {
-                const dto = await UserTaskMapper.toDto(userTask);
-                dtos.push(dto);
-            }
-
-            const searchResults: UserTaskSearchResults = {
-                TotalCount     : dtos.length,
-                RetrievedCount : dtos.length,
-                Items          : dtos,
-                PageIndex      : 0,
-                ItemsPerPage   : 0,
-                Order          : '',
-                OrderedBy      : ''
+            var searchForInProgress = {
+                UserId             : userId,
+                ScheduledStartTime : {
+                    [Op.gte] : dayStart,
+                    [Op.lte] : dayEnd
+                },
+                Cancelled : false,
+                Started   : true,
+                Finished  : false
             };
+            const inProgress = await UserTask.findAndCountAll({ where: searchForInProgress });
+            const inProgressCount = inProgress.count;
+            const inProgressTasks = inProgress.rows.map(x => UserTaskMapper.toDto(x));
 
-            return searchResults;
+            var searchForPending = {
+                UserId             : userId,
+                ScheduledStartTime : {
+                    [Op.gte] : dayStart,
+                    [Op.lte] : dayEnd,
+                },
+                Cancelled : false,
+                Started   : false,
+                Finished  : false
+            };
+            const pending = await UserTask.findAndCountAll({ where: searchForPending });
+            const pendingCount = pending.count;
+            const pendingTasks = pending.rows.map(x => UserTaskMapper.toDto(x));
+
+            const summary: TaskSummaryDto = {
+                TotalCount      : completedCount + inProgressCount + pendingCount,
+                CompletedCount  : completedCount,
+                InProgressCount : inProgressCount,
+                PendingCount    : pendingCount,
+                CompletedTasks  : completedTasks,
+                InProgressTasks : inProgressTasks,
+                PendingTasks    : pendingTasks
+            };
+            
+            return summary;
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

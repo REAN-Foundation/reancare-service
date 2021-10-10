@@ -27,6 +27,7 @@ export enum ProgressStatus {
     InProgress = 'In-progress',
     Completed  = 'Completed',
     Cancelled  = 'Cancelled',
+    Delayed    = 'Delayed',
     Unknown    = 'Unknown',
 }
 
@@ -35,5 +36,6 @@ export const ProgressStatusList: ProgressStatus[] = [
     ProgressStatus.InProgress,
     ProgressStatus.Completed,
     ProgressStatus.Cancelled,
+    ProgressStatus.Delayed,
     ProgressStatus.Unknown,
 ];

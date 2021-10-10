@@ -1,25 +1,35 @@
-
-import { UserDto } from "../user/user.dto";
-import { UserActionDto } from "./user.action.dto";
-import { UserTaskCategoryDto } from "./user.task.category.dto";
+import { ProgressStatus } from "../../../domain.types/miscellaneous/system.types";
+import { UserTaskCategory } from "./user.task..types";
 
 export interface UserTaskDto {
     id?                  : string;
+    UserId?              : string;
     DisplayId?           : string;
-    User?                : UserDto;
-    TaskName?            : string;
-    Category?            : UserTaskCategoryDto;
-    Action?              : UserActionDto;
+    Task?                : string;
+    Category?            : UserTaskCategory;
+    Action?              : string;
+    Description?         : string;
+    ReferenceItemId?     : string;
     ScheduledStartTime?  : Date;
     ScheduledEndTime?    : Date;
+    Status?              : ProgressStatus;
     Started?             : boolean;
     StartedAt?           : Date;
     Finished             : boolean;
     FinishedAt?          : Date;
-    TaskIsSuccess?       : boolean;
     Cancelled?           : boolean;
     CancelledAt?         : Date;
     CancellationReason?  : string;
     IsRecurrent?         : boolean;
     RecurrenceScheduleId?: string;
+}
+
+export interface TaskSummaryDto {
+    TotalCount     : number;
+    CompletedCount : number;
+    InProgressCount: number;
+    PendingCount   : number;
+    CompletedTasks : UserTaskDto[];
+    InProgressTasks: UserTaskDto[];
+    PendingTasks   : UserTaskDto[];
 }

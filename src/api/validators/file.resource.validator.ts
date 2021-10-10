@@ -1,16 +1,16 @@
 import express from 'express';
-import { body, param, validationResult, query } from 'express-validator';
-import { DownloadDisposition, FileResourceMetadata, ResourceReference } from '../../domain.types/file.resource/file.resource.types';
-import { FileResourceRenameDomainModel, FileResourceUpdateModel, FileResourceUploadDomainModel } from '../../domain.types/file.resource/file.resource.domain.model';
-import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
-import * as _ from 'lodash';
-import { ValidationError } from 'sequelize';
 import * as expressFileupload from 'express-fileupload';
+import { body, param, query, validationResult } from 'express-validator';
+import * as _ from 'lodash';
 import mime from 'mime';
 import path from 'path';
+import { ValidationError } from 'sequelize';
 import { Helper } from "../../common/helper";
 import { TimeHelper } from '../../common/time.helper';
 import { ConfigurationManager } from '../../config/configuration.manager';
+import { FileResourceRenameDomainModel, FileResourceUpdateModel, FileResourceUploadDomainModel } from '../../domain.types/file.resource/file.resource.domain.model';
+import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
+import { DownloadDisposition, FileResourceMetadata, ResourceReference } from '../../domain.types/file.resource/file.resource.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

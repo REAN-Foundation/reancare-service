@@ -152,8 +152,9 @@ export default class Document extends Model {
 
     @Length({ max: 512 })
     @Column({
-        type      : DataType.STRING(512),
-        allowNull : false,
+        type         : DataType.STRING(512),
+        allowNull    : false,
+        defaultValue : ''
     })
     AuthenticatedUrl: string;
 

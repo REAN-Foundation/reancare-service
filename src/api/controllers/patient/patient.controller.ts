@@ -65,6 +65,15 @@ export class PatientController {
                 patientDomainModel
             );
 
+            //NOTE: Currently we are not allowing multiple patients to share same phone number,
+            // but in future, we will be. For example, family members sharing the same phone number.
+            // But for now, throw the error!
+
+            if (existingPatientCountSharingPhone > 0) {
+                const msg = `Patient already exists with this phone number. Please verify with OTP to gain access to the patient account.`;
+                throw new ApiError(409, msg);
+            }
+            
             const userName = await this._userService.generateUserName(
                 patientDomainModel.User.Person.FirstName,
                 patientDomainModel.User.Person.LastName

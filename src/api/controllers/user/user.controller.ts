@@ -53,7 +53,7 @@ export class UserController {
                 throw new ApiError(404, 'User not found.');
             }
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
-                user : user,
+                User : user,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -70,7 +70,7 @@ export class UserController {
                 throw new ApiError(404, 'User not found.');
             }
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
-                user : user,
+                User : user,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -110,7 +110,7 @@ export class UserController {
             const obj = await UserValidator.generateOtp(request, response);
             const entity = await this._service.generateOtp(obj);
             ResponseHandler.success(request, response, 'OTP has been successfully generated!', 200, {
-                entity : entity,
+                GenerateOTPResult : entity,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

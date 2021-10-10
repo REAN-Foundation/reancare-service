@@ -53,6 +53,9 @@ export class FileResourceController {
             
             var domainModels = await FileResourceValidator.upload(request);
 
+            if (domainModels.length === 0) {
+                throw new ApiError(400, 'File/s not found!');
+            }
             var dtos = [];
             for await (var model of domainModels) {
                 var dto = await this._service.upload(model);

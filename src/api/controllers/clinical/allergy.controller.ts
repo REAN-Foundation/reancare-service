@@ -120,7 +120,7 @@ export class AllergyController {
             const allergies = await this._service.getForPatient(patientUserId);
                    
             ResponseHandler.success(request, response, 'Allergies for patient retrieved successfully!', 200, {
-                allergies : allergies
+                Allergies : allergies
             });
 
         } catch (error) {

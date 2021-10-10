@@ -1422,8 +1422,8 @@
 											"listen": "prerequest",
 											"script": {
 												"exec": [
-													"pm.environment.set(\"PHONE\", \"+91-9970155165\");\r",
-													""
+													"pm.environment.set(\"PHONE_NUMBER\", \"1599511599\");\r",
+													"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");"
 												],
 												"type": "text/javascript"
 											}
@@ -1485,7 +1485,9 @@
 											"listen": "prerequest",
 											"script": {
 												"exec": [
-													""
+													"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+													"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+													"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");"
 												],
 												"type": "text/javascript"
 											}
@@ -1508,7 +1510,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"Phone\": \"{{PHONE}}\"\r\n}"
+											"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\"\r\n}"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/patients",
@@ -1537,18 +1539,6 @@
 													"catch (error) {\r",
 													"    console.log(error.message);\r",
 													"}\r",
-													"\r",
-													"pm.test(\"Request is successfull\", function () {\r",
-													"    pm.response.to.have.status(200);\r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Status).to.eql('success');\r",
-													"});\r",
-													"\r",
-													"pm.test(\"Patient login: Access token is returned\", function () {\r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
-													"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
-													"});\r",
 													""
 												],
 												"type": "text/javascript"
@@ -1572,7 +1562,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"Phone\": \"{{PHONE}}\",\r\n    \"Otp\": \"180291\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
+											"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Otp\": \"180291\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/users/login-with-otp",
@@ -1602,17 +1592,11 @@
 													"    console.log(error.message);\r",
 													"}\r",
 													"\r",
-													"pm.test(\"Request is successfull\", function () {\r",
-													"    pm.response.to.have.status(200);\r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Status).to.eql('success');\r",
-													"});\r",
-													"\r",
-													"pm.test(\"Patient login: Access token is returned\", function () {\r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
-													"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
-													"});\r",
+													"// pm.test(\"Request is successfull\", function () {\r",
+													"//     pm.response.to.have.status(200);\r",
+													"//     var jsonRes = pm.response.json();\r",
+													"//     pm.expect(jsonRes.Status).to.eql('success');\r",
+													"// });\r",
 													""
 												],
 												"type": "text/javascript"
@@ -1697,7 +1681,10 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											""
+											"\r",
+											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+											"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+											"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");"
 										],
 										"type": "text/javascript"
 									}
@@ -1720,7 +1707,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"+91-9970155165\"\r\n}"
+									"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patients",
@@ -1750,7 +1737,7 @@
 											"}\r",
 											"\r",
 											"pm.test(\"Response should be failure\", function () {\r",
-											"    pm.response.to.have.status(400);\r",
+											"    pm.response.to.have.status(409);\r",
 											"    var jsonRes = pm.response.json();\r",
 											"    pm.expect(jsonRes.Status).to.eql('failure');\r",
 											"});\r",
@@ -1846,27 +1833,11 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"//Randomly generated user details\r",
-											"\r",
-											"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
-											"\r",
-											"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
-											"\r",
-											"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
-											"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
 											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
-											"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
-											"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
 											"var password = \"Test@123\";\r",
 											"\r",
-											"pm.environment.set(\"FIRST_NAME\", first);\r",
-											"pm.environment.set(\"LAST_NAME\", last);\r",
 											"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
-											"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");\r",
-											"pm.environment.set(\"EMAIL\", email);\r",
 											"pm.environment.set(\"PASSWORD\", password);\r",
-											"\r",
-											"//Profile images\r",
 											""
 										],
 										"type": "text/javascript"
@@ -1905,90 +1876,7 @@
 							"response": []
 						},
 						{
-							"name": "Get user with phone and role",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    var personRoles = jsonRes.Data.PersonRoleTypes;\r",
-											"    for(var i = 0; i < personRoles.length; i++) {\r",
-											"        var r = personRoles[i];\r",
-											"        var name = r.RoleName;\r",
-											"        var id = r.id;\r",
-											"        var str = \"ROLE_\" + name.toUpperCase();\r",
-											"        console.log(str);\r",
-											"        console.log(id);\r",
-											"        pm.environment.set(str, id);\r",
-											"    }\r",
-											"}\r",
-											"catch (error) {\r",
-											"    console.log(error.message);\r",
-											"}\r",
-											"\r",
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Person roles are retrieved\", function () {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('PersonRoleTypes');\r",
-											"    pm.expect(jsonRes.Data.PersonRoleTypes).to.not.be.empty;\r",
-											"    var count = jsonRes.Data.PersonRoleTypes.length;\r",
-											"    pm.expect(count).greaterThan(0);\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"description": "API key for client app authentication",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/users/by-phone/{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}/role/{{ROLE_PATIENT}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"users",
-										"by-phone",
-										"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}",
-										"role",
-										"{{ROLE_PATIENT}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Patient log-in with otp",
+							"name": "Patient log-in with password",
 							"event": [
 								{
 									"listen": "test",
@@ -2036,16 +1924,97 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Otp\": \"794222\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
+									"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/users/login-with-otp",
+									"raw": "{{BASE_URL}}/users/login-with-password",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"users",
-										"login-with-otp"
+										"login-with-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get user with phone and role",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    var personRoles = jsonRes.Data.PersonRoleTypes;\r",
+											"    for(var i = 0; i < personRoles.length; i++) {\r",
+											"        var r = personRoles[i];\r",
+											"        var name = r.RoleName;\r",
+											"        var id = r.id;\r",
+											"        var str = \"ROLE_\" + name.toUpperCase();\r",
+											"        console.log(str);\r",
+											"        console.log(id);\r",
+											"        pm.environment.set(str, id);\r",
+											"    }\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Person roles are retrieved\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('User');\r",
+											"    pm.expect(jsonRes.Data.User).to.not.be.empty;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/users/by-phone/{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}/role/{{ROLE_PATIENT}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"by-phone",
+										"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}",
+										"role",
+										"{{ROLE_PATIENT}}"
 									]
 								}
 							},
@@ -2140,179 +2109,6 @@
 									"path": [
 										"patients",
 										"{{PATIENT_USER_ID}}"
-									]
-								}
-							},
-							"response": [
-								{
-									"name": "Get patient by user id",
-									"originalRequest": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{PATIENT_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"url": {
-											"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"patients",
-												"{{PATIENT_USER_ID}}"
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "X-DNS-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "Expect-CT",
-											"value": "max-age=0"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "X-XSS-Protection",
-											"value": "0"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "1246"
-										},
-										{
-											"key": "ETag",
-											"value": "W/\"4de-vtd/lNY4h4WU1eZaAJBoB38Ssx4\""
-										},
-										{
-											"key": "Date",
-											"value": "Mon, 02 Aug 2021 07:46:36 GMT"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Keep-Alive",
-											"value": "timeout=5"
-										}
-									],
-									"cookie": [],
-									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Patient retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Patient\": {\n            \"id\": \"e66f8dda-a724-4ebe-b904-bcec548cf782\",\n            \"User\": {\n                \"id\": \"e291b0a2-6bec-4af9-b05f-29f9acefca41\",\n                \"UserName\": \"xvylkb7136\",\n                \"Person\": {\n                    \"id\": \"2ee6a612-cd50-4177-878c-09d4a3472e6c\",\n                    \"Prefix\": \"\",\n                    \"FirstName\": null,\n                    \"MiddleName\": null,\n                    \"LastName\": null,\n                    \"DisplayName\": \"unknown\",\n                    \"Gender\": \"Unknown\",\n                    \"BirthDate\": null,\n                    \"Age\": \"\",\n                    \"Phone\": \"+91-3283072998\",\n                    \"Email\": null,\n                    \"ImageResourceId\": null,\n                    \"ActiveSince\": \"2021-08-02T07:46:29.000Z\",\n                    \"Roles\": [\n                        {\n                            \"id\": \"43329a2b-7f0d-4b61-9a2b-a52412fdd911\",\n                            \"PersonId\": \"2ee6a612-cd50-4177-878c-09d4a3472e6c\",\n                            \"RoleId\": 2,\n                            \"RoleName\": \"Patient\"\n                        }\n                    ]\n                },\n                \"LastLogin\": null,\n                \"DefaultTimeZone\": \"+05:30\",\n                \"CurrentTimeZone\": \"+05:30\",\n                \"Role\": {\n                    \"id\": 2,\n                    \"RoleName\": \"Patient\"\n                }\n            },\n            \"DisplayId\": \"PT#1-3283072998\",\n            \"EhrId\": null,\n            \"Addresses\": [],\n            \"MedicalProfile\": null,\n            \"Insurances\": [],\n            \"EmergencyContacts\": []\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"1c353c97-437a-489c-ad00-c83d6e07ebd8\",\n        \"DisplayName\": \"unknown\",\n        \"Phone\": \"+91-6238056610\",\n        \"Email\": null,\n        \"UserName\": \"cbixyx9006\",\n        \"CurrentRoleId\": 2,\n        \"iat\": 1627844993,\n        \"exp\": 1635620993\n    },\n    \"Context\": \"Patient.GetByUserId\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
-								}
-							]
-						},
-						{
-							"name": "Patient log-in with password",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.environment.set(\"PATIENT_USER_JWT\", jsonRes.Data.AccessToken);\r",
-											"}\r",
-											"catch (error) {\r",
-											"    console.log(error.message);\r",
-											"}\r",
-											"\r",
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Patient login: Access token is returned\", function () {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
-											"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"description": "API key for client app authentication",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/users/login-with-password",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"users",
-										"login-with-password"
 									]
 								}
 							},
@@ -2606,180 +2402,7 @@
 								},
 								"description": "Search addresses using query parameters."
 							},
-							"response": [
-								{
-									"name": "Search patients",
-									"originalRequest": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{ADMIN_USER_JWT}}",
-												"description": "Session token (JWT) for the user",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"description": "API client secret key",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"url": {
-											"raw": "{{BASE_URL}}/patients/search?phone={{PATIENT_PHONE}}&email={{PATIENT_EMAIL}}&name={{PATIENT_FIRST_NAME}}&gender={{PATIENT_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"patients",
-												"search"
-											],
-											"query": [
-												{
-													"key": "phone",
-													"value": "{{PATIENT_PHONE}}",
-													"description": "Search by patient phone"
-												},
-												{
-													"key": "email",
-													"value": "{{PATIENT_EMAIL}}",
-													"description": "Search by patient email"
-												},
-												{
-													"key": "name",
-													"value": "{{PATIENT_FIRST_NAME}}",
-													"description": "Search by name"
-												},
-												{
-													"key": "gender",
-													"value": "{{PATIENT_GENDER}}",
-													"description": "Search by patient gender"
-												},
-												{
-													"key": "birthdateFrom",
-													"value": "1975-01-01",
-													"description": "Date in format: YYYY-MM-DD. Start of the range for birthdate based search"
-												},
-												{
-													"key": "birthdateTo",
-													"value": "2021-12-12",
-													"description": "Date in format: YYYY-MM-DD. End of the range for birthdate based search"
-												},
-												{
-													"key": "createdDateFrom",
-													"value": "2021-05-01",
-													"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
-												},
-												{
-													"key": "createdDateTo",
-													"value": "2021-12-12",
-													"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
-												},
-												{
-													"key": "orderBy",
-													"value": "Email",
-													"description": "The name of the parameter to order by"
-												},
-												{
-													"key": "order",
-													"value": "ascending",
-													"description": "'ascending' or 'descending'"
-												},
-												{
-													"key": "pageIndex",
-													"value": "0",
-													"description": "Page index for pagination"
-												},
-												{
-													"key": "itemsPerPage",
-													"value": "25",
-													"description": "Items per page"
-												}
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "X-DNS-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "Expect-CT",
-											"value": "max-age=0"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "X-XSS-Protection",
-											"value": "0"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "1248"
-										},
-										{
-											"key": "ETag",
-											"value": "W/\"4e0-dkGE75qDjZcJyZ0HRRb9+L73wtw\""
-										},
-										{
-											"key": "Date",
-											"value": "Mon, 02 Aug 2021 07:45:13 GMT"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Keep-Alive",
-											"value": "timeout=5"
-										}
-									],
-									"cookie": [],
-									"body": "{\n    \"Status\": \"success\",\n    \"Message\": \"Total 2 patient records retrieved successfully!\",\n    \"HttpCode\": 200,\n    \"Data\": {\n        \"Patients\": {\n            \"TotalCount\": 2,\n            \"PageIndex\": 0,\n            \"ItemsPerPage\": 25,\n            \"Order\": \"ascending\",\n            \"OrderedBy\": \"CreatedAt\",\n            \"Items\": [\n                {\n                    \"id\": \"4e8a8e80-72f2-4a83-87c2-1159c74e6c98\",\n                    \"UserId\": \"c60d6508-5002-4748-adfe-b81bf60e3b92\",\n                    \"DisplayId\": \"PT#1-8125681676\",\n                    \"EhrId\": null,\n                    \"DisplayName\": \"Mr. John Doe\",\n                    \"UserName\": \"mgihsm9697\",\n                    \"Phone\": \"+91-8125681676\",\n                    \"Email\": \"johndoe@gmail.com\",\n                    \"Gender\": \"Male\",\n                    \"BirthDate\": \"1979-01-01T00:00:00.000Z\",\n                    \"Age\": \"42 years and 7 months\"\n                },\n                {\n                    \"id\": \"d365387c-e297-4a0f-b722-1e7f6a7c33dc\",\n                    \"UserId\": \"32a16f4b-3e65-4353-9297-65308a56d8da\",\n                    \"DisplayId\": \"PT#1-1423755609\",\n                    \"EhrId\": null,\n                    \"DisplayName\": \"Mr. Anand Tendulkar\",\n                    \"UserName\": \"amseta1420\",\n                    \"Phone\": \"+91-1423755609\",\n                    \"Email\": \"ananddoe@gmail.com\",\n                    \"Gender\": \"Male\",\n                    \"BirthDate\": \"1978-01-12T00:00:00.000Z\",\n                    \"Age\": \"43 years and 7 months\"\n                }\n            ]\n        }\n    },\n    \"Trace\": null,\n    \"Client\": {\n        \"ClientName\": \"REAN Foundation - Internal API client\",\n        \"ClientCode\": \"REANINTR\"\n    },\n    \"User\": {\n        \"UserId\": \"ab84bbf7-0189-4344-9fbe-7cf20e48d746\",\n        \"DisplayName\": \"system-admin\",\n        \"Phone\": \"+91 0000000000\",\n        \"Email\": null,\n        \"UserName\": \"admin\",\n        \"CurrentRoleId\": 1,\n        \"iat\": 1627844992,\n        \"exp\": 1635620992\n    },\n    \"Context\": \"Patient.Search\",\n    \"ClientIps\": [\n        \"::1\"\n    ],\n    \"APIVersion\": \"0.1.000\"\n}"
-								}
-							]
+							"response": []
 						}
 					]
 				},
@@ -6241,7 +5864,7 @@
 											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
 											"    let expectedContactRelation = pm.environment.get(\"CONTACT_RELATION\");\r",
 											"    let expectedIsAvailableForEmergency = true;\r",
-											"    let expectedTimeOfAvailability = \"10:00 AM to 5:00 PM\";\r",
+											"    let expectedTimeOfAvailability = \"10:00 AM - 5:00 PM\";\r",
 											"    let expectedDescription = \"Some description here\";\r",
 											"    let expectedAdditionalPhoneNumbers = \"+91-3243243334\";\r",
 											"\r",
@@ -6343,9 +5966,9 @@
 											"pm.test(\"Emergency contact is created\", function () {\r",
 											"\r",
 											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
-											"    let expectedContactRelation = pm.environment.get(\"CONTACT_RELATION\");\r",
+											"    let expectedContactRelation = \"Patient family member\";\r",
 											"    let expectedIsAvailableForEmergency = true;\r",
-											"    let expectedTimeOfAvailability = \"10:00 AM to 5:00 PM\";\r",
+											"    let expectedTimeOfAvailability = \"10:00 AM - 5:00 PM\";\r",
 											"    let expectedDescription = \"Some description here\";\r",
 											"    let expectedAdditionalPhoneNumbers = \"+91-3243243334\";\r",
 											"\r",
@@ -6396,7 +6019,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"ContactPerson\": {\r\n        \"Prefix\": \"Mrs.\",\r\n        \"FirstName\": \"Abc\",\r\n        \"LastName\": \"Xyz\",\r\n        \"Phone\": \"+91-3243243334\"\r\n    },\r\n    \"ContactRelation\": \"Patient family member\",\r\n    \"Address\": {\r\n        \"AddressLine\": \"GSG Schlesische Straße, Gebäude 3, Schlesische Straße 27\",\r\n        \"City\": \"Berlin\",\r\n        \"Country\": \"Germany\",\r\n        \"PostalCode\": \"10997\"\r\n    },\r\n    \"IsAvailableForEmergency\": true,\r\n    \"TimeOfAvailability\": \"10:00 AM to 5:00 PM\",\r\n    \"Description\": \"Some description here\",\r\n    \"AdditionalPhoneNumbers\": \"+91-3243243334\"\r\n}"
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"ContactPerson\": {\r\n        \"Prefix\": \"Mrs.\",\r\n        \"FirstName\": \"Abc\",\r\n        \"LastName\": \"Xyz\",\r\n        \"Phone\": \"+91-3243243334\"\r\n    },\r\n    \"ContactRelation\": \"Patient family member\",\r\n    \"Address\": {\r\n        \"AddressLine\": \"GSG Schlesische Straße, Gebäude 3, Schlesische Straße 27\",\r\n        \"City\": \"Berlin\",\r\n        \"Country\": \"Germany\",\r\n        \"PostalCode\": \"10997\"\r\n    },\r\n    \"IsAvailableForEmergency\": true,\r\n    \"TimeOfAvailability\": \"10:00 AM - 5:00 PM\",\r\n    \"Description\": \"Some description here\",\r\n    \"AdditionalPhoneNumbers\": \"+91-3243243334\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patient-emergency-contacts",
@@ -6438,9 +6061,9 @@
 											"pm.test(\"Emergency contact is returned\", function () {\r",
 											"\r",
 											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
-											"    let expectedContactRelation = pm.environment.get(\"CONTACT_RELATION\");\r",
+											"    let expectedContactRelation = \"Patient family member\";\r",
 											"    let expectedIsAvailableForEmergency = true;\r",
-											"    let expectedTimeOfAvailability = \"10:00 AM to 5:00 PM\";\r",
+											"    let expectedTimeOfAvailability = \"10:00 AM - 5:00 PM\";\r",
 											"    let expectedDescription = \"Some description here\";\r",
 											"    let expectedAdditionalPhoneNumbers = \"+91-3243243334\";\r",
 											"\r",
@@ -6537,7 +6160,7 @@
 											"pm.test(\"Correct updates should be reflected\", function () {\r",
 											"\r",
 											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
-											"    let expectedContactRelation = pm.environment.get(\"CONTACT_RELATION\");\r",
+											"    let expectedContactRelation = \"Patient family member\";\r",
 											"    let expectedIsAvailableForEmergency = false;\r",
 											"    let expectedTimeOfAvailability = \"10:00 AM to 7:00 PM\";\r",
 											"    let expectedDescription = \"Some another description here\";\r",
@@ -7310,7 +6933,7 @@
 											"",
 											"pm.test(\"New Document record is created\", function () {",
 											"",
-											"    var expectedMedicalPractitionerUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+											"    var expectedMedicalPractitionerUserId = pm.environment.get(\"DOCTOR_USER_ID\");",
 											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
 											"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
 											"",
@@ -7354,7 +6977,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"DocumentType\": \"Lab\",\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"MedicalPractitionerUserId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"MedicalPractionerRole\": \"Patient\",\n    \"UploadedByUserId\":\"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedVisitId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedVisitType\": \"Doctor\",\n    \"AssociatedOrderId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedOrderType\": \"Drug\",\n    \"FileName\": \"Lab report\",\n    \"ResourceId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AuthenticatedUrl\": \"http://localhost:7272\",\n    \"MimeType\": \"abcd\",\n    \"SizeInKBytes\": 10.2,\n    \"RecordDate\": \"2021-09-23\",\n    \"UploadedDate\": \"2021-09-24\"\n}\n"
+									"raw": "{\n    \"DocumentType\": \"OPD paper\",\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"MedicalPractitionerUserId\": \"{{DOCTOR_USER_ID}}\",\n    \"MedicalPractionerRole\": \"Doctor\",\n    \"UploadedByUserId\":\"{{PATIENT_USER_ID}}\",\n    \"AssociatedVisitId\": null,\n    \"AssociatedVisitType\": null,\n    \"AssociatedOrderId\": null,\n    \"AssociatedOrderType\": null,\n    \"FileName\": \"Scan.jpg\",\n    \"ResourceId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"RecordDate\": \"2021-09-24\"\n}\n"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patient-documents",
@@ -7383,9 +7006,9 @@
 											"",
 											"pm.test(\"Document record is returned\", function () {",
 											"",
-											"    var expectedMedicalPractitionerUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
-											"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+											"    var expectedMedicalPractitionerUserId = pm.environment.get(\"DOCTOR_USER_ID\");",
 											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
 											"",
 											"    var jsonRes = pm.response.json();",
 											"    pm.expect(jsonRes.Data).to.have.property('Document');",
@@ -7394,10 +7017,10 @@
 											"    pm.expect(jsonRes.Data.Document).to.have.property('MedicalPractitionerUserId');",
 											"    pm.expect(jsonRes.Data.Document).to.have.property('PatientUserId');",
 											"    pm.expect(jsonRes.Data.Document).to.have.property('ResourceId');",
-											" ",
+											"",
 											"    pm.expect(jsonRes.Data.Document.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
 											"    pm.expect(jsonRes.Data.Document.PatientUserId).equals(expectedPatientUserId);",
-											"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId); ",
+											"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId);",
 											"});",
 											"",
 											""
@@ -7453,8 +7076,9 @@
 											"",
 											"pm.test(\"Updated document record is returned\", function () {",
 											"",
-											"    var expectedMedicalPractitionerUserId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+											"    var expectedMedicalPractitionerUserId = pm.environment.get(\"DOCTOR_USER_ID\");",
 											"    var expectedRecordDate = \"2021-09-24T00:00:00.000Z\";",
+											"    ",
 											"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
 											"",
 											"     var jsonRes = pm.response.json();",
@@ -7466,7 +7090,8 @@
 											"    pm.expect(jsonRes.Data.Document).to.have.property('ResourceId');",
 											"",
 											"    pm.expect(jsonRes.Data.Document.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
-											"    pm.expect(jsonRes.Data.Document.PatientUserId).equals(expectedRecordDate);",
+											"    pm.expect(jsonRes.Data.Document.RecordDate).equals(expectedRecordDate);",
+											"    ",
 											"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId);    ",
 											"    ",
 											"});",
@@ -7498,7 +7123,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"DocumentType\": \"LabReport\",\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"MedicalPractitionerUserId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"MedicalPractionerRole\": \"LabUser\",\n    \"UploadedByUserId\":\"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedVisitId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedVisitType\": \"Doctor\",\n    \"AssociatedOrderId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AssociatedOrderType\": \"DrugOrder\",\n    \"FileName\": \"Scan\",\n    \"ResourceId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"AuthenticatedUrl\": \"http://localhost:7272\",\n    \"MimeType\": \"abcd\",\n    \"SizeInKBytes\": 15.2,\n    \"RecordDate\": \"2021-09-24\",\n    \"UploadedDate\": \"2021-09-24\"\n}\n"
+									"raw": "{\n    \"DocumentType\": \"Lab report\",\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"MedicalPractitionerUserId\": \"{{DOCTOR_USER_ID}}\",\n    \"MedicalPractionerRole\": \"Doctor\",\n    \"UploadedByUserId\":\"{{PATIENT_USER_ID}}\",\n    \"AssociatedVisitId\": null,\n    \"AssociatedVisitType\": null,\n    \"AssociatedOrderId\": null,\n    \"AssociatedOrderType\": null,\n    \"FileName\": \"Scan.jpg\",\n    \"ResourceId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"RecordDate\": \"2021-09-24\"\n}\n"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}",
@@ -12317,7 +11942,7 @@
 													"",
 													"    var jsonRes = pm.response.json();",
 													"    pm.expect(jsonRes.Data).to.have.property('Drugs');",
-													"    pm.expect(jsonRes.Data.DrugRecords.Items.length).to.be.greaterThan(0);",
+													"    pm.expect(jsonRes.Data.Drugs.Items.length).to.be.greaterThan(0);",
 													"",
 													"});",
 													""
@@ -12454,7 +12079,7 @@
 													"var jsonRes = pm.response.json();\r",
 													"\r",
 													"try {\r",
-													"    pm.environment.set(\"DRUG_ID\", jsonRes.Data.DrugRecords.Items[3].id);\r",
+													"    pm.environment.set(\"DRUG_ID\", jsonRes.Data.Drugs.Items[0].id);\r",
 													"}\r",
 													"catch (error) {\r",
 													"    console.log(error.message);\r",
@@ -16290,8 +15915,8 @@
 													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('Language');\r",
 													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('ImageResourceId');\r",
 													"\r",
-													"    pm.expect(jsonRes.Data.SymptomType.Symptom).equals(\"Blurry vision\");\r",
-													"    pm.expect(jsonRes.Data.SymptomType.Description).equals(\"Not able to see clearly.\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Symptom).equals(\"Headache\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Description).equals(\"Severe to moderate headache\");\r",
 													"    pm.expect(jsonRes.Data.SymptomType.Language).equals(\"en-US\");\r",
 													"    pm.expect(jsonRes.Data.SymptomType.Tags.length).greaterThan(0);\r",
 													"});\r",
@@ -16353,7 +15978,7 @@
 												"exec": [
 													"\r",
 													"pm.test(\"Request is successfull\", function () {\r",
-													"    pm.response.to.have.status(201);\r",
+													"    pm.response.to.have.status(200);\r",
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Status).to.eql('success');\r",
 													"});\r",
@@ -16369,8 +15994,8 @@
 													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('Language');\r",
 													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('ImageResourceId');\r",
 													"\r",
-													"    pm.expect(jsonRes.Data.SymptomType.Symptom).equals(\"Blurry vision\");\r",
-													"    pm.expect(jsonRes.Data.SymptomType.Description).equals(\"Not able to see clearly.\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Symptom).equals(\"Headache\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Description).equals(\"Severe to moderate headache\");\r",
 													"    pm.expect(jsonRes.Data.SymptomType.Language).equals(\"en-US\");\r",
 													"    pm.expect(jsonRes.Data.SymptomType.Tags.length).greaterThan(0);\r",
 													"});\r",
@@ -16708,8 +16333,8 @@
 													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('Language');\r",
 													"    pm.expect(jsonRes.Data.SymptomType).to.have.property('ImageResourceId');\r",
 													"\r",
-													"    pm.expect(jsonRes.Data.SymptomType.Symptom).equals(\"Blurry vision\");\r",
-													"    pm.expect(jsonRes.Data.SymptomType.Description).equals(\"Not able to see clearly.\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Symptom).equals(\"Headache\");\r",
+													"    pm.expect(jsonRes.Data.SymptomType.Description).equals(\"Severe to moderate headache\");\r",
 													"    pm.expect(jsonRes.Data.SymptomType.Language).equals(\"en-US\");\r",
 													"    pm.expect(jsonRes.Data.SymptomType.Tags.length).greaterThan(0);\r",
 													"});\r",
@@ -19350,7 +18975,7 @@
 											"pm.environment.set(\"PATIENT_ALLERGY_Severity\", 'Medium');\r",
 											"pm.environment.set(\"PATIENT_ALLERGY_Reaction\", 'Difficulty Breathing');\r",
 											"pm.environment.set(\"PATIENT_ALLERGY_OtherInformation\", 'Na');\r",
-											"pm.environment.set(\"PATIENT_ALLERGY_LastOccurrence\", new Date());"
+											"pm.environment.set(\"PATIENT_ALLERGY_LastOccurrence\", '2021-01-01');"
 										],
 										"type": "text/javascript"
 									}
@@ -19362,7 +18987,7 @@
 											"var jsonRes = pm.response.json();\r",
 											"\r",
 											"try {\r",
-											"    pm.environment.set(\"PATIENT_ALLERGY_ID\", jsonRes.Data.PatientAllergy.id);\r",
+											"    pm.environment.set(\"PATIENT_ALLERGY_ID\", jsonRes.Data.Allergy.id);\r",
 											"}\r",
 											"catch (error) {\r",
 											"    console.log(error.message);\r",
@@ -19374,7 +18999,7 @@
 											"    pm.expect(jsonRes.Status).to.eql('success');\r",
 											"});\r",
 											"\r",
-											"pm.test(\"New Patient Allergy record is created\", function () {\r",
+											"pm.test(\"New allergy record is created\", function () {\r",
 											"\r",
 											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_ALLERGY_PATIENTUSERID\");\r",
 											"    let expectedAllergy = pm.environment.get(\"PATIENT_ALLERGY_Allergy\");\r",
@@ -19386,25 +19011,27 @@
 											"    let expectedLastOccurrence = pm.environment.get(\"PATIENT_ALLERGY_LastOccurrence\");\r",
 											"\r",
 											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('PatientAllergy');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('PatientUserId');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Allergy');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenCategory');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenExposureRoute');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Severity');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Reaction');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('OtherInformation');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('LastOccurrence');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Allergy');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('Allergy');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('AllergenCategory');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('AllergenExposureRoute');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('Severity');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('Reaction');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('OtherInformation');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('LastOccurrence');\r",
 											"\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.PatientUserId).equals(expectedPatientUserId);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.Allergy).equals(expectedAllergy);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenCategory).equals(expectedAllergenCategory);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.Severity).equals(expectedSeverity);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.Reaction).equals(expectedReaction);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.OtherInformation).equals(expectedOtherInformation);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.LastOccurrence).equals(expectedLastOccurrence);\r",
+											"    pm.expect(jsonRes.Data.Allergy.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.Allergy.Allergy).equals(expectedAllergy);\r",
+											"    pm.expect(jsonRes.Data.Allergy.AllergenCategory).equals(expectedAllergenCategory);\r",
+											"    pm.expect(jsonRes.Data.Allergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
+											"    pm.expect(jsonRes.Data.Allergy.Severity).equals(expectedSeverity);\r",
+											"    pm.expect(jsonRes.Data.Allergy.Reaction).equals(expectedReaction);\r",
+											"    pm.expect(jsonRes.Data.Allergy.OtherInformation).equals(expectedOtherInformation);\r",
+											"\r",
+											"    var lastOccurrence = jsonRes.Data.Allergy.LastOccurrence.split('T')[0];\r",
+											"    pm.expect(lastOccurrence).equals(expectedLastOccurrence);\r",
 											"});\r",
 											"\r",
 											""
@@ -19488,23 +19115,27 @@
 											"    let expectedLastOccurrence = pm.environment.get(\"PATIENT_ALLERGY_LastOccurrence\");\r",
 											"\r",
 											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('PatientAllergy');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('PatientUserId');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Allergy');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenCategory');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenExposureRoute');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Severity');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Reaction');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('OtherInformation');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Allergy');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('Allergy');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('AllergenCategory');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('AllergenExposureRoute');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('Severity');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('Reaction');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('OtherInformation');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('LastOccurrence');\r",
 											"\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.PatientUserId).equals(expectedPatientUserId);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.Allergy).equals(expectedAllergy);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenCategory).equals(expectedAllergenCategory);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.Severity).equals(expectedSeverity);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.Reaction).equals(expectedReaction);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.OtherInformation).equals(expectedOtherInformation);\r",
+											"    pm.expect(jsonRes.Data.Allergy.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.Allergy.Allergy).equals(expectedAllergy);\r",
+											"    pm.expect(jsonRes.Data.Allergy.AllergenCategory).equals(expectedAllergenCategory);\r",
+											"    pm.expect(jsonRes.Data.Allergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
+											"    pm.expect(jsonRes.Data.Allergy.Severity).equals(expectedSeverity);\r",
+											"    pm.expect(jsonRes.Data.Allergy.Reaction).equals(expectedReaction);\r",
+											"    pm.expect(jsonRes.Data.Allergy.OtherInformation).equals(expectedOtherInformation);\r",
+											"\r",
+											"    var lastOccurrence = jsonRes.Data.Allergy.LastOccurrence.split('T')[0];\r",
+											"    pm.expect(lastOccurrence).equals(expectedLastOccurrence);\r",
 											"});\r",
 											"\r",
 											""
@@ -19583,7 +19214,6 @@
 											"pm.test(\"Correct updates should be reflected\", function () {\r",
 											"\r",
 											"    let expectedPatientUserId = pm.environment.get(\"PATIENT_ALLERGY_PATIENTUSERID\");\r",
-											"    let expectedAllergy = pm.environment.get(\"PATIENT_ALLERGY_Allergy\");\r",
 											"    let expectedAllergenCategory = pm.environment.get(\"PATIENT_ALLERGY_AllergenCategory\");\r",
 											"    let expectedAllergenExposureRoute = pm.environment.get(\"PATIENT_ALLERGY_AllergenExposureRoute\");\r",
 											"    let expectedSeverity = pm.environment.get(\"PATIENT_ALLERGY_Severity\");\r",
@@ -19592,23 +19222,27 @@
 											"    let expectedLastOccurrence = pm.environment.get(\"PATIENT_ALLERGY_LastOccurrence\");\r",
 											"\r",
 											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('PatientAllergy');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('PatientUserId');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Allergy');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenCategory');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('AllergenExposureRoute');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Severity');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('Reaction');\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy).to.have.property('OtherInformation');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Allergy');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('Allergy');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('AllergenCategory');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('AllergenExposureRoute');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('Severity');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('Reaction');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('OtherInformation');\r",
+											"    pm.expect(jsonRes.Data.Allergy).to.have.property('LastOccurrence');\r",
 											"\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.PatientUserId).equals(expectedPatientUserId);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.Allergy).equals(expectedAllergy);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenCategory).equals(expectedAllergenCategory);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.Severity).equals(expectedSeverity);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.Reaction).equals(expectedReaction);\r",
-											"    pm.expect(jsonRes.Data.PatientAllergy.OtherInformation).equals(expectedOtherInformation);\r",
+											"    pm.expect(jsonRes.Data.Allergy.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.Allergy.Allergy).equals(\"Nut allergy\");\r",
+											"    pm.expect(jsonRes.Data.Allergy.AllergenCategory).equals(expectedAllergenCategory);\r",
+											"    pm.expect(jsonRes.Data.Allergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);\r",
+											"    pm.expect(jsonRes.Data.Allergy.Severity).equals(\"Low\");\r",
+											"    pm.expect(jsonRes.Data.Allergy.Reaction).equals(expectedReaction);\r",
+											"    pm.expect(jsonRes.Data.Allergy.OtherInformation).equals(expectedOtherInformation);\r",
+											"\r",
+											"    var lastOccurrence = jsonRes.Data.Allergy.LastOccurrence.split('T')[0];\r",
+											"    pm.expect(lastOccurrence).equals(expectedLastOccurrence);\r",
 											"});\r",
 											"\r",
 											""
@@ -19640,7 +19274,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_ALLERGY_PATIENTUSERID}}\",\r\n    \"Allergy\": \"{{PATIENT_ALLERGY_Allergy}}\",\r\n    \"AllergenCategory\": \"{{PATIENT_ALLERGY_AllergenCategory}}\",\r\n    \"AllergenExposureRoute\": \"{{PATIENT_ALLERGY_AllergenExposureRoute}}\",\r\n    \"Severity\": \"{{PATIENT_ALLERGY_Severity}}\",\r\n    \"Reaction\": \"{{PATIENT_ALLERGY_Reaction}}\",\r\n    \"OtherInformation\": \"{{PATIENT_ALLERGY_OtherInformation}}\",\r\n    \"LastOccurrence\": \"{{PATIENT_ALLERGY_LastOccurrence}}\"\r\n}"
+									"raw": "{\r\n    \"Allergy\": \"Nut allergy\",\r\n    \"Severity\": \"{{PATIENT_ALLERGY_Severity}}\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/clinical/allergies/{{PATIENT_ALLERGY_ID}}",
@@ -19658,7 +19292,7 @@
 							"response": []
 						},
 						{
-							"name": "Get for patient",
+							"name": "Search allergies",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -19683,7 +19317,7 @@
 											"\r",
 											"    var jsonRes = pm.response.json();\r",
 											"    pm.expect(jsonRes.Data).to.have.property('Allergies');\r",
-											"    pm.expect(jsonRes.Data.Allergies.length).to.be.greaterThan(0);\r",
+											"    pm.expect(jsonRes.Data.Allergies.Items.length).to.be.greaterThan(0);\r",
 											"\r",
 											"});\r",
 											""
@@ -19747,7 +19381,7 @@
 							"response": []
 						},
 						{
-							"name": "Search patient allergy",
+							"name": "Get patient allergies",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -19768,11 +19402,11 @@
 											"    pm.expect(jsonRes.Status).to.eql('success');\r",
 											"});\r",
 											"\r",
-											"pm.test(\"List of Calorie Record is returned\", function () {\r",
+											"pm.test(\"Current patient allergies are returned\", function () {\r",
 											"\r",
 											"    var jsonRes = pm.response.json();\r",
 											"    pm.expect(jsonRes.Data).to.have.property('Allergies');\r",
-											"    pm.expect(jsonRes.Data.Allergies.Items.length).to.be.greaterThan(0);\r",
+											"    pm.expect(jsonRes.Data.Allergies.length).to.be.greaterThan(0);\r",
 											"\r",
 											"});\r",
 											""
@@ -19819,13 +19453,6 @@
 										"allergies",
 										"for-patient",
 										"{{PATIENT_USER_ID}}"
-									],
-									"query": [
-										{
-											"key": "patientUserId",
-											"value": "{{PATIENT_USER_ID}}",
-											"disabled": true
-										}
 									]
 								},
 								"description": "Search PatientAllergy using query parameters."
@@ -22985,7 +22612,7 @@
 											"",
 											"pm.test(\"Knowledge nugget record is created\", function () {",
 											"",
-											"    var expectedValue = \"Heart Failure\";",
+											"    var expectedValue = \"Some topic\";",
 											"    ",
 											"    var jsonRes = pm.response.json();",
 											"    pm.expect(jsonRes.Data).to.have.property('KnowledgeNugget');",
@@ -23039,79 +22666,7 @@
 							"response": []
 						},
 						{
-							"name": "Get today's topic",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var jsonRes = pm.response.json();",
-											"",
-											"try {",
-											"    pm.environment.set(\"KNOWLEDGE_NUGGET_ID\", jsonRes.Data.KnowledgeNugget.id);",
-											"}",
-											"catch (error) {",
-											"    console.log(error.message);",
-											"}",
-											"",
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"Random knowledge nugget record is returned\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('KnowledgeNugget');",
-											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('id');",
-											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('TopicName');",
-											"",
-											"});",
-											"",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/educational/knowledge-nuggets/today/{{PATIENT_USER_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"educational",
-										"knowledge-nuggets",
-										"today",
-										"{{PATIENT_USER_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get knowledge nugget by id Copy",
+							"name": "Get knowledge nugget by id",
 							"event": [
 								{
 									"listen": "test",
@@ -23125,7 +22680,7 @@
 											"",
 											"pm.test(\"Knowledge nugget record is returned\", function () {",
 											"",
-											"    var expectedValue = \"Heart Failure\";",
+											"    var expectedValue = \"Some topic\";",
 											"",
 											"    var jsonRes = pm.response.json();",
 											"    pm.expect(jsonRes.Data).to.have.property('KnowledgeNugget');",
@@ -23382,6 +22937,70 @@
 										"educational",
 										"knowledge-nuggets",
 										"{{KNOWLEDGE_NUGGET_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get today's topic",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Random knowledge nugget record is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('KnowledgeNugget');",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.KnowledgeNugget).to.have.property('TopicName');",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/educational/knowledge-nuggets/today/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"educational",
+										"knowledge-nuggets",
+										"today",
+										"{{PATIENT_USER_ID}}"
 									]
 								}
 							},
@@ -24298,8 +23917,8 @@
 									"\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Data).to.have.property('FileResources');\r",
-									"    pm.expect(resource.FileResources.TotalCount).greaterThan(0);\r",
-									"    pm.expect(resource.FileResources.Items.length).greaterThan(0);\r",
+									"    pm.expect(jsonRes.Data.FileResources.TotalCount).greaterThan(0);\r",
+									"    pm.expect(jsonRes.Data.FileResources.Items.length).greaterThan(0);\r",
 									"\r",
 									"});"
 								],

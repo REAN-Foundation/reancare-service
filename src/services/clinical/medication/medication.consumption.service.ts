@@ -7,6 +7,7 @@ import { IMedicationRepo } from "../../../database/repository.interfaces/clinica
 import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
 import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/user/user.device.details.repo.interface ";
 import { IUserRepo } from "../../../database/repository.interfaces/user/user.repo.interface";
+import { IUserTaskRepo } from "../../../database/repository.interfaces/user/user.task.repo.interface";
 import { MedicationConsumptionDomainModel } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
 import { MedicationConsumptionDetailsDto, MedicationConsumptionDto, MedicationConsumptionStatsDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionStatus } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types";
@@ -14,12 +15,13 @@ import { MedicationDto } from "../../../domain.types/clinical/medication/medicat
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
 import { MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from "../../../domain.types/clinical/medication/medication/medication.types";
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
+import { IUserActionService } from "../../../services/user/user.action.service.interface";
 import { Loader } from "../../../startup/loader";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class MedicationConsumptionService {
+export class MedicationConsumptionService implements IUserActionService {
 
     constructor(
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,
@@ -27,8 +29,7 @@ export class MedicationConsumptionService {
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
-
-        //@inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
+        @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
     ) {}
 
     create = async (medication: MedicationDto, customStartDate = null)
@@ -162,7 +163,7 @@ export class MedicationConsumptionService {
                 }
     
                 //Now update the associated user task as completed
-                //await this.completeAssociatedTask(medConsumption);
+                await this.finishAssociatedTask(medConsumption);
     
                 takenMeds.push(updatedDto);
             }
@@ -197,16 +198,16 @@ export class MedicationConsumptionService {
                     continue;
                 }
     
-                var updatedDto = await this._medicationConsumptionRepo.markAsMissed(id);
-                if (updatedDto === null) {
+                var updated = await this._medicationConsumptionRepo.markAsMissed(id);
+                if (updated === null) {
                     Logger.instance().log('Unable to mark medication as missed!');
                     continue;
                 }
     
                 //Now update the associated user task as completed
-                //await this.completeAssociatedTask(medConsumption);
+                await this.finishAssociatedTask(medConsumption);
     
-                missedMeds.push(updatedDto);
+                missedMeds.push(updated);
             }
             return missedMeds;
         }
@@ -229,25 +230,19 @@ export class MedicationConsumptionService {
             takenAt = medConsumption.TimeScheduleEnd;
         }
    
-        var updatedDto = await this._medicationConsumptionRepo.markAsTaken(id, takenAt);
-        if (updatedDto === null) {
+        var updated = await this._medicationConsumptionRepo.markAsTaken(id, takenAt);
+        if (updated === null) {
             Logger.instance().log('Unable to mark medication as taken!');
             return null;
         }
     
         //Now update the associated user task as completed
-        //await this.completeAssociatedTask(medConsumption);
+        await this.finishAssociatedTask(medConsumption);
     
-        return updatedDto;
+        return updated;
     };
 
     markAsMissed = async (id: string): Promise<MedicationConsumptionDto> => {
-
-        var medConsumption = await this._medicationConsumptionRepo.getById(id);
-        if (medConsumption === null) {
-            Logger.instance().log('Medication consumption instance with given id cannot be found.');
-            return null;
-        }
 
         var updatedDto = await this._medicationConsumptionRepo.markAsMissed(id);
         if (updatedDto === null) {
@@ -255,8 +250,14 @@ export class MedicationConsumptionService {
             return null;
         }
 
+        var medConsumption = await this._medicationConsumptionRepo.getById(id);
+        if (medConsumption === null) {
+            Logger.instance().log('Medication consumption instance with given id cannot be found.');
+            return null;
+        }
+        
         //Now update the associated user task as completed
-        //await this.completeAssociatedTask(medConsumption);
+        await this.finishAssociatedTask(medConsumption);
 
         return updatedDto;
     };
@@ -394,16 +395,66 @@ export class MedicationConsumptionService {
         return count;
     }
 
-    // private async completeAssociatedTask(medConsumption: MedicationConsumptionDetailsDto) {
-    //     var task = await this._userTaskRepo.getTaskForUserWithReference(
-    //      medConsumption.PatientUserId, medConsumption.id);
-    //     var updatedTask = await this._userTaskRepo.completeTask(task.id);
-    //     if (updatedTask === null) {
-    //         Logger.instance().log("Unabled to update task assocaited with consumption!");
-    //     }
-    // }
+    completeAction = async (actionId: string, completionTime?: Date, success?: boolean): Promise<boolean> => {
+
+        if (success === undefined || success === false) {
+            var updatedDto = await this._medicationConsumptionRepo.markAsMissed(actionId);
+            if (updatedDto === null) {
+                Logger.instance().log('Unable to mark medication as missed!');
+                return false;
+            }
+        }
+        else {
+            var medConsumption = await this._medicationConsumptionRepo.getById(actionId);
+            if (medConsumption === null) {
+                Logger.instance().log('Medication consumption instance with given id cannot be found.');
+                return false;
+            }
+            var takenAt = completionTime ?? new Date();
+            var isPastScheduleEnd = TimeHelper.isAfter(takenAt, medConsumption.TimeScheduleEnd);
+            if (isPastScheduleEnd) {
+                takenAt = medConsumption.TimeScheduleEnd;
+            }
+            var updated = await this._medicationConsumptionRepo.markAsTaken(actionId, takenAt);
+            if (updated === null) {
+                Logger.instance().log('Unable to mark medication as taken!');
+                return null;
+            }
+        }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    cancelAction = async(actionId: string, cancellationTime?: Date, cancellationReason?: string): Promise<boolean> => {
+        return await this._medicationConsumptionRepo.cancelSchedule(actionId);
+    }
 
     //#region Privates
+
+    private async finishAssociatedTask(medConsumption: MedicationConsumptionDetailsDto) {
+
+        var task = await this._userTaskRepo.getTaskForUserWithAction(
+            medConsumption.PatientUserId, medConsumption.id);
+        if (task === null) {
+            return;
+        }
+        var updatedTask = await this._userTaskRepo.finishTask(task.id);
+        if (updatedTask === null) {
+            Logger.instance().log("Unabled to update task assocaited with consumption!");
+        }
+    }
+
+    private async cancelAssociatedTask(medConsumption: MedicationConsumptionDetailsDto) {
+
+        var task = await this._userTaskRepo.getTaskForUserWithAction(
+            medConsumption.PatientUserId, medConsumption.id);
+        if (task === null) {
+            return;
+        }
+        var updatedTask = await this._userTaskRepo.cancelTask(task.id);
+        if (updatedTask === null) {
+            Logger.instance().log("Unabled to update task assocaited with consumption!");
+        }
+    }
 
     private parseDurationInHours = (duration: string): number => {
         

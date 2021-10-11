@@ -18,8 +18,10 @@ export interface IUserTaskRepo {
 
     finishTask(id: string): Promise<UserTaskDto>;
 
-    cancelTask(id: string, reason: string): Promise<UserTaskDto>;
+    cancelTask(id: string, reason?: string): Promise<UserTaskDto>;
 
     getTaskSummaryForDay (userId: string, dateStr: string): Promise<TaskSummaryDto>;
+
+    getTaskForUserWithAction (userId: string, actionId: string): Promise<UserTaskDto>;
 
 }

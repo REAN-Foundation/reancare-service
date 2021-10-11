@@ -2,10 +2,12 @@ import express from 'express';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
+import { Logger } from '../../../common/logger';
 import { ResponseHandler } from '../../../common/response.handler';
 import { OrganizationService } from '../../../services/organization.service';
 import { PersonService } from '../../../services/person.service';
 import { RoleService } from '../../../services/role.service';
+import { UserActionResolver } from '../../../services/user/user.action.resolver';
 import { UserTaskService } from '../../../services/user/user.task.service';
 import { Loader } from '../../../startup/loader';
 import { UserTaskValidator } from '../../validators/user/user.task.validator';
@@ -55,6 +57,7 @@ export class UserTaskController {
             ResponseHandler.success(request, response, 'User task created successfully!', 201, {
                 UserTask : userTask,
             });
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -76,6 +79,7 @@ export class UserTaskController {
             ResponseHandler.success(request, response, 'User task retrieved successfully!', 200, {
                 UserTask : userTask,
             });
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -145,9 +149,16 @@ export class UserTaskController {
                 throw new ApiError(400, 'Unable to update user task record!');
             }
 
+            if (updated.ActionId != null && updated.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const result = await actionResolver.completeAction(updated.ActionType, updated.ActionId);
+                Logger.instance().log(`${updated.ActionType} - Action result : ${result.toString()}`);
+            }
+            
             ResponseHandler.success(request, response, 'User task finished successfully!', 200, {
                 UserTask : updated,
             });
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -170,6 +181,12 @@ export class UserTaskController {
                 throw new ApiError(400, 'Unable to update user task record!');
             }
 
+            if (updated.ActionId != null && updated.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const result = await actionResolver.cancelAction(updated.ActionType, updated.ActionId);
+                Logger.instance().log(`${updated.ActionType} - Action result : ${result.toString()}`);
+            }
+
             ResponseHandler.success(request, response, 'User task cancelled successfully!', 200, {
                 UserTask : updated,
             });
@@ -181,7 +198,7 @@ export class UserTaskController {
 
     getTaskSummaryForDay = async(request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.Summary';
+            request.context = 'UserTask.SummaryForDay';
             await this._authorizer.authorize(request, response);
 
             const { userId, date } = await this._validator.getTaskSummaryForDay(request);
@@ -217,6 +234,7 @@ export class UserTaskController {
             ResponseHandler.success(request, response, 'User task record updated successfully!', 200, {
                 UserTask : updated,
             });
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

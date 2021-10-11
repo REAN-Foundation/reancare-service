@@ -10,6 +10,7 @@ import { IMedicationConsumptionRepo } from '../../../../../repository.interfaces
 import { MedicationConsumptionMapper } from '../../../mappers/clinical/medication/medication.consumption.mapper';
 import MedicationConsumption from '../../../models/clinical/medication/medication.consumption.model';
 import Medication from '../../../models/clinical/medication/medication.model';
+import UserTask from '../../../models/user/user.task.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -93,9 +94,19 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                 }
             };
             
+            const ids = (await MedicationConsumption.findAll(selector)).map(x => x.id);
             const deletedCount = await MedicationConsumption.destroy(selector);
-            Logger.instance().log(`Deleted ${deletedCount} medication consumptions`);
+            Logger.instance().log(`Deleted ${deletedCount} medication consumptions.`);
 
+            if (deletedCount > 0) {
+                var deletedTaskCount = await UserTask.destroy({
+                    where : {
+                        ActionId : ids, //ActionType : UserTaskActionType.Medication
+                    }
+                });
+                Logger.instance().log(`Deleted ${deletedTaskCount} medication associated user tasks.`);
+
+            }
             return deletedCount;
 
         } catch (error) {
@@ -317,6 +328,27 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             });
             
             return count;
+    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+
+    }
+
+    cancelSchedule = async (id: string): Promise<boolean> => {
+        
+        try {
+   
+            var schedule = await MedicationConsumption.findByPk(id);
+            if (schedule === null) {
+                return false;
+            }
+            schedule.IsCancelled = true;
+            schedule.CancelledOn = new Date();
+            await schedule.save();
+
+            return true;
     
         } catch (error) {
             Logger.instance().log(error.message);

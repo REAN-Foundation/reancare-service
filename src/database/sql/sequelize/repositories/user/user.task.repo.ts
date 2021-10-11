@@ -359,4 +359,19 @@ export class UserTaskRepo implements IUserTaskRepo {
         }
     };
 
+    getTaskForUserWithAction = async (userId: string, referenceId: string): Promise<UserTaskDto> => {
+        try {
+            const task = await UserTask.findOne({
+                where : {
+                    UserId   : userId,
+                    ActionId : referenceId
+                } }
+            );
+            return UserTaskMapper.toDto(task);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
 }

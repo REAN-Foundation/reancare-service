@@ -15,10 +15,10 @@ export const register = (app: express.Application): void => {
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
 
     router.put("/start/:id", authenticator.authenticateClient, authenticator.authenticateUser, controller.startTask);
-
     router.put("/finish/:id", authenticator.authenticateClient, authenticator.authenticateUser, controller.finishTask);
+    router.put("/cancel/:id", authenticator.authenticateClient, authenticator.authenticateUser, controller.cancelTask);
 
-    router.get("/patient/:patientUserId/summary-for-today", authenticator.authenticateClient, authenticator.authenticateUser, controller.getTaskSummaryForDay);
+    router.get("/user/:userId/summary-for-day", authenticator.authenticateClient, authenticator.authenticateUser, controller.getTaskSummaryForDay);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);

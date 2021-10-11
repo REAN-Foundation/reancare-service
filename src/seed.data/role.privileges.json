@@ -229,7 +229,8 @@
             "UserTask.Delete",
             "UserTask.StartTask",
             "UserTask.FinishTask",
-            "UserTask.Summary"
+            "UserTask.CancelTask",
+            "UserTask.SummaryForDay"
         ]
     },
     {
@@ -485,7 +486,8 @@
             "UserTask.Delete",
             "UserTask.StartTask",
             "UserTask.FinishTask",
-            "UserTask.Summary"
+            "UserTask.CancelTask",
+            "UserTask.SummaryForDay"
         ]
     },
     {
@@ -745,7 +747,8 @@
             "UserTask.Delete",
             "UserTask.StartTask",
             "UserTask.FinishTask",
-            "UserTask.Summary"
+            "UserTask.CancelTask",
+            "UserTask.SummaryForDay"
         ]
     },
     {
@@ -950,7 +953,8 @@
             "UserTask.Delete",
             "UserTask.StartTask",
             "UserTask.FinishTask",
-            "UserTask.Summary"
+            "UserTask.CancelTask",
+            "UserTask.SummaryForDay"
         ]
     },
     {
@@ -1154,7 +1158,8 @@
             "UserTask.Delete",
             "UserTask.StartTask",
             "UserTask.FinishTask",
-            "UserTask.Summary"
+            "UserTask.CancelTask",
+            "UserTask.SummaryForDay"
         ]
     }
 ]

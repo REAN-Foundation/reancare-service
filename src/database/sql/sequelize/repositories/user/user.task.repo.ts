@@ -24,8 +24,8 @@ export class UserTaskRepo implements IUserTaskRepo {
                 UserId             : model.UserId ?? null,
                 Task               : model.Task ?? null,
                 Category           : model.Category ?? null,
-                Action             : model.Action ?? null,
-                ReferenceItemId    : model.ReferenceItemId ?? null,
+                ActionType         : model.ActionType ?? null,
+                ActionId           : model.ActionId ?? null,
                 ScheduledStartTime : model.ScheduledStartTime ?? null,
                 ScheduledEndTime   : model.ScheduledEndTime ?? null,
             };
@@ -64,8 +64,8 @@ export class UserTaskRepo implements IUserTaskRepo {
             if (filters.UserId != null) {
                 search.where['UserId'] = filters.UserId;
             }
-            if (filters.ReferenceItemId != null) {
-                search.where['ReferenceItemId'] = filters.ReferenceItemId;
+            if (filters.ActionId != null) {
+                search.where['ReferenceItemId'] = filters.ActionId;
             }
             if (filters.Task != null) {
                 search.where['Task'] = { [Op.like]: '%' + filters.Task + '%' };
@@ -73,8 +73,8 @@ export class UserTaskRepo implements IUserTaskRepo {
             if (filters.Category != null) {
                 search.where['Category'] = { [Op.like]: '%' + filters.Category + '%' };
             }
-            if (filters.Action != null) {
-                search.where['Action'] = { [Op.like]: '%' + filters.Action + '%' };
+            if (filters.ActionType != null) {
+                search.where['ActionType'] = { [Op.like]: '%' + filters.ActionType + '%' };
             }
             if (filters.Started != null) {
                 search.where['Started'] = filters.Started;
@@ -178,16 +178,16 @@ export class UserTaskRepo implements IUserTaskRepo {
                 userTask.Category = model.Category as UserTaskCategory;
             }
 
-            if (model.Action != null) {
-                userTask.Action = model.Action;
+            if (model.ActionType != null) {
+                userTask.ActionType = model.ActionType;
             }
 
             if (model.Description != null) {
                 userTask.Description = model.Description;
             }
 
-            if (model.ReferenceItemId != null) {
-                userTask.ReferenceItemId = model.ReferenceItemId;
+            if (model.ActionId != null) {
+                userTask.ActionId = model.ActionId;
             }
 
             if (model.IsRecurrent != null) {

@@ -1,3 +1,4 @@
+import { UserTaskActionType } from "./user.task..types";
 
 export interface UserTaskDomainModel {
     id?                  : string;
@@ -5,14 +6,14 @@ export interface UserTaskDomainModel {
     DisplayId?           : string;
     Task?                : string;
     Category?            : string;
-    Action?              : string;
     Description?         : string;
-    ReferenceItemId?     : string;
+    ActionType?          : UserTaskActionType;
+    ActionId?            : string;
     ScheduledStartTime?  : Date;
     ScheduledEndTime?    : Date;
     Started?             : boolean;
     StartedAt?           : Date;
-    Finished             : boolean;
+    Finished?            : boolean;
     FinishedAt?          : Date;
     Cancelled?           : boolean;
     CancelledAt?         : Date;

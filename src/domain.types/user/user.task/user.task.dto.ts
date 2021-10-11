@@ -1,5 +1,5 @@
 import { ProgressStatus } from "../../../domain.types/miscellaneous/system.types";
-import { UserTaskCategory } from "./user.task..types";
+import { UserTaskActionType, UserTaskCategory } from "./user.task..types";
 
 export interface UserTaskDto {
     id?                  : string;
@@ -7,9 +7,9 @@ export interface UserTaskDto {
     DisplayId?           : string;
     Task?                : string;
     Category?            : UserTaskCategory;
-    Action?              : string;
     Description?         : string;
-    ReferenceItemId?     : string;
+    ActionType?          : UserTaskActionType;
+    ActionId?            : string;
     ScheduledStartTime?  : Date;
     ScheduledEndTime?    : Date;
     Status?              : ProgressStatus;

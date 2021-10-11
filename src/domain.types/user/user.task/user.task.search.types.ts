@@ -4,8 +4,8 @@ export interface UserTaskSearchFilters {
     UserId?         : string;
     Task?           : string;
     Category?       : number;
-    Action          : string;
-    ReferenceItemId?: string;
+    ActionType      : string;
+    ActionId?       : string;
     ScheduledFrom?  : Date;
     ScheduledTo?    : Date;
     Started?        : boolean;
@@ -13,10 +13,10 @@ export interface UserTaskSearchFilters {
     Cancelled?      : boolean;
     CreatedDateFrom?: Date;
     CreatedDateTo?  : Date;
-    OrderBy         : string;
-    Order           : string;
-    PageIndex       : number;
-    ItemsPerPage    : number;
+    OrderBy?        : string;
+    Order?          : string;
+    PageIndex?      : number;
+    ItemsPerPage?   : number;
 }
 
 export interface UserTaskSearchResults {

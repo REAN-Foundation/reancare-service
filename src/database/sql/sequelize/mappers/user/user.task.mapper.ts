@@ -1,5 +1,5 @@
 import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system.types';
-import { UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task..types';
+import { UserTaskActionType, UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task..types';
 import { UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
 import UserTask from '../../models/user/user.task.model';
 
@@ -34,9 +34,10 @@ export class UserTaskMapper {
             DisplayId            : task.DisplayId,
             UserId               : task.UserId,
             Task                 : task.Task,
-            Category             : task.Category as UserTaskCategory,
-            Action               : task.Action,
             Description          : task.Description,
+            Category             : task.Category as UserTaskCategory,
+            ActionType           : task.ActionType as UserTaskActionType,
+            ActionId             : task.ActionId,
             ScheduledStartTime   : task.ScheduledStartTime,
             ScheduledEndTime     : task.ScheduledEndTime,
             Status               : status,

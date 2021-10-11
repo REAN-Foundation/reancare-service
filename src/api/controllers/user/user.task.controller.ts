@@ -26,6 +26,8 @@ export class UserTaskController {
 
     _authorizer: Authorizer = null;
 
+    _validator: UserTaskValidator = new UserTaskValidator();
+
     constructor() {
         this._service = Loader.container.resolve(UserTaskService);
         this._roleService = Loader.container.resolve(RoleService);
@@ -43,14 +45,14 @@ export class UserTaskController {
             request.context = 'UserTask.Create';
             await this._authorizer.authorize(request, response);
             
-            const domainModel = await UserTaskValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             const userTask = await this._service.create(domainModel);
             if (userTask == null) {
                 throw new ApiError(400, 'Cannot create userTask!');
             }
 
-            ResponseHandler.success(request, response, 'UserTask created successfully!', 201, {
+            ResponseHandler.success(request, response, 'User task created successfully!', 201, {
                 UserTask : userTask,
             });
         } catch (error) {
@@ -64,14 +66,14 @@ export class UserTaskController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const id: string = await UserTaskValidator.getById(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
 
             const userTask = await this._service.getById(id);
             if (userTask == null) {
-                throw new ApiError(404, 'UserTask not found.');
+                throw new ApiError(404, 'User task not found.');
             }
 
-            ResponseHandler.success(request, response, 'UserTask retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'User task retrieved successfully!', 200, {
                 UserTask : userTask,
             });
         } catch (error) {
@@ -84,7 +86,7 @@ export class UserTaskController {
             request.context = 'UserTask.Search';
             await this._authorizer.authorize(request, response);
 
-            const filters = await UserTaskValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -106,7 +108,7 @@ export class UserTaskController {
             request.context = 'UserTask.StartTask';
             await this._authorizer.authorize(request, response);
 
-            const id: string = await UserTaskValidator.startTask(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
 
             const existing = await this._service.getById(id);
             if (existing == null) {
@@ -131,11 +133,11 @@ export class UserTaskController {
             request.context = 'UserTask.FinishTask';
             await this._authorizer.authorize(request, response);
 
-            const id: string = await UserTaskValidator.finishTask(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
 
             const existing = await this._service.getById(id);
             if (existing == null) {
-                throw new ApiError(404, 'UserTask not found.');
+                throw new ApiError(404, 'User task not found.');
             }
 
             const updated = await this._service.finishTask(id);
@@ -156,11 +158,11 @@ export class UserTaskController {
             request.context = 'UserTask.CancelTask';
             await this._authorizer.authorize(request, response);
 
-            const { id, reason } = await UserTaskValidator.cancelTask(request);
-
+            const { id, reason } = await this._validator.cancelTask(request);
+            
             const existing = await this._service.getById(id);
             if (existing == null) {
-                throw new ApiError(404, 'UserTask not found.');
+                throw new ApiError(404, 'User task not found.');
             }
 
             const updated = await this._service.cancelTask(id, reason);
@@ -182,9 +184,8 @@ export class UserTaskController {
             request.context = 'UserTask.Summary';
             await this._authorizer.authorize(request, response);
 
-            const { userId, dateStr } = await UserTaskValidator.getTaskSummaryForDay(request);
-
-            const summary = await this._service.getTaskSummaryForDay(userId, dateStr);
+            const { userId, date } = await this._validator.getTaskSummaryForDay(request);
+            const summary = await this._service.getTaskSummaryForDay(userId, date);
                    
             ResponseHandler.success(request, response, 'User task cancelled successfully!', 200, {
                 UserTaskSummaryForDay : summary
@@ -200,20 +201,20 @@ export class UserTaskController {
             request.context = 'UserTask.Update';
             await this._authorizer.authorize(request, response);
 
-            const domainModel = await UserTaskValidator.update(request);
-
-            const id: string = await UserTaskValidator.getById(request);
+            const domainModel = await this._validator.update(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
+            
             const existingUserTask = await this._service.getById(id);
             if (existingUserTask == null) {
-                throw new ApiError(404, 'UserTask not found.');
+                throw new ApiError(404, 'User task not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update userTask record!');
             }
 
-            ResponseHandler.success(request, response, 'UserTask record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'User task record updated successfully!', 200, {
                 UserTask : updated,
             });
         } catch (error) {
@@ -226,18 +227,18 @@ export class UserTaskController {
             request.context = 'UserTask.Delete';
             await this._authorizer.authorize(request, response);
 
-            const id: string = await UserTaskValidator.getById(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
             const existingUserTask = await this._service.getById(id);
             if (existingUserTask == null) {
-                throw new ApiError(404, 'UserTask not found.');
+                throw new ApiError(404, 'User task not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'UserTask cannot be deleted.');
+                throw new ApiError(400, 'User task cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'UserTask record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'User task record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

@@ -64,26 +64,26 @@ export default class UserTask extends Model {
     })
     Category: string;
 
-    @Length({ max: 128 })
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
-    })
-    Action: string;
-
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
     Description: string;
+    
+    @Length({ max: 64 })
+    @Column({
+        type      : DataType.STRING(64),
+        allowNull : true,
+    })
+    ActionType: string;
 
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    ReferenceItemId: string;
+    ActionId: string;
 
     @IsDate
     @Column({

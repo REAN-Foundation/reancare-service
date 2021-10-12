@@ -1,4 +1,4 @@
-import { UserTaskActionType } from "../../domain.types/user/user.task/user.task..types";
+import { UserActionType } from "../../domain.types/user/user.task/user.task..types";
 import { Loader } from "../../startup/loader";
 import { MedicationConsumptionService } from "../clinical/medication/medication.consumption.service";
 import { IUserActionService } from "./user.action.service.interface";
@@ -29,10 +29,10 @@ export class UserActionResolver {
     }
 
     getActionService = (actionType: string): IUserActionService => {
-        if (actionType === UserTaskActionType.Medication) {
+        if (actionType === UserActionType.Medication) {
             return Loader.container.resolve(MedicationConsumptionService);
         }
-        else if (actionType === UserTaskActionType.Appointment) {
+        else if (actionType === UserActionType.Appointment) {
             
             //return Loader.container.resolve(AppointmentService);
             return null;

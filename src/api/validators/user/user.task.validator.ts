@@ -1,4 +1,5 @@
 import express from 'express';
+import { ProgressStatus } from '../../../domain.types/miscellaneous/system.types';
 import { UserTaskDomainModel } from '../../../domain.types/user/user.task/user.task.domain.model';
 import { UserTaskSearchFilters } from '../../../domain.types/user/user.task/user.task.search.types';
 import { BaseValidator, Where } from '../base.validator';
@@ -43,9 +44,7 @@ export class UserTaskValidator extends BaseValidator{
         await this.validateUuid(request, 'actionId', Where.Query, false, false);
         await this.validateDate(request, 'scheduledFrom', Where.Query, false, false);
         await this.validateDate(request, 'scheduledTo', Where.Query, false, false);
-        await this.validateBoolean(request, 'started', Where.Query, false, false);
-        await this.validateBoolean(request, 'finished', Where.Query, false, false);
-        await this.validateBoolean(request, 'cancelled', Where.Query, false, false);
+        await this.validateString(request, 'status', Where.Query, false, false);
         await this.validateCommonSearchFilters(request);
         
         this.validateRequest(request);
@@ -70,7 +69,7 @@ export class UserTaskValidator extends BaseValidator{
      }
 
      getTaskSummaryForDay = async (request: express.Request): Promise<any> => {
-         const id: string = await this.getParamUuid(request, 'userId');
+         const userId: string = await this.getParamUuid(request, 'userId');
          await this.validateDateString(request, 'date', Where.Param, false, false);
          this.validateRequest(request);
          var dateStr = request.params.date;
@@ -78,7 +77,7 @@ export class UserTaskValidator extends BaseValidator{
              .toISOString()
              .split('T')[0];
          var date = request.params.date ? dateStr.split('T')[0] : todayStr;
-         return { id, date };
+         return { userId, date };
      };
 
      private  async validateCreateBody(request) {
@@ -89,8 +88,8 @@ export class UserTaskValidator extends BaseValidator{
          await this.validateString(request, 'ActionType', Where.Body, false, false);
          await this.validateUuid(request, 'ActionId', Where.Body, false, true);
          await this.validateString(request, 'ActionType', Where.Body, false, true);
-         await this.validateDateString(request, 'ScheduledStartTime', Where.Body, true, false);
-         await this.validateDateString(request, 'ScheduledEndTime', Where.Body, false, false);
+         await this.validateDate(request, 'ScheduledStartTime', Where.Body, true, false);
+         await this.validateDate(request, 'ScheduledEndTime', Where.Body, false, false);
          await this.validateBoolean(request, 'IsRecurrent', Where.Body, false, true);
          await this.validateUuid(request, 'RecurrenceScheduleId', Where.Body, false, true);
 
@@ -104,8 +103,8 @@ export class UserTaskValidator extends BaseValidator{
          await this.validateString(request, 'ActionType', Where.Body, false, false);
          await this.validateUuid(request, 'ActionId', Where.Body, false, true);
          await this.validateString(request, 'ActionType', Where.Body, false, true);
-         await this.validateDateString(request, 'ScheduledStartTime', Where.Body, false, false);
-         await this.validateDateString(request, 'ScheduledEndTime', Where.Body, false, false);
+         await this.validateDate(request, 'ScheduledStartTime', Where.Body, false, false);
+         await this.validateDate(request, 'ScheduledEndTime', Where.Body, false, false);
          await this.validateBoolean(request, 'IsRecurrent', Where.Body, false, true);
          await this.validateUuid(request, 'RecurrenceScheduleId', Where.Body, false, true);
 
@@ -113,6 +112,25 @@ export class UserTaskValidator extends BaseValidator{
      }
 
      private  getFilter(request): UserTaskSearchFilters {
+
+         var status: ProgressStatus = null;
+         if (request.query.status) {
+             if (request.query.status === 'inProgress') {
+                 status = ProgressStatus.InProgress;
+             }
+             if (request.query.status === 'pending' || request.query.status === 'upcoming') {
+                 status = ProgressStatus.Pending;
+             }
+             if (request.query.status === 'completed' || request.query.status === 'finished') {
+                 status = ProgressStatus.Completed;
+             }
+             if (request.query.status === 'delayed' || request.query.status === 'overdue') {
+                 status = ProgressStatus.Delayed;
+             }
+             if (request.query.status === 'cancelled') {
+                 status = ProgressStatus.Cancelled;
+             }
+         }
 
          const filters: UserTaskSearchFilters = {
              UserId          : request.query.userId,
@@ -122,9 +140,7 @@ export class UserTaskValidator extends BaseValidator{
              ActionId        : request.query.actionId,
              ScheduledFrom   : request.query.scheduledFrom,
              ScheduledTo     : request.query.scheduledTo,
-             Started         : request.query.started,
-             Finished        : request.query.finished,
-             Cancelled       : request.query.cancelled,
+             Status          : status,
              CreatedDateFrom : request.query.createdDateFrom,
              CreatedDateTo   : request.query.createdDateTo
          };

@@ -1,5 +1,5 @@
 import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system.types';
-import { UserTaskActionType, UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task..types';
+import { UserActionType, UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task..types';
 import { UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
 import UserTask from '../../models/user/user.task.model';
 
@@ -17,7 +17,7 @@ export class UserTaskMapper {
         if (task.Started === true && task.Finished === true) {
             status = ProgressStatus.Completed;
         }
-        if (task.Started === false && task.Finished === false) {
+        if (task.Started === false && task.Finished === false && task.Cancelled === false) {
             if (task.ScheduledEndTime < new Date()) {
                 status = ProgressStatus.Delayed;
             }
@@ -28,6 +28,9 @@ export class UserTaskMapper {
         if (task.Started === true && task.Finished === false) {
             status = ProgressStatus.InProgress;
         }
+        if (task.Cancelled === true) {
+            status = ProgressStatus.Cancelled;
+        }
 
         const dto: UserTaskDto = {
             id                   : task.id,
@@ -36,7 +39,7 @@ export class UserTaskMapper {
             Task                 : task.Task,
             Description          : task.Description,
             Category             : task.Category as UserTaskCategory,
-            ActionType           : task.ActionType as UserTaskActionType,
+            ActionType           : task.ActionType as UserActionType,
             ActionId             : task.ActionId,
             ScheduledStartTime   : task.ScheduledStartTime,
             ScheduledEndTime     : task.ScheduledEndTime,

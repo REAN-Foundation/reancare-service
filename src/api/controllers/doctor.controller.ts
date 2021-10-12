@@ -1,28 +1,22 @@
 import express from 'express';
-
-import { DoctorService } from '../../services/doctor.service';
-import { UserService } from '../../services/user/user.service';
-import { PersonService } from '../../services/person.service';
+import { Authorizer } from '../../auth/authorizer';
+import { ApiError } from '../../common/api.error';
 import { Helper } from '../../common/helper';
 import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
-import { Authorizer } from '../../auth/authorizer';
-import { DoctorValidator } from '../validators/doctor.validator';
-import { DoctorDomainModel } from '../../domain.types/doctor/doctor.domain.model';
-
+import { PersonDomainModel } from '../../domain.types/person/person.domain.model';
 import { Roles } from '../../domain.types/role/role.types';
 import { UserDomainModel } from '../../domain.types/user/user/user.domain.model';
-import { ApiError } from '../../common/api.error';
-import { AddressDomainModel } from '../../domain.types/address/address.domain.model';
-import { AddressValidator } from '../validators/address.validator';
-import { AddressService } from '../../services/address.service';
+import { DoctorService } from '../../services/doctor.service';
+import { PersonService } from '../../services/person.service';
 import { RoleService } from '../../services/role.service';
-import { PersonDomainModel } from '../../domain.types/person/person.domain.model';
-import { DoctorDetailsDto } from '../../domain.types/doctor/doctor.dto';
+import { UserService } from '../../services/user/user.service';
+import { Loader } from '../../startup/loader';
+import { DoctorValidator } from '../validators/doctor.validator';
+import { BaseUserController } from './base.user.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DoctorController {
+export class DoctorController extends BaseUserController {
 
     //#region member variables and constructors
 
@@ -32,16 +26,16 @@ export class DoctorController {
 
     _personService: PersonService = null;
 
-    _addressService: AddressService = null;
-
     _roleService: RoleService = null;
 
     _authorizer: Authorizer = null;
 
     constructor() {
+
+        super();
+
         this._service = Loader.container.resolve(DoctorService);
         this._userService = Loader.container.resolve(UserService);
-        this._personService = Loader.container.resolve(PersonService);
         this._roleService = Loader.container.resolve(RoleService);
         this._authorizer = Loader.authorizer;
     }
@@ -114,7 +108,7 @@ export class DoctorController {
                 throw new ApiError(400, 'Cannot create doctor!');
             }
 
-            await this.createAddress(request, doctor);
+            await this.addAddress(request, person.id);
 
             ResponseHandler.success(request, response, 'Doctor created successfully!', 201, {
                 Doctor : doctor,
@@ -211,11 +205,12 @@ export class DoctorController {
                 throw new ApiError(400, 'Unable to update doctor record!');
             }
 
-            await this.createOrUpdateAddress(request, doctorDomainModel);
+            await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
 
             ResponseHandler.success(request, response, 'Doctor records updated successfully!', 200, {
                 Doctor : updatedDoctor,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -244,52 +239,6 @@ export class DoctorController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-
-    //#endregion
-
-    //#region Private methods
-
-    private async createOrUpdateAddress(request, domainModel: DoctorDomainModel): Promise<void> {
-
-        let addressDomainModel: AddressDomainModel = null;
-        const addressBody = request.body.Address ?? null;
-
-        if (addressBody != null) {
-            addressDomainModel = await AddressValidator.getDomainModel(addressBody);
-
-            //get existing address to update
-            const existingAddresses = await this._personService.getAddresses(domainModel.PersonId);
-            if (existingAddresses.length < 1) {
-                addressDomainModel.PersonId = domainModel.PersonId;
-                const address = await this._addressService.create(addressDomainModel);
-                if (address == null) {
-                    throw new ApiError(400, 'Cannot create address!');
-                }
-            } else if (existingAddresses.length === 1) {
-                const updatedAddress = await this._addressService.update(
-                    existingAddresses[0].id,
-                    addressDomainModel
-                );
-                if (updatedAddress == null) {
-                    throw new ApiError(400, 'Unable to update address record!');
-                }
-            }
-        }
-    }
-
-    private async createAddress(request, doctor: DoctorDetailsDto): Promise<void> {
-        
-        let addressDomainModel: AddressDomainModel = null;
-        const addressBody = request.body.Address ?? null;
-        if (addressBody != null) {
-            addressDomainModel = await AddressValidator.getDomainModel(addressBody);
-            addressDomainModel.PersonId = doctor.User.id;
-            const address = await this._addressService.create(addressDomainModel);
-            if (address == null) {
-                throw new ApiError(400, 'Cannot create address!');
-            }
-        }
-    }
 
     //#endregion
 

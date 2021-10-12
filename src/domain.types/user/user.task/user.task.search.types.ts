@@ -1,3 +1,4 @@
+import { ProgressStatus } from "../../../domain.types/miscellaneous/system.types";
 import { UserTaskDto } from "./user.task.dto";
 
 export interface UserTaskSearchFilters {
@@ -8,9 +9,7 @@ export interface UserTaskSearchFilters {
     ActionId?       : string;
     ScheduledFrom?  : Date;
     ScheduledTo?    : Date;
-    Started?        : boolean;
-    Finished        : boolean;
-    Cancelled?      : boolean;
+    Status?         : ProgressStatus;
     CreatedDateFrom?: Date;
     CreatedDateTo?  : Date;
     OrderBy?        : string;

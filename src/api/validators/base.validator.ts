@@ -118,7 +118,6 @@ export class BaseValidator {
         var chain: ValidationChain = this.getValidationChain(field, where);
         chain = chain.trim();
         chain = this.checkRequired(required, chain, nullable);
-        chain = chain.isDate();
         chain = chain.toDate();
         await chain.run(request);
     }

@@ -1,12 +1,12 @@
-import { IAddressRepo } from '../../../repository.interfaces/address.repo.interface';
-import Address from '../models/address.model';
 import { Op } from 'sequelize';
-import { AddressMapper } from '../mappers/address.mapper';
-import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
+import { Logger } from '../../../../common/logger';
 import { AddressDomainModel } from '../../../../domain.types/address/address.domain.model';
 import { AddressDto } from '../../../../domain.types/address/address.dto';
 import { AddressSearchFilters, AddressSearchResults } from '../../../../domain.types/address/address.search.types';
+import { IAddressRepo } from '../../../repository.interfaces/address.repo.interface';
+import { AddressMapper } from '../mappers/address.mapper';
+import Address from '../models/address.model';
 
 ///////////////////////////////////////////////////////////////////////
 

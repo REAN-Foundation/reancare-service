@@ -1,11 +1,11 @@
+import { healthcare_v1 } from 'googleapis';
 import { Helper } from '../../../../../../common/helper';
 import { Logger } from '../../../../../../common/logger';
 import { PatientDomainModel } from '../../../../../../domain.types/patient/patient/patient.domain.model';
-import { IPatientStore } from '../../../../interfaces/patient.store.interface';
-import { GcpHelper } from './helper.gcp';
-import { healthcare_v1 } from 'googleapis';
-import { FhirHelper } from '../../fhir.helper';
 import { PatientSearchFilters } from '../../../../../../domain.types/patient/patient/patient.search.types';
+import { IPatientStore } from '../../../../interfaces/patient.store.interface';
+import { FhirHelper } from '../../fhir.helper';
+import { GcpHelper } from './helper.gcp';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -146,19 +146,17 @@ export class GcpPatientStore implements IPatientStore {
                 value  : model.User.Person.Email
             });
         }
-        if (model.Addresses != null) {
-            for (var a of model.Addresses) {
-                var address = {
-                    line       : [],
-                    city       : a.City ?? '',
-                    district   : a.District ?? '',
-                    postalCode : a.PostalCode ?? ''
-                };
-                if (a.AddressLine != null) {
-                    address.line.push(a.AddressLine);
-                }
-                resource.address.push(address);
+        if (model.Address != null) {
+            var address = {
+                line       : [],
+                city       : model.Address.City ?? '',
+                district   : model.Address.District ?? '',
+                postalCode : model.Address.PostalCode ?? ''
+            };
+            if (model.Address.AddressLine != null) {
+                address.line.push(model.Address.AddressLine);
             }
+            resource.address.push(address);
         }
         return resource;
     }
@@ -217,8 +215,8 @@ export class GcpPatientStore implements IPatientStore {
             }
         }
 
-        if (updates.Addresses !== null && updates.Addresses.length > 0) {
-            var a = updates.Addresses[0];
+        if (updates.Address !== null) {
+            var a = updates.Address;
             var address = {
                 line       : [],
                 city       : a.City ?? '',

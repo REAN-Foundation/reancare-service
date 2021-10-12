@@ -4,6 +4,7 @@ import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
 import { Logger } from '../../../common/logger';
 import { ResponseHandler } from '../../../common/response.handler';
+import { UserActionTypeList, UserTaskCategoryList } from '../../../domain.types/user/user.task/user.task..types';
 import { OrganizationService } from '../../../services/organization.service';
 import { PersonService } from '../../../services/person.service';
 import { RoleService } from '../../../services/role.service';
@@ -42,6 +43,26 @@ export class UserTaskController {
 
     //#region Action methods
 
+    getCategories = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            ResponseHandler.success(request, response, 'User task categories retrieved successfully!', 200, {
+                UserTaskCategories : UserTaskCategoryList,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getUserActionTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            ResponseHandler.success(request, response, 'User action types retrieved successfully!', 200, {
+                UserActionTypes : UserActionTypeList,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.Create';
@@ -72,6 +93,28 @@ export class UserTaskController {
             const id: string = await this._validator.getParamUuid(request, 'id');
 
             const userTask = await this._service.getById(id);
+            if (userTask == null) {
+                throw new ApiError(404, 'User task not found.');
+            }
+
+            ResponseHandler.success(request, response, 'User task retrieved successfully!', 200, {
+                UserTask : userTask,
+            });
+            
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getByDisplayId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'UserTask.GetByDisplayId';
+            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            await this._authorizer.authorize(request, response);
+
+            const id: string = await this._validator.getParamUuid(request, 'displayId');
+
+            const userTask = await this._service.getByDisplayId(id);
             if (userTask == null) {
                 throw new ApiError(404, 'User task not found.');
             }

@@ -8,6 +8,8 @@ export interface IUserTaskRepo {
 
     getById(id: string): Promise<UserTaskDto>;
 
+    getByDisplayId(displayId: string): Promise<UserTaskDto>;
+
     search(filters: UserTaskSearchFilters): Promise<UserTaskSearchResults>;
 
     update(id: string, model: UserTaskDomainModel): Promise<UserTaskDto>;

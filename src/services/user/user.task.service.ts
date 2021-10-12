@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe";
+import { Helper } from "../../common/helper";
 import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
 import { UserTaskDomainModel } from '../../domain.types/user/user.task/user.task.domain.model';
 import { TaskSummaryDto, UserTaskDto } from '../../domain.types/user/user.task/user.task.dto';
@@ -14,11 +15,17 @@ export class UserTaskService {
     ) {}
 
     create = async (userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
+        const displayId = Helper.generateDisplayId('TSK');
+        userTaskDomainModel.DisplayId = displayId;
         return await this._userTaskRepo.create(userTaskDomainModel);
     };
 
     getById = async (id: string): Promise<UserTaskDto> => {
         return await this._userTaskRepo.getById(id);
+    };
+
+    getByDisplayId = async (id: string): Promise<UserTaskDto> => {
+        return await this._userTaskRepo.getByDisplayId(id);
     };
 
     search = async (filters: UserTaskSearchFilters): Promise<UserTaskSearchResults> => {

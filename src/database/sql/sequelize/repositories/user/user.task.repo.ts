@@ -3,6 +3,7 @@ import { Op } from 'sequelize';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { TimeHelper } from '../../../../../common/time.helper';
+import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system.types';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task..types';
 import { UserTaskDomainModel } from '../../../../../domain.types/user/user.task/user.task.domain.model';
@@ -47,6 +48,20 @@ export class UserTaskRepo implements IUserTaskRepo {
         }
     };
 
+    getByDisplayId = async (displayId: string): Promise<UserTaskDto> => {
+        try {
+            const userTask = await UserTask.findOne({
+                where : {
+                    DisplayId : displayId
+                }
+            });
+            return UserTaskMapper.toDto(userTask);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     search = async (filters: UserTaskSearchFilters): Promise<UserTaskSearchResults> => {
         try {
             const search = { where: {} };
@@ -76,16 +91,43 @@ export class UserTaskRepo implements IUserTaskRepo {
             if (filters.ActionType != null) {
                 search.where['ActionType'] = { [Op.like]: '%' + filters.ActionType + '%' };
             }
-            if (filters.Started != null) {
-                search.where['Started'] = filters.Started;
+            if (filters.Status != null) {
+                if (filters.Status === ProgressStatus.InProgress) {
+                    search.where['Started'] = true;
+                    search.where['Finished'] = false;
+                    search.where['Cancelled'] = false;
+                }
+                if (filters.Status === ProgressStatus.Pending) {
+                    search.where['Started'] = false;
+                    search.where['Finished'] = false;
+                    search.where['Cancelled'] = false;
+                    search.where['ScheduledStartTime'] = {
+                        [Op.gte] : new Date(),
+                    };
+                }
+                if (filters.Status === ProgressStatus.Delayed) {
+                    search.where['Started'] = false;
+                    search.where['Finished'] = false;
+                    search.where['Cancelled'] = false;
+                    search.where['ScheduledEndTime'] = {
+                        [Op.lte] : new Date(),
+                    };
+                }
+                if (filters.Status === ProgressStatus.Completed) {
+                    search.where['Started'] = true;
+                    search.where['Finished'] = true;
+                    search.where['Cancelled'] = false;
+                    search.where['FinishedAt'] = {
+                        [Op.lte] : new Date(),
+                    };
+                }
+                if (filters.Status === ProgressStatus.Cancelled) {
+                    search.where['Cancelled'] = true;
+                    search.where['CancelledAt'] = {
+                        [Op.lte] : new Date(),
+                    };
+                }
             }
-            if (filters.Finished != null) {
-                search.where['Finished'] = filters.Finished;
-            }
-            if (filters.Cancelled != null) {
-                search.where['Cancelled'] = filters.Cancelled;
-            }
-
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
                 search.where['CreatedAt'] = {
                     [Op.gte] : filters.CreatedDateFrom,

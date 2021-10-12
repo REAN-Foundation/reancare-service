@@ -1,5 +1,5 @@
 import express from 'express';
-import { query, body, validationResult, param } from 'express-validator';
+import { body, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../common/helper';
 import { PatientDomainModel } from '../../../domain.types/patient/patient/patient.domain.model';
 import { PatientSearchFilters } from '../../../domain.types/patient/patient/patient.search.types';
@@ -35,8 +35,8 @@ export class PatientValidator {
                     CurrentTimeZone  : request.body.DefaultTimeZone ?? null,
                     GenerateLoginOTP : request.body.DefaultTimeZone ?? null,
                 },
-                UserId     : request.params.userId ?? null,
-                AddressIds : request.body.AddressIds ?? [],
+                UserId  : request.params.userId ?? null,
+                Address : request.body.Addresses ?? null
             };
             if (entity.User.Person.Gender != null && entity.User.Person.Prefix == null) {
                 entity.User.Person.Prefix = Helper.guessPrefixByGender(entity.User.Person.Gender);
@@ -258,6 +258,10 @@ export class PatientValidator {
             await body('AddressIds').optional()
                 .isArray()
                 .toArray()
+                .run(request);
+
+            await body('Addresses').optional()
+                .isArray()
                 .run(request);
 
             const result = validationResult(request);

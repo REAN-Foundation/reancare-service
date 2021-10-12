@@ -33,12 +33,12 @@ export const UserTaskCategoryList: UserTaskCategory [] = [
     UserTaskCategory.Custom,
 ];
 
-export enum UserTaskActionType {
+export enum UserActionType {
     Medication  = 'Medication',
     Appointment = 'Appointment',
 }
 
-export const UserTaskActionTypeList: UserTaskActionType [] = [
-    UserTaskActionType.Medication,
-    UserTaskActionType.Appointment,
+export const UserActionTypeList: UserActionType [] = [
+    UserActionType.Medication,
+    UserActionType.Appointment,
 ];

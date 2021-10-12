@@ -1,6 +1,5 @@
 import express from 'express';
-import { body, param, validationResult, query } from 'express-validator';
-
+import { body, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../common/helper';
 import { AddressDomainModel } from '../../domain.types/address/address.domain.model';
 import { AddressSearchFilters } from '../../domain.types/address/address.search.types';
@@ -9,20 +8,18 @@ import { AddressSearchFilters } from '../../domain.types/address/address.search.
 
 export class AddressValidator {
 
-    static getDomainModel = (request: express.Request): AddressDomainModel => {
+    static getDomainModel = (requestBody: any): AddressDomainModel => {
 
         const addressModel: AddressDomainModel = {
-            Type           : request.body.Type ?? 'Home',
-            PersonId       : request.body.PersonId ?? null,
-            OrganizationId : request.body.OrganizationId ?? null,
-            AddressLine    : request.body.AddressLine,
-            City           : request.body.City ?? null,
-            District       : request.body.District ?? null,
-            State          : request.body.State ?? null,
-            Country        : request.body.Country ?? null,
-            PostalCode     : request.body.PostalCode ?? null,
-            Longitude      : request.body.Longitude ?? null,
-            Lattitude      : request.body.Lattitude ?? null,
+            Type        : requestBody.Type ?? 'Home',
+            AddressLine : requestBody.AddressLine,
+            City        : requestBody.City ?? null,
+            District    : requestBody.District ?? null,
+            State       : requestBody.State ?? null,
+            Country     : requestBody.Country ?? null,
+            PostalCode  : requestBody.PostalCode ?? null,
+            Longitude   : requestBody.Longitude ?? null,
+            Lattitude   : requestBody.Lattitude ?? null,
         };
 
         return addressModel;
@@ -30,7 +27,7 @@ export class AddressValidator {
 
     static create = async (request: express.Request): Promise<AddressDomainModel> => {
         await AddressValidator.validateBody(request);
-        return AddressValidator.getDomainModel(request);
+        return AddressValidator.getDomainModel(request.body);
     };
 
     static getById = async (request: express.Request): Promise<string> => {
@@ -192,7 +189,7 @@ export class AddressValidator {
         const id = await AddressValidator.getParamId(request);
         await AddressValidator.validateBody(request);
 
-        const domainModel = AddressValidator.getDomainModel(request);
+        const domainModel = AddressValidator.getDomainModel(request.body);
         domainModel.id = id;
 
         return domainModel;

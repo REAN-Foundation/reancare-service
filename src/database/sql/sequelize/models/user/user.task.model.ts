@@ -144,7 +144,7 @@ export default class UserTask extends Model {
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
-        allowNull : false,
+        allowNull : true,
     })
     CancellationReason: string;
    

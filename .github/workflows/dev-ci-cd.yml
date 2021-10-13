@@ -97,7 +97,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: reancare/healthguru-bot:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          tags: reancare/services:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
@@ -115,7 +115,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: default
-          image: reancare/healthguru-bot:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          image: reancare/services:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1

@@ -47,20 +47,6 @@ export class AddressController {
             
             const domainModel = await AddressValidator.create(request);
 
-            if (domainModel.PersonId != null) {
-                const person = await this._personService.getById(domainModel.PersonId);
-                if (person == null) {
-                    throw new ApiError(404, `Person with an id ${domainModel.PersonId} cannot be found.`);
-                }
-            }
-
-            if (domainModel.OrganizationId != null) {
-                var organization = await this._organizationService.getById(domainModel.OrganizationId);
-                if (organization == null) {
-                    throw new ApiError(404, `Organization with an id ${domainModel.OrganizationId} cannot be found.`);
-                }
-            }
-
             const address = await this._service.create(domainModel);
             if (address == null) {
                 throw new ApiError(400, 'Cannot create address!');

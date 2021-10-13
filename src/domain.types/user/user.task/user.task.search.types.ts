@@ -1,25 +1,21 @@
+import { ProgressStatus } from "../../../domain.types/miscellaneous/system.types";
 import { UserTaskDto } from "./user.task.dto";
 
 export interface UserTaskSearchFilters {
-    UserId?                : string;
-    UserRole?              : string;
-    Name?                  : string;
-    CategoryId?            : number;
-    ActionType             : string;
-    ReferenceItemId?       : string;
-    ScheduledStartTimeFrom?: Date;
-    ScheduledStartTimeTo?  : Date;
-    ScheduledEndTimeFrom?  : Date;
-    ScheduledEndTimeTo?    : Date;
-    Started?               : boolean;
-    Finished               : boolean;
-    Cancelled?             : boolean;
-    CreatedDateFrom?       : Date;
-    CreatedDateTo?         : Date;
-    OrderBy                : string;
-    Order                  : string;
-    PageIndex              : number;
-    ItemsPerPage           : number;
+    UserId?         : string;
+    Task?           : string;
+    Category?       : number;
+    ActionType      : string;
+    ActionId?       : string;
+    ScheduledFrom?  : Date;
+    ScheduledTo?    : Date;
+    Status?         : ProgressStatus;
+    CreatedDateFrom?: Date;
+    CreatedDateTo?  : Date;
+    OrderBy?        : string;
+    Order?          : string;
+    PageIndex?      : number;
+    ItemsPerPage?   : number;
 }
 
 export interface UserTaskSearchResults {

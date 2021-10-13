@@ -1,17 +1,6 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    ForeignKey,
-    BelongsTo,
+    BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
 import { v4 } from 'uuid';
 import Address from './address.model';
 import Organization from './organization.model';
@@ -48,9 +37,6 @@ export default class OrganizationAddresses extends Model {
         allowNull : false,
     })
     OrganizationId: string;
-
-    @BelongsTo(() => Organization)
-    Organization: Organization;
 
     @IsUUID(4)
     @ForeignKey(() => Address)

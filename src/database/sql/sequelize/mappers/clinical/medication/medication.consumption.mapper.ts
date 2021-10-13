@@ -1,8 +1,8 @@
-import MedicationConsumptionModel from '../../../models/clinical/medication/medication.consumption.model';
+import { TimeHelper } from '../../../../../../common/time.helper';
 import { MedicationConsumptionDetailsDto, MedicationConsumptionDto } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { MedicationConsumptionStatus } from '../../../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types';
-import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
+import MedicationConsumptionModel from '../../../models/clinical/medication/medication.consumption.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -58,6 +58,7 @@ export class MedicationConsumptionMapper {
 
         const dto: MedicationConsumptionDto = {
             id                : consumption.id,
+            PatientUserId     : consumption.PatientUserId,
             DrugName          : consumption.DrugName,
             Details           : consumption.Details,
             TimeScheduleStart : consumption.TimeScheduleStart,

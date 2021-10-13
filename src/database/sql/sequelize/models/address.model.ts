@@ -1,17 +1,9 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    Length,
+    BelongsTo,
+    Column, CreatedAt, DataType, DeletedAt,
     ForeignKey,
-    BelongsTo } from 'sequelize-typescript';
-
+    IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
+} from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import Organization from './organization.model';
 import Person from './person.model';
@@ -69,7 +61,7 @@ export default class Address extends Model {
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),
-        allowNull : true,
+        allowNull : false,
     })
     AddressLine: string;
 
@@ -97,7 +89,7 @@ export default class Address extends Model {
     @Length({ min: 2, max: 32 })
     @Column({
         type      : DataType.STRING(32),
-        allowNull : true
+        allowNull : false
     })
     Country: string;
 

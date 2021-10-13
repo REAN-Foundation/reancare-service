@@ -1,21 +1,20 @@
-import { UserActionDomainModel } from "./user.action.domain.model";
-import { UserTaskCategoryDomainModel } from "./user.task.category.domain.model";
+import { UserActionType, UserTaskCategory } from "./user.task..types";
 
 export interface UserTaskDomainModel {
     id?                  : string;
-    DisplayId?           : string;
     UserId?              : string;
-    UserRole?            : string;
-    TaskName?            : string;
-    Category?            : UserTaskCategoryDomainModel;
-    Action?              : UserActionDomainModel;
+    DisplayId?           : string;
+    Task?                : string;
+    Category?            : UserTaskCategory;
+    Description?         : string;
+    ActionType?          : UserActionType;
+    ActionId?            : string;
     ScheduledStartTime?  : Date;
     ScheduledEndTime?    : Date;
     Started?             : boolean;
     StartedAt?           : Date;
-    Finished             : boolean;
+    Finished?            : boolean;
     FinishedAt?          : Date;
-    TaskIsSuccess?       : boolean;
     Cancelled?           : boolean;
     CancelledAt?         : Date;
     CancellationReason?  : string;

@@ -33,4 +33,6 @@ export interface IMedicationConsumptionRepo {
 
     getSchedulesForDay(patientUserId: string, date: Date): Promise<MedicationConsumptionDto[]>;
 
+    cancelSchedule(id: string): Promise<boolean>;
+
 }

@@ -1,5 +1,6 @@
 FROM node:14.17-alpine
 RUN apk update
+RUN apk add bash
 RUN apk add curl
 
 RUN apk add --no-cache \

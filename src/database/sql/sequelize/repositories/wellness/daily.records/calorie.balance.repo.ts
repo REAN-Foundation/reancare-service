@@ -15,7 +15,6 @@ export class CalorieBalanceRepo implements ICalorieBalanceRepo {
     create = async (calorieBalanceDomainModel: CalorieBalanceDomainModel): Promise<CalorieBalanceDto> => {
         try {
             const entity = {
-                PersonId         : calorieBalanceDomainModel.PersonId,
                 PatientUserId    : calorieBalanceDomainModel.PatientUserId ?? null,
                 CaloriesConsumed : calorieBalanceDomainModel.CaloriesConsumed ?? null,
                 CaloriesBurned   : calorieBalanceDomainModel.CaloriesBurned ?? null,
@@ -45,9 +44,6 @@ export class CalorieBalanceRepo implements ICalorieBalanceRepo {
         try {
             const search = { where: {} };
 
-            if (filters.PersonId != null) {
-                search.where['PersonId'] = { [Op.eq]: filters.PersonId };
-            }
             if (filters.PatientUserId != null) {
                 search.where['PatientUserId'] = { [Op.eq]: filters.PatientUserId };
             }
@@ -136,9 +132,6 @@ export class CalorieBalanceRepo implements ICalorieBalanceRepo {
         try {
             const calorieBalance = await CalorieBalance.findByPk(id);
 
-            if (calorieBalanceDomainModel.PersonId != null) {
-                calorieBalance.PersonId = calorieBalanceDomainModel.PersonId;
-            }
             if (calorieBalanceDomainModel.PatientUserId != null) {
                 calorieBalance.PatientUserId = calorieBalanceDomainModel.PatientUserId;
             }

@@ -11,7 +11,6 @@ export class CalorieBalanceValidator {
     static getDomainModel = (request: express.Request): CalorieBalanceDomainModel => {
 
         const calorieBalanceModel: CalorieBalanceDomainModel = {
-            PersonId         : request.body.PersonId ?? 'Home',
             PatientUserId    : request.body.PatientUserId ?? null,
             CaloriesConsumed : request.body.CaloriesConsumed ?? 0,
             CaloriesBurned   : request.body.CaloriesBurned ?? 0,
@@ -35,12 +34,6 @@ export class CalorieBalanceValidator {
     };
 
     static search = async (request: express.Request): Promise<CalorieBalanceSearchFilters> => {
-
-        await query('personId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
 
         await query('PatientUserId').optional()
             .trim()
@@ -120,12 +113,6 @@ export class CalorieBalanceValidator {
 
     private static async validateBody(request) {
 
-        await body('personId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
         await body('PatientUserId').optional()
             .trim()
             .escape()
@@ -162,7 +149,6 @@ export class CalorieBalanceValidator {
             request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
 
         const filters: CalorieBalanceSearchFilters = {
-            PersonId                 : request.query.personId ?? null,
             PatientUserId            : request.query.patientUserId ?? null,
             MinCaloriesConsumedValue : request.query.minCaloriesConsumedValue ?? null,
             MaxCaloriesConsumedValue : request.query.maxCaloriesConsumedValue ?? null,

@@ -1,7 +1,6 @@
 import { CalorieBalanceDto } from "./calorie.balance.dto";
 
 export interface CalorieBalanceSearchFilters {
-    PersonId?: string;
     PatientUserId?: string;
     MinCaloriesConsumedValue?: number;
     MaxCaloriesConsumedValue?: number;

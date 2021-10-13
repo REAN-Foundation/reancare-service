@@ -136,7 +136,7 @@ jobs:
       - name: Deploy Amazon ECS task definition using Duplo API
         uses: fjogeleit/http-request-action@master
         with:
-          url: 'https://reanfoundation.duplocloud.net/subscriptions/${{ secrets.DUPLO_ID }/UpdateEcsService'
+          url: 'https://reanfoundation.duplocloud.net/subscriptions/${{ secrets.DUPLO_ID }}/UpdateEcsService'
           method: 'POST'
           data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1}'
           bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}

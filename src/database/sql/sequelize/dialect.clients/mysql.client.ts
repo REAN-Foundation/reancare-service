@@ -52,16 +52,14 @@ export class MysqlClient {
                     connection.query(query, function (err, result) {
                         if (err) {
                             Logger.instance().log(err.message);
-<<<<<<< HEAD:src/data/database/sequelize/dialect.clients/mysql.client.ts
-                            Logger.instance().log(result.toString());
 
-                            //throw err;
-=======
-                            var str = result ? result.toString() : null;
+                            var str = (result !== undefined && result !== null) ? result.toString() : null;
                             if (str != null){
                                 Logger.instance().log(str);
                             }
->>>>>>> main:src/database/sql/sequelize/dialect.clients/mysql.client.ts
+                            else {
+                                Logger.instance().log(`Query: ${query}`);
+                            }
                         }
                         resolve(true);
                     });

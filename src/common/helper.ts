@@ -1,12 +1,12 @@
-import * as fs from 'fs';
+import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import child_process from 'child_process';
-import { InputValidationError } from './input.validation.error';
-import { Gender } from '../domain.types/miscellaneous/system.types';
-import { generate } from 'generate-password';
-import { hashSync, compareSync, genSaltSync } from 'bcryptjs';
 import * as crypto from 'crypto';
 import express from 'express';
+import * as fs from 'fs';
+import { generate } from 'generate-password';
 import path from 'path';
+import { Gender } from '../domain.types/miscellaneous/system.types';
+import { InputValidationError } from './input.validation.error';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -401,4 +401,14 @@ export class Helper {
         return path.basename(filepath);
     }
 
+    public static generateDisplayId = (prefix = null) => {
+        var tmp = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
+        var displayId = tmp.slice(0, 4) + '-' + tmp.slice(4, 8);
+        var identifier = displayId;
+        if (prefix != null){
+            identifier = prefix + '-' + identifier;
+        }
+        return identifier;
+    }
+    
 }

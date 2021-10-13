@@ -1,10 +1,11 @@
 import {
-    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsDecimal, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey,
+    IsDate, IsDecimal, IsUUID, Length, Model, PrimaryKey,
+    Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import User from '../../user/user.model';
 import Drug from './drug.model';
-
 
 ///////////////////////////////////////////////////////////////////////
 

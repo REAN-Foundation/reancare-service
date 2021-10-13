@@ -16,6 +16,5 @@ export interface PatientDomainModel {
     User?: UserDomainModel;
     InsuranceIds?: string[];
     EmergencyContactIds?: string[];
-    AddressIds: string[];
-    Addresses?: AddressDomainModel[];
+    Address?: AddressDomainModel;
 }

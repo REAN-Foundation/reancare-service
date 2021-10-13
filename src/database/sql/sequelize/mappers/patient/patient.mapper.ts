@@ -1,5 +1,5 @@
-import Patient from '../../models/patient/patient.model';
 import { PatientDetailsDto, PatientDto } from "../../../../../domain.types/patient/patient/patient.dto";
+import Patient from '../../models/patient/patient.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,6 @@ export class PatientMapper {
             User              : null,
             DisplayId         : patient.DisplayId,
             EhrId             : patient.EhrId,
-            Addresses         : [],
             HealthProfile     : null, //PatientMedicalProfileDto;
             Insurances        : [], //PatientInsuranceDto[];
             EmergencyContacts : [], // PatientEmergencyContactDto[];

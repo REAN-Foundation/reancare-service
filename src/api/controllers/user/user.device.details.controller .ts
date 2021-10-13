@@ -5,7 +5,7 @@ import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
 import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
 import { Loader } from '../../../startup/loader';
-import { UserDeviceDetailsValidator } from '../../validators/user.device.details.validator';
+import { UserDeviceDetailsValidator } from '../../validators/user/user.device.details.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

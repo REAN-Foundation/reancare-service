@@ -1,18 +1,18 @@
-import { Loader } from '../../startup/loader';
+import { inject, injectable } from 'tsyringe';
+import { ApiError } from '../../common/api.error';
+import { Helper } from '../../common/helper';
+import { IAddressRepo } from '../../database/repository.interfaces/address.repo.interface';
 import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
-import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
+import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
 import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
-import { IAddressRepo } from '../../database/repository.interfaces/address.repo.interface';
-import { injectable, inject } from 'tsyringe';
-import { ApiError } from '../../common/api.error';
-import { Roles } from '../../domain.types/role/role.types';
-import { PatientStore } from '../../modules/ehr/services/patient.store';
-import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
-import { Helper } from '../../common/helper';
+import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
 import { PatientDomainModel } from '../../domain.types/patient/patient/patient.domain.model';
 import { PatientDetailsDto, PatientDto } from '../../domain.types/patient/patient/patient.dto';
-import { PatientSearchFilters, PatientDetailsSearchResults, PatientSearchResults } from '../../domain.types/patient/patient/patient.search.types';
+import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults } from '../../domain.types/patient/patient/patient.search.types';
+import { Roles } from '../../domain.types/role/role.types';
+import { PatientStore } from '../../modules/ehr/services/patient.store';
+import { Loader } from '../../startup/loader';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -109,8 +109,8 @@ export class PatientService {
             user.Person = await this._personRepo.getById(user.PersonId);
         }
         const addresses = await this._personRepo.getAddresses(user.PersonId);
+        user.Person.Addresses = addresses;
         dto.User = user;
-        dto.Addresses = addresses;
         return dto;
     };
 

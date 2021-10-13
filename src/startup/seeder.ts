@@ -280,7 +280,7 @@ export class Seeder {
                     Phone : phone
                 }
             },
-            AddressIds : []
+            Address : null
         };
 
         //Throw an error if patient with same name and phone number exists

@@ -1,15 +1,13 @@
 import express from 'express';
-
-import { PersonService } from '../../services/person.service';
-import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
-import { AddressDto } from '../../domain.types/address/address.dto';
-import { PersonValidator } from '../validators/person.validator';
-import { UserService } from '../../services/user/user.service';
+import { ApiError } from '../../common/api.error';
+import { ResponseHandler } from '../../common/response.handler';
 import { AddressService } from '../../services/address.service';
 import { OrganizationService } from '../../services/organization.service';
-import { ApiError } from '../../common/api.error';
+import { PersonService } from '../../services/person.service';
+import { UserService } from '../../services/user/user.service';
+import { Loader } from '../../startup/loader';
+import { PersonValidator } from '../validators/person.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -83,11 +81,11 @@ export class PersonController {
 
             const id: string = await PersonValidator.validateId(request);
             const organizations = await this._service.getOrganizations(id);
-            if (organizations.length === 0) {
-                ResponseHandler.failure(request, response, 'Organizations for person are not found.', 404);
-                return;
-            }
-            ResponseHandler.success(request, response, 'Organizations for person retrieved successfully!', 200, {
+
+            const message = organizations.length === 0 ?
+                'No records found!' : `Total ${organizations.length} organization records retrieved successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, {
                 Organizations : organizations,
             });
         } catch (error) {
@@ -143,18 +141,18 @@ export class PersonController {
         }
     };
 
-    getAddresses = async (request: express.Request, response: express.Response): Promise<AddressDto> => {
+    getAddresses = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Person.GetAddresses';
             await this._authorizer.authorize(request, response);
 
             const id: string = await PersonValidator.validateId(request);
             const addresses = await this._service.getAddresses(id);
-            if (addresses.length === 0) {
-                ResponseHandler.failure(request, response, 'Addresses for person are not found.', 404);
-                return;
-            }
-            ResponseHandler.success(request, response, 'Addresses for person retrieved successfully!', 200, {
+                        
+            const message = addresses.length === 0 ?
+                'No records found!' : `Total ${addresses.length} address records retrieved successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, {
                 Addresses : addresses,
             });
         } catch (error) {

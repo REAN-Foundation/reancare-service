@@ -16,6 +16,7 @@ RUN apk add --update alpine-sdk
 
 ADD . /app
 WORKDIR /app
+COPY package*.json /app/
 ADD . /app/creds
 
 ENV GOOGLE_APPLICATION_CREDENTIALS /app/creds/reancare_firebase_creds.json

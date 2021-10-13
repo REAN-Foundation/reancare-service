@@ -1,0 +1,14 @@
+{
+    "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "PatientEhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "DoctorUserId": "",
+    "DoctorEhrId": "",
+    "VisitId": "30182fdf-75a8-475c-b29d-6f55b0a1ef67",
+    "VisitEhrId": "30182fdf-75a8-475c-b29d-6f55b0a1ef67",
+    "EhrId": null,
+    "Note": "The chronic hypertension for the patient with critically high levels.",
+    "Comments": "hfd tuytuydfyres tyhtr",
+    "Status": "Preliminary",
+    "Interpretation": "Normal",
+    "RecordDate": "2021-05-28T12:32:23.532Z"
+}

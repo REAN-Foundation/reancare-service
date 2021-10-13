@@ -1,14 +1,12 @@
-import "reflect-metadata"
-
+import cors from 'cors';
 import express from 'express';
 import fileUpload from 'express-fileupload';
-import cors from 'cors';
 import helmet from 'helmet';
-
+import "reflect-metadata";
 import { Router } from './api/routes/router';
-import { Loader } from './startup/loader';
 import { Logger } from './common/logger';
-import { ConfigurationManager } from "./configs/configuration.manager";
+import { ConfigurationManager } from "./config/configuration.manager";
+import { Loader } from './startup/loader';
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -59,7 +57,8 @@ export default class Application {
             await Loader.seeder.init();
 
             //Set-up cron jobs
-
+            await Loader.scheduler.schedule();
+            
             //Start listening
             await this.listen();
             

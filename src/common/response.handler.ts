@@ -1,9 +1,9 @@
 import express from 'express';
-
-import { Logger } from './logger';
+import { ResponseDto } from '../domain.types/miscellaneous/response.dto';
 import { ActivityRecorder } from './activity.recorder';
+import { ApiError } from './api.error';
 import { InputValidationError } from './input.validation.error';
-import { ResponseDto } from '../data/domain.types/response.domain.types';
+import { Logger } from './logger';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -53,8 +53,10 @@ export class ResponseHandler {
 
         ActivityRecorder.record(responseObject);
 
-        //Don't send request related info in response, only use it for logging
+        //Sanitize response: Don't send request and trace related info in response, only use it for logging
         delete responseObject.Request;
+        delete responseObject.Trace;
+
         return response.status(httpErrorCode).send(responseObject);
     }
 
@@ -98,11 +100,13 @@ export class ResponseHandler {
             }
             Logger.instance().log(JSON.stringify(responseObject, null, 2));
         }
-       
+        
         ActivityRecorder.record(responseObject);
         
-        //Don't send request related info in response, only use it for logging
+        //Sanitize response: Don't send request and trace related info in response, only use it for logging
         delete responseObject.Request;
+        delete responseObject.Trace;
+
         return response.status(httpCode).send(responseObject);
     }
 
@@ -114,6 +118,10 @@ export class ResponseHandler {
         if (error instanceof InputValidationError) {
             const validationError = error as InputValidationError;
             ResponseHandler.failure(request, response, validationError.message, validationError.httpErrorCode, error);
+        }
+        else if (error instanceof ApiError) {
+            var err = error as ApiError;
+            ResponseHandler.failure(request, response, err.errorMessage, err.httpErrorCode, error);
         }
         else {
             ResponseHandler.failure(request, response, error.message, 400, error);

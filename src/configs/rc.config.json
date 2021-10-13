@@ -1,7 +1,0 @@
-{
-    "Ehr" : {
-        "Specification": "FHIR",
-        "Provider": "GCP-FHIR"
-    },
-    "MaxUploadFileSize": 104857600
-}

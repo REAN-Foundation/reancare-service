@@ -1,22 +1,26 @@
 import express from 'express';
-import { query, body, oneOf, validationResult, param } from 'express-validator';
-import { ResponseHandler } from '../../common/response.handler';
+import { body, oneOf, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../common/helper';
-import { UserSearchFilters, UserLoginDetails } from '../../data/domain.types/user.domain.types';
+import { ResponseHandler } from '../../common/response.handler';
+import { UserExistanceModel, UserLoginDetails } from '../../domain.types/user/user/user.domain.model';
+import { UserSearchFilters } from '../../domain.types/user/user/user.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class UserValidator {
 
     static getById = async (request: express.Request): Promise<string> => {
+
         await param('id').trim()
             .escape()
             .isUUID()
             .run(request);
+
         const result = validationResult(request);
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
+        
         return request.params.id;
     };
 
@@ -29,57 +33,69 @@ export class UserValidator {
                 .trim()
                 .escape()
                 .run(request);
+
             await query('email').optional()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('userId').optional()
                 .isUUID()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('name').optional()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('gender').optional()
                 .isAlpha()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('birthdateFrom').optional()
                 .isDate()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('birthdateTo').optional()
                 .isDate()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('createdDateFrom').optional()
                 .isDate()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('createdDateTo').optional()
                 .isDate()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('orderBy').optional()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('order').optional()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('pageIndex').optional()
                 .isInt()
                 .trim()
                 .escape()
                 .run(request);
+
             await query('itemsPerPage').optional()
                 .isInt()
                 .trim()
@@ -140,9 +156,11 @@ export class UserValidator {
                     .trim()
                     .escape(),
             ]).run(request);
+
             await body('Password').exists()
                 .trim()
                 .run(request);
+
             await body('LoginRoleId').exists()
                 .trim()
                 .isNumeric()
@@ -175,9 +193,47 @@ export class UserValidator {
             ResponseHandler.handleError(request, response, error);
         }
     };
+    
+    static userExistsCheck = async (
+        request: express.Request): Promise<UserExistanceModel> => {
+
+        await oneOf([
+            param('phone').optional()
+                .trim()
+                .escape(),
+            param('email').optional()
+                .trim()
+                .escape(),
+        ]).run(request);
+
+        await param('roleId').exists()
+            .trim()
+            .isNumeric()
+            .run(request);
+
+        const result = validationResult(request);
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        const userDetails: UserExistanceModel = {
+            Phone  : null,
+            Email  : null,
+            RoleId : parseInt(request.params.roleId, 10)
+        };
+        if (typeof request.params.phone !== 'undefined') {
+            userDetails.Phone = request.params.phone;
+        }
+        if (typeof request.params.email !== 'undefined') {
+            userDetails.Email = request.params.email;
+        }
+
+        return userDetails;
+    };
 
     static resetPassword = async (request: express.Request, response: express.Response): Promise<any> => {
         try {
+
             await oneOf([
                 body('Phone').optional()
                     .trim()
@@ -186,6 +242,7 @@ export class UserValidator {
                     .trim()
                     .escape(),
             ]).run(request);
+
             await body('NewPassword').exists()
                 .trim()
                 .run(request);
@@ -216,6 +273,7 @@ export class UserValidator {
 
     static generateOtp = async (request: express.Request, response: express.Response): Promise<any> => {
         try {
+
             await oneOf([
                 body('Phone').optional()
                     .trim()
@@ -228,11 +286,18 @@ export class UserValidator {
                     .trim()
                     .escape(),
             ]).run(request);
+
             await body('Purpose').optional()
                 .trim()
                 .run(request);
 
+            await body('RoleId').exists()
+                .trim()
+                .toInt()
+                .run(request);
+
             const result = validationResult(request);
+
             if (!result.isEmpty()) {
                 Helper.handleValidationError(result);
             }
@@ -242,6 +307,7 @@ export class UserValidator {
                 Email   : null,
                 UserId  : null,
                 Purpose : 'Login',
+                RoleId  : request.body.RoleId
             };
 
             if (typeof request.body.Phone !== 'undefined') {
@@ -256,8 +322,12 @@ export class UserValidator {
             if (typeof request.body.Purpose !== 'undefined') {
                 obj.Purpose = request.body.Purpose;
             }
+            if (typeof request.body.RoleId !== 'undefined') {
+                obj.RoleId = request.body.RoleId;
+            }
 
             return obj;
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -295,7 +365,7 @@ export class UserValidator {
                 Email       : null,
                 Password    : null,
                 Otp         : request.body.Otp,
-                LoginRoleId : request.body.LoginRoleId,
+                LoginRoleId : parseInt(request.body.LoginRoleId),
             };
             if (typeof request.body.Phone !== 'undefined') {
                 loginObject.Phone = request.body.Phone;
@@ -310,4 +380,3 @@ export class UserValidator {
     };
 
 }
-

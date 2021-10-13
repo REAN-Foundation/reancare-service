@@ -6,11 +6,11 @@ import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';
 import { PersonService } from '../../services/person.service';
 
-//import { OrganizationService } from '../../services/organization.service';
 import { ApiError } from '../../common/api.error';
 import { AddressValidator } from '../validators/address.validator';
 import { AddressService } from '../../services/address.service';
 import { RoleService } from '../../services/role.service';
+import { OrganizationService } from '../../services/organization.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,15 +24,15 @@ export class AddressController {
 
     _personService: PersonService = null;
 
-    //_organizationService: OrganizationService = null;
+    _organizationService: OrganizationService = null;
+
     _authorizer: Authorizer = null;
 
     constructor() {
         this._service = Loader.container.resolve(AddressService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);
-
-        //this._organizationService = Loader.container.resolve(OrganizationService);
+        this._organizationService = Loader.container.resolve(OrganizationService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -43,7 +43,8 @@ export class AddressController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Address.Create';
-
+            await this._authorizer.authorize(request, response);
+            
             const domainModel = await AddressValidator.create(request);
 
             if (domainModel.PersonId != null) {
@@ -53,12 +54,12 @@ export class AddressController {
                 }
             }
 
-            // if(domainModel.OrganizationId != null) {
-            //     var organization = await this._organizationService.getById(domainModel.OrganizationId);
-            //     if(organization == null) {
-            //         throw new ApiError(404, `Organization with an id ${domainModel.OrganizationId} cannot be found.`)
-            //     }
-            // }
+            if (domainModel.OrganizationId != null) {
+                var organization = await this._organizationService.getById(domainModel.OrganizationId);
+                if (organization == null) {
+                    throw new ApiError(404, `Organization with an id ${domainModel.OrganizationId} cannot be found.`);
+                }
+            }
 
             const address = await this._service.create(domainModel);
             if (address == null) {
@@ -102,15 +103,15 @@ export class AddressController {
             const filters = await AddressValidator.search(request);
 
             const searchResults = await this._service.search(filters);
-            if (searchResults.Items.length !== 0) {
-                const count = searchResults.Items.length;
-                const message =
-                    count === 0
-                        ? 'No records found!'
-                        : `Total ${count} address records retrieved successfully!`;
-                ResponseHandler.success(request, response, message, 200, { Addresses: searchResults });
-                return;
-            }
+
+            const count = searchResults.Items.length;
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} address records retrieved successfully!`;
+                    
+            ResponseHandler.success(request, response, message, 200, { Addresses: searchResults });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

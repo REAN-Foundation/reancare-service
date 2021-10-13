@@ -7,6 +7,13 @@
 4. [MySQL](https://dev.mysql.com/downloads/mysql/) - (MySQL Community Server 8.0.25) or [PostgreSQL](https://www.postgresql.org/download/) - (Minimum Version 12.x)
 5. Optional: If you want to use FHIR service, user the one using version R4. Default is [GCP FHIR](https://cloud.google.com/healthcare/docs/concepts/fhir) for which you have enable the GCP API for FHIR and set the creds.
 
+## Recommended Tools on Development Machine
+1. Visual Studio Code with following extensions
+    - ESLint by Dirk Baeumer
+    - DotENV by mikestead
+    - Prettier Code Formatter by Prettier
+2. MySQL Workbench
+3. Postman
 
 ## Development machine set-up
 

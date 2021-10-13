@@ -5,6 +5,7 @@ import { injectable, inject } from "tsyringe";
 
 import { ResponseHandler } from '../common/response.handler';
 import { Logger } from '../common/logger';
+import { ApiError } from '../common/api.error';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +22,7 @@ export class Authenticator {
         next: express.NextFunction
     ): Promise<boolean> => {
         try {
-            const authResult = await this._authenticator.authenticateUser(request, response);
+            const authResult = await this._authenticator.authenticateUser(request);
             if (authResult.Result === false){
                 ResponseHandler.failure(request, response, authResult.Message, authResult.HttpErrorCode);
                 return false;
@@ -39,7 +40,7 @@ export class Authenticator {
         next: express.NextFunction
     ): Promise<boolean> => {
         try {
-            const authResult = await this._authenticator.authenticateClient(request, response);
+            const authResult = await this._authenticator.authenticateClient(request);
             if (authResult.Result === false){
                 ResponseHandler.failure(request, response, authResult.Message, authResult.HttpErrorCode);
                 return false;
@@ -50,6 +51,18 @@ export class Authenticator {
             ResponseHandler.failure(request, response, 'Client authentication error: ' + error.message, 401);
         }
     };
+
+    public checkAuthentication = async(request: express.Request): Promise<boolean> => {
+        const clientAuthResult = await this._authenticator.authenticateClient(request);
+        if (clientAuthResult.Result === false){
+            throw new ApiError(401, 'Unauthorized access');
+        }
+        const userAuthResult = await this._authenticator.authenticateUser(request);
+        if (userAuthResult.Result === false){
+            throw new ApiError(401, 'Unauthorized access');
+        }
+        return true;
+    }
 
 }
 

@@ -1,0 +1,16 @@
+{
+    "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "PatientEhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "ProcedureId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "ProcedureEhrId": "",
+    "Name": "Toncils Operation",
+    "Description": "Some operation description",
+    "PerformedById": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "PerformedByEhrId": "",
+    "PerformedAtLocationEhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "PerformedAtOrganizationId": "",
+    "PerformedAtOrganizationEhrId": "",
+    "StartTime": "2021-05-28T12:32:23.532Z",
+    "EndTime": "2021-05-28T12:32:23.532Z",
+    "PractitionerNotes": ""
+}

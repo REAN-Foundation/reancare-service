@@ -1,9 +1,9 @@
-import 'reflect-metadata';
 import express from 'express';
-import { IAuthorizer } from './authorizer.interface';
-import { injectable, inject } from "tsyringe";
-import { CurrentUser } from '../data/domain.types/current.user';
+import 'reflect-metadata';
+import { inject, injectable } from "tsyringe";
 import { ApiError } from '../common/api.error';
+import { CurrentUser } from '../domain.types/miscellaneous/current.user';
+import { IAuthorizer } from './authorizer.interface';
 
 ////////////////////////////////////////////////////////////////////////
 

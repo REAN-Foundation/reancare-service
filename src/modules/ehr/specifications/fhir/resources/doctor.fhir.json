@@ -1,0 +1,65 @@
+{
+    "resourceType": "Practitioner",
+    "identifier": [
+        {
+            "use": "official",
+            "value": "official_value"
+        },
+        {
+            "use": "usual",
+            "value": "usual_value"
+        }
+    ],
+    "name": [
+        {
+            "use": "official",
+            "given": ["doctor_first_name", "doctor_middle_name"],
+            "family": "doctor_last_name",
+            "suffix": ["doctor_name_suffix"]
+        }
+    ],
+    "gender": "unknown",
+    "birthDate": "1234-12-12",
+    "telecom": [
+        {
+            "system": "phone",
+            "use": "work",
+            "value": "doctor_phone_number"
+        },
+        {
+            "system": "email",
+            "use": "work",
+            "value": "doctor_email"
+        },
+        {
+            "system": "fax",
+            "use": "work",
+            "value": "doctor_fax_number"
+        }
+    ],
+    "address": [
+        {
+            "use": "work",
+            "line": [
+                "doctor_address_first_line",
+                "doctor_address_second_line"
+            ],
+            "city": "doctor_address_city",
+            "district": "doctor_address_district",
+            "postalCode": "doctor_address_postal_code"
+        }
+    ],
+    "qualification": [
+        {
+            "code": {
+                "coding": [
+                    {
+                        "system": "doctor_system",
+                        "code": "doctor_code",
+                        "display": "doctor_code_display"
+                    }
+                ]
+            }
+        }
+    ]
+} 

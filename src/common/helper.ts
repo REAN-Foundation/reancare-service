@@ -1,11 +1,12 @@
 import * as fs from 'fs';
 import child_process from 'child_process';
 import { InputValidationError } from './input.validation.error';
-import { Gender } from './system.types';
+import { Gender } from '../domain.types/miscellaneous/system.types';
 import { generate } from 'generate-password';
 import { hashSync, compareSync, genSaltSync } from 'bcryptjs';
 import * as crypto from 'crypto';
 import express from 'express';
+import path from 'path';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -27,6 +28,21 @@ export class Helper {
     static dumpJson(obj, filename) {
         const txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);
+    }
+    
+    static jsonToObj = (jsonPath) => {
+
+        if (!fs.existsSync(jsonPath)) {
+            return null;
+        }
+
+        const rawdata = fs.readFileSync(jsonPath, {
+            encoding : 'utf8',
+            flag     : 'r',
+        });
+
+        const obj = JSON.parse(rawdata);
+        return obj;
     }
 
     static executeCommand = (command: string): Promise<string> => {
@@ -339,5 +355,50 @@ export class Helper {
         return decrypted.toString();
     }
 
-}
+    public static getPossiblePhoneNumbers = (phone) => {
 
+        if (phone == null) {
+            return [];
+        }
+        
+        let phoneTemp = phone;
+        phoneTemp = phoneTemp.trim();
+        const searchFors = ['+91', '+1'];
+        const possiblePhoneNumbers = [phone];
+
+        let phonePrefix = "";
+
+        for (var s of searchFors) {
+            if (phoneTemp.startsWith(s)) {
+                phonePrefix = s;
+                phoneTemp = phoneTemp.replace(s, '');
+                phoneTemp = phoneTemp.replace('-', '');
+            }
+        }
+    
+        if (phonePrefix) {
+            possiblePhoneNumbers.push(phonePrefix + phoneTemp);
+            possiblePhoneNumbers.push(phonePrefix + "-" + phoneTemp);
+            possiblePhoneNumbers.push(phoneTemp);
+    
+        } else {
+            possiblePhoneNumbers.push("+91" + phoneTemp);
+            possiblePhoneNumbers.push("+91-" + phoneTemp);
+    
+            possiblePhoneNumbers.push("+1" + phoneTemp);
+            possiblePhoneNumbers.push("+1-" + phoneTemp);
+            possiblePhoneNumbers.push(phoneTemp);
+        }
+        return possiblePhoneNumbers;
+    }
+
+    public static getFileExtension = (filename: string) => {
+        var ext = /^.+\.([^.]+)$/.exec(filename);
+        return ext == null ? "" : ext[1];
+    }
+
+    public static getFilenameFromFilePath = (filepath: string) => {
+        return path.basename(filepath);
+    }
+
+}

@@ -1,10 +1,11 @@
 import { inject, injectable } from "tsyringe";
 import { ApiError } from '../common/api.error';
-import { ApiClientDomainModel, ApiClientDto, ApiClientVerificationDomainModel, ClientApiKeyDto } from "../data/domain.types/api.client.domain.types";
-import { IApiClientRepo } from "../data/repository.interfaces/api.client.repo.interface";
+import { ApiClientDomainModel, ApiClientVerificationDomainModel } from "../domain.types/api.client/api.client.domain.model";
+import { ApiClientDto, ClientApiKeyDto } from "../domain.types/api.client/api.client.dto";
+import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
 import { generate } from 'generate-password';
 import { Helper } from "../common/helper";
-import { CurrentClient } from "../data/domain.types/current.client";
+import { CurrentClient } from "../domain.types/miscellaneous/current.client";
 import * as apikeyGenerator from 'uuid-apikey';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +24,7 @@ export class ApiClientService {
         const d = new Date();
         d.setFullYear(d.getFullYear() + 1);
         clientDomainModel.ValidFrom = clientDomainModel.ValidFrom ?? new Date();
-        clientDomainModel.ValidTill = clientDomainModel.ValidTill ?? d
+        clientDomainModel.ValidTill = clientDomainModel.ValidTill ?? d;
 
         return await this._clientRepo.create(clientDomainModel);
     };

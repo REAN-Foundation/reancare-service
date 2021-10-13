@@ -32,7 +32,7 @@ In addition to these, here are naming conventions we follow for this project.
 16. For code files, file content demarcation is only allowed between imports area and code area. 
     e.g. 
 ```javascript
-import { AddressDomainModel } from '../../data/domain.types/address.domain.types';
+import { AddressDomainModel } from '../../domain.types/address.domain.types';
 import { AddressInputValidator } from '../input.validators/address.input.validator';
 import { AddressService } from '../../services/address.service';
 import { RoleService } from '../../services/role.service';

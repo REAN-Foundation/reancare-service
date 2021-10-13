@@ -1578,6 +1578,58 @@
 									"response": []
 								},
 								{
+									"name": "Patient log-in with otp Copy",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.environment.set(\"PATIENT_USER_JWT\", jsonRes.Data.AccessToken);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"description": "API key for client app authentication",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Otp\": \"684268\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/users/login-with-otp",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"users",
+												"login-with-otp"
+											]
+										}
+									},
+									"response": []
+								},
+								{
 									"name": "Generate otp",
 									"event": [
 										{
@@ -1708,6 +1760,91 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients"
+									]
+								},
+								"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+							},
+							"response": []
+						},
+						{
+							"name": "Register patient- with only a phone number Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+											"    pm.environment.set(\"PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+											"    pm.environment.set(\"PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+											"    pm.environment.set(\"PERSON_ID_1\", jsonRes.Data.Patient.User.Person.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient is created\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Patient');\r",
+											"    pm.expect(jsonRes.Data.Patient).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.Patient).to.have.property('User');\r",
+											"    pm.expect(jsonRes.Data.Patient.User).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient.User).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient.User.Person).to.have.property('id');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+											"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+											"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text",
+										"description": "API key for client app authentication"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Phone\": \"+91-9970155165\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patients",
@@ -2186,6 +2323,92 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"John\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"Doe\",\r\n    \"Email\": \"john.doe@gmail.com\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\",\r\n    \"Address\": {\r\n        \"Type\": \"Official\",\r\n        \"AddressLine\": \"99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli\",\r\n        \"City\": \"Mumbai\",\r\n        \"District\": \"Greater Mumbai\",\r\n        \"State\": \"Maharashtra\",\r\n        \"Country\": \"India\",\r\n        \"PostalCode\": \"412407\",\r\n        \"Longitude\": 23.45545,\r\n        \"Lattitude\": 54.65466\r\n    }\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients",
+										"{{PATIENT_USER_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update patient details Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PATIENT_FIRST_NAME\", jsonRes.Data.Patient.User.Person.FirstName);\r",
+											"    pm.environment.set(\"PATIENT_PHONE\", jsonRes.Data.Patient.User.Person.Phone);\r",
+											"    pm.environment.set(\"PATIENT_GENDER\", jsonRes.Data.Patient.User.Person.Gender);\r",
+											"    pm.environment.set(\"PATIENT_EMAIL\", jsonRes.Data.Patient.User.Person.Email);\r",
+											"\r",
+											"    var phone = jsonRes.Data.Patient.User.Person.Phone;\r",
+											"    var tokens = phone.split('-');\r",
+											"    var phoneNumber = tokens[1];\r",
+											"\r",
+											"    pm.environment.set(\"PATIENT_PHONE_NUMBER\", phoneNumber);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient is created\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Patient');\r",
+											"    pm.expect(jsonRes.Data.Patient).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.Patient).to.have.property('User');\r",
+											"    pm.expect(jsonRes.Data.Patient.User).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient.User).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Patient.User.Person).to.have.property('id');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"FirstName\": \"John\",\r\n    \"LastName\": \"Doe\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
@@ -8086,28 +8309,19 @@
 					"name": "Patient document",
 					"item": [
 						{
-							"name": "Add patient document details",
+							"name": "Get document types",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
-											"var jsonRes = pm.response.json();",
-											"",
-											"try {",
-											"    pm.environment.set(\"PATIENT_DOCUMENT_ID\", jsonRes.Data.Document.id);",
-											"}",
-											"catch (error) {",
-											"    console.log(error.message);",
-											"}",
-											"",
 											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(201);",
+											"    pm.response.to.have.status(200);",
 											"    var jsonRes = pm.response.json();",
 											"    pm.expect(jsonRes.Status).to.eql('success');",
 											"});",
 											"",
-											"pm.test(\"New Document record is created\", function () {",
+											"pm.test(\"Document record is returned\", function () {",
 											"",
 											"    var expectedMedicalPractitionerUserId = pm.environment.get(\"DOCTOR_USER_ID\");",
 											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
@@ -8121,11 +8335,11 @@
 											"    pm.expect(jsonRes.Data.Document).to.have.property('PatientUserId');",
 											"    pm.expect(jsonRes.Data.Document).to.have.property('ResourceId');",
 											"",
-											"    ",
 											"    pm.expect(jsonRes.Data.Document.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
 											"    pm.expect(jsonRes.Data.Document.PatientUserId).equals(expectedPatientUserId);",
-											"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId);    ",
+											"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId);",
 											"});",
+											"",
 											""
 										],
 										"type": "text/javascript"
@@ -8133,7 +8347,7 @@
 								}
 							],
 							"request": {
-								"method": "POST",
+								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
@@ -8151,24 +8365,110 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"DocumentType\": \"OPD paper\",\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"MedicalPractitionerUserId\": \"{{DOCTOR_USER_ID}}\",\n    \"MedicalPractionerRole\": \"Doctor\",\n    \"UploadedByUserId\":\"{{PATIENT_USER_ID}}\",\n    \"AssociatedVisitId\": null,\n    \"AssociatedVisitType\": null,\n    \"AssociatedOrderId\": null,\n    \"AssociatedOrderType\": null,\n    \"FileName\": \"Scan.jpg\",\n    \"ResourceId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"RecordDate\": \"2021-09-24\"\n}\n"
-								},
 								"url": {
-									"raw": "{{BASE_URL}}/patient-documents",
+									"raw": "{{BASE_URL}}/patient-documents/types",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
-										"patient-documents"
+										"patient-documents",
+										"types"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Get patient document by id",
+							"name": "Upload document",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRespData = pm.response.json();\r",
+											"    pm.environment.set(\"PATIENT_DOCUMENT_ID\", jsonRespData.data.documents[0].id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "multipart/form-data",
+										"disabled": true
+									},
+									{
+										"key": "enc",
+										"type": "text",
+										"value": "multipart/form-data"
+									},
+									{
+										"key": "authorization",
+										"value": "Bearer {{PATIENT_ROLE_JWT}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "Name",
+											"type": "file",
+											"src": "test.data/documents/lab_order_x.pdf"
+										},
+										{
+											"key": "PatientUserId",
+											"value": "{{PATIENT_USER_ID}}",
+											"contentType": "",
+											"description": "User id of the patient - Mandatory",
+											"type": "text"
+										},
+										{
+											"key": "DocumentType",
+											"value": "Lab report",
+											"description": "The type of the document - \n1. \"Lab report\"\n2.\"Imaging study\"\n3.\"Drug prescription\"\n4.\"Diagnostic prescription\"\n5.\"Doctor notes\"\n6.\"Discharge summary\"\n7.\"OPD paper\"\n8\"Unknown\"\n",
+											"type": "text"
+										},
+										{
+											"key": "MedicalPractitionerId",
+											"value": "{{DOCTOR_USER_ID}}",
+											"contentType": "",
+											"description": "The id of the medical practioner who has created/approved the document",
+											"type": "text"
+										},
+										{
+											"key": "OrderId",
+											"value": "",
+											"description": "Order related to this document",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient-documents/",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-documents",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get document by id",
 							"event": [
 								{
 									"listen": "test",
@@ -8238,7 +8538,78 @@
 							"response": []
 						},
 						{
-							"name": "Update patient document by id",
+							"name": "Download document",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Document record is returned\", function () {",
+											"",
+											"    var expectedMedicalPractitionerUserId = pm.environment.get(\"DOCTOR_USER_ID\");",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Document');",
+											"    pm.expect(jsonRes.Data.Document).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Document).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Document).to.have.property('MedicalPractitionerUserId');",
+											"    pm.expect(jsonRes.Data.Document).to.have.property('PatientUserId');",
+											"    pm.expect(jsonRes.Data.Document).to.have.property('ResourceId');",
+											"",
+											"    pm.expect(jsonRes.Data.Document.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
+											"    pm.expect(jsonRes.Data.Document.PatientUserId).equals(expectedPatientUserId);",
+											"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}/download",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-documents",
+										"{{PATIENT_DOCUMENT_ID}}",
+										"download"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update document",
 							"event": [
 								{
 									"listen": "test",
@@ -8315,7 +8686,247 @@
 							"response": []
 						},
 						{
-							"name": "Delete patient document by id",
+							"name": "Rename document",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_ROLE_JWT}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"NewName\": \"abc.jpg\"\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}/rename",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-documents",
+										"{{PATIENT_DOCUMENT_ID}}",
+										"rename"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get shareable link for document",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"Date.prototype.addDays = function(days) {\r",
+											"    var date = new Date(this.valueOf());\r",
+											"    date.setDate(date.getDate() + days);\r",
+											"    return date;\r",
+											"}\r",
+											"\r",
+											"function formatDate(date) {\r",
+											"    var d = new Date(date),\r",
+											"        month = '' + (d.getMonth() + 1),\r",
+											"        day = '' + d.getDate(),\r",
+											"        year = d.getFullYear();\r",
+											"\r",
+											"    if (month.length < 2) \r",
+											"        month = '0' + month;\r",
+											"    if (day.length < 2) \r",
+											"        day = '0' + day;\r",
+											"\r",
+											"    return [year, month, day].join('-');\r",
+											"}\r",
+											"\r",
+											"var d = new Date();\r",
+											"\r",
+											"var fromDate = formatDate(d);\r",
+											"var toDate = formatDate((new Date()).addDays(10));\r",
+											"\r",
+											"pm.environment.set(\"FROM_DATE\", fromDate);\r",
+											"pm.environment.set(\"TO_DATE\", toDate);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{PATIENT_ROLE_JWT}}"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}/share?durationMinutes=15",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-documents",
+										"{{PATIENT_DOCUMENT_ID}}",
+										"share"
+									],
+									"query": [
+										{
+											"key": "durationMinutes",
+											"value": "15"
+										},
+										{
+											"key": "documentType",
+											"value": "PATIENT_LAB_REPORTS",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get documents for patient",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"Date.prototype.addDays = function(days) {\r",
+											"    var date = new Date(this.valueOf());\r",
+											"    date.setDate(date.getDate() + days);\r",
+											"    return date;\r",
+											"}\r",
+											"\r",
+											"function formatDate(date) {\r",
+											"    var d = new Date(date),\r",
+											"        month = '' + (d.getMonth() + 1),\r",
+											"        day = '' + d.getDate(),\r",
+											"        year = d.getFullYear();\r",
+											"\r",
+											"    if (month.length < 2) \r",
+											"        month = '0' + month;\r",
+											"    if (day.length < 2) \r",
+											"        day = '0' + day;\r",
+											"\r",
+											"    return [year, month, day].join('-');\r",
+											"}\r",
+											"\r",
+											"var d = new Date();\r",
+											"\r",
+											"var fromDate = formatDate(d);\r",
+											"var toDate = formatDate((new Date()).addDays(10));\r",
+											"\r",
+											"pm.environment.set(\"FROM_DATE\", fromDate);\r",
+											"pm.environment.set(\"TO_DATE\", toDate);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{PATIENT_ROLE_JWT}}"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/patient-documents/search?documentType=lab",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-documents",
+										"search"
+									],
+									"query": [
+										{
+											"key": "documentType",
+											"value": "lab",
+											"description": "There are "
+										},
+										{
+											"key": "medicalPractitionerId",
+											"value": "{{DOCTOR_USER_ID}}",
+											"disabled": true
+										},
+										{
+											"key": "uploadedFrom",
+											"value": "{{FROM_DATE}}",
+											"disabled": true
+										},
+										{
+											"key": "uploadedTo",
+											"value": "{{TO_DATE}}",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete document by id",
 							"event": [
 								{
 									"listen": "test",
@@ -15002,6 +15613,124 @@
 								},
 								{
 									"name": "Get med schedule for day",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"\r",
+													"Date.prototype.addDays = function(days) {\r",
+													"    var date = new Date(this.valueOf());\r",
+													"    date.setDate(date.getDate() + days);\r",
+													"    return date;\r",
+													"}\r",
+													"\r",
+													"function formatDate(date) {\r",
+													"    var d = new Date(date),\r",
+													"        month = '' + (d.getMonth() + 1),\r",
+													"        day = '' + d.getDate(),\r",
+													"        year = d.getFullYear();\r",
+													"\r",
+													"    if (month.length < 2) \r",
+													"        month = '0' + month;\r",
+													"    if (day.length < 2) \r",
+													"        day = '0' + day;\r",
+													"\r",
+													"    return [year, month, day].join('-');\r",
+													"}\r",
+													"\r",
+													"var date = formatDate((new Date()).addDays(4));\r",
+													"\r",
+													"pm.environment.set(\"MEDICATION_CONSUMPTION_FOR_DATE\", date);\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Medication consumption schedule for day is returned\", function () {\r",
+													"   \r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationSchedulesForDay');\r",
+													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay).to.have.property('Day');\r",
+													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay).to.have.property('Schedules');    \r",
+													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay.Schedules.length).greaterThan(0);\r",
+													"\r",
+													"    var firstMed = jsonRes.Data.MedicationSchedulesForDay.Schedules[0];\r",
+													"\r",
+													"    pm.expect(firstMed).to.have.property('id');\r",
+													"    pm.expect(firstMed).to.have.property('DrugName');\r",
+													"    pm.expect(firstMed).to.have.property('Details');\r",
+													"    pm.expect(firstMed).to.have.property('TimeScheduleStart');\r",
+													"    pm.expect(firstMed).to.have.property('TimeScheduleEnd');\r",
+													"    pm.expect(firstMed).to.have.property('Status');\r",
+													"  \r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/summary-for-day/{{PATIENT_USER_ID}}/{{MEDICATION_CONSUMPTION_FOR_DATE}}?groupByDrug=true&date={{MEDICATION_CONSUMPTION_FOR_DATE}}",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"medication-consumptions",
+												"summary-for-day",
+												"{{PATIENT_USER_ID}}",
+												"{{MEDICATION_CONSUMPTION_FOR_DATE}}"
+											],
+											"query": [
+												{
+													"key": "groupByDrug",
+													"value": "true"
+												},
+												{
+													"key": "date",
+													"value": "{{MEDICATION_CONSUMPTION_FOR_DATE}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get med summary for day",
 									"event": [
 										{
 											"listen": "prerequest",

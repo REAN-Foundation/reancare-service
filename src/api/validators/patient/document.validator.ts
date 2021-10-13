@@ -32,7 +32,7 @@ export class DocumentValidator {
         return DocumentModel;
     };
     
-    static create = async (request: express.Request): Promise<DocumentDomainModel> => {
+    static upload = async (request: express.Request): Promise<DocumentDomainModel> => {
         await DocumentValidator.validateBody(request);
         return DocumentValidator.getDomainModel(request);
     };

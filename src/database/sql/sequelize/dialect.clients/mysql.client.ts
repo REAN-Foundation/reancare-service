@@ -52,6 +52,7 @@ export class MysqlClient {
                     connection.query(query, function (err, result) {
                         if (err) {
                             Logger.instance().log(err.message);
+
                             var str = (result !== undefined && result !== null) ? result.toString() : null;
                             if (str != null){
                                 Logger.instance().log(str);

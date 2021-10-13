@@ -1,0 +1,186 @@
+# This workflow will triage pull requests and apply a label based on the
+# paths that are modified in the pull request.
+#
+# To use this workflow, you will need to set up a .github/labeler.yml
+# file with configuration.  For more information, see:
+# https://github.com/actions/labeler
+
+name: CI-CD
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  # push:
+  #   branches: [main, develop]
+  # pull_request:
+  #   branches: [main, develop]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      Tenant:
+        description: 'ECS Deployment Teant (dev/ uat / prod)'
+        required: true
+
+jobs:
+  # Code-Linting:
+  #   runs-on: ubuntu-latest
+  #   # permissions:
+  #   #   contents: read
+  #   #   pull-requests: write
+
+  #   steps:
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 12.14.1
+
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v2.3.4
+  #       with:
+  #         fetch-depth: 0
+
+  #     - name: Cache node modules
+  #       uses: actions/cache@v2
+  #       env:
+  #         cache-name: cache-reancare-service-node-modules
+  #       with:
+  #         path: ~/.npm
+  #         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+  #         restore-keys: |
+  #           ${{ runner.OS }}-build-${{ env.cache-name }}-
+  #           ${{ runner.OS }}-build-
+  #           ${{ runner.OS }}-
+
+  #     - name: Install Node Dependencies
+  #       run: npm install
+  #       env:
+  #         CI: TRUE
+
+  #     - name: Lint Code Base
+  #       uses: github/super-linter@v4
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         LINTER_RULES_PATH: /
+  #         JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
+
+  ECS_Deployment:
+    runs-on: ubuntu-latest
+
+    env:
+      TENANT_SELECTED: ${{ github.event.inputs.Tenant }}
+
+    steps:
+      - name: Set the dev environment variables
+        if: ${{ env.TENANT_SELECTED == 'dev' }}
+        run: |
+            echo "TASK_DEFINTION_NAME=duploservices-dev-reancare-api" >> $GITHUB_ENV
+            echo "DUPLO_ID=1b25fb90-59d2-4a35-8d69-98e604e7206d" >> $GITHUB_ENV
+            echo "SERVICE_NAME=reancare-api" >> $GITHUB_ENV
+
+      - name: Set the uat environment variables
+        if: ${{ env.TENANT_SELECTED == 'uat' }}
+        run: |
+            echo "TASK_DEFINTION_NAME=duploservices-dev-reancare-api" >> $GITHUB_ENV
+            echo "DUPLO_ID=1b25fb90-59d2-4a35-8d69-98e604e7206d" >> $GITHUB_ENV
+            echo "SERVICE_NAME=reancare-api" >> $GITHUB_ENV
+
+      - name: Set the prod environment variables
+        if: ${{ env.TENANT_SELECTED == 'prod' }}
+        run: |
+            echo "TASK_DEFINTION_NAME=duploservices-dev-reancare-api" >> $GITHUB_ENV
+            echo "DUPLO_ID=1b25fb90-59d2-4a35-8d69-98e604e7206d" >> $GITHUB_ENV
+            echo "SERVICE_NAME=reancare-api" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Declare some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")"
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+          echo "::set-output name=repo_name::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')"
+
+      - name: Another step
+        run: |
+          echo "Branch: ${{ steps.vars.outputs.branch }}"
+          echo "Sha: ${{ steps.vars.outputs.sha_short }}"
+          echo "Repo: ${{ steps.vars.outputs.repo_name }}"
+
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: reancare/services:${{ steps.vars.outputs.repo_name }}_${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.TASK_DEFINTION_NAME }} \
+          --query taskDefinition > task-definition.json
+
+      - name: New image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: default
+          image: reancare/services:${{ steps.vars.outputs.repo_name }}_${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          wait-for-service-stability: true
+
+      - name: Task Definition Variable
+        id: taskdefintionvar
+        shell: bash
+        run: |
+          echo "::set-output name=task_definition_arn::$(aws ecs describe-task-definition --task-definition ${{ env.TASK_DEFINTION_NAME }} | jq '.[] | .taskDefinitionArn')"
+
+      - name: Task Defintion ARN
+        run: |
+          echo "Task Defintion: ${{ steps.taskdefintionvar.outputs.task_definition_arn }}"
+
+      - name: Deploy Amazon ECS task definition using Duplo API
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: 'https://reanfoundation.duplocloud.net/subscriptions/${{ env.DUPLO_ID }}/UpdateEcsService'
+          method: 'POST'
+          data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ env.SERVICE_NAME }}"}'
+          bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}

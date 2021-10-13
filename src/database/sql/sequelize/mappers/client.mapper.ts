@@ -1,5 +1,9 @@
 import ApiClient from '../models/api.client.model';
+<<<<<<< HEAD:src/data/database/sequelize/mappers/client.mapper.ts
+import { ApiClientDto, ClientApiKeyDto } from "../../../domain.types/api.client.domain.types";
+=======
 import { ApiClientDto, ClientApiKeyDto } from '../../../../domain.types/api.client/api.client.dto';
+>>>>>>> main:src/database/sql/sequelize/mappers/client.mapper.ts
 
 ///////////////////////////////////////////////////////////////////////////////////
 

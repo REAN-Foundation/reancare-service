@@ -14,5 +14,6 @@ cd /app
 
 # Start the service
 # npm run start
-
-pm2-runtime ./dist/src/index.js
+pwd
+ls dist/
+pm2-runtime dist/index.js

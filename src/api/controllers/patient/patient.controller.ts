@@ -1,5 +1,4 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
@@ -8,8 +7,6 @@ import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../domain.types/user/user/user.domain.model';
 import { HealthProfileService } from '../../../services/patient/health.profile.service';
 import { PatientService } from '../../../services/patient/patient.service';
-import { RoleService } from '../../../services/role.service';
-import { UserService } from '../../../services/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { PatientValidator } from '../../validators/patient/patient.validator';
 import { BaseUserController } from '../base.user.controller';
@@ -22,21 +19,12 @@ export class PatientController extends BaseUserController{
 
     _service: PatientService = null;
 
-    _userService: UserService = null;
-
-    _roleService: RoleService = null;
-
     _patientHealthProfileService: HealthProfileService = null;
-
-    _authorizer: Authorizer = null;
 
     constructor() {
         super();
         this._service = Loader.container.resolve(PatientService);
-        this._userService = Loader.container.resolve(UserService);
-        this._roleService = Loader.container.resolve(RoleService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion

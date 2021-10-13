@@ -6473,6 +6473,14 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    var personAddressesCount = jsonRes.Data.Addresses.length;\r",
+											"    pm.environment.set(\"PERSON_ADDRESS_COUNT\", personAddressesCount);\r",
+											"} catch(error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
 											"pm.test(\"Request is successfull\", function () {\r",
 											"    pm.response.to.have.status(200);\r",
 											"    var jsonRes = pm.response.json();\r",
@@ -6624,12 +6632,20 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"Request is failure\", function () {\r",
-											"    pm.response.to.have.status(404);\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
 											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('failure');\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
 											"});\r",
 											"\r",
+											"pm.test(\"Updated addresses for person are returned after deletion\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Addresses');\r",
+											"    var currentPersonAddressesCount = jsonRes.Data.Addresses.length;\r",
+											"    var previousPersonAddressesCount = pm.environment.get(\"PERSON_ADDRESS_COUNT\");\r",
+											"    pm.expect(currentPersonAddressesCount).lessThan(previousPersonAddressesCount);\r",
+											"});\r",
 											""
 										],
 										"type": "text/javascript"
@@ -20515,7 +20531,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/clinical/allergies/search?allergy=pea",
+									"raw": "{{BASE_URL}}/clinical/allergies/search",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -20532,7 +20548,8 @@
 										},
 										{
 											"key": "allergy",
-											"value": "pea"
+											"value": "pea",
+											"disabled": true
 										}
 									]
 								},

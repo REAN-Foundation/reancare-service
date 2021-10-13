@@ -1,5 +1,4 @@
 import express from 'express';
-import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
 import { Helper } from '../../common/helper';
 import { ResponseHandler } from '../../common/response.handler';
@@ -7,9 +6,6 @@ import { PersonDomainModel } from '../../domain.types/person/person.domain.model
 import { Roles } from '../../domain.types/role/role.types';
 import { UserDomainModel } from '../../domain.types/user/user/user.domain.model';
 import { DoctorService } from '../../services/doctor.service';
-import { PersonService } from '../../services/person.service';
-import { RoleService } from '../../services/role.service';
-import { UserService } from '../../services/user/user.service';
 import { Loader } from '../../startup/loader';
 import { DoctorValidator } from '../validators/doctor.validator';
 import { BaseUserController } from './base.user.controller';
@@ -22,22 +18,9 @@ export class DoctorController extends BaseUserController {
 
     _service: DoctorService = null;
 
-    _userService: UserService = null;
-
-    _personService: PersonService = null;
-
-    _roleService: RoleService = null;
-
-    _authorizer: Authorizer = null;
-
     constructor() {
-
         super();
-
         this._service = Loader.container.resolve(DoctorService);
-        this._userService = Loader.container.resolve(UserService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion

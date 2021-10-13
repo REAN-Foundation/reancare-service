@@ -1,15 +1,13 @@
 import express from 'express';
-
+import { Authorizer } from '../../auth/authorizer';
+import { ApiError } from '../../common/api.error';
 import { Helper } from '../../common/helper';
 import { ResponseHandler } from '../../common/response.handler';
-import { Loader } from '../../startup/loader';
-import { Authorizer } from '../../auth/authorizer';
-import { PersonService } from '../../services/person.service';
-
-import { ApiError } from '../../common/api.error';
-import { OrganizationValidator } from '../validators/organization.validator';
 import { OrganizationService } from '../../services/organization.service';
+import { PersonService } from '../../services/person.service';
 import { RoleService } from '../../services/role.service';
+import { Loader } from '../../startup/loader';
+import { OrganizationValidator } from '../validators/organization.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -231,11 +229,11 @@ export class OrganizationController {
             const id: string = await OrganizationValidator.getParamId(request);
 
             const addresses = await this._service.getAddresses(id);
-            if (addresses == null || addresses.length === 0) {
-                throw new ApiError(404, 'Addresses not found.');
-            }
+                        
+            const message = addresses.length === 0 ?
+                'No records found!' : `Total ${addresses.length} address records retrieved successfully!`;
 
-            ResponseHandler.success(request, response, 'Addresses retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, message, 200, {
                 Addresses : addresses,
             });
         } catch (error) {
@@ -299,11 +297,11 @@ export class OrganizationController {
             const id: string = await OrganizationValidator.getParamId(request);
 
             const persons = await this._service.getPersons(id);
-            if (persons == null || persons.length === 0) {
-                throw new ApiError(404, 'Persons not found.');
-            }
+                        
+            const message = persons.length === 0 ?
+                'No records found!' : `Total ${persons.length} person records retrieved successfully!`;
 
-            ResponseHandler.success(request, response, 'Persons retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, message, 200, {
                 Persons : persons,
             });
         } catch (error) {

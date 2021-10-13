@@ -1,8 +1,11 @@
+import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
 import { Logger } from '../../common/logger';
 import { AddressDomainModel } from '../../domain.types/address/address.domain.model';
 import { AddressService } from '../../services/address.service';
 import { PersonService } from '../../services/person.service';
+import { RoleService } from '../../services/role.service';
+import { UserService } from '../../services/user/user.service';
 import { Loader } from '../../startup/loader';
 import { AddressValidator } from '../validators/address.validator';
 
@@ -14,9 +17,18 @@ export class BaseUserController {
 
     _addressService: AddressService = null;
 
+    _userService: UserService = null;
+
+    _roleService: RoleService = null;
+    
+    _authorizer: Authorizer = null;
+
     constructor() {
+        this._userService = Loader.container.resolve(UserService);
+        this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);
         this._addressService = Loader.container.resolve(AddressService);
+        this._authorizer = Loader.authorizer;
     }
 
     async createOrUpdateDefaultAddress(request, personId: string): Promise<void> {

@@ -1,5 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { ApiError } from "../../../common/api.error";
+import { Helper } from "../../../common/helper";
 import { Logger } from "../../../common/logger";
 import { TimeHelper } from "../../../common/time.helper";
 import { IMedicationConsumptionRepo } from "../../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface";
@@ -15,6 +16,8 @@ import { MedicationDto } from "../../../domain.types/clinical/medication/medicat
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
 import { MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from "../../../domain.types/clinical/medication/medication/medication.types";
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
+import { UserActionType, UserTaskCategory } from "../../../domain.types/user/user.task/user.task..types";
+import { UserTaskDomainModel } from "../../../domain.types/user/user.task/user.task.domain.model";
 import { IUserActionService } from "../../../services/user/user.action.service.interface";
 import { Loader } from "../../../startup/loader";
 
@@ -96,6 +99,13 @@ export class MedicationConsumptionService implements IUserActionService {
                 
                 if (TimeHelper.isAfter(now, start)) {
                     pendingCount++;
+
+                    //Add task only for the schedule which is in next two days
+                    var afterTwoDays = TimeHelper.addDuration(now, 2, DurationType.Day);
+                    if (start < afterTwoDays) {
+                        await this.createMedicationTaskForSchedule(savedRecord);
+                    }
+
                 }
                 
                 consumptions.push(savedRecord);
@@ -237,12 +247,12 @@ export class MedicationConsumptionService implements IUserActionService {
         }
     
         //Now update the associated user task as completed
-        await this.finishAssociatedTask(medConsumption);
+        await this.finishAssociatedTask(updated);
     
         return updated;
     };
 
-    markAsMissed = async (id: string): Promise<MedicationConsumptionDto> => {
+    markAsMissed = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
 
         var updatedDto = await this._medicationConsumptionRepo.markAsMissed(id);
         if (updatedDto === null) {
@@ -250,14 +260,14 @@ export class MedicationConsumptionService implements IUserActionService {
             return null;
         }
 
-        var medConsumption = await this._medicationConsumptionRepo.getById(id);
-        if (medConsumption === null) {
-            Logger.instance().log('Medication consumption instance with given id cannot be found.');
-            return null;
-        }
+        // var medConsumption = await this._medicationConsumptionRepo.getById(id);
+        // if (medConsumption === null) {
+        //     Logger.instance().log('Medication consumption instance with given id cannot be found.');
+        //     return null;
+        // }
         
         //Now update the associated user task as completed
-        await this.finishAssociatedTask(medConsumption);
+        await this.finishAssociatedTask(updatedDto);
 
         return updatedDto;
     };
@@ -393,6 +403,44 @@ export class MedicationConsumptionService implements IUserActionService {
             count++;
         }
         return count;
+    }
+
+    createMedicationTasks = async (upcomingInMinutes: number): Promise<number> => {
+        var count = 0;
+        var from = new Date();
+        var to = TimeHelper.addDuration(from, upcomingInMinutes, DurationType.Minute);
+        var schedules = await this._medicationConsumptionRepo.getSchedulesForDuration(from, to);
+        for await (var a of schedules) {
+            if (true === await this.createMedicationTaskForSchedule(a))
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    createMedicationTaskForSchedule = async (consumption: MedicationConsumptionDto): Promise<boolean> => {
+
+        const existingTask = await this._userTaskRepo.getTaskForUserWithAction(
+            consumption.PatientUserId, consumption.id);
+
+        if (existingTask !== null) {
+            return false; //If exists...
+        }
+        
+        const displayId = Helper.generateDisplayId('TSK');
+        const domainModel: UserTaskDomainModel = {
+            Task        : consumption.Details,
+            DisplayId   : displayId,
+            UserId      : consumption.PatientUserId,
+            Category    : UserTaskCategory.Medication,
+            ActionId    : consumption.id,
+            ActionType  : UserActionType.Medication,
+            IsRecurrent : false,
+        };
+        await this._userTaskRepo.create(domainModel);
+        
+        return true;
     }
 
     completeAction = async (actionId: string, completionTime?: Date, success?: boolean): Promise<boolean> => {

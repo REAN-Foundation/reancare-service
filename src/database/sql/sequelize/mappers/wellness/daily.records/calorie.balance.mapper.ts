@@ -12,12 +12,10 @@ export class CalorieBalanceMapper {
 
         const dto: CalorieBalanceDto = {
             id               : calorieBalance.id,
-            PersonId         : calorieBalance.PersonId,
             PatientUserId    : calorieBalance.PatientUserId,
             CaloriesBurned   : calorieBalance.CaloriesBurned,
             CaloriesConsumed : calorieBalance.CaloriesConsumed,
             Unit             : calorieBalance.Unit,
-            Person           : undefined,
             CalorieBalance   : Number(calorieBalance.CaloriesConsumed) - Number(calorieBalance.CaloriesBurned)
         };
         return dto;

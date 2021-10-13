@@ -45,13 +45,6 @@ export class CalorieBalanceController {
             
             const domainModel = await CalorieBalanceValidator.create(request);
 
-            if (domainModel.PersonId != null) {
-                const person = await this._personService.getById(domainModel.PersonId);
-                if (person == null) {
-                    throw new ApiError(404, `Person with an id ${domainModel.PersonId} cannot be found.`);
-                }
-            }
-
             if (domainModel.PatientUserId != null) {
                 var organization = await this._patientService.getByUserId(domainModel.PatientUserId);
                 if (organization == null) {

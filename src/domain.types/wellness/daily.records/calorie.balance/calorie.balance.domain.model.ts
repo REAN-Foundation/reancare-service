@@ -1,6 +1,5 @@
 export interface CalorieBalanceDomainModel {
     id?: string;
-    PersonId: string;
     PatientUserId?: string;
     CaloriesConsumed?: number;
     CaloriesBurned?: number;

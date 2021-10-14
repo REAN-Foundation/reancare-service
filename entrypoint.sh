@@ -16,4 +16,4 @@ cd /app
 # npm run start
 pwd
 ls dist/
-pm2-runtime dist/index.js
+pm2-runtime dist/src/index.js

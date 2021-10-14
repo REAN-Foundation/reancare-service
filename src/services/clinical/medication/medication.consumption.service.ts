@@ -76,7 +76,8 @@ export class MedicationConsumptionService implements IUserActionService {
 
             for (var j = 0; j < scheduleTimings.length; j++) {
 
-                var details = this.getMedicationDetails(dose, dosageUnit, scheduleTimings[j].schedule);
+                var details = this.getMedicationDetails(
+                    medication.DrugName, dose, dosageUnit, scheduleTimings[j].schedule);
                 var start_minutes = scheduleTimings[j].start;
                 var end_minutes = scheduleTimings[j].end;
                 var start = TimeHelper.addDuration(day, start_minutes, DurationType.Minute);
@@ -430,13 +431,15 @@ export class MedicationConsumptionService implements IUserActionService {
         
         const displayId = Helper.generateDisplayId('TSK');
         const domainModel: UserTaskDomainModel = {
-            Task        : consumption.Details,
-            DisplayId   : displayId,
-            UserId      : consumption.PatientUserId,
-            Category    : UserTaskCategory.Medication,
-            ActionId    : consumption.id,
-            ActionType  : UserActionType.Medication,
-            IsRecurrent : false,
+            Task               : consumption.Details,
+            DisplayId          : displayId,
+            UserId             : consumption.PatientUserId,
+            Category           : UserTaskCategory.Medication,
+            ActionId           : consumption.id,
+            ActionType         : UserActionType.Medication,
+            ScheduledStartTime : consumption.TimeScheduleStart,
+            ScheduledEndTime   : consumption.TimeScheduleEnd,
+            IsRecurrent        : false,
         };
         await this._userTaskRepo.create(domainModel);
         
@@ -546,8 +549,8 @@ export class MedicationConsumptionService implements IUserActionService {
         return "+05:30";
     }
 
-    private getMedicationDetails = (dose, dosageUnit, schedule) => {
-        return dose.toFixed(1).toString() + ' ' + dosageUnit + ', ' + schedule;
+    private getMedicationDetails = (drugName, dose, dosageUnit, schedule) => {
+        return drugName + ': ' + dose.toFixed(1).toString() + ' ' + dosageUnit + ', ' + schedule;
     }
 
     private getScheduleSlots = (medication) => {

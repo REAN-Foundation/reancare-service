@@ -27,11 +27,15 @@ ADD . /app/tmp/resources/uploads
 ADD . /app/tmp/resources/downloads
 
 RUN npm install -g typescript
+RUN npm install -g ts-node
+RUN npm install -g sequelize-cli
 RUN npm install pm2 -g
 RUN npm install
 
-#Optionally build if using pm2-runtime
-# RUN npm run build
+#Build the service
+RUN npm run build
+
+COPY . .
 
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]

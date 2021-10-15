@@ -11,18 +11,23 @@ import { ConfigurationManager } from '../../config/configuration.manager';
 import { FileResourceRenameDomainModel, FileResourceUpdateModel, FileResourceUploadDomainModel } from '../../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
 import { DownloadDisposition, FileResourceMetadata, ResourceReference } from '../../domain.types/file.resource/file.resource.types';
+import { BaseValidator } from './base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FileResourceValidator {
+export class FileResourceValidator extends BaseValidator{
+
+    constructor() {
+        super();
+    }
 
     //#region Publics
 
-    static getUploadDomainModel = (request: express.Request): FileResourceUploadDomainModel[] => {
+    getUploadDomainModel = (request: express.Request): FileResourceUploadDomainModel[] => {
 
         var currentUserId = request.currentUser.UserId;
         var models: FileResourceUploadDomainModel[] = [];
-        var fileMetadataList = FileResourceValidator.getFileMetadataList(request);
+        var fileMetadataList = this.getFileMetadataList(request);
 
         var mimeType = null;
         if (fileMetadataList.length > 0) {
@@ -44,15 +49,15 @@ export class FileResourceValidator {
         return models;
     };
 
-    static upload = async (request: express.Request): Promise<FileResourceUploadDomainModel[]> => {
+    upload = async (request: express.Request): Promise<FileResourceUploadDomainModel[]> => {
         if (!request.files) {
             throw new ValidationError('No file uploaded!!');
         }
-        await FileResourceValidator.validateBody(request);
-        return FileResourceValidator.getUploadDomainModel(request);
+        await this.validateBody(request);
+        return this.getUploadDomainModel(request);
     };
 
-    static update = async (request: express.Request): Promise<FileResourceUpdateModel> => {
+    update = async (request: express.Request): Promise<FileResourceUpdateModel> => {
 
         await param('id').exists()
             .escape()
@@ -99,7 +104,7 @@ export class FileResourceValidator {
         return updateModel;
     };
 
-    static uploadVersion = async (request: express.Request): Promise<FileResourceMetadata> => {
+    uploadVersion = async (request: express.Request): Promise<FileResourceMetadata> => {
 
         if (!request.files) {
             throw new ValidationError('No file uploaded!!');
@@ -125,7 +130,7 @@ export class FileResourceValidator {
             Helper.handleValidationError(result);
         }
 
-        var metadataList = FileResourceValidator.getFileMetadataList(request);
+        var metadataList = this.getFileMetadataList(request);
         if (metadataList.length === 0) {
             throw new ValidationError('Missing file metadata!');
         }
@@ -138,7 +143,7 @@ export class FileResourceValidator {
         return metadata;
     };
 
-    static rename = async (request: express.Request): Promise<FileResourceRenameDomainModel> => {
+    rename = async (request: express.Request): Promise<FileResourceRenameDomainModel> => {
 
         await param('id').exists()
             .escape()
@@ -164,7 +169,7 @@ export class FileResourceValidator {
         return domainModel;
     }
 
-    static getByVersionName = async (request: express.Request): Promise<FileResourceMetadata> => {
+    getByVersionName = async (request: express.Request): Promise<FileResourceMetadata> => {
 
         await param('id').exists()
             .escape()
@@ -185,7 +190,7 @@ export class FileResourceValidator {
             Helper.handleValidationError(result);
         }
 
-        var disposition = FileResourceValidator.getDownloadDisposition(request);
+        var disposition = this.getDownloadDisposition(request);
         
         var metadata: FileResourceMetadata = {
             ResourceId  : request.params.id,
@@ -196,7 +201,7 @@ export class FileResourceValidator {
         return metadata;
     };
 
-    static getByVersionId = async (request: express.Request): Promise<FileResourceMetadata> => {
+    getByVersionId = async (request: express.Request): Promise<FileResourceMetadata> => {
 
         await param('id').exists()
             .escape()
@@ -218,7 +223,7 @@ export class FileResourceValidator {
             Helper.handleValidationError(result);
         }
 
-        var disposition = FileResourceValidator.getDownloadDisposition(request);
+        var disposition = this.getDownloadDisposition(request);
         
         var metadata: FileResourceMetadata = {
             ResourceId  : request.params.id,
@@ -229,7 +234,7 @@ export class FileResourceValidator {
         return metadata;
     };
 
-    static downloadById = async (request: express.Request): Promise<FileResourceMetadata> => {
+    downloadById = async (request: express.Request): Promise<FileResourceMetadata> => {
 
         await param('id').trim()
             .escape()
@@ -246,7 +251,7 @@ export class FileResourceValidator {
             Helper.handleValidationError(result);
         }
 
-        var disposition = FileResourceValidator.getDownloadDisposition(request);
+        var disposition = this.getDownloadDisposition(request);
         
         var metadata: FileResourceMetadata = {
             ResourceId  : request.params.id,
@@ -256,20 +261,20 @@ export class FileResourceValidator {
         return metadata;
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await FileResourceValidator.getParamId(request);
+    getById = async (request: express.Request): Promise<string> => {
+        return await this.getParamId(request);
     };
 
-    static search = async (request: express.Request): Promise<FileResourceSearchFilters> => {
-        await FileResourceValidator.searchQueryParams(request);
-        return FileResourceValidator.getFilter(request);
+    search = async (request: express.Request): Promise<FileResourceSearchFilters> => {
+        await this.searchQueryParams(request);
+        return this.getFilter(request);
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await FileResourceValidator.getParamId(request);
+    delete = async (request: express.Request): Promise<string> => {
+        return await this.getParamId(request);
     };
 
-    static deleteByReference = async (request: express.Request): Promise<string> => {
+    deleteByReference = async (request: express.Request): Promise<string> => {
 
         await param('referenceId').trim()
             .escape()
@@ -284,7 +289,7 @@ export class FileResourceValidator {
         return request.params.referenceId;
     };
 
-    private static getDownloadDisposition(request) {
+    public getDownloadDisposition(request) {
         var disposition = DownloadDisposition.Auto;
         if (request.query.disposition) {
             if (request.query.disposition === 'inline') {
@@ -300,7 +305,7 @@ export class FileResourceValidator {
         return disposition;
     }
 
-    private static getFileMetadataList(request) {
+    public getFileMetadataList(request) {
         var timestamp = TimeHelper.timestamp(new Date());
         var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
         var folderPath = path.join(tempUploadFolder, timestamp);
@@ -312,7 +317,7 @@ export class FileResourceValidator {
 
     //#region Privates
 
-    private static async searchQueryParams(request) {
+    private async searchQueryParams(request) {
 
         await query('ownerUserId').optional()
             .trim()
@@ -381,7 +386,7 @@ export class FileResourceValidator {
         }
     }
 
-    private static async validateBody(request) {
+    private async validateBody(request) {
 
         await body('FileName').optional()
             .trim()
@@ -415,7 +420,7 @@ export class FileResourceValidator {
         }
     }
 
-    private static getFilter(request): FileResourceSearchFilters {
+    private getFilter(request): FileResourceSearchFilters {
 
         const pageIndex = request.query.pageIndex ?
             parseInt(request.query.pageIndex as string, 10) : 0;
@@ -440,7 +445,7 @@ export class FileResourceValidator {
         return filters;
     }
 
-    private static async getParamId(request) {
+    private async getParamId(request) {
 
         await param('id').trim()
             .escape()
@@ -455,7 +460,7 @@ export class FileResourceValidator {
         return request.params.id;
     }
 
-    static storeLocally = (tempFolder: string, files: expressFileupload.FileArray): FileResourceMetadata[] => {
+    storeLocally = (tempFolder: string, files: expressFileupload.FileArray): FileResourceMetadata[] => {
 
         var metadataDetails = [];
         _.forEach(_.keysIn(files), (key) => {
@@ -463,19 +468,19 @@ export class FileResourceValidator {
             if (Array.isArray(file)) {
                 var fileArray = file;
                 for (var fileElement of fileArray) {
-                    var metadata = FileResourceValidator.moveToTempFolder(tempFolder, fileElement);
+                    var metadata = this.moveToTempFolder(tempFolder, fileElement);
                     metadataDetails.push(metadata);
                 }
             }
             else {
-                var metadata = FileResourceValidator.moveToTempFolder(tempFolder, file);
+                var metadata = this.moveToTempFolder(tempFolder, file);
                 metadataDetails.push(metadata);
             }
         });
         return metadataDetails;
     }
 
-    static moveToTempFolder = (folder, file): FileResourceMetadata => {
+    moveToTempFolder = (folder, file): FileResourceMetadata => {
 
         var timestamp = TimeHelper.timestamp(new Date());
         var filename = file.name;

@@ -1,7 +1,13 @@
+
 import { inject, injectable } from "tsyringe";
+import { Helper } from "../../common/helper";
 import { IDocumentRepo } from "../../database/repository.interfaces/patient/document.repo.interface";
 import { DocumentDomainModel } from '../../domain.types/patient/document/document.domain.model';
 import { DocumentDto } from '../../domain.types/patient/document/document.dto';
+import { DocumentSearchFilters, DocumentSearchResults } from "../../domain.types/patient/document/document.search.types";
+import { DocumentTypes } from "../../domain.types/patient/document/document.types";
+import { SharedDocumentDetailsDomainModel } from "../../domain.types/patient/document/shared.document.details.domain.model";
+import { SharedDocumentDetailsDto } from "../../domain.types/patient/document/shared.document.details.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -12,9 +18,10 @@ export class DocumentService {
         @inject('IDocumentRepo') private _documentRepo: IDocumentRepo,
     ) { }
 
-    create = async (documentDomainModel: DocumentDomainModel):
+    create = async (model: DocumentDomainModel):
     Promise<DocumentDto> => {
-        return await this._documentRepo.create(documentDomainModel);
+        model.DisplayId = this.getDocumentDisplayId(model.DocumentType);
+        return await this._documentRepo.create(model);
     };
 
     getById = async (id: string): Promise<DocumentDto> => {
@@ -30,5 +37,55 @@ export class DocumentService {
         return await this._documentRepo.delete(id);
     };
 
-}
+    upload = async (documentDomainModel: DocumentDomainModel) => {
+        return await this._documentRepo.upload(documentDomainModel);
+    }
 
+    search = async (filters: DocumentSearchFilters): Promise<DocumentSearchResults> => {
+        return await this._documentRepo.search(filters);
+    }
+
+    rename = async (id: string, newName: string): Promise<DocumentDto> => {
+        return await this._documentRepo.rename(id, newName);
+    }
+
+    share = async (model: SharedDocumentDetailsDomainModel): Promise<SharedDocumentDetailsDto> => {
+        return await this._documentRepo.share(model);
+    }
+
+    getSharedDocument = async (key: string): Promise<SharedDocumentDetailsDto> => {
+        return await this._documentRepo.getSharedDocument(key);
+    }
+
+    sharedKeyExists = async (key: string): Promise<boolean> => {
+        return await this._documentRepo.sharedKeyExists(key);
+    }
+
+    //#region Privates
+
+    getDocumentDisplayId = (docType: DocumentTypes) => {
+        
+        var prefix = 'DCMT';
+
+        var prefixes = {};
+        prefixes[DocumentTypes.LabReport] = 'LBRP';
+        prefixes[DocumentTypes.ImagingStudy] = 'IMST';
+        prefixes[DocumentTypes.DrugPrescription] = 'MDPR';
+        prefixes[DocumentTypes.DiagnosticPrescription] = 'DGPR';
+        prefixes[DocumentTypes.DoctorNotes] = 'DRNT';
+        prefixes[DocumentTypes.DischargeSummary] = 'DSSM';
+        prefixes[DocumentTypes.OpdPaper] = 'OPDP';
+        prefixes[DocumentTypes.Unknown] = 'UNKN';
+        
+        const keys = Object.keys(prefixes);
+
+        if (keys.includes(docType)){
+            prefix = prefixes[docType];
+        }
+
+        return Helper.generateDisplayId(prefix);
+    }
+
+    //#endregion
+
+}

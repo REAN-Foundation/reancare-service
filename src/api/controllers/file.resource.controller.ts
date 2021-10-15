@@ -34,6 +34,8 @@ export class FileResourceController {
 
     _authenticator: Authenticator = null;
 
+    _validator: FileResourceValidator = new FileResourceValidator();
+
     constructor() {
         this._service = Loader.container.resolve(FileResourceService);
         this._roleService = Loader.container.resolve(RoleService);
@@ -51,7 +53,7 @@ export class FileResourceController {
             request.context = 'FileResource.Upload';
             await this._authorizer.authorize(request, response);
             
-            var domainModels = await FileResourceValidator.upload(request);
+            var domainModels = await this._validator.upload(request);
 
             if (domainModels.length === 0) {
                 throw new ApiError(400, 'File/s not found!');
@@ -75,7 +77,7 @@ export class FileResourceController {
             request.context = 'FileResource.Update';
             await this._authorizer.authorize(request, response);
             
-            var updateModel = await FileResourceValidator.update(request);
+            var updateModel = await this._validator.update(request);
             var dto = await this._service.update(updateModel.ResourceId, updateModel);
             dto = this.sanitizeDto(dto);
             ResponseHandler.success(request, response, 'File resource updated successfully!', 200, {
@@ -92,7 +94,7 @@ export class FileResourceController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const metadata: FileResourceMetadata = await FileResourceValidator.uploadVersion(request);
+            const metadata: FileResourceMetadata = await this._validator.uploadVersion(request);
             var dto = await this._service.uploadVersion(metadata, metadata.IsDefaultVersion);
             dto = this.sanitizeDto(dto);
 
@@ -111,7 +113,7 @@ export class FileResourceController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const model = await FileResourceValidator.rename(request);
+            const model = await this._validator.rename(request);
             if (model.NewFileName === null) {
                 throw new ApiError(400, "Invalid file name!");
             }
@@ -134,7 +136,7 @@ export class FileResourceController {
             await this._authorizer.authorize(request, response);
 
             const filters: FileResourceSearchFilters =
-                await FileResourceValidator.search(request);
+                await this._validator.search(request);
 
             const downloadedFolder = await this._service.searchAndDownload(filters);
             var filenames = fs.readdirSync(downloadedFolder);
@@ -166,7 +168,7 @@ export class FileResourceController {
             request.context = 'FileResource.DownloadByVersionName';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
-            const metadata: FileResourceMetadata = await FileResourceValidator.getByVersionName(request);
+            const metadata: FileResourceMetadata = await this._validator.getByVersionName(request);
             var resource = await this._service.getById(metadata.ResourceId);
 
             if (resource.IsPublicResource === false) {
@@ -195,7 +197,7 @@ export class FileResourceController {
             request.context = 'FileResource.DownloadByVersionId';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
-            const metadata: FileResourceMetadata = await FileResourceValidator.getByVersionId(request);
+            const metadata: FileResourceMetadata = await this._validator.getByVersionId(request);
             var resource = await this._service.getById(metadata.ResourceId);
 
             if (resource.IsPublicResource === false) {
@@ -224,7 +226,7 @@ export class FileResourceController {
             request.context = 'FileResource.DownloadById';
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
 
-            const metadata = await FileResourceValidator.downloadById(request);
+            const metadata = await this._validator.downloadById(request);
             var resource = await this._service.getById(metadata.ResourceId);
 
             if (resource.IsPublicResource === false) {
@@ -251,7 +253,7 @@ export class FileResourceController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const filters: FileResourceSearchFilters = await FileResourceValidator.search(request);
+            const filters: FileResourceSearchFilters = await this._validator.search(request);
 
             var searchResults = await this._service.search(filters);
             if (searchResults == null) {
@@ -277,7 +279,7 @@ export class FileResourceController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const metadata: FileResourceMetadata = await FileResourceValidator.getByVersionId(request);
+            const metadata: FileResourceMetadata = await this._validator.getByVersionId(request);
             
             const versionMetadata = await this._service.getVersionByVersionId(
                 metadata.ResourceId,
@@ -305,7 +307,7 @@ export class FileResourceController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const id: string = await FileResourceValidator.getById(request);
+            const id: string = await this._validator.getById(request);
 
             const versions = await this._service.getVersions(id);
             if (versions === null || versions.length === 0) {
@@ -337,7 +339,7 @@ export class FileResourceController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const id: string = await FileResourceValidator.getById(request);
+            const id: string = await this._validator.getById(request);
 
             var dto = await this._service.getById(id);
             if (dto == null) {
@@ -360,7 +362,7 @@ export class FileResourceController {
             request.context = 'FileResource.Delete';
             await this._authorizer.authorize(request, response);
 
-            const id: string = await FileResourceValidator.delete(request);
+            const id: string = await this._validator.delete(request);
             const existingFileResource = await this._service.getById(id);
             if (existingFileResource == null) {
                 throw new ApiError(404, 'File resource not found.');
@@ -386,7 +388,7 @@ export class FileResourceController {
             request.context = 'FileResource.DeleteVersionByVersionId';
             await this._authorizer.authorize(request, response);
 
-            const metadata: FileResourceMetadata = await FileResourceValidator.getByVersionId(request);
+            const metadata: FileResourceMetadata = await this._validator.getByVersionId(request);
 
             const deleted = await this._service.deleteVersionByVersionId(metadata.ResourceId, metadata.VersionId);
             if (!deleted) {

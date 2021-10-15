@@ -1,22 +1,11 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    Length,
-    IsDate,
-    ForeignKey,
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate,
+    IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
 import { v4 } from 'uuid';
-import User from '../user/user.model';
-import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
+import { DocumentTypes, DocumentTypesList } from '../../../../../domain.types/patient/document/document.types';
 import FileResource from '../file.resource/file.resource.model';
+import User from '../user/user.model';
 import Document from './document.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +13,7 @@ import Document from './document.model';
 @Table({
     timestamps      : true,
     modelName       : 'SharedDocumentDetails',
-    tableName       : 'patient_shared_document_details',
+    tableName       : 'shared_document_details',
     paranoid        : true,
     freezeTableName : true,
 })
@@ -67,18 +56,9 @@ export default class SharedDocumentDetails extends Model {
 
     @Length({ max: 128 })
     @Column({
-        type      : DataType.STRING(128),
-        allowNull : false,
-        values    : [
-            DocumentTypes.LabReport,
-            DocumentTypes.ImagingStudy,
-            DocumentTypes.DrugPrescription,
-            DocumentTypes.DiagnosticPrescription,
-            DocumentTypes.DoctorNotes,
-            DocumentTypes.DischargeSummary,
-            DocumentTypes.OpdPaper,
-            DocumentTypes.Unknown,
-        ],
+        type         : DataType.STRING(128),
+        allowNull    : false,
+        values       : DocumentTypesList,
         defaultValue : DocumentTypes.Unknown
     })
     DocumentType: string;

@@ -24,3 +24,11 @@ export const register = (app: express.Application): void => {
 
     app.use('/api/v1/patient-documents', router);
 };
+
+export const registerSharingRoutes = (app: express.Application): void => {
+
+    const router = express.Router();
+    const controller = new DocumentController();
+    router.delete('/:key', controller.getSharedDocument);
+    app.use('/api/v1/docs', router);
+};

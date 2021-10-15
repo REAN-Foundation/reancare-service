@@ -1,170 +1,148 @@
 import express from 'express';
-import { body, param, validationResult } from 'express-validator';
-import { Helper } from '../../../common/helper';
+import { ValidationError } from 'sequelize';
 import { DocumentDomainModel } from '../../../domain.types/patient/document/document.domain.model';
+import { DocumentSearchFilters } from '../../../domain.types/patient/document/document.search.types';
+import { Roles } from '../../../domain.types/role/role.types';
+import { UserService } from '../../../services/user/user.service';
+import { Loader } from '../../../startup/loader';
+import { BaseValidator, Where } from '../base.validator';
+import { FileResourceValidator } from '../file.resource.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DocumentValidator {
+export class DocumentValidator  extends BaseValidator {
+    
+    _userService: UserService = null;
 
-    static getDomainModel = (request: express.Request): DocumentDomainModel => {
+    constructor() {
+        super();
+        this._userService = Loader.container.resolve(UserService);
+    }
 
-        const DocumentModel: DocumentDomainModel = {
+    getDomainModel = async (request: express.Request): Promise<DocumentDomainModel> => {
+
+        var fileResourceValidator = new FileResourceValidator();
+        var fileMetadataList = fileResourceValidator.getFileMetadataList(request);
+        if (fileMetadataList.length === 0) {
+            throw new ValidationError(`File metadata cannot be retrieved.`);
+        }
+        var metadata = fileMetadataList[0];
+
+        const currentUserId = request.currentUser.UserId;
+        var patientUserId = null;
+        if (request.body.PatientUserId === undefined || request.body.PatientUserId === null) {
+            var roleName = await this._userService.getUserRoleName(currentUserId);
+            if (roleName === Roles.Patient) {
+                patientUserId = currentUserId;
+            }
+        }
+        else {
+            patientUserId = request.body.PatientUserId;
+        }
+
+        const model: DocumentDomainModel = {
             DocumentType              : request.body.DocumentType,
-            PatientUserId             : request.body.PatientUserId,
+            PatientUserId             : patientUserId,
             MedicalPractitionerUserId : request.body.MedicalPractitionerUserId ?? null,
             MedicalPractionerRole     : request.body.MedicalPractionerRole ?? null,
-            UploadedByUserId          : request.body.UploadedByUserId ?? null,
+            UploadedByUserId          : currentUserId,
             AssociatedVisitId         : request.body.AssociatedVisitId ?? null,
             AssociatedVisitType       : request.body.AssociatedVisitType ?? null,
             AssociatedOrderId         : request.body.AssociatedOrderId ?? null,
             AssociatedOrderType       : request.body.AssociatedOrderType ?? null,
-            FileName                  : request.body.FileName ?? null,
-            ResourceId                : request.body.ResourceId,
-            AuthenticatedUrl          : request.body.AuthenticatedUrl,
-            MimeType                  : request.body.MimeType ?? null,
-            SizeInKBytes              : request.body.SizeInKBytes ?? null,
-            RecordDate                : request.body.RecordDate ?? null,
-            UploadedDate              : request.body.UploadedDate ?? null,
-
+            FileMetaData              : metadata,
+            RecordDate                : request.body.RecordDate ?? new Date(),
+            UploadedDate              : new Date(),
         };
 
-        return DocumentModel;
+        return model;
     };
     
-    static upload = async (request: express.Request): Promise<DocumentDomainModel> => {
-        await DocumentValidator.validateBody(request);
-        return DocumentValidator.getDomainModel(request);
+    upload = async (request: express.Request): Promise<DocumentDomainModel> => {
+        await this.validateUploadBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await DocumentValidator.getParamId(request);
+    update = async (request: express.Request): Promise<DocumentDomainModel> => {
+
+        const id: string = await this.getParamUuid(request, 'id');
+
+        await this.validateUpdateBody(request);
+
+        const model: DocumentDomainModel = {
+            DocumentType              : request.body.DocumentType ?? null,
+            PatientUserId             : request.body.PatientUserId ?? null,
+            MedicalPractitionerUserId : request.body.MedicalPractitionerUserId ?? null,
+            MedicalPractionerRole     : request.body.MedicalPractionerRole ?? null,
+            AssociatedVisitId         : request.body.AssociatedVisitId ?? null,
+            AssociatedVisitType       : request.body.AssociatedVisitType ?? null,
+            AssociatedOrderId         : request.body.AssociatedOrderId ?? null,
+            AssociatedOrderType       : request.body.AssociatedOrderType ?? null,
+            RecordDate                : request.body.RecordDate ?? new Date(),
+        };
+        model.id = id;
+
+        return model;
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await DocumentValidator.getParamId(request);
+    rename = async (request: express.Request): Promise<string> => {
+        await this.validateString(request, 'NewName', Where.Body, true, false, false, 4, 64);
+        this.validateRequest(request);
+        return request.body.NewName;
+    };
+    
+    search = async (request: express.Request): Promise<DocumentSearchFilters> => {
+
+        await this.validateUuid(request, 'medicalPractitionerUserId', Where.Query, false, false);
+        await this.validateString(request, 'documentType', Where.Query, false, false, true);
+        await this.validateUuid(request, 'associatedOrderId', Where.Query, false, false);
+        await this.validateUuid(request, 'associatedVisitId', Where.Query, false, false);
+        await this.validateDate(request, 'uploadedDateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'uploadedDateTo', Where.Query, false, false);
+        await this.validateCommonSearchFilters(request);
+        
+        this.validateRequest(request);
+
+        return this.getFilter(request);
     };
 
-    static update = async (request: express.Request): Promise<DocumentDomainModel> => {
+    private  getFilter(request): DocumentSearchFilters {
 
-        const id = await DocumentValidator.getParamId(request);
-        await DocumentValidator.validateBody(request);
-
-        const domainModel = DocumentValidator.getDomainModel(request);
-        domainModel.id = id;
-
-        return domainModel;
-    };
-
-    private static async validateBody(request) {
-
-        await body('DocumentType').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('MedicalPractitionerUserId').optional({ nullable: true })
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('MedicalPractionerRole').optional({ nullable: true })
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('UploadedByUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('AssociatedVisitId').optional({ nullable: true })
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('AssociatedVisitType').optional({ nullable: true })
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('AssociatedOrderId').optional({ nullable: true })
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('AssociatedOrderType').optional({ nullable: true })
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('FileName').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('ResourceId').optional({ nullable: true })
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('AuthenticatedUrl').optional({ nullable: true })
-            .trim()
-            .run(request);
-
-        await body('MimeType').optional({ nullable: true })
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('SizeInKBytes').optional({ nullable: true })
-            .trim()
-            .escape()
-            .isFloat()
-            .run(request);
-
-        await body('RecordDate').optional({ nullable: true })
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await body('UploadedDate').optional({ nullable: true })
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        var filters: DocumentSearchFilters = {
+            PatientUserId             : request.currentUser.UserId, //Currently only allow patients to search their own documents
+            MedicalPractitionerUserId : request.query.medicalPractitionerUserId,
+            DocumentType              : request.query.documentType,
+            AssociatedOrderId         : request.query.associatedOrderId,
+            AssociatedVisitId         : request.query.associatedVisitId,
+            CreatedDateFrom           : request.query.uploadedDateFrom,
+            CreatedDateTo             : request.query.uploadedDateTo
+        };
+        
+        return this.updateCommonSearchFilters(request, filters);
     }
-    
-    private static async getParamId(request) {
 
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
+    private async validateUploadBody(request) {
+        await this.validateString(request, 'DocumentType', Where.Body, true, false, true);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateCommonBodyParams(request);
+        this.validateRequest(request);
+    }
 
-        const result = validationResult(request);
+    private async validateUpdateBody(request) {
+        await this.validateString(request, 'DocumentType', Where.Body, false, false, true);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateCommonBodyParams(request);
+        this.validateRequest(request);
+    }
 
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+    private async validateCommonBodyParams(request: any) {
+        await this.validateUuid(request, 'MedicalPractitionerUserId', Where.Body, false, true);
+        await this.validateUuid(request, 'AssociatedVisitId', Where.Body, false, true);
+        await this.validateUuid(request, 'AssociatedOrderId', Where.Body, false, true);
+        await this.validateString(request, 'MedicalPractionerRole', Where.Body, false, false);
+        await this.validateString(request, 'AssociatedVisitType', Where.Body, false, false);
+        await this.validateString(request, 'AssociatedOrderType', Where.Body, false, false);
+        await this.validateDate(request, 'RecordDate', Where.Body, false, false);
     }
 
 }

@@ -1,9 +1,20 @@
 import express from 'express';
+import fs from 'fs';
+import * as genpass from 'generate-password';
+import path from 'path';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
+import { TimeHelper } from '../../../common/time.helper';
+import { FileResourceUploadDomainModel } from '../../../domain.types/file.resource/file.resource.domain.model';
+import { DurationType } from '../../../domain.types/miscellaneous/time.types';
+import { DocumentDto } from '../../../domain.types/patient/document/document.dto';
+import { DocumentSearchFilters } from '../../../domain.types/patient/document/document.search.types';
 import { DocumentTypesList } from '../../../domain.types/patient/document/document.types';
+import { SharedDocumentDetailsDomainModel } from '../../../domain.types/patient/document/shared.document.details.domain.model';
+import { SharedDocumentDetailsDto } from '../../../domain.types/patient/document/shared.document.details.dto';
+import { FileResourceService } from '../../../services/file.resource.service';
 import { DocumentService } from '../../../services/patient/document.service';
 import { Loader } from '../../../startup/loader';
 import { DocumentValidator } from '../../validators/patient/document.validator';
@@ -16,12 +27,17 @@ export class DocumentController {
 
     _service: DocumentService = null;
 
+    _fileResourceService: FileResourceService = null;
+
     _authorizer: Authorizer = null;
+
+    _validator: DocumentValidator = new DocumentValidator();
 
     _personService: any;
 
     constructor() {
         this._service = Loader.container.resolve(DocumentService);
+        this._fileResourceService = Loader.container.resolve(FileResourceService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -45,17 +61,25 @@ export class DocumentController {
             request.context = 'PatientDocument.Upload';
             await this._authorizer.authorize(request, response);
             
-            const documentDomainModel = await DocumentValidator.upload(request);
+            const documentDomainModel = await this._validator.upload(request);
 
-            const document = await this._service.create(documentDomainModel);
-            if (document == null) {
-                throw new ApiError(400, 'Cannot create document!');
-            }
-
-            ResponseHandler.success(request, response, 'Document created successfully!', 201, {
-                PatientDocument : document,
-            });
+            var fileResourceDomainModel : FileResourceUploadDomainModel = {
+                FileMetadata           : documentDomainModel.FileMetaData,
+                IsMultiResolutionImage : false,
+                IsPublicResource       : false,
+                OwnerUserId            : documentDomainModel.PatientUserId,
+                UploadedByUserId       : documentDomainModel.UploadedByUserId
+            };
+            var fileResourceDto = await this._fileResourceService.upload(fileResourceDomainModel);
+            documentDomainModel.FileMetaData = fileResourceDto.DefaultVersion;
             
+            const document = await this._service.upload(documentDomainModel);
+            if (document == null) {
+                throw new ApiError(400, 'Cannot upload document!');
+            }
+            ResponseHandler.success(request, response, 'Document uploaded successfully!', 201, {
+                PatientPatientDocument : document,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -67,15 +91,14 @@ export class DocumentController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const id: string = await DocumentValidator.getById(request);
-
+            const id: string = await this._validator.getParamUuid(request, 'id');
             const Document = await this._service.getById(id);
             if (Document == null) {
                 throw new ApiError(404, ' Document not found.');
             }
 
             ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {
-                Document : Document,
+                PatientDocument : Document,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -88,8 +111,9 @@ export class DocumentController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const domainModel = await DocumentValidator.update(request);
-            const id: string = await DocumentValidator.getById(request);
+            const domainModel = await this._validator.update(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
+
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Document not found.');
@@ -101,7 +125,7 @@ export class DocumentController {
             }
 
             ResponseHandler.success(request, response, 'Document updated successfully!', 200, {
-                Document : updated,
+                PatientDocument : updated,
             });
             
         } catch (error) {
@@ -115,21 +139,16 @@ export class DocumentController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const domainModel = await DocumentValidator.update(request);
-            const id: string = await DocumentValidator.getById(request);
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
-                throw new ApiError(404, 'Document not found.');
-            }
+            var filters: DocumentSearchFilters = await this._validator.search(request);
 
-            const updated = await this._service.update(domainModel.id, domainModel);
-            if (updated == null) {
-                throw new ApiError(400, 'Unable to update document!');
-            }
-
-            ResponseHandler.success(request, response, 'Document updated successfully!', 200, {
-                Document : updated,
-            });
+            const searchResults = await this._service.search(filters);
+            const count = searchResults.Items.length;
+            const message =
+                count === 0
+                    ? 'No records found!'
+                    : `Total ${count} patient document records retrieved successfully!`;
+                    
+            ResponseHandler.success(request, response, message, 200, { PatientDocuments: searchResults });
             
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -142,20 +161,24 @@ export class DocumentController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const domainModel = await DocumentValidator.update(request);
-            const id: string = await DocumentValidator.getById(request);
+            const newName = await this._validator.rename(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
+
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Document not found.');
             }
-
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const renamed = await this._fileResourceService.rename(existingRecord.ResourceId, newName);
+            if (!renamed) {
+                throw new ApiError(400, 'Unable to rename document!');
+            }
+            const updated: DocumentDto = await this._service.rename(id, newName);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update document!');
             }
 
-            ResponseHandler.success(request, response, 'Document updated successfully!', 200, {
-                Document : updated,
+            ResponseHandler.success(request, response, 'Document renamed successfully!', 200, {
+                PatientDocument : updated,
             });
             
         } catch (error) {
@@ -169,21 +192,21 @@ export class DocumentController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const domainModel = await DocumentValidator.update(request);
-            const id: string = await DocumentValidator.getById(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Document not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
-            if (updated == null) {
-                throw new ApiError(400, 'Unable to update document!');
+            const localDestination = await this._fileResourceService.downloadById(existingRecord.ResourceId);
+            if (localDestination == null) {
+                throw new ApiError(404, 'File resource not found.');
             }
-
-            ResponseHandler.success(request, response, 'Document updated successfully!', 200, {
-                Document : updated,
-            });
+    
+            var filename = path.basename(localDestination);
+            response.setHeader('Content-disposition', 'attachment; filename=' + filename);
+            var filestream = fs.createReadStream(localDestination);
+            filestream.pipe(response);
             
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -196,20 +219,41 @@ export class DocumentController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const domainModel = await DocumentValidator.update(request);
-            const id: string = await DocumentValidator.getById(request);
-            const existingRecord = await this._service.getById(id);
-            if (existingRecord == null) {
+            const id: string = await this._validator.getParamUuid(request, 'id');
+            var durationMinutes = 15;
+            const durationStr: string = await this._validator.getParamStr(request, 'durationMinutes');
+            if (durationStr !== undefined) {
+                durationMinutes = parseInt(durationStr, 10);
+            }
+            const sharedWithUserId = await this._validator.getParamUuid(request, 'sharedWithUserId');
+
+            const document = await this._service.getById(id);
+            if (document == null) {
                 throw new ApiError(404, 'Document not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
-            if (updated == null) {
-                throw new ApiError(400, 'Unable to update document!');
-            }
+            var originalLink = await this._fileResourceService.getShareableLink(
+                document.ResourceId, durationMinutes);
 
-            ResponseHandler.success(request, response, 'Document updated successfully!', 200, {
-                PatientDocumentLink : updated,
+            var { scrambled, link } = await this.generateShortLink();
+
+            var sharingDomainModel: SharedDocumentDetailsDomainModel = {
+                DocumentId           : document.id,
+                ResourceId           : document.ResourceId,
+                PatientUserId        : document.PatientUserId,
+                DocumentType         : document.DocumentType,
+                OriginalLink         : originalLink,
+                Key                  : scrambled,
+                ShortLink            : link,
+                SharedForDurationMin : durationMinutes,
+                SharedWithUserId     : sharedWithUserId ?? null,
+                SharedDate           : new Date(),
+            };
+
+            await this._service.share(sharingDomainModel);
+
+            ResponseHandler.success(request, response, 'Document shareable link retrieved successfully!', 200, {
+                PatientDocumentLink : link,
             });
             
         } catch (error) {
@@ -223,7 +267,7 @@ export class DocumentController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const id: string = await DocumentValidator.getById(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Document not found.');
@@ -241,6 +285,60 @@ export class DocumentController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    getSharedDocument = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'PatientDocument.GetSharedDocument';
+            
+            const key: string = await this._validator.getParamStr(request, 'key');
+            var document: SharedDocumentDetailsDto = await this._service.getSharedDocument(key);
+            if (document === null) {
+                throw new ApiError(404, 'The document cannot be found.');
+            }
+
+            const now = new Date();
+            const sharedAt = document.SharedDate;
+            const duration = document.SharedForDurationMin;
+            const validTill = TimeHelper.addDuration(sharedAt, duration, DurationType.Minute);
+            const linkExpired = TimeHelper.isAfter(now, validTill);
+            if (linkExpired) {
+                throw new ApiError(400, 'Document link has expired.');
+            }
+
+            response.status(301).redirect(document.OriginalLink);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
+    //#endregion
+
+    //#region Privates
+
+    generateShortLink = async () => {
+        var baseUrl = process.env.THIS_BASE_URL;
+
+        var scrambled = genpass.generate({
+            length    : 8,
+            numbers   : true,
+            lowercase : true,
+            uppercase : false,
+            symbols   : false
+        });
+        var exists: boolean = await this._service.sharedKeyExists(scrambled);
+        while (exists) {
+            scrambled = genpass.generate({
+                length    : 8,
+                numbers   : true,
+                lowercase : true,
+                uppercase : false,
+                symbols   : false
+            });
+            exists = await this._service.sharedKeyExists(scrambled);
+        }
+        var link = baseUrl + '/docs/' + scrambled;
+        return { scrambled, link };
+    }
 
     //#endregion
 

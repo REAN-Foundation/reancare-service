@@ -1,10 +1,13 @@
-import { IDocumentRepo } from '../../../../repository.interfaces/patient/document.repo.interface';
-import DocumentModel  from '../../models/patient/document.model';
-import { DocumentMapper } from '../../mappers/patient/document.mapper';
-import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
+import { Logger } from '../../../../../common/logger';
 import { DocumentDomainModel } from "../../../../../domain.types/patient/document/document.domain.model";
 import { DocumentDto } from "../../../../../domain.types/patient/document/document.dto";
+import { DocumentSearchFilters, DocumentSearchResults } from '../../../../../domain.types/patient/document/document.search.types';
+import { SharedDocumentDetailsDomainModel } from '../../../../../domain.types/patient/document/shared.document.details.domain.model';
+import { SharedDocumentDetailsDto } from '../../../../../domain.types/patient/document/shared.document.details.dto';
+import { IDocumentRepo } from '../../../../repository.interfaces/patient/document.repo.interface';
+import { DocumentMapper } from '../../mappers/patient/document.mapper';
+import DocumentModel from '../../models/patient/document.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -23,11 +26,11 @@ export class DocumentRepo implements IDocumentRepo {
                 AssociatedVisitType       : documentDomainModel.AssociatedVisitType,
                 AssociatedOrderId         : documentDomainModel.AssociatedOrderId,
                 AssociatedOrderType       : documentDomainModel.AssociatedOrderType,
-                FileName                  : documentDomainModel.FileName,
-                ResourceId                : documentDomainModel.ResourceId,
-                AuthenticatedUrl          : documentDomainModel.AuthenticatedUrl,
-                MimeType                  : documentDomainModel.MimeType,
-                SizeInKBytes              : documentDomainModel.SizeInKBytes,
+                FileName                  : documentDomainModel.FileMetaData.FileName,
+                ResourceId                : documentDomainModel.FileMetaData.ResourceId,
+                AuthenticatedUrl          : documentDomainModel.FileMetaData.Url,
+                MimeType                  : documentDomainModel.FileMetaData.MimeType,
+                SizeInKBytes              : documentDomainModel.FileMetaData.Size,
                 RecordDate                : documentDomainModel.RecordDate,
                 UploadedDate              : documentDomainModel.UploadedDate
             };
@@ -84,21 +87,6 @@ export class DocumentRepo implements IDocumentRepo {
             if (documentDomainModel.AssociatedOrderType != null) {
                 document.AssociatedOrderType = documentDomainModel.AssociatedOrderType;
             }
-            if (documentDomainModel.FileName != null) {
-                document.FileName = documentDomainModel.FileName;
-            }
-            if (documentDomainModel.ResourceId != null) {
-                document.ResourceId = documentDomainModel.ResourceId;
-            }
-            if (documentDomainModel.AuthenticatedUrl != null) {
-                document.AuthenticatedUrl = documentDomainModel.AuthenticatedUrl;
-            }
-            if (documentDomainModel.MimeType != null) {
-                document.MimeType = documentDomainModel.MimeType;
-            }
-            if (documentDomainModel.SizeInKBytes != null) {
-                document.SizeInKBytes = documentDomainModel.SizeInKBytes;
-            }
             if (documentDomainModel.RecordDate != null) {
                 document.RecordDate = documentDomainModel.RecordDate;
             }
@@ -127,5 +115,29 @@ export class DocumentRepo implements IDocumentRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    sharedKeyExists(key: string): PromiseLike<boolean> {
+        throw new Error('Method not implemented.');
+    }
+
+    getSharedDocument(key: string): Promise<SharedDocumentDetailsDto> {
+        throw new Error('Method not implemented.');
+    }
+
+    share(model: SharedDocumentDetailsDomainModel): Promise<SharedDocumentDetailsDto> {
+        throw new Error('Method not implemented.');
+    }
+
+    rename(id: string, newName: string): DocumentDto | PromiseLike<DocumentDto> {
+        throw new Error('Method not implemented.');
+    }
+
+    search(filters: DocumentSearchFilters): Promise<DocumentSearchResults> {
+        throw new Error('Method not implemented.');
+    }
+
+    upload(documentDomainModel: DocumentDomainModel) {
+        throw new Error('Method not implemented.');
+    }
 
 }

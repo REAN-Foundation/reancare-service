@@ -58,6 +58,12 @@ export class UserService {
         return dto;
     };
 
+    public getUserRoleName = async (userId: string): Promise<string> => {
+        var dto = await this._userRepo.getById(userId);
+        dto = await this.updateDetailsDto(dto);
+        return dto.Role.RoleName;
+    };
+
     public getByEmailAndRole = async (email: string, roleId: number): Promise<UserDetailsDto> => {
         var dto = await this._userRepo.getByEmailAndRole(email, roleId);
         dto = await this.updateDetailsDto(dto);

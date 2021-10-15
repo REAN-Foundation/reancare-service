@@ -2,16 +2,14 @@ import { OrderTypes } from '../../../../../domain.types/clinical/order/order.typ
 import { VisitType } from '../../../../../domain.types/miscellaneous/clinical.types';
 import { DocumentDto } from '../../../../../domain.types/patient/document/document.dto';
 import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
+import { SharedDocumentDetailsDto } from '../../../../../domain.types/patient/document/shared.document.details.dto';
 import { Roles } from '../../../../../domain.types/role/role.types';
 import DocumentModel from '../../models/patient/document.model';
-import sharedDocumentDetailsModel from '../../models/patient/shared.document.details.model';
+import SharedDocumentDetails from '../../models/patient/shared.document.details.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class DocumentMapper {
-    static toSharedDocumentDto(sharedDocument: sharedDocumentDetailsModel): Promise<import("../../../../../domain.types/patient/document/shared.document.details.dto").SharedDocumentDetailsDto> {
-        throw new Error('Method not implemented.');
-    }
 
     static toDto = (
         document: DocumentModel): DocumentDto => {
@@ -38,6 +36,28 @@ export class DocumentMapper {
             RecordDate                : document.RecordDate,
             UploadedDate              : document.UploadedDate,
         };
+        return dto;
+    }
+
+    static toSharedDocumentDto = (sharedDocument: SharedDocumentDetails): SharedDocumentDetailsDto => {
+
+        if (sharedDocument == null) {
+            return null;
+        }
+
+        const dto: SharedDocumentDetailsDto = {
+            id                   : sharedDocument.id,
+            DocumentId           : sharedDocument.DocumentId,
+            PatientUserId        : sharedDocument.PatientUserId,
+            ResourceId           : sharedDocument.ResourceId,
+            OriginalLink         : sharedDocument.OriginalLink,
+            ShortLink            : sharedDocument.ShortLink,
+            Key                  : sharedDocument.Key,
+            SharedWithUserId     : sharedDocument.SharedWithUserId,
+            SharedForDurationMin : sharedDocument.SharedForDurationMin,
+            SharedDate           : sharedDocument.SharedDate,
+        };
+
         return dto;
     }
 

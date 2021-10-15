@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { DocumentDomainModel } from "../../../../../domain.types/patient/document/document.domain.model";
@@ -7,49 +8,47 @@ import { SharedDocumentDetailsDomainModel } from '../../../../../domain.types/pa
 import { SharedDocumentDetailsDto } from '../../../../../domain.types/patient/document/shared.document.details.dto';
 import { IDocumentRepo } from '../../../../repository.interfaces/patient/document.repo.interface';
 import { DocumentMapper } from '../../mappers/patient/document.mapper';
-import DocumentModel from '../../models/patient/document.model';
+import Document from '../../models/patient/document.model';
 import SharedDocumentDetails from '../../models/patient/shared.document.details.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 export class DocumentRepo implements IDocumentRepo {
 
-    create = async (documentDomainModel: DocumentDomainModel):
-    Promise<DocumentDto> => {
+    upload = async (model: DocumentDomainModel): Promise<DocumentDto> => {
         try {
             const entity = {
-                DocumentType              : documentDomainModel.DocumentType,
-                PatientUserId             : documentDomainModel.PatientUserId,
-                MedicalPractitionerUserId : documentDomainModel.MedicalPractitionerUserId,
-                MedicalPractionerRole     : documentDomainModel.MedicalPractionerRole,
-                UploadedByUserId          : documentDomainModel.UploadedByUserId,
-                AssociatedVisitId         : documentDomainModel.AssociatedVisitId,
-                AssociatedVisitType       : documentDomainModel.AssociatedVisitType,
-                AssociatedOrderId         : documentDomainModel.AssociatedOrderId,
-                AssociatedOrderType       : documentDomainModel.AssociatedOrderType,
-                FileName                  : documentDomainModel.FileMetaData.FileName,
-                ResourceId                : documentDomainModel.FileMetaData.ResourceId,
-                AuthenticatedUrl          : documentDomainModel.FileMetaData.Url,
-                MimeType                  : documentDomainModel.FileMetaData.MimeType,
-                SizeInKBytes              : documentDomainModel.FileMetaData.Size,
-                RecordDate                : documentDomainModel.RecordDate,
-                UploadedDate              : documentDomainModel.UploadedDate
+                DocumentType              : model.DocumentType,
+                PatientUserId             : model.PatientUserId,
+                MedicalPractitionerUserId : model.MedicalPractitionerUserId,
+                MedicalPractionerRole     : model.MedicalPractionerRole,
+                UploadedByUserId          : model.UploadedByUserId,
+                AssociatedVisitId         : model.AssociatedVisitId,
+                AssociatedVisitType       : model.AssociatedVisitType,
+                AssociatedOrderId         : model.AssociatedOrderId,
+                AssociatedOrderType       : model.AssociatedOrderType,
+                FileName                  : model.FileMetaData.FileName,
+                ResourceId                : model.FileMetaData.ResourceId,
+                AuthenticatedUrl          : model.FileMetaData.Url,
+                MimeType                  : model.FileMetaData.MimeType,
+                SizeInKBytes              : model.FileMetaData.Size,
+                RecordDate                : model.RecordDate,
+                UploadedDate              : model.UploadedDate
             };
 
-            const document = await DocumentModel.create(entity);
-            const dto = await DocumentMapper.toDto(document);
-            return dto;
+            const document = await Document.create(entity);
+            return await DocumentMapper.toDto(document);
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    };
+    }
 
     getById = async (id: string): Promise<DocumentDto> => {
         try {
-            const document = await DocumentModel.findByPk(id);
-            const dto = await DocumentMapper.toDto(document);
-            return dto;
+            const document = await Document.findByPk(id);
+            return DocumentMapper.toDto(document);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -59,7 +58,7 @@ export class DocumentRepo implements IDocumentRepo {
     update = async (id: string, documentDomainModel: DocumentDomainModel):
     Promise<DocumentDto> => {
         try {
-            const document = await DocumentModel.findByPk(id);
+            const document = await Document.findByPk(id);
 
             if (documentDomainModel.DocumentType != null) {
                 document.DocumentType = documentDomainModel.DocumentType;
@@ -97,8 +96,8 @@ export class DocumentRepo implements IDocumentRepo {
     
             await document.save();
 
-            const dto = await DocumentMapper.toDto(document);
-            return dto;
+            return DocumentMapper.toDto(document);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -107,9 +106,7 @@ export class DocumentRepo implements IDocumentRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            Logger.instance().log(id);
-
-            const result = await DocumentModel.destroy({ where: { id: id } });
+            const result = await Document.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -153,7 +150,7 @@ export class DocumentRepo implements IDocumentRepo {
             };
 
             const document = await SharedDocumentDetails.create(entity);
-            return await DocumentMapper.toSharedDocumentDto(document);
+            return DocumentMapper.toSharedDocumentDto(document);
             
         } catch (error) {
             Logger.instance().log(error.message);
@@ -161,16 +158,91 @@ export class DocumentRepo implements IDocumentRepo {
         }
     }
 
-    rename(id: string, newName: string): DocumentDto | PromiseLike<DocumentDto> {
-        throw new Error('Method not implemented.');
+    rename = async (id: string, newName: string): Promise<DocumentDto> => {
+        try {
+            var document = await Document.findOne({ where: { id: id } });
+            document.FileName = newName;
+            document = await document.save();
+            return DocumentMapper.toDto(document);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
-    search(filters: DocumentSearchFilters): Promise<DocumentSearchResults> {
-        throw new Error('Method not implemented.');
-    }
+    search = async (filters: DocumentSearchFilters): Promise<DocumentSearchResults> => {
+        try {
+            const search = { where: {} };
 
-    upload(documentDomainModel: DocumentDomainModel) {
-        throw new Error('Method not implemented.');
-    }
+            if (filters.PatientUserId != null) {
+                search.where['PatientUserId'] = filters.PatientUserId;
+            }
+            if (filters.AssociatedOrderId != null) {
+                search.where['AssociatedOrderId'] = filters.AssociatedOrderId;
+            }
+            if (filters.AssociatedVisitId != null) {
+                search.where['AssociatedVisitId'] = filters.AssociatedVisitId;
+            }
+            if (filters.DocumentType != null) {
+                search.where['DocumentType'] = { [Op.like]: '%' + filters.DocumentType + '%' };
+            }
+            if (filters.MedicalPractitionerUserId != null) {
+                search.where['MedicalPractitionerUserId'] = filters.MedicalPractitionerUserId;
+            }
+            if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
+                search.where['CreatedAt'] = {
+                    [Op.lte] : filters.CreatedDateTo,
+                    [Op.gte] : filters.CreatedDateFrom,
+                };
+            }
+
+            let orderByColum = 'UploadedDate';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await Document.findAndCountAll(search);
+
+            const dtos: DocumentDto[] = [];
+            for (const contact of foundResults.rows) {
+                const dto = DocumentMapper.toDto(contact);
+                dtos.push(dto);
+            }
+
+            const searchResults: DocumentSearchResults = {
+                TotalCount     : foundResults.count,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos,
+            };
+
+            return searchResults;
+            
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
 }

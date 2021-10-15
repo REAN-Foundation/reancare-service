@@ -4,7 +4,7 @@ import {
 import { v4 } from 'uuid';
 import { OrderTypes } from '../../../../../domain.types/clinical/order/order.types';
 import { VisitType, VisitTypeList } from '../../../../../domain.types/miscellaneous/clinical.types';
-import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
+import { DocumentTypes, DocumentTypesList } from '../../../../../domain.types/patient/document/document.types';
 import { Roles } from '../../../../../domain.types/role/role.types';
 import Order from '../clinical/order.model';
 import Visit from '../clinical/visit.model';
@@ -42,18 +42,9 @@ export default class Document extends Model {
 
     @Length({ max: 128 })
     @Column({
-        type      : DataType.STRING(128),
-        allowNull : false,
-        values    : [
-            DocumentTypes.LabReport,
-            DocumentTypes.ImagingStudy,
-            DocumentTypes.DrugPrescription,
-            DocumentTypes.DiagnosticPrescription,
-            DocumentTypes.DoctorNotes,
-            DocumentTypes.DischargeSummary,
-            DocumentTypes.OpdPaper,
-            DocumentTypes.Unknown,
-        ],
+        type         : DataType.STRING(128),
+        allowNull    : false,
+        values       : DocumentTypesList,
         defaultValue : DocumentTypes.Unknown
     })
     DocumentType: string;

@@ -16,9 +16,7 @@ export interface IDocumentRepo {
 
     search(filters: DocumentSearchFilters): Promise<DocumentSearchResults>;
     
-    upload(documentDomainModel: DocumentDomainModel);
-
-    create(documentDomainModel: DocumentDomainModel): Promise<DocumentDto>;
+    upload(documentDomainModel: DocumentDomainModel): Promise<DocumentDto>;
 
     getById(id: string): Promise<DocumentDto>;
     

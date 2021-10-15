@@ -18,12 +18,6 @@ export class DocumentService {
         @inject('IDocumentRepo') private _documentRepo: IDocumentRepo,
     ) { }
 
-    create = async (model: DocumentDomainModel):
-    Promise<DocumentDto> => {
-        model.DisplayId = this.getDocumentDisplayId(model.DocumentType);
-        return await this._documentRepo.create(model);
-    };
-
     getById = async (id: string): Promise<DocumentDto> => {
         return await this._documentRepo.getById(id);
     };
@@ -37,8 +31,10 @@ export class DocumentService {
         return await this._documentRepo.delete(id);
     };
 
-    upload = async (documentDomainModel: DocumentDomainModel) => {
-        return await this._documentRepo.upload(documentDomainModel);
+    upload = async (model: DocumentDomainModel):
+    Promise<DocumentDto> => {
+        model.DisplayId = this.getDocumentDisplayId(model.DocumentType);
+        return await this._documentRepo.upload(model);
     }
 
     search = async (filters: DocumentSearchFilters): Promise<DocumentSearchResults> => {

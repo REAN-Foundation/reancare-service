@@ -1,6 +1,6 @@
 import * as cron from 'node-cron';
+import * as CronSchedules from '../../seed.data/cron.schedules.json';
 import { Logger } from '../common/logger';
-import * as CronSchedules from '../seed.data/cron.schedules.json';
 import { MedicationConsumptionService } from '../services/clinical/medication/medication.consumption.service';
 import { FileResourceService } from '../services/file.resource.service';
 import { Loader } from './loader';

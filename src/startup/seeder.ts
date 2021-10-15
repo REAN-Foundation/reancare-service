@@ -1,6 +1,11 @@
-import * as fs from "fs";
+import fs from "fs";
 import path from "path";
 import { inject, injectable } from "tsyringe";
+import * as SeededDrugs from '../../seed.data/drugs.seed.json';
+import * as SeededKnowledgeNuggets from '../../seed.data/knowledge.nuggets.seed.json';
+import * as RolePrivilegesList from '../../seed.data/role.privileges.json';
+import * as SeededAssessmentTemplates from '../../seed.data/symptom.assessment.templates.json';
+import * as SeededSymptomTypes from '../../seed.data/symptom.types.json';
 import { Helper } from "../common/helper";
 import { Logger } from "../common/logger";
 import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
@@ -25,14 +30,6 @@ import { KnowledgeNuggetDomainModel } from "../domain.types/educational/knowledg
 import { PatientDomainModel } from "../domain.types/patient/patient/patient.domain.model";
 import { Roles } from "../domain.types/role/role.types";
 import { UserDomainModel } from "../domain.types/user/user/user.domain.model";
-import * as SeededDrugs from '../seed.data/drugs.seed.json';
-import * as SeededInternalClients from '../seed.data/internal.clients.seed.json';
-import * as SeededInternalTestsUsers from '../seed.data/internal.test.users.seed.sample.json';
-import * as SeededKnowledgeNuggets from '../seed.data/knowledge.nuggets.seed.json';
-import * as RolePrivilegesList from '../seed.data/role.privileges.json';
-import * as SeededAssessmentTemplates from '../seed.data/symptom.assessment.templates.json';
-import * as SeededSymptomTypes from '../seed.data/symptom.types.json';
-import * as SeededSystemAdmin from '../seed.data/system.admin.seed.json';
 import { ApiClientService } from "../services/api.client.service";
 import { DrugService } from "../services/clinical/medication/drug.service";
 import { SymptomAssessmentTemplateService } from "../services/clinical/symptom/symptom.assessment.template.service";
@@ -153,6 +150,8 @@ export class Seeder {
             return;
         }
 
+        const SeededSystemAdmin = this.loadJSONSeedFile('system.admin.seed.json');
+
         const role = await this._roleRepo.getByName(Roles.SystemAdmin);
        
         const userDomainModel: UserDomainModel = {
@@ -175,11 +174,19 @@ export class Seeder {
         Logger.instance().log('Seeded admin user successfully!');
     };
 
+    private loadJSONSeedFile(file: string): any {
+        var filepath = path.join(process.cwd(), 'seed.data', file);
+        var fileBuffer = fs.readFileSync(filepath, 'utf8');
+        const obj = JSON.parse(fileBuffer);
+        return obj;
+    }
+
     private seedInternalClients = async () => {
 
         Logger.instance().log('Seeding internal clients...');
 
-        const arr = SeededInternalClients['default'];
+        const arr = this.loadJSONSeedFile('internal.clients.seed.json');
+
         for (let i = 0; i < arr.length; i++) {
             var c = arr[i];
             let client = await this._apiClientService.getByClientCode(c.ClientCode);
@@ -202,10 +209,12 @@ export class Seeder {
     };
 
     private seedDefaultRoles = async () => {
+        
         const existing = await this._roleRepo.search();
         if (existing.length > 0) {
             return;
         }
+        
         await this._roleRepo.create({
             RoleName    : Roles.SystemAdmin,
             Description : 'Admin of the system having elevated privileges.',
@@ -254,6 +263,7 @@ export class Seeder {
 
     private seedInternalPatients = async () => {
         try {
+            const SeededInternalTestsUsers = this.loadJSONSeedFile('internal.test.users.seed.json');
             const arr = SeededInternalTestsUsers.Patients;
             for (let i = 0; i < arr.length; i++) {
                 var phone = arr[i];

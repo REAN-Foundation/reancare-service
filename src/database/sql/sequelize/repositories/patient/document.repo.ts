@@ -8,6 +8,7 @@ import { SharedDocumentDetailsDto } from '../../../../../domain.types/patient/do
 import { IDocumentRepo } from '../../../../repository.interfaces/patient/document.repo.interface';
 import { DocumentMapper } from '../../mappers/patient/document.mapper';
 import DocumentModel from '../../models/patient/document.model';
+import SharedDocumentDetails from '../../models/patient/shared.document.details.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -116,16 +117,48 @@ export class DocumentRepo implements IDocumentRepo {
         }
     };
 
-    sharedKeyExists(key: string): PromiseLike<boolean> {
-        throw new Error('Method not implemented.');
+    sharedKeyExists = async (key: string): Promise<boolean> => {
+        try {
+            const result = await SharedDocumentDetails.findOne({ where: { Key: key } });
+            return result !== null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
-    getSharedDocument(key: string): Promise<SharedDocumentDetailsDto> {
-        throw new Error('Method not implemented.');
+    getSharedDocument = async (key: string): Promise<SharedDocumentDetailsDto> => {
+        try {
+            const sharedDocument = await SharedDocumentDetails.findOne({ where: { Key: key } });
+            return DocumentMapper.toSharedDocumentDto(sharedDocument);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
-    share(model: SharedDocumentDetailsDomainModel): Promise<SharedDocumentDetailsDto> {
-        throw new Error('Method not implemented.');
+    share = async (model: SharedDocumentDetailsDomainModel): Promise<SharedDocumentDetailsDto> => {
+        try {
+            const entity = {
+                DocumentId           : model.DocumentId,
+                DocumentType         : model.DocumentType,
+                PatientUserId        : model.PatientUserId,
+                ResourceId           : model.ResourceId,
+                OriginalLink         : model.OriginalLink,
+                ShortLink            : model.ShortLink,
+                Key                  : model.Key,
+                SharedWithUserId     : model.SharedWithUserId,
+                SharedForDurationMin : model.SharedForDurationMin,
+                SharedDate           : model.SharedDate,
+            };
+
+            const document = await SharedDocumentDetails.create(entity);
+            return await DocumentMapper.toSharedDocumentDto(document);
+            
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
     rename(id: string, newName: string): DocumentDto | PromiseLike<DocumentDto> {

@@ -4,10 +4,14 @@ import { DocumentDto } from '../../../../../domain.types/patient/document/docume
 import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
 import { Roles } from '../../../../../domain.types/role/role.types';
 import DocumentModel from '../../models/patient/document.model';
+import sharedDocumentDetailsModel from '../../models/patient/shared.document.details.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class DocumentMapper {
+    static toSharedDocumentDto(sharedDocument: sharedDocumentDetailsModel): Promise<import("../../../../../domain.types/patient/document/shared.document.details.dto").SharedDocumentDetailsDto> {
+        throw new Error('Method not implemented.');
+    }
 
     static toDto = (
         document: DocumentModel): DocumentDto => {

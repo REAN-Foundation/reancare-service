@@ -406,7 +406,7 @@ export class Helper {
         var displayId = tmp.slice(0, 4) + '-' + tmp.slice(4, 8);
         var identifier = displayId;
         if (prefix != null){
-            identifier = prefix + '#' + identifier;
+            identifier = prefix + '-' + identifier;
         }
         return identifier;
     }

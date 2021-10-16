@@ -3,7 +3,6 @@ import { VisitType } from '../../../../../domain.types/miscellaneous/clinical.ty
 import { DocumentDto } from '../../../../../domain.types/patient/document/document.dto';
 import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
 import { SharedDocumentDetailsDto } from '../../../../../domain.types/patient/document/shared.document.details.dto';
-import { Roles } from '../../../../../domain.types/role/role.types';
 import DocumentModel from '../../models/patient/document.model';
 import SharedDocumentDetails from '../../models/patient/shared.document.details.model';
 
@@ -19,15 +18,16 @@ export class DocumentMapper {
         const dto: DocumentDto = {
             id                        : document.id,
             EhrId                     : document.EhrId,
-            DocumentType              : DocumentTypes[document.DocumentType],
+            DisplayId                 : document.DisplayId,
+            DocumentType              : document.DocumentType as DocumentTypes,
             PatientUserId             : document.PatientUserId,
             MedicalPractitionerUserId : document.MedicalPractitionerUserId,
-            MedicalPractionerRole     : Roles[document.MedicalPractionerRole],
+            MedicalPractionerRole     : document.MedicalPractionerRole,
             UploadedByUserId          : document.UploadedByUserId,
             AssociatedVisitId         : document.AssociatedVisitId,
-            AssociatedVisitType       : VisitType[document.AssociatedVisitType],
+            AssociatedVisitType       : document.AssociatedVisitType as VisitType,
             AssociatedOrderId         : document.AssociatedOrderId,
-            AssociatedOrderType       : OrderTypes[document.AssociatedOrderType],
+            AssociatedOrderType       : document.AssociatedOrderType as OrderTypes,
             FileName                  : document.FileName,
             ResourceId                : document.ResourceId,
             AuthenticatedUrl          : document.AuthenticatedUrl,

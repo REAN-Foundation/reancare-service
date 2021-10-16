@@ -1,15 +1,15 @@
 import { VisitType } from "../../../domain.types/miscellaneous/clinical.types";
 import { OrderTypes } from "../../clinical/order/order.types";
-import { Roles } from "../../role/role.types";
 import { DocumentTypes } from "./document.types";
 
 export interface DocumentDto {
     id                        : string;
     EhrId?                    : string;
+    DisplayId                 : string;
     DocumentType?             : DocumentTypes;
     PatientUserId?            : string;
     MedicalPractitionerUserId?: string;
-    MedicalPractionerRole?    : Roles;
+    MedicalPractionerRole?    : string;
     UploadedByUserId?         : string;
     AssociatedVisitId?        : string;
     AssociatedVisitType?      : VisitType;

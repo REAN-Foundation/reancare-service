@@ -169,6 +169,13 @@ export class DocumentController {
             if (existingRecord == null) {
                 throw new ApiError(404, 'Document not found.');
             }
+
+            const prevFilenameExtension = Helper.getFileExtension(existingRecord.FileName).toLowerCase();
+            const newFilenameExtension = Helper.getFileExtension(newName).toLowerCase();
+            if (prevFilenameExtension !== newFilenameExtension) {
+                throw new ApiError(409, 'New file name extension does not match with the existing file name extension.');
+            }
+
             const renamed = await this._fileResourceService.rename(existingRecord.ResourceId, newName);
             if (!renamed) {
                 throw new ApiError(400, 'Unable to rename document!');

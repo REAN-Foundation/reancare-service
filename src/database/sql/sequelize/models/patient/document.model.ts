@@ -40,6 +40,13 @@ export default class Document extends Model {
     })
     EhrId: string;
 
+    @Length({ max: 32 })
+    @Column({
+        type      : DataType.STRING(32),
+        allowNull : false,
+    })
+    DisplayId: string;
+
     @Length({ max: 128 })
     @Column({
         type         : DataType.STRING(128),

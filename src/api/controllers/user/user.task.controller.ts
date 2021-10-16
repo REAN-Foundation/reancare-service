@@ -112,7 +112,7 @@ export class UserTaskController {
             request.resourceOwnerUserId = Helper.getResourceOwner(request);
             await this._authorizer.authorize(request, response);
 
-            const id: string = await this._validator.getParamUuid(request, 'displayId');
+            const id: string = await this._validator.getParamStr(request, 'displayId');
 
             const userTask = await this._service.getByDisplayId(id);
             if (userTask == null) {

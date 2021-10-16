@@ -18,6 +18,7 @@ export class DocumentRepo implements IDocumentRepo {
     upload = async (model: DocumentDomainModel): Promise<DocumentDto> => {
         try {
             const entity = {
+                DisplayId                 : model.DisplayId,
                 DocumentType              : model.DocumentType,
                 PatientUserId             : model.PatientUserId,
                 MedicalPractitionerUserId : model.MedicalPractitionerUserId,
@@ -27,7 +28,7 @@ export class DocumentRepo implements IDocumentRepo {
                 AssociatedVisitType       : model.AssociatedVisitType,
                 AssociatedOrderId         : model.AssociatedOrderId,
                 AssociatedOrderType       : model.AssociatedOrderType,
-                FileName                  : model.FileMetaData.FileName,
+                FileName                  : model.FileMetaData.OriginalName,
                 ResourceId                : model.FileMetaData.ResourceId,
                 AuthenticatedUrl          : model.FileMetaData.Url,
                 MimeType                  : model.FileMetaData.MimeType,

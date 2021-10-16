@@ -1775,91 +1775,6 @@
 							"response": []
 						},
 						{
-							"name": "Register patient- with only a phone number Copy",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.environment.set(\"PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
-											"    pm.environment.set(\"PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
-											"    pm.environment.set(\"PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
-											"    pm.environment.set(\"PERSON_ID_1\", jsonRes.Data.Patient.User.Person.id);\r",
-											"}\r",
-											"catch (error) {\r",
-											"    console.log(error.message);\r",
-											"}\r",
-											"\r",
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(201);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Patient is created\", function () {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Patient');\r",
-											"    pm.expect(jsonRes.Data.Patient).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Patient).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Patient).to.have.property('User');\r",
-											"    pm.expect(jsonRes.Data.Patient.User).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Patient.User).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Patient.User.Person).to.have.property('id');\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"\r",
-											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
-											"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
-											"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text",
-										"description": "API key for client app authentication"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"+91-9970155165\"\r\n}"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/patients",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"patients"
-									]
-								},
-								"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
-							},
-							"response": []
-						},
-						{
 							"name": "Register patient- with same phone number - should fail",
 							"event": [
 								{
@@ -2323,92 +2238,6 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"John\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"Doe\",\r\n    \"Email\": \"john.doe@gmail.com\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\",\r\n    \"Address\": {\r\n        \"Type\": \"Official\",\r\n        \"AddressLine\": \"99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli\",\r\n        \"City\": \"Mumbai\",\r\n        \"District\": \"Greater Mumbai\",\r\n        \"State\": \"Maharashtra\",\r\n        \"Country\": \"India\",\r\n        \"PostalCode\": \"412407\",\r\n        \"Longitude\": 23.45545,\r\n        \"Lattitude\": 54.65466\r\n    }\r\n}"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"patients",
-										"{{PATIENT_USER_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update patient details Copy",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"try {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.environment.set(\"PATIENT_FIRST_NAME\", jsonRes.Data.Patient.User.Person.FirstName);\r",
-											"    pm.environment.set(\"PATIENT_PHONE\", jsonRes.Data.Patient.User.Person.Phone);\r",
-											"    pm.environment.set(\"PATIENT_GENDER\", jsonRes.Data.Patient.User.Person.Gender);\r",
-											"    pm.environment.set(\"PATIENT_EMAIL\", jsonRes.Data.Patient.User.Person.Email);\r",
-											"\r",
-											"    var phone = jsonRes.Data.Patient.User.Person.Phone;\r",
-											"    var tokens = phone.split('-');\r",
-											"    var phoneNumber = tokens[1];\r",
-											"\r",
-											"    pm.environment.set(\"PATIENT_PHONE_NUMBER\", phoneNumber);\r",
-											"}\r",
-											"catch (error) {\r",
-											"    console.log(error.message);\r",
-											"}\r",
-											"\r",
-											"\r",
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Patient is created\", function () {\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Patient');\r",
-											"    pm.expect(jsonRes.Data.Patient).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Patient).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Patient).to.have.property('User');\r",
-											"    pm.expect(jsonRes.Data.Patient.User).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Patient.User).to.have.property('id');\r",
-											"    pm.expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.Patient.User.Person).to.have.property('id');\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"description": "API key for client app authentication",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"FirstName\": \"John\",\r\n    \"LastName\": \"Doe\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
@@ -3737,1166 +3566,6 @@
 										"{{USER_DEVICE_DETAILS_ID}}"
 									]
 								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Task",
-					"item": [
-						{
-							"name": "Get user task categories",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"User action categories are returned\", function () {",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserTaskCategories');",
-											"    pm.expect(jsonRes.Data.UserTaskCategories).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.UserTaskCategories.length).greaterThan(0);",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/categories",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks",
-										"categories"
-									]
-								},
-								"description": "Gets list of User Task records"
-							},
-							"response": []
-						},
-						{
-							"name": "Get user action types",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"User action types is returned\", function () {",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserActionTypes');",
-											"    pm.expect(jsonRes.Data.UserActionTypes).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.UserActionTypes.length).greaterThan(0);",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/action-types",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks",
-										"action-types"
-									]
-								},
-								"description": "Gets list of User Task records"
-							},
-							"response": []
-						},
-						{
-							"name": "Create task with associated action id",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var jsonRes = pm.response.json();",
-											"",
-											"try {",
-											"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
-											"}",
-											"catch (error) {",
-											"    console.log(error.message);",
-											"}",
-											"",
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(201);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"New User Task is created\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
-											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
-											"",
-											"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take medication\");",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Task\": \"Take medication\",\n    \"Category\": \"Custom\",\n    \"ActionType\": \"Medication\",\n    \"ActionId\": \"3dab5783-2b20-4e17-ae88-ef4562c85772\",\n    \"ScheduledStartTime\": \"2021-10-11T05:30:00.000Z\",\n    \"ScheduledEndTime\": \"2021-10-11T07:30:00.000Z\",\n    \"IsRecurrent\": false\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks"
-									]
-								},
-								"description": "Create new User Task record"
-							},
-							"response": []
-						},
-						{
-							"name": "Create task without associated action id",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var jsonRes = pm.response.json();",
-											"",
-											"try {",
-											"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
-											"    pm.environment.set(\"USER_TASK_DISPLAY_ID\", jsonRes.Data.UserTask.DisplayId);",
-											"}",
-											"catch (error) {",
-											"    console.log(error.message);",
-											"}",
-											"",
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(201);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"New User Task is created\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
-											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
-											"",
-											"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take a dog for walk\");",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Task\": \"Take a dog for walk\",\n    \"Category\": \"Custom\",\n    \"ScheduledStartTime\": \"2021-10-11T05:30:00.000Z\",\n    \"ScheduledEndTime\": \"2021-10-11T07:30:00.000Z\",\n    \"IsRecurrent\": false\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks"
-									]
-								},
-								"description": "Create new User Task record"
-							},
-							"response": []
-						},
-						{
-							"name": "Get task by id",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var jsonRes = pm.response.json();",
-											"",
-											"try {",
-											"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
-											"}",
-											"catch (error) {",
-											"    console.log(error.message);",
-											"}",
-											"",
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"User Task is created\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
-											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
-											"",
-											"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take a dog for walk\");",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks",
-										"{{USER_TASK_ID}}"
-									]
-								},
-								"description": "Gets list of User Task records"
-							},
-							"response": []
-						},
-						{
-							"name": "Get task by display id",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var jsonRes = pm.response.json();",
-											"",
-											"try {",
-											"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
-											"}",
-											"catch (error) {",
-											"    console.log(error.message);",
-											"}",
-											"",
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"User Task is created\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
-											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
-											"",
-											"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take a dog for walk\");",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/display-id/{{USER_TASK_DISPLAY_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks",
-										"display-id",
-										"{{USER_TASK_DISPLAY_ID}}"
-									]
-								},
-								"description": "Gets list of User Task records"
-							},
-							"response": []
-						},
-						{
-							"name": "Update task",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"",
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"User Task is updated\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
-											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
-											"",
-											"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Run a mile\");",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"pm.environment.set(\"USER_TASK_ISRECURRENT\", true);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"Task\": \"Run a mile\",\n    \"Category\": \"Exercise\",\n    \"ScheduledStartTime\": \"2021-10-15T09:30:00.000Z\",\n    \"ScheduledEndTime\": \"2021-10-15T12:30:00.000Z\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks",
-										"{{USER_TASK_ID}}"
-									]
-								},
-								"description": "Update User Task record with id"
-							},
-							"response": []
-						},
-						{
-							"name": "Start task",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"",
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"User Task is started\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
-											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
-											"",
-											"    pm.expect(jsonRes.Data.UserTask.Status).eqls(\"In-progress\");",
-											"    pm.expect(jsonRes.Data.UserTask.Started).eqls(true);",
-											"",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}/start",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks",
-										"{{USER_TASK_ID}}",
-										"start"
-									]
-								},
-								"description": "Starts User Task record with id"
-							},
-							"response": []
-						},
-						{
-							"name": "Finish task",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"",
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"User Task is finished\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
-											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
-											"",
-											"    pm.expect(jsonRes.Data.UserTask.Status).eqls(\"Completed\");",
-											"    pm.expect(jsonRes.Data.UserTask.Finished).eqls(true);",
-											"",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"pm.environment.set(\"USER_TASK_FINISHED\", true);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}/finish",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks",
-										"{{USER_TASK_ID}}",
-										"finish"
-									]
-								},
-								"description": "Finishes User Task record with id"
-							},
-							"response": []
-						},
-						{
-							"name": "Create task",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var jsonRes = pm.response.json();",
-											"",
-											"try {",
-											"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
-											"    pm.environment.set(\"USER_TASK_DISPLAY_ID\", jsonRes.Data.UserTask.DisplayId);",
-											"}",
-											"catch (error) {",
-											"    console.log(error.message);",
-											"}",
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Task\": \"Take a dog for walk\",\n    \"Category\": \"Custom\",\n    \"ScheduledStartTime\": \"2021-10-11T05:30:00.000Z\",\n    \"ScheduledEndTime\": \"2021-10-11T07:30:00.000Z\",\n    \"IsRecurrent\": false\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks"
-									]
-								},
-								"description": "Create new User Task record"
-							},
-							"response": []
-						},
-						{
-							"name": "Cancel task",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"",
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"User Task is cancelled\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
-											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
-											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
-											"",
-											"    pm.expect(jsonRes.Data.UserTask.Status).eqls(\"Cancelled\");",
-											"    pm.expect(jsonRes.Data.UserTask.Cancelled).eqls(true);",
-											"",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"pm.environment.set(\"USER_TASK_FINISHED\", true);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}/cancel",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks",
-										"{{USER_TASK_ID}}",
-										"cancel"
-									]
-								},
-								"description": "Finishes User Task record with id"
-							},
-							"response": []
-						},
-						{
-							"name": "Search user tasks",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"List of User task records is returned\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserTasks');",
-											"    pm.expect(jsonRes.Data.UserTasks.Items.length).greaterThan(0);",
-											"",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/search?status=completed&dateFrom=2021-09-01&dateTo=2021-10-14&createdDateTo=2021-10-14&createdDateFrom=2021-09-01&order=ascending&pageIndex=0&itemsPerPage=25",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks",
-										"search"
-									],
-									"query": [
-										{
-											"key": "task",
-											"value": "",
-											"disabled": true
-										},
-										{
-											"key": "actionType",
-											"value": "",
-											"disabled": true
-										},
-										{
-											"key": "status",
-											"value": "completed",
-											"description": "The other possible options are - \n1) inProgress : Tasks which are currently in progress\n2) pending / upcoming- Upcoming tasks\n3) completed- Finished tasks\n4) delayed / overdue- Tasks which are delayed beyond their scheduled duration\n5) cancelled- Tasks which have been cancelled\n"
-										},
-										{
-											"key": "actionId",
-											"value": "{{MEDICATION_CONSUMPTION_ID}}",
-											"disabled": true
-										},
-										{
-											"key": "userId",
-											"value": "{{PATIENT_USER_ID}}",
-											"disabled": true
-										},
-										{
-											"key": "category",
-											"value": "Medication",
-											"disabled": true
-										},
-										{
-											"key": "dateFrom",
-											"value": "2021-09-01"
-										},
-										{
-											"key": "dateTo",
-											"value": "2021-10-14"
-										},
-										{
-											"key": "createdDateTo",
-											"value": "2021-10-14"
-										},
-										{
-											"key": "createdDateFrom",
-											"value": "2021-09-01"
-										},
-										{
-											"key": "orderBy",
-											"value": "",
-											"disabled": true
-										},
-										{
-											"key": "order",
-											"value": "ascending"
-										},
-										{
-											"key": "pageIndex",
-											"value": "0"
-										},
-										{
-											"key": "itemsPerPage",
-											"value": "25"
-										}
-									]
-								},
-								"description": "Search User Task records with filters"
-							},
-							"response": []
-						},
-						{
-							"name": "Get task summary for user",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"Task summary for the day is returned\", function () {",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('UserTaskSummaryForDay');",
-											"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('TotalCount');",
-											"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('CompletedCount');",
-											"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('InProgressCount');",
-											"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('PendingCount');",
-											"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('CompletedTasks');",
-											"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('InProgressTasks');",
-											"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('PendingTasks');",
-											"",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/users/{{PATIENT_USER_ID}}/summary-for-day/2021-10-14",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks",
-										"users",
-										"{{PATIENT_USER_ID}}",
-										"summary-for-day",
-										"2021-10-14"
-									]
-								},
-								"description": "Get Summary of User Task record"
-							},
-							"response": []
-						},
-						{
-							"name": "Delete task",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {",
-											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
-											"});",
-											"",
-											"pm.test(\"User Task record is deleted\", function () {",
-											"",
-											"    var expectedValue = true;",
-											"    ",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
-											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
-											"",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"user-tasks",
-										"{{USER_TASK_ID}}"
-									]
-								},
-								"description": "Delete User Task record with id"
 							},
 							"response": []
 						}
@@ -8315,29 +6984,21 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"    var jsonRes = pm.response.json();",
+											"    var documentType = jsonRes.Data.PatientDocumentTypes[0];",
+											"    pm.environment.set(\"DOCUMENT_TYPE\", documentType);",
+											"",
 											"pm.test(\"Request is successfull\", function () {",
 											"    pm.response.to.have.status(200);",
 											"    var jsonRes = pm.response.json();",
 											"    pm.expect(jsonRes.Status).to.eql('success');",
 											"});",
 											"",
-											"pm.test(\"Document record is returned\", function () {",
-											"",
-											"    var expectedMedicalPractitionerUserId = pm.environment.get(\"DOCTOR_USER_ID\");",
-											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
-											"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
-											"",
+											"pm.test(\"Document types are returned\", function () {",
 											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('Document');",
-											"    pm.expect(jsonRes.Data.Document).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('id');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('MedicalPractitionerUserId');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('PatientUserId');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('ResourceId');",
-											"",
-											"    pm.expect(jsonRes.Data.Document.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
-											"    pm.expect(jsonRes.Data.Document.PatientUserId).equals(expectedPatientUserId);",
-											"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId);",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientDocumentTypes');",
+											"    pm.expect(jsonRes.Data.PatientDocumentTypes).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.PatientDocumentTypes.length).greaterThan(0);",
 											"});",
 											"",
 											""
@@ -8391,7 +7052,33 @@
 											"}\r",
 											"catch (error) {\r",
 											"    console.log(error.message);\r",
-											"}"
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Document is uploaded\", function () {\r",
+											"\r",
+											"    var expectedMedicalPractitionerUserId = pm.environment.get(\"DOCTOR_USER_ID\");\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientDocument');\r",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('MedicalPractitionerUserId');\r",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('ResourceId');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.PatientDocument.ResourceId).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PatientDocument.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);\r",
+											"    pm.expect(jsonRes.Data.PatientDocument.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});\r",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -8438,12 +7125,11 @@
 											"type": "text"
 										},
 										{
-											"key": "MedicalPractitionerId",
+											"key": "MedicalPractitionerUserId",
 											"value": "{{DOCTOR_USER_ID}}",
 											"contentType": "",
 											"description": "The id of the medical practioner who has created/approved the document",
-											"type": "text",
-											"disabled": true
+											"type": "text"
 										},
 										{
 											"key": "MedicalPractionerRole",
@@ -8508,21 +7194,19 @@
 											"",
 											"    var expectedMedicalPractitionerUserId = pm.environment.get(\"DOCTOR_USER_ID\");",
 											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
-											"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
 											"",
 											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('Document');",
-											"    pm.expect(jsonRes.Data.Document).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('id');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('MedicalPractitionerUserId');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('PatientUserId');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('ResourceId');",
-											"",
-											"    pm.expect(jsonRes.Data.Document.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
-											"    pm.expect(jsonRes.Data.Document.PatientUserId).equals(expectedPatientUserId);",
-											"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId);",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientDocument');",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('MedicalPractitionerUserId');",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('PatientUserId');",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('ResourceId');",
+											"    ",
+											"    pm.expect(jsonRes.Data.PatientDocument.ResourceId).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.PatientDocument.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
+											"    pm.expect(jsonRes.Data.PatientDocument.PatientUserId).equals(expectedPatientUserId);",
 											"});",
-											"",
 											""
 										],
 										"type": "text/javascript"
@@ -8570,29 +7254,7 @@
 										"exec": [
 											"pm.test(\"Request is successfull\", function () {",
 											"    pm.response.to.have.status(200);",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Status).to.eql('success');",
 											"});",
-											"",
-											"pm.test(\"Document record is returned\", function () {",
-											"",
-											"    var expectedMedicalPractitionerUserId = pm.environment.get(\"DOCTOR_USER_ID\");",
-											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
-											"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
-											"",
-											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('Document');",
-											"    pm.expect(jsonRes.Data.Document).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('id');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('MedicalPractitionerUserId');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('PatientUserId');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('ResourceId');",
-											"",
-											"    pm.expect(jsonRes.Data.Document.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
-											"    pm.expect(jsonRes.Data.Document.PatientUserId).equals(expectedPatientUserId);",
-											"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId);",
-											"});",
-											"",
 											""
 										],
 										"type": "text/javascript"
@@ -8647,24 +7309,17 @@
 											"",
 											"pm.test(\"Updated document record is returned\", function () {",
 											"",
-											"    var expectedMedicalPractitionerUserId = pm.environment.get(\"DOCTOR_USER_ID\");",
+											"    var expectedDocumentType = \"Drug prescription\";",
 											"    var expectedRecordDate = \"2021-09-24T00:00:00.000Z\";",
-											"    ",
-											"    var expectedResourceId = \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\";",
 											"",
-											"     var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('Document');",
-											"    pm.expect(jsonRes.Data.Document).to.not.be.empty;",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('id');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('MedicalPractitionerUserId');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('RecordDate');",
-											"    pm.expect(jsonRes.Data.Document).to.have.property('ResourceId');",
-											"",
-											"    pm.expect(jsonRes.Data.Document.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);",
-											"    pm.expect(jsonRes.Data.Document.RecordDate).equals(expectedRecordDate);",
-											"    ",
-											"    pm.expect(jsonRes.Data.Document.ResourceId).equals(expectedResourceId);    ",
-											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientDocument');",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('RecordDate');",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('ResourceId');",
+											"    pm.expect(jsonRes.Data.PatientDocument.DocumentType).equals(expectedDocumentType);",
+											"    pm.expect(jsonRes.Data.PatientDocument.RecordDate).equals(expectedRecordDate);",
 											"});",
 											"",
 											""
@@ -8710,7 +7365,7 @@
 							"response": []
 						},
 						{
-							"name": "Rename document",
+							"name": "Rename document with different file ext",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -8725,6 +7380,84 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"pm.test(\"Request is failure\", function () {\r",
+											"    pm.response.to.have.status(409);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('failure');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"NewName\": \"abc.jpg\"\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}/rename",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-documents",
+										"{{PATIENT_DOCUMENT_ID}}",
+										"rename"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rename document with same file ext",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Document is renamed with new file name\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientDocument');\r",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PatientDocument).to.have.property('FileName');\r",
+											"    pm.expect(jsonRes.Data.PatientDocument.FileName).equals('abc.pdf');\r",
+											"});\r",
 											""
 										],
 										"type": "text/javascript"
@@ -8775,34 +7508,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"\r",
-											"Date.prototype.addDays = function(days) {\r",
-											"    var date = new Date(this.valueOf());\r",
-											"    date.setDate(date.getDate() + days);\r",
-											"    return date;\r",
-											"}\r",
-											"\r",
-											"function formatDate(date) {\r",
-											"    var d = new Date(date),\r",
-											"        month = '' + (d.getMonth() + 1),\r",
-											"        day = '' + d.getDate(),\r",
-											"        year = d.getFullYear();\r",
-											"\r",
-											"    if (month.length < 2) \r",
-											"        month = '0' + month;\r",
-											"    if (day.length < 2) \r",
-											"        day = '0' + day;\r",
-											"\r",
-											"    return [year, month, day].join('-');\r",
-											"}\r",
-											"\r",
-											"var d = new Date();\r",
-											"\r",
-											"var fromDate = formatDate(d);\r",
-											"var toDate = formatDate((new Date()).addDays(10));\r",
-											"\r",
-											"pm.environment.set(\"FROM_DATE\", fromDate);\r",
-											"pm.environment.set(\"TO_DATE\", toDate);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -8811,6 +7517,17 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Document is renamed with new file name\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientDocumentLink');\r",
+											"    pm.expect(jsonRes.Data.PatientDocumentLink).to.not.be.empty;\r",
+											"});\r",
 											""
 										],
 										"type": "text/javascript"
@@ -8904,6 +7621,18 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of patient documents is returned\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientDocuments');\r",
+											"    pm.expect(jsonRes.Data.PatientDocuments.Items.length).greaterThan(0);\r",
+											"\r",
+											"});\r",
 											""
 										],
 										"type": "text/javascript"
@@ -8930,7 +7659,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/patient-documents/search?documentType=lab",
+									"raw": "{{BASE_URL}}/patient-documents/search?documentType=dru",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -8941,8 +7670,8 @@
 									"query": [
 										{
 											"key": "documentType",
-											"value": "lab",
-											"description": "There are "
+											"value": "dru",
+											"description": "Search by document type. Uses closest matching document types of entered value."
 										},
 										{
 											"key": "medicalPractitionerUserId",
@@ -10774,19 +9503,16 @@
 													"pm.test(\"New Heart point record is created\", function () {\r",
 													"\r",
 													"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
-													"    var expectedPersonId = pm.environment.get(\"HEART_POINT_PERSONID\");\r",
 													"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
 													"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PersonId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
 													"\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.PersonId).equals(expectedPersonId);\r",
 													"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
 													"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(\"\" + expectedHeartPoints);\r",
 													"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
@@ -11284,7 +10010,6 @@
 													"pm.test(\"New Calorie Balance record is created\", function () {\r",
 													"\r",
 													"    var expectedPatientUserId = pm.environment.get(\"CALORIE_BALANCE_PATIENTUSERID\");\r",
-													"    var expectedPersonId = pm.environment.get(\"CALORIE_BALANCE_PERSONID\");\r",
 													"    var expectedCalorieConsumed = pm.environment.get(\"CALORIE_BALANCE_CALORIESCONSUMED\");\r",
 													"    var expectedCalorieBurned = pm.environment.get(\"CALORIE_BALANCE_CALORIESBURNED\");\r",
 													"    var expectedCalorieUnit = pm.environment.get(\"CALORIE_BALANCE_UNIT\");\r",
@@ -11292,13 +10017,11 @@
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('CalorieBalance');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PersonId');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PatientUserId');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesConsumed');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesBurned');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('Unit');\r",
 													"\r",
-													"    pm.expect(jsonRes.Data.CalorieBalance.PersonId).equals(expectedPersonId);\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance.PatientUserId).equals(expectedPatientUserId);\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance.CaloriesConsumed).equals(expectedCalorieConsumed);\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance.CaloriesBurned).equals(expectedCalorieBurned);\r",
@@ -11378,7 +10101,6 @@
 													"pm.test(\"Calorie record should have correct data\", function () {\r",
 													"\r",
 													"    var expectedPatientUserId = pm.environment.get(\"CALORIE_BALANCE_PATIENTUSERID\");\r",
-													"    var expectedPersonId = pm.environment.get(\"CALORIE_BALANCE_PERSONID\");\r",
 													"    var expectedCalorieConsumed = pm.environment.get(\"CALORIE_BALANCE_CALORIESCONSUMED\");\r",
 													"    var expectedCalorieBurned = pm.environment.get(\"CALORIE_BALANCE_CALORIESBURNED\");\r",
 													"    var expectedCalorieUnit = pm.environment.get(\"CALORIE_BALANCE_UNIT\");\r",
@@ -11386,13 +10108,11 @@
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('CalorieBalance');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PersonId');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PatientUserId');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesConsumed');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesBurned');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('Unit');\r",
 													"\r",
-													"    pm.expect(jsonRes.Data.CalorieBalance.PersonId).equals(expectedPersonId);\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance.PatientUserId).equals(expectedPatientUserId);\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance.CaloriesConsumed).equals(Number(expectedCalorieConsumed));\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance.CaloriesBurned).equals(Number(expectedCalorieBurned));\r",
@@ -11477,7 +10197,6 @@
 													"pm.test(\"Correct updates should be reflected\", function () {\r",
 													"\r",
 													"    var expectedPatientUserId = pm.environment.get(\"CALORIE_BALANCE_PATIENTUSERID\");\r",
-													"    var expectedPersonId = pm.environment.get(\"CALORIE_BALANCE_PERSONID\");\r",
 													"    var expectedCalorieConsumed = pm.environment.get(\"CALORIE_BALANCE_CALORIESCONSUMED\");\r",
 													"    var expectedCalorieBurned = pm.environment.get(\"CALORIE_BALANCE_CALORIESBURNED\");\r",
 													"    var expectedCalorieUnit = pm.environment.get(\"CALORIE_BALANCE_UNIT\");\r",
@@ -11485,13 +10204,11 @@
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('CalorieBalance');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PersonId');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('PatientUserId');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesConsumed');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesBurned');\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance).to.have.property('Unit');\r",
 													"\r",
-													"    pm.expect(jsonRes.Data.CalorieBalance.PersonId).equals(expectedPersonId);\r",
 													"    pm.expect(jsonRes.Data.CalorieBalance.PatientUserId).equals(expectedPatientUserId);\r",
 													"    pm.expect(Number(jsonRes.Data.CalorieBalance.CaloriesConsumed)).equals(Number(expectedCalorieConsumed));\r",
 													"    pm.expect(Number(jsonRes.Data.CalorieBalance.CaloriesBurned)).equals(Number(expectedCalorieBurned));\r",
@@ -11655,12 +10372,6 @@
 													"description": "Items per page"
 												},
 												{
-													"key": "personId",
-													"value": "",
-													"description": "Person ID to filter",
-													"disabled": true
-												},
-												{
 													"key": "patientUserId",
 													"value": "",
 													"description": "Patient User ID to filter",
@@ -11715,52 +10426,6 @@
 											"listen": "prerequest",
 											"script": {
 												"exec": [
-													"var str = '';\r",
-													"var search = '';\r",
-													"var num = 0.0;\r",
-													"\r",
-													"var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
-													"var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
-													"var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
-													"var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-													"var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
-													"var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-													"var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-													"var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-													"var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
-													"\r",
-													"str = pm.environment.get(\"ADDRESS_LINE\");\r",
-													"search = str.substring(0, 3).toLowerCase();\r",
-													"pm.environment.set(\"ADDRESS_LINE_SEARCH_STRING\", search);\r",
-													"\r",
-													"str = pm.environment.get(\"ADDRESS_CITY\");\r",
-													"search = str.substring(0, 3).toLowerCase();\r",
-													"pm.environment.set(\"ADDRESS_CITY_SEARCH_STRING\", search);\r",
-													"\r",
-													"str = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-													"search = str.substring(0, 3).toLowerCase();\r",
-													"pm.environment.set(\"ADDRESS_DISTRICT_SEARCH_STRING\", search);\r",
-													"\r",
-													"str = pm.environment.get(\"ADDRESS_STATE\");\r",
-													"search = str.substring(0, 3).toLowerCase();\r",
-													"pm.environment.set(\"ADDRESS_STATE_SEARCH_STRING\", search);\r",
-													"\r",
-													"str = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-													"search = str.substring(0, 3).toLowerCase();\r",
-													"pm.environment.set(\"ADDRESS_COUNTRY_SEARCH_STRING\", search);\r",
-													"\r",
-													"str = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-													"search = str.substring(0, 3).toLowerCase();\r",
-													"pm.environment.set(\"ADDRESS_POSTAL_CODE_SEARCH_STRING\", search);\r",
-													"\r",
-													"num = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-													"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_FROM\", num - 1);\r",
-													"pm.environment.set(\"ADDRESS_LONGITUDE_SEARCH_TO\", num + 1);\r",
-													"\r",
-													"num = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
-													"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_FROM\", num - 1);\r",
-													"pm.environment.set(\"ADDRESS_LATTITUDE_SEARCH_TO\", num + 1);\r",
-													"\r",
 													""
 												],
 												"type": "text/javascript"
@@ -11823,38 +10488,6 @@
 												"daily-records",
 												"calorie-balances",
 												"{{CALORIE_BALANCE_ID}}"
-											],
-											"query": [
-												{
-													"key": "addressLine",
-													"value": "{{ADDRESS_LINE_SEARCH_STRING}}",
-													"description": "Search string to match address line",
-													"disabled": true
-												},
-												{
-													"key": "longitudeFrom",
-													"value": "{{ADDRESS_LONGITUDE_SEARCH_FROM}}",
-													"description": "Format: float value. \nStart of the range for longitude based search",
-													"disabled": true
-												},
-												{
-													"key": "longitudeTo",
-													"value": "{{ADDRESS_LONGITUDE_SEARCH_TO}}",
-													"description": "Format: float value. \nEnd of the range for longitude based search",
-													"disabled": true
-												},
-												{
-													"key": "lattitudeFrom",
-													"value": "{{ADDRESS_LATTITUDE_SEARCH_FROM}}",
-													"description": "Format: float value.\nStart of the range for lattitude based search",
-													"disabled": true
-												},
-												{
-													"key": "lattitudeTo",
-													"value": "{{ADDRESS_LATTITUDE_SEARCH_TO}}",
-													"description": "Format: float value.\nEnd of the range for lattitude based search",
-													"disabled": true
-												}
 											]
 										},
 										"description": "Search addresses using query parameters."
@@ -12135,7 +10768,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/wellness/daily-records/move-minutes/search?createdDateFrom=2021-09-14&createdDateTo=2021-10-15&orderBy=MoveMinutes&order=ascending&pageIndex=0&itemsPerPage=25&minValue=60&maxValue=90&patientUserId={{PATIENT_USER_ID}}",
+											"raw": "{{BASE_URL}}/wellness/daily-records/move-minutes/search?orderBy=MoveMinutes&order=ascending&pageIndex=0&itemsPerPage=25&minValue=60&maxValue=90&patientUserId={{PATIENT_USER_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -12148,11 +10781,13 @@
 											"query": [
 												{
 													"key": "createdDateFrom",
-													"value": "2021-09-14"
+													"value": "2021-09-14",
+													"disabled": true
 												},
 												{
 													"key": "createdDateTo",
-													"value": "2021-10-15"
+													"value": "2021-10-15",
+													"disabled": true
 												},
 												{
 													"key": "orderBy",
@@ -12525,7 +11160,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/wellness/daily-records/step-counts/search?createdDateFrom=2021-09-14&createdDateTo=2021-10-15&orderBy=StepCount&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=25000&patientUserId={{PATIENT_USER_ID}}",
+											"raw": "{{BASE_URL}}/wellness/daily-records/step-counts/search?orderBy=StepCount&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=25000&patientUserId={{PATIENT_USER_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -12538,11 +11173,13 @@
 											"query": [
 												{
 													"key": "createdDateFrom",
-													"value": "2021-09-14"
+													"value": "2021-09-14",
+													"disabled": true
 												},
 												{
 													"key": "createdDateTo",
-													"value": "2021-10-15"
+													"value": "2021-10-15",
+													"disabled": true
 												},
 												{
 													"key": "orderBy",
@@ -12944,7 +11581,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/wellness/daily-records/sleep/search?createdDateFrom=2021-09-14&createdDateTo=2021-10-15&orderBy=RecordDate&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=15&patientUserId={{PATIENT_USER_ID}}",
+											"raw": "{{BASE_URL}}/wellness/daily-records/sleep/search?orderBy=RecordDate&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=15&patientUserId={{PATIENT_USER_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -12957,11 +11594,13 @@
 											"query": [
 												{
 													"key": "createdDateFrom",
-													"value": "2021-09-14"
+													"value": "2021-09-14",
+													"disabled": true
 												},
 												{
 													"key": "createdDateTo",
-													"value": "2021-10-15"
+													"value": "2021-10-15",
+													"disabled": true
 												},
 												{
 													"key": "orderBy",
@@ -15661,7 +14300,7 @@
 									"response": []
 								},
 								{
-									"name": "Get med schedule for day",
+									"name": "Get med summary for day",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -15710,20 +14349,18 @@
 													"pm.test(\"Medication consumption schedule for day is returned\", function () {\r",
 													"   \r",
 													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('MedicationSchedulesForDay');\r",
-													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay).to.have.property('Day');\r",
-													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay).to.have.property('Schedules');    \r",
-													"    pm.expect(jsonRes.Data.MedicationSchedulesForDay.Schedules.length).greaterThan(0);\r",
+													"    pm.expect(jsonRes.Data).to.have.property('MedicationConsumptionSummary');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptionSummary).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptionSummary).to.have.property('Day');\r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptionSummary).to.have.property('SummaryForDay');    \r",
+													"    pm.expect(jsonRes.Data.MedicationConsumptionSummary.SummaryForDay.length).greaterThan(0);\r",
 													"\r",
-													"    var firstMed = jsonRes.Data.MedicationSchedulesForDay.Schedules[0];\r",
+													"    var firstDrugSummary = jsonRes.Data.MedicationConsumptionSummary.SummaryForDay[0];\r",
 													"\r",
-													"    pm.expect(firstMed).to.have.property('id');\r",
-													"    pm.expect(firstMed).to.have.property('DrugName');\r",
-													"    pm.expect(firstMed).to.have.property('Details');\r",
-													"    pm.expect(firstMed).to.have.property('TimeScheduleStart');\r",
-													"    pm.expect(firstMed).to.have.property('TimeScheduleEnd');\r",
-													"    pm.expect(firstMed).to.have.property('Status');\r",
+													"    pm.expect(firstDrugSummary).to.have.property('Drug');\r",
+													"    pm.expect(firstDrugSummary).to.have.property('SummaryForDrug');\r",
+													"    pm.expect(firstDrugSummary).to.have.property('Schedules');\r",
+													"    pm.expect(firstDrugSummary.Schedules.length).greaterThan(0);\r",
 													"  \r",
 													"});\r",
 													"\r",
@@ -15753,7 +14390,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/medication-consumptions/summary-for-day/{{PATIENT_USER_ID}}/{{MEDICATION_CONSUMPTION_FOR_DATE}}?groupByDrug=true&date=2021-10-14",
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/summary-for-day/{{PATIENT_USER_ID}}/{{MEDICATION_CONSUMPTION_FOR_DATE}}?date={{MEDICATION_CONSUMPTION_FOR_DATE}}&groupByDrug=true",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -15766,17 +14403,17 @@
 											],
 											"query": [
 												{
-													"key": "groupByDrug",
-													"value": "true"
+													"key": "date",
+													"value": "{{MEDICATION_CONSUMPTION_FOR_DATE}}"
 												},
 												{
 													"key": "date",
-													"value": "{{MEDICATION_CONSUMPTION_FOR_DATE}}",
+													"value": "2021-10-14",
 													"disabled": true
 												},
 												{
-													"key": "date",
-													"value": "2021-10-14"
+													"key": "groupByDrug",
+													"value": "true"
 												}
 											]
 										}
@@ -15784,7 +14421,7 @@
 									"response": []
 								},
 								{
-									"name": "Get med summary for day",
+									"name": "Get med schedules for day",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -21795,7 +20432,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/biometrics/blood-oxygen-saturations/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-10-14&orderBy=BloodOxygenSaturation&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=100&patientUserId={{PATIENT_USER_ID}}",
+											"raw": "{{BASE_URL}}/clinical/biometrics/blood-oxygen-saturations/search?orderBy=BloodOxygenSaturation&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=100&patientUserId={{PATIENT_USER_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -21808,15 +20445,18 @@
 											"query": [
 												{
 													"key": "recordedByUserId",
-													"value": "{{RECORDED_BY_USER_ID}}"
+													"value": "{{RECORDED_BY_USER_ID}}",
+													"disabled": true
 												},
 												{
 													"key": "createdDateFrom",
-													"value": "2021-09-01"
+													"value": "2021-09-01",
+													"disabled": true
 												},
 												{
 													"key": "createdDateTo",
-													"value": "2021-10-14"
+													"value": "2021-10-14",
+													"disabled": true
 												},
 												{
 													"key": "orderBy",
@@ -22252,7 +20892,7 @@
 											"raw": ""
 										},
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/biometrics/body-heights/search?createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=BodyHeight&order=ascending&pageIndex=0&itemsPerPage=25&PatientUserId={{PATIENT_USER_ID}}&MinValue=10&MaxValue=200",
+											"raw": "{{BASE_URL}}/clinical/biometrics/body-heights/search?orderBy=BodyHeight&order=ascending&pageIndex=0&itemsPerPage=25&PatientUserId={{PATIENT_USER_ID}}&MinValue=10&MaxValue=200",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -22266,12 +20906,14 @@
 												{
 													"key": "createdDateFrom",
 													"value": "2021-05-01",
-													"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
+													"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
+													"disabled": true
 												},
 												{
 													"key": "createdDateTo",
 													"value": "2021-12-12",
-													"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
+													"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
+													"disabled": true
 												},
 												{
 													"key": "orderBy",
@@ -22733,7 +21375,7 @@
 											"raw": ""
 										},
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/biometrics/body-weights/search?createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=BodyWeight&order=ascending&pageIndex=0&itemsPerPage=25&PatientUserId={{PATIENT_USER_ID}}&MinValue=10&MaxValue=200",
+											"raw": "{{BASE_URL}}/clinical/biometrics/body-weights/search?orderBy=BodyWeight&order=ascending&pageIndex=0&itemsPerPage=25&PatientUserId={{PATIENT_USER_ID}}&MinValue=10&MaxValue=200",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -22747,12 +21389,14 @@
 												{
 													"key": "createdDateFrom",
 													"value": "2021-05-01",
-													"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
+													"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
+													"disabled": true
 												},
 												{
 													"key": "createdDateTo",
 													"value": "2021-12-12",
-													"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
+													"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
+													"disabled": true
 												},
 												{
 													"key": "orderBy",
@@ -23164,7 +21808,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/biometrics/body-temperatures/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-13&createdDateTo=2021-10-14&orderBy=BodyTemperature&order=ascending&pageIndex=0&itemsPerPage=25&minValue=36&maxValue=48&patientUserId={{PATIENT_USER_ID}}",
+											"raw": "{{BASE_URL}}/clinical/biometrics/body-temperatures/search?recordedByUserId={{RECORDED_BY_USER_ID}}&orderBy=BodyTemperature&order=ascending&pageIndex=0&itemsPerPage=25&minValue=36&maxValue=48&patientUserId={{PATIENT_USER_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -23181,11 +21825,13 @@
 												},
 												{
 													"key": "createdDateFrom",
-													"value": "2021-09-13"
+													"value": "2021-09-13",
+													"disabled": true
 												},
 												{
 													"key": "createdDateTo",
-													"value": "2021-10-14"
+													"value": "2021-10-14",
+													"disabled": true
 												},
 												{
 													"key": "orderBy",
@@ -23569,7 +22215,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/biometrics/pulse/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-12-07&orderBy=Pulse&order=ascending&pageIndex=0&itemsPerPage=25&minValue=70&maxValue=76&patientUserId={{PATIENT_USER_ID}}",
+											"raw": "{{BASE_URL}}/clinical/biometrics/pulse/search?recordedByUserId={{RECORDED_BY_USER_ID}}&orderBy=Pulse&order=ascending&pageIndex=0&itemsPerPage=25&minValue=70&maxValue=76&patientUserId={{PATIENT_USER_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -23586,11 +22232,13 @@
 												},
 												{
 													"key": "createdDateFrom",
-													"value": "2021-09-01"
+													"value": "2021-09-01",
+													"disabled": true
 												},
 												{
 													"key": "createdDateTo",
-													"value": "2021-12-07"
+													"value": "2021-12-07",
+													"disabled": true
 												},
 												{
 													"key": "orderBy",
@@ -23979,7 +22627,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/biometrics/blood-pressures/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-22&createdDateTo=2021-10-22&orderBy=Systolic&order=ascending&pageIndex=0&itemsPerPage=25&MinSystolicValue=100&MaxSystolicValue=160&patientUserId={{PATIENT_USER_ID}}&MinDiastolicValue=80&MaxDiastolicValue=180",
+											"raw": "{{BASE_URL}}/clinical/biometrics/blood-pressures/search?recordedByUserId={{RECORDED_BY_USER_ID}}&orderBy=Systolic&order=ascending&pageIndex=0&itemsPerPage=25&MinSystolicValue=100&MaxSystolicValue=160&patientUserId={{PATIENT_USER_ID}}&MinDiastolicValue=80&MaxDiastolicValue=180",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -23996,11 +22644,13 @@
 												},
 												{
 													"key": "createdDateFrom",
-													"value": "2021-09-22"
+													"value": "2021-09-22",
+													"disabled": true
 												},
 												{
 													"key": "createdDateTo",
-													"value": "2021-10-22"
+													"value": "2021-10-22",
+													"disabled": true
 												},
 												{
 													"key": "orderBy",
@@ -24419,7 +23069,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/biometrics/blood-glucose/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-01&createdDateTo=2021-10-14&orderBy=BloodGlucose&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=1000&patientUserId={{PATIENT_USER_ID}}",
+											"raw": "{{BASE_URL}}/clinical/biometrics/blood-glucose/search?recordedByUserId={{RECORDED_BY_USER_ID}}&orderBy=BloodGlucose&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=1000&patientUserId={{PATIENT_USER_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -24436,11 +23086,13 @@
 												},
 												{
 													"key": "createdDateFrom",
-													"value": "2021-09-01"
+													"value": "2021-09-01",
+													"disabled": true
 												},
 												{
 													"key": "createdDateTo",
-													"value": "2021-10-14"
+													"value": "2021-10-14",
+													"disabled": true
 												},
 												{
 													"key": "orderBy",
@@ -26091,6 +24743,1170 @@
 								"{{RESOURCE_ID}}"
 							]
 						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User tasks",
+			"item": [
+				{
+					"name": "Get user task categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"User action categories are returned\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserTaskCategories');",
+									"    pm.expect(jsonRes.Data.UserTaskCategories).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserTaskCategories.length).greaterThan(0);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks/categories",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks",
+								"categories"
+							]
+						},
+						"description": "Gets list of User Task records"
+					},
+					"response": []
+				},
+				{
+					"name": "Get user action types",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"User action types is returned\", function () {",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserActionTypes');",
+									"    pm.expect(jsonRes.Data.UserActionTypes).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserActionTypes.length).greaterThan(0);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks/action-types",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks",
+								"action-types"
+							]
+						},
+						"description": "Gets list of User Task records"
+					},
+					"response": []
+				},
+				{
+					"name": "Create task with associated action id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();",
+									"",
+									"try {",
+									"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
+									"}",
+									"catch (error) {",
+									"    console.log(error.message);",
+									"}",
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"New User Task is created\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+									"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
+									"",
+									"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take medication\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Task\": \"Take medication\",\n    \"Category\": \"Custom\",\n    \"ActionType\": \"Medication\",\n    \"ActionId\": \"3dab5783-2b20-4e17-ae88-ef4562c85772\",\n    \"ScheduledStartTime\": \"2021-10-11T05:30:00.000Z\",\n    \"ScheduledEndTime\": \"2021-10-11T07:30:00.000Z\",\n    \"IsRecurrent\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks"
+							]
+						},
+						"description": "Create new User Task record"
+					},
+					"response": []
+				},
+				{
+					"name": "Create task without associated action id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();",
+									"",
+									"try {",
+									"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
+									"    pm.environment.set(\"USER_TASK_DISPLAY_ID\", jsonRes.Data.UserTask.DisplayId);",
+									"}",
+									"catch (error) {",
+									"    console.log(error.message);",
+									"}",
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"New User Task is created\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+									"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
+									"",
+									"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take a dog for walk\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Task\": \"Take a dog for walk\",\n    \"Category\": \"Custom\",\n    \"ScheduledStartTime\": \"2021-10-11T05:30:00.000Z\",\n    \"ScheduledEndTime\": \"2021-10-11T07:30:00.000Z\",\n    \"IsRecurrent\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks"
+							]
+						},
+						"description": "Create new User Task record"
+					},
+					"response": []
+				},
+				{
+					"name": "Get task by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();",
+									"",
+									"try {",
+									"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
+									"}",
+									"catch (error) {",
+									"    console.log(error.message);",
+									"}",
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"User Task is created\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+									"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
+									"",
+									"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take a dog for walk\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks",
+								"{{USER_TASK_ID}}"
+							]
+						},
+						"description": "Gets list of User Task records"
+					},
+					"response": []
+				},
+				{
+					"name": "Get task by display id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();",
+									"",
+									"try {",
+									"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
+									"}",
+									"catch (error) {",
+									"    console.log(error.message);",
+									"}",
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"User Task is created\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+									"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
+									"",
+									"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take a dog for walk\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks/display-id/{{USER_TASK_DISPLAY_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks",
+								"display-id",
+								"{{USER_TASK_DISPLAY_ID}}"
+							]
+						},
+						"description": "Gets list of User Task records"
+					},
+					"response": []
+				},
+				{
+					"name": "Update task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"User Task is updated\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+									"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
+									"",
+									"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Run a mile\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"USER_TASK_ISRECURRENT\", true);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Task\": \"Run a mile\",\n    \"Category\": \"Exercise\",\n    \"ScheduledStartTime\": \"2021-10-15T09:30:00.000Z\",\n    \"ScheduledEndTime\": \"2021-10-15T12:30:00.000Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks",
+								"{{USER_TASK_ID}}"
+							]
+						},
+						"description": "Update User Task record with id"
+					},
+					"response": []
+				},
+				{
+					"name": "Start task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"User Task is started\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+									"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
+									"",
+									"    pm.expect(jsonRes.Data.UserTask.Status).eqls(\"In-progress\");",
+									"    pm.expect(jsonRes.Data.UserTask.Started).eqls(true);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}/start",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks",
+								"{{USER_TASK_ID}}",
+								"start"
+							]
+						},
+						"description": "Starts User Task record with id"
+					},
+					"response": []
+				},
+				{
+					"name": "Finish task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"User Task is finished\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+									"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
+									"",
+									"    pm.expect(jsonRes.Data.UserTask.Status).eqls(\"Completed\");",
+									"    pm.expect(jsonRes.Data.UserTask.Finished).eqls(true);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"USER_TASK_FINISHED\", true);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}/finish",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks",
+								"{{USER_TASK_ID}}",
+								"finish"
+							]
+						},
+						"description": "Finishes User Task record with id"
+					},
+					"response": []
+				},
+				{
+					"name": "Create task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();",
+									"",
+									"try {",
+									"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
+									"    pm.environment.set(\"USER_TASK_DISPLAY_ID\", jsonRes.Data.UserTask.DisplayId);",
+									"}",
+									"catch (error) {",
+									"    console.log(error.message);",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Task\": \"Take a dog for walk\",\n    \"Category\": \"Custom\",\n    \"ScheduledStartTime\": \"2021-10-11T05:30:00.000Z\",\n    \"ScheduledEndTime\": \"2021-10-11T07:30:00.000Z\",\n    \"IsRecurrent\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks"
+							]
+						},
+						"description": "Create new User Task record"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"User Task is cancelled\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+									"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
+									"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
+									"",
+									"    pm.expect(jsonRes.Data.UserTask.Status).eqls(\"Cancelled\");",
+									"    pm.expect(jsonRes.Data.UserTask.Cancelled).eqls(true);",
+									"",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"USER_TASK_FINISHED\", true);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}/cancel",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks",
+								"{{USER_TASK_ID}}",
+								"cancel"
+							]
+						},
+						"description": "Finishes User Task record with id"
+					},
+					"response": []
+				},
+				{
+					"name": "Search user tasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"List of User task records is returned\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserTasks');",
+									"    pm.expect(jsonRes.Data.UserTasks.Items.length).greaterThan(0);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks/search?status=completed&order=ascending&pageIndex=0&itemsPerPage=25",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks",
+								"search"
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "actionType",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "completed",
+									"description": "The other possible options are - \n1) inProgress : Tasks which are currently in progress\n2) pending / upcoming- Upcoming tasks\n3) completed- Finished tasks\n4) delayed / overdue- Tasks which are delayed beyond their scheduled duration\n5) cancelled- Tasks which have been cancelled\n"
+								},
+								{
+									"key": "actionId",
+									"value": "{{MEDICATION_CONSUMPTION_ID}}",
+									"disabled": true
+								},
+								{
+									"key": "userId",
+									"value": "{{PATIENT_USER_ID}}",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "Medication",
+									"disabled": true
+								},
+								{
+									"key": "dateFrom",
+									"value": "2021-09-01",
+									"disabled": true
+								},
+								{
+									"key": "dateTo",
+									"value": "2021-10-14",
+									"disabled": true
+								},
+								{
+									"key": "createdDateTo",
+									"value": "2021-10-14",
+									"disabled": true
+								},
+								{
+									"key": "createdDateFrom",
+									"value": "2021-09-01",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "ascending"
+								},
+								{
+									"key": "pageIndex",
+									"value": "0"
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "25"
+								}
+							]
+						},
+						"description": "Search User Task records with filters"
+					},
+					"response": []
+				},
+				{
+					"name": "Get task summary for user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Task summary for the day is returned\", function () {",
+									"",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('UserTaskSummaryForDay');",
+									"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('TotalCount');",
+									"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('CompletedCount');",
+									"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('InProgressCount');",
+									"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('PendingCount');",
+									"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('CompletedTasks');",
+									"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('InProgressTasks');",
+									"    pm.expect(jsonRes.Data.UserTaskSummaryForDay).to.have.property('PendingTasks');",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks/users/{{PATIENT_USER_ID}}/summary-for-day/2021-10-14",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks",
+								"users",
+								"{{PATIENT_USER_ID}}",
+								"summary-for-day",
+								"2021-10-14"
+							]
+						},
+						"description": "Get Summary of User Task record"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"User Task record is deleted\", function () {",
+									"",
+									"    var expectedValue = true;",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+									"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/user-tasks/{{USER_TASK_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"user-tasks",
+								"{{USER_TASK_ID}}"
+							]
+						},
+						"description": "Delete User Task record with id"
 					},
 					"response": []
 				}

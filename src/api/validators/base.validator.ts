@@ -24,22 +24,14 @@ export class BaseValidator {
     getParamUuid = async(request: express.Request, field: string): Promise<string> => {
 
         this.validateUuid(request, field, Where.Param, true, false);
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
         return request.params[field];
     }
 
     getParamInt = async(request: express.Request, field): Promise<number> => {
 
-        await param(field).trim()
-            .isInt()
-            .run(request);
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateInt(request, field, Where.Param, false, false);
+        this.validateRequest(request);
         var p = request.params[field];
         return parseInt(p);
     }
@@ -52,11 +44,33 @@ export class BaseValidator {
         maxLength?: number): Promise<string> => {
 
         await this.validateString(request, field, Where.Param, true, false, escape, minLength, maxLength);
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
         return request.params[field];
+    }
+
+    getQueryStr = async(
+        request: express.Request,
+        field: string,
+        escape?: boolean,
+        minLength?: number,
+        maxLength?: number): Promise<string> => {
+        await this.validateString(request, field, Where.Query, false, false, escape, minLength, maxLength);
+        this.validateRequest(request);
+        return request.query[field] ? request.query[field] as string : null;
+    }
+
+    getQueryUuid = async(
+        request: express.Request,
+        field: string): Promise<string> => {
+        await this.validateUuid(request, field, Where.Query, false, false);
+        this.validateRequest(request);
+        return request.query[field] ? request.query[field] as string : null;
+    }
+
+    getQueryInt = async(request: express.Request, field): Promise<number> => {
+        await this.validateInt(request, field, Where.Query, false, false);
+        this.validateRequest(request);
+        return request.query[field] ? parseInt(request.query[field] as string) : null;
     }
 
     //#endregion

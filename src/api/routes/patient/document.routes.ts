@@ -29,6 +29,6 @@ export const registerSharingRoutes = (app: express.Application): void => {
 
     const router = express.Router();
     const controller = new DocumentController();
-    router.delete('/:key', controller.getSharedDocument);
+    router.get('/:key', controller.getSharedDocument);
     app.use('/api/v1/docs', router);
 };

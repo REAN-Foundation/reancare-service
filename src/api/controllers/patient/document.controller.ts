@@ -7,6 +7,7 @@ import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
 import { TimeHelper } from '../../../common/time.helper';
+import { ConfigurationManager } from '../../../config/configuration.manager';
 import { FileResourceUploadDomainModel } from '../../../domain.types/file.resource/file.resource.domain.model';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { DocumentDto } from '../../../domain.types/patient/document/document.dto';
@@ -78,7 +79,7 @@ export class DocumentController {
                 throw new ApiError(400, 'Cannot upload document!');
             }
             ResponseHandler.success(request, response, 'Document uploaded successfully!', 201, {
-                PatientPatientDocument : document,
+                PatientDocument : document,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -220,12 +221,11 @@ export class DocumentController {
             await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
-            var durationMinutes = 15;
-            const durationStr: string = await this._validator.getParamStr(request, 'durationMinutes');
-            if (durationStr !== undefined) {
-                durationMinutes = parseInt(durationStr, 10);
+            var durationMinutes = await this._validator.getQueryInt(request, 'durationMinutes');
+            if (durationMinutes === null) {
+                durationMinutes = 15;
             }
-            const sharedWithUserId = await this._validator.getParamUuid(request, 'sharedWithUserId');
+            const sharedWithUserId = await this._validator.getQueryUuid(request, 'sharedWithUserId');
 
             const document = await this._service.getById(id);
             if (document == null) {
@@ -273,6 +273,12 @@ export class DocumentController {
                 throw new ApiError(404, 'Document not found.');
             }
 
+            var resourceDeleted = await this._fileResourceService.delete(
+                existingRecord.ResourceId);
+            if (!resourceDeleted) {
+                throw new ApiError(400, 'File resource cannot be deleted.');
+            }
+            
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Document cannot be deleted.');
@@ -291,6 +297,7 @@ export class DocumentController {
             request.context = 'PatientDocument.GetSharedDocument';
             
             const key: string = await this._validator.getParamStr(request, 'key');
+
             var document: SharedDocumentDetailsDto = await this._service.getSharedDocument(key);
             if (document === null) {
                 throw new ApiError(404, 'The document cannot be found.');
@@ -316,8 +323,7 @@ export class DocumentController {
     //#region Privates
 
     generateShortLink = async () => {
-        var baseUrl = process.env.THIS_BASE_URL;
-
+        
         var scrambled = genpass.generate({
             length    : 8,
             numbers   : true,
@@ -336,7 +342,8 @@ export class DocumentController {
             });
             exists = await this._service.sharedKeyExists(scrambled);
         }
-        var link = baseUrl + '/docs/' + scrambled;
+        
+        var link = ConfigurationManager.BaseUrl() + '/api/v1/docs/' + scrambled;
         return { scrambled, link };
     }
 

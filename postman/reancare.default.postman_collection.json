@@ -4823,7 +4823,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/users/{{PATIENT_USER_ID}}/summary-for-day/2021-10-11",
+									"raw": "{{BASE_URL}}/user-tasks/users/{{PATIENT_USER_ID}}/summary-for-day/2021-10-14",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -4832,7 +4832,7 @@
 										"users",
 										"{{PATIENT_USER_ID}}",
 										"summary-for-day",
-										"2021-10-11"
+										"2021-10-14"
 									]
 								},
 								"description": "Get Summary of User Task record"
@@ -8386,8 +8386,8 @@
 									"script": {
 										"exec": [
 											"try {\r",
-											"    var jsonRespData = pm.response.json();\r",
-											"    pm.environment.set(\"PATIENT_DOCUMENT_ID\", jsonRespData.data.documents[0].id);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PATIENT_DOCUMENT_ID\", jsonRes.Data.PatientDocument.id);\r",
 											"}\r",
 											"catch (error) {\r",
 											"    console.log(error.message);\r",
@@ -8401,19 +8401,18 @@
 								"method": "POST",
 								"header": [
 									{
-										"key": "Content-Type",
-										"type": "text",
-										"value": "multipart/form-data",
-										"disabled": true
-									},
-									{
 										"key": "enc",
-										"type": "text",
-										"value": "multipart/form-data"
+										"value": "multipart/form-data",
+										"type": "text"
 									},
 									{
 										"key": "authorization",
-										"value": "Bearer {{PATIENT_ROLE_JWT}}",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
 										"type": "text"
 									}
 								],
@@ -8443,12 +8442,37 @@
 											"value": "{{DOCTOR_USER_ID}}",
 											"contentType": "",
 											"description": "The id of the medical practioner who has created/approved the document",
-											"type": "text"
+											"type": "text",
+											"disabled": true
 										},
 										{
-											"key": "OrderId",
-											"value": "",
+											"key": "MedicalPractionerRole",
+											"value": "Doctor",
 											"description": "Order related to this document",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "AssociatedVisitId",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "AssociatedVisitType",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "AssociatedOrderId",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "AssociatedOrderType",
+											"value": "",
 											"type": "text",
 											"disabled": true
 										}
@@ -8670,7 +8694,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"DocumentType\": \"Lab report\",\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"MedicalPractitionerUserId\": \"{{DOCTOR_USER_ID}}\",\n    \"MedicalPractionerRole\": \"Doctor\",\n    \"UploadedByUserId\":\"{{PATIENT_USER_ID}}\",\n    \"AssociatedVisitId\": null,\n    \"AssociatedVisitType\": null,\n    \"AssociatedOrderId\": null,\n    \"AssociatedOrderType\": null,\n    \"FileName\": \"Scan.jpg\",\n    \"ResourceId\": \"4cd74e12-cae1-4314-9a69-f45b18cc1cf9\",\n    \"RecordDate\": \"2021-09-24\"\n}\n"
+									"raw": "{\n    \"DocumentType\": \"Drug prescription\",\n    \"MedicalPractitionerUserId\": \"{{DOCTOR_USER_ID}}\",\n    \"MedicalPractionerRole\": \"Doctor\",\n    \"RecordDate\": \"2021-09-24\"\n}\n"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}",
@@ -8717,13 +8741,18 @@
 									},
 									{
 										"key": "Authorization",
-										"value": "Bearer {{PATIENT_ROLE_JWT}}",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"NewName\": \"abc.jpg\"\r\n}\r\n"
+									"raw": "{\r\n    \"NewName\": \"abc.pdf\"\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}/rename",
@@ -8799,11 +8828,16 @@
 									{
 										"key": "Authorization",
 										"type": "text",
-										"value": "Bearer {{PATIENT_ROLE_JWT}}"
+										"value": "Bearer {{PATIENT_USER_JWT}}"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}/share?durationMinutes=15",
+									"raw": "{{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}/share?durationMinutes=2",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -8814,13 +8848,13 @@
 									],
 									"query": [
 										{
-											"key": "durationMinutes",
-											"value": "15"
-										},
-										{
 											"key": "documentType",
 											"value": "PATIENT_LAB_REPORTS",
 											"disabled": true
+										},
+										{
+											"key": "durationMinutes",
+											"value": "2"
 										}
 									]
 								}
@@ -8828,7 +8862,7 @@
 							"response": []
 						},
 						{
-							"name": "Get documents for patient",
+							"name": "Search documents for patient",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -8887,7 +8921,12 @@
 									{
 										"key": "Authorization",
 										"type": "text",
-										"value": "Bearer {{PATIENT_ROLE_JWT}}"
+										"value": "Bearer {{PATIENT_USER_JWT}}"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
 									}
 								],
 								"url": {
@@ -8906,18 +8945,28 @@
 											"description": "There are "
 										},
 										{
-											"key": "medicalPractitionerId",
+											"key": "medicalPractitionerUserId",
 											"value": "{{DOCTOR_USER_ID}}",
 											"disabled": true
 										},
 										{
-											"key": "uploadedFrom",
+											"key": "uploadedDateFrom",
 											"value": "{{FROM_DATE}}",
 											"disabled": true
 										},
 										{
-											"key": "uploadedTo",
+											"key": "uploadedDateTo",
 											"value": "{{TO_DATE}}",
+											"disabled": true
+										},
+										{
+											"key": "associatedOrderId",
+											"value": "{{ORDER_ID}}",
+											"disabled": true
+										},
+										{
+											"key": "associatedVisitId",
+											"value": "{{VISIT_ID}}",
 											"disabled": true
 										}
 									]
@@ -14601,7 +14650,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugName\": \"Tylenol 8 HR Arthritis Pain: 650 mg\",\n    \"Dose\": 1,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\", \n        \"Evening\", \n        \"Night\"\n    ],\n    \"Frequency\": 4,\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 25,\n    \"DurationUnit\": \"Days\",\n    \"StartDate\": \"2021-04-25\",\n    \"RefillNeeded\": false,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\",\n    \"MedicationImageResourceId\": \"{{STOCK_MEDICATION_IMAGE_RESOURCE_ID}}\"\n}",
+											"raw": "{\n\t\"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugName\": \"Tylenol 8 HR Arthritis Pain: 650 mg\",\n    \"Dose\": 1,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\", \n        \"Evening\", \n        \"Night\"\n    ],\n    \"Frequency\": 4,\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 25,\n    \"DurationUnit\": \"Weeks\",\n    \"StartDate\": \"2021-04-25\",\n    \"RefillNeeded\": false,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\",\n    \"MedicationImageResourceId\": \"{{STOCK_MEDICATION_IMAGE_RESOURCE_ID}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -14742,7 +14791,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugId\": \"{{DRUG_ID}}\",\n    \"Dose\": 1.5,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\"\n    ],\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 2,\n    \"DurationUnit\": \"Weeks\",\n    \"StartDate\": \"{{MEDICATION_START_DATE}}\",\n    \"RefillNeeded\": true,\n    \"RefillCount\": 2,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\"\n}",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugId\": \"{{DRUG_ID}}\",\n    \"Dose\": 1.5,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\"\n    ],\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 2,\n    \"DurationUnit\": \"Months\",\n    \"StartDate\": \"{{MEDICATION_START_DATE}}\",\n    \"RefillNeeded\": true,\n    \"RefillCount\": 2,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -15704,7 +15753,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/medication-consumptions/summary-for-day/{{PATIENT_USER_ID}}/{{MEDICATION_CONSUMPTION_FOR_DATE}}?groupByDrug=true&date={{MEDICATION_CONSUMPTION_FOR_DATE}}",
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/summary-for-day/{{PATIENT_USER_ID}}/{{MEDICATION_CONSUMPTION_FOR_DATE}}?groupByDrug=true&date=2021-10-14",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -15722,7 +15771,12 @@
 												},
 												{
 													"key": "date",
-													"value": "{{MEDICATION_CONSUMPTION_FOR_DATE}}"
+													"value": "{{MEDICATION_CONSUMPTION_FOR_DATE}}",
+													"disabled": true
+												},
+												{
+													"key": "date",
+													"value": "2021-10-14"
 												}
 											]
 										}

@@ -1,7 +1,6 @@
 import express from 'express';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
 import { KnowledgeNuggetService } from '../../../services/educational/knowledge.nugget.service';
 import { Loader } from '../../../startup/loader';
@@ -71,7 +70,7 @@ export class KnowledgeNuggetController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'KnowledgeNugget.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await KnowledgeNuggetValidator.getById(request);

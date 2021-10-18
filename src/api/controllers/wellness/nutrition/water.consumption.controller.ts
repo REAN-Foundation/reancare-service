@@ -1,11 +1,10 @@
 import express from 'express';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
-import { ApiError } from '../../../../common/api.error';
-import { WaterConsumptionService } from '../../../../services/wellness/nutrition/water.consumption.service';
 import { Authorizer } from '../../../../auth/authorizer';
+import { ApiError } from '../../../../common/api.error';
+import { ResponseHandler } from '../../../../common/response.handler';
+import { WaterConsumptionService } from '../../../../services/wellness/nutrition/water.consumption.service';
+import { Loader } from '../../../../startup/loader';
 import { WaterConsumptionValidator } from '../../../validators/wellness/nutrition/water.consumption.validator';
-import { Helper } from '../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +50,7 @@ export class WaterConsumptionController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Nutrition.WaterConsumption.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await WaterConsumptionValidator.getById(request);

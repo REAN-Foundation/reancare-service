@@ -1,11 +1,10 @@
 import express from 'express';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
-import { ApiError } from '../../../../common/api.error';
-import { FoodConsumptionService } from '../../../../services/wellness/nutrition/food.consumption.service';
 import { Authorizer } from '../../../../auth/authorizer';
+import { ApiError } from '../../../../common/api.error';
+import { ResponseHandler } from '../../../../common/response.handler';
+import { FoodConsumptionService } from '../../../../services/wellness/nutrition/food.consumption.service';
+import { Loader } from '../../../../startup/loader';
 import { FoodConsumptionValidator } from '../../../validators/wellness/nutrition/food.consumption.validator';
-import { Helper } from '../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +50,7 @@ export class FoodConsumptionController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Nutrition.FoodConsumption.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await FoodConsumptionValidator.getById(request);
@@ -72,7 +71,7 @@ export class FoodConsumptionController {
     getByEvent = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Nutrition.FoodConsumption.GetByEvent';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const event: string = await FoodConsumptionValidator.getByEvent(request);
@@ -93,7 +92,7 @@ export class FoodConsumptionController {
     getForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Nutrition.FoodConsumption.GetForDay';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const date = await FoodConsumptionValidator.getForDay(request);

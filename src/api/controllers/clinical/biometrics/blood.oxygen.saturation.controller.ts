@@ -1,7 +1,6 @@
 import express from 'express';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BloodOxygenSaturationService } from '../../../../services/clinical/biometrics/blood.oxygen.saturation.service';
 import { Loader } from '../../../../startup/loader';
@@ -51,7 +50,7 @@ export class BloodOxygenSaturationController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Biometrics.BloodOxygenSaturation.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await BloodOxygenSaturationValidator.getById(request);

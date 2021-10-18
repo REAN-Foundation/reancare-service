@@ -1,7 +1,6 @@
 import express from 'express';
 import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
-import { Helper } from '../../common/helper';
 import { ResponseHandler } from '../../common/response.handler';
 import { OrganizationService } from '../../services/organization.service';
 import { PersonService } from '../../services/person.service';
@@ -63,7 +62,7 @@ export class OrganizationController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Organization.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await OrganizationValidator.getById(request);
@@ -84,7 +83,7 @@ export class OrganizationController {
     getByContactUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Organization.GetByContactUserId';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const contactUserId: string = await OrganizationValidator.getByContactUserId(request);

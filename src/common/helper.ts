@@ -410,5 +410,12 @@ export class Helper {
         }
         return identifier;
     }
+
+    public static convertCamelCaseToPascalCase = (str: string): string => {
+        if (str.length > 0) {
+            return str.charAt(0).toUpperCase() + str.substring(1);
+        }
+        return str;
+    }
     
 }

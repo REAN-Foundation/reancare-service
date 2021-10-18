@@ -1,7 +1,6 @@
 import express from 'express';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BloodGlucoseService } from '../../../../services/clinical/biometrics/blood.glucose.service';
 import { Loader } from '../../../../startup/loader';
@@ -50,7 +49,7 @@ export class BloodGlucoseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Biometrics.BloodGlucose.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await BloodGlucoseValidator.getById(request);

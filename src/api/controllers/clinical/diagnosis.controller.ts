@@ -1,15 +1,14 @@
 import express from 'express';
-
-import { DiagnosisService } from '../../../services/clinical/diagnosis.service';
-import { UserService } from '../../../services/user/user.service';
-import { PersonService } from '../../../services/person.service';
-import { PatientService } from '../../../services/patient/patient.service';
-import { Helper } from '../../../common/helper';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
 import { Authorizer } from '../../../auth/authorizer';
-import { DiagnosisValidator } from '../../validators/clinical/diagnosis.validator';
 import { ApiError } from '../../../common/api.error';
+import { ResponseHandler } from '../../../common/response.handler';
+import { DiagnosisService } from '../../../services/clinical/diagnosis.service';
+import { PatientService } from '../../../services/patient/patient.service';
+import { PersonService } from '../../../services/person.service';
+import { UserService } from '../../../services/user/user.service';
+import { Loader } from '../../../startup/loader';
+import { DiagnosisValidator } from '../../validators/clinical/diagnosis.validator';
+
 
 //import { DiagnosisDomainModel } from '../../domain.types/diagnosis/diagnosis.domain.model';
 //import { PatientDomainModel } from '../../domain.types/patient/patient/patient.domain.model';
@@ -73,7 +72,7 @@ export class DiagnosisController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Diagnosis.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await DiagnosisValidator.getById(request);

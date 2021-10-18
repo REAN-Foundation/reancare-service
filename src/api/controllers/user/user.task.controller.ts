@@ -1,7 +1,6 @@
 import express from 'express';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { Helper } from '../../../common/helper';
 import { Logger } from '../../../common/logger';
 import { ResponseHandler } from '../../../common/response.handler';
 import { UserActionTypeList, UserTaskCategoryList } from '../../../domain.types/user/user.task/user.task..types';
@@ -87,7 +86,7 @@ export class UserTaskController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
@@ -109,7 +108,7 @@ export class UserTaskController {
     getByDisplayId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserTask.GetByDisplayId';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamStr(request, 'displayId');

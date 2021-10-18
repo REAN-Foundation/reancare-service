@@ -1,11 +1,10 @@
 import express from 'express';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
-import { ApiError } from '../../../../common/api.error';
-import { PulseService } from '../../../../services/clinical/biometrics/pulse.service';
 import { Authorizer } from '../../../../auth/authorizer';
+import { ApiError } from '../../../../common/api.error';
+import { ResponseHandler } from '../../../../common/response.handler';
+import { PulseService } from '../../../../services/clinical/biometrics/pulse.service';
+import { Loader } from '../../../../startup/loader';
 import { PulseValidator } from '../../../validators/clinical/biometrics/pulse.validator';
-import { Helper } from '../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +50,7 @@ export class PulseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Biometrics.Pulse.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await PulseValidator.getById(request);

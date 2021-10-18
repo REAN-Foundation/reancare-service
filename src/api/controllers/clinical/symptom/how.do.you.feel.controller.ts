@@ -1,7 +1,6 @@
 import express from 'express';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { HowDoYouFeelService } from '../../../../services/clinical/symptom/how.do.you.feel.service';
 import { UserService } from '../../../../services/user/user.service';
@@ -60,7 +59,7 @@ export class HowDoYouFeelController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'HowDoYouFeel.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await HowDoYouFeelValidator.getById(request);

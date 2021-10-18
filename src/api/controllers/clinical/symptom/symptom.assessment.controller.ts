@@ -1,13 +1,12 @@
 import express from 'express';
-
-import { Helper } from '../../../../common/helper';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
 import { Authorizer } from '../../../../auth/authorizer';
-
 import { ApiError } from '../../../../common/api.error';
-import { SymptomAssessmentValidator } from '../../../validators/clinical/symptom/symptom.assessment.validator';
+import { ResponseHandler } from '../../../../common/response.handler';
 import { SymptomAssessmentService } from '../../../../services/clinical/symptom/symptom.assessment.service';
+import { Loader } from '../../../../startup/loader';
+import { SymptomAssessmentValidator } from '../../../validators/clinical/symptom/symptom.assessment.validator';
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +50,7 @@ export class SymptomAssessmentController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'SymptomAssessment.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await SymptomAssessmentValidator.getById(request);

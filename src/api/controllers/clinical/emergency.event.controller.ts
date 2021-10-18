@@ -1,7 +1,6 @@
 import express from 'express';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
 import { EmergencyEventService } from '../../../services/clinical/emergency.event.service';
 import { OrganizationService } from '../../../services/organization.service';
@@ -68,7 +67,7 @@ export class EmergencyEventController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'EmergencyEvent.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await EmergencyEventValidator.getById(request);

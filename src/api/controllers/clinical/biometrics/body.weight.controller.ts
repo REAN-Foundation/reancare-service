@@ -1,7 +1,6 @@
 import express from 'express';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BodyWeightService } from '../../../../services/clinical/biometrics/body.weight.service';
 import { Loader } from '../../../../startup/loader';
@@ -49,7 +48,7 @@ export class BodyWeightController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Biometrics.BodyWeight.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await BodyWeightValidator.getById(request);
@@ -70,7 +69,7 @@ export class BodyWeightController {
     getByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Biometrics.BodyWeight.GetByPatientUserId';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const patientUserId: string = await BodyWeightValidator.getByPatientUserId(request);

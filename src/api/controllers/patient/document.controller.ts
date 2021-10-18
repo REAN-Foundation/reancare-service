@@ -89,7 +89,7 @@ export class DocumentController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
@@ -109,7 +109,7 @@ export class DocumentController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.Update';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const domainModel = await this._validator.update(request);
@@ -137,7 +137,7 @@ export class DocumentController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.Search';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             var filters: DocumentSearchFilters = await this._validator.search(request);
@@ -159,7 +159,7 @@ export class DocumentController {
     rename = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.Rename';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const newName = await this._validator.rename(request);
@@ -197,7 +197,7 @@ export class DocumentController {
     download = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.Download';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
@@ -224,7 +224,7 @@ export class DocumentController {
     share = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.Share';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
@@ -271,7 +271,7 @@ export class DocumentController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientDocument.Delete';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');

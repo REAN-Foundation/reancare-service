@@ -3,7 +3,6 @@ import fs from 'fs';
 import mime from 'mime';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { DrugDomainModel } from '../../../../domain.types/clinical/medication/drug/drug.domain.model';
 import { MedicationStockImageDto } from '../../../../domain.types/clinical/medication/medication.stock.image/medication.stock.image.dto';
@@ -150,7 +149,7 @@ export class MedicationController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Medication.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await MedicationValidator.getParamId(request);
@@ -280,7 +279,7 @@ export class MedicationController {
     getCurrentMedications = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Medication.GetCurrentMedications';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const patientUserId: string = await MedicationValidator.getPatientUserId(request);
@@ -314,7 +313,7 @@ export class MedicationController {
     getStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Medication.GetStockMedicationImageById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const imageId: number = await MedicationValidator.getParamImageId(request);
@@ -333,7 +332,7 @@ export class MedicationController {
     downloadStockMedicationImageById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Medication.DownloadStockMedicationImageById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const imageId: number = await MedicationValidator.getParamImageId(request);

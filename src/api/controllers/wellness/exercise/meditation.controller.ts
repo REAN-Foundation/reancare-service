@@ -1,11 +1,10 @@
 import express from 'express';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
-import { ApiError } from '../../../../common/api.error';
-import { MeditationService } from '../../../../services/wellness/exercise/meditation.service';
 import { Authorizer } from '../../../../auth/authorizer';
+import { ApiError } from '../../../../common/api.error';
+import { ResponseHandler } from '../../../../common/response.handler';
+import { MeditationService } from '../../../../services/wellness/exercise/meditation.service';
+import { Loader } from '../../../../startup/loader';
 import { MeditationValidator } from '../../../validators/wellness/exercise/meditation.validator';
-import { Helper } from '../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +50,7 @@ export class MeditationController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Exercise.Meditation.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await MeditationValidator.getById(request);

@@ -1,17 +1,16 @@
 import express from 'express';
-
-import { Helper } from '../../../common/helper';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
 import { Authorizer } from '../../../auth/authorizer';
-import { PersonService } from '../../../services/person.service';
-
 import { ApiError } from '../../../common/api.error';
-import { ComplaintValidator } from '../../validators/clinical/complaint.validator';
+import { ResponseHandler } from '../../../common/response.handler';
 import { ComplaintService } from '../../../services/clinical/complaint.service';
-import { RoleService } from '../../../services/role.service';
-import { PatientService } from '../../../services/patient/patient.service';
 import { DoctorService } from '../../../services/doctor.service';
+import { PatientService } from '../../../services/patient/patient.service';
+import { PersonService } from '../../../services/person.service';
+import { RoleService } from '../../../services/role.service';
+import { Loader } from '../../../startup/loader';
+import { ComplaintValidator } from '../../validators/clinical/complaint.validator';
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -81,7 +80,7 @@ export class ComplaintController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Complaint.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await ComplaintValidator.getById(request);

@@ -1,7 +1,6 @@
 import express from 'express';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
-import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { SchedulesForDayDto } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
@@ -46,7 +45,7 @@ export class MedicationConsumptionController {
         try {
             request.context = 'MedicationConsumption.MarkListAsTaken';
             await this._authorizer.authorize(request, response);
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
 
             const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
             if (consumptionIds.length === 0) {
@@ -69,7 +68,7 @@ export class MedicationConsumptionController {
         try {
             request.context = 'MedicationConsumption.MarkListAsMissed';
             await this._authorizer.authorize(request, response);
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
 
             const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
             if (consumptionIds.length === 0) {
@@ -92,7 +91,7 @@ export class MedicationConsumptionController {
         try {
             request.context = 'MedicationConsumption.MarkAsTaken';
             await this._authorizer.authorize(request, response);
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
 
             const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsTaken(consumptionId);
@@ -112,7 +111,7 @@ export class MedicationConsumptionController {
         try {
             request.context = 'MedicationConsumption.MarkAsMissed';
             await this._authorizer.authorize(request, response);
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
 
             const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsMissed(consumptionId);
@@ -132,7 +131,7 @@ export class MedicationConsumptionController {
         try {
             request.context = 'MedicationConsumption.DeleteFutureMedicationSchedules';
             await this._authorizer.authorize(request, response);
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
 
             const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
             const deletedCount = await this._service.deleteFutureMedicationSchedules(medicationId);
@@ -151,7 +150,7 @@ export class MedicationConsumptionController {
     //     try {
     //         request.context = 'MedicationConsumption.UpdateFutureMedicationSchedulesForTimeZone';
     //         await this._authorizer.authorize(request, response);
-    //         request.resourceOwnerUserId = Helper.getResourceOwner(request);
+    //         
 
     //         const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
     //         const newTimeZone = await MedicationConsumptionValidator.getParam(request, 'newTimeZone');
@@ -173,7 +172,7 @@ export class MedicationConsumptionController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'MedicationConsumption.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await MedicationConsumptionValidator.getParam(request, 'id');
@@ -216,7 +215,7 @@ export class MedicationConsumptionController {
     getScheduleForDuration = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'MedicationConsumption.GetMedicationSchedule';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const model = await MedicationConsumptionValidator.getScheduleForDuration(request);
@@ -242,7 +241,7 @@ export class MedicationConsumptionController {
         try {
 
             request.context = 'MedicationConsumption.GetMedicationScheduleForDay';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const model = await MedicationConsumptionValidator.getScheduleForDay(request);
@@ -267,7 +266,7 @@ export class MedicationConsumptionController {
     getSummaryForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'MedicationConsumption.GetMedicationConsumptionSummaryForDay';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const model = await MedicationConsumptionValidator.getSummaryForDay(request);
@@ -292,7 +291,7 @@ export class MedicationConsumptionController {
     getSummaryByCalendarMonths = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'MedicationConsumption.GetSummaryByCalendarMonths';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const model = await MedicationConsumptionValidator.getSummaryByCalendarMonths(request);

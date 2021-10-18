@@ -6,6 +6,8 @@ export type Gender        = 'Male'| 'male' | 'Female' | 'female' | 'Other' | 'ot
 export type BloodGroup    = 'A+'| 'B+' | 'O+' | 'AB+' | 'A-' | 'B-' |'O-' | 'AB-' | null;
 export type MaritalStatus = 'Single'| 'Married' | 'Widowed' | 'Divorcee' | 'Live-in' | 'Other' | 'Unknown' | null;
 
+export type uuid = string;
+
 export enum Severity {
     Low      = 'Low',
     Medium   = 'Medium',

@@ -107,7 +107,7 @@ export class DoctorController extends BaseUserController {
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Doctor.GetByUserId';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const userId: string = await DoctorValidator.getByUserId(request);

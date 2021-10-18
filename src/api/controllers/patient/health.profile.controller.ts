@@ -1,16 +1,15 @@
 import express from 'express';
-
-import { Helper } from '../../../common/helper';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
 import { Authorizer } from '../../../auth/authorizer';
-import { PatientService } from '../../../services/patient/patient.service';
-
 import { ApiError } from '../../../common/api.error';
-import { HealthProfileValidator } from '../../validators/patient/health.profile.validator';
-import { HealthProfileService } from '../../../services/patient/health.profile.service';
+import { ResponseHandler } from '../../../common/response.handler';
 import { HealthProfileDomainModel } from '../../../domain.types/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../domain.types/patient/health.profile/health.profile.dto';
+import { HealthProfileService } from '../../../services/patient/health.profile.service';
+import { PatientService } from '../../../services/patient/patient.service';
+import { Loader } from '../../../startup/loader';
+import { HealthProfileValidator } from '../../validators/patient/health.profile.validator';
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +36,7 @@ export class HealthProfileController {
         try {
 
             request.context = 'HealthProfile.GetByPatientUserId';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const patientUserId: string = await HealthProfileValidator.validatePatientUserId(request);

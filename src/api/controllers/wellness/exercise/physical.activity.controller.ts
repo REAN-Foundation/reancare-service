@@ -1,16 +1,15 @@
 import express from 'express';
-
-import { Helper } from '../../../../common/helper';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { Loader } from '../../../../startup/loader';
 import { Authorizer } from '../../../../auth/authorizer';
-import { PersonService } from '../../../../services/person.service';
-
 import { ApiError } from '../../../../common/api.error';
-import { PhysicalActivityValidator } from '../../../validators/wellness/exercise/physical.activity.validator';
-import { PhysicalActivityService } from '../../../../services/wellness/exercise/physical.activity.service';
+import { ResponseHandler } from '../../../../common/response.handler';
+import { PersonService } from '../../../../services/person.service';
 import { RoleService } from '../../../../services/role.service';
 import { UserService } from '../../../../services/user/user.service';
+import { PhysicalActivityService } from '../../../../services/wellness/exercise/physical.activity.service';
+import { Loader } from '../../../../startup/loader';
+import { PhysicalActivityValidator } from '../../../validators/wellness/exercise/physical.activity.validator';
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +69,7 @@ export class PhysicalActivityController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PhysicalActivity.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await PhysicalActivityValidator.getById(request);

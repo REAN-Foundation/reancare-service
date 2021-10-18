@@ -133,7 +133,7 @@ export class PatientController extends BaseUserController{
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Patient.GetByUserId';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const userId: string = await PatientValidator.getByUserId(request);

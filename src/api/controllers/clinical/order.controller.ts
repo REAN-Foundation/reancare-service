@@ -1,7 +1,6 @@
 import express from 'express';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
 import { OrderService } from '../../../services/clinical/order.service';
 import { PatientService } from '../../../services/patient/patient.service';
@@ -58,7 +57,7 @@ export class OrderController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Order.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await OrderValidator.getById(request);

@@ -1,7 +1,6 @@
 import express from 'express';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
-import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
 import { AllergySearchFilters } from '../../../domain.types/clinical/allergy/allergy.search.types';
 import { AllergenCategoriesList, AllergenExposureRoutesList } from '../../../domain.types/clinical/allergy/allergy.types';
@@ -92,7 +91,7 @@ export class AllergyController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Allergy.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await AllergyValidator.getById(request);

@@ -1,14 +1,13 @@
 import express from 'express';
-
-import { Helper } from '../../../common/helper';
-import { ResponseHandler } from '../../../common/response.handler';
-import { Loader } from '../../../startup/loader';
 import { Authorizer } from '../../../auth/authorizer';
-
 import { ApiError } from '../../../common/api.error';
-import { GoalValidator } from '../../validators/patient/goal.validator';
+import { ResponseHandler } from '../../../common/response.handler';
 import { GoalService } from '../../../services/patient/goal.service';
 import { PatientService } from '../../../services/patient/patient.service';
+import { Loader } from '../../../startup/loader';
+import { GoalValidator } from '../../validators/patient/goal.validator';
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,7 +61,7 @@ export class GoalController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Goal.GetById';
-            request.resourceOwnerUserId = Helper.getResourceOwner(request);
+            
             await this._authorizer.authorize(request, response);
 
             const id: string = await GoalValidator.getById(request);

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6c85daee-81c6-4afe-9153-759c64e695ed",
+		"_postman_id": "119552a9-baa9-44b3-8657-d69d3a95e086",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -18896,14 +18896,14 @@
 											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Feeling\": 1,\n    \"RecordDate\": \"2021-06-20\",\n    \"Comments\": \"abcd66\",\n    \"SymptomAssessmentId\": null\n}"
 										},
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/symptoms/how-do.you-feel",
+											"raw": "{{BASE_URL}}/clinical/symptoms/how-do-you-feel",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
 												"clinical",
 												"symptoms",
-												"how-do.you-feel"
+												"how-do-you-feel"
 											]
 										}
 									},
@@ -18931,14 +18931,14 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/symptoms/how-do.you-feel/{{HOW_DO_YOU_FEEL_ID}}",
+											"raw": "{{BASE_URL}}/clinical/symptoms/how-do-you-feel/{{HOW_DO_YOU_FEEL_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
 												"clinical",
 												"symptoms",
-												"how-do.you-feel",
+												"how-do-you-feel",
 												"{{HOW_DO_YOU_FEEL_ID}}"
 											]
 										}
@@ -18967,14 +18967,14 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/symptoms/how-do.you-feel/{{PATIENT_USER_ID}}/search?startDate=2021-06-15&endDate=2021-06-21",
+											"raw": "{{BASE_URL}}/clinical/symptoms/how-do-you-feel/{{PATIENT_USER_ID}}/search?startDate=2021-06-15&endDate=2021-06-21",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
 												"clinical",
 												"symptoms",
-												"how-do.you-feel",
+												"how-do-you-feel",
 												"{{PATIENT_USER_ID}}",
 												"search"
 											],
@@ -19018,14 +19018,14 @@
 											"raw": "{\n    \"Feeling\": 1,\n    \"RecordDate\": \"2021-06-21\",\n    \"Comments\": \"abcd22\",\n    \"SymptomAssessmentId\": null\n}"
 										},
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/symptoms/how-do.you-feel/{{HOW_DO_YOU_FEEL_ID}}",
+											"raw": "{{BASE_URL}}/clinical/symptoms/how-do-you-feel/{{HOW_DO_YOU_FEEL_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
 												"clinical",
 												"symptoms",
-												"how-do.you-feel",
+												"how-do-you-feel",
 												"{{HOW_DO_YOU_FEEL_ID}}"
 											]
 										}
@@ -19054,14 +19054,14 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/symptoms/how-do.you-feel/{{HOW_DO_YOU_FEEL_ID}}",
+											"raw": "{{BASE_URL}}/clinical/symptoms/how-do-you-feel/{{HOW_DO_YOU_FEEL_ID}}",
 											"host": [
 												"{{BASE_URL}}"
 											],
 											"path": [
 												"clinical",
 												"symptoms",
-												"how-do.you-feel",
+												"how-do-you-feel",
 												"{{HOW_DO_YOU_FEEL_ID}}"
 											]
 										},

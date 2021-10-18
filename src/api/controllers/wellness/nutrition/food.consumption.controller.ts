@@ -1,27 +1,22 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { FoodConsumptionService } from '../../../../services/wellness/nutrition/food.consumption.service';
 import { Loader } from '../../../../startup/loader';
 import { FoodConsumptionValidator } from '../../../validators/wellness/nutrition/food.consumption.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FoodConsumptionController {
+export class FoodConsumptionController extends BaseController {
 
     //#region member variables and constructors
 
     _service: FoodConsumptionService = null;
 
-    _authorizer: Authorizer = null;
-
-    _personService: any;
-
     constructor() {
+        super();
         this._service = Loader.container.resolve(FoodConsumptionService);
-        this._authorizer = Loader.authorizer;
-
     }
 
     //#endregion
@@ -30,18 +25,19 @@ export class FoodConsumptionController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.FoodConsumption.Create';
+
+            this.setContext('Nutrition.FoodConsumption.Create', request, response);
 
             const foodConsumptionDomainModel = await FoodConsumptionValidator.create(request);
-
-            const FoodConsumption = await this._service.create(foodConsumptionDomainModel);
-            if (FoodConsumption == null) {
+            const foodConsumption = await this._service.create(foodConsumptionDomainModel);
+            if (foodConsumption == null) {
                 throw new ApiError(400, 'Cannot create record for food consumption!');
             }
 
             ResponseHandler.success(request, response, 'Food consumption record created successfully!', 201, {
-                FoodConsumption : FoodConsumption,
+                FoodConsumption : foodConsumption,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -49,20 +45,19 @@ export class FoodConsumptionController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.FoodConsumption.GetById';
-            
-            await this._authorizer.authorize(request, response);
+
+            this.setContext('Nutrition.FoodConsumption.GetById', request, response);
 
             const id: string = await FoodConsumptionValidator.getById(request);
-
-            const FoodConsumption = await this._service.getById(id);
-            if (FoodConsumption == null) {
+            const foodConsumption = await this._service.getById(id);
+            if (foodConsumption == null) {
                 throw new ApiError(404, 'Food consumption record not found.');
             }
 
             ResponseHandler.success(request, response, 'Food consumption record retrieved successfully!', 200, {
-                FoodConsumption : FoodConsumption,
+                FoodConsumption : foodConsumption,
             });
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -70,20 +65,19 @@ export class FoodConsumptionController {
 
     getByEvent = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.FoodConsumption.GetByEvent';
-            
-            await this._authorizer.authorize(request, response);
+
+            this.setContext('Nutrition.FoodConsumption.GetByEvent', request, response);
 
             const event: string = await FoodConsumptionValidator.getByEvent(request);
-
-            const FoodConsumptionEvent = await this._service.getByEvent(event, request.resourceOwnerUserId);
-            if (FoodConsumptionEvent == null) {
+            const foodConsumptionEvent = await this._service.getByEvent(event, request.params.patientUserId);
+            if (foodConsumptionEvent == null) {
                 throw new ApiError(404, 'Food consumption record not found.');
             }
 
             ResponseHandler.success(request, response, 'Food consumption records retrieved successfully!', 200, {
-                FoodConsumptionEvent : FoodConsumptionEvent,
+                FoodConsumptionEvent : foodConsumptionEvent,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -91,20 +85,20 @@ export class FoodConsumptionController {
 
     getForDay = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.FoodConsumption.GetForDay';
-            
-            await this._authorizer.authorize(request, response);
+
+            this.setContext('Nutrition.FoodConsumption.GetForDay', request, response);
 
             const date = await FoodConsumptionValidator.getForDay(request);
 
-            const FoodConsumptionForDay = await this._service.getForDay(date, request.resourceOwnerUserId);
-            if (FoodConsumptionForDay == null) {
+            const foodConsumptionForDay = await this._service.getForDay(date, request.params.patientUserId);
+            if (foodConsumptionForDay == null) {
                 throw new ApiError(404, 'Food consumption record not found.');
             }
 
             ResponseHandler.success(request, response, 'Food consumption record retrieved successfully!', 200, {
-                FoodConsumptionForDay : FoodConsumptionForDay,
+                FoodConsumptionForDay : foodConsumptionForDay,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -112,13 +106,11 @@ export class FoodConsumptionController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.FoodConsumption.Search';
-            await this._authorizer.authorize(request, response);
+
+            this.setContext('Nutrition.FoodConsumption.Search', request, response);
 
             const filters = await FoodConsumptionValidator.search(request);
-
             const searchResults = await this._service.search(filters);
-
             const count = searchResults.Items.length;
             
             const message =
@@ -136,9 +128,8 @@ export class FoodConsumptionController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.FoodConsumption.Update';
 
-            await this._authorizer.authorize(request, response);
+            this.setContext('Nutrition.FoodConsumption.Update', request, response);
 
             const domainModel = await FoodConsumptionValidator.update(request);
 
@@ -163,8 +154,8 @@ export class FoodConsumptionController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.FoodConsumption.Delete';
-            await this._authorizer.authorize(request, response);
+
+            this.setContext('Nutrition.FoodConsumption.Delete', request, response);
 
             const id: string = await FoodConsumptionValidator.getById(request);
             const existingRecord = await this._service.getById(id);

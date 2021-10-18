@@ -25,6 +25,7 @@ import { register as registerEmergencyContactRoutes } from './patient/emergency.
 import { register as registerSleepRoutes } from './daily.records/sleep.routes';
 import { register as registerEmergencyEventRoutes } from './emergency.event.routes';
 import { register as registerMeditationtRoutes } from './exercise/meditation.routes';
+import { register as registerMedicalConditionRoutes } from './static types/medical.condition.routes';
 
 import { Logger } from "../../common/logger";
 
@@ -75,6 +76,7 @@ export class Router {
                 registerSleepRoutes(this._app);
                 registerEmergencyEventRoutes(this._app);
                 registerMeditationtRoutes(this._app);
+                registerMedicalConditionRoutes(this._app);
 
                 resolve(true);
 

@@ -1,6 +1,6 @@
 [
     {
-        "Role": "System admin",
+        "Role": "SystemAdmin",
         "Privileges": [
             "Client.Create",
             "Client.GetById",
@@ -117,7 +117,13 @@
             "Biometrics.BloodPressure.GetById",
             "Biometrics.BloodPressure.Update",
             "Biometrics.BloodPressure.Search",
-            "Biometrics.BloodPressure.Delete"
+            "Biometrics.BloodPressure.Delete",
+            "StaticTypes.MedicalCondition.Create",
+            "StaticTypes.MedicalCondition.GetById",
+            "StaticTypes.MedicalCondition.Update",
+            "StaticTypes.MedicalCondition.Search",
+            "StaticTypes.MedicalCondition.Delete"
+
         ]
     },
     {
@@ -239,7 +245,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "StaticTypes.MedicalCondition.Create",
+            "StaticTypes.MedicalCondition.GetById",
+            "StaticTypes.MedicalCondition.Update",
+            "StaticTypes.MedicalCondition.Search",
+            "StaticTypes.MedicalCondition.Delete"
         ]
     },
     {
@@ -364,11 +375,16 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "StaticTypes.MedicalCondition.Create",
+            "StaticTypes.MedicalCondition.GetById",
+            "StaticTypes.MedicalCondition.Update",
+            "StaticTypes.MedicalCondition.Search",
+            "StaticTypes.MedicalCondition.Delete"
         ]
     },
     {
-        "Role": "Lab user",
+        "Role": "LabUser",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -479,11 +495,16 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "StaticTypes.MedicalCondition.Create",
+            "StaticTypes.MedicalCondition.GetById",
+            "StaticTypes.MedicalCondition.Update",
+            "StaticTypes.MedicalCondition.Search",
+            "StaticTypes.MedicalCondition.Delete"
         ]
     },
     {
-        "Role": "Pharmacy user",
+        "Role": "PharmacyUser",
         "Privileges": [
             "User.GetById",
             "User.Search",
@@ -594,7 +615,12 @@
             "Exercise.Meditation.GetById",
             "Exercise.Meditation.Update",
             "Exercise.Meditation.Delete",
-            "Exercise.Meditation.Search"
+            "Exercise.Meditation.Search",
+            "StaticTypes.MedicalCondition.Create",
+            "StaticTypes.MedicalCondition.GetById",
+            "StaticTypes.MedicalCondition.Update",
+            "StaticTypes.MedicalCondition.Search",
+            "StaticTypes.MedicalCondition.Delete"
         ]
     }
 ]

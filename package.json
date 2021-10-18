@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --watch",
+    "build": "tsc",
     "start": "tsc && ts-node --files ./src/index.ts",
     "lint": "eslint ./src/**",
     "lint:fix": "eslint ./src/** --fix",

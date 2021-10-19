@@ -12,7 +12,7 @@ export const register = (app: express.Application): void => {
 
     router.post('/', authenticator.authenticateClient, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/:patientUserId/by-event/:event', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByEvent);
+    router.get('/:patientUserId/consumed-as/:consumedAs', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByEvent);
     router.get('/:patientUserId/for-day/:date', authenticator.authenticateClient, authenticator.authenticateUser, controller.getForDay);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);

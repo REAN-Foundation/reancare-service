@@ -99,7 +99,8 @@ export class DocumentValidator  extends BaseValidator {
         await this.validateUuid(request, 'associatedVisitId', Where.Query, false, false);
         await this.validateDate(request, 'uploadedDateFrom', Where.Query, false, false);
         await this.validateDate(request, 'uploadedDateTo', Where.Query, false, false);
-        await this.validateCommonSearchFilters(request);
+        
+        await this.validateBaseSearchFilters(request);
         
         this.validateRequest(request);
 
@@ -118,7 +119,7 @@ export class DocumentValidator  extends BaseValidator {
             CreatedDateTo             : request.query.uploadedDateTo
         };
         
-        return this.updateCommonSearchFilters(request, filters);
+        return this.updateBaseSearchFilters(request, filters);
     }
 
     private async validateUploadBody(request) {

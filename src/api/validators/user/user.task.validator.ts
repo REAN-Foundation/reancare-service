@@ -45,7 +45,8 @@ export class UserTaskValidator extends BaseValidator{
         await this.validateDate(request, 'scheduledFrom', Where.Query, false, false);
         await this.validateDate(request, 'scheduledTo', Where.Query, false, false);
         await this.validateString(request, 'status', Where.Query, false, false);
-        await this.validateCommonSearchFilters(request);
+        
+        await this.validateBaseSearchFilters(request);
         
         this.validateRequest(request);
 
@@ -132,7 +133,7 @@ export class UserTaskValidator extends BaseValidator{
              }
          }
 
-         const filters: UserTaskSearchFilters = {
+         var filters: UserTaskSearchFilters = {
              UserId          : request.query.userId,
              Task            : request.query.Task,
              Category        : request.query.category,
@@ -145,7 +146,7 @@ export class UserTaskValidator extends BaseValidator{
              CreatedDateTo   : request.query.createdDateTo
          };
          
-         return this.updateCommonSearchFilters(request, filters);
+         return this.updateBaseSearchFilters(request, filters);
 
      }
 

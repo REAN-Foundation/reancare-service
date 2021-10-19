@@ -13,23 +13,23 @@ import FoodConsumptionModel from '../../../models/wellness/nutrition/food.consum
 
 export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
-    create = async (foodConsumptionDomainModel: FoodConsumptionDomainModel):
+    create = async (createModel: FoodConsumptionDomainModel):
     Promise<FoodConsumptionDto> => {
         try {
             const entity = {
-                PatientUserId   : foodConsumptionDomainModel.PatientUserId,
-                Food            : foodConsumptionDomainModel.Food,
-                Description     : foodConsumptionDomainModel.Description,
-                ConsumedAs      : FoodConsumptionEvents[foodConsumptionDomainModel.ConsumedAs],
-                Calories        : foodConsumptionDomainModel.Calories,
-                ImageResourceId : foodConsumptionDomainModel.ImageResourceId,
-                StartTime       : foodConsumptionDomainModel.StartTime,
-                EndTime         : foodConsumptionDomainModel.EndTime,
+                PatientUserId   : createModel.PatientUserId,
+                Food            : createModel.Food,
+                Description     : createModel.Description,
+                ConsumedAs      : createModel.ConsumedAs,
+                Calories        : createModel.Calories,
+                ImageResourceId : createModel.ImageResourceId,
+                StartTime       : createModel.StartTime,
+                EndTime         : createModel.EndTime,
             };
 
             const foodConsumption = await FoodConsumptionModel.create(entity);
-            const dto = await FoodConsumptionMapper.toDto(foodConsumption);
-            return dto;
+            return await FoodConsumptionMapper.toDto(foodConsumption);
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -39,18 +39,17 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     getById = async (id: string): Promise<FoodConsumptionDto> => {
         try {
             const foodConsumption = await FoodConsumptionModel.findByPk(id);
-            const dto = await FoodConsumptionMapper.toDto(foodConsumption);
-            return dto;
+            return await FoodConsumptionMapper.toDto(foodConsumption);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    getByEvent = async (ConsumedAs: string, PatientUserId: string): Promise<FoodConsumptionEventDto> => {
+    getByEvent = async (consumedAs: string, patientUserId: string): Promise<FoodConsumptionEventDto> => {
         try {
             const foodResults = await FoodConsumptionModel.findAll({
-                where : { ConsumedAs: ConsumedAs, PatientUserId: PatientUserId, DeletedAt: null }
+                where : { ConsumedAs: consumedAs, PatientUserId: patientUserId }
             });
 
             const foodConsumptions: FoodConsumptionDto[] = [];
@@ -60,8 +59,8 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             }
 
             const entity = {
-                PatientUserId : PatientUserId,
-                Event         : FoodConsumptionEvents[ConsumedAs],
+                PatientUserId : patientUserId,
+                Event         : FoodConsumptionEvents[consumedAs],
                 Foods         : foodConsumptions,
                 TotalCalories : await FoodConsumptionRepo.calculateEventTotalCalories(foodConsumptions),
                 StartTime     : await FoodConsumptionRepo.calculateEventStartTime(foodConsumptions),
@@ -69,15 +68,15 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 DurationInMin : await FoodConsumptionRepo.calculateEventDuration(foodConsumptions),
             };
 
-            const event = await FoodConsumptionMapper.toEventDto(entity);
-            return event;
+            return await FoodConsumptionMapper.toEventDto(entity);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    getForDay = async (date: Date, PatientUserId: string): Promise<FoodConsumptionForDayDto> => {
+    getForDay = async (date: Date, patientUserId: string): Promise<FoodConsumptionForDayDto> => {
         try {
             const startTime = new Date(date);
             startTime.setHours(0, 0, 0, 0);
@@ -88,7 +87,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 where : {
                     StartTime     : { [Op.gte]: startTime },
                     EndTime       : { [Op.lte]: endTime },
-                    PatientUserId : PatientUserId,
+                    PatientUserId : patientUserId,
                     DeletedAt     : null
                 },
                 order : [['StartTime', 'ASC']]
@@ -116,7 +115,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 const foodConsumptions = availableFoodEvents[eventName];
 
                 const eventEntity = {
-                    PatientUserId : PatientUserId,
+                    PatientUserId : patientUserId,
                     Event         : FoodConsumptionEvents[eventName],
                     Foods         : foodConsumptions,
                     TotalCalories : await FoodConsumptionRepo.calculateEventTotalCalories(foodConsumptions),
@@ -129,7 +128,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             }
 
             const entity = {
-                PatientUserId : PatientUserId,
+                PatientUserId : patientUserId,
                 Events        : foodConsumptionsEvents,
                 Date          : date,
                 TotalCalories : await FoodConsumptionRepo.calculateTotalCaloriesForDay(foodConsumptionsEvents),
@@ -138,8 +137,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 DurationInMin : await FoodConsumptionRepo.calculateDurationForDay(foodConsumptionsEvents),
             };
 
-            const eventsForDay = await FoodConsumptionMapper.toConsumptionForDayDto(entity);
-            return eventsForDay;
+            return await FoodConsumptionMapper.toConsumptionForDayDto(entity);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -150,8 +148,6 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     search = async (filters: FoodConsumptionSearchFilters): Promise<FoodConsumptionSearchResults> => {
         try {
 
-            Logger.instance().log(`Filters 2 , ${JSON.stringify(filters)}`);
-            
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
@@ -163,30 +159,20 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             if (filters.ConsumedAs != null) {
                 search.where['ConsumedAs'] = filters.ConsumedAs;
             }
-            if (filters.TimeFrom != null && filters.TimeTo != null) {
+            if (filters.DateFrom != null && filters.DateTo != null) {
                 search.where['CreatedAt'] = {
-                    [Op.gte] : filters.TimeFrom,
-                    [Op.lte] : filters.TimeTo,
+                    [Op.gte] : filters.DateFrom,
+                    [Op.lte] : filters.DateTo,
                 };
-            } else if (filters.TimeFrom === null && filters.TimeTo !== null) {
+            } else if (filters.DateFrom === null && filters.DateTo !== null) {
                 search.where['CreatedAt'] = {
-                    [Op.lte] : filters.TimeTo,
+                    [Op.lte] : filters.DateTo,
                 };
-            } else if (filters.TimeFrom !== null && filters.TimeTo === null) {
+            } else if (filters.DateFrom !== null && filters.DateTo === null) {
                 search.where['CreatedAt'] = {
-                    [Op.gte] : filters.TimeFrom,
+                    [Op.gte] : filters.DateFrom,
                 };
             }
-            if (filters.ForDay !== null) {
-                const startTime = new Date(filters.ForDay);
-                startTime.setHours(0, 0, 0, 0);
-                const endTime = new Date(filters.ForDay);
-                endTime.setHours(23, 59, 59, 0);
-
-                search.where['StartTime'] = { [Op.gte]: startTime };
-                search.where['EndTime'] = { [Op.lte]: endTime };
-            }
-
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
@@ -229,46 +215,47 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             };
 
             return searchResults;
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    update = async (id: string, foodConsumptionDomainModel: FoodConsumptionDomainModel):
-    Promise<FoodConsumptionDto> => {
+    update = async (id: string, updateModel: FoodConsumptionDomainModel):
+        Promise<FoodConsumptionDto> => {
         try {
             const foodConsumption = await FoodConsumptionModel.findByPk(id);
 
-            if (foodConsumptionDomainModel.PatientUserId != null) {
-                foodConsumption.PatientUserId = foodConsumptionDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                foodConsumption.PatientUserId = updateModel.PatientUserId;
             }
-            if (foodConsumptionDomainModel.Food != null) {
-                foodConsumption.Food = foodConsumptionDomainModel.Food;
+            if (updateModel.Food != null) {
+                foodConsumption.Food = updateModel.Food;
             }
-            if (foodConsumptionDomainModel.Description != null) {
-                foodConsumption.Description = foodConsumptionDomainModel.Description;
+            if (updateModel.Description != null) {
+                foodConsumption.Description = updateModel.Description;
             }
-            if (foodConsumptionDomainModel.ConsumedAs != null) {
-                foodConsumption.ConsumedAs = foodConsumptionDomainModel.ConsumedAs;
+            if (updateModel.ConsumedAs != null) {
+                foodConsumption.ConsumedAs = updateModel.ConsumedAs;
             }
-            if (foodConsumptionDomainModel.Calories != null) {
-                foodConsumption.Calories = foodConsumptionDomainModel.Calories;
+            if (updateModel.Calories != null) {
+                foodConsumption.Calories = updateModel.Calories;
             }
-            if (foodConsumptionDomainModel.ImageResourceId != null) {
-                foodConsumption.ImageResourceId = foodConsumptionDomainModel.ImageResourceId;
+            if (updateModel.ImageResourceId != null) {
+                foodConsumption.ImageResourceId = updateModel.ImageResourceId;
             }
-            if (foodConsumptionDomainModel.StartTime != null) {
-                foodConsumption.StartTime = foodConsumptionDomainModel.StartTime;
+            if (updateModel.StartTime != null) {
+                foodConsumption.StartTime = updateModel.StartTime;
             }
-            if (foodConsumptionDomainModel.EndTime != null) {
-                foodConsumption.EndTime = foodConsumptionDomainModel.EndTime;
+            if (updateModel.EndTime != null) {
+                foodConsumption.EndTime = updateModel.EndTime;
             }
     
             await foodConsumption.save();
 
-            const dto = await FoodConsumptionMapper.toDto(foodConsumption);
-            return dto;
+            return await FoodConsumptionMapper.toDto(foodConsumption);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -277,8 +264,6 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            Logger.instance().log(id);
-
             const result = await FoodConsumptionModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
@@ -319,6 +304,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     }
 
     private static calculateEventDuration = async (foods: FoodConsumptionDomainModel[]): Promise<number> => {
+
         const startTime = await FoodConsumptionRepo.calculateEventStartTime(foods);
         const endTime = await FoodConsumptionRepo.calculateEventEndTime(foods);
         let duration = 0;

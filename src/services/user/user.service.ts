@@ -155,7 +155,12 @@ export class UserService {
 
         const otpDto = await this._otpRepo.create(otpEntity);
         const systemIdentifier = ConfigurationManager.SystemIdentifier();
-        const message = `Hello ${user.Person.FirstName}, ${otp} is OTP for your ${systemIdentifier} account and will expire in 3 minutes.`;
+        
+        var userFirstName = 'user';
+        if (user.Person && user.Person.FirstName) {
+            userFirstName = user.Person.FirstName;
+        }
+        const message = `Dear ${userFirstName}, ${otp} is OTP for your ${systemIdentifier} account and will expire in 3 minutes.`;
         const sendStatus = await Loader.messagingService.sendSMS(user.Person.Phone, message);
         if (sendStatus) {
             Logger.instance().log('Otp sent successfully.\n ' + JSON.stringify(otpDto, null, 2));

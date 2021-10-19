@@ -1,6 +1,7 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { FoodConsumptionService } from '../../../../services/wellness/nutrition/food.consumption.service';
 import { Loader } from '../../../../startup/loader';
 import { FoodConsumptionValidator } from '../../../validators/wellness/nutrition/food.consumption.validator';
@@ -13,6 +14,8 @@ export class FoodConsumptionController extends BaseController {
     //#region member variables and constructors
 
     _service: FoodConsumptionService = null;
+
+    _validator: FoodConsumptionValidator = new FoodConsumptionValidator();
 
     constructor() {
         super();
@@ -28,8 +31,8 @@ export class FoodConsumptionController extends BaseController {
 
             this.setContext('Nutrition.FoodConsumption.Create', request, response);
 
-            const foodConsumptionDomainModel = await FoodConsumptionValidator.create(request);
-            const foodConsumption = await this._service.create(foodConsumptionDomainModel);
+            const model = await this._validator.create(request);
+            const foodConsumption = await this._service.create(model);
             if (foodConsumption == null) {
                 throw new ApiError(400, 'Cannot create record for food consumption!');
             }
@@ -48,7 +51,7 @@ export class FoodConsumptionController extends BaseController {
 
             this.setContext('Nutrition.FoodConsumption.GetById', request, response);
 
-            const id: string = await FoodConsumptionValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const foodConsumption = await this._service.getById(id);
             if (foodConsumption == null) {
                 throw new ApiError(404, 'Food consumption record not found.');
@@ -68,8 +71,9 @@ export class FoodConsumptionController extends BaseController {
 
             this.setContext('Nutrition.FoodConsumption.GetByEvent', request, response);
 
-            const event: string = await FoodConsumptionValidator.getByEvent(request);
-            const foodConsumptionEvent = await this._service.getByEvent(event, request.params.patientUserId);
+            const consumedAs: string = await this._validator.getParamStr(request, 'consumedAs');
+            const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
+            const foodConsumptionEvent = await this._service.getByEvent(consumedAs, patientUserId);
             if (foodConsumptionEvent == null) {
                 throw new ApiError(404, 'Food consumption record not found.');
             }
@@ -88,9 +92,9 @@ export class FoodConsumptionController extends BaseController {
 
             this.setContext('Nutrition.FoodConsumption.GetForDay', request, response);
 
-            const date = await FoodConsumptionValidator.getForDay(request);
-
-            const foodConsumptionForDay = await this._service.getForDay(date, request.params.patientUserId);
+            const date: Date = await this._validator.getParamDate(request, 'date');
+            const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
+            const foodConsumptionForDay = await this._service.getForDay(date, patientUserId);
             if (foodConsumptionForDay == null) {
                 throw new ApiError(404, 'Food consumption record not found.');
             }
@@ -109,10 +113,9 @@ export class FoodConsumptionController extends BaseController {
 
             this.setContext('Nutrition.FoodConsumption.Search', request, response);
 
-            const filters = await FoodConsumptionValidator.search(request);
+            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
-            
             const message =
                 count === 0
                     ? 'No records found!'
@@ -131,15 +134,13 @@ export class FoodConsumptionController extends BaseController {
 
             this.setContext('Nutrition.FoodConsumption.Update', request, response);
 
-            const domainModel = await FoodConsumptionValidator.update(request);
-
-            const id: string = await FoodConsumptionValidator.getById(request);
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Food consumption record not found.');
             }
-
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update food consumption record!');
             }
@@ -147,6 +148,7 @@ export class FoodConsumptionController extends BaseController {
             ResponseHandler.success(request, response, 'Food consumption record updated successfully!', 200, {
                 FoodConsumption : updated,
             });
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -157,7 +159,7 @@ export class FoodConsumptionController extends BaseController {
 
             this.setContext('Nutrition.FoodConsumption.Delete', request, response);
 
-            const id: string = await FoodConsumptionValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Food consumption record not found.');
@@ -171,6 +173,7 @@ export class FoodConsumptionController extends BaseController {
             ResponseHandler.success(request, response, 'Food consumption record deleted successfully!', 200, {
                 Deleted : true,
             });
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

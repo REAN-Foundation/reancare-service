@@ -1,6 +1,7 @@
 import express from 'express';
 import { body, param, query, ValidationChain, validationResult } from 'express-validator';
 import { Helper } from '../../common/helper';
+import { integer, uuid } from '../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -10,30 +11,28 @@ export enum Where {
     Query = 'Query'
 }
 
-export interface CommonSearchFilters {
-    OrderBy         : string;
-    Order           : string;
-    PageIndex       : number;
-    ItemsPerPage    : number;
-}
-
 export class BaseValidator {
     
     //#region Param extraction
 
-    getParamUuid = async(request: express.Request, field: string): Promise<string> => {
-
+    getParamUuid = async(request: express.Request, field: string): Promise<uuid> => {
         this.validateUuid(request, field, Where.Param, true, false);
         this.validateRequest(request);
         return request.params[field];
     }
 
-    getParamInt = async(request: express.Request, field): Promise<number> => {
-
+    getParamInt = async(request: express.Request, field: string): Promise<number> => {
         await this.validateInt(request, field, Where.Param, false, false);
         this.validateRequest(request);
         var p = request.params[field];
         return parseInt(p);
+    }
+
+    getParamDate = async(request: express.Request, field: string): Promise<Date> => {
+        await this.validateDate(request, field, Where.Param, true, false);
+        this.validateRequest(request);
+        var p = request.params[field];
+        return new Date(p);
     }
 
     getParamStr = async(
@@ -42,7 +41,6 @@ export class BaseValidator {
         escape?: boolean,
         minLength?: number,
         maxLength?: number): Promise<string> => {
-
         await this.validateString(request, field, Where.Param, true, false, escape, minLength, maxLength);
         this.validateRequest(request);
         return request.params[field];
@@ -85,6 +83,7 @@ export class BaseValidator {
         var chain: ValidationChain = this.getValidationChain(field, where);
         chain = chain.trim();
         chain = this.checkRequired(required, chain, nullable);
+        
         await chain.run(request);
     }
 
@@ -148,6 +147,7 @@ export class BaseValidator {
         chain = this.checkRequired(required, chain, nullable);
         chain = chain.isEmail();
         chain = chain.normalizeEmail();
+
         await chain.run(request);
     }
 
@@ -163,6 +163,7 @@ export class BaseValidator {
         chain = this.checkRequired(required, chain, nullable);
         chain = chain.isBoolean();
         chain = chain.toBoolean();
+
         await chain.run(request);
     }
 
@@ -178,6 +179,7 @@ export class BaseValidator {
         chain = this.checkRequired(required, chain, nullable);
         chain = chain.isInt();
         chain = chain.toInt();
+
         await chain.run(request);
     }
 
@@ -193,11 +195,11 @@ export class BaseValidator {
         chain = this.checkRequired(required, chain, nullable);
         chain = chain.isDecimal();
         chain = chain.toFloat();
+
         await chain.run(request);
     }
 
-    validateCommonSearchFilters = async(
-        request: express.Request) => {
+    validateBaseSearchFilters = async(request: express.Request) => {
 
         await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
         await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
@@ -205,6 +207,7 @@ export class BaseValidator {
         await this.validateString(request, 'order', Where.Query, false, false, true);
         await this.validateInt(request, 'pageIndex', Where.Query, false, false);
         await this.validateInt(request, 'itemsPerPage', Where.Query, false, false);
+
         if (request.query.order !== undefined &&
             request.query.order !== 'descending' &&
             request.query.order !== 'ascending') {
@@ -219,18 +222,20 @@ export class BaseValidator {
         }
     }
 
-    updateCommonSearchFilters = (request: express.Request, filters: any): any => {
+    updateBaseSearchFilters = (request: express.Request, filters: any): any => {
 
-        const pageIndex = request.query.pageIndex !== 'undefined' ?
+        const pageIndex: integer = request.query.pageIndex !== 'undefined' ?
             parseInt(request.query.pageIndex as string, 10) : 0;
 
-        const itemsPerPage = request.query.itemsPerPage !== 'undefined' ?
+        const itemsPerPage: integer = request.query.itemsPerPage !== 'undefined' ?
             parseInt(request.query.itemsPerPage as string, 10) : 25;
 
-        filters['OrderBy']      = request.query.orderBy as string ?? 'CreatedAt';
-        filters['Order']        = request.query.order as string ?? 'descending';
-        filters['PageIndex']    = pageIndex;
-        filters['ItemsPerPage'] = itemsPerPage;
+        filters['CreatedDateFrom'] = request.query.createdDateFrom ? new Date(request.query.createdDateFrom as string) : null;
+        filters['CreatedDateTo']   = request.query.createdDateTo ? new Date(request.query.createdDateFrom as string) : null;
+        filters['OrderBy']         = request.query.orderBy as string ?? 'CreatedAt';
+        filters['Order']           = request.query.order as string ?? 'descending';
+        filters['PageIndex']       = pageIndex;
+        filters['ItemsPerPage']    = itemsPerPage;
 
         return filters;
     }
@@ -261,7 +266,9 @@ export class BaseValidator {
     }
 
     getValidationChain(field: string, where: Where): ValidationChain {
+
         var chain: ValidationChain = null;
+        
         if (where === Where.Body) {
             chain = body(field);
         }

@@ -1,27 +1,18 @@
+import { BaseSearchFilters, BaseSearchResults } from "../../../../domain.types/miscellaneous/base.search.types";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from "./food.consumption.dto";
 import { FoodConsumptionEvents } from "./food.consumption.types";
 
 //////////////////////////////////////////////////////////////////////
 
-export interface FoodConsumptionSearchFilters {
-    PatientUserId?: string;
-    Food?: string;
-    ConsumedAs?: FoodConsumptionEvents;
-    TimeFrom: Date;
-    TimeTo: Date;
-    ForDay: Date;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+export interface FoodConsumptionSearchFilters extends BaseSearchFilters{
+    PatientUserId?: uuid;
+    Food?         : string;
+    ConsumedAs?   : FoodConsumptionEvents;
+    DateFrom      : Date;
+    DateTo        : Date;
 }
 
-export interface FoodConsumptionSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface FoodConsumptionSearchResults extends BaseSearchResults{
     Items: FoodConsumptionDto[] | FoodConsumptionEventDto[] | FoodConsumptionForDayDto[];
 }

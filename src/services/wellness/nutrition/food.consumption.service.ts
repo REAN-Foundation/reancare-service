@@ -15,7 +15,7 @@ export class FoodConsumptionService {
     ) { }
 
     create = async (foodConsumptionDomainModel: FoodConsumptionDomainModel):
-    Promise<FoodConsumptionDto> => {
+        Promise<FoodConsumptionDto> => {
         return await this._foodConsumptionRepo.create(foodConsumptionDomainModel);
     };
 

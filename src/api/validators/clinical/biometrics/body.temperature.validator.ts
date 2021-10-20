@@ -14,9 +14,8 @@ export class BodyTemperatureValidator {
             PatientUserId    : request.body.PatientUserId,
             BodyTemperature  : request.body.BodyTemperature,
             Unit             : request.body.Unit,
-            RecordDate       : request.body.RecordDate ?? null,
-            RecordedByUserId : request.body.RecordedByUserId ?? null,
-
+            RecordDate       : request.body.RecordDate ?? new Date(),
+            RecordedByUserId : request.body.RecordedByUserId ?? request.currentUser.UserId,
         };
 
         return BodyTemperatureModel;

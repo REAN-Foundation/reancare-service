@@ -14,8 +14,8 @@ export class BodyWeightValidator {
             PatientUserId    : request.body.PatientUserId,
             BodyWeight       : request.body.BodyWeight,
             Unit             : request.body.Unit,
-            RecordDate       : request.body.RecordDate ?? null,
-            RecordedByUserId : request.body.RecordedByUserId ?? null,
+            RecordDate       : request.body.RecordDate ?? new Date(),
+            RecordedByUserId : request.body.RecordedByUserId ?? request.currentUser.UserId,
         };
 
         return bodyWeightModel;

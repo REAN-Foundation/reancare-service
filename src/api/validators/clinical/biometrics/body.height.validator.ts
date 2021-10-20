@@ -11,9 +11,11 @@ export class BodyHeightValidator {
     static getDomainModel = (request: express.Request): BodyHeightDomainModel => {
 
         const bodyHeightModel: BodyHeightDomainModel = {
-            PatientUserId : request.body.PatientUserId ?? null,
-            BodyHeight    : request.body.BodyHeight ?? null,
-            Unit          : request.body.Unit,
+            PatientUserId    : request.body.PatientUserId ?? null,
+            BodyHeight       : request.body.BodyHeight ?? null,
+            Unit             : request.body.Unit,
+            RecordDate       : request.body.RecordDate ?? new Date(),
+            RecordedByUserId : request.body.RecordedByUserId ?? request.currentUser.UserId,
         };
 
         return bodyHeightModel;

@@ -15,9 +15,8 @@ export class BloodPressureValidator {
             Systolic         : request.body.Systolic,
             Diastolic        : request.body.Diastolic,
             Unit             : request.body.Unit,
-            RecordDate       : request.body.RecordDate ?? null,
-            RecordedByUserId : request.body.RecordedByUserId ?? null,
- 
+            RecordDate       : request.body.RecordDate ?? new Date(),
+            RecordedByUserId : request.body.RecordedByUserId ?? request.currentUser.UserId,
         };
  
         return BloodPressureModel;

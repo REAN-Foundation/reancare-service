@@ -1611,7 +1611,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Otp\": \"684268\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
+									"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Otp\": \"780400\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/users/login-with-otp",
@@ -22246,6 +22246,11 @@
 													"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('BodyWeight');\r",
 													"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('PatientUserId');\r",
 													"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('Unit');\r",
+													"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('RecordDate');\r",
+													"    pm.expect(jsonRes.Data.BodyWeight).to.have.property('RecordedByUserId');\r",
+													"\r",
+													"    pm.expect(jsonRes.Data.BodyWeight.RecordDate).not.null;\r",
+													"    pm.expect(jsonRes.Data.BodyWeight.RecordedByUserId).not.null;\r",
 													"\r",
 													"    pm.expect(jsonRes.Data.BodyWeight.PatientUserId).equals(expectedPatientUserId);\r",
 													"    pm.expect(Number(jsonRes.Data.BodyWeight.BodyWeight)).equals(Number(expectedBodyWeight));\r",

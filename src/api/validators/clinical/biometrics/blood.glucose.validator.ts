@@ -14,8 +14,8 @@ export class BloodGlucoseValidator {
             PatientUserId    : request.body.PatientUserId,
             BloodGlucose     : request.body.BloodGlucose,
             Unit             : request.body.Unit,
-            RecordDate       : request.body.RecordDate ?? null,
-            RecordedByUserId : request.body.RecordedByUserId ?? null,
+            RecordDate       : request.body.RecordDate ?? new Date(),
+            RecordedByUserId : request.body.RecordedByUserId ?? request.currentUser.UserId,
         };
 
         return bloodGlucoseDomainModel;

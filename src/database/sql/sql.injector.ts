@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { ConfigurationManager } from '../../config/configuration.manager';
 import { DependencyContainer } from 'tsyringe';
+import { ConfigurationManager } from '../../config/configuration.manager';
 import { SequelizeInjector } from './sequelize/sequelize.injector';
 
 ////////////////////////////////////////////////////////////////////////////////

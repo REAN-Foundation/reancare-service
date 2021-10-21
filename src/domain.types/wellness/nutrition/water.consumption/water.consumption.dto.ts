@@ -1,15 +1,15 @@
 
 export interface WaterConsumptionDto {
-    id?: string;
-    EhrId?: string;
+    id?          : string;
+    EhrId?       : string;
     PatientUserId: string;
-    Volume: number;
-    Time?: Date;
+    Volume       : number;
+    Time?        : Date;
 }
 
 export interface WaterConsumptionForDayDto {
     PatientUserId?: string;
-    Date: Date;
-    Consumptions: WaterConsumptionDto[];
-    TotalVolume: number;
+    Date          : Date;
+    Consumptions  : WaterConsumptionDto[];
+    TotalVolume   : number;
 }

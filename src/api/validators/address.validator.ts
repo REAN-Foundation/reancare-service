@@ -34,38 +34,6 @@ export class AddressValidator {
         return await AddressValidator.getParamId(request);
     };
     
-    static getByOrganizationId = async (request: express.Request): Promise<string> => {
-
-        await param('organizationId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        
-        return request.params.organizationId;
-    };
-    
-    static getByPersonId = async (request: express.Request): Promise<string> => {
-
-        await param('personId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        
-        return request.params.personId;
-    };
-
     static delete = async (request: express.Request): Promise<string> => {
         return await AddressValidator.getParamId(request);
     };
@@ -196,18 +164,6 @@ export class AddressValidator {
     };
 
     private static async validateBody(request) {
-
-        await body('PersonId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('OrganizationId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
 
         await body('Type').optional()
             .trim()

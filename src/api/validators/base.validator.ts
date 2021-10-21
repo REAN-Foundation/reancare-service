@@ -15,6 +15,14 @@ export class BaseValidator {
     
     //#region Param extraction
 
+    isFalsy(str) {
+        return !str || str === null || (str as string).length === 0;
+    }
+
+    isTruthy(str) {
+        return str && str !== null && (str as string).length > 0;
+    }
+
     getParamUuid = async(request: express.Request, field: string): Promise<uuid> => {
         this.validateUuid(request, field, Where.Param, true, false);
         this.validateRequest(request);

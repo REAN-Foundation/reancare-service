@@ -1,20 +1,9 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    Length,
-    IsDate,
-    ForeignKey,
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsUUID,
+    Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
-import { Severity, SeverityList } from '../../../../../domain.types/miscellaneous/system.types';
 import { v4 } from 'uuid';
+import { Severity, SeverityList } from '../../../../../domain.types/miscellaneous/system.types';
 import User from '../user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -47,24 +36,26 @@ export default class HealthProfile extends Model {
     })
     PatientUserId: string;
 
-    @Length({ min: 2, max: 16 })
     @Column({
-        type      : DataType.STRING(16),
-        allowNull : true,
+        type         : DataType.STRING(16),
+        allowNull    : true,
+        defaultValue : ''
     })
     BloodGroup: string;
 
     @Length({ max: 128 })
     @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
+        type         : DataType.STRING(128),
+        allowNull    : true,
+        defaultValue : ''
     })
     MajorAilment: string;
 
     @Length({ max: 512 })
     @Column({
-        type      : DataType.STRING(512),
-        allowNull : true,
+        type         : DataType.STRING(512),
+        allowNull    : true,
+        defaultValue : ''
     })
     OtherConditions: string;
 

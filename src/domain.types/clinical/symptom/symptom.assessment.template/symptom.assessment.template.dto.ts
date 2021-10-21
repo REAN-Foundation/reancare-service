@@ -1,10 +1,11 @@
 
 export interface TemplateSymptomTypesDto {
-    Index?        : number;
-    SymptomTypeId?: string;
-    Symptom?      : string;
-    Description?  : string;
-    Tags?         : string;
+    Index?          : number;
+    SymptomTypeId?  : string;
+    Symptom?        : string;
+    Description?    : string;
+    ImageResourceId?: string;
+    Tags?           : string;
 }
 
 export interface SymptomAssessmentTemplateDto {

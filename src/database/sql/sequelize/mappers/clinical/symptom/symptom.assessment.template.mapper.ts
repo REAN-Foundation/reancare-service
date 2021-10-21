@@ -1,5 +1,5 @@
-import SymptomAssessmentTemplate from '../../../models/clinical/symptom/symptom.assessment.template.model';
 import { SymptomAssessmentTemplateDto, TemplateSymptomTypesDto } from '../../../../../../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.dto';
+import SymptomAssessmentTemplate from '../../../models/clinical/symptom/symptom.assessment.template.model';
 import SymptomTypesInTemplate from '../../../models/clinical/symptom/symptom.types.in.template.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -24,10 +24,11 @@ export class SymptomAssessmentTemplateMapper {
                 var y: any = x;
                 var index = y.SymptomTypesInTemplate.Index;
                 var d: TemplateSymptomTypesDto = {
-                    Index         : index,
-                    SymptomTypeId : x.id,
-                    Symptom       : x.Symptom,
-                    Description   : x.Description,
+                    Index           : index,
+                    SymptomTypeId   : x.id,
+                    Symptom         : x.Symptom,
+                    Description     : x.Description,
+                    ImageResourceId : x.ImageResourceId
                 };
                 return d;
             }) : [];

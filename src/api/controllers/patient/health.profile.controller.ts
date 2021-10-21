@@ -1,31 +1,27 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { HealthProfileDomainModel } from '../../../domain.types/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../domain.types/patient/health.profile/health.profile.dto';
 import { HealthProfileService } from '../../../services/patient/health.profile.service';
-import { PatientService } from '../../../services/patient/patient.service';
 import { Loader } from '../../../startup/loader';
 import { HealthProfileValidator } from '../../validators/patient/health.profile.validator';
-
-
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HealthProfileController {
+export class HealthProfileController extends BaseController{
 
     //#region member variables and constructors
 
     _service: HealthProfileService = null;
 
-    _patientService: PatientService = null;
-
-    _authorizer: Authorizer = null;
+    _validator: HealthProfileValidator = new HealthProfileValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(HealthProfileService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -35,11 +31,9 @@ export class HealthProfileController {
     getByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            request.context = 'HealthProfile.GetByPatientUserId';
-            
-            await this._authorizer.authorize(request, response);
+            await this.setContext('HealthProfile.GetByPatientUserId', request, response);
 
-            const patientUserId: string = await HealthProfileValidator.validatePatientUserId(request);
+            const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
 
             const healthProfile : HealthProfileDto = await this._service.getByPatientUserId(patientUserId);
             if (healthProfile == null) {
@@ -57,12 +51,11 @@ export class HealthProfileController {
 
     updateByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'HealthProfile.UpdateByPatientUserId';
-            await this._authorizer.authorize(request, response);
+            
+            await this.setContext('HealthProfile.UpdateByPatientUserId', request, response);
 
-            const domainModel: HealthProfileDomainModel = await HealthProfileValidator.update(request);
-
-            const patientUserId : string = await HealthProfileValidator.validatePatientUserId(request);
+            const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
+            const domainModel: HealthProfileDomainModel = await this._validator.update(request);
 
             const existingHealthProfile = await this._service.getByPatientUserId(patientUserId);
             if (existingHealthProfile == null) {

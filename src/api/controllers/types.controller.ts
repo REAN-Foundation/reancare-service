@@ -1,18 +1,21 @@
 import express from 'express';
 import { ApiError } from '../../common/api.error';
 import { ResponseHandler } from '../../common/response.handler';
+import { BloodGroupList, MaritalStatusList, SeverityList } from '../../domain.types/miscellaneous/system.types';
 import { TypesService } from '../../services/types.service';
 import { Loader } from '../../startup/loader';
+import { BaseController } from './base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class TypesController {
+export class TypesController extends BaseController {
 
     //#region member variables and constructors
 
     _service: TypesService = null;
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(TypesService);
     }
 
@@ -22,7 +25,7 @@ export class TypesController {
 
     getPersonRoleTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Types.GetPersonRoleTypes';
+            this.setContext('Types.GetPersonRoleTypes', request, response, false);
 
             const types = await this._service.getPersonRoleTypes();
             if (types === null || types.length === 0) {
@@ -40,7 +43,7 @@ export class TypesController {
 
     getOrganizationTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Types.GetOrganizationTypes';
+            this.setContext('Types.GetOrganizationTypes', request, response, false);
 
             const types = await this._service.getOrganizationTypes();
             if (types === null || types.length === 0) {
@@ -58,7 +61,8 @@ export class TypesController {
 
     getGenderTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Types.GetGenderTypes';
+
+            this.setContext('Types.GetGenderTypes', request, response, false);
 
             const types = await this._service.getGenderTypes();
             if (types === null || types.length === 0) {
@@ -67,6 +71,47 @@ export class TypesController {
 
             ResponseHandler.success(request, response, 'Gender types retrieved successfully!', 200, {
                 GenderTypes : types,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
+    getBloodGroups = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            this.setContext('Types.GetBloodGroups', request, response, false);
+
+            ResponseHandler.success(request, response, 'Blood group types retrieved successfully!', 200, {
+                BloodGroups : BloodGroupList,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
+    getMaritalStatuses = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            this.setContext('Types.GetMaritalStatuses', request, response, false);
+
+            ResponseHandler.success(request, response, 'Marital status types retrieved successfully!', 200, {
+                MaritalStatuses : MaritalStatusList,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
+    getSeverities = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            this.setContext('Types.GetSeverities', request, response, false);
+
+            ResponseHandler.success(request, response, 'Severity types retrieved successfully!', 200, {
+                Severities : SeverityList,
             });
 
         } catch (error) {

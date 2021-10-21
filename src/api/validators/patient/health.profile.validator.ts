@@ -1,18 +1,25 @@
 import express from 'express';
-import { body, param, validationResult } from 'express-validator';
-
-import { Helper } from '../../../common/helper';
+import { ValidationError } from 'sequelize';
+import {
+    BloodGroup,
+    BloodGroupList,
+    MaritalStatus,
+    MaritalStatusList,
+    Severity,
+    SeverityList
+} from '../../../domain.types/miscellaneous/system.types';
 import { HealthProfileDomainModel } from '../../../domain.types/patient/health.profile/health.profile.domain.model';
+import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HealthProfileValidator {
+export class HealthProfileValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): HealthProfileDomainModel => {
+    getDomainModel = (request: express.Request): HealthProfileDomainModel => {
 
         const model: HealthProfileDomainModel = {
             BloodGroup         : request.body.BloodGroup ?? null,
-            MajorAilment       : request.body.MajorAilment,
+            MajorAilment       : request.body.MajorAilment ?? null,
             OtherConditions    : request.body.OtherConditions ?? null,
             IsDiabetic         : request.body.IsDiabetic ?? null,
             HasHeartAilment    : request.body.HasHeartAilment ?? null,
@@ -36,161 +43,63 @@ export class HealthProfileValidator {
         return model;
     };
 
-    static validatePatientUserId = async (request: express.Request): Promise<string> => {
-
-        await param('patientUserId')
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return request.params.patientUserId;
-
-    };
-
-    static update = async (request: express.Request): Promise<HealthProfileDomainModel> => {
-
-        const patientUserId = await HealthProfileValidator.validatePatientUserId(request);
-        await HealthProfileValidator.validateBody(request);
-
-        const domainModel = HealthProfileValidator.getDomainModel(request);
+    update = async (request: express.Request): Promise<HealthProfileDomainModel> => {
+        await this.validateBody(request);
+        const patientUserId = await this.getParamUuid(request, 'patientUserId');
+        const domainModel = this.getDomainModel(request);
         domainModel.PatientUserId = patientUserId;
-
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private async validateBody(request) {
 
-        await body('BloodGroup')
-            .optional()
-            .trim()
-            .isIn(['A+', 'B+', 'O+', 'AB+', 'A-', 'B-','O-', 'AB-'])
-            .run(request);
+        await this.validateString(request, 'BloodGroup', Where.Body, false, true);
+        await this.validateString(request, 'MajorAilment', Where.Body, false, true);
+        await this.validateString(request, 'OtherConditions', Where.Body, false, true);
+        await this.validateBoolean(request, 'IsDiabetic', Where.Body, false, true);
+        await this.validateBoolean(request, 'HasHeartAilment', Where.Body, false, true);
+        await this.validateString(request, 'MaritalStatus', Where.Body, false, true);
+        await this.validateString(request, 'Ethnicity', Where.Body, false, true);
+        await this.validateString(request, 'Nationality', Where.Body, false, true);
+        await this.validateString(request, 'Occupation', Where.Body, false, true);
+        await this.validateBoolean(request, 'SedentaryLifestyle', Where.Body, false, true);
+        await this.validateBoolean(request, 'IsSmoker', Where.Body, false, true);
+        await this.validateString(request, 'SmokingSeverity', Where.Body, false, true);
+        await this.validateDate(request, 'SmokingSince', Where.Body, false, true);
+        await this.validateBoolean(request, 'IsDrinker', Where.Body, false, true);
+        await this.validateString(request, 'DrinkingSeverity', Where.Body, false, true);
+        await this.validateDate(request, 'DrinkingSince', Where.Body, false, true);
+        await this.validateBoolean(request, 'SubstanceAbuse', Where.Body, false, true);
+        await this.validateString(request, 'ProcedureHistory', Where.Body, false, true);
+        await this.validateString(request, 'ObstetricHistory', Where.Body, false, true);
+        await this.validateString(request, 'OtherInformation', Where.Body, false, true);
 
-        await body('MajorAilment')
-            .optional()
-            .trim()
-            .run(request);
-
-        await body('OtherConditions')
-            .optional()
-            .trim()
-            .run(request);
-
-        await body('IsDiabetic')
-            .optional()
-            .trim()
-            .escape()
-            .isBoolean()
-            .run(request);
-
-        await body('HasHeartAilment')
-            .optional()
-            .trim()
-            .escape()
-            .isBoolean()
-            .run(request);
-
-        await body('MaritalStatus')
-            .optional()
-            .trim()
-            .isIn(['Single', 'Married', 'Widowed', 'Divorcee', 'Live-in'])
-            .run(request);
-
-        await body('Ethnicity')
-            .optional()
-            .trim()
-            .isLength({ min: 1 })
-            .run(request);
-
-        await body('Nationality')
-            .optional()
-            .trim()
-            .isLength({ min: 1 })
-            .run(request);
-
-        await body('Occupation')
-            .optional()
-            .trim()
-            .isLength({ min: 1 })
-            .run(request);
-
-        await body('SedentaryLifestyle')
-            .optional()
-            .trim()
-            .isBoolean()
-            .run(request);
-
-        await body('IsSmoker')
-            .optional()
-            .trim()
-            .isBoolean()
-            .run(request);
-
-        await body('SmokingSeverity')
-            .optional()
-            .trim()
-            .isIn(['Low', 'Medium', 'High', 'Critical'])
-            .run(request);
-
-        await body('SmokingSince')
-            .optional()
-            .trim()
-            .isDate()
-            .run(request);
-
-        await body('IsDrinker')
-            .optional()
-            .trim()
-            .isBoolean()
-            .run(request);
-
-        await body('DrinkingSeverity')
-            .optional()
-            .trim()
-            .isIn(['Low', 'Medium', 'High', 'Critical'])
-            .run(request);
-
-        await body('DrinkingSince')
-            .optional()
-            .trim()
-            .isDate()
-            .run(request);
-
-        await body('SubstanceAbuse')
-            .optional()
-            .trim()
-            .isBoolean()
-            .run(request);
-
-        await body('ProcedureHistory')
-            .optional()
-            .trim()
-            .isLength({ min: 1 })
-            .run(request);
-
-        await body('ObstetricHistory')
-            .optional()
-            .trim()
-            .isLength({ min: 1 })
-            .run(request);
-
-        await body('OtherInformation')
-            .optional()
-            .trim()
-            .isLength({ min: 1 })
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
+        this.validateRequest(request);
+        
+        if (this.isTruthy(request.body.BloodGroup) &&
+            !BloodGroupList.includes(request.body.BloodGroup as BloodGroup)) {
+            var bloodGroups = BloodGroupList.join(',');
+            throw new ValidationError(`Blood group should be either of ${bloodGroups}.`);
         }
+
+        if (this.isTruthy(request.body.MaritalStatus) &&
+            !MaritalStatusList.includes(request.body.MaritalStatus as MaritalStatus)) {
+            var maritalStatuses = MaritalStatusList.join(',');
+            throw new ValidationError(`Marital status should be either of ${maritalStatuses}.`);
+        }
+
+        const severities = SeverityList.join(',');
+        
+        if (this.isTruthy(request.body.SmokingSeverity) &&
+            !SeverityList.includes(request.body.SmokingSeverity as Severity)) {
+            throw new ValidationError(`Smoking severity should be either of ${severities}.`);
+        }
+        
+        if (this.isTruthy(request.body.DrinkingSeverity) &&
+            !SeverityList.includes(request.body.DrinkingSeverity as Severity)) {
+            throw new ValidationError(`Drinking severity should be either of ${severities}.`);
+        }
+        
     }
 
 }

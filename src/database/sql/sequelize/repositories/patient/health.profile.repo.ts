@@ -1,10 +1,10 @@
-import { IHealthProfileRepo } from '../../../../repository.interfaces/patient/health.profile.repo.interface';
-import HealthProfile from '../../models/patient/health.profile.model';
-import { HealthProfileMapper } from '../../mappers/patient/health.profile.mapper';
-import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
+import { Logger } from '../../../../../common/logger';
 import { HealthProfileDomainModel } from '../../../../../domain.types/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../../../domain.types/patient/health.profile/health.profile.dto';
+import { IHealthProfileRepo } from '../../../../repository.interfaces/patient/health.profile.repo.interface';
+import { HealthProfileMapper } from '../../mappers/patient/health.profile.mapper';
+import HealthProfile from '../../models/patient/health.profile.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -15,15 +15,15 @@ export class HealthProfileRepo implements IHealthProfileRepo {
         try {
             const entity = {
                 PatientUserId      : patientHealthProfileDomainModel.PatientUserId,
-                BloodGroup         : patientHealthProfileDomainModel.BloodGroup ?? null,
-                MajorAilment       : patientHealthProfileDomainModel.MajorAilment ?? null,
-                OtherConditions    : patientHealthProfileDomainModel.OtherConditions ?? null,
+                BloodGroup         : patientHealthProfileDomainModel.BloodGroup ?? '',
+                MajorAilment       : patientHealthProfileDomainModel.MajorAilment ?? '',
+                OtherConditions    : patientHealthProfileDomainModel.OtherConditions ?? '',
                 IsDiabetic         : patientHealthProfileDomainModel.IsDiabetic ?? false,
                 HasHeartAilment    : patientHealthProfileDomainModel.HasHeartAilment ?? false,
                 MaritalStatus      : patientHealthProfileDomainModel.MaritalStatus ?? 'Unknown',
-                Ethnicity          : patientHealthProfileDomainModel.Ethnicity ?? null,
-                Nationality        : patientHealthProfileDomainModel.Nationality ?? null,
-                Occupation         : patientHealthProfileDomainModel.Occupation ?? null,
+                Ethnicity          : patientHealthProfileDomainModel.Ethnicity ?? '',
+                Nationality        : patientHealthProfileDomainModel.Nationality ?? '',
+                Occupation         : patientHealthProfileDomainModel.Occupation ?? '',
                 SedentaryLifestyle : patientHealthProfileDomainModel.SedentaryLifestyle ?? false,
                 IsSmoker           : patientHealthProfileDomainModel.IsSmoker ?? false,
                 SmokingSeverity    : patientHealthProfileDomainModel.SmokingSeverity ?? 'Low',
@@ -32,9 +32,9 @@ export class HealthProfileRepo implements IHealthProfileRepo {
                 DrinkingSeverity   : patientHealthProfileDomainModel.DrinkingSeverity ?? 'Low',
                 DrinkingSince      : patientHealthProfileDomainModel.DrinkingSince ?? null,
                 SubstanceAbuse     : patientHealthProfileDomainModel.SubstanceAbuse ?? false,
-                ProcedureHistory   : patientHealthProfileDomainModel.ProcedureHistory ?? null,
-                ObstetricHistory   : patientHealthProfileDomainModel.ObstetricHistory ?? null,
-                OtherInformation   : patientHealthProfileDomainModel.OtherInformation ?? null,
+                ProcedureHistory   : patientHealthProfileDomainModel.ProcedureHistory ?? '',
+                ObstetricHistory   : patientHealthProfileDomainModel.ObstetricHistory ?? '',
+                OtherInformation   : patientHealthProfileDomainModel.OtherInformation ?? '',
             };
             const patientHealthProfile = await HealthProfile.create(entity);
             return HealthProfileMapper.toDto(patientHealthProfile);

@@ -10,6 +10,27 @@ export type uuid    = string | undefined | null;
 export type decimal = number | undefined | null;
 export type integer = number | undefined | null;
 
+export const BloodGroupList: BloodGroup[] = [
+    'A+',
+    'B+',
+    'O+',
+    'AB+',
+    'A-',
+    'B-',
+    'O-',
+    'AB-'
+];
+
+export const MaritalStatusList: MaritalStatus[] = [
+    'Single',
+    'Married',
+    'Widowed',
+    'Divorcee',
+    'Live-in',
+    'Other',
+    'Unknown'
+];
+
 export enum Severity {
     Low      = 'Low',
     Medium   = 'Medium',

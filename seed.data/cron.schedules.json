@@ -1,0 +1,20 @@
+{
+    "development": {
+        "FileCleanup": "*/30 * * * *",
+        "MedicationReminder": "*/15 * * * *",
+        "CreateMedicationTasks": "5 0 * * *",
+        "PatientDailyTasks": "*/7 * * * *"
+    },
+    "uat": {
+        "FileCleanup": "*/30 * * * *",
+        "MedicationReminder": "*/15 * * * *",
+        "CreateMedicationTasks": "5 0 * * *",
+        "PatientDailyTasks": "*/7 * * * *"
+    },
+    "production": {
+        "FileCleanup": "*/30 * * * *",
+        "MedicationReminder": "*/15 * * * *",
+        "CreateMedicationTasks": "5 0 * * *",
+        "PatientDailyTasks": "5 0 * * *"
+    }
+}

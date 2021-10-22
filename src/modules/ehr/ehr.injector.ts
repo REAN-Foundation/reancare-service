@@ -1,16 +1,30 @@
 import 'reflect-metadata';
+import { ConfigurationManager } from '../../config/configuration.manager';
 import { DependencyContainer } from 'tsyringe';
-import { GcpStorageService } from './specifications/fhir/providers/gcp/storage.service';
-import { PatientStoreGCP } from './specifications/fhir/providers/gcp/patient.store';
+import { FhirInjector } from './specifications/fhir/fhir.injector';
+import { MockEhrInjector } from './specifications/mock.ehr/mockehr.injector';
+
+//import { OpenEhrInjector } from './specifications/openehr/openehr.injector';
 
 ////////////////////////////////////////////////////////////////////////////////
 
 export class EhrInjector {
 
     static registerInjections(container: DependencyContainer) {
+        
+        const ehrSpec = ConfigurationManager.EhrSpecification();
+        if (ehrSpec === 'FHIR') {
+            FhirInjector.registerInjections(container);
+        }
 
-        container.register('IStorageService', GcpStorageService);
-        container.register('IPatientStore', PatientStoreGCP);
+        // else if (ehrSpec === 'OpenEHR') {
+        //     OpenEhrInjector.registerInjections(container);
+        // }
+
+        else {
+            MockEhrInjector.registerInjections(container);
+        }
 
     }
+
 }

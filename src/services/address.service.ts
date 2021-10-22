@@ -1,6 +1,8 @@
 import { inject, injectable } from "tsyringe";
-import { AddressDomainModel, AddressDto, AddressSearchFilters, AddressSearchResults } from "../data/domain.types/address.domain.types";
-import { IAddressRepo } from "../data/repository.interfaces/address.repo.interface";
+import { IAddressRepo } from "../database/repository.interfaces/address.repo.interface";
+import { AddressDomainModel } from '../domain.types/address/address.domain.model';
+import { AddressDto } from '../domain.types/address/address.dto';
+import { AddressSearchResults, AddressSearchFilters } from '../domain.types/address/address.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,10 +21,6 @@ export class AddressService {
         return await this._addressRepo.getById(id);
     };
 
-    getByPersonId = async (personId: string): Promise<AddressDto[]> => {
-        return await this._addressRepo.getByPersonId(personId);
-    };
-
     search = async (filters: AddressSearchFilters): Promise<AddressSearchResults> => {
         return await this._addressRepo.search(filters);
     };
@@ -34,4 +32,5 @@ export class AddressService {
     delete = async (id: string): Promise<boolean> => {
         return await this._addressRepo.delete(id);
     };
+
 }

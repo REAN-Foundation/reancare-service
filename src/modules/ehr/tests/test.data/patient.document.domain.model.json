@@ -1,0 +1,23 @@
+{
+    "DocumentType": "PATIENT_LAB_PRESCRIPTIONS",
+    "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "PatientEhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "DoctorUserId": "",
+    "DoctorEhrId": "",
+    "LabUserId": "7d94a499-8618-4b5e-8168-f95b04d8ef52",
+    "LabEhrId": "7d94a499-8618-4b5e-8168-f95b04d8ef52",
+    "PharmacyUserId": null,
+    "PharmacyEhrId": null,
+    "DrugOrderId": null,
+    "DrugOrderEhrId": null,
+    "LabOrderId": null,
+    "LabOrderEhrId": null,
+    "DisplayId": "LBPRSC-1622231178874",
+    "AddedBy": "495c791d-618e-4090-8fcf-a1299624a194",
+    "FileName": "1.jpg",
+    "ResourceId": "13325366-152d-4b93-8714-c3228e493a36",
+    "Url_Auth": "https://reancare-api-dev.services.reanfoundation.org//resources/download/13325366-152d-4b93-8714-c3228e493a36",
+    "MimeType": "image/jpeg",
+    "Size": 149389,
+    "DateCreated": "2021-05-28T19:46:18.874Z"
+}

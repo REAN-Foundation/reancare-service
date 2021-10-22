@@ -1,0 +1,35 @@
+{
+    "Prefix": "Miss.",
+    "FirstName": "Sarah",
+    "LastName": "Robinson",
+    "Phone": "8265596983",
+    "Email": "Sarah.53252.Robinson@gmail.com",
+    "Gender": "Female",
+    "BirthDate": "2004-06-07T00:00:00.000Z",
+    "ImageURL": "https://reancare-api-dev.services.reanfoundation.org//resources/download-public/c845a245-a22c-4f18-9df9-db7b2da577f8",
+    "Organizations": [
+        {
+            "Type": "Pharmacy",
+            "Name": "Medicos meds, Pune",
+            "AboutUs": "Medicos Meds deals with subscription medicines for allopathy, ayurveda and homeopathy.",
+            "OperationalSince": "2010-06-10T00:00:00.000Z",       
+            "ContactPhone": "1233232343",
+            "ContactEmail": "medicos.meds@gmail.com",
+            "Address": {}
+        }
+    ],
+    "Locality": "Pune",
+    "Address": {
+        "Type": "Official",
+        "AddressLine": "Gold Adlabs Mariplex Mall, Ground Floor, next to Axis Bank, Kalyani Nagar",
+        "City": "Pune",
+        "District": "Pune",
+        "State": "Maharashtra",
+        "Country": "India",
+        "PostalCode": "411006",
+        "Location": {
+            "LocationCoords_Longitude": "73.894525",
+            "LocationCoords_Lattitude": "18.556302"
+        }
+    }
+}

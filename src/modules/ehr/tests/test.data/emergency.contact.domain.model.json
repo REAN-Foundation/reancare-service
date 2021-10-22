@@ -1,0 +1,29 @@
+{
+    "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "PatientEhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "Role": 3,
+    "RoleName": "Doctor",
+    "Name": "Dr. Garfield Moore",
+    "Details": {
+        "FirstName": "Garfield",
+        "LastName": "Moore",
+        "Prefix": "Dr.",
+        "PhoneNumber": "7198849855",
+        "Email": "Garfield.52956.Moore@gmail.com",
+        "Gender": "Female",
+        "Address": "Some Address",
+        "ImageURL": "https://hca-bff-dev.services.tikme.app/resources/download-public/19c74c7e-cc63-417d-8398-b670ac5a2e27",
+        "LocationCoords_Longitude": "43.123456",
+        "LocationCoords_Lattitude": "-79.123456",
+        "DisplayId": null,
+        "DisplayEhrId": null,
+        "EstablishmentName": "Dr ABC",
+        "Qualification": null,
+        "Specialities": null,
+        "AboutMe": "Speciality: Heart",
+        "ProfessionalHighlights": null,
+        "ConsultationFee": null,
+        "AppointmentSlotDuration": "MON 10:00AM-6:00PM, TUE 10:00AM-6:00PM, WED 10:00AM-6:00PM, THU 10:00AM-6:00PM, FRI 10:00AM-6:00PM, SAT 10:00AM-6:00PM",
+        "PractisingSince": null
+    }
+}

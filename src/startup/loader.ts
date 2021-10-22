@@ -1,25 +1,36 @@
 import 'reflect-metadata';
 import { container, DependencyContainer } from 'tsyringe';
-
-import { DatabaseConnector } from '../data/database/database.connector';
 import { Authenticator } from '../auth/authenticator';
 import { Authorizer } from '../auth/authorizer';
-import { Injector } from './injector';
-import { Seeder } from './seeder';
+import { Logger } from '../common/logger';
+import { DatabaseConnector } from '../database/database.connector';
+import { MessagingService } from '../modules/communication/messaging.service/messaging.service';
+import { NotificationService } from '../modules/communication/notification.service/notification.service';
 import { StorageService } from '../modules/ehr/services/storage.service';
+import { Injector } from './injector';
+import { Scheduler } from './scheduler';
+import { Seeder } from './seeder';
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//Register injections here...
-Injector.registerInjections(container);
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class Loader {
 
     private static _authorizer: Authorizer = null;
+
     private static _authenticator: Authenticator = null;
+
     private static _databaseConnector: DatabaseConnector = null;
+
     private static _seeder: Seeder = null;
+    
+    private static _scheduler: Scheduler = Scheduler.instance();
+
+    private static _messagingService: MessagingService = null;
+
+    private static _notificationService: NotificationService = null;
+
     private static _ehrStore: StorageService = null;
+
     private static _container: DependencyContainer = container;
 
     public static get authenticator() {
@@ -38,34 +49,52 @@ export class Loader {
         return Loader._seeder;
     }
 
+    public static get scheduler() {
+        return Loader._scheduler;
+    }
+
     public static get storage() {
         return Loader._ehrStore;
+    }
+
+    public static get messagingService() {
+        return Loader._messagingService;
+    }
+
+    public static get notificationService() {
+        return Loader._notificationService;
     }
 
     public static get container() {
         return Loader._container;
     }
 
-    public static init = async () => {
-        return new Promise(async (resolve, reject) => {
-            try {
+    public static init = async (): Promise<boolean> => {
+        try {
 
-                Loader._databaseConnector = container.resolve(DatabaseConnector);
-                Loader._authenticator = container.resolve(Authenticator);
-                Loader._authorizer = container.resolve(Authorizer);
-                Loader._seeder = container.resolve(Seeder);
-                
-                if(process.env.USE_FHIR_STORAGE == 'Yes') {
-                    Loader._ehrStore = container.resolve(StorageService);
-                    await Loader._ehrStore.init();
-                }
+            //Register injections here...
+            Injector.registerInjections(container);
 
-                resolve(true);
+            Loader._databaseConnector = container.resolve(DatabaseConnector);
+            Loader._authenticator = container.resolve(Authenticator);
+            Loader._authorizer = container.resolve(Authorizer);
+            Loader._seeder = container.resolve(Seeder);
+            
+            Loader._ehrStore = container.resolve(StorageService);
+            await Loader._ehrStore.init();
 
-            } catch (error) {
-                reject(error);
-            }
-        });
+            Loader._notificationService = container.resolve(NotificationService);
+            Loader._notificationService.init();
+
+            Loader._messagingService = container.resolve(MessagingService);
+            Loader._messagingService.init();
+
+            return true;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return false;
+        }
     };
-}
 
+}

@@ -1,5 +1,5 @@
 {
-    "SystemIdentifier": "REAN Health Guru",
+    "SystemIdentifier": "REAN HealthGuru",
     "Auth" : {
         "Authentication": "Custom",
         "Authorization": "Custom"

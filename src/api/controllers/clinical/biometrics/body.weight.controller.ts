@@ -34,10 +34,10 @@ export class BodyWeightController {
 
             const bodyWeight = await this._service.create(domainModel);
             if (bodyWeight == null) {
-                throw new ApiError(400, 'Cannot create biometric BodyWeight record!');
+                throw new ApiError(400, 'Cannot create body weight record!');
             }
 
-            ResponseHandler.success(request, response, 'Biometrics BodyWeight created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Body weight record created successfully!', 201, {
                 BodyWeight : bodyWeight,
             });
         } catch (error) {
@@ -55,10 +55,10 @@ export class BodyWeightController {
 
             const bodyWeight = await this._service.getById(id);
             if (bodyWeight == null) {
-                throw new ApiError(404, 'Biometric bodyWeight not found.');
+                throw new ApiError(404, 'Body Weight record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Biometrics BodyWeight retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Body weight record retrieved successfully!', 200, {
                 BodyWeight : bodyWeight,
             });
         } catch (error) {
@@ -76,10 +76,10 @@ export class BodyWeightController {
 
             const bodyWeights = await this._service.getByPatientUserId(patientUserId);
             if (bodyWeights.length === 0) {
-                throw new ApiError(404, 'Biometrics BodyWeight not found.');
+                throw new ApiError(404, 'Body weight record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Biometrics BodyWeight retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Body weight record retrieved successfully!', 200, {
                 BodyWeights : bodyWeights,
             });
         } catch (error) {

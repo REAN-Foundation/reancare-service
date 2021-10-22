@@ -85,16 +85,16 @@ export class EmergencyContactRepo implements IEmergencyContactRepo {
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
-                search.where['PatientUserId'] = { [Op.eq]: '%' + filters.PatientUserId + '%' };
+                search.where['PatientUserId'] = filters.PatientUserId;
             }
             if (filters.ContactPersonId != null) {
-                search.where['ContactPersonId'] = { [Op.eq]: '%' + filters.ContactPersonId + '%' };
+                search.where['ContactPersonId'] = filters.ContactPersonId;
             }
             if (filters.IsAvailableForEmergency != null) {
-                search.where['IsAvailableForEmergency'] = { [Op.eq]: '%' + filters.IsAvailableForEmergency + '%' };
+                search.where['IsAvailableForEmergency'] = filters.IsAvailableForEmergency;
             }
             if (filters.ContactRelation != null) {
-                search.where['ContactRelation'] = { [Op.eq]: '%' + filters.ContactRelation + '%' };
+                search.where['ContactRelation'] = { [Op.like]: '%' + filters.ContactRelation + '%' };
             }
 
             let orderByColum = 'IsAvailableForEmergency';

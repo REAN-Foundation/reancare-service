@@ -181,25 +181,25 @@ export class EmergencyContactValidator {
     };
 
     static search = async (request: express.Request): Promise<EmergencyContactSearchFilters> => {
-        await query('PatientUserId').optional()
+        await query('patientUserId').optional()
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await query('ContactPersonId').optional()
+        await query('contactPersonId').optional()
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await query('IsAvailableForEmergency').optional()
+        await query('isAvailableForEmergency').optional()
             .trim()
             .escape()
             .isBoolean()
             .run(request);
 
-        await query('ContactRelation').optional()
+        await query('contactRelation').optional()
             .trim()
             .run(request);
 
@@ -212,16 +212,20 @@ export class EmergencyContactValidator {
     };
 
     private static getFilter(request): EmergencyContactSearchFilters {
+
         const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
 
         const itemsPerPage =
             request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
 
+        const isAvailableForEmergency = (request.query.isAvailableForEmergency && request.query.isAvailableForEmergency === 'true')
+            ? true : false;
+
         const filters: EmergencyContactSearchFilters = {
-            PatientUserId           : request.query.PatientUserId ?? null,
-            ContactPersonId         : request.query.ContactPersonId ?? null,
-            IsAvailableForEmergency : request.query.IsAvailableForEmergency ?? null,
-            ContactRelation         : request.query.ContactRelation ?? null,
+            PatientUserId           : request.query.patientUserId ?? null,
+            ContactPersonId         : request.query.contactPersonId ?? null,
+            IsAvailableForEmergency : isAvailableForEmergency,
+            ContactRelation         : request.query.contactRelation ?? null,
             OrderBy                 : request.query.orderBy ?? 'IsAvailableForEmergency',
             Order                   : request.query.order ?? 'descending',
             PageIndex               : pageIndex,

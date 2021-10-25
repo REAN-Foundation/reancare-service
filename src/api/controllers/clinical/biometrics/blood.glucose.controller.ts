@@ -44,11 +44,12 @@ export class BloodGlucoseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    };
+    };;
+
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BloodGlucose.GetById';
+            request.context = 'Biometrics.BloodGlucose.GetById';   
             
             await this._authorizer.authorize(request, response);
 

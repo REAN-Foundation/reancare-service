@@ -62,7 +62,7 @@ export class MedicationConsumptionService implements IUserActionService {
 
         var totalCount = 0;
         var pendingCount = 0;
-        var now = new Date();
+        //var now = new Date();
         
         var consumptions: MedicationConsumptionDto[] = [];
 
@@ -95,19 +95,18 @@ export class MedicationConsumptionService implements IUserActionService {
                 };
 
                 var savedRecord = await this._medicationConsumptionRepo.create(domainModel);
+                await this.createMedicationTaskForSchedule(savedRecord);
 
                 totalCount++;
                 
-                if (TimeHelper.isAfter(now, start)) {
-                    pendingCount++;
-
-                    //Add task only for the schedule which is in next two days
-                    var afterTwoDays = TimeHelper.addDuration(now, 2, DurationType.Day);
-                    if (start < afterTwoDays) {
-                        await this.createMedicationTaskForSchedule(savedRecord);
-                    }
-
-                }
+                // if (TimeHelper.isAfter(now, start)) {
+                //     pendingCount++;
+                //     //Add task only for the schedule which is in next two days
+                //     var afterTwoDays = TimeHelper.addDuration(now, 2, DurationType.Day);
+                //     if (start < afterTwoDays) {
+                //         await this.createMedicationTaskForSchedule(savedRecord);
+                //     }
+                // }
                 
                 consumptions.push(savedRecord);
             }

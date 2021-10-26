@@ -57,7 +57,7 @@ export class BodyTemperatureValidator extends BaseValidator {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
         await this.validateInt(request, 'BodyTemperature', Where.Body, true, false);
-        await this.validateString(request, 'Unit', Where.Body, true, false);
+        await this.validateString(request, 'Unit', Where.Body, false, true);
         await this.validateDate(request, 'RecordDate', Where.Body, true, false);
         await this.validateUuid(request, 'RecordedByUserId', Where.Body, false, true);
         

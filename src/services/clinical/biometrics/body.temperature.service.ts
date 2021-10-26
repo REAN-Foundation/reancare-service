@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IBodyTemperatureRepo } from "../../../database/repository.interfaces/clinical/biometrics/body.temperature.repo.interface";
 import { BodyTemperatureDomainModel } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
@@ -18,7 +19,7 @@ export class BodyTemperatureService {
         return await this._bodyTemperatureRepo.create(bodyTemperatureDomainModel);
     };
 
-    getById = async (id: string): Promise<BodyTemperatureDto> => {
+    getById = async (id: uuid): Promise<BodyTemperatureDto> => {
         return await this._bodyTemperatureRepo.getById(id);
     };
 
@@ -26,12 +27,12 @@ export class BodyTemperatureService {
         return await this._bodyTemperatureRepo.search(filters);
     };
 
-    update = async (id: string, bodyTemperatureDomainModel: BodyTemperatureDomainModel):
+    update = async (id: uuid, bodyTemperatureDomainModel: BodyTemperatureDomainModel):
     Promise<BodyTemperatureDto> => {
         return await this._bodyTemperatureRepo.update(id, bodyTemperatureDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._bodyTemperatureRepo.delete(id);
     };
 

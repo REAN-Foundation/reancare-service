@@ -1,9 +1,11 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+
 export interface PulseDomainModel {
-    id?: string;
-    EhrId?: string;
-    PatientUserId: string;
-    Pulse: number;
-    Unit: string;
-    RecordDate?: Date;
-    RecordedByUserId?: string;
+    id?              : uuid;
+    EhrId?           : string;
+    PatientUserId    : uuid;
+    Pulse            : number;
+    Unit             : string;
+    RecordDate?      : Date;
+    RecordedByUserId?: uuid;
 }

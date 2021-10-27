@@ -1,20 +1,16 @@
+import { BaseSearchFilters, BaseSearchResults } from "../../../../domain.types/miscellaneous/base.search.types";
 import { BloodGlucoseDto } from "./blood.glucose.dto";
 
-export interface BloodGlucoseSearchFilters {
-    PersonId?: string;
-    PatientUserId?: string;
-    MinValue?: number;
-    MaxValue?: number;
-    CreatedDateFrom?: Date;
-    CreatedDateTo?: Date;
+export interface BloodGlucoseSearchFilters extends BaseSearchFilters{
+    PatientUserId?   : string;
+    MinValue?        : number;
+    MaxValue?        : number;
+    CreatedDateFrom? : Date;
+    CreatedDateTo?   : Date;
     RecordedByUserId?: string;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
 }
 
-export interface BloodGlucoseSearchResults {
+export interface BloodGlucoseSearchResults extends BaseSearchResults{
     TotalCount: number;
     RetrievedCount: number;
     PageIndex: number;

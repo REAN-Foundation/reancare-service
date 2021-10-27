@@ -24,8 +24,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
             };
 
             const bloodGlucose = await BloodGlucoseModel.create(entity);
-            const dto = await BloodGlucoseMapper.toDto(bloodGlucose);
-            return dto;
+            return await BloodGlucoseMapper.toDto(bloodGlucose);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -35,8 +34,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
     getById = async (id: string): Promise<BloodGlucoseDto> => {
         try {
             const bloodGlucose = await BloodGlucoseModel.findByPk(id);
-            const dto = await BloodGlucoseMapper.toDto(bloodGlucose);
-            return dto;
+            return await BloodGlucoseMapper.toDto(bloodGlucose);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -45,8 +43,6 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
 
     search = async (filters: BloodGlucoseSearchFilters): Promise<BloodGlucoseSearchResults> => {
         try {
-
-            Logger.instance().log(`Filters 2 , ${JSON.stringify(filters)}`);
             
             const search = { where: {} };
 
@@ -156,8 +152,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
     
             await bloodGlucose.save();
 
-            const dto = await BloodGlucoseMapper.toDto(bloodGlucose);
-            return dto;
+            return await BloodGlucoseMapper.toDto(bloodGlucose);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

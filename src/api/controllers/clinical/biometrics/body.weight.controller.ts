@@ -34,10 +34,10 @@ export class BodyWeightController {
 
             const bodyWeight = await this._service.create(domainModel);
             if (bodyWeight == null) {
-                throw new ApiError(400, 'Cannot create body weight record!');
+                throw new ApiError(400, 'Cannot create weight record!');
             }
 
-            ResponseHandler.success(request, response, 'Body weight record created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Weight record created successfully!', 201, {
                 BodyWeight : bodyWeight,
             });
         } catch (error) {
@@ -55,10 +55,10 @@ export class BodyWeightController {
 
             const bodyWeight = await this._service.getById(id);
             if (bodyWeight == null) {
-                throw new ApiError(404, 'Body Weight record not found.');
+                throw new ApiError(404, 'Weight record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Body weight record retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Weight record retrieved successfully!', 200, {
                 BodyWeight : bodyWeight,
             });
         } catch (error) {
@@ -76,10 +76,10 @@ export class BodyWeightController {
 
             const bodyWeights = await this._service.getByPatientUserId(patientUserId);
             if (bodyWeights.length === 0) {
-                throw new ApiError(404, 'Body weight record not found.');
+                throw new ApiError(404, 'Weight record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Body weight record retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Weight record retrieved successfully!', 200, {
                 BodyWeights : bodyWeights,
             });
         } catch (error) {
@@ -100,7 +100,7 @@ export class BodyWeightController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} body weight records retrieved successfully!`;
+                    : `Total ${count} weight records retrieved successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, { BodyWeightRecords: searchResults });
 
@@ -119,15 +119,15 @@ export class BodyWeightController {
             const id: string = await BodyWeightValidator.getById(request);
             const existingBodyWeight = await this._service.getById(id);
             if (existingBodyWeight == null) {
-                throw new ApiError(404, 'Body weight record not found.');
+                throw new ApiError(404, 'Weight record not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update body weight record!');
+                throw new ApiError(400, 'Unable to update weight record!');
             }
 
-            ResponseHandler.success(request, response, 'Body weight record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Weight record updated successfully!', 200, {
                 BodyWeight : updated,
             });
         } catch (error) {
@@ -143,15 +143,15 @@ export class BodyWeightController {
             const id: string = await BodyWeightValidator.getById(request);
             const existingBodyWeight = await this._service.getById(id);
             if (existingBodyWeight == null) {
-                throw new ApiError(404, 'Body weight record not found.');
+                throw new ApiError(404, 'Weight record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'Body weight record cannot be deleted.');
+                throw new ApiError(400, 'Weight record cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'Body weight record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Weight record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

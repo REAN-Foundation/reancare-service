@@ -103,15 +103,15 @@ export class BloodOxygenSaturationController {
             const id: string = await BloodOxygenSaturationValidator.getById(request);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
-                throw new ApiError(404, 'Blood Oxygen Saturation record not found.');
+                throw new ApiError(404, 'Blood oxygen saturation record not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update Blood Oxygen Saturation record!');
+                throw new ApiError(400, 'Unable to update blood oxygen saturation record!');
             }
 
-            ResponseHandler.success(request, response, 'Blood Oxygen Saturation record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Blood oxygen saturation record updated successfully!', 200, {
                 BloodOxygenSaturation : updated,
             });
         } catch (error) {
@@ -127,15 +127,15 @@ export class BloodOxygenSaturationController {
             const id: string = await BloodOxygenSaturationValidator.getById(request);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
-                throw new ApiError(404, 'Blood Oxygen Saturation record not found.');
+                throw new ApiError(404, 'Blood oxygen saturation record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'Blood Oxygen Saturation record cannot be deleted.');
+                throw new ApiError(400, 'Blood oxygen saturation record cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'Blood Oxygen Saturation record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Blood oxygen saturation record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

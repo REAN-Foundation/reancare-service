@@ -46,10 +46,10 @@ export class BodyHeightController {
 
             const bodyHeight = await this._service.create(domainModel);
             if (bodyHeight == null) {
-                throw new ApiError(400, 'Cannot create body height!');
+                throw new ApiError(400, 'Cannot create record for height!');
             }
 
-            ResponseHandler.success(request, response, 'Body height created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Height record created successfully!', 201, {
                 BodyHeight : bodyHeight
             });
         } catch (error) {
@@ -67,10 +67,10 @@ export class BodyHeightController {
 
             const bodyHeight = await this._service.getById(id);
             if (bodyHeight == null) {
-                throw new ApiError(404, 'Body height not found.');
+                throw new ApiError(404, 'Height record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Body height retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Height record retrieved successfully!', 200, {
                 BodyHeight : bodyHeight
             });
         } catch (error) {
@@ -91,7 +91,7 @@ export class BodyHeightController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} body height records retrieved successfully!`;
+                    : `Total ${count} height records retrieved successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, {
                 BodyHeightRecords : searchResults
@@ -112,15 +112,15 @@ export class BodyHeightController {
             const id: string = await BodyHeightValidator.getById(request);
             const existingAddress = await this._service.getById(id);
             if (existingAddress == null) {
-                throw new ApiError(404, 'Body height not found.');
+                throw new ApiError(404, 'Height record not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update body height record!');
+                throw new ApiError(400, 'Unable to update height record!');
             }
 
-            ResponseHandler.success(request, response, 'Body height record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Height record updated successfully!', 200, {
                 BodyHeight : updated
             });
         } catch (error) {
@@ -136,15 +136,15 @@ export class BodyHeightController {
             const id: string = await BodyHeightValidator.getById(request);
             const existingAddress = await this._service.getById(id);
             if (existingAddress == null) {
-                throw new ApiError(404, 'Body height not found.');
+                throw new ApiError(404, 'Height record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'Body height cannot be deleted.');
+                throw new ApiError(400, 'Height record cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'Body height record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Height record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

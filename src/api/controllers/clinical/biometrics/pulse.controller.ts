@@ -57,7 +57,7 @@ export class PulseController {
 
             const Pulse = await this._service.getById(id);
             if (Pulse == null) {
-                throw new ApiError(404, ' Pulse record not found.');
+                throw new ApiError(404, 'Pulse record not found.');
             }
 
             ResponseHandler.success(request, response, 'Pulse record retrieved successfully!', 200, {

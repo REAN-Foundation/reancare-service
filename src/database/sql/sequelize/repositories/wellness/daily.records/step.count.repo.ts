@@ -21,8 +21,7 @@ export class StepCountRepo implements IStepCountRepo {
                 RecordDate    : stepCountDomainModel.RecordDate ?? null,
             };
             const stepCount = await StepCount.create(entity);
-            const dto = await StepCountMapper.toDto(stepCount);
-            return dto;
+            return await StepCountMapper.toDto(stepCount);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -32,8 +31,7 @@ export class StepCountRepo implements IStepCountRepo {
     getById = async (id: string): Promise<StepCountDto> => {
         try {
             const stepCount = await StepCount.findByPk(id);
-            const dto = await StepCountMapper.toDto(stepCount);
-            return dto;
+            return await StepCountMapper.toDto(stepCount);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -45,7 +43,7 @@ export class StepCountRepo implements IStepCountRepo {
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
-                search.where['PatientUserId'] = { [Op.eq]: filters.PatientUserId };
+                search.where['PatientUserId'] = filters.PatientUserId;
             }
             if (filters.MinValue != null && filters.MaxValue != null) {
                 search.where['StepCount'] = {
@@ -132,8 +130,7 @@ export class StepCountRepo implements IStepCountRepo {
 
             await stepCount.save();
 
-            const dto = await StepCountMapper.toDto(stepCount);
-            return dto;
+            return await StepCountMapper.toDto(stepCount);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

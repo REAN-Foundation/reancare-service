@@ -1,12 +1,12 @@
-import { ISymptomTypeRepo } from '../../../../../repository.interfaces/clinical/symptom/symptom.type.repo.interface';
-import SymptomType from '../../../models/clinical/symptom/symptom.type.model';
 import { Op } from 'sequelize';
-import { SymptomTypeMapper } from '../../../mappers/clinical/symptom/symptom.type.mapper';
-import { Logger } from '../../../../../../common/logger';
 import { ApiError } from '../../../../../../common/api.error';
+import { Logger } from '../../../../../../common/logger';
 import { SymptomTypeDomainModel } from '../../../../../../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model';
 import { SymptomTypeDto } from '../../../../../../domain.types/clinical/symptom/symptom.type/symptom.type.dto';
 import { SymptomTypeSearchFilters, SymptomTypeSearchResults } from '../../../../../../domain.types/clinical/symptom/symptom.type/symptom.type.search.types';
+import { ISymptomTypeRepo } from '../../../../../repository.interfaces/clinical/symptom/symptom.type.repo.interface';
+import { SymptomTypeMapper } from '../../../mappers/clinical/symptom/symptom.type.mapper';
+import SymptomType from '../../../models/clinical/symptom/symptom.type.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -40,6 +40,20 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
         }
     };
 
+    getByName = async (name: string): Promise<SymptomTypeDto> => {
+        try {
+            const symptomType = await SymptomType.findOne({
+                where : {
+                    Symptom : { [Op.like]: '%' + name + '%' }
+                }
+            });
+            return SymptomTypeMapper.toDto(symptomType);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+    
     search = async (filters: SymptomTypeSearchFilters): Promise<SymptomTypeSearchResults> => {
         try {
             const search = { where: {} };

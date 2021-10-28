@@ -82,7 +82,7 @@ export class BodyTemperatureController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} Body temperature records retrieved successfully!`;
+                    : `Total ${count} body temperature records retrieved successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, {
                 BodyTemperatureRecords : searchResults });

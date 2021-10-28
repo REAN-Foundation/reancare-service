@@ -12,15 +12,15 @@ import BloodGlucoseModel from "../../../models/clinical/biometrics/blood.glucose
 
 export class BloodGlucoseRepo implements IBloodGlucoseRepo {
 
-    create = async (bloodGlucoseDomainModel: BloodGlucoseDomainModel):
+    create = async (createModel: BloodGlucoseDomainModel):
     Promise<BloodGlucoseDto> => {
         try {
             const entity = {
-                PatientUserId    : bloodGlucoseDomainModel.PatientUserId,
-                BloodGlucose     : bloodGlucoseDomainModel.BloodGlucose,
-                Unit             : bloodGlucoseDomainModel.Unit,
-                RecordDate       : bloodGlucoseDomainModel.RecordDate,
-                RecordedByUserId : bloodGlucoseDomainModel.RecordedByUserId,
+                PatientUserId    : createModel.PatientUserId,
+                BloodGlucose     : createModel.BloodGlucose,
+                Unit             : createModel.Unit,
+                RecordDate       : createModel.RecordDate,
+                RecordedByUserId : createModel.RecordedByUserId,
             };
 
             const bloodGlucose = await BloodGlucoseModel.create(entity);
@@ -129,25 +129,25 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
         }
     };
 
-    update = async (id: string, bloodGlucoseDomainModel: BloodGlucoseDomainModel):
+    update = async (id: string, updateModel: BloodGlucoseDomainModel):
     Promise<BloodGlucoseDto> => {
         try {
             const bloodGlucose = await BloodGlucoseModel.findByPk(id);
 
-            if (bloodGlucoseDomainModel.PatientUserId != null) {
-                bloodGlucose.PatientUserId = bloodGlucoseDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                bloodGlucose.PatientUserId = updateModel.PatientUserId;
             }
-            if (bloodGlucoseDomainModel.BloodGlucose != null) {
-                bloodGlucose.BloodGlucose = bloodGlucoseDomainModel.BloodGlucose;
+            if (updateModel.BloodGlucose != null) {
+                bloodGlucose.BloodGlucose = updateModel.BloodGlucose;
             }
-            if (bloodGlucoseDomainModel.Unit != null) {
-                bloodGlucose.Unit = bloodGlucoseDomainModel.Unit;
+            if (updateModel.Unit != null) {
+                bloodGlucose.Unit = updateModel.Unit;
             }
-            if (bloodGlucoseDomainModel.RecordDate != null) {
-                bloodGlucose.RecordDate = bloodGlucoseDomainModel.RecordDate;
+            if (updateModel.RecordDate != null) {
+                bloodGlucose.RecordDate = updateModel.RecordDate;
             }
-            if (bloodGlucoseDomainModel.RecordedByUserId != null) {
-                bloodGlucose.RecordedByUserId = bloodGlucoseDomainModel.RecordedByUserId;
+            if (updateModel.RecordedByUserId != null) {
+                bloodGlucose.RecordedByUserId = updateModel.RecordedByUserId;
             }
     
             await bloodGlucose.save();
@@ -161,8 +161,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            Logger.instance().log(id);
-
+            
             const result = await BloodGlucoseModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {

@@ -1,5 +1,4 @@
 import express from 'express';
-//import { Helper } from '../../../../common/helper';
 import { BloodGlucoseDomainModel } from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model';
 import { BloodGlucoseSearchFilters } from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.search.types';
 import { BaseValidator, Where } from '../../base.validator';
@@ -29,14 +28,6 @@ export class BloodGlucoseValidator extends BaseValidator {
         await this.validateCreateBody(request);
         return this.getDomainModel(request);
     };
-
-    //getById = async (request: express.Request): Promise<string> => {
-    // return await BloodGlucoseValidator.getParamId(request);
-    //};
-
-    //delete = async (request: express.Request): Promise<string> => {
-    //return await BloodGlucoseValidator.getParamId(request);
-    //};
 
     search = async (request: express.Request): Promise<BloodGlucoseSearchFilters> => {
 
@@ -99,20 +90,5 @@ export class BloodGlucoseValidator extends BaseValidator {
         };
         return this.updateBaseSearchFilters(request, filters);
     }
-
-    /* private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
-    }*/
 
 }

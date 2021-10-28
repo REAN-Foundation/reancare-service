@@ -1,43 +1,43 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BodyWeightService } from '../../../../services/clinical/biometrics/body.weight.service';
 import { Loader } from '../../../../startup/loader';
 import { BodyWeightValidator } from '../../../validators/clinical/biometrics/body.weight.validator';
+import { BaseController } from '../../base.controller';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BodyWeightController {
+export class BodyWeightController extends BaseController {
 
     //#region member variables and constructors
 
     _service: BodyWeightService = null;
 
-    _authorizer: Authorizer = null;
+    _validator: BodyWeightValidator = new BodyWeightValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(BodyWeightService);
-        this._authorizer = Loader.authorizer;
     }
-
     //#endregion
 
     //#region Action methods
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyWeight.Create';
-            await this._authorizer.authorize(request, response);
             
-            const domainModel = await BodyWeightValidator.create(request);
+            this.setContext('Biometrics.BodyWeight.Create', request, response);
 
-            const bodyWeight = await this._service.create(domainModel);
+            const model = await this._validator.create(request);
+            const bodyWeight = await this._service.create(model);
             if (bodyWeight == null) {
-                throw new ApiError(400, 'Cannot create body weight record!');
+                throw new ApiError(400, 'Cannot create weight record!');
             }
 
-            ResponseHandler.success(request, response, 'Body weight record created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Weight record created successfully!', 201, {
                 BodyWeight : bodyWeight,
             });
         } catch (error) {
@@ -47,40 +47,17 @@ export class BodyWeightController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyWeight.GetById';
             
-            await this._authorizer.authorize(request, response);
+            this.setContext('Biometrics.BodyWeight.GetById', request, response);
 
-            const id: string = await BodyWeightValidator.getById(request);
-
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const bodyWeight = await this._service.getById(id);
             if (bodyWeight == null) {
-                throw new ApiError(404, 'Body Weight record not found.');
+                throw new ApiError(404, 'Weight record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Body weight record retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Weight record retrieved successfully!', 200, {
                 BodyWeight : bodyWeight,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    getByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'Biometrics.BodyWeight.GetByPatientUserId';
-            
-            await this._authorizer.authorize(request, response);
-
-            const patientUserId: string = await BodyWeightValidator.getByPatientUserId(request);
-
-            const bodyWeights = await this._service.getByPatientUserId(patientUserId);
-            if (bodyWeights.length === 0) {
-                throw new ApiError(404, 'Body weight record not found.');
-            }
-
-            ResponseHandler.success(request, response, 'Body weight record retrieved successfully!', 200, {
-                BodyWeights : bodyWeights,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -89,10 +66,12 @@ export class BodyWeightController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyWeight.Search';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Biometrics.BodyWeight.Search', request, response);
 
-            const filters = await BodyWeightValidator.search(request);
+            const filters = await this._validator.search(request);
+
+            Logger.instance().log(`afre validation: ${JSON.stringify(filters)}`);
 
             const searchResults = await this._service.search(filters);
 
@@ -100,7 +79,7 @@ export class BodyWeightController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} body weight records retrieved successfully!`;
+                    : `Total ${count} weight records retrieved successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, { BodyWeightRecords: searchResults });
 
@@ -111,23 +90,22 @@ export class BodyWeightController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyWeight.Update';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Biometrics.BodyWeight.Update', request, response);
 
-            const domainModel = await BodyWeightValidator.update(request);
-
-            const id: string = await BodyWeightValidator.getById(request);
-            const existingBodyWeight = await this._service.getById(id);
-            if (existingBodyWeight == null) {
-                throw new ApiError(404, 'Body weight record not found.');
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Weight record not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update body weight record!');
+                throw new ApiError(400, 'Unable to update weight record!');
             }
 
-            ResponseHandler.success(request, response, 'Body weight record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Weight record updated successfully!', 200, {
                 BodyWeight : updated,
             });
         } catch (error) {
@@ -137,21 +115,21 @@ export class BodyWeightController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyWeight.Delete';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Biometrics.BodyWeight.Delete', request, response);
 
-            const id: string = await BodyWeightValidator.getById(request);
-            const existingBodyWeight = await this._service.getById(id);
-            if (existingBodyWeight == null) {
-                throw new ApiError(404, 'Body weight record not found.');
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Weight record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'Body weight record cannot be deleted.');
+                throw new ApiError(400, 'Weight record cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'Body weight record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Weight record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

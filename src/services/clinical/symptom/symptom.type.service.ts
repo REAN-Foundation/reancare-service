@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { ISymptomTypeRepo } from "../../../database/repository.interfaces/clinical/symptom/symptom.type.repo.interface";
 import { SymptomTypeDomainModel } from '../../../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model';
 import { SymptomTypeDto } from '../../../domain.types/clinical/symptom/symptom.type/symptom.type.dto';
-import { SymptomTypeSearchResults, SymptomTypeSearchFilters } from '../../../domain.types/clinical/symptom/symptom.type/symptom.type.search.types';
+import { SymptomTypeSearchFilters, SymptomTypeSearchResults } from '../../../domain.types/clinical/symptom/symptom.type/symptom.type.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,8 +13,8 @@ export class SymptomTypeService {
         @inject('ISymptomTypeRepo') private _symptomTypeRepo: ISymptomTypeRepo,
     ) {}
 
-    create = async (addressDomainModel: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
-        return await this._symptomTypeRepo.create(addressDomainModel);
+    create = async (domainModel: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
+        return await this._symptomTypeRepo.create(domainModel);
     };
 
     getById = async (id: string): Promise<SymptomTypeDto> => {
@@ -25,8 +25,8 @@ export class SymptomTypeService {
         return await this._symptomTypeRepo.search(filters);
     };
 
-    update = async (id: string, addressDomainModel: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
-        return await this._symptomTypeRepo.update(id, addressDomainModel);
+    update = async (id: string, domainModel: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
+        return await this._symptomTypeRepo.update(id, domainModel);
     };
 
     delete = async (id: string): Promise<boolean> => {

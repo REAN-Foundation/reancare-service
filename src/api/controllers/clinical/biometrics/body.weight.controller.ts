@@ -6,7 +6,6 @@ import { BodyWeightService } from '../../../../services/clinical/biometrics/body
 import { Loader } from '../../../../startup/loader';
 import { BodyWeightValidator } from '../../../validators/clinical/biometrics/body.weight.validator';
 import { BaseController } from '../../base.controller';
-import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,9 +69,6 @@ export class BodyWeightController extends BaseController {
             this.setContext('Biometrics.BodyWeight.Search', request, response);
 
             const filters = await this._validator.search(request);
-
-            Logger.instance().log(`afre validation: ${JSON.stringify(filters)}`);
-
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;

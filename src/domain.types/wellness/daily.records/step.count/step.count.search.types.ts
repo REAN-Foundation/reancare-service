@@ -11,11 +11,5 @@ export interface StepCountSearchFilters extends BaseSearchFilters{
 }
 
 export interface StepCountSearchResults extends BaseSearchResults{
-    TotalCount    : number;
-    RetrievedCount: number;
-    PageIndex     : number;
-    ItemsPerPage  : number;
-    Order         : string;
-    OrderedBy     : string;
     Items         : StepCountDto[];
 }

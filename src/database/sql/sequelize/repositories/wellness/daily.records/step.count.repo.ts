@@ -12,13 +12,13 @@ import StepCount from '../../../models/wellness/daily.records/step.count.model';
 
 export class StepCountRepo implements IStepCountRepo {
 
-    create = async (stepCountDomainModel: StepCountDomainModel): Promise<StepCountDto> => {
+    create = async (createModel: StepCountDomainModel): Promise<StepCountDto> => {
         try {
             const entity = {
-                PatientUserId : stepCountDomainModel.PatientUserId ?? null,
-                StepCount     : stepCountDomainModel.StepCount ?? null,
-                Unit          : stepCountDomainModel.Unit ?? null,
-                RecordDate    : stepCountDomainModel.RecordDate ?? null,
+                PatientUserId : createModel.PatientUserId ?? null,
+                StepCount     : createModel.StepCount ?? null,
+                Unit          : createModel.Unit ?? null,
+                RecordDate    : createModel.RecordDate ?? null,
             };
             const stepCount = await StepCount.create(entity);
             return await StepCountMapper.toDto(stepCount);
@@ -114,18 +114,18 @@ export class StepCountRepo implements IStepCountRepo {
         }
     };
 
-    update = async (id: string, stepCountDomainModel: StepCountDomainModel): Promise<StepCountDto> => {
+    update = async (id: string, updateModel: StepCountDomainModel): Promise<StepCountDto> => {
         try {
             const stepCount = await StepCount.findByPk(id);
 
-            if (stepCountDomainModel.PatientUserId != null) {
-                stepCount.PatientUserId = stepCountDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                stepCount.PatientUserId = updateModel.PatientUserId;
             }
-            if (stepCountDomainModel.StepCount != null) {
-                stepCount.StepCount = stepCountDomainModel.StepCount;
+            if (updateModel.StepCount != null) {
+                stepCount.StepCount = updateModel.StepCount;
             }
-            if (stepCountDomainModel.Unit != null) {
-                stepCount.Unit = stepCountDomainModel.Unit;
+            if (updateModel.Unit != null) {
+                stepCount.Unit = updateModel.Unit;
             }
 
             await stepCount.save();

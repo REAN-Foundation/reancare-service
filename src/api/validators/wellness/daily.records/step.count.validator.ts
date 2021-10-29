@@ -28,13 +28,6 @@ export class StepCountValidator extends BaseValidator {
         return this.getDomainModel(request);
     };
 
-    /* getById = async (request: express.Request): Promise<string> => {
-        return await this.getParamUuid(request, 'id');
-    };
-
-    delete = async (request: express.Request): Promise<string> => {
-        return await this.getParamUuid(request, 'id');
-    };*/
     search = async (request: express.Request): Promise<StepCountSearchFilters> => {
 
         await this.validateUuid(request, 'patientUserId', Where.Query, false, false);

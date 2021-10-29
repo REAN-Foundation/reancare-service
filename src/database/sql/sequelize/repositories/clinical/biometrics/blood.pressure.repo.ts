@@ -12,21 +12,20 @@ import BloodPressureModel from '../../../models/clinical/biometrics/blood.pressu
 
 export class BloodPressureRepo implements IBloodPressureRepo {
 
-    create = async (bloodPressureDomainModel: BloodPressureDomainModel):
+    create = async (createModel: BloodPressureDomainModel):
     Promise<BloodPressureDto> => {
         try {
             const entity = {
-                PatientUserId    : bloodPressureDomainModel.PatientUserId,
-                Systolic         : bloodPressureDomainModel.Systolic,
-                Diastolic        : bloodPressureDomainModel.Diastolic,
-                Unit             : bloodPressureDomainModel.Unit,
-                RecordDate       : bloodPressureDomainModel.RecordDate,
-                RecordedByUserId : bloodPressureDomainModel.RecordedByUserId
+                PatientUserId    : createModel.PatientUserId,
+                Systolic         : createModel.Systolic,
+                Diastolic        : createModel.Diastolic,
+                Unit             : createModel.Unit,
+                RecordDate       : createModel.RecordDate,
+                RecordedByUserId : createModel.RecordedByUserId
             };
 
             const bloodPressure = await BloodPressureModel.create(entity);
-            const dto = await BloodPressureMapper.toDto(bloodPressure);
-            return dto;
+            return await BloodPressureMapper.toDto(bloodPressure);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -36,8 +35,7 @@ export class BloodPressureRepo implements IBloodPressureRepo {
     getById = async (id: string): Promise<BloodPressureDto> => {
         try {
             const bloodPressure = await BloodPressureModel.findByPk(id);
-            const dto = await BloodPressureMapper.toDto(bloodPressure);
-            return dto;
+            return await BloodPressureMapper.toDto(bloodPressure);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -146,34 +144,34 @@ export class BloodPressureRepo implements IBloodPressureRepo {
         }
     };
 
-    update = async (id: string, bloodPressureDomainModel: BloodPressureDomainModel):
+    update = async (id: string, updateModel: BloodPressureDomainModel):
     Promise<BloodPressureDto> => {
         try {
             const bloodPressure = await BloodPressureModel.findByPk(id);
 
-            if (bloodPressureDomainModel.PatientUserId != null) {
-                bloodPressure.PatientUserId = bloodPressureDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                bloodPressure.PatientUserId = updateModel.PatientUserId;
             }
-            if (bloodPressureDomainModel.Systolic != null) {
-                bloodPressure.Systolic = bloodPressureDomainModel.Systolic;
+            if (updateModel.Systolic != null) {
+                bloodPressure.Systolic = updateModel.Systolic;
             }
-            if (bloodPressure.Diastolic != null) {
-                bloodPressure.Diastolic = bloodPressureDomainModel.Diastolic;
+            if (updateModel.Diastolic != null) {
+                bloodPressure.Diastolic = updateModel.Diastolic;
             }
-            if (bloodPressureDomainModel.Unit != null) {
-                bloodPressure.Unit = bloodPressureDomainModel.Unit;
+            if (updateModel.Unit != null) {
+                bloodPressure.Unit = updateModel.Unit;
             }
-            if (bloodPressureDomainModel.RecordDate != null) {
-                bloodPressure.RecordDate = bloodPressureDomainModel.RecordDate;
+            if (updateModel.RecordDate != null) {
+                bloodPressure.RecordDate = updateModel.RecordDate;
             }
-            if (bloodPressureDomainModel.RecordedByUserId != null) {
-                bloodPressure.RecordedByUserId = bloodPressureDomainModel.RecordedByUserId;
+            if (updateModel.RecordedByUserId != null) {
+                bloodPressure.RecordedByUserId = updateModel.RecordedByUserId;
             }
     
             await bloodPressure.save();
 
-            const dto = await BloodPressureMapper.toDto(bloodPressure);
-            return dto;
+            return await BloodPressureMapper.toDto(bloodPressure);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -182,7 +180,6 @@ export class BloodPressureRepo implements IBloodPressureRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            Logger.instance().log(id);
 
             const result = await BloodPressureModel.destroy({ where: { id: id } });
             return result === 1;

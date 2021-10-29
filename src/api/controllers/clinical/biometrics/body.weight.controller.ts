@@ -1,38 +1,37 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BodyWeightService } from '../../../../services/clinical/biometrics/body.weight.service';
 import { Loader } from '../../../../startup/loader';
 import { BodyWeightValidator } from '../../../validators/clinical/biometrics/body.weight.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BodyWeightController {
+export class BodyWeightController extends BaseController {
 
     //#region member variables and constructors
 
     _service: BodyWeightService = null;
 
-    _authorizer: Authorizer = null;
+    _validator: BodyWeightValidator = new BodyWeightValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(BodyWeightService);
-        this._authorizer = Loader.authorizer;
     }
-
     //#endregion
 
     //#region Action methods
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyWeight.Create';
-            await this._authorizer.authorize(request, response);
             
-            const domainModel = await BodyWeightValidator.create(request);
+            this.setContext('Biometrics.BodyWeight.Create', request, response);
 
-            const bodyWeight = await this._service.create(domainModel);
+            const model = await this._validator.create(request);
+            const bodyWeight = await this._service.create(model);
             if (bodyWeight == null) {
                 throw new ApiError(400, 'Cannot create weight record!');
             }
@@ -47,12 +46,10 @@ export class BodyWeightController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyWeight.GetById';
             
-            await this._authorizer.authorize(request, response);
+            this.setContext('Biometrics.BodyWeight.GetById', request, response);
 
-            const id: string = await BodyWeightValidator.getById(request);
-
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const bodyWeight = await this._service.getById(id);
             if (bodyWeight == null) {
                 throw new ApiError(404, 'Weight record not found.');
@@ -66,34 +63,12 @@ export class BodyWeightController {
         }
     };
 
-    getByPatientUserId = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'Biometrics.BodyWeight.GetByPatientUserId';
-            
-            await this._authorizer.authorize(request, response);
-
-            const patientUserId: string = await BodyWeightValidator.getByPatientUserId(request);
-
-            const bodyWeights = await this._service.getByPatientUserId(patientUserId);
-            if (bodyWeights.length === 0) {
-                throw new ApiError(404, 'Weight record not found.');
-            }
-
-            ResponseHandler.success(request, response, 'Weight record retrieved successfully!', 200, {
-                BodyWeights : bodyWeights,
-            });
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyWeight.Search';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Biometrics.BodyWeight.Search', request, response);
 
-            const filters = await BodyWeightValidator.search(request);
-
+            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -111,14 +86,13 @@ export class BodyWeightController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyWeight.Update';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Biometrics.BodyWeight.Update', request, response);
 
-            const domainModel = await BodyWeightValidator.update(request);
-
-            const id: string = await BodyWeightValidator.getById(request);
-            const existingBodyWeight = await this._service.getById(id);
-            if (existingBodyWeight == null) {
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
                 throw new ApiError(404, 'Weight record not found.');
             }
 
@@ -137,12 +111,12 @@ export class BodyWeightController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyWeight.Delete';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Biometrics.BodyWeight.Delete', request, response);
 
-            const id: string = await BodyWeightValidator.getById(request);
-            const existingBodyWeight = await this._service.getById(id);
-            if (existingBodyWeight == null) {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
                 throw new ApiError(404, 'Weight record not found.');
             }
 

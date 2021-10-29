@@ -1,27 +1,26 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BloodPressureService } from '../../../../services/clinical/biometrics/blood.pressure.service';
 import { Loader } from '../../../../startup/loader';
 import { BloodPressureValidator } from '../../../validators/clinical/biometrics/blood.pressure.validator';
+import { BaseController } from '../../base.controller';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BloodPressureController {
+export class BloodPressureController extends BaseController {
 
     //#region member variables and constructors
 
     _service: BloodPressureService = null;
 
-    _authorizer: Authorizer = null;
-
-    _personService: any;
+    _validator: BloodPressureValidator = new BloodPressureValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(BloodPressureService);
-        this._authorizer = Loader.authorizer;
-
     }
 
     //#endregion
@@ -30,17 +29,17 @@ export class BloodPressureController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BloodPressure.Create';
+            
+            this.setContext('Biometrics.BloodPressure.Create', request, response);
 
-            const bloodPressureDomainModel = await BloodPressureValidator.create(request);
-
-            const BloodPressure = await this._service.create(bloodPressureDomainModel);
-            if (BloodPressure == null) {
+            const model = await this._validator.create(request);
+            const bloodPressure = await this._service.create(model);
+            if (bloodPressure == null) {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
             }
 
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
-                BloodPressure : BloodPressure,
+                BloodPressure : bloodPressure,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -49,19 +48,17 @@ export class BloodPressureController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BloodPressure.GetById';
             
-            await this._authorizer.authorize(request, response);
+            this.setContext('Biometrics.BloodPressure.GetById', request, response);
 
-            const id: string = await BloodPressureValidator.getById(request);
-
-            const BloodPressure = await this._service.getById(id);
-            if (BloodPressure == null) {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const bloodPressure = await this._service.getById(id);
+            if (bloodPressure == null) {
                 throw new ApiError(404, ' Blood pressure record not found.');
             }
 
             ResponseHandler.success(request, response, 'Blood pressure record retrieved successfully!', 200, {
-                BloodPressure : BloodPressure,
+                BloodPressure : bloodPressure,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -70,12 +67,14 @@ export class BloodPressureController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BloodPressure.Search';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Biometrics.BloodPressure.Search', request, response);
 
-            const filters = await BloodPressureValidator.search(request);
-
+            Logger.instance().log(`trying to fetch data for search...`);
+            const filters = await this._validator.search(request);
+            Logger.instance().log(`Validations passed:: ${JSON.stringify(filters)}`);
             const searchResults = await this._service.search(filters);
+            Logger.instance().log(`result length.: ${searchResults.Items.length}`);
 
             const count = searchResults.Items.length;
 
@@ -94,13 +93,11 @@ export class BloodPressureController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BloodPressure.Update';
+            
+            this.setContext('Biometrics.BloodPressure.Update', request, response);
 
-            await this._authorizer.authorize(request, response);
-
-            const domainModel = await BloodPressureValidator.update(request);
-
-            const id: string = await BloodPressureValidator.getById(request);
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Blood Pressure record not found.');
@@ -108,10 +105,10 @@ export class BloodPressureController {
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update Blood Pressure record!');
+                throw new ApiError(400, 'Unable to update blood pressure record!');
             }
 
-            ResponseHandler.success(request, response, 'Blood Pressure record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Blood pressure record updated successfully!', 200, {
                 BloodPressure : updated,
             });
         } catch (error) {
@@ -121,21 +118,21 @@ export class BloodPressureController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BloodPressure.Delete';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Biometrics.BloodPressure.Delete', request, response);
 
-            const id: string = await BloodPressureValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
-                throw new ApiError(404, 'Blood Pressure record not found.');
+                throw new ApiError(404, 'Blood pressure record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'Blood Pressure record cannot be deleted.');
+                throw new ApiError(400, 'Blood pressure record cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'Blood Pressure record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Blood pressure record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

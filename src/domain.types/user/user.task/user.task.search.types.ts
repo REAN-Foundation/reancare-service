@@ -4,7 +4,7 @@ import { UserTaskDto } from "./user.task.dto";
 export interface UserTaskSearchFilters {
     UserId?         : string;
     Task?           : string;
-    Category?       : number;
+    Category?       : string;
     ActionType      : string;
     ActionId?       : string;
     ScheduledFrom?  : Date;

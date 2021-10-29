@@ -12,19 +12,18 @@ import BodyWeight from '../../../models/clinical/biometrics/body.weight.model';
 
 export class BodyWeightRepo implements IBodyWeightRepo {
 
-    create = async (bodyWeightDomainModel: BodyWeightDomainModel): Promise<BodyWeightDto> => {
+    create = async (createModel: BodyWeightDomainModel): Promise<BodyWeightDto> => {
         try {
             const entity = {
-                PatientUserId    : bodyWeightDomainModel.PatientUserId,
-                BodyWeight       : bodyWeightDomainModel.BodyWeight,
-                Unit             : bodyWeightDomainModel.Unit,
-                RecordDate       : bodyWeightDomainModel.RecordDate ?? null,
-                RecordedByUserId : bodyWeightDomainModel.RecordedByUserId ?? null,
+                PatientUserId    : createModel.PatientUserId,
+                BodyWeight       : createModel.BodyWeight,
+                Unit             : createModel.Unit,
+                RecordDate       : createModel.RecordDate ?? null,
+                RecordedByUserId : createModel.RecordedByUserId ?? null,
             };
 
             const bodyWeight = await BodyWeight.create(entity);
-            const dto = await BodyWeightMapper.toDto(bodyWeight);
-            return dto;
+            return await BodyWeightMapper.toDto(bodyWeight);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -34,23 +33,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
     getById = async (id: string): Promise<BodyWeightDto> => {
         try {
             const bodyWeight = await BodyWeight.findByPk(id);
-            const dto = await BodyWeightMapper.toDto(bodyWeight);
-            return dto;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    getByPatientUserId = async (patientUserId: string): Promise<BodyWeightDto[]> => {
-        try {
-            const dtos = [];
-            const bodyWeights = await BodyWeight.findAll({ where: { PatientUserId: patientUserId } });
-            for (const bodyWeight of bodyWeights) {
-                const dto = await BodyWeightMapper.toDto(bodyWeight);
-                dtos.push(dto);
-            }
-            return dtos;
+            return await BodyWeightMapper.toDto(bodyWeight);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -140,30 +123,30 @@ export class BodyWeightRepo implements IBodyWeightRepo {
         }
     };
 
-    update = async (id: string, bodyWeightDomainModel: BodyWeightDomainModel): Promise<BodyWeightDto> => {
+    update = async (id: string, updateModel: BodyWeightDomainModel): Promise<BodyWeightDto> => {
         try {
             const bodyWeight = await BodyWeight.findByPk(id);
 
-            if (bodyWeightDomainModel.PatientUserId != null) {
-                bodyWeight.PatientUserId = bodyWeightDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                bodyWeight.PatientUserId = updateModel.PatientUserId;
             }
-            if (bodyWeightDomainModel.BodyWeight != null) {
-                bodyWeight.BodyWeight = bodyWeightDomainModel.BodyWeight;
+            if (updateModel.BodyWeight != null) {
+                bodyWeight.BodyWeight = updateModel.BodyWeight;
             }
-            if (bodyWeightDomainModel.Unit != null) {
-                bodyWeight.Unit = bodyWeightDomainModel.Unit;
+            if (updateModel.Unit != null) {
+                bodyWeight.Unit = updateModel.Unit;
             }
-            if (bodyWeightDomainModel.RecordDate != null) {
-                bodyWeight.RecordDate = bodyWeightDomainModel.RecordDate;
+            if (updateModel.RecordDate != null) {
+                bodyWeight.RecordDate = updateModel.RecordDate;
             }
-            if (bodyWeightDomainModel.RecordedByUserId != null) {
-                bodyWeight.RecordedByUserId = bodyWeightDomainModel.RecordedByUserId;
+            if (updateModel.RecordedByUserId != null) {
+                bodyWeight.RecordedByUserId = updateModel.RecordedByUserId;
             }
 
             await bodyWeight.save();
 
-            const dto = await BodyWeightMapper.toDto(bodyWeight);
-            return dto;
+            return await BodyWeightMapper.toDto(bodyWeight);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -172,8 +155,8 @@ export class BodyWeightRepo implements IBodyWeightRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            await BodyWeight.destroy({ where: { id: id } });
-            return true;
+            const result = await BodyWeight.destroy({ where: { id: id } });
+            return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

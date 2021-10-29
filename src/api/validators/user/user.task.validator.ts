@@ -1,7 +1,11 @@
 import express from 'express';
-import { ProgressStatus } from '../../../domain.types/miscellaneous/system.types';
+import { TimeHelper } from '../../../common/time.helper';
+import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
+import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { UserTaskDomainModel } from '../../../domain.types/user/user.task/user.task.domain.model';
 import { UserTaskSearchFilters } from '../../../domain.types/user/user.task/user.task.search.types';
+import { UserService } from '../../../services/user/user.service';
+import { Loader } from '../../../startup/loader';
 import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -112,9 +116,10 @@ export class UserTaskValidator extends BaseValidator{
          this.validateRequest(request);
      }
 
-     private  getFilter(request): UserTaskSearchFilters {
+     private  async getFilter(request: express.Request): Promise<UserTaskSearchFilters> {
 
          var status: ProgressStatus = null;
+
          if (request.query.status) {
              if (request.query.status === 'inProgress') {
                  status = ProgressStatus.InProgress;
@@ -133,17 +138,36 @@ export class UserTaskValidator extends BaseValidator{
              }
          }
 
+         var userId = request.currentUser.UserId;
+         if (request.query.userId !== undefined) {
+             userId = request.query.userId as uuid;
+         }
+
+         var userService = Loader.container.resolve(UserService);
+
+         var scheduledFrom: Date = null;
+         if (request.query.scheduledFrom)
+         {
+             scheduledFrom = await userService.getDateInUserTimeZone(userId, request.body.scheduledFrom);
+         }
+         var scheduledTo: Date = null;
+         if (request.query.scheduledTo)
+         {
+             scheduledTo = await userService.getDateInUserTimeZone(userId, request.body.scheduledTo);
+             if (scheduledFrom.getTime() === scheduledTo.getTime()) {
+                 scheduledTo = TimeHelper.addDuration(scheduledFrom, 1, DurationType.Day);
+             }
+         }
+
          var filters: UserTaskSearchFilters = {
-             UserId          : request.query.userId,
-             Task            : request.query.Task,
-             Category        : request.query.category,
-             ActionType      : request.query.actionType,
-             ActionId        : request.query.actionId,
-             ScheduledFrom   : request.query.scheduledFrom,
-             ScheduledTo     : request.query.scheduledTo,
-             Status          : status,
-             CreatedDateFrom : request.query.createdDateFrom,
-             CreatedDateTo   : request.query.createdDateTo
+             UserId        : userId,
+             Task          : request.query.Task as string ?? null,
+             Category      : request.query.category as string ?? null,
+             ActionType    : request.query.actionType as string ?? null,
+             ActionId      : request.query.actionId as uuid ?? null,
+             ScheduledFrom : scheduledFrom,
+             ScheduledTo   : scheduledTo,
+             Status        : status,
          };
          
          return this.updateBaseSearchFilters(request, filters);

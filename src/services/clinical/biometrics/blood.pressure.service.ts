@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IBloodPressureRepo } from "../../../database/repository.interfaces/clinical/biometrics/blood.pressure.repo.interface";
 import { BloodPressureDomainModel } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
@@ -18,7 +19,7 @@ export class BloodPressureService {
         return await this._bloodPressureRepo.create(bloodPressureDomainModel);
     };
 
-    getById = async (id: string): Promise<BloodPressureDto> => {
+    getById = async (id: uuid): Promise<BloodPressureDto> => {
         return await this._bloodPressureRepo.getById(id);
     };
 
@@ -26,12 +27,12 @@ export class BloodPressureService {
         return await this._bloodPressureRepo.search(filters);
     };
 
-    update = async (id: string, bloodPressureDomainModel: BloodPressureDomainModel):
+    update = async (id: uuid, bloodPressureDomainModel: BloodPressureDomainModel):
     Promise<BloodPressureDto> => {
         return await this._bloodPressureRepo.update(id, bloodPressureDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._bloodPressureRepo.delete(id);
     };
 

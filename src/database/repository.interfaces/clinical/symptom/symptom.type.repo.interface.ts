@@ -8,6 +8,8 @@ export interface ISymptomTypeRepo {
 
     getById(id: string): Promise<SymptomTypeDto>;
 
+    getByName(name: string): Promise<SymptomTypeDto>;
+
     search(filters: SymptomTypeSearchFilters): Promise<SymptomTypeSearchResults>;
 
     update(id: string, addressDomainModel: SymptomTypeDomainModel): Promise<SymptomTypeDto>;

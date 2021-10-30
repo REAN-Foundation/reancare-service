@@ -13,7 +13,7 @@ export class StepCountMapper {
         const dto: StepCountDto = {
             id            : stepCount.id,
             PatientUserId : stepCount.PatientUserId,
-            StepCount     : parseInt(String(stepCount.StepCount)),
+            StepCount     : stepCount.StepCount,
             Unit          : stepCount.Unit,
             RecordDate    : stepCount.RecordDate,
         };

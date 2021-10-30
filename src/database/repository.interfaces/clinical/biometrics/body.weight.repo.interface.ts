@@ -8,8 +8,6 @@ export interface IBodyWeightRepo {
 
     getById(id: string): Promise<BodyWeightDto>;
 
-    getByPatientUserId(patientUserId: string): Promise<BodyWeightDto[]>;
-
     search(filters: BodyWeightSearchFilters): Promise<BodyWeightSearchResults>;
 
     update(id: string, bodyWeightDomainModel: BodyWeightDomainModel): Promise<BodyWeightDto>;

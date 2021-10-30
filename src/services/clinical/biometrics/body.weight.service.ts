@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IBodyWeightRepo } from "../../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface";
 import { BodyWeightDomainModel } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
@@ -17,23 +18,19 @@ export class BodyWeightService {
         return await this._bodyWeightRepo.create(bodyWeightDomainModel);
     };
 
-    getById = async (id: string): Promise<BodyWeightDto> => {
+    getById = async (id: uuid): Promise<BodyWeightDto> => {
         return await this._bodyWeightRepo.getById(id);
-    };
-
-    getByPatientUserId = async (patientUserId: string): Promise<BodyWeightDto[]> => {
-        return await this._bodyWeightRepo.getByPatientUserId(patientUserId);
     };
 
     search = async (filters: BodyWeightSearchFilters): Promise<BodyWeightSearchResults> => {
         return await this._bodyWeightRepo.search(filters);
     };
 
-    update = async (id: string, bodyWeightDomainModel: BodyWeightDomainModel): Promise<BodyWeightDto> => {
+    update = async (id: uuid, bodyWeightDomainModel: BodyWeightDomainModel): Promise<BodyWeightDto> => {
         return await this._bodyWeightRepo.update(id, bodyWeightDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._bodyWeightRepo.delete(id);
     };
 

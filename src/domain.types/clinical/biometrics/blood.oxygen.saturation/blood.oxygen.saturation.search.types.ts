@@ -1,25 +1,18 @@
+import { BaseSearchResults } from "../../../../domain.types/miscellaneous/base.search.types";
+import { BaseSearchFilters } from "../../../../domain.types/miscellaneous/base.search.types";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 import { BloodOxygenSaturationDto } from "./blood.oxygen.saturation.dto";
 
-export interface BloodOxygenSaturationSearchFilters {
-    PersonId?: string;
-    PatientUserId?: string;
-    MinValue?: number;
-    MaxValue?: number;
-    CreatedDateFrom?: Date;
-    CreatedDateTo?: Date;
-    RecordedByUserId?: string;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+export interface BloodOxygenSaturationSearchFilters extends BaseSearchFilters  {
+    PersonId?        : uuid;
+    PatientUserId?   : uuid;
+    MinValue?        : number;
+    MaxValue?        : number;
+    CreatedDateFrom? : Date;
+    CreatedDateTo?   : Date;
+    RecordedByUserId?: uuid;
 }
 
-export interface BloodOxygenSaturationSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface BloodOxygenSaturationSearchResults extends BaseSearchResults {
     Items: BloodOxygenSaturationDto[];
 }

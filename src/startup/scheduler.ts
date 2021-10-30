@@ -66,7 +66,6 @@ export class Scheduler {
             (async () => {
                 Logger.instance().log('Running scheducled jobs: Reminders for medications...');
                 var service = Loader.container.resolve(MedicationConsumptionService);
-                
                 var upcomingInMinutes = 30;
                 var count = await service.sendMedicationReminders(upcomingInMinutes);
                 Logger.instance().log(`Total ${count} medication reminders sent.`);
@@ -76,14 +75,13 @@ export class Scheduler {
 
     private scheduleCreateMedicationTasks = () => {
         cron.schedule(Scheduler._schedules['CreateMedicationTasks'], () => {
-            (async () => {
-                Logger.instance().log('Running scheducled jobs: Create medication tasks...');
-                var service = Loader.container.resolve(MedicationConsumptionService);
-                
-                var upcomingInMinutes = 60 * 24 * 2;
-                var count = await service.createMedicationTasks(upcomingInMinutes);
-                Logger.instance().log(`Total ${count} new medication tasks created.`);
-            })();
+            // (async () => {
+            //     Logger.instance().log('Running scheducled jobs: Create medication tasks...');
+            //     var service = Loader.container.resolve(MedicationConsumptionService);
+            //     var upcomingInMinutes = 60 * 24 * 2;
+            //     var count = await service.createMedicationTasks(upcomingInMinutes);
+            //     Logger.instance().log(`Total ${count} new medication tasks created.`);
+            // })();
         });
     };
 

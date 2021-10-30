@@ -35,10 +35,10 @@ export class BloodGlucoseController {
 
             const bloodGlucose = await this._service.create(bloodGlucoseDomainModel);
             if (bloodGlucose == null) {
-                throw new ApiError(400, 'Cannot create record for Blood Glucose!');
+                throw new ApiError(400, 'Cannot create record for blood glucose!');
             }
 
-            ResponseHandler.success(request, response, 'Blood Glucose record created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Blood glucose record created successfully!', 201, {
                 BloodGlucose : bloodGlucose,
             });
         } catch (error) {
@@ -56,10 +56,10 @@ export class BloodGlucoseController {
 
             const BloodGlucose = await this._service.getById(id);
             if (BloodGlucose == null) {
-                throw new ApiError(404, ' Blood Glucose record not found.');
+                throw new ApiError(404, ' Blood glucose record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Blood Glucose record retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Blood glucose record retrieved successfully!', 200, {
                 BloodGlucose : BloodGlucose,
             });
         } catch (error) {
@@ -81,7 +81,7 @@ export class BloodGlucoseController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} Blood Glucose records retrieved successfully!`;
+                    : `Total ${count} blood glucose records retrieved successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, {
                 BloodGlucoseRecords : searchResults });
@@ -102,15 +102,15 @@ export class BloodGlucoseController {
             const id: string = await BloodGlucoseValidator.getById(request);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
-                throw new ApiError(404, 'Blood Glucose record not found.');
+                throw new ApiError(404, 'Blood glucose record not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update Blood Glucose record!');
+                throw new ApiError(400, 'Unable to update blood glucose record!');
             }
 
-            ResponseHandler.success(request, response, 'Blood Glucose record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Blood glucose record updated successfully!', 200, {
                 BloodGlucose : updated,
             });
         } catch (error) {
@@ -126,15 +126,15 @@ export class BloodGlucoseController {
             const id: string = await BloodGlucoseValidator.getById(request);
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
-                throw new ApiError(404, 'Blood Glucose record not found.');
+                throw new ApiError(404, 'Blood glucose record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'Blood Glucose record cannot be deleted.');
+                throw new ApiError(400, 'Blood glucose record cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'Blood Glucose record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Blood glucose record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

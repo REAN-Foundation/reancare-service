@@ -5,13 +5,15 @@
 # file with configuration.  For more information, see:
 # https://github.com/actions/labeler
 
-name: Dev-CI-CD
+name: UAT-CI-CD
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push events but only for the develop branch
   push:
-    branches: [develop]
+    branches: [release/**]
+    
+  workflow_dispatch:
 
 jobs:
   CodeScan-ESLint:
@@ -31,7 +33,7 @@ jobs:
           VALIDATE_TYPESCRIPT_ES: true
 
   Deploy-ECS:
-    environment: dev
+    environment: uat
     runs-on: ubuntu-latest
 
     steps:

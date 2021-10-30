@@ -115,6 +115,26 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     }
 
+    getSchedulesForMedication = async(medicationId: string): Promise<MedicationConsumptionDto[]> => {
+        try {
+            var selector = {
+                where : {
+                    MedicationId : medicationId,
+                }
+            };
+            var dtos: MedicationConsumptionDto[] = [];
+            const consumptions = await MedicationConsumption.findAll(selector);
+            for (const consumption of consumptions) {
+                const dto = await MedicationConsumptionMapper.toDetailsDto(consumption);
+                dtos.push(dto);
+            }
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
     // updateTimeZoneForFutureMedicationSchedules = async(
     //     medicationId: string,
     //     currentTimeZone: string,

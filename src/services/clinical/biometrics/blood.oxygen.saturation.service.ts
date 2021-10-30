@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IBloodOxygenSaturationRepo } from "../../../database/repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface";
 import { BloodOxygenSaturationDomainModel } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
@@ -19,7 +20,7 @@ export class BloodOxygenSaturationService {
         return await this._bloodOxygenSaturationRepo.create(bloodOxygenSaturationDomainModel);
     };
 
-    getById = async (id: string): Promise<BloodOxygenSaturationDto> => {
+    getById = async (id: uuid): Promise<BloodOxygenSaturationDto> => {
         return await this._bloodOxygenSaturationRepo.getById(id);
     };
 
@@ -27,12 +28,12 @@ export class BloodOxygenSaturationService {
         return await this._bloodOxygenSaturationRepo.search(filters);
     };
 
-    update = async (id: string, bloodOxygenSaturationDomainModel: BloodOxygenSaturationDomainModel):
+    update = async (id: uuid, bloodOxygenSaturationDomainModel: BloodOxygenSaturationDomainModel):
     Promise<BloodOxygenSaturationDto> => {
         return await this._bloodOxygenSaturationRepo.update(id, bloodOxygenSaturationDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._bloodOxygenSaturationRepo.delete(id);
     };
 

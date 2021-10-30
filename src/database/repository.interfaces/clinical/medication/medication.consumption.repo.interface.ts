@@ -20,6 +20,8 @@ export interface IMedicationConsumptionRepo {
 
     deleteFutureMedicationSchedules(medicationId: string): Promise<number>;
 
+    getSchedulesForMedication(medicationId: string): Promise<MedicationConsumptionDto[]>;
+
     // updateTimeZoneForFutureMedicationSchedules(
     //     medicationId: string,
     //     currentTimeZone: string,

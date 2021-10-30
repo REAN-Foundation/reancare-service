@@ -128,6 +128,7 @@ export class UserTaskRepo implements IUserTaskRepo {
                     };
                 }
             }
+            
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
                 search.where['CreatedAt'] = {
                     [Op.gte] : filters.CreatedDateFrom,

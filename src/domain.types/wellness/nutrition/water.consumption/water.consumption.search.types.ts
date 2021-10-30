@@ -1,22 +1,14 @@
-
+import { BaseSearchResults } from "../../../../domain.types/miscellaneous/base.search.types";
+import { BaseSearchFilters } from "../../../../domain.types/miscellaneous/base.search.types";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 import { WaterConsumptionDto, WaterConsumptionForDayDto } from "./water.consumption.dto";
 
-export interface WaterConsumptionSearchFilters {
-    PatientUserId?: string;
+export interface WaterConsumptionSearchFilters extends BaseSearchFilters{
+    PatientUserId?  : uuid;
     DailyVolumeFrom?: number;
-    DailyVolumeTo?: number;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+    DailyVolumeTo?  : number;
 }
 
-export interface WaterConsumptionSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface WaterConsumptionSearchResults extends BaseSearchResults {
     Items: WaterConsumptionDto[] | WaterConsumptionForDayDto[];
 }

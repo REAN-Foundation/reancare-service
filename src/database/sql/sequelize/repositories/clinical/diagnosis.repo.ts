@@ -2,9 +2,10 @@ import { Op } from 'sequelize';
 import { ApiError } from "../../../../../common/api.error";
 import { Logger } from "../../../../../common/logger";
 import { DiagnosisDomainModel } from '../../../../../domain.types/clinical/diagnosis/diagnosis.domain.model';
-import { DiagnosisDto } from '../../../../../domain.types/clinical/diagnosis/diagnosis.dto';
+import { DiagnosisDto, DiagnosisEventDto } from '../../../../../domain.types/clinical/diagnosis/diagnosis.dto';
 import { DiagnosisSearchFilters, DiagnosisSearchResults } from '../../../../../domain.types/clinical/diagnosis/diagnosis.search.types';
 import { IDiagnosisRepo } from "../../../../repository.interfaces/clinical/diagnosis.repo.interface";
+import { ClinicalValidationStatus } from "../../../../../domain.types/miscellaneous/clinical.types";
 import { DiagnosisMapper } from "../../mappers/clinical/diagnosis.mapper";
 import Diagnosis from "../../models/clinical/diagnosis.model";
 
@@ -12,27 +13,25 @@ import Diagnosis from "../../models/clinical/diagnosis.model";
 
 export class DiagnosisRepo implements IDiagnosisRepo {
 
-    create = async (diagnosisDomainModel: DiagnosisDomainModel): Promise<DiagnosisDto> => {
+    create = async (createModel: DiagnosisDomainModel): Promise<DiagnosisDto> => {
 
         try {
             const entity = {
-                PatientUserId             : diagnosisDomainModel.PatientUserId,
-                EhrId                     : diagnosisDomainModel.EhrId,
-                MedicalPractitionerUserId : diagnosisDomainModel.MedicalPractitionerUserId,
-                VisitId                   : diagnosisDomainModel.VisitId,
-                MedicalConditionId        : diagnosisDomainModel.MedicalConditionId,
-                Comments                  : diagnosisDomainModel.Comments,
-                IsClinicallyActive        : diagnosisDomainModel.IsClinicallyActive,
-                ValidationStatus          : diagnosisDomainModel.ValidationStatus,
-                Interpretation            : diagnosisDomainModel.Interpretation,
-                OnsetDate                 : diagnosisDomainModel.OnsetDate,
-                EndDate                   : diagnosisDomainModel.EndDate
+                PatientUserId             : createModel.PatientUserId,
+                EhrId                     : createModel.EhrId,
+                MedicalPractitionerUserId : createModel.MedicalPractitionerUserId,
+                VisitId                   : createModel.VisitId,
+                MedicalConditionId        : createModel.MedicalConditionId,
+                Comments                  : createModel.Comments,
+                IsClinicallyActive        : createModel.IsClinicallyActive,
+                ValidationStatus          : createModel.ValidationStatus,
+                Interpretation            : createModel.Interpretation,
+                OnsetDate                 : createModel.OnsetDate,
+                EndDate                   : createModel.EndDate
             };
 
             const diagnosis = await Diagnosis.create(entity);
-            const dto = await DiagnosisMapper.toDto(diagnosis);
-
-            return dto;
+            return await DiagnosisMapper.toDto(diagnosis);
             
         } catch (error) {
             Logger.instance().log(error.message);
@@ -43,58 +42,83 @@ export class DiagnosisRepo implements IDiagnosisRepo {
     getById = async (id: string): Promise<DiagnosisDto> => {
         try {
             const diagnosis = await Diagnosis.findOne({ where: { id: id } });
-            const dto = await DiagnosisMapper.toDto(diagnosis);
-            return dto;
+            return await DiagnosisMapper.toDto(diagnosis);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     }
 
+    getByEvent = async (validationStatus: string, patientUserId: string): Promise<DiagnosisEventDto> => {
+        try {
+            const foodResults = await Diagnosis.findAll({
+                where : { ValidationStatus: validationStatus, PatientUserId: patientUserId }
+            });
+
+            const diagnoses: DiagnosisDto[] = [];
+            for (const foodConsumption of foodResults) {
+                const dto = await DiagnosisMapper.toDto(foodConsumption);
+                diagnoses.push(dto);
+            }
+
+            const entity = {
+                PatientUserId : patientUserId,
+                Event         : ClinicalValidationStatus[validationStatus],
+                Diagnoses     : diagnoses,
+                StartTime     : await DiagnosisRepo.calculateEventStartTime(diagnoses),
+                EndTime       : await DiagnosisRepo.calculateEventEndTime(diagnoses),
+            };
+
+            return await DiagnosisMapper.toEventDto(entity);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    update = async (id: string, model: DiagnosisDomainModel): Promise<DiagnosisDto> => {
+    update = async (id: string, updateModel: DiagnosisDomainModel): Promise<DiagnosisDto> => {
         try {
             const diagnosis = await Diagnosis.findOne({ where: { id: id } });
             
-            if (model.PatientUserId != null) {
-                diagnosis.PatientUserId = model.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                diagnosis.PatientUserId = updateModel.PatientUserId;
             }
-            if (model.EhrId != null) {
-                diagnosis.EhrId = model.EhrId;
+            if (updateModel.EhrId != null) {
+                diagnosis.EhrId = updateModel.EhrId;
             }
-            if (model.MedicalPractitionerUserId != null) {
-                diagnosis.MedicalPractitionerUserId = model.MedicalPractitionerUserId;
+            if (updateModel.MedicalPractitionerUserId != null) {
+                diagnosis.MedicalPractitionerUserId = updateModel.MedicalPractitionerUserId;
             }
-            if (model.VisitId != null) {
-                diagnosis.VisitId = model.VisitId;
+            if (updateModel.VisitId != null) {
+                diagnosis.VisitId = updateModel.VisitId;
             }
-            if (model.MedicalConditionId != null) {
-                diagnosis.MedicalConditionId = model.MedicalConditionId;
+            if (updateModel.MedicalConditionId != null) {
+                diagnosis.MedicalConditionId = updateModel.MedicalConditionId;
             }
-            if (model.Comments != null) {
-                diagnosis.Comments = model.Comments;
+            if (updateModel.Comments != null) {
+                diagnosis.Comments = updateModel.Comments;
             }
-            if (model.IsClinicallyActive != null) {
-                diagnosis.IsClinicallyActive = model.IsClinicallyActive;
+            if (updateModel.IsClinicallyActive != null) {
+                diagnosis.IsClinicallyActive = updateModel.IsClinicallyActive;
             }
-            if (model.ValidationStatus != null) {
-                diagnosis.ValidationStatus = model.ValidationStatus;
+            if (updateModel.ValidationStatus != null) {
+                diagnosis.ValidationStatus = updateModel.ValidationStatus;
             }
-            if (model.Interpretation != null) {
-                diagnosis.Interpretation = model.Interpretation;
+            if (updateModel.Interpretation != null) {
+                diagnosis.Interpretation = updateModel.Interpretation;
             }
-            if (model.OnsetDate != null) {
-                diagnosis.OnsetDate = model.OnsetDate;
+            if (updateModel.OnsetDate != null) {
+                diagnosis.OnsetDate = updateModel.OnsetDate;
             }
-            if (model.EndDate != null) {
-                diagnosis.EndDate = model.EndDate;
+            if (updateModel.EndDate != null) {
+                diagnosis.EndDate = updateModel.EndDate;
             }
 
             await diagnosis.save();
 
-            const dto = await DiagnosisMapper.toDto(diagnosis);
-
-            return dto;
+            return await DiagnosisMapper.toDto(diagnosis);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -111,22 +135,22 @@ export class DiagnosisRepo implements IDiagnosisRepo {
                 search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
             }
             if (filters.PatientUserId != null) {
-                search.where['PatientUserId'] = { [Op.like]: '%' + filters.PatientUserId + '%' };
+                search.where['PatientUserId'] = filters.PatientUserId;
             }
             if (filters.MedicalPractitionerUserId != null) {
                 search.where['MedicalPractitionerUserId'] = filters.MedicalPractitionerUserId;
             }
             if (filters.VisitId != null) {
-                search.where['VisitId'] = { [Op.like]: '%' + filters.VisitId + '%' };
+                search.where['VisitId'] = filters.VisitId;
             }
             if (filters.MedicalConditionId != null) {
-                search.where['MedicalConditionId'] = { [Op.like]: '%' + filters.MedicalConditionId + '%' };
+                search.where['MedicalConditionId'] = filters.MedicalConditionId;
             }
             if (filters.IsClinicallyActive != null) {
                 search.where['IsClinicallyActive'] = { [Op.like]: '%' + filters.IsClinicallyActive + '%' };
             }
             if (filters.FulfilledByOrganizationId != null) {
-                search.where['FulfilledByOrganizationId'] = { [Op.like]: '%' + filters.FulfilledByOrganizationId + '%' };
+                search.where['FulfilledByOrganizationId'] = filters.FulfilledByOrganizationId;
             }
             if (filters.ValidationStatus != null) {
                 search.where['ValidationStatus'] = { [Op.like]: '%' + filters.ValidationStatus + '%' };
@@ -214,6 +238,28 @@ export class DiagnosisRepo implements IDiagnosisRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    }
+
+    private static calculateEventStartTime = async (diagnoses: DiagnosisDomainModel[]): Promise<Date> => {
+        let onsetDate = diagnoses[0] ? diagnoses[0].OnsetDate : null;
+        diagnoses.forEach((diagnosis) => {
+            if (diagnosis.OnsetDate < onsetDate) {
+                onsetDate = diagnosis.OnsetDate;
+            }
+        });
+
+        return onsetDate;
+    }
+
+    private static calculateEventEndTime = async (diagnoses: DiagnosisDomainModel[]): Promise<Date> => {
+        let endDate = diagnoses[0] ? diagnoses[0].EndDate : null;
+        diagnoses.forEach((diagnosis) => {
+            if (diagnosis.EndDate > endDate) {
+                endDate = diagnosis.EndDate;
+            }
+        });
+
+        return endDate;
     }
 
 }

@@ -16,7 +16,8 @@ export class CalorieBalanceMapper {
             CaloriesBurned   : calorieBalance.CaloriesBurned,
             CaloriesConsumed : calorieBalance.CaloriesConsumed,
             Unit             : calorieBalance.Unit,
-            CalorieBalance   : Number(calorieBalance.CaloriesConsumed) - Number(calorieBalance.CaloriesBurned)
+            CalorieBalance   : Number(calorieBalance.CaloriesConsumed) - Number(calorieBalance.CaloriesBurned),
+            RecordDate       : calorieBalance.RecordDate
         };
         return dto;
     }

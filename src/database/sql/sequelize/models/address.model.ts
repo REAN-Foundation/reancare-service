@@ -65,35 +65,35 @@ export default class Address extends Model {
     })
     AddressLine: string;
 
-    @Length({ min: 2, max: 32 })
+    @Length({ max: 32 })
     @Column({
         type      : DataType.STRING(32),
         allowNull : true
     })
     City: string;
 
-    @Length({ min: 2, max: 32 })
+    @Length({ max: 32 })
     @Column({
         type      : DataType.STRING(32),
         allowNull : true
     })
     District: string;
 
-    @Length({ min: 2, max: 32 })
+    @Length({ max: 32 })
     @Column({
         type      : DataType.STRING(32),
         allowNull : true
     })
     State: string;
 
-    @Length({ min: 2, max: 32 })
+    @Length({ max: 32 })
     @Column({
         type      : DataType.STRING(32),
-        allowNull : false
+        allowNull : true
     })
     Country: string;
 
-    @Length({ min: 2, max: 16 })
+    @Length({ max: 16 })
     @Column({
         type      : DataType.STRING(16),
         allowNull : true

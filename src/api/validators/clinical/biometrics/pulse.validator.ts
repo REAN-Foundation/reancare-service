@@ -39,7 +39,6 @@ export class PulseValidator extends BaseValidator {
         await this.validateUuid(request, 'recordedByUserId', Where.Query, false, false);
 
         await this.validateBaseSearchFilters(request);
-        
         this.validateRequest(request);
 
         return this.getFilter(request);

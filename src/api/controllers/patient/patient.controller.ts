@@ -2,6 +2,7 @@ import express from 'express';
 import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../domain.types/user/user/user.domain.model';
@@ -21,6 +22,8 @@ export class PatientController extends BaseUserController{
 
     _patientHealthProfileService: HealthProfileService = null;
 
+    _validator = new PatientValidator();
+
     constructor() {
         super();
         this._service = Loader.container.resolve(PatientService);
@@ -33,13 +36,13 @@ export class PatientController extends BaseUserController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Patient.Create';
+            await this.setContext('Patient.Create', request, response, false);
 
-            const patientDomainModel = await PatientValidator.create(request);
+            const createModel = await this._validator.create(request);
 
             //Throw an error if patient with same name and phone number exists
             const existingPatientCountSharingPhone = await this._service.checkforDuplicatePatients(
-                patientDomainModel
+                createModel
             );
 
             //NOTE: Currently we are not allowing multiple patients to share same phone number,
@@ -52,32 +55,32 @@ export class PatientController extends BaseUserController{
             }
             
             const userName = await this._userService.generateUserName(
-                patientDomainModel.User.Person.FirstName,
-                patientDomainModel.User.Person.LastName
+                createModel.User.Person.FirstName,
+                createModel.User.Person.LastName
             );
 
             const displayId = await this._userService.generateUserDisplayId(
                 Roles.Patient,
-                patientDomainModel.User.Person.Phone,
+                createModel.User.Person.Phone,
                 existingPatientCountSharingPhone
             );
 
             const displayName = Helper.constructPersonDisplayName(
-                patientDomainModel.User.Person.Prefix,
-                patientDomainModel.User.Person.FirstName,
-                patientDomainModel.User.Person.LastName
+                createModel.User.Person.Prefix,
+                createModel.User.Person.FirstName,
+                createModel.User.Person.LastName
             );
 
-            patientDomainModel.User.Person.DisplayName = displayName;
-            patientDomainModel.User.UserName = userName;
-            patientDomainModel.DisplayId = displayId;
+            createModel.User.Person.DisplayName = displayName;
+            createModel.User.UserName = userName;
+            createModel.DisplayId = displayId;
 
-            const userDomainModel = patientDomainModel.User;
+            const userDomainModel = createModel.User;
             const personDomainModel = userDomainModel.Person;
 
             //Create a person first
 
-            let person = await this._personService.getPersonWithPhone(patientDomainModel.User.Person.Phone);
+            let person = await this._personService.getPersonWithPhone(createModel.User.Person.Phone);
             if (person == null) {
                 person = await this._personService.create(personDomainModel);
                 if (person == null) {
@@ -86,7 +89,7 @@ export class PatientController extends BaseUserController{
             }
 
             const role = await this._roleService.getByName(Roles.Patient);
-            patientDomainModel.PersonId = person.id;
+            createModel.PersonId = person.id;
             userDomainModel.Person.id = person.id;
             userDomainModel.RoleId = role.id;
 
@@ -94,14 +97,14 @@ export class PatientController extends BaseUserController{
             if (user == null) {
                 throw new ApiError(400, 'Cannot create user!');
             }
-            patientDomainModel.UserId = user.id;
+            createModel.UserId = user.id;
 
             //KK: Note - Please add user to appointment service here...
             // var appointmentCustomerModel = PatientMapper.ToAppointmentCustomerDomainModel(userDomainModel);
             // var customer = await this._appointmentService.createCustomer(appointmentCustomerModel);
 
-            patientDomainModel.DisplayId = displayId;
-            const patient = await this._service.create(patientDomainModel);
+            createModel.DisplayId = displayId;
+            const patient = await this._service.create(createModel);
             if (patient == null) {
                 throw new ApiError(400, 'Cannot create patient!');
             }
@@ -132,12 +135,9 @@ export class PatientController extends BaseUserController{
 
     getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Patient.GetByUserId';
-            
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Patient.GetByUserId', request, response);
 
-            const userId: string = await PatientValidator.getByUserId(request);
-
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
@@ -158,16 +158,9 @@ export class PatientController extends BaseUserController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Patient.Search';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Patient.Search', request, response);
 
-            const filters = await PatientValidator.search(request);
-
-            // const extractFull: boolean =
-            //     request.query.fullDetails !== 'undefined' && typeof request.query.fullDetails === 'boolean'
-            //         ? request.query.fullDetails
-            //         : false;
-
+            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -184,23 +177,21 @@ export class PatientController extends BaseUserController{
 
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Patient.UpdateByUserId';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Patient.UpdateByUserId', request, response);
 
-            const patientDomainModel = await PatientValidator.updateByUserId(request);
-
-            const userId: string = await PatientValidator.getByUserId(request);
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
 
-            const userDomainModel: UserDomainModel = patientDomainModel.User;
+            const updateModel = await this._validator.updateByUserId(request);
+            const userDomainModel: UserDomainModel = updateModel.User;
             const updatedUser = await this._userService.update(userId, userDomainModel);
             if (!updatedUser) {
                 throw new ApiError(400, 'Unable to update user!');
             }
-            const personDomainModel: PersonDomainModel = patientDomainModel.User.Person;
+            const personDomainModel: PersonDomainModel = updateModel.User.Person;
             personDomainModel.id = updatedUser.Person.id;
             const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);
             if (!updatedPerson) {
@@ -208,7 +199,7 @@ export class PatientController extends BaseUserController{
             }
             const updatedPatient = await this._service.updateByUserId(
                 updatedUser.id,
-                patientDomainModel
+                updateModel
             );
             if (updatedPatient == null) {
                 throw new ApiError(400, 'Unable to update patient record!');
@@ -229,10 +220,9 @@ export class PatientController extends BaseUserController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Patient.DeleteByUserId';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Patient.DeleteByUserId', request, response);
 
-            const userId: string = await PatientValidator.delete(request);
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');

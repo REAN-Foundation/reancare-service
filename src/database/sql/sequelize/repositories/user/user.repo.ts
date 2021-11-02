@@ -147,16 +147,24 @@ export class UserRepo implements IUserRepo {
         try {
             const user = await User.findByPk(id);
 
-            if (userDomainModel.DefaultTimeZone != null) {
+            if (userDomainModel.DefaultTimeZone !== undefined &&
+                userDomainModel.DefaultTimeZone !== null &&
+                userDomainModel.DefaultTimeZone.length > 0) {
                 user.DefaultTimeZone = userDomainModel.DefaultTimeZone;
             }
-            if (userDomainModel.CurrentTimeZone != null) {
+            if (userDomainModel.CurrentTimeZone !== undefined &&
+                userDomainModel.CurrentTimeZone !== null &&
+                userDomainModel.CurrentTimeZone.length > 0) {
                 user.CurrentTimeZone = userDomainModel.CurrentTimeZone;
             }
-            if (userDomainModel.UserName != null) {
+            if (userDomainModel.UserName !== undefined &&
+                userDomainModel.UserName !== null &&
+                userDomainModel.UserName.length > 0) {
                 user.UserName = userDomainModel.UserName;
             }
-            if (userDomainModel.Password != null) {
+            if (userDomainModel.Password !== undefined &&
+                userDomainModel.Password !== null &&
+                userDomainModel.Password.length > 0) {
                 user.Password = Helper.hash(userDomainModel.Password);
             }
             if (userDomainModel.LastLogin != null) {

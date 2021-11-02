@@ -1,36 +1,25 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { DoctorNoteService } from '../../../services/clinical/doctor.note.service';
-import { PersonService } from '../../../services/person.service';
-import { RoleService } from '../../../services/role.service';
-import { UserService } from '../../../services/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { DoctorNoteValidator } from '../../validators/clinical/doctor.note.validator';
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DoctorNoteController {
+export class DoctorNoteController extends BaseController {
 
     //#region member variables and constructors
 
     _service: DoctorNoteService = null;
 
-    _roleService: RoleService = null;
-
-    _personService: PersonService = null;
-
-    _userService: UserService = null;
-
-    _authorizer: Authorizer = null;
+    _validator: DoctorNoteValidator = new DoctorNoteValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(DoctorNoteService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._userService = Loader.container.resolve(UserService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -39,17 +28,10 @@ export class DoctorNoteController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DoctorNote.Create';
-            await this._authorizer.authorize(request, response);
-            
-            const domainModel = await DoctorNoteValidator.create(request);
 
-            if (domainModel.PatientUserId != null) {
-                const person = await this._userService.getById(domainModel.PatientUserId);
-                if (person == null) {
-                    throw new ApiError(404, `User with an id ${domainModel.PatientUserId} cannot be found.`);
-                }
-            }
+            this.setContext('DoctorNote.Create', request, response);
+            
+            const domainModel = await this._validator.create(request);
 
             const doctorNote = await this._service.create(domainModel);
             if (doctorNote == null) {
@@ -66,11 +48,10 @@ export class DoctorNoteController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DoctorNote.GetById';
             
-            await this._authorizer.authorize(request, response);
+            this.setContext('DoctorNote.GetById', request, response);
 
-            const id: string = await DoctorNoteValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const doctorNote = await this._service.getById(id);
             if (doctorNote == null) {
@@ -87,10 +68,10 @@ export class DoctorNoteController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DoctorNote.Search';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('DoctorNote.Search', request, response);
 
-            const filters = await DoctorNoteValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -109,12 +90,13 @@ export class DoctorNoteController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DoctorNote.Update';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('DoctorNote.Update', request, response);
 
-            const domainModel = await DoctorNoteValidator.update(request);
+            const domainModel = await this._validator.update(request);
 
-            const id: string = await DoctorNoteValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+
             const doctorNote = await this._service.getById(id);
             if (doctorNote == null) {
                 throw new ApiError(404, 'Doctor Note not found.');
@@ -135,10 +117,10 @@ export class DoctorNoteController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DoctorNote.Delete';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('DoctorNote.Delete', request, response);
 
-            const id: string = await DoctorNoteValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const doctorNote = await this._service.getById(id);
             if (doctorNote == null) {
                 throw new ApiError(404, 'Doctor Note not found.');

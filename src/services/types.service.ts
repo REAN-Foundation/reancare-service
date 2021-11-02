@@ -1,6 +1,7 @@
-import { OrganizationTypeList } from "../domain.types/organization/organization.types";
 import { inject, injectable } from "tsyringe";
 import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
+import { Gender, GenderList } from "../domain.types/miscellaneous/system.types";
+import { OrganizationTypeList } from "../domain.types/organization/organization.types";
 import { RoleDto } from "../domain.types/role/role.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,16 +25,11 @@ export class TypesService {
         });
     };
 
-    getGenderTypes = async (): Promise<string[]> => {
+    getGenderTypes = async (): Promise<Gender[]> => {
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return new Promise((resolve, reject) => {
-            resolve([
-                'Male',
-                'Female',
-                'Other',
-                'Unknown'
-            ]);
+            resolve(GenderList);
         });
     };
 

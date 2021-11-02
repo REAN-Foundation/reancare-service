@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IWaterConsumptionRepo } from "../../../database/repository.interfaces/wellness/nutrition/water.consumption.repo.interface";
 import { WaterConsumptionDomainModel } from '../../../domain.types/wellness/nutrition/water.consumption/water.consumption.domain.model';
@@ -18,7 +19,7 @@ export class WaterConsumptionService {
         return await this._waterConsumptionRepo.create(waterConsumptionDomainModel);
     };
 
-    getById = async (id: string): Promise<WaterConsumptionDto> => {
+    getById = async (id: uuid): Promise<WaterConsumptionDto> => {
         return await this._waterConsumptionRepo.getById(id);
     };
 
@@ -26,12 +27,12 @@ export class WaterConsumptionService {
         return await this._waterConsumptionRepo.search(filters);
     };
 
-    update = async (id: string, waterConsumptionDomainModel: WaterConsumptionDomainModel):
+    update = async (id: uuid, waterConsumptionDomainModel: WaterConsumptionDomainModel):
     Promise<WaterConsumptionDto> => {
         return await this._waterConsumptionRepo.update(id, waterConsumptionDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._waterConsumptionRepo.delete(id);
     };
 

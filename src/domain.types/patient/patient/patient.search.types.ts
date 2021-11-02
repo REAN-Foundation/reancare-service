@@ -1,39 +1,22 @@
+import { BaseSearchFilters, BaseSearchResults } from "../../../domain.types/miscellaneous/base.search.types";
 import { Gender } from "../../miscellaneous/system.types";
 import { PatientDetailsDto, PatientDto } from "./patient.dto";
 
 //////////////////////////////////////////////////////////////////////////////////
 
-export interface PatientSearchFilters {
+export interface PatientSearchFilters extends BaseSearchFilters{
     Phone: string;
     Email: string;
     Name: string;
     Gender: Gender;
     BirthdateFrom: Date;
     BirthdateTo: Date;
-    CreatedDateFrom: Date;
-    CreatedDateTo: Date;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
 }
 
-export interface PatientSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface PatientSearchResults extends BaseSearchResults {
     Items: PatientDto[];
 }
 
-export interface PatientDetailsSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface PatientDetailsSearchResults extends BaseSearchResults {
     Items: PatientDetailsDto[];
 }

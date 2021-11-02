@@ -3,7 +3,7 @@ import {
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import { Severity, SeverityList } from '../../../../../domain.types/miscellaneous/system.types';
+import { MaritalStatusList, Severity, SeverityList } from '../../../../../domain.types/miscellaneous/system.types';
 import User from '../user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ export default class HealthProfile extends Model {
 
     @Column({
         type         : DataType.ENUM,
-        values       : ['Single', 'Married', 'Widowed', 'Divorcee', 'Live-in', 'Other', 'Unknown'],
+        values       : MaritalStatusList,
         defaultValue : 'Unknown',
         allowNull    : false,
     })

@@ -8,7 +8,20 @@ import { BodyHeightSearchFilters } from '../../../../domain.types/clinical/biome
 
 export class BodyHeightValidator {
 
-    static getDomainModel = (request: express.Request): BodyHeightDomainModel => {
+    static getCreateDomainModel = (request: express.Request): BodyHeightDomainModel => {
+
+        const bodyHeightModel: BodyHeightDomainModel = {
+            PatientUserId    : request.body.PatientUserId ?? null,
+            BodyHeight       : request.body.BodyHeight ?? null,
+            Unit             : request.body.Unit,
+            RecordDate       : request.body.RecordDate ?? new Date(),
+            RecordedByUserId : request.body.RecordedByUserId ?? request.currentUser.UserId,
+        };
+
+        return bodyHeightModel;
+    };
+
+    static getUpdateDomainModel = (request: express.Request): BodyHeightDomainModel => {
 
         const bodyHeightModel: BodyHeightDomainModel = {
             PatientUserId    : request.body.PatientUserId ?? null,
@@ -22,8 +35,8 @@ export class BodyHeightValidator {
     };
 
     static create = async (request: express.Request): Promise<BodyHeightDomainModel> => {
-        await BodyHeightValidator.validateBody(request);
-        return BodyHeightValidator.getDomainModel(request);
+        await BodyHeightValidator.validateCreateBody(request);
+        return BodyHeightValidator.getCreateDomainModel(request);
     };
 
     static getById = async (request: express.Request): Promise<string> => {
@@ -99,15 +112,15 @@ export class BodyHeightValidator {
     static update = async (request: express.Request): Promise<BodyHeightDomainModel> => {
 
         const id = await BodyHeightValidator.getParamId(request);
-        await BodyHeightValidator.validateBody(request);
+        await BodyHeightValidator.validateCreateBody(request);
 
-        const domainModel = BodyHeightValidator.getDomainModel(request);
+        const domainModel = BodyHeightValidator.getCreateDomainModel(request);
         domainModel.id = id;
 
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private static async validateCreateBody(request) {
 
         await body('PatientUserId').exists()
             .trim()

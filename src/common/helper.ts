@@ -151,10 +151,10 @@ export class Helper {
     };
 
     static guessPrefixByGender = (gender: Gender) => {
-        if (gender === 'Male' || gender === 'male') {
+        if (gender === Gender.Male) {
             return 'Mr.';
         }
-        if (gender === 'Female' || gender === 'female') {
+        if (gender === Gender.Female) {
             return 'Miss.';
         }
         return ''; //Return empty prefix
@@ -174,20 +174,6 @@ export class Helper {
             displayName = 'unknown';
         }
         return displayName;
-    };
-
-    static getGender = (str: string): Gender => {
-        if (
-            str !== 'Male' &&
-            str !== 'Female' &&
-            str !== 'male' &&
-            str !== 'female' &&
-            str !== 'Other' &&
-            str !== 'other'
-        ) {
-            return 'Unknown';
-        }
-        return str;
     };
 
     static formatDate = (date) => {

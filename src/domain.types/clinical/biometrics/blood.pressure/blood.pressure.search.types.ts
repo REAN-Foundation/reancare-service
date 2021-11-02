@@ -1,27 +1,19 @@
+import { BaseSearchResults, BaseSearchFilters } from "../../../../domain.types/miscellaneous/base.search.types";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 import { BloodPressureDto } from "./blood.pressure.dto";
 
-export interface BloodPressureSearchFilters {
-    PersonId?: string;
-    PatientUserId?: string;
-    MinSystolicValue?: number;
-    MaxSystolicValue?: number;
+export interface BloodPressureSearchFilters extends BaseSearchFilters{
+    PersonId?         : uuid;
+    PatientUserId?    : uuid;
+    MinSystolicValue? : number;
+    MaxSystolicValue? : number;
     MinDiastolicValue?: number;
     MaxDiastolicValue?: number;
-    CreatedDateFrom?: Date;
-    CreatedDateTo?: Date;
-    RecordedByUserId?: string;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+    CreatedDateFrom?  : Date;
+    CreatedDateTo?    : Date;
+    RecordedByUserId? : uuid;
 }
 
-export interface BloodPressureSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface BloodPressureSearchResults extends BaseSearchResults{
     Items: BloodPressureDto[];
 }

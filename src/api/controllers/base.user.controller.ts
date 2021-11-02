@@ -8,10 +8,11 @@ import { RoleService } from '../../services/role.service';
 import { UserService } from '../../services/user/user.service';
 import { Loader } from '../../startup/loader';
 import { AddressValidator } from '../validators/address.validator';
+import { BaseController } from './base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BaseUserController {
+export class BaseUserController extends BaseController {
 
     _personService: PersonService = null;
 
@@ -24,6 +25,7 @@ export class BaseUserController {
     _authorizer: Authorizer = null;
 
     constructor() {
+        super();
         this._userService = Loader.container.resolve(UserService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);
@@ -36,8 +38,10 @@ export class BaseUserController {
         let addressDomainModel: AddressDomainModel = null;
         const addressBody = request.body.Address ?? null;
 
+        var addressValidator = new AddressValidator();
+
         if (addressBody != null) {
-            addressDomainModel = await AddressValidator.getDomainModel(addressBody);
+            addressDomainModel = await addressValidator.getUpdateDomainModel(addressBody);
 
             //get existing address to update
             const existingAddresses = await this._personService.getAddresses(personId);
@@ -58,7 +62,8 @@ export class BaseUserController {
     async addAddress(request, personId: string): Promise<void> {
         const addressBody = request.body.Address ?? null;
         if (addressBody != null) {
-            const addressDomainModel: AddressDomainModel = await AddressValidator.getDomainModel(addressBody);
+            var addressValidator = new AddressValidator();
+            const addressDomainModel: AddressDomainModel = await addressValidator.getCreateDomainModel(addressBody);
             await this.createAddress(addressDomainModel, personId);
         }
     }

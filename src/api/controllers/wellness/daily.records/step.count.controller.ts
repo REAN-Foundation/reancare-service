@@ -1,36 +1,29 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { PatientService } from '../../../../services/patient/patient.service';
-import { PersonService } from '../../../../services/person.service';
-import { RoleService } from '../../../../services/role.service';
 import { StepCountService } from '../../../../services/wellness/daily.records/step.count.service';
 import { Loader } from '../../../../startup/loader';
 import { StepCountValidator } from '../../../validators/wellness/daily.records/step.count.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class StepCountController {
+export class StepCountController extends BaseController {
 
     //#region member variables and constructors
 
     _service: StepCountService = null;
 
-    _roleService: RoleService = null;
-
-    _personService: PersonService = null;
+    _validator: StepCountValidator = new StepCountValidator();
 
     _patientService: PatientService = null;
 
-    _authorizer: Authorizer = null;
-
     constructor() {
+        super();
         this._service = Loader.container.resolve(StepCountService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
         this._patientService = Loader.container.resolve(PatientService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -39,10 +32,9 @@ export class StepCountController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DailyRecords.StepCount.Create';
-            await this._authorizer.authorize(request, response);
+            this.setContext('DailyRecords.StepCount.Create', request, response);
             
-            const domainModel = await StepCountValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             if (domainModel.PatientUserId != null) {
                 var organization = await this._patientService.getByUserId(domainModel.PatientUserId);
@@ -67,12 +59,9 @@ export class StepCountController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DailyRecords.StepCount.GetById';
-            
-            await this._authorizer.authorize(request, response);
+            this.setContext('DailyRecords.StepCount.GetById', request, response);
 
-            const id: string = await StepCountValidator.getById(request);
-
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const stepCount = await this._service.getById(id);
             if (stepCount == null) {
                 throw new ApiError(404, 'Step Count not found.');
@@ -88,10 +77,9 @@ export class StepCountController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DailyRecords.StepCount.Search';
-            await this._authorizer.authorize(request, response);
+            this.setContext('DailyRecords.StepCount.Search', request, response);
 
-            const filters = await StepCountValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -110,14 +98,13 @@ export class StepCountController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DailyRecords.StepCount.Update';
-            await this._authorizer.authorize(request, response);
+            this.setContext('DailyRecords.StepCount.Update', request, response);
 
-            const domainModel = await StepCountValidator.update(request);
+            const domainModel = await this._validator.update(request);
 
-            const id: string = await StepCountValidator.getById(request);
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingStepCount = await this._service.getById(id);
+            if (existingStepCount == null) {
                 throw new ApiError(404, 'Step Count not found.');
             }
 
@@ -136,12 +123,11 @@ export class StepCountController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DailyRecords.StepCount.Delete';
-            await this._authorizer.authorize(request, response);
+            this.setContext('DailyRecords.StepCount.Delete', request, response);
 
-            const id: string = await StepCountValidator.getById(request);
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingStepCount = await this._service.getById(id);
+            if (existingStepCount == null) {
                 throw new ApiError(404, 'Step Count not found.');
             }
 

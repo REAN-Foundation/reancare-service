@@ -1,9 +1,11 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+
 export interface BloodOxygenSaturationDomainModel {
-    id?: string;
-    EhrId?: string;
-    PatientUserId: string;
+    id?                  : uuid;
+    EhrId?               : string;
+    PatientUserId        : uuid;
     BloodOxygenSaturation: number;
-    Unit: string;
-    RecordDate?: Date;
-    RecordedByUserId?: string;
+    Unit                 : string;
+    RecordDate?          : Date;
+    RecordedByUserId?    : uuid;
 }

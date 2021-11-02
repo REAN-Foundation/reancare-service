@@ -22,8 +22,8 @@ export class WaterConsumptionRepo implements IWaterConsumptionRepo {
             };
 
             const waterConsumption = await WaterConsumptionModel.create(entity);
-            const dto = await WaterConsumptionMapper.toDto(waterConsumption);
-            return dto;
+            return await WaterConsumptionMapper.toDto(waterConsumption);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -33,8 +33,8 @@ export class WaterConsumptionRepo implements IWaterConsumptionRepo {
     getById = async (id: string): Promise<WaterConsumptionDto> => {
         try {
             const waterConsumption = await WaterConsumptionModel.findByPk(id);
-            const dto = await WaterConsumptionMapper.toDto(waterConsumption);
-            return dto;
+            return await WaterConsumptionMapper.toDto(waterConsumption);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -110,19 +110,19 @@ export class WaterConsumptionRepo implements IWaterConsumptionRepo {
         }
     };
 
-    update = async (id: string, waterConsumptionDomainModel: WaterConsumptionDomainModel):
+    update = async (id: string, updateModel: WaterConsumptionDomainModel):
     Promise<WaterConsumptionDto> => {
         try {
             const waterConsumption = await WaterConsumptionModel.findByPk(id);
 
-            if (waterConsumptionDomainModel.PatientUserId != null) {
-                waterConsumption.PatientUserId = waterConsumptionDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                waterConsumption.PatientUserId = updateModel.PatientUserId;
             }
-            if (waterConsumptionDomainModel.Volume != null) {
-                waterConsumption.Volume = waterConsumptionDomainModel.Volume;
+            if (updateModel.Volume != null) {
+                waterConsumption.Volume = updateModel.Volume;
             }
-            if (waterConsumptionDomainModel.Time != null) {
-                waterConsumption.Time = waterConsumptionDomainModel.Time;
+            if (updateModel.Time != null) {
+                waterConsumption.Time = updateModel.Time;
             }
 
             await waterConsumption.save();

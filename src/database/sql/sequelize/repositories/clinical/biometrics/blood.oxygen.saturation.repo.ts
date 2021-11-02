@@ -12,20 +12,20 @@ import BloodOxygenSaturationModel from '../../../models/clinical/biometrics/bloo
 
 export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
 
-    create = async (bloodOxygenSaturationDomainModel: BloodOxygenSaturationDomainModel):
+    create = async (createModel: BloodOxygenSaturationDomainModel):
     Promise<BloodOxygenSaturationDto> => {
         try {
             const entity = {
-                PatientUserId         : bloodOxygenSaturationDomainModel.PatientUserId,
-                BloodOxygenSaturation : bloodOxygenSaturationDomainModel.BloodOxygenSaturation,
-                Unit                  : bloodOxygenSaturationDomainModel.Unit,
-                RecordDate            : bloodOxygenSaturationDomainModel.RecordDate,
-                RecordedByUserId      : bloodOxygenSaturationDomainModel.RecordedByUserId
+                PatientUserId         : createModel.PatientUserId,
+                BloodOxygenSaturation : createModel.BloodOxygenSaturation,
+                Unit                  : createModel.Unit,
+                RecordDate            : createModel.RecordDate,
+                RecordedByUserId      : createModel.RecordedByUserId
             };
 
             const bloodOxygenSaturation = await BloodOxygenSaturationModel.create(entity);
-            const dto = await BloodOxygenSaturationMapper.toDto(bloodOxygenSaturation);
-            return dto;
+            return await BloodOxygenSaturationMapper.toDto(bloodOxygenSaturation);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -35,8 +35,8 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
     getById = async (id: string): Promise<BloodOxygenSaturationDto> => {
         try {
             const bloodOxygenSaturation = await BloodOxygenSaturationModel.findByPk(id);
-            const dto = await BloodOxygenSaturationMapper.toDto(bloodOxygenSaturation);
-            return dto;
+            return await BloodOxygenSaturationMapper.toDto(bloodOxygenSaturation);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -133,31 +133,31 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
         }
     };
 
-    update = async (id: string, bloodOxygenSaturationDomainModel: BloodOxygenSaturationDomainModel):
+    update = async (id: string, updateModel: BloodOxygenSaturationDomainModel):
     Promise<BloodOxygenSaturationDto> => {
         try {
             const bloodOxygenSaturation = await BloodOxygenSaturationModel.findByPk(id);
 
-            if (bloodOxygenSaturationDomainModel.PatientUserId != null) {
-                bloodOxygenSaturation.PatientUserId = bloodOxygenSaturationDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                bloodOxygenSaturation.PatientUserId = updateModel.PatientUserId;
             }
-            if (bloodOxygenSaturationDomainModel.BloodOxygenSaturation != null) {
-                bloodOxygenSaturation.BloodOxygenSaturation = bloodOxygenSaturationDomainModel.BloodOxygenSaturation;
+            if (updateModel.BloodOxygenSaturation != null) {
+                bloodOxygenSaturation.BloodOxygenSaturation = updateModel.BloodOxygenSaturation;
             }
-            if (bloodOxygenSaturationDomainModel.Unit != null) {
-                bloodOxygenSaturation.Unit = bloodOxygenSaturationDomainModel.Unit;
+            if (updateModel.Unit != null) {
+                bloodOxygenSaturation.Unit = updateModel.Unit;
             }
-            if (bloodOxygenSaturationDomainModel.RecordDate != null) {
-                bloodOxygenSaturation.RecordDate = bloodOxygenSaturationDomainModel.RecordDate;
+            if (updateModel.RecordDate != null) {
+                bloodOxygenSaturation.RecordDate = updateModel.RecordDate;
             }
-            if (bloodOxygenSaturationDomainModel.RecordedByUserId != null) {
-                bloodOxygenSaturation.RecordedByUserId = bloodOxygenSaturationDomainModel.RecordedByUserId;
+            if (updateModel.RecordedByUserId != null) {
+                bloodOxygenSaturation.RecordedByUserId = updateModel.RecordedByUserId;
             }
     
             await bloodOxygenSaturation.save();
 
-            const dto = await BloodOxygenSaturationMapper.toDto(bloodOxygenSaturation);
-            return dto;
+            return await BloodOxygenSaturationMapper.toDto(bloodOxygenSaturation);
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

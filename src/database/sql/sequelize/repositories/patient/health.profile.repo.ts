@@ -73,64 +73,64 @@ export class HealthProfileRepo implements IHealthProfileRepo {
                 throw new Error("Cannot find health-profile for the patient.");
             }
 
-            if (patientHealthProfileDomainModel.BloodGroup != null) {
+            if (patientHealthProfileDomainModel.BloodGroup !== undefined) {
                 patientHealthProfile.BloodGroup = patientHealthProfileDomainModel.BloodGroup;
             }
-            if (patientHealthProfileDomainModel.MajorAilment != null) {
+            if (patientHealthProfileDomainModel.MajorAilment !== undefined) {
                 patientHealthProfile.MajorAilment = patientHealthProfileDomainModel.MajorAilment;
             }
-            if (patientHealthProfileDomainModel.OtherConditions != null) {
+            if (patientHealthProfileDomainModel.OtherConditions !== undefined) {
                 patientHealthProfile.OtherConditions = patientHealthProfileDomainModel.OtherConditions;
             }
-            if (patientHealthProfileDomainModel.IsDiabetic != null) {
+            if (patientHealthProfileDomainModel.IsDiabetic !== undefined) {
                 patientHealthProfile.IsDiabetic = patientHealthProfileDomainModel.IsDiabetic;
             }
-            if (patientHealthProfileDomainModel.HasHeartAilment != null) {
+            if (patientHealthProfileDomainModel.HasHeartAilment !== undefined) {
                 patientHealthProfile.HasHeartAilment = patientHealthProfileDomainModel.HasHeartAilment;
             }
-            if (patientHealthProfileDomainModel.MaritalStatus != null) {
+            if (patientHealthProfileDomainModel.MaritalStatus !== undefined) {
                 patientHealthProfile.MaritalStatus = patientHealthProfileDomainModel.MaritalStatus;
             }
-            if (patientHealthProfileDomainModel.Ethnicity != null) {
+            if (patientHealthProfileDomainModel.Ethnicity !== undefined) {
                 patientHealthProfile.Ethnicity = patientHealthProfileDomainModel.Ethnicity;
             }
-            if (patientHealthProfileDomainModel.Nationality != null) {
+            if (patientHealthProfileDomainModel.Nationality !== undefined) {
                 patientHealthProfile.Nationality = patientHealthProfileDomainModel.Nationality;
             }
-            if (patientHealthProfileDomainModel.Occupation != null) {
+            if (patientHealthProfileDomainModel.Occupation !== undefined) {
                 patientHealthProfile.Occupation = patientHealthProfileDomainModel.Occupation;
             }
-            if (patientHealthProfileDomainModel.SedentaryLifestyle != null) {
+            if (patientHealthProfileDomainModel.SedentaryLifestyle !== undefined) {
                 patientHealthProfile.SedentaryLifestyle = patientHealthProfileDomainModel.SedentaryLifestyle;
             }
-            if (patientHealthProfileDomainModel.IsSmoker != null) {
+            if (patientHealthProfileDomainModel.IsSmoker !== undefined) {
                 patientHealthProfile.IsSmoker = patientHealthProfileDomainModel.IsSmoker;
             }
-            if (patientHealthProfileDomainModel.SmokingSeverity != null) {
+            if (patientHealthProfileDomainModel.SmokingSeverity !== undefined) {
                 patientHealthProfile.SmokingSeverity = patientHealthProfileDomainModel.SmokingSeverity;
             }
-            if (patientHealthProfileDomainModel.SmokingSince != null) {
+            if (patientHealthProfileDomainModel.SmokingSince !== undefined) {
                 patientHealthProfile.SmokingSince = patientHealthProfileDomainModel.SmokingSince;
             }
-            if (patientHealthProfileDomainModel.IsDrinker != null) {
+            if (patientHealthProfileDomainModel.IsDrinker !== undefined) {
                 patientHealthProfile.IsDrinker = patientHealthProfileDomainModel.IsDrinker;
             }
-            if (patientHealthProfileDomainModel.DrinkingSeverity != null) {
+            if (patientHealthProfileDomainModel.DrinkingSeverity !== undefined) {
                 patientHealthProfile.DrinkingSeverity = patientHealthProfileDomainModel.DrinkingSeverity;
             }
-            if (patientHealthProfileDomainModel.DrinkingSince != null) {
+            if (patientHealthProfileDomainModel.DrinkingSince !== undefined) {
                 patientHealthProfile.DrinkingSince = patientHealthProfileDomainModel.DrinkingSince;
             }
-            if (patientHealthProfileDomainModel.SubstanceAbuse != null) {
+            if (patientHealthProfileDomainModel.SubstanceAbuse !== undefined) {
                 patientHealthProfile.SubstanceAbuse = patientHealthProfileDomainModel.SubstanceAbuse;
             }
-            if (patientHealthProfileDomainModel.ProcedureHistory != null) {
+            if (patientHealthProfileDomainModel.ProcedureHistory !== undefined) {
                 patientHealthProfile.ProcedureHistory = patientHealthProfileDomainModel.ProcedureHistory;
             }
-            if (patientHealthProfileDomainModel.ObstetricHistory != null) {
+            if (patientHealthProfileDomainModel.ObstetricHistory !== undefined) {
                 patientHealthProfile.ObstetricHistory = patientHealthProfileDomainModel.ObstetricHistory;
             }
-            if (patientHealthProfileDomainModel.OtherInformation != null) {
+            if (patientHealthProfileDomainModel.OtherInformation !== undefined) {
                 patientHealthProfile.OtherInformation = patientHealthProfileDomainModel.OtherInformation;
             }
 

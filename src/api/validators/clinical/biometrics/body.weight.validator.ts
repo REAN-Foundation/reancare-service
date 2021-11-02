@@ -58,7 +58,7 @@ export class BodyWeightValidator extends BaseValidator{
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
         await this.validateDecimal(request, 'BodyWeight', Where.Body, true, false);
         await this.validateString(request, 'Unit', Where.Body, false, true);
-        await this.validateDate(request, 'RecordDate', Where.Body, true, false);
+        await this.validateDate(request, 'RecordDate', Where.Body, false, false);
         await this.validateUuid(request, 'RecordedByUserId', Where.Body, false, false);
 
         this.validateRequest(request);

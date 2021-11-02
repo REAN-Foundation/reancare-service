@@ -1,21 +1,21 @@
-import { PersonDomainModel } from "../../../../domain.types/person/person.domain.model";
-import { IPersonRepo } from "../../../repository.interfaces/person.repo.interface";
-import Person from '../models/person.model';
-import { PersonMapper } from "../mappers/person.mapper";
-import { Logger } from "../../../../common/logger";
+import { Op } from 'sequelize';
 import { ApiError } from "../../../../common/api.error";
 import { Helper } from "../../../../common/helper";
-import { Op } from 'sequelize';
-import PersonRole from "../models/person.role.model";
-import { PersonDetailsDto, PersonDto } from "../../../../domain.types/person/person.dto";
-import { OrganizationDto } from "../../../../domain.types/organization/organization.dto";
+import { Logger } from "../../../../common/logger";
 import { AddressDto } from "../../../../domain.types/address/address.dto";
-import OrganizationPersons from "../models/organization.persons.model";
-import { OrganizationMapper } from "../mappers/organization.mapper";
+import { OrganizationDto } from "../../../../domain.types/organization/organization.dto";
+import { PersonDomainModel } from "../../../../domain.types/person/person.domain.model";
+import { PersonDetailsDto, PersonDto } from "../../../../domain.types/person/person.dto";
+import { IPersonRepo } from "../../../repository.interfaces/person.repo.interface";
 import { AddressMapper } from "../mappers/address.mapper";
-import PersonAddresses from "../models/person.addresses.model";
-import Organization from "../models/organization.model";
+import { OrganizationMapper } from "../mappers/organization.mapper";
+import { PersonMapper } from "../mappers/person.mapper";
 import Address from "../models/address.model";
+import Organization from "../models/organization.model";
+import OrganizationPersons from "../models/organization.persons.model";
+import PersonAddresses from "../models/person.addresses.model";
+import Person from '../models/person.model';
+import PersonRole from "../models/person.role.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -154,28 +154,28 @@ export class PersonRepo implements IPersonRepo {
         try {
             const person = await Person.findOne({ where: { id: id } });
 
-            if (personDomainModel.Prefix != null) {
+            if (personDomainModel.Prefix !== undefined) {
                 person.Prefix = personDomainModel.Prefix;
             }
-            if (personDomainModel.FirstName != null) {
+            if (personDomainModel.FirstName !== undefined) {
                 person.FirstName = personDomainModel.FirstName;
             }
-            if (personDomainModel.LastName != null) {
+            if (personDomainModel.LastName !== undefined) {
                 person.LastName = personDomainModel.LastName;
             }
-            if (personDomainModel.Phone != null) {
+            if (personDomainModel.Phone !== undefined) {
                 person.Phone = personDomainModel.Phone;
             }
-            if (personDomainModel.Email != null) {
+            if (personDomainModel.Email !== undefined) {
                 person.Email = personDomainModel.Email;
             }
-            if (personDomainModel.Gender != null) {
+            if (personDomainModel.Gender !== undefined) {
                 person.Gender = personDomainModel.Gender;
             }
-            if (personDomainModel.BirthDate != null) {
+            if (personDomainModel.BirthDate !== undefined) {
                 person.BirthDate = personDomainModel.BirthDate;
             }
-            if (personDomainModel.ImageResourceId != null) {
+            if (personDomainModel.ImageResourceId !== undefined) {
                 person.ImageResourceId = personDomainModel.ImageResourceId;
             }
             await person.save();

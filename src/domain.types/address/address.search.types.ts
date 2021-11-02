@@ -1,6 +1,7 @@
+import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.search.types";
 import { AddressDto } from "./address.dto";
 
-export interface AddressSearchFilters {
+export interface AddressSearchFilters extends BaseSearchFilters {
     Type?: string;
     PersonId?: string;
     OrganizationId?: string;
@@ -14,20 +15,8 @@ export interface AddressSearchFilters {
     LongitudeTo: number;
     LattitudeFrom?: number;
     LattitudeTo: number;
-    CreatedDateFrom?: Date;
-    CreatedDateTo?: Date;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
 }
 
-export interface AddressSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface AddressSearchResults extends BaseSearchResults {
     Items: AddressDto[];
 }

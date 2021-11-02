@@ -5,7 +5,7 @@ import { BaseValidator, Where } from '../../base.validator';
  
 ///////////////////////////////////////////////////////////////////////////////////////
  
-export class BloodPressureValidator extends BaseValidator{
+export class BloodPressureValidator extends BaseValidator {
 
     constructor() {
         super();

@@ -1,26 +1,25 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BodyTemperatureService } from '../../../../services/clinical/biometrics/body.temperature.service';
 import { Loader } from '../../../../startup/loader';
 import { BodyTemperatureValidator } from '../../../validators/clinical/biometrics/body.temperature.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class BodyTemperatureController {
+export class BodyTemperatureController extends BaseController {
 
     //#region member variables and constructors
 
     _service: BodyTemperatureService = null;
 
-    _authorizer: Authorizer = null;
-
-    _personService: any;
+    _validator: BodyTemperatureValidator = new BodyTemperatureValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(BodyTemperatureService);
-        this._authorizer = Loader.authorizer;
 
     }
 
@@ -30,17 +29,17 @@ export class BodyTemperatureController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyTemperature.Create';
 
-            const bodyTemperatureDomainModel = await BodyTemperatureValidator.create(request);
+            this.setContext('Biometrics.BodyTemperature.Create', request, response);
 
-            const BodyTemperature = await this._service.create(bodyTemperatureDomainModel);
-            if (BodyTemperature == null) {
+            const model = await this._validator.create(request);
+            const bodyTemperature = await this._service.create(model);
+            if (bodyTemperature == null) {
                 throw new ApiError(400, 'Cannot create record for body temperature!');
             }
 
             ResponseHandler.success(request, response, 'Body temperature record created successfully!', 201, {
-                BodyTemperature : BodyTemperature,
+                BodyTemperature : bodyTemperature,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -49,19 +48,17 @@ export class BodyTemperatureController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyTemperature.GetById';
             
-            await this._authorizer.authorize(request, response);
+            this.setContext('Biometrics.BodyTemperature.GetById', request, response);
 
-            const id: string = await BodyTemperatureValidator.getById(request);
-
-            const BodyTemperature = await this._service.getById(id);
-            if (BodyTemperature == null) {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const bodyTemperature = await this._service.getById(id);
+            if (bodyTemperature == null) {
                 throw new ApiError(404, 'Body temperature record not found.');
             }
 
             ResponseHandler.success(request, response, 'Body temperature record retrieved successfully!', 200, {
-                BodyTemperature : BodyTemperature,
+                BodyTemperature : bodyTemperature,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -70,15 +67,12 @@ export class BodyTemperatureController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyTemperature.Search';
-            await this._authorizer.authorize(request, response);
-
-            const filters = await BodyTemperatureValidator.search(request);
-
-            const searchResults = await this._service.search(filters);
-
-            const count = searchResults.Items.length;
             
+            this.setContext('Biometrics.BodyTemperature.Search', request, response);
+
+            const filters = await this._validator.search(request);
+            const searchResults = await this._service.search(filters);
+            const count = searchResults.Items.length;
             const message =
                 count === 0
                     ? 'No records found!'
@@ -94,13 +88,11 @@ export class BodyTemperatureController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyTemperature.Update';
+            
+            this.setContext('Biometrics.BodyTemperature.Update', request, response);
 
-            await this._authorizer.authorize(request, response);
-
-            const domainModel = await BodyTemperatureValidator.update(request);
-
-            const id: string = await BodyTemperatureValidator.getById(request);
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Body temperature record not found.');
@@ -121,10 +113,10 @@ export class BodyTemperatureController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.BodyTemperature.Delete';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Biometrics.BodyTemperature.Delete', request, response);
 
-            const id: string = await BodyTemperatureValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Body temperature record not found.');

@@ -1,14 +1,18 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../common/helper';
+//import { body, param, query, validationResult } from 'express-validator';
 import { DoctorNoteDomainModel } from '../../../domain.types/clinical/doctor.note/doctor.note.domain.model';
 import { DoctorNoteSearchFilters } from '../../../domain.types/clinical/doctor.note/doctor.note.search.types';
+import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DoctorNoteValidator {
+export class DoctorNoteValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): DoctorNoteDomainModel => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = (request: express.Request): DoctorNoteDomainModel => {
 
         const doctorNoteModel: DoctorNoteDomainModel = {
             PatientUserId             : request.body.PatientUserId ?? null,
@@ -23,179 +27,74 @@ export class DoctorNoteValidator {
         return doctorNoteModel;
     };
 
-    static create = async (request: express.Request): Promise<DoctorNoteDomainModel> => {
-        await DoctorNoteValidator.validateBody(request);
-        return DoctorNoteValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<DoctorNoteDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await DoctorNoteValidator.getParamId(request);
+    search = async (request: express.Request): Promise<DoctorNoteSearchFilters> => {
+
+        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
+        await this.validateUuid(request, 'visitId', Where.Query, false, false);
+        await this.validateUuid(request, 'medicalPractitionerUserId', Where.Query, false, false);
+        await this.validateString(request, 'notes', Where.Query, false, false);
+        await this.validateDate(request, 'recordDateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'recordDateTo', Where.Query, false, false);
+
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+        
+        return this.getFilter(request);
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await DoctorNoteValidator.getParamId(request);
-    };
+    update = async (request: express.Request): Promise<DoctorNoteDomainModel> => {
 
-    static search = async (request: express.Request): Promise<DoctorNoteSearchFilters> => {
-
-        await query('patientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-        
-        await query('visitId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('medicalPractitionerUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-        
-        await query('notes').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('recordDateFrom').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        await query('recordDateTo').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-        
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-        
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return DoctorNoteValidator.getFilter(request);
-    };
-
-    static update = async (request: express.Request): Promise<DoctorNoteDomainModel> => {
-
-        const id = await DoctorNoteValidator.getParamId(request);
-        await DoctorNoteValidator.validateBody(request);
-
-        const domainModel = DoctorNoteValidator.getDomainModel(request);
-        domainModel.id = id;
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
 
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private  async validateCreateBody(request) {
 
-        await body('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateUuid(request, 'EhrId', Where.Body, false, false);
+        await this.validateUuid(request, 'MedicalPractitionerUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'VisitId', Where.Body, true, false);
+        await this.validateString(request, 'Notes', Where.Body, true, true);
+        await this.validateString(request, 'ValidationStatus', Where.Body, true, false);
+        await this.validateDate(request, 'RecordDate', Where.Body, true, false);
 
-        await body('EhrId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('MedicalPractitionerUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('VisitId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('Notes').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('ValidationStatus').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('RecordDate').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-        
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
     }
 
-    private static getFilter(request): DoctorNoteSearchFilters {
-        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
+    private  async validateUpdateBody(request) {
 
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'EhrId', Where.Body, false, false);
+        await this.validateUuid(request, 'MedicalPractitionerUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'VisitId', Where.Body, false, false);
+        await this.validateString(request, 'Notes', Where.Body, false, true);
+        await this.validateString(request, 'ValidationStatus', Where.Body, false, false);
+        await this.validateDate(request, 'RecordDate', Where.Body, false, false);
 
-        const filters: DoctorNoteSearchFilters = {
-            PatientUserId             : request.query.PatientUserId ?? null,
-            MedicalPractitionerUserId : request.query.MedicalPractitionerUserId ?? null,
-            VisitId                   : request.query.VisitId ?? null,
-            Notes                     : request.query.Notes ?? null,
+        this.validateRequest(request);
+    }
+
+    private getFilter(request): DoctorNoteSearchFilters {
+
+        var filters: DoctorNoteSearchFilters = {
+            PatientUserId             : request.query.patientUserId ?? null,
+            MedicalPractitionerUserId : request.query.medicalPractitionerUserId ?? null,
+            VisitId                   : request.query.visitId ?? null,
+            Notes                     : request.query.notes ?? null,
             RecordDateFrom            : request.query.recordDateFrom ?? null,
             RecordDateTo              : request.query.recordDateTo ?? null,
-            OrderBy                   : request.query.orderBy ?? 'CreatedAt',
-            Order                     : request.query.order ?? 'descending',
-            PageIndex                 : pageIndex,
-            ItemsPerPage              : itemsPerPage,
+            
         };
-        return filters;
-    }
-
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

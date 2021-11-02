@@ -1,25 +1,11 @@
 import {
-    Table,
-    Column,
-    Model,
-    DataType,
-    HasMany,
-    CreatedAt,
-    UpdatedAt,
-    DeletedAt,
-    IsUUID,
-    PrimaryKey,
-    Length,
-    IsEmail,
-    IsDate,
-    Index,
+    Column, CreatedAt, DataType, DeletedAt, HasMany, Index, IsEmail, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-
-import { PersonIdentificationType } from '../../../../domain.types/person/person.types';
-
 import { v4 } from 'uuid';
-import User from './user/user.model';
+import { Gender, GenderList } from '../../../../domain.types/miscellaneous/system.types';
+import { PersonIdentificationType } from '../../../../domain.types/person/person.types';
 import Address from './address.model';
+import User from './user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -89,13 +75,12 @@ export default class Person extends Model {
 
     @Column({
         type         : DataType.ENUM,
-        values       : ['Male', 'Female', 'Other', 'Unknown'],
-        defaultValue : 'Male',
-        allowNull    : false,
+        values       : GenderList,
+        defaultValue : Gender.Unknown,
+        allowNull    : true,
     })
     Gender: string;
 
-    @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,

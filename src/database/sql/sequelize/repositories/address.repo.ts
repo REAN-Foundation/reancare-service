@@ -152,31 +152,33 @@ export class AddressRepo implements IAddressRepo {
         try {
             const address = await Address.findByPk(id);
 
-            if (addressDomainModel.Type != null) {
+            if (addressDomainModel.Type !== undefined &&
+                addressDomainModel.Type !== null) {
                 address.Type = addressDomainModel.Type;
             }
-            if (addressDomainModel.AddressLine != null) {
+            if (addressDomainModel.AddressLine !== undefined &&
+                addressDomainModel.AddressLine !== null) {
                 address.AddressLine = addressDomainModel.AddressLine;
             }
-            if (addressDomainModel.City != null) {
+            if (addressDomainModel.City !== undefined) {
                 address.City = addressDomainModel.City;
             }
-            if (addressDomainModel.District != null) {
+            if (addressDomainModel.District !== undefined) {
                 address.District = addressDomainModel.District;
             }
-            if (addressDomainModel.State != null) {
+            if (addressDomainModel.State !== undefined) {
                 address.State = addressDomainModel.State;
             }
-            if (addressDomainModel.Country != null) {
+            if (addressDomainModel.Country !== undefined) {
                 address.Country = addressDomainModel.Country;
             }
-            if (addressDomainModel.PostalCode != null) {
+            if (addressDomainModel.PostalCode !== undefined) {
                 address.PostalCode = addressDomainModel.PostalCode;
             }
-            if (addressDomainModel.Longitude != null) {
+            if (addressDomainModel.Longitude !== undefined) {
                 address.Longitude = addressDomainModel.Longitude;
             }
-            if (addressDomainModel.Lattitude != null) {
+            if (addressDomainModel.Lattitude !== undefined) {
                 address.Lattitude = addressDomainModel.Lattitude;
             }
             await address.save();

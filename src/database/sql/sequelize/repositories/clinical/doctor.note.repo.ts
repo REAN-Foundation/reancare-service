@@ -17,16 +17,16 @@ export class DoctorNoteRepo implements IDoctorNoteRepo {
             const entity = {
                 id                        : doctorNoteDomainModel.id,
                 PatientUserId             : doctorNoteDomainModel.PatientUserId,
-                EhrId                     : doctorNoteDomainModel.EhrId ?? null,
-                MedicalPractitionerUserId : doctorNoteDomainModel.MedicalPractitionerUserId ?? null,
-                VisitId                   : doctorNoteDomainModel.VisitId ?? null,
-                Notes                     : doctorNoteDomainModel.Notes ?? null,
+                EhrId                     : doctorNoteDomainModel.EhrId,
+                MedicalPractitionerUserId : doctorNoteDomainModel.MedicalPractitionerUserId,
+                VisitId                   : doctorNoteDomainModel.VisitId,
+                Notes                     : doctorNoteDomainModel.Notes,
                 ValidationStatus          : doctorNoteDomainModel.ValidationStatus,
-                RecordDate                : doctorNoteDomainModel.RecordDate ?? null,
+                RecordDate                : doctorNoteDomainModel.RecordDate,
             };
             const doctorNote = await DoctorNote.create(entity);
-            const dto = await DoctorNoteMapper.toDto(doctorNote);
-            return dto;
+            return await DoctorNoteMapper.toDto(doctorNote);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -36,8 +36,8 @@ export class DoctorNoteRepo implements IDoctorNoteRepo {
     getById = async (id: string): Promise<DoctorNoteDto> => {
         try {
             const doctorNote = await DoctorNote.findByPk(id);
-            const dto = await DoctorNoteMapper.toDto(doctorNote);
-            return dto;
+            return await DoctorNoteMapper.toDto(doctorNote);
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -49,22 +49,22 @@ export class DoctorNoteRepo implements IDoctorNoteRepo {
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
-                search.where['PatientUserId'] = { [Op.eq]: filters.PatientUserId };
+                search.where['PatientUserId'] = filters.PatientUserId;
             }
             if (filters.VisitId != null) {
-                search.where['VisitId'] = { [Op.eq]: filters.VisitId };
+                search.where['VisitId'] = filters.VisitId;
             }
             if (filters.MedicalPractitionerUserId != null) {
-                search.where['MedicalPractitionerUserId'] = { [Op.eq]: filters.MedicalPractitionerUserId };
+                search.where['MedicalPractitionerUserId'] = filters.MedicalPractitionerUserId;
             }
             if (filters.Notes != null) {
-                search.where['Notes'] = { [Op.eq]: filters.Notes };
+                search.where['Notes'] = { [Op.like]: '%' + filters.Notes + '%' };
             }
             if (filters.RecordDateFrom != null) {
-                search.where['RecordDateFrom'] = { [Op.eq]: filters.RecordDateFrom };
+                search.where['RecordDateFrom'] = filters.RecordDateFrom;
             }
             if (filters.RecordDateTo != null) {
-                search.where['RecordDateTo'] = { [Op.eq]: filters.RecordDateTo };
+                search.where['RecordDateTo'] = filters.RecordDateTo;
             }
             
             let orderByColum = 'RecordDate';
@@ -106,7 +106,6 @@ export class DoctorNoteRepo implements IDoctorNoteRepo {
                 Order          : order === 'DESC' ? 'descending' : 'ascending',
                 OrderedBy      : orderByColum,
                 Items          : dtos,
-                length         : undefined
             };
             return searchResults;
         } catch (error) {
@@ -144,8 +143,8 @@ export class DoctorNoteRepo implements IDoctorNoteRepo {
             
             await doctorNote.save();
 
-            const dto = await DoctorNoteMapper.toDto(doctorNote);
-            return dto;
+            return await DoctorNoteMapper.toDto(doctorNote);
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

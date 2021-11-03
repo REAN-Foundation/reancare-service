@@ -239,7 +239,7 @@ export class BaseValidator {
             parseInt(request.query.itemsPerPage as string, 10) : 25;
 
         filters['CreatedDateFrom'] = request.query.createdDateFrom ? new Date(request.query.createdDateFrom as string) : null;
-        filters['CreatedDateTo']   = request.query.createdDateTo ? new Date(request.query.createdDateFrom as string) : null;
+        filters['CreatedDateTo']   = request.query.createdDateTo ? new Date(request.query.createdDateTo as string) : null;
         filters['OrderBy']         = request.query.orderBy as string ?? 'CreatedAt';
         filters['Order']           = request.query.order as string ?? 'descending';
         filters['PageIndex']       = pageIndex;

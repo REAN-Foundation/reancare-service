@@ -12,11 +12,10 @@ export class HeartPointsMapper {
 
         const dto: HeartPointsDto = {
             id            : heartPoint.id,
-            PersonId      : heartPoint.PersonId,
             PatientUserId : heartPoint.PatientUserId,
             HeartPoints   : heartPoint.HeartPoints,
             Unit          : heartPoint.Unit,
-            Person        : null
+            RecordDate    : heartPoint.RecordDate,
         };
         return dto;
     }

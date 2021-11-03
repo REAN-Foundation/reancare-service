@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6c85daee-81c6-4afe-9153-759c64e695ed",
+		"_postman_id": "00300029-e737-4f58-8e10-079e4b85dd14",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -16512,7 +16512,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"MedicalPractitionerUserId\": \"0652a79e-c549-478d-bc99-42187dd91d30\",\r\n    \"MedicalConditionId\": \"06fbc6fd-b819-416e-8dc9-e20bb59c11c9\",\r\n    \"Comments\": \"better than earlier\",\r\n    \"IsClinicallyActive\": false,\r\n    \"ValidationStatus\": \"Confirmed\",\r\n    \"Interpretation\": \"Significant change up\",\r\n    \"OnsetDate\": \"2021-09-15\",\r\n    \"EndDate\": \"2021-09-25\"\r\n}"
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"MedicalPractitionerUserId\": \"0652a79e-c549-478d-bc99-42187dd91d30\",\r\n    \"VisitId\": \"0f5958d4-d872-453c-a8dd-df6e6d4cac1e\",\r\n    \"MedicalConditionId\": \"06fbc6fd-b819-416e-8dc9-e20bb59c11c9\",\r\n    \"Comments\": \"Better than earlier\",\r\n    \"IsClinicallyActive\": false,\r\n    \"ValidationStatus\": \"Negated\",\r\n    \"Interpretation\": \"Significant change up\",\r\n    \"OnsetDate\": \"2021-09-15\",\r\n    \"EndDate\": \"2021-09-25\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/clinical/diagnoses",
@@ -16664,6 +16664,76 @@
 										"clinical",
 										"diagnoses",
 										"{{DIAGNOSIS_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get dignosis records by event clinical status",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Diagnosis record is returned\", function () {\r",
+											"\r",
+											"    var expectedValue = \"Negated\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DiagnosisEvent');\r",
+											"    pm.expect(jsonRes.Data.DiagnosisEvent).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.DiagnosisEvent).to.have.property('Diagnoses');\r",
+											"    pm.expect(jsonRes.Data.DiagnosisEvent).to.have.property('PatientUserId');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.DiagnosisEvent.Event.length).greaterThan(0);\r",
+											"    pm.expect(jsonRes.Data.DiagnosisEvent.Event).equals(expectedValue)\r",
+											"    pm.expect(jsonRes.Data.DiagnosisEvent.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/diagnoses/{{PATIENT_USER_ID}}/clinical-status/Negated",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"diagnoses",
+										"{{PATIENT_USER_ID}}",
+										"clinical-status",
+										"Negated"
 									]
 								}
 							},

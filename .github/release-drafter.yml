@@ -1,0 +1,51 @@
+change-template: "* $TITLE (#$NUMBER) by @$AUTHOR"
+name-template: '$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+categories:
+  - title: '⚡ Breaking Changes'
+    labels:
+      - 'breaking-change'
+  - title: '🌟New features and non-breaking changes'
+    labels:
+      - 'major'
+      - 'feature'
+  - title: '🌟 Minor Changes'
+    labels:
+      - 'enhancement'
+  - title: '📜 Documentation updates'
+    labels:
+      - 'documentation'
+  - title: '🐛 Bug and hot fixes'
+    labels:
+      - 'bug'
+      - 'fix'
+  - title: '🚒 Deprecations'
+    labels:
+      - 'deprecated'
+  - title: '🔧 Maintenance'
+    labels:
+      - 'internal'
+      - 'dependencies'
+exclude-labels:
+  - 'skip-changelog'
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'minor'
+  patch:
+    labels:
+      - 'patch'
+  default: major
+template: |
+  ## Summary
+
+  ## Changes
+
+  $CHANGES
+
+  ## This release was made possible by the following contributors:
+
+  $CONTRIBUTORS

@@ -1,7 +1,7 @@
 import express from 'express';
-import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BodyWeightService } from '../../../../services/clinical/biometrics/body.weight.service';
 import { Loader } from '../../../../startup/loader';
 import { BodyWeightValidator } from '../../../validators/clinical/biometrics/body.weight.validator';

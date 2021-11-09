@@ -18,7 +18,7 @@ export class DoctorNoteMapper {
             MedicalPractitionerUserId : doctorNote.MedicalPractitionerUserId,
             VisitId                   : doctorNote.VisitId,
             Notes                     : doctorNote.Notes,
-            ValidationStatus          : doctorNote.ValidationStatus as ClinicalValidationStatus,
+            ValidationStatus          : ClinicalValidationStatus[doctorNote.ValidationStatus],
             RecordDate                : doctorNote.RecordDate,
         };
         return dto;

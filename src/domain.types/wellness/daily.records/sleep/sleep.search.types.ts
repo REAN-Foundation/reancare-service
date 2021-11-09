@@ -1,24 +1,15 @@
+import { BaseSearchResults, BaseSearchFilters } from "../../../../domain.types/miscellaneous/base.search.types";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 import { SleepDto } from "./sleep.dto";
 
-export interface SleepSearchFilters {
-    PersonId?       : string;
-    PatientUserId?  : string;
+export interface SleepSearchFilters extends BaseSearchFilters{
+    PatientUserId?  : uuid;
     MinValue?       : number;
     MaxValue?       : number;
     CreatedDateFrom?: Date;
     CreatedDateTo?  : Date;
-    OrderBy         : string;
-    Order           : string;
-    PageIndex       : number;
-    ItemsPerPage    : number;
 }
 
-export interface SleepSearchResults {
-    TotalCount    : number;
-    RetrievedCount: number;
-    PageIndex     : number;
-    ItemsPerPage  : number;
-    Order         : string;
-    OrderedBy     : string;
+export interface SleepSearchResults extends BaseSearchResults {
     Items         : SleepDto[];
 }

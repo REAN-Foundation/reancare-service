@@ -1,27 +1,24 @@
 import { DoctorNoteDto } from "./doctor.note.dto";
+import { BaseSearchFilters, BaseSearchResults } from "../../../domain.types/miscellaneous/base.search.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 //////////////////////////////////////////////////////////////////////
 
-export interface DoctorNoteSearchFilters {
-    PatientUserId?: string;
-    MedicalPractitionerUserId?: string;
-    VisitId?: string;
-    Notes?: string;
-    RecordDateFrom: Date;
-    RecordDateTo: Date;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+export interface DoctorNoteSearchFilters extends BaseSearchFilters{
+    PatientUserId?            : uuid;
+    MedicalPractitionerUserId?: uuid;
+    VisitId?                  : uuid;
+    Notes?                    : string;
+    RecordDateFrom            : Date;
+    RecordDateTo              : Date;
 }
 
-export interface DoctorNoteSearchResults {
-    length: any;
-    TotalCount: number;
+export interface DoctorNoteSearchResults extends BaseSearchResults{
+    TotalCount    : number;
     RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
-    Items: DoctorNoteDto[];
+    PageIndex     : number;
+    ItemsPerPage  : number;
+    Order         : string;
+    OrderedBy     : string;
+    Items         : DoctorNoteDto[];
 }

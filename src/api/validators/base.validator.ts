@@ -137,9 +137,17 @@ export class BaseValidator {
         nullable: boolean) => {
 
         var chain: ValidationChain = this.getValidationChain(field, where);
-        chain = chain.trim();
         chain = this.checkRequired(required, chain, nullable);
-        chain = chain.toDate();
+
+        chain = chain.customSanitizer((value) => {
+            if (value !== null && value !== undefined) {
+                value = value.trim();
+                var x = Date.parse(value);
+                value = new Date(x);
+                return value;
+            }
+        });
+
         await chain.run(request);
     }
 
@@ -151,10 +159,32 @@ export class BaseValidator {
         nullable: boolean) => {
 
         var chain: ValidationChain = this.getValidationChain(field, where);
+        chain = this.checkRequired(required, chain, nullable);
+
+        chain = chain.customSanitizer((value) => {
+            if (value !== null && value !== undefined) {
+                chain = chain.trim();
+                chain = chain.isEmail();
+                chain = chain.normalizeEmail();
+            }
+        });
+
+        await chain.run(request);
+    }
+
+    validatePhone = async(
+        request: express.Request,
+        field: string,
+        where: Where,
+        required: boolean,
+        nullable: boolean) => {
+
+        var chain: ValidationChain = this.getValidationChain(field, where);
         chain = chain.trim();
         chain = this.checkRequired(required, chain, nullable);
-        chain = chain.isEmail();
-        chain = chain.normalizeEmail();
+        chain = chain.notEmpty();
+        chain = chain.customSanitizer(Helper.sanitizePhone);
+        chain = chain.custom(Helper.validatePhone);
 
         await chain.run(request);
     }

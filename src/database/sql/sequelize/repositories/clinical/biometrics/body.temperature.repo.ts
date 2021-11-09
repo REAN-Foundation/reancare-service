@@ -12,20 +12,19 @@ import BodyTemperatureModel from '../../../models/clinical/biometrics/body.tempe
 
 export class BodyTemperatureRepo implements IBodyTemperatureRepo {
 
-    create = async (bodyTemperatureDomainModel: BodyTemperatureDomainModel):
+    create = async (createModel: BodyTemperatureDomainModel):
     Promise<BodyTemperatureDto> => {
         try {
             const entity = {
-                PatientUserId    : bodyTemperatureDomainModel.PatientUserId,
-                BodyTemperature  : bodyTemperatureDomainModel.BodyTemperature,
-                Unit             : bodyTemperatureDomainModel.Unit,
-                RecordDate       : bodyTemperatureDomainModel.RecordDate,
-                RecordedByUserId : bodyTemperatureDomainModel.RecordedByUserId
+                PatientUserId    : createModel.PatientUserId,
+                BodyTemperature  : createModel.BodyTemperature,
+                Unit             : createModel.Unit,
+                RecordDate       : createModel.RecordDate,
+                RecordedByUserId : createModel.RecordedByUserId
             };
 
             const bodyTemperature = await BodyTemperatureModel.create(entity);
-            const dto = await BodyTemperatureMapper.toDto(bodyTemperature);
-            return dto;
+            return await BodyTemperatureMapper.toDto(bodyTemperature);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -35,8 +34,7 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
     getById = async (id: string): Promise<BodyTemperatureDto> => {
         try {
             const bodyTemperature = await BodyTemperatureModel.findByPk(id);
-            const dto = await BodyTemperatureMapper.toDto(bodyTemperature);
-            return dto;
+            return await BodyTemperatureMapper.toDto(bodyTemperature);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -45,8 +43,6 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
 
     search = async (filters: BodyTemperatureSearchFilters): Promise<BodyTemperatureSearchResults> => {
         try {
-
-            Logger.instance().log(`Filters 2 , ${JSON.stringify(filters)}`);
             
             const search = { where: {} };
 
@@ -111,11 +107,11 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
             const foundResults = await BodyTemperatureModel.findAndCountAll(search);
 
             const dtos: BodyTemperatureDto[] = [];
-            for (const bodyTemperature of foundResults.rows) {
-                const dto = await BodyTemperatureMapper.toDto(bodyTemperature);
+            for (const foodConsumption of foundResults.rows) {
+                const dto = await BodyTemperatureMapper.toDto(foodConsumption);
                 dtos.push(dto);
             }
-
+    
             const searchResults: BodyTemperatureSearchResults = {
                 TotalCount     : foundResults.count,
                 RetrievedCount : dtos.length,
@@ -127,37 +123,38 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
             };
 
             return searchResults;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    update = async (id: string, bodyTemperatureDomainModel: BodyTemperatureDomainModel):
+    update = async (id: string, updateModel: BodyTemperatureDomainModel):
     Promise<BodyTemperatureDto> => {
         try {
             const bodyTemperature = await BodyTemperatureModel.findByPk(id);
 
-            if (bodyTemperatureDomainModel.PatientUserId != null) {
-                bodyTemperature.PatientUserId = bodyTemperatureDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                bodyTemperature.PatientUserId = updateModel.PatientUserId;
             }
-            if (bodyTemperatureDomainModel.BodyTemperature != null) {
-                bodyTemperature.BodyTemperature = bodyTemperatureDomainModel.BodyTemperature;
+            if (updateModel.BodyTemperature != null) {
+                bodyTemperature.BodyTemperature = updateModel.BodyTemperature;
             }
-            if (bodyTemperatureDomainModel.Unit != null) {
-                bodyTemperature.Unit = bodyTemperatureDomainModel.Unit;
+            if (updateModel.Unit != null) {
+                bodyTemperature.Unit = updateModel.Unit;
             }
-            if (bodyTemperatureDomainModel.RecordDate != null) {
-                bodyTemperature.RecordDate = bodyTemperatureDomainModel.RecordDate;
+            if (updateModel.RecordDate != null) {
+                bodyTemperature.RecordDate = updateModel.RecordDate;
             }
-            if (bodyTemperatureDomainModel.RecordedByUserId != null) {
-                bodyTemperature.RecordedByUserId = bodyTemperatureDomainModel.RecordedByUserId;
+            if (updateModel.RecordedByUserId != null) {
+                bodyTemperature.RecordedByUserId = updateModel.RecordedByUserId;
             }
     
             await bodyTemperature.save();
 
-            const dto = await BodyTemperatureMapper.toDto(bodyTemperature);
-            return dto;
+            return await BodyTemperatureMapper.toDto(bodyTemperature);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -166,7 +163,6 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            Logger.instance().log(id);
 
             const result = await BodyTemperatureModel.destroy({ where: { id: id } });
             return result === 1;

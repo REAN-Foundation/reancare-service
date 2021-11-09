@@ -1,8 +1,9 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 
 export interface WaterConsumptionDomainModel {
-    id?: string,
-    EhrId?: string;
-    PatientUserId: string;
-    Volume: number;
-    Time?: Date;
+    id?          : uuid,
+    EhrId?       : string;
+    PatientUserId: uuid;
+    Volume       : number;
+    Time?        : Date;
 }

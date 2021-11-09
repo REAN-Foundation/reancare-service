@@ -1,36 +1,25 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
-import { PatientService } from '../../../../services/patient/patient.service';
-import { PersonService } from '../../../../services/person.service';
-import { RoleService } from '../../../../services/role.service';
 import { SleepService } from '../../../../services/wellness/daily.records/sleep.service';
 import { Loader } from '../../../../startup/loader';
 import { SleepValidator } from '../../../validators/wellness/daily.records/sleep.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SleepController {
+export class SleepController extends BaseController{
 
     //#region member variables and constructors
 
     _service: SleepService = null;
 
-    _roleService: RoleService = null;
-
-    _personService: PersonService = null;
-
-    _patientService: PatientService = null;
-
-    _authorizer: Authorizer = null;
+    _validator: SleepValidator = new SleepValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(SleepService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -39,24 +28,16 @@ export class SleepController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DailyRecords.Sleep.Create';
-            await this._authorizer.authorize(request, response);
             
-            const domainModel = await SleepValidator.create(request);
+            this.setContext('DailyRecords.Sleep.Create', request, response);
 
-            if (domainModel.PatientUserId != null) {
-                var organization = await this._patientService.getByUserId(domainModel.PatientUserId);
-                if (organization == null) {
-                    throw new ApiError(404, `Patient with an id ${domainModel.PatientUserId} cannot be found.`);
-                }
-            }
-
-            const sleep = await this._service.create(domainModel);
+            const model = await this._validator.create(request);
+            const sleep = await this._service.create(model);
             if (sleep == null) {
-                throw new ApiError(400, 'Cannot create sleep!');
+                throw new ApiError(400, 'Cannot create record for sleep!');
             }
 
-            ResponseHandler.success(request, response, 'Daily sleep record created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Sleep record created successfully!', 201, {
                 SleepRecord : sleep,
             });
         } catch (error) {
@@ -66,12 +47,10 @@ export class SleepController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DailyRecords.Sleep.GetById';
             
-            await this._authorizer.authorize(request, response);
+            this.setContext('DailyRecords.Sleep.GetById', request, response);
 
-            const id: string = await SleepValidator.getById(request);
-
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const sleepRecord = await this._service.getById(id);
             if (sleepRecord == null) {
                 throw new ApiError(404, 'Sleep record not found.');
@@ -87,13 +66,11 @@ export class SleepController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DailyRecords.Sleep.Search';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('DailyRecords.Sleep.Search', request, response);
 
-            const filters = await SleepValidator.search(request);
-
+            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
-
             const count = searchResults.Items.length;
             const message =
                 count === 0
@@ -109,14 +86,13 @@ export class SleepController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DailyRecords.Sleep.Update';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('DailyRecords.Sleep.Update', request, response);
 
-            const domainModel = await SleepValidator.update(request);
-
-            const id: string = await SleepValidator.getById(request);
-            const existingSleepRecord = await this._service.getById(id);
-            if (existingSleepRecord == null) {
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
                 throw new ApiError(404, 'Sleep record not found.');
             }
 
@@ -135,12 +111,12 @@ export class SleepController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'DailyRecords.Sleep.Delete';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('DailyRecords.Sleep.Delete', request, response);
 
-            const id: string = await SleepValidator.getById(request);
-            const existingSleepRecord = await this._service.getById(id);
-            if (existingSleepRecord == null) {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
                 throw new ApiError(404, 'Sleep record not found.');
             }
 

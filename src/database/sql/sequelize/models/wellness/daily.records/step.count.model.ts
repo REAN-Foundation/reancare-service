@@ -41,7 +41,7 @@ export default class DailyRecordsStepCount extends Model {
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : true,
+        allowNull : false,
     })
     PatientUserId: string;
 

@@ -1,6 +1,7 @@
+import { Helper } from '../../../../common/helper';
+import { Gender } from '../../../../domain.types/miscellaneous/system.types';
 import { PersonDetailsDto, PersonDto } from "../../../../domain.types/person/person.dto";
 import Person from '../models/person.model';
-import { Helper } from '../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +28,7 @@ export class PersonMapper {
             MiddleName      : person.MiddleName,
             LastName        : person.LastName,
             DisplayName     : displayName,
-            Gender          : Helper.getGender(person.Gender),
+            Gender          : person.Gender as Gender,
             BirthDate       : person.BirthDate,
             Age             : age,
             Phone           : person.Phone,
@@ -55,7 +56,7 @@ export class PersonMapper {
         const dto: PersonDto = {
             id          : person.id,
             DisplayName : displayName,
-            Gender      : Helper.getGender(person.Gender),
+            Gender      : person.Gender as Gender,
             BirthDate   : person.BirthDate,
             Phone       : person.Phone,
             Email       : person.Email,

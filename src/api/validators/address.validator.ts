@@ -1,16 +1,19 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../common/helper';
 import { AddressDomainModel } from '../../domain.types/address/address.domain.model';
 import { AddressSearchFilters } from '../../domain.types/address/address.search.types';
+import { BaseValidator, Where } from './base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AddressValidator {
+export class AddressValidator extends BaseValidator {
 
-    static getDomainModel = (requestBody: any): AddressDomainModel => {
+    constructor() {
+        super();
+    }
 
-        const addressModel: AddressDomainModel = {
+    getCreateDomainModel = (requestBody: any): AddressDomainModel => {
+
+        const createModel: AddressDomainModel = {
             Type        : requestBody.Type ?? 'Home',
             AddressLine : requestBody.AddressLine,
             City        : requestBody.City ?? null,
@@ -22,244 +25,108 @@ export class AddressValidator {
             Lattitude   : requestBody.Lattitude ?? null,
         };
 
-        return addressModel;
+        return createModel;
     };
 
-    static create = async (request: express.Request): Promise<AddressDomainModel> => {
-        await AddressValidator.validateBody(request);
-        return AddressValidator.getDomainModel(request.body);
+    getUpdateDomainModel = (requestBody: any): AddressDomainModel => {
+
+        const updateModel: AddressDomainModel = {
+            Type        : requestBody.Type !== undefined ? requestBody.Type : undefined,
+            AddressLine : requestBody.AddressLine,
+            City        : requestBody.City !== undefined ? requestBody.City : undefined,
+            District    : requestBody.District !== undefined ? requestBody.District : undefined,
+            State       : requestBody.State !== undefined ? requestBody.State : undefined,
+            Country     : requestBody.Country !== undefined ? requestBody.Country : undefined,
+            PostalCode  : requestBody.PostalCode !== undefined ? requestBody.PostalCode : undefined,
+            Longitude   : requestBody.Longitude !== undefined ? requestBody.Longitude : undefined,
+            Lattitude   : requestBody.Lattitude !== undefined ? requestBody.Lattitude : undefined,
+        };
+
+        return updateModel;
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await AddressValidator.getParamId(request);
-    };
-    
-    static delete = async (request: express.Request): Promise<string> => {
-        return await AddressValidator.getParamId(request);
+    create = async (request: express.Request): Promise<AddressDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getCreateDomainModel(request.body);
     };
 
-    static search = async (request: express.Request): Promise<AddressSearchFilters> => {
+    search = async (request: express.Request): Promise<AddressSearchFilters> => {
+        
+        await this.validateUuid(request, 'personId', Where.Query, false, false);
+        await this.validateUuid(request, 'organizationId', Where.Query, false, false);
+        await this.validateString(request, 'type', Where.Query, false, false);
+        await this.validateString(request, 'addressLine', Where.Query, false, false);
+        await this.validateString(request, 'city', Where.Query, false, false);
+        await this.validateString(request, 'district', Where.Query, false, false);
+        await this.validateString(request, 'state', Where.Query, false, false);
+        await this.validateString(request, 'country', Where.Query, false, false);
+        await this.validateString(request, 'postalCode', Where.Query, false, false);
+        await this.validateString(request, 'longitudeFrom', Where.Query, false, false);
+        await this.validateString(request, 'longitudeTo', Where.Query, false, false);
+        await this.validateString(request, 'lattitudeFrom', Where.Query, false, false);
+        await this.validateString(request, 'lattitudeTo', Where.Query, false, false);
 
-        await query('personId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('organizationId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('type').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('addressLine').optional()
-            .trim()
-            .run(request);
-
-        await query('city').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('district').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('state').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('country').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('postalCode').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('longitudeFrom').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('longitudeTo').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('lattitudeFrom').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('lattitudeTo').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('createdDateFrom').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('createdDateTo').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return AddressValidator.getFilter(request);
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+        
+        return this.getFilter(request);
     };
 
-    static update = async (request: express.Request): Promise<AddressDomainModel> => {
-
-        const id = await AddressValidator.getParamId(request);
-        await AddressValidator.validateBody(request);
-
-        const domainModel = AddressValidator.getDomainModel(request.body);
-        domainModel.id = id;
-
+    update = async (request: express.Request): Promise<AddressDomainModel> => {
+        await this.validateUpdateBody(request);
+        const domainModel = this.getUpdateDomainModel(request.body);
+        domainModel.id = await this.getParamUuid(request, 'id');
         return domainModel;
     };
 
-    private static async validateBody(request) {
-
-        await body('Type').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('AddressLine').exists()
-            .trim()
-            .run(request);
-
-        await body('City').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('District').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('State').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Country').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('PostalCode').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Longitude').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await body('Lattitude').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+    private async validateCreateBody(request) {
+        await this.validateString(request, 'Type', Where.Body, true, false);
+        await this.validateString(request, 'AddressLine', Where.Body, true, false);
+        await this.validateString(request, 'City', Where.Body, false, true);
+        await this.validateString(request, 'District', Where.Body, false, true);
+        await this.validateString(request, 'State', Where.Body, false, true);
+        await this.validateString(request, 'Country', Where.Body, false, true);
+        await this.validateString(request, 'PostalCode', Where.Body, false, true);
+        await this.validateString(request, 'Longitude', Where.Body, false, true);
+        await this.validateString(request, 'Lattitude', Where.Body, false, true);
+        await this.validateString(request, 'State', Where.Body, false, true);
+        await this.validateRequest(request);
     }
 
-    private static getFilter(request): AddressSearchFilters {
-        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
+    private async validateUpdateBody(request) {
+        await this.validateString(request, 'Type', Where.Body, false, false);
+        await this.validateString(request, 'AddressLine', Where.Body, false, false);
+        await this.validateString(request, 'City', Where.Body, false, true);
+        await this.validateString(request, 'District', Where.Body, false, true);
+        await this.validateString(request, 'State', Where.Body, false, true);
+        await this.validateString(request, 'Country', Where.Body, false, true);
+        await this.validateString(request, 'PostalCode', Where.Body, false, true);
+        await this.validateString(request, 'Longitude', Where.Body, false, true);
+        await this.validateString(request, 'Lattitude', Where.Body, false, true);
+        await this.validateString(request, 'State', Where.Body, false, true);
+        await this.validateRequest(request);
+    }
 
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
-
+    private getFilter(request): AddressSearchFilters {
+        
         const filters: AddressSearchFilters = {
-            Type            : request.query.type ?? null,
-            PersonId        : request.query.personId ?? null,
-            OrganizationId  : request.query.organizationId ?? null,
-            AddressLine     : request.query.addressLine ?? null,
-            City            : request.query.city ?? null,
-            District        : request.query.district ?? null,
-            State           : request.query.state ?? null,
-            Country         : request.query.country ?? null,
-            PostalCode      : request.query.postalCode ?? null,
-            LongitudeFrom   : request.query.longitudeFrom ?? null,
-            LongitudeTo     : request.query.longitudeTo ?? null,
-            LattitudeFrom   : request.query.lattitudeFrom ?? null,
-            LattitudeTo     : request.query.lattitudeTo ?? null,
-            CreatedDateFrom : request.query.createdDateFrom ?? null,
-            CreatedDateTo   : request.query.createdDateTo ?? null,
-            OrderBy         : request.query.orderBy ?? 'CreatedAt',
-            Order           : request.query.order ?? 'descending',
-            PageIndex       : pageIndex,
-            ItemsPerPage    : itemsPerPage,
+            Type           : request.query.type ?? null,
+            PersonId       : request.query.personId ?? null,
+            OrganizationId : request.query.organizationId ?? null,
+            AddressLine    : request.query.addressLine ?? null,
+            City           : request.query.city ?? null,
+            District       : request.query.district ?? null,
+            State          : request.query.state ?? null,
+            Country        : request.query.country ?? null,
+            PostalCode     : request.query.postalCode ?? null,
+            LongitudeFrom  : request.query.longitudeFrom ?? null,
+            LongitudeTo    : request.query.longitudeTo ?? null,
+            LattitudeFrom  : request.query.lattitudeFrom ?? null,
+            LattitudeTo    : request.query.lattitudeTo ?? null,
         };
-        return filters;
-    }
-
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+        
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

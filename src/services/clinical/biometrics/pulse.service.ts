@@ -1,8 +1,8 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IPulseRepo } from "../../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ";
 import { PulseDomainModel } from '../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
 import { PulseDto } from '../../../domain.types/clinical/biometrics/pulse/pulse.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PulseSearchFilters, PulseSearchResults } from '../../../domain.types/clinical/biometrics/pulse/pulse.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ export class PulseService {
         return await this._pulseRepo.create(pulseDomainModel);
     };
 
-    getById = async (id: string): Promise<PulseDto> => {
+    getById = async (id: uuid): Promise<PulseDto> => {
         return await this._pulseRepo.getById(id);
     };
 
@@ -27,12 +27,12 @@ export class PulseService {
         return await this._pulseRepo.search(filters);
     };
 
-    update = async (id: string, pulseDomainModel: PulseDomainModel):
+    update = async (id: uuid, pulseDomainModel: PulseDomainModel):
     Promise<PulseDto> => {
         return await this._pulseRepo.update(id, pulseDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._pulseRepo.delete(id);
     };
 

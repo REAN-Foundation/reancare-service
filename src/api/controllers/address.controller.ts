@@ -24,6 +24,8 @@ export class AddressController extends BaseController {
 
     _organizationService: OrganizationService = null;
 
+    _validator = new AddressValidator();
+
     constructor() {
         super();
         this._service = Loader.container.resolve(AddressService);
@@ -41,7 +43,7 @@ export class AddressController extends BaseController {
 
             this.setContext('Address.Create', request, response);
             
-            const domainModel = await AddressValidator.create(request);
+            const domainModel = await this._validator.create(request);
             const address = await this._service.create(domainModel);
             if (address == null) {
                 throw new ApiError(400, 'Cannot create address!');
@@ -61,7 +63,7 @@ export class AddressController extends BaseController {
 
             this.setContext('Address.GetById', request, response);
 
-            const id: uuid = await AddressValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const address = await this._service.getById(id);
             if (address == null) {
                 throw new ApiError(404, 'Address not found.');
@@ -81,7 +83,7 @@ export class AddressController extends BaseController {
 
             this.setContext('Address.Search', request, response);
 
-            const filters = await AddressValidator.search(request);
+            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -101,8 +103,8 @@ export class AddressController extends BaseController {
 
             this.setContext('Address.Update', request, response);
 
-            const domainModel = await AddressValidator.update(request);
-            const id: uuid = await AddressValidator.getById(request);
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingAddress = await this._service.getById(id);
             if (existingAddress == null) {
                 throw new ApiError(404, 'Address not found.');
@@ -126,7 +128,7 @@ export class AddressController extends BaseController {
 
             this.setContext('Address.Delete', request, response);
 
-            const id: uuid = await AddressValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingAddress = await this._service.getById(id);
             if (existingAddress == null) {
                 throw new ApiError(404, 'Address not found.');

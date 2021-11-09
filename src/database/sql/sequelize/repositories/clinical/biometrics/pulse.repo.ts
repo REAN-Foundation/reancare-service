@@ -12,20 +12,19 @@ import PulseModel from '../../../models/clinical/biometrics/pulse.model';
 
 export class PulseRepo implements IPulseRepo {
 
-    create = async (pulseDomainModel: PulseDomainModel):
+    create = async (createModel: PulseDomainModel):
     Promise<PulseDto> => {
         try {
             const entity = {
-                PatientUserId    : pulseDomainModel.PatientUserId,
-                Pulse            : pulseDomainModel.Pulse,
-                Unit             : pulseDomainModel.Unit,
-                RecordDate       : pulseDomainModel.RecordDate,
-                RecordedByUserId : pulseDomainModel.RecordedByUserId
+                PatientUserId    : createModel.PatientUserId,
+                Pulse            : createModel.Pulse,
+                Unit             : createModel.Unit,
+                RecordDate       : createModel.RecordDate,
+                RecordedByUserId : createModel.RecordedByUserId
             };
 
             const pulse = await PulseModel.create(entity);
-            const dto = await PulseMapper.toDto(pulse);
-            return dto;
+            return await PulseMapper.toDto(pulse);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -35,8 +34,7 @@ export class PulseRepo implements IPulseRepo {
     getById = async (id: string): Promise<PulseDto> => {
         try {
             const pulse = await PulseModel.findByPk(id);
-            const dto = await PulseMapper.toDto(pulse);
-            return dto;
+            return await PulseMapper.toDto(pulse);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -130,31 +128,31 @@ export class PulseRepo implements IPulseRepo {
         }
     };
 
-    update = async (id: string, pulseDomainModel: PulseDomainModel):
+    update = async (id: string, updateModel: PulseDomainModel):
     Promise<PulseDto> => {
         try {
             const pulse = await PulseModel.findByPk(id);
 
-            if (pulseDomainModel.PatientUserId != null) {
-                pulse.PatientUserId = pulseDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                pulse.PatientUserId = updateModel.PatientUserId;
             }
-            if (pulseDomainModel.Pulse != null) {
-                pulse.Pulse = pulseDomainModel.Pulse;
+            if (updateModel.Pulse != null) {
+                pulse.Pulse = updateModel.Pulse;
             }
-            if (pulseDomainModel.Unit != null) {
-                pulse.Unit = pulseDomainModel.Unit;
+            if (updateModel.Unit != null) {
+                pulse.Unit = updateModel.Unit;
             }
-            if (pulseDomainModel.RecordDate != null) {
-                pulse.RecordDate = pulseDomainModel.RecordDate;
+            if (updateModel.RecordDate != null) {
+                pulse.RecordDate = updateModel.RecordDate;
             }
-            if (pulseDomainModel.RecordedByUserId != null) {
-                pulse.RecordedByUserId = pulseDomainModel.RecordedByUserId;
+            if (updateModel.RecordedByUserId != null) {
+                pulse.RecordedByUserId = updateModel.RecordedByUserId;
             }
     
             await pulse.save();
 
-            const dto = await PulseMapper.toDto(pulse);
-            return dto;
+            return await PulseMapper.toDto(pulse);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

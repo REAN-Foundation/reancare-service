@@ -2,7 +2,6 @@
 export type NotThere    = null | undefined | '';
 export type Optional<T> = T | NotThere;
 
-export type Gender        = 'Male'| 'male' | 'Female' | 'female' | 'Other' | 'other' |'Unknown' | 'unknown' | null;
 export type BloodGroup    = 'A+'| 'B+' | 'O+' | 'AB+' | 'A-' | 'B-' |'O-' | 'AB-' | null;
 export type MaritalStatus = 'Single'| 'Married' | 'Widowed' | 'Divorcee' | 'Live-in' | 'Other' | 'Unknown' | 'Unmarried' | null;
 
@@ -19,6 +18,20 @@ export const BloodGroupList: BloodGroup[] = [
     'B-',
     'O-',
     'AB-'
+];
+
+export enum Gender {
+    Male = 'Male',
+    Female = 'Female',
+    Other = 'Other',
+    Unknown = 'Unknown',
+}
+
+export const GenderList: Gender[] = [
+    Gender.Male,
+    Gender.Female,
+    Gender.Other,
+    Gender.Unknown,
 ];
 
 export const MaritalStatusList: MaritalStatus[] = [

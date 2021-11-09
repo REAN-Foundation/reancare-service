@@ -1,13 +1,13 @@
-import { IPatientRepo } from "../../../../repository.interfaces/patient/patient.repo.interface";
-import { Logger } from "../../../../../common/logger";
-import { ApiError } from "../../../../../common/api.error";
-import Patient from "../../models/patient/patient.model";
-import { PatientMapper } from "../../mappers/patient/patient.mapper";
 import { Op } from 'sequelize';
-import Person from "../../models/person.model";
+import { ApiError } from "../../../../../common/api.error";
+import { Logger } from "../../../../../common/logger";
 import { PatientDomainModel } from "../../../../../domain.types/patient/patient/patient.domain.model";
 import { PatientDetailsDto, PatientDto } from "../../../../../domain.types/patient/patient/patient.dto";
 import { PatientSearchFilters, PatientSearchResults } from "../../../../../domain.types/patient/patient/patient.search.types";
+import { IPatientRepo } from "../../../../repository.interfaces/patient/patient.repo.interface";
+import { PatientMapper } from "../../mappers/patient/patient.mapper";
+import Patient from "../../models/patient/patient.model";
+import Person from "../../models/person.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -48,10 +48,10 @@ export class PatientRepo implements IPatientRepo {
         try {
             const patient = await Patient.findOne({ where: { UserId: userId } });
             
-            if (model.NationalHealthId != null) {
+            if (model.NationalHealthId !== undefined) {
                 patient.NationalHealthId = model.NationalHealthId;
             }
-            if (model.EhrId != null) {
+            if (model.EhrId !== undefined) {
                 patient.EhrId = model.EhrId;
             }
 

@@ -19,15 +19,14 @@ export class BaseController {
         response: express.Response,
         authorize = true) => {
 
-        if (context === undefined && context === null) {
+        if (context === undefined || context === null) {
             throw new ApiError(500, 'Invalid request context');
         }
         const tokens = context.split('.');
-        if (tokens.length !== 2) {
+        if (tokens.length < 2) {
             throw new ApiError(500, 'Invalid request context');
         }
         const resourceType = tokens[0];
-        //const action = tokens[1];
         request.context = context;
         request.resourceType = resourceType;
         if (request.params.id !== undefined && request.params.id !== null) {

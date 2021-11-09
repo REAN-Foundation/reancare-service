@@ -2577,12 +2577,14 @@
 								{
 									"key": "createdDateFrom",
 									"value": "2021-05-01",
-									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
+									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
+									"disabled": true
 								},
 								{
 									"key": "createdDateTo",
 									"value": "2021-12-12",
-									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
+									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
+									"disabled": true
 								},
 								{
 									"key": "orderBy",

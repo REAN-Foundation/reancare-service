@@ -1,7 +1,9 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+
 export interface StepCountDomainModel {
-    id?          : string;
-    PatientUserId: string;
-    StepCount    : number;
-    Unit         : string;
-    RecordDate?  : Date;
+    id?           : uuid;
+    PatientUserId?: uuid;
+    StepCount?    : number;
+    Unit?         : string;
+    RecordDate    : Date;
 }

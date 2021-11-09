@@ -1,27 +1,26 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { WaterConsumptionService } from '../../../../services/wellness/nutrition/water.consumption.service';
 import { Loader } from '../../../../startup/loader';
 import { WaterConsumptionValidator } from '../../../validators/wellness/nutrition/water.consumption.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class WaterConsumptionController {
+export class WaterConsumptionController extends BaseController {
 
     //#region member variables and constructors
 
     _service: WaterConsumptionService = null;
 
-    _authorizer: Authorizer = null;
-
-    _personService: any;
+    _validator: WaterConsumptionValidator = new WaterConsumptionValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(WaterConsumptionService);
-        this._authorizer = Loader.authorizer;
-
+    
     }
 
     //#endregion
@@ -30,11 +29,11 @@ export class WaterConsumptionController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.WaterConsumption.Create';
+            this.setContext('Nutrition.WaterConsumption.Create', request, response);
 
-            const waterConsumptionDomainModel = await WaterConsumptionValidator.create(request);
+            const model = await this._validator.create(request);
 
-            const WaterConsumption = await this._service.create(waterConsumptionDomainModel);
+            const WaterConsumption = await this._service.create(model);
             if (WaterConsumption == null) {
                 throw new ApiError(400, 'Cannot create record for water consumption!');
             }
@@ -49,11 +48,10 @@ export class WaterConsumptionController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.WaterConsumption.GetById';
-            
-            await this._authorizer.authorize(request, response);
 
-            const id: string = await WaterConsumptionValidator.getById(request);
+            this.setContext('Nutrition.WaterConsumption.GetById', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const WaterConsumption = await this._service.getById(id);
             if (WaterConsumption == null) {
@@ -70,15 +68,12 @@ export class WaterConsumptionController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.WaterConsumption.Search';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Nutrition.WaterConsumption.Search', request, response);
 
-            const filters = await WaterConsumptionValidator.search(request);
-
+            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
-
             const count = searchResults.Items.length;
-
             const message =
                 count === 0
                     ? 'No records found!'
@@ -94,13 +89,10 @@ export class WaterConsumptionController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.WaterConsumption.Update';
+            this.setContext('Nutrition.WaterConsumption.Update', request, response);
 
-            await this._authorizer.authorize(request, response);
-
-            const domainModel = await WaterConsumptionValidator.update(request);
-
-            const id: string = await WaterConsumptionValidator.getById(request);
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Water consumption record not found.');
@@ -121,10 +113,8 @@ export class WaterConsumptionController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Nutrition.WaterConsumption.Delete';
-            await this._authorizer.authorize(request, response);
-
-            const id: string = await WaterConsumptionValidator.getById(request);
+            this.setContext('Nutrition.WaterConsumption.Delete', request, response);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Water consumption record not found.');

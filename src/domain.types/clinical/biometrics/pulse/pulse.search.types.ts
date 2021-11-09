@@ -1,24 +1,16 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+import { BaseSearchResults, BaseSearchFilters } from "../../../../domain.types/miscellaneous/base.search.types";
 import { PulseDto } from "./pulse.dto";
 
-export interface PulseSearchFilters {
-    PatientUserId?: string;
-    MinValue?: number;
-    MaxValue?: number;
-    CreatedDateFrom?: Date;
-    CreatedDateTo?: Date;
-    RecordedByUserId?: string;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+export interface PulseSearchFilters extends BaseSearchFilters{
+    PatientUserId?   : uuid;
+    MinValue?        : number;
+    MaxValue?        : number;
+    CreatedDateFrom? : Date;
+    CreatedDateTo?   : Date;
+    RecordedByUserId?: uuid;
 }
 
-export interface PulseSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface PulseSearchResults extends BaseSearchResults{
     Items: PulseDto[];
 }

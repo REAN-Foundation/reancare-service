@@ -1,27 +1,25 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { PulseService } from '../../../../services/clinical/biometrics/pulse.service';
 import { Loader } from '../../../../startup/loader';
 import { PulseValidator } from '../../../validators/clinical/biometrics/pulse.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PulseController {
+export class PulseController extends BaseController{
 
     //#region member variables and constructors
 
     _service: PulseService = null;
 
-    _authorizer: Authorizer = null;
-
-    _personService: any;
+    _validator: PulseValidator = new PulseValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(PulseService);
-        this._authorizer = Loader.authorizer;
-
     }
 
     //#endregion
@@ -30,17 +28,17 @@ export class PulseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.Pulse.Create';
+            
+            this.setContext('Biometrics.Pulse.Create', request, response);
 
-            const pulseDomainModel = await PulseValidator.create(request);
-
-            const Pulse = await this._service.create(pulseDomainModel);
-            if (Pulse == null) {
+            const model = await this._validator.create(request);
+            const pulse = await this._service.create(model);
+            if (pulse == null) {
                 throw new ApiError(400, 'Cannot create record for pulse!');
             }
 
             ResponseHandler.success(request, response, 'Pulse record created successfully!', 201, {
-                Pulse : Pulse,
+                Pulse : pulse,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -49,19 +47,17 @@ export class PulseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.Pulse.GetById';
             
-            await this._authorizer.authorize(request, response);
+            this.setContext('Biometrics.Pulse.GetById', request, response);
 
-            const id: string = await PulseValidator.getById(request);
-
-            const Pulse = await this._service.getById(id);
-            if (Pulse == null) {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const pulse = await this._service.getById(id);
+            if (pulse == null) {
                 throw new ApiError(404, 'Pulse record not found.');
             }
 
             ResponseHandler.success(request, response, 'Pulse record retrieved successfully!', 200, {
-                Pulse : Pulse,
+                Pulse : pulse,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -70,11 +66,10 @@ export class PulseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.Pulse.Search';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Biometrics.Pulse.Search', request, response);
 
-            const filters = await PulseValidator.search(request);
-
+            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
@@ -94,13 +89,11 @@ export class PulseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.Pulse.Update';
+            
+            this.setContext('Biometrics.Pulse.Update', request, response);
 
-            await this._authorizer.authorize(request, response);
-
-            const domainModel = await PulseValidator.update(request);
-
-            const id: string = await PulseValidator.getById(request);
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Pulse record not found.');
@@ -121,10 +114,10 @@ export class PulseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Biometrics.Pulse.Delete';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Biometrics.Pulse.Delete', request, response);
 
-            const id: string = await PulseValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Pulse record not found.');

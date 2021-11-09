@@ -30,7 +30,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: /
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
-          VALIDATE_MARKDOWN: true
           VALIDATE_TYPESCRIPT_ES: true
 
   Build-Docker-Image:

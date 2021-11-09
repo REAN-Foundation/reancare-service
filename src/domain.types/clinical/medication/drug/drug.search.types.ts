@@ -1,21 +1,12 @@
+import { BaseSearchResults, BaseSearchFilters } from "../../../../domain.types/miscellaneous/base.search.types";
 import { DrugDto } from "./drug.dto";
 
 //////////////////////////////////////////////////////////////////////
 
-export interface DrugSearchFilters {
+export interface DrugSearchFilters extends BaseSearchFilters {
     Name?: string;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
 }
 
-export interface DrugSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface DrugSearchResults extends BaseSearchResults {
     Items: DrugDto[];
 }

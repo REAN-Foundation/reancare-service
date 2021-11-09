@@ -1,27 +1,25 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { Loader } from '../../../../startup/loader';
 import { DrugValidator } from '../../../validators/clinical/medication/drug.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DrugController {
+export class DrugController extends BaseController{
 
     //#region member variables and constructors
 
     _service: DrugService = null;
 
-    _authorizer: Authorizer = null;
-
-    _personService: any;
+    _validator: DrugValidator = new DrugValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(DrugService);
-        this._authorizer = Loader.authorizer;
-
     }
 
     //#endregion
@@ -30,17 +28,17 @@ export class DrugController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Drug.Create';
+            
+            this.setContext('Medication.Drug.Create', request, response);
 
-            const drugDomainModel = await DrugValidator.create(request);
-
-            const Drug = await this._service.create(drugDomainModel);
-            if (Drug == null) {
+            const model = await this._validator.create(request);
+            const drug = await this._service.create(model);
+            if (drug == null) {
                 throw new ApiError(400, 'Cannot create record for drug!');
             }
 
             ResponseHandler.success(request, response, 'Drug record created successfully!', 201, {
-                Drug : Drug,
+                Drug : drug,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -49,19 +47,17 @@ export class DrugController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Drug.GetById';
             
-            await this._authorizer.authorize(request, response);
+            this.setContext('Medication.Drug.GetById', request, response);
 
-            const id: string = await DrugValidator.getById(request);
-
-            const Drug = await this._service.getById(id);
-            if (Drug == null) {
-                throw new ApiError(404, ' Drug record not found.');
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const drug = await this._service.getById(id);
+            if (drug == null) {
+                throw new ApiError(404, 'Drug record not found.');
             }
 
             ResponseHandler.success(request, response, 'Drug record retrieved successfully!', 200, {
-                Drug : Drug,
+                Drug : drug,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -70,15 +66,12 @@ export class DrugController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Drug.Search';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Medication.Drug.Search', request, response);
 
-            const filters = await DrugValidator.search(request);
-
+            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
-
             const count = searchResults.Items.length;
-
             const message =
                 count === 0
                     ? 'No records found!'
@@ -94,13 +87,11 @@ export class DrugController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Drug.Update';
+            
+            this.setContext('Medication.Drug.Update', request, response);
 
-            await this._authorizer.authorize(request, response);
-
-            const domainModel = await DrugValidator.update(request);
-
-            const id: string = await DrugValidator.getById(request);
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Drug record not found.');
@@ -121,10 +112,10 @@ export class DrugController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Medication.Drug.Delete';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Medication.Drug.Delete', request, response);
 
-            const id: string = await DrugValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Drug record not found.');

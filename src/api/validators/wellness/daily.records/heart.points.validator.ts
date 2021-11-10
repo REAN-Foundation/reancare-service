@@ -1,180 +1,87 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../../common/helper';
 import { HeartPointsDomainModel } from '../../../../domain.types/wellness/daily.records/heart.points/heart.points.domain.model';
 import { HeartPointsSearchFilters } from '../../../../domain.types/wellness/daily.records/heart.points/heart.points.search.types';
+import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HeartPointValidator {
+export class HeartPointValidator extends BaseValidator{
 
-    static getDomainModel = (request: express.Request): HeartPointsDomainModel => {
+    constructor() {
+        super();
+    }
 
-        const addressModel: HeartPointsDomainModel = {
-            PersonId      : request.body.PersonId ?? null,
+    getDomainModel = (request: express.Request): HeartPointsDomainModel => {
+
+        const heartPointsModel: HeartPointsDomainModel = {
+            PatientUserId : request.body.PatientUserId ?? null,
             HeartPoints   : request.body.HeartPoints ?? null,
             Unit          : request.body.Unit,
-            PatientUserId : request.body.PatientUserId ?? null
+            RecordDate    : request.body.RecordDate ?? new Date(),
         };
 
-        return addressModel;
+        return heartPointsModel;
     };
 
-    static create = async (request: express.Request): Promise<HeartPointsDomainModel> => {
-        await HeartPointValidator.validateBody(request);
-        return HeartPointValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<HeartPointsDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await HeartPointValidator.getParamId(request);
+    search = async (request: express.Request): Promise<HeartPointsSearchFilters> => {
+
+        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
+        await this.validateInt(request, 'minValue', Where.Query, false, false );
+        await this.validateInt(request, 'maxValue', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
+
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+
+        return this.getFilter(request);
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await HeartPointValidator.getParamId(request);
-    };
+    update = async (request: express.Request): Promise<HeartPointsDomainModel> => {
 
-    static search = async (request: express.Request): Promise<HeartPointsSearchFilters> => {
-
-        await query('personId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('patientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('minValue').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('maxValue').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('createdDateFrom').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('createdDateTo').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return HeartPointValidator.getFilter(request);
-    };
-
-    static update = async (request: express.Request): Promise<HeartPointsDomainModel> => {
-
-        const id = await HeartPointValidator.getParamId(request);
-        await HeartPointValidator.validateBody(request);
-
-        const domainModel = HeartPointValidator.getDomainModel(request);
-        domainModel.id = id;
-
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private  async validateCreateBody(request) {
 
-        await body('PersonId').exists()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateInt(request, 'HeartPoints', Where.Body, true, false);
+        await this.validateString(request, 'Unit', Where.Body, false, true);
+        await this.validateDate(request, 'RecordDate', Where.Body, true, false);
 
-        await body('PatientUserId').exists()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        this.validateRequest(request);
+    }
+    
+    private  async validateUpdateBody(request) {
 
-        await body('HeartPoints').exists()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Unit').exists()
-            .trim()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateInt(request, 'HeartPoints', Where.Body, false, false);
+        await this.validateString(request, 'Unit', Where.Body, false, false);
+        await this.validateDate(request, 'RecordDate', Where.Body, false, false);
+        
+        this.validateRequest(request);
     }
 
-    private static getFilter(request): HeartPointsSearchFilters {
-        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
-
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
-
-        const filters: HeartPointsSearchFilters = {
-            PersonId        : request.query.personId ?? null,
+    private getFilter(request): HeartPointsSearchFilters {
+        
+        var filters: HeartPointsSearchFilters = {
             PatientUserId   : request.query.patientUserId ?? null,
             MinValue        : request.query.minValue ?? null,
             MaxValue        : request.query.maxValue ?? null,
             CreatedDateFrom : request.query.createdDateFrom ?? null,
             CreatedDateTo   : request.query.createdDateTo ?? null,
-            OrderBy         : request.query.orderBy ?? 'CreatedAt',
-            Order           : request.query.order ?? 'descending',
-            PageIndex       : pageIndex,
-            ItemsPerPage    : itemsPerPage,
         };
-        return filters;
-    }
 
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

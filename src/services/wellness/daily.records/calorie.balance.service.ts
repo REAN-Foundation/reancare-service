@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { ICalorieBalanceRepo } from "../../../database/repository.interfaces/wellness/daily.records/calorie.balance.repo.interface";
 import { CalorieBalanceDomainModel } from '../../../domain.types/wellness/daily.records/calorie.balance/calorie.balance.domain.model';
@@ -13,11 +14,11 @@ export class CalorieBalanceService {
         @inject('ICalorieBalanceRepo') private _calorieBalanceRepo: ICalorieBalanceRepo,
     ) {}
 
-    create = async (addressDomainModel: CalorieBalanceDomainModel): Promise<CalorieBalanceDto> => {
-        return await this._calorieBalanceRepo.create(addressDomainModel);
+    create = async (calorieBalanceDomainModel: CalorieBalanceDomainModel): Promise<CalorieBalanceDto> => {
+        return await this._calorieBalanceRepo.create(calorieBalanceDomainModel);
     };
 
-    getById = async (id: string): Promise<CalorieBalanceDto> => {
+    getById = async (id: uuid): Promise<CalorieBalanceDto> => {
         return await this._calorieBalanceRepo.getById(id);
     };
 
@@ -25,11 +26,11 @@ export class CalorieBalanceService {
         return await this._calorieBalanceRepo.search(filters);
     };
 
-    update = async (id: string, addressDomainModel: CalorieBalanceDomainModel): Promise<CalorieBalanceDto> => {
-        return await this._calorieBalanceRepo.update(id, addressDomainModel);
+    update = async (id: uuid, calorieBalanceDomainModel: CalorieBalanceDomainModel): Promise<CalorieBalanceDto> => {
+        return await this._calorieBalanceRepo.update(id, calorieBalanceDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._calorieBalanceRepo.delete(id);
     };
 

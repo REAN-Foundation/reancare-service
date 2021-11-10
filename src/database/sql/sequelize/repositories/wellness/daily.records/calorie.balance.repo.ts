@@ -12,17 +12,18 @@ import CalorieBalance from '../../../models/wellness/daily.records/calorie.balan
 
 export class CalorieBalanceRepo implements ICalorieBalanceRepo {
 
-    create = async (calorieBalanceDomainModel: CalorieBalanceDomainModel): Promise<CalorieBalanceDto> => {
+    create = async (createModel: CalorieBalanceDomainModel): Promise<CalorieBalanceDto> => {
         try {
             const entity = {
-                PatientUserId    : calorieBalanceDomainModel.PatientUserId ?? null,
-                CaloriesConsumed : calorieBalanceDomainModel.CaloriesConsumed ?? null,
-                CaloriesBurned   : calorieBalanceDomainModel.CaloriesBurned ?? null,
-                Unit             : calorieBalanceDomainModel.Unit ?? null,
+                PatientUserId    : createModel.PatientUserId,
+                CaloriesConsumed : createModel.CaloriesConsumed,
+                CaloriesBurned   : createModel.CaloriesBurned,
+                Unit             : createModel.Unit,
+                RecordDate       : createModel.RecordDate,
             };
             const calorieBalance = await CalorieBalance.create(entity);
-            const dto = await CalorieBalanceMapper.toDto(calorieBalance);
-            return dto;
+            return await CalorieBalanceMapper.toDto(calorieBalance);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -32,8 +33,8 @@ export class CalorieBalanceRepo implements ICalorieBalanceRepo {
     getById = async (id: string): Promise<CalorieBalanceDto> => {
         try {
             const calorieBalance = await CalorieBalance.findByPk(id);
-            const dto = await CalorieBalanceMapper.toDto(calorieBalance);
-            return dto;
+            return await CalorieBalanceMapper.toDto(calorieBalance);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -52,17 +53,27 @@ export class CalorieBalanceRepo implements ICalorieBalanceRepo {
                     [Op.gte] : filters.MinCaloriesConsumedValue,
                     [Op.lte] : filters.MaxCaloriesConsumedValue,
                 };
+            } else if (filters.MinCaloriesConsumedValue === null && filters.MaxCaloriesConsumedValue !== null) {
+                search.where['CaloriesConsumed'] = {
+                    [Op.lte] : filters.MaxCaloriesConsumedValue,
+                };
+            } else if (filters.MinCaloriesConsumedValue !== null && filters.MaxCaloriesConsumedValue === null) {
+                search.where['CaloriesConsumed'] = {
+                    [Op.gte] : filters.MinCaloriesConsumedValue,
+                };
             }
             if (filters.MinCaloriesBurnedValue != null && filters.MaxCaloriesBurnedValue != null) {
                 search.where['CaloriesBurned'] = {
                     [Op.gte] : filters.MinCaloriesBurnedValue,
                     [Op.lte] : filters.MaxCaloriesBurnedValue,
                 };
-            }
-            if (filters.MinCalorieBalanceValue != null && filters.MaxCalorieBalanceValue != null) {
-                search.where['CaloriesBalance'] = {
-                    [Op.gte] : filters.MinCalorieBalanceValue,
-                    [Op.lte] : filters.MaxCalorieBalanceValue,
+            } else if (filters.MinCaloriesBurnedValue === null && filters.MaxCaloriesBurnedValue !== null) {
+                search.where['CaloriesBurned'] = {
+                    [Op.lte] : filters.MaxCaloriesBurnedValue,
+                };
+            } else if (filters.MinCaloriesBurnedValue !== null && filters.MaxCaloriesBurnedValue === null) {
+                search.where['CaloriesBurned'] = {
+                    [Op.gte] : filters.MinCaloriesBurnedValue,
                 };
             }
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
@@ -80,7 +91,7 @@ export class CalorieBalanceRepo implements ICalorieBalanceRepo {
                 };
             }
 
-            let orderByColum = 'CaloriesBurned';
+            let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }
@@ -128,27 +139,30 @@ export class CalorieBalanceRepo implements ICalorieBalanceRepo {
         }
     };
 
-    update = async (id: string, calorieBalanceDomainModel: CalorieBalanceDomainModel): Promise<CalorieBalanceDto> => {
+    update = async (id: string, updateModel: CalorieBalanceDomainModel): Promise<CalorieBalanceDto> => {
         try {
             const calorieBalance = await CalorieBalance.findByPk(id);
 
-            if (calorieBalanceDomainModel.PatientUserId != null) {
-                calorieBalance.PatientUserId = calorieBalanceDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                calorieBalance.PatientUserId = updateModel.PatientUserId;
             }
-            if (calorieBalanceDomainModel.CaloriesConsumed != null) {
-                calorieBalance.CaloriesConsumed = calorieBalanceDomainModel.CaloriesConsumed;
+            if (updateModel.CaloriesConsumed != null) {
+                calorieBalance.CaloriesConsumed = updateModel.CaloriesConsumed;
             }
-            if (calorieBalanceDomainModel.CaloriesBurned != null) {
-                calorieBalance.CaloriesBurned = calorieBalanceDomainModel.CaloriesBurned;
+            if (updateModel.CaloriesBurned != null) {
+                calorieBalance.CaloriesBurned = updateModel.CaloriesBurned;
             }
-            if (calorieBalanceDomainModel.Unit != null) {
-                calorieBalance.Unit = calorieBalanceDomainModel.Unit;
+            if (updateModel.Unit != null) {
+                calorieBalance.Unit = updateModel.Unit;
+            }
+            if (updateModel.RecordDate != null) {
+                calorieBalance.RecordDate = updateModel.RecordDate;
             }
 
             await calorieBalance.save();
 
-            const dto = await CalorieBalanceMapper.toDto(calorieBalance);
-            return dto;
+            return await CalorieBalanceMapper.toDto(calorieBalance);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -157,8 +171,8 @@ export class CalorieBalanceRepo implements ICalorieBalanceRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            await CalorieBalance.destroy({ where: { id: id } });
-            return true;
+            const result = await CalorieBalance.destroy({ where: { id: id } });
+            return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

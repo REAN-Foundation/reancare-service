@@ -1,27 +1,19 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+import { BaseSearchResults, BaseSearchFilters } from "../../../../domain.types/miscellaneous/base.search.types";
 import { CalorieBalanceDto } from "./calorie.balance.dto";
 
-export interface CalorieBalanceSearchFilters {
-    PatientUserId?: string;
+export interface CalorieBalanceSearchFilters extends BaseSearchFilters {
+    PatientUserId?           : uuid;
     MinCaloriesConsumedValue?: number;
     MaxCaloriesConsumedValue?: number;
-    MinCaloriesBurnedValue?: number;
-    MaxCaloriesBurnedValue?: number;
-    MinCalorieBalanceValue?: number;
-    MaxCalorieBalanceValue?: number;
-    CreatedDateFrom?: Date;
-    CreatedDateTo?: Date;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+    MinCaloriesBurnedValue?  : number;
+    MaxCaloriesBurnedValue?  : number;
+    MinCalorieBalanceValue?  : number;
+    MaxCalorieBalanceValue?  : number;
+    CreatedDateFrom?         : Date;
+    CreatedDateTo?           : Date;
 }
 
-export interface CalorieBalanceSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface CalorieBalanceSearchResults extends BaseSearchResults{
     Items: CalorieBalanceDto[];
 }

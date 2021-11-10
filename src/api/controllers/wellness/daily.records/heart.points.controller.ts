@@ -39,7 +39,7 @@ export class HeartPointController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'HeartPoints.Create';
+            request.context = 'DailyRecords.HeartPoints.Create';
             await this._authorizer.authorize(request, response);
             
             const domainModel = await HeartPointValidator.create(request);
@@ -66,7 +66,7 @@ export class HeartPointController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'HeartPoints.GetById';
+            request.context = 'DailyRecords.HeartPoints.GetById';
             
             await this._authorizer.authorize(request, response);
 
@@ -87,7 +87,7 @@ export class HeartPointController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'HeartPoints.Search';
+            request.context = 'DailyRecords.HeartPoints.Search';
             await this._authorizer.authorize(request, response);
 
             const filters = await HeartPointValidator.search(request);
@@ -109,7 +109,7 @@ export class HeartPointController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'HeartPoints.Update';
+            request.context = 'DailyRecords.HeartPoints.Update';
             await this._authorizer.authorize(request, response);
 
             const domainModel = await HeartPointValidator.update(request);
@@ -135,7 +135,7 @@ export class HeartPointController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'HeartPoints.Delete';
+            request.context = 'DailyRecords.HeartPoints.Delete';
             await this._authorizer.authorize(request, response);
 
             const id: string = await HeartPointValidator.getById(request);

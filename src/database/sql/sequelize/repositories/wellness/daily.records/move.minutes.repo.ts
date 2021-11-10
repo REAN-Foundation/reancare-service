@@ -12,19 +12,19 @@ import MoveMinutesModel from '../../../models/wellness/daily.records/move.minute
 
 export class MoveMinutesRepo implements IMoveMinutesRepo {
 
-    create = async (moveMinutesDomainModel: MoveMinutesDomainModel):
+    create = async (createModel: MoveMinutesDomainModel):
     Promise<MoveMinutesDto> => {
         try {
             const entity = {
-                PatientUserId : moveMinutesDomainModel.PatientUserId,
-                MoveMinutes   : moveMinutesDomainModel.MoveMinutes,
-                Unit          : moveMinutesDomainModel.Unit,
-                RecordDate    : moveMinutesDomainModel.RecordDate,
+                PatientUserId : createModel.PatientUserId,
+                MoveMinutes   : createModel.MoveMinutes,
+                Unit          : createModel.Unit,
+                RecordDate    : createModel.RecordDate,
             };
 
             const moveMinutes = await MoveMinutesModel.create(entity);
-            const dto = await MoveMinutesMapper.toDto(moveMinutes);
-            return dto;
+            return await MoveMinutesMapper.toDto(moveMinutes);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -34,8 +34,8 @@ export class MoveMinutesRepo implements IMoveMinutesRepo {
     getById = async (id: string): Promise<MoveMinutesDto> => {
         try {
             const moveMinutes = await MoveMinutesModel.findByPk(id);
-            const dto = await MoveMinutesMapper.toDto(moveMinutes);
-            return dto;
+            return await MoveMinutesMapper.toDto(moveMinutes);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -44,8 +44,6 @@ export class MoveMinutesRepo implements IMoveMinutesRepo {
 
     search = async (filters: MoveMinutesSearchFilters): Promise<MoveMinutesSearchResults> => {
         try {
-
-            Logger.instance().log(`Filters 2 , ${JSON.stringify(filters)}`);
             
             const search = { where: {} };
 
@@ -128,28 +126,28 @@ export class MoveMinutesRepo implements IMoveMinutesRepo {
         }
     };
 
-    update = async (id: string, moveMinutesDomainModel: MoveMinutesDomainModel):
+    update = async (id: string, updateModel: MoveMinutesDomainModel):
     Promise<MoveMinutesDto> => {
         try {
             const moveMinutes = await MoveMinutesModel.findByPk(id);
 
-            if (moveMinutesDomainModel.PatientUserId != null) {
-                moveMinutes.PatientUserId = moveMinutesDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                moveMinutes.PatientUserId = updateModel.PatientUserId;
             }
-            if (moveMinutesDomainModel.MoveMinutes != null) {
-                moveMinutes.MoveMinutes = moveMinutesDomainModel.MoveMinutes;
+            if (updateModel.MoveMinutes != null) {
+                moveMinutes.MoveMinutes = updateModel.MoveMinutes;
             }
-            if (moveMinutesDomainModel.Unit != null) {
-                moveMinutes.Unit = moveMinutesDomainModel.Unit;
+            if (updateModel.Unit != null) {
+                moveMinutes.Unit = updateModel.Unit;
             }
-            if (moveMinutesDomainModel.RecordDate != null) {
-                moveMinutes.RecordDate = moveMinutesDomainModel.RecordDate;
+            if (updateModel.RecordDate != null) {
+                moveMinutes.RecordDate = updateModel.RecordDate;
             }
             
             await moveMinutes.save();
 
-            const dto = await MoveMinutesMapper.toDto(moveMinutes);
-            return dto;
+            return await MoveMinutesMapper.toDto(moveMinutes);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -158,8 +156,7 @@ export class MoveMinutesRepo implements IMoveMinutesRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            Logger.instance().log(id);
-
+            
             const result = await MoveMinutesModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {

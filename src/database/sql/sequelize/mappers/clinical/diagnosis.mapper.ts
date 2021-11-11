@@ -1,4 +1,4 @@
-import { DiagnosisDto, DiagnosisEventDto } from '../../../../../domain.types/clinical/diagnosis/diagnosis.dto';
+import { DiagnosisDto } from '../../../../../domain.types/clinical/diagnosis/diagnosis.dto';
 import { ClinicalInterpretation, ClinicalValidationStatus } from '../../../../../domain.types/miscellaneous/clinical.types';
 import Diagnosis from '../../models/clinical/diagnosis.model';
 
@@ -26,22 +26,6 @@ export class DiagnosisMapper {
             EndDate                   : diagnosis.EndDate,
         };
         return dto;
-    }
-
-    static toEventDto = (
-        diagnosisEvent: DiagnosisEventDto): DiagnosisEventDto => {
-        if (diagnosisEvent == null) {
-            return null;
-        }
-        const event: DiagnosisEventDto = {
-            PatientUserId : diagnosisEvent.PatientUserId,
-            Event         : diagnosisEvent.Event,
-            Diagnoses     : diagnosisEvent.Diagnoses,
-            StartTime     : diagnosisEvent.StartTime,
-            EndTime       : diagnosisEvent.EndTime,
-
-        };
-        return event;
     }
 
 }

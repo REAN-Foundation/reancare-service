@@ -16,10 +16,3 @@ export interface DiagnosisDto {
     OnsetDate?                : Date;
     EndDate?                  : Date;
 }
-export interface DiagnosisEventDto {
-    PatientUserId?: string;
-    Event         : ClinicalValidationStatus;
-    Diagnoses     : DiagnosisDto[];
-    StartTime?    : Date;
-    EndTime?      : Date;
-}

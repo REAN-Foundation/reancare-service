@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { IDiagnosisRepo } from '../../database/repository.interfaces/clinical/diagnosis.repo.interface';
 import { DiagnosisDomainModel } from '../../domain.types/clinical/diagnosis/diagnosis.domain.model';
-import { DiagnosisDto, DiagnosisEventDto } from '../../domain.types/clinical/diagnosis/diagnosis.dto';
+import { DiagnosisDto } from '../../domain.types/clinical/diagnosis/diagnosis.dto';
 import { DiagnosisSearchFilters, DiagnosisSearchResults } from '../../domain.types/clinical/diagnosis/diagnosis.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -20,10 +20,6 @@ export class DiagnosisService {
 
     getById = async (id: string): Promise<DiagnosisDto> => {
         return await this._diagnosisRepo.getById(id);
-    };
-
-    getByEvent = async (event: string, patientUserId: string): Promise<DiagnosisEventDto> => {
-        return await this._diagnosisRepo.getByEvent(event, patientUserId);
     };
 
     search = async (filters: DiagnosisSearchFilters): Promise<DiagnosisSearchResults> => {

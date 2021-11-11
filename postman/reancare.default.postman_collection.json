@@ -5620,8 +5620,7 @@
 										"exec": [
 											"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
 											"let addressId = pm.environment.get('ADDRESS_ID');\r",
-											"let orgId = pm.environment.get('ORGANIZATION_ID');\r",
-											""
+											"let orgId = pm.environment.get('ORGANIZATION_ID');"
 										],
 										"type": "text/javascript"
 									}
@@ -5701,7 +5700,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"ContactPerson\": {\r\n        \"Prefix\": \"Mrs.\",\r\n        \"FirstName\": \"Abc\",\r\n        \"LastName\": \"Xyz\",\r\n        \"Phone\": \"+91-3243243334\"\r\n    },\r\n    \"ContactRelation\": \"Patient family member\",\r\n    \"Address\": {\r\n        \"AddressLine\": \"GSG Schlesische Straße, Gebäude 3, Schlesische Straße 27\",\r\n        \"City\": \"Berlin\",\r\n        \"Country\": \"Germany\",\r\n        \"PostalCode\": \"10997\"\r\n    },\r\n    \"IsAvailableForEmergency\": true,\r\n    \"TimeOfAvailability\": \"10:00 AM - 5:00 PM\",\r\n    \"Description\": \"Some description here\",\r\n    \"AdditionalPhoneNumbers\": \"+91-3243243334\"\r\n}"
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"ContactPersonId\": \"{{PERSON_ID_1}}\",\r\n    \"ContactPerson\": {\r\n        \"Prefix\": \"Mrs.\",\r\n        \"FirstName\": \"Abc\",\r\n        \"LastName\": \"Xyz\",\r\n        \"Phone\": \"+91-3243243334\"\r\n    },\r\n    \"ContactRelation\": \"Patient family member\",\r\n    \"Address\": {\r\n        \"AddressLine\": \"GSG Schlesische Straße, Gebäude 3, Schlesische Straße 27\",\r\n        \"City\": \"Berlin\",\r\n        \"Country\": \"Germany\",\r\n        \"PostalCode\": \"10997\"\r\n    },\r\n    \"IsAvailableForEmergency\": true,\r\n    \"TimeOfAvailability\": \"10:00 AM - 5:00 PM\",\r\n    \"Description\": \"Some description here\",\r\n    \"AdditionalPhoneNumbers\": \"+91-3243243334\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patient-emergency-contacts",
@@ -16664,76 +16663,6 @@
 										"clinical",
 										"diagnoses",
 										"{{DIAGNOSIS_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get dignosis records by event clinical status",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Diagnosis record is returned\", function () {\r",
-											"\r",
-											"    var expectedValue = \"Negated\";\r",
-											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
-											"\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('DiagnosisEvent');\r",
-											"    pm.expect(jsonRes.Data.DiagnosisEvent).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.DiagnosisEvent).to.have.property('Diagnoses');\r",
-											"    pm.expect(jsonRes.Data.DiagnosisEvent).to.have.property('PatientUserId');\r",
-											"\r",
-											"    pm.expect(jsonRes.Data.DiagnosisEvent.Event.length).greaterThan(0);\r",
-											"    pm.expect(jsonRes.Data.DiagnosisEvent.Event).equals(expectedValue)\r",
-											"    pm.expect(jsonRes.Data.DiagnosisEvent.PatientUserId).equals(expectedPatientUserId);\r",
-											"\r",
-											"});\r",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/clinical/diagnoses/{{PATIENT_USER_ID}}/clinical-status/Negated",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"clinical",
-										"diagnoses",
-										"{{PATIENT_USER_ID}}",
-										"clinical-status",
-										"Negated"
 									]
 								}
 							},

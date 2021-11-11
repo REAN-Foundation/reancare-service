@@ -2,10 +2,9 @@ import { Op } from 'sequelize';
 import { ApiError } from "../../../../../common/api.error";
 import { Logger } from "../../../../../common/logger";
 import { DiagnosisDomainModel } from '../../../../../domain.types/clinical/diagnosis/diagnosis.domain.model';
-import { DiagnosisDto, DiagnosisEventDto } from '../../../../../domain.types/clinical/diagnosis/diagnosis.dto';
+import { DiagnosisDto } from '../../../../../domain.types/clinical/diagnosis/diagnosis.dto';
 import { DiagnosisSearchFilters, DiagnosisSearchResults } from '../../../../../domain.types/clinical/diagnosis/diagnosis.search.types';
 import { IDiagnosisRepo } from "../../../../repository.interfaces/clinical/diagnosis.repo.interface";
-import { ClinicalValidationStatus } from "../../../../../domain.types/miscellaneous/clinical.types";
 import { DiagnosisMapper } from "../../mappers/clinical/diagnosis.mapper";
 import Diagnosis from "../../models/clinical/diagnosis.model";
 
@@ -48,34 +47,6 @@ export class DiagnosisRepo implements IDiagnosisRepo {
             throw new ApiError(500, error.message);
         }
     }
-
-    getByEvent = async (validationStatus: string, patientUserId: string): Promise<DiagnosisEventDto> => {
-        try {
-            const foodResults = await Diagnosis.findAll({
-                where : { ValidationStatus: validationStatus, PatientUserId: patientUserId }
-            });
-
-            const diagnoses: DiagnosisDto[] = [];
-            for (const foodConsumption of foodResults) {
-                const dto = await DiagnosisMapper.toDto(foodConsumption);
-                diagnoses.push(dto);
-            }
-
-            const entity = {
-                PatientUserId : patientUserId,
-                Event         : ClinicalValidationStatus[validationStatus],
-                Diagnoses     : diagnoses,
-                StartTime     : await DiagnosisRepo.calculateEventStartTime(diagnoses),
-                EndTime       : await DiagnosisRepo.calculateEventEndTime(diagnoses),
-            };
-
-            return await DiagnosisMapper.toEventDto(entity);
-
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     update = async (id: string, updateModel: DiagnosisDomainModel): Promise<DiagnosisDto> => {
@@ -238,28 +209,6 @@ export class DiagnosisRepo implements IDiagnosisRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
-
-    private static calculateEventStartTime = async (diagnoses: DiagnosisDomainModel[]): Promise<Date> => {
-        let onsetDate = diagnoses[0] ? diagnoses[0].OnsetDate : null;
-        diagnoses.forEach((diagnosis) => {
-            if (diagnosis.OnsetDate < onsetDate) {
-                onsetDate = diagnosis.OnsetDate;
-            }
-        });
-
-        return onsetDate;
-    }
-
-    private static calculateEventEndTime = async (diagnoses: DiagnosisDomainModel[]): Promise<Date> => {
-        let endDate = diagnoses[0] ? diagnoses[0].EndDate : null;
-        diagnoses.forEach((diagnosis) => {
-            if (diagnosis.EndDate > endDate) {
-                endDate = diagnosis.EndDate;
-            }
-        });
-
-        return endDate;
     }
 
 }

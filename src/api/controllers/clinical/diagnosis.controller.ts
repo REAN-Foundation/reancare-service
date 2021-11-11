@@ -75,27 +75,6 @@ export class DiagnosisController extends BaseController {
         }
     };
 
-    getByEvent = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-
-            this.setContext('Diagnosis.GetByEvent', request, response);
-
-            const validationStatus: string = await this._validator.getParamStr(request, 'clinicalStatus');
-            const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
-            const diagnosis = await this._service.getByEvent(validationStatus, patientUserId);
-            if (diagnosis == null) {
-                throw new ApiError(404, 'Diagnosis record not found.');
-            }
-
-            ResponseHandler.success(request, response, 'Diagnosis records retrieved successfully!', 200, {
-                DiagnosisEvent : diagnosis,
-            });
-
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             this.setContext('Diagnosis.Search', request, response);

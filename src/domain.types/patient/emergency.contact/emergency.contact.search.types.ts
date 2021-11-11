@@ -1,25 +1,17 @@
 import { EmergencyContactDto } from "./emergency.contact.dto";
 import { EmergencyContactRoles } from "./emergency.contact.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { BaseSearchFilters, BaseSearchResults } from "../../../domain.types/miscellaneous/base.search.types";
 
 //////////////////////////////////////////////////////////////////////
 
-export interface EmergencyContactSearchFilters {
-    PatientUserId?: string;
-    ContactPersonId?: string;
+export interface EmergencyContactSearchFilters extends BaseSearchFilters{
+    PatientUserId?          : uuid;
+    ContactPersonId?        : uuid;
     IsAvailableForEmergency?: boolean;
-    ContactRelation?: EmergencyContactRoles;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+    ContactRelation?        : EmergencyContactRoles;
 }
 
-export interface EmergencyContactSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface EmergencyContactSearchResults extends BaseSearchResults{
     Items: EmergencyContactDto[];
 }

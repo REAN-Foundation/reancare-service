@@ -1,166 +1,84 @@
 import express from 'express';
-import { body, param, validationResult, query } from 'express-validator';
-import { Helper } from '../../../../common/helper';
 import { MeditationDomainModel } from '../../../../domain.types/wellness/exercise/meditation/meditation.domain.model';
 import { MeditationSearchFilters } from '../../../../domain.types/wellness/exercise/meditation/meditation.search.types';
+import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MeditationValidator {
+export class MeditationValidator extends BaseValidator{
 
-    static getDomainModel = (request: express.Request): MeditationDomainModel => {
+    getDomainModel = (request: express.Request): MeditationDomainModel => {
 
         const MeditationModel: MeditationDomainModel = {
-            PatientUserId : request.body.PatientUserId,
-            Meditation    : request.body.Meditation,
+            PatientUserId : request.body.PatientUserId ?? null,
+            Meditation    : request.body.Meditation ?? null,
             Description   : request.body.Description ?? null,
-            Category      : request.body.Category ?? null,
-            StartTime     : request.body.StartTime,
-            EndTime       : request.body.EndTime ,
+            Category      : request.body.Category,
+            StartTime     : request.body.StartTime ?? new Date(),
+            EndTime       : request.body.EndTime ?? null,
 
         };
 
         return MeditationModel;
     };
 
-    static create = async (request: express.Request): Promise<MeditationDomainModel> => {
-        await MeditationValidator.validateBody(request);
-        return MeditationValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<MeditationDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await MeditationValidator.getParamId(request);
+    search = async (request: express.Request): Promise<MeditationSearchFilters> => {
+
+        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
+        await this.validateString(request, 'meditation', Where.Query, false, false);
+    
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+
+        return this.getFilter(request);
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await MeditationValidator.getParamId(request);
-    };
+    update = async (request: express.Request): Promise<MeditationDomainModel> => {
 
-    static search = async (request: express.Request): Promise<MeditationSearchFilters> => {
-
-        await query('patientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('meditation').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return MeditationValidator.getFilter(request);
-    };
-
-    static update = async (request: express.Request): Promise<MeditationDomainModel> => {
-
-        const id = await MeditationValidator.getParamId(request);
-        await MeditationValidator.validateBody(request);
-
-        const domainModel = MeditationValidator.getDomainModel(request);
-        domainModel.id = id;
-
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private  async validateCreateBody(request) {
 
-        await body('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateString(request, 'Meditation', Where.Body, true, false);
+        await this.validateString(request, 'Description', Where.Body, true, false);
+        await this.validateString(request, 'Category', Where.Body, false, true);
+        await this.validateDate(request, 'StartTime', Where.Body, false, true);
+        await this.validateDate(request, 'EndTime', Where.Body, true, false);
 
-        await body('Meditation').optional()
-            .trim()
-            .escape()
-            .run(request);
+        this.validateRequest(request);
+    }
+    
+    private  async validateUpdateBody(request) {
 
-        await body('Description').optional()
-            .trim()
-            .escape()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateString(request, 'Meditation', Where.Body, false, false);
+        await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateString(request, 'Category', Where.Body, false, false);
+        await this.validateDate(request, 'StartTime', Where.Body, false, false);
+        await this.validateDate(request, 'EndTime', Where.Body, false, false);
 
-        await body('Category').optional()
-            .trim()
-            .escape()
-            .run(request);
+        this.validateRequest(request);
+    }
 
-        await body('StartTime').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
+    private getFilter(request): MeditationSearchFilters {
         
-        await body('EndTime').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-    }
-
-    private static getFilter(request): MeditationSearchFilters {
-        const pageIndex = request.query.PageIndex !== 'undefined' ? parseInt(request.query.PageIndex as string, 10) : 0;
-
-        const itemsPerPage =
-            request.query.ItemsPerPage !== 'undefined' ? parseInt(request.query.ItemsPerPage as string, 10) : 25;
-
-        const filters: MeditationSearchFilters = {
-            PatientUserId : request.query.patientUserId,
-            Meditation    : request.query.meditation,
-            OrderBy       : request.query.orderBy ?? 'CreatedAt',
-            Order         : request.query.order ?? 'descending',
-            PageIndex     : pageIndex,
-            ItemsPerPage  : itemsPerPage,
+        var filters: MeditationSearchFilters = {
+            PatientUserId : request.query.patientUserId ?? null,
+            Meditation    : request.query.meditation ?? null,
         };
-        return filters;
-    }
 
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

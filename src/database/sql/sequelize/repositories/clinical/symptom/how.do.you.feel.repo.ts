@@ -12,18 +12,17 @@ import HowDoYouFeel from '../../../models/clinical/symptom/how.do.you.feel.model
 
 export class HowDoYouFeelRepo implements IHowDoYouFeelRepo {
 
-    create = async (howDoYouFeelDomainModel: HowDoYouFeelDomainModel): Promise<HowDoYouFeelDto> => {
+    create = async (createModel: HowDoYouFeelDomainModel): Promise<HowDoYouFeelDto> => {
         try {
             const entity = {
-                EhrId         : howDoYouFeelDomainModel.EhrId,
-                PatientUserId : howDoYouFeelDomainModel.PatientUserId ?? null,
-                Feeling       : howDoYouFeelDomainModel.Feeling ?? null,
-                Comments      : howDoYouFeelDomainModel.Comments ?? null,
-                RecordDate    : howDoYouFeelDomainModel.RecordDate ?? null,
+                PatientUserId : createModel.PatientUserId,
+                Feeling       : createModel.Feeling,
+                Comments      : createModel.Comments,
+                RecordDate    : createModel.RecordDate,
             };
             const howDoYouFeel = await HowDoYouFeel.create(entity);
-            const dto = await HowDoYouFeelMapper.toDto(howDoYouFeel);
-            return dto;
+            return await HowDoYouFeelMapper.toDto(howDoYouFeel);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -33,8 +32,8 @@ export class HowDoYouFeelRepo implements IHowDoYouFeelRepo {
     getById = async (id: string): Promise<HowDoYouFeelDto> => {
         try {
             const howDoYouFeel = await HowDoYouFeel.findByPk(id);
-            const dto = await HowDoYouFeelMapper.toDto(howDoYouFeel);
-            return dto;
+            return await HowDoYouFeelMapper.toDto(howDoYouFeel);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -44,21 +43,27 @@ export class HowDoYouFeelRepo implements IHowDoYouFeelRepo {
     search = async (filters: HowDoYouFeelSearchFilters): Promise<HowDoYouFeelSearchResults> => {
         try {
             const search = { where: {} };
-
-            if (filters.Feeling != null) {
-                search.where['Feeling'] = { [Op.eq]: filters.Feeling };
-            }
             if (filters.PatientUserId != null) {
-                search.where['PatientUserId'] = { [Op.eq]: filters.PatientUserId };
+                search.where['PatientUserId'] = filters.PatientUserId;
+            }
+            if (filters.Feeling != null) {
+                search.where['Feeling'] = filters.Feeling;
             }
             if (filters.DateFrom != null && filters.DateTo != null) {
-                search.where['RecordDate'] = {
+                search.where['CreatedAt'] = {
                     [Op.gte] : filters.DateFrom,
                     [Op.lte] : filters.DateTo,
                 };
+            } else if (filters.DateFrom === null && filters.DateTo !== null) {
+                search.where['CreatedAt'] = {
+                    [Op.lte] : filters.DateTo,
+                };
+            } else if (filters.DateFrom !== null && filters.DateTo === null) {
+                search.where['CreatedAt'] = {
+                    [Op.gte] : filters.DateFrom,
+                };
             }
-
-            let orderByColum = 'RecordDate';
+            let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }
@@ -84,8 +89,8 @@ export class HowDoYouFeelRepo implements IHowDoYouFeelRepo {
             const foundResults = await HowDoYouFeel.findAndCountAll(search);
 
             const dtos: HowDoYouFeelDto[] = [];
-            for (const howDoYouFeel of foundResults.rows) {
-                const dto = await HowDoYouFeelMapper.toDto(howDoYouFeel);
+            for (const foodConsumption of foundResults.rows) {
+                const dto = await HowDoYouFeelMapper.toDto(foodConsumption);
                 dtos.push(dto);
             }
 
@@ -100,30 +105,28 @@ export class HowDoYouFeelRepo implements IHowDoYouFeelRepo {
             };
 
             return searchResults;
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    update = async (id: string, howDoYouFeelDomainModel: HowDoYouFeelDomainModel): Promise<HowDoYouFeelDto> => {
+    update = async (id: string, updateModel: HowDoYouFeelDomainModel): Promise<HowDoYouFeelDto> => {
         try {
             const howDoYouFeel = await HowDoYouFeel.findByPk(id);
 
-            if (howDoYouFeelDomainModel.EhrId != null) {
-                howDoYouFeel.EhrId = howDoYouFeelDomainModel.EhrId;
+            if (updateModel.PatientUserId != null) {
+                howDoYouFeel.PatientUserId = updateModel.PatientUserId;
             }
-            if (howDoYouFeelDomainModel.PatientUserId != null) {
-                howDoYouFeel.PatientUserId = howDoYouFeelDomainModel.PatientUserId;
+            if (updateModel.Feeling != null) {
+                howDoYouFeel.Feeling = updateModel.Feeling;
             }
-            if (howDoYouFeelDomainModel.Feeling != null) {
-                howDoYouFeel.Feeling = howDoYouFeelDomainModel.Feeling;
+            if (updateModel.Comments != null) {
+                howDoYouFeel.Comments = updateModel.Comments;
             }
-            if (howDoYouFeelDomainModel.Comments != null) {
-                howDoYouFeel.Comments = howDoYouFeelDomainModel.Comments;
-            }
-            if (howDoYouFeelDomainModel.RecordDate != null) {
-                howDoYouFeel.RecordDate = new Date(howDoYouFeelDomainModel.RecordDate).toISOString();
+            if (updateModel.RecordDate != null) {
+                howDoYouFeel.RecordDate = updateModel.RecordDate;
             }
             await howDoYouFeel.save();
 
@@ -137,8 +140,8 @@ export class HowDoYouFeelRepo implements IHowDoYouFeelRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            await HowDoYouFeel.destroy({ where: { id: id } });
-            return true;
+            const result = await HowDoYouFeel.destroy({ where: { id: id } });
+            return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

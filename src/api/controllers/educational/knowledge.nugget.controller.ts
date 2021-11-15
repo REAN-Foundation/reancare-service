@@ -1,26 +1,25 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { KnowledgeNuggetService } from '../../../services/educational/knowledge.nugget.service';
 import { Loader } from '../../../startup/loader';
 import { KnowledgeNuggetValidator } from '../../validators/educational/knowledge.nugget.validator';
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class KnowledgeNuggetController {
+export class KnowledgeNuggetController extends BaseController {
 
     //#region member variables and constructors
 
     _service: KnowledgeNuggetService = null;
 
-    _authorizer: Authorizer = null;
-
-    _personService: any;
+    _validator: KnowledgeNuggetValidator = new KnowledgeNuggetValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(KnowledgeNuggetService);
-        this._authorizer = Loader.authorizer;
 
     }
 
@@ -30,9 +29,9 @@ export class KnowledgeNuggetController {
 
     getTodaysTopic = async(request: express.Request, response: express.Response) => {
         try {
-            request.context = 'KnowledgeNugget.GetTodaysTopic';
+            this.setContext('KnowledgeNugget.GetTodaysTopic', request, response);
 
-            const patientUserId = await KnowledgeNuggetValidator.getPatientUserId(request);
+            const patientUserId = await this._validator.getParamUuid(request, 'patientUserId');
     
             const nugget = await this._service.getTodaysTopic(patientUserId);
             if (nugget == null) {
@@ -50,9 +49,9 @@ export class KnowledgeNuggetController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'KnowledgeNugget.Create';
+            this.setContext('KnowledgeNugget.Create', request, response);
 
-            const domainModel = await KnowledgeNuggetValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             const knowledgeNugget = await this._service.create(domainModel);
             if (knowledgeNugget == null) {
@@ -69,11 +68,10 @@ export class KnowledgeNuggetController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'KnowledgeNugget.GetById';
-            
-            await this._authorizer.authorize(request, response);
 
-            const id: string = await KnowledgeNuggetValidator.getById(request);
+            this.setContext('KnowledgeNugget.GetById', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const knowledgeNugget = await this._service.getById(id);
             if (knowledgeNugget == null) {
@@ -90,10 +88,9 @@ export class KnowledgeNuggetController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'KnowledgeNugget.Search';
-            await this._authorizer.authorize(request, response);
+            this.setContext('KnowledgeNugget.Search', request, response);
 
-            const filters = await KnowledgeNuggetValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -114,13 +111,11 @@ export class KnowledgeNuggetController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'KnowledgeNugget.Update';
+            this.setContext('KnowledgeNugget.Update', request, response);
 
-            await this._authorizer.authorize(request, response);
+            const domainModel = await this._validator.update(request);
 
-            const domainModel = await KnowledgeNuggetValidator.update(request);
-
-            const id: string = await KnowledgeNuggetValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'KnowledgeNugget record not found.');
@@ -141,10 +136,9 @@ export class KnowledgeNuggetController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'KnowledgeNugget.Delete';
-            await this._authorizer.authorize(request, response);
+            this.setContext('KnowledgeNugget.Delete', request, response);
 
-            const id: string = await KnowledgeNuggetValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Knowledge nugget record not found.');

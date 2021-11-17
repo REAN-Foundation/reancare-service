@@ -1,7 +1,7 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
-import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { ResourceCreatorType, ResourceOwnerType, uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BloodGlucoseService } from '../../../../services/clinical/biometrics/blood.glucose.service';
 import { Loader } from '../../../../startup/loader';
 import { BloodGlucoseValidator } from '../../../validators/clinical/biometrics/blood.glucose.validator';
@@ -19,7 +19,11 @@ export class BloodGlucoseController extends BaseController {
     constructor() {
         super();
         this._service = Loader.container.resolve(BloodGlucoseService);
-
+        this._resourceOwnerType = ResourceOwnerType.Patient;
+        this._resourceCreatorTypes = [
+            ResourceCreatorType.Patient,
+            ResourceCreatorType.Doctor
+        ];
     }
 
     //#endregion
@@ -47,9 +51,9 @@ export class BloodGlucoseController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Biometrics.BloodGlucose.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this._service.setResourceOwnerUserId(id, this._resourceOwnerType, request);
+            await this.setContext('Biometrics.BloodGlucose.GetById', request, response);
 
             const bloodGlucose = await this._service.getById(id);
             if (bloodGlucose == null) {
@@ -66,9 +70,9 @@ export class BloodGlucoseController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Biometrics.BloodGlucose.Search', request, response);
-
             const filters = await this._validator.search(request);
+            await this._service.setResourceOwnerUserIdForSearch(filters, this._resourceOwnerType, request);
+            await this.setContext('Biometrics.BloodGlucose.Search', request, response);
 
             const searchResults = await this._service.search(filters);
 
@@ -89,11 +93,12 @@ export class BloodGlucoseController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this._service.setResourceOwnerUserId(id, this._resourceOwnerType, request);
             await this.setContext('Biometrics.BloodGlucose.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
-            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Blood glucose record not found.');
@@ -114,9 +119,10 @@ export class BloodGlucoseController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this._service.setResourceOwnerUserId(id, this._resourceOwnerType, request);
             await this.setContext('Biometrics.BloodGlucose.Delete', request, response);
 
-            const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Blood glucose record not found.');

@@ -3,25 +3,29 @@ import { IBloodGlucoseRepo } from "../../../database/repository.interfaces/clini
 import { BloodGlucoseDomainModel } from '../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model';
 import { BloodGlucoseDto } from '../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto';
 import { BloodGlucoseSearchFilters, BloodGlucoseSearchResults } from '../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.search.types';
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { BaseResourceService } from "../../../services/base.resource.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class BloodGlucoseService {
+export class BloodGlucoseService extends BaseResourceService {
 
     constructor(
         @inject('IBloodGlucoseRepo') private _bloodGlucoseRepo: IBloodGlucoseRepo,
-    ) {}
+    ) {
+        super();
+    }
 
     create = async (bloodGlucoseDomainModel: BloodGlucoseDomainModel): Promise<BloodGlucoseDto> => {
         return await this._bloodGlucoseRepo.create(bloodGlucoseDomainModel);
     };
 
-    getById = async (id: string): Promise<BloodGlucoseDto> => {
+    getById = async (id: uuid): Promise<BloodGlucoseDto> => {
         return await this._bloodGlucoseRepo.getById(id);
     };
 
-    update = async (id: string, bloodGlucoseDomainModel: BloodGlucoseDomainModel): Promise<BloodGlucoseDto> => {
+    update = async (id: uuid, bloodGlucoseDomainModel: BloodGlucoseDomainModel): Promise<BloodGlucoseDto> => {
         return await this._bloodGlucoseRepo.update(id, bloodGlucoseDomainModel);
     };
 
@@ -29,7 +33,7 @@ export class BloodGlucoseService {
         return await this._bloodGlucoseRepo.search(filters);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._bloodGlucoseRepo.delete(id);
     };
 

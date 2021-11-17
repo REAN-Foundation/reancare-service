@@ -1,4 +1,3 @@
-
 export interface SleepDto {
     id?          : string;
     PatientUserId: string;

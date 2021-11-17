@@ -1,11 +1,12 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 
 export interface MeditationDomainModel {
-    id?: string,
-    EhrId?: string;
-    PatientUserId: string;
-    Meditation: string;
-    Description?: string;
-    Category?: string;
-    StartTime: Date;
-    EndTime: Date;
+    id?          : uuid,
+    EhrId?       : string;
+    PatientUserId: uuid;
+    Meditation   : string;
+    Description? : string;
+    Category?    : string;
+    StartTime    : Date;
+    EndTime      : Date;
 }

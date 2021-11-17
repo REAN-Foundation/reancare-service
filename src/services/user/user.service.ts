@@ -90,6 +90,8 @@ export class UserService {
             }
         }
 
+        const loginRole = await this._roleRepo.getById(loginModel.LoginRoleId);
+
         //The following user data is immutable. Don't include any mutable data
         const currentUser: CurrentUser = {
             UserId        : user.id,
@@ -98,6 +100,7 @@ export class UserService {
             Email         : user.Person.Email,
             UserName      : user.UserName,
             CurrentRoleId : loginModel.LoginRoleId,
+            CurrentRole   : loginRole.RoleName
         };
         const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
 
@@ -186,6 +189,8 @@ export class UserService {
             }
         }
 
+        const loginRole = await this._roleRepo.getById(loginModel.LoginRoleId);
+
         //The following user data is immutable. Don't include any mutable data
         const currentUser: CurrentUser = {
             UserId        : user.id,
@@ -194,6 +199,7 @@ export class UserService {
             Email         : user.Person.Email,
             UserName      : user.UserName,
             CurrentRoleId : loginModel.LoginRoleId,
+            CurrentRole   : loginRole.RoleName
         };
         const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
 

@@ -1,4 +1,3 @@
-import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { inject, injectable } from 'tsyringe';
 import { ApiError } from '../../common/api.error';
 import { Helper } from '../../common/helper';
@@ -8,6 +7,7 @@ import { IPersonRepo } from '../../database/repository.interfaces/person.repo.in
 import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
 import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
+import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { PatientDomainModel } from '../../domain.types/patient/patient/patient.domain.model';
 import { PatientDetailsDto, PatientDto } from '../../domain.types/patient/patient/patient.dto';
 import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults } from '../../domain.types/patient/patient/patient.search.types';
@@ -56,6 +56,7 @@ export class PatientService {
     public search = async (
         filters: PatientSearchFilters
     ): Promise<PatientDetailsSearchResults | PatientSearchResults> => {
+        
         var items = [];
         var results = await this._patientRepo.search(filters);
         for await (var dto of results.Items) {
@@ -63,6 +64,9 @@ export class PatientService {
             items.push(dto);
         }
 
+        //KK: ALERT! Needs a separate route for this use-case for bot-access
+        //Issues with this way of sending token back in search
+        
         if (items.length > 0) {
             const currentUser: CurrentUser = {
                 UserId        : items[0].id,
@@ -71,10 +75,12 @@ export class PatientService {
                 Email         : items[0].Email,
                 UserName      : items[0].UserName,
                 CurrentRoleId : 2,
+                CurrentRole   : Roles.Patient
             };
             const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
             items[0].accessToken = accessToken;
         }
+
         results.Items = items;
         return results;
     };

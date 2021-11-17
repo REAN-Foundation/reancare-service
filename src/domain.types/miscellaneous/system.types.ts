@@ -78,3 +78,18 @@ export const ProgressStatusList: ProgressStatus[] = [
     ProgressStatus.Delayed,
     ProgressStatus.Unknown,
 ];
+
+export enum ResourceOwnerType {
+    Patient             = 'Patient',
+    MedicalPractitioner = 'Medical practitioner',
+    Organization        = 'Organization',
+    Public              = 'Public'
+}
+
+export enum ResourceCreatorType {
+    System  = 'System',
+    Admin   = 'Admin',
+    Anybody = 'Anybody',
+    Patient = 'Patient',
+    Doctor  = 'Doctor',
+}

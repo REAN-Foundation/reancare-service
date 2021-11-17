@@ -1,11 +1,10 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-
 import { Logger } from '../../common/logger';
-import { IAuthorizer } from '../authorizer.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { RolePrivilegeService } from '../../services/role.privilege.service';
 import { Loader } from '../../startup/loader';
+import { IAuthorizer } from '../authorizer.interface';
 
 //const execSync = require('child_process').execSync;
 
@@ -60,6 +59,12 @@ export class CustomAuthorizer implements IAuthorizer {
     };
 
     private isResourceOwner = async (user: CurrentUser, request: express.Request): Promise<boolean> => {
+        
+        if (request.resourceOwnerUserId === null ||
+            request.resourceOwnerUserId === undefined) {
+            //If the owner is not set
+            return true;
+        }
         if (request.resourceOwnerUserId === user.UserId) {
             return true;
         }
@@ -72,7 +77,7 @@ export class CustomAuthorizer implements IAuthorizer {
         Logger.instance().log('Context: ' + context);
 
         //for time being, return true always
-        return true;
+        return false;
     };
 
 }

@@ -1,21 +1,23 @@
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IBloodPressureRepo } from "../../../database/repository.interfaces/clinical/biometrics/blood.pressure.repo.interface";
 import { BloodPressureDomainModel } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
 import { BloodPressureDto } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto';
 import { BloodPressureSearchFilters, BloodPressureSearchResults } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.search.types';
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { BaseResourceService } from "../../../services/base.resource.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class BloodPressureService {
+export class BloodPressureService extends BaseResourceService {
 
     constructor(
         @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
-    ) { }
+    ) {
+        super();
+    }
 
-    create = async (bloodPressureDomainModel: BloodPressureDomainModel):
-    Promise<BloodPressureDto> => {
+    create = async (bloodPressureDomainModel: BloodPressureDomainModel): Promise<BloodPressureDto> => {
         return await this._bloodPressureRepo.create(bloodPressureDomainModel);
     };
 

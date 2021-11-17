@@ -1,12 +1,11 @@
 import express from 'express';
-import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
+import { ResourceCreatorType, ResourceOwnerType, uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BloodPressureService } from '../../../../services/clinical/biometrics/blood.pressure.service';
 import { Loader } from '../../../../startup/loader';
 import { BloodPressureValidator } from '../../../validators/clinical/biometrics/blood.pressure.validator';
 import { BaseController } from '../../base.controller';
-import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,6 +20,11 @@ export class BloodPressureController extends BaseController {
     constructor() {
         super();
         this._service = Loader.container.resolve(BloodPressureService);
+        this._resourceOwnerType = ResourceOwnerType.Patient;
+        this._resourceCreatorTypes = [
+            ResourceCreatorType.Patient,
+            ResourceCreatorType.Doctor
+        ];
     }
 
     //#endregion
@@ -30,7 +34,7 @@ export class BloodPressureController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('Biometrics.BloodPressure.Create', request, response);
+            await this.setContext('Biometrics.BloodPressure.Create', request, response);
 
             const model = await this._validator.create(request);
             const bloodPressure = await this._service.create(model);
@@ -48,10 +52,10 @@ export class BloodPressureController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
-            this.setContext('Biometrics.BloodPressure.GetById', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this._service.setResourceOwnerUserId(id, this._resourceOwnerType, request);
+            await this.setContext('Biometrics.BloodPressure.GetById', request, response);
+
             const bloodPressure = await this._service.getById(id);
             if (bloodPressure == null) {
                 throw new ApiError(404, ' Blood pressure record not found.');
@@ -67,14 +71,11 @@ export class BloodPressureController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
-            this.setContext('Biometrics.BloodPressure.Search', request, response);
-
-            Logger.instance().log(`trying to fetch data for search...`);
             const filters = await this._validator.search(request);
-            Logger.instance().log(`Validations passed:: ${JSON.stringify(filters)}`);
+            await this._service.setResourceOwnerUserIdForSearch(filters, this._resourceOwnerType, request);
+            await this.setContext('Biometrics.BloodPressure.Search', request, response);
+
             const searchResults = await this._service.search(filters);
-            Logger.instance().log(`result length.: ${searchResults.Items.length}`);
 
             const count = searchResults.Items.length;
 
@@ -93,11 +94,11 @@ export class BloodPressureController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
-            this.setContext('Biometrics.BloodPressure.Update', request, response);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this._service.setResourceOwnerUserId(id, this._resourceOwnerType, request);
+            await this.setContext('Biometrics.BloodPressure.Update', request, response);
 
             const domainModel = await this._validator.update(request);
-            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Blood Pressure record not found.');
@@ -119,9 +120,10 @@ export class BloodPressureController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('Biometrics.BloodPressure.Delete', request, response);
-
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            await this._service.setResourceOwnerUserId(id, this._resourceOwnerType, request);
+            await this.setContext('Biometrics.BloodPressure.Delete', request, response);
+
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Blood pressure record not found.');

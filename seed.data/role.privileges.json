@@ -236,7 +236,9 @@
             "UserTask.StartTask",
             "UserTask.FinishTask",
             "UserTask.CancelTask",
-            "UserTask.SummaryForDay"
+            "UserTask.SummaryForDay",
+            "DailyAssessment.Create",
+            "DailyAssessment.Search"
         ]
     },
     {
@@ -499,7 +501,9 @@
             "UserTask.StartTask",
             "UserTask.FinishTask",
             "UserTask.CancelTask",
-            "UserTask.SummaryForDay"
+            "UserTask.SummaryForDay",
+            "DailyAssessment.Create",
+            "DailyAssessment.Search"
         ]
     },
     {
@@ -766,7 +770,9 @@
             "UserTask.StartTask",
             "UserTask.FinishTask",
             "UserTask.CancelTask",
-            "UserTask.SummaryForDay"
+            "UserTask.SummaryForDay",
+            "DailyAssessment.Create",
+            "DailyAssessment.Search"
         ]
     },
     {

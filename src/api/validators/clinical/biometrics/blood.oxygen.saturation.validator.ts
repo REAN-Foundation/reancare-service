@@ -31,8 +31,7 @@ export class BloodOxygenSaturationValidator extends BaseValidator {
 
     search = async (request: express.Request): Promise<BloodOxygenSaturationSearchFilters> => {
 
-        await this.validateUuid(request, 'personId', Where.Query, false, false);
-        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
+        await this.validateUuid(request, 'patientUserId', Where.Query, true, false);
         await this.validateInt(request, 'minValue', Where.Query, false, false);
         await this.validateInt(request, 'maxValue', Where.Query, false, false);
         await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);

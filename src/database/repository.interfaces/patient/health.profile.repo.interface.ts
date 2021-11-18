@@ -6,6 +6,8 @@ export interface IHealthProfileRepo {
     create(domainModel: HealthProfileDomainModel)
         : Promise<HealthProfileDto>;
 
+    getById(id: string): Promise<HealthProfileDto>;
+
     getByPatientUserId(patientUserId: string): Promise<HealthProfileDto>;
 
     updateByPatientUserId(userId: string, updateModel: HealthProfileDomainModel)

@@ -15,16 +15,18 @@ import { MedicationConsumptionStatus } from "../../../domain.types/clinical/medi
 import { MedicationDto } from "../../../domain.types/clinical/medication/medication/medication.dto";
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
 import { MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from "../../../domain.types/clinical/medication/medication/medication.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
 import { UserActionType, UserTaskCategory } from "../../../domain.types/user/user.task/user.task..types";
 import { UserTaskDomainModel } from "../../../domain.types/user/user.task/user.task.domain.model";
+import { BaseResourceService } from "../../../services/base.resource.service";
 import { IUserActionService } from "../../../services/user/user.action.service.interface";
 import { Loader } from "../../../startup/loader";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class MedicationConsumptionService implements IUserActionService {
+export class MedicationConsumptionService extends BaseResourceService implements IUserActionService {
 
     constructor(
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,
@@ -33,7 +35,9 @@ export class MedicationConsumptionService implements IUserActionService {
         @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
-    ) {}
+    ) {
+        super();
+    }
 
     create = async (medication: MedicationDto, customStartDate = null)
         :Promise<MedicationConsumptionStatsDto> => {
@@ -184,7 +188,7 @@ export class MedicationConsumptionService implements IUserActionService {
         }
     };
 
-    markListAsMissed = async (consumptionIds: string[]): Promise<MedicationConsumptionDto[]> => {
+    markListAsMissed = async (consumptionIds: uuid[]): Promise<MedicationConsumptionDto[]> => {
 
         try {
 
@@ -226,7 +230,7 @@ export class MedicationConsumptionService implements IUserActionService {
         }
     };
 
-    markAsTaken = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
+    markAsTaken = async (id: uuid): Promise<MedicationConsumptionDetailsDto> => {
 
         var medConsumption = await this._medicationConsumptionRepo.getById(id);
         if (medConsumption === null) {
@@ -252,7 +256,7 @@ export class MedicationConsumptionService implements IUserActionService {
         return updated;
     };
 
-    markAsMissed = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
+    markAsMissed = async (id: uuid): Promise<MedicationConsumptionDetailsDto> => {
 
         var updatedDto = await this._medicationConsumptionRepo.markAsMissed(id);
         if (updatedDto === null) {
@@ -272,11 +276,11 @@ export class MedicationConsumptionService implements IUserActionService {
         return updatedDto;
     };
 
-    deleteFutureMedicationSchedules = async (medicationId: string): Promise<number> => {
+    deleteFutureMedicationSchedules = async (medicationId: uuid): Promise<number> => {
         return await this._medicationConsumptionRepo.deleteFutureMedicationSchedules(medicationId);
     };
 
-    getById = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
+    getById = async (id: uuid): Promise<MedicationConsumptionDetailsDto> => {
         return await this._medicationConsumptionRepo.getById(id);
     };
 
@@ -284,7 +288,7 @@ export class MedicationConsumptionService implements IUserActionService {
         return await this._medicationConsumptionRepo.search(filters);
     };
 
-    getScheduleForDuration = async (patientUserId: string, duration: string, when: string)
+    getScheduleForDuration = async (patientUserId: uuid, duration: string, when: string)
         : Promise<MedicationConsumptionDto[]> => {
             
         var durationInHours: number = this.parseDurationInHours(duration);
@@ -328,7 +332,7 @@ export class MedicationConsumptionService implements IUserActionService {
     
     };
 
-    getSchedulesForDay = async (patientUserId: string, date: Date)
+    getSchedulesForDay = async (patientUserId: uuid, date: Date)
         : Promise<SchedulesForDayDto> => {
         var consumptions = await this._medicationConsumptionRepo.getSchedulesForDay(patientUserId, date);
         var schedules : SchedulesForDayDto = {
@@ -338,7 +342,7 @@ export class MedicationConsumptionService implements IUserActionService {
         return schedules;
     };
 
-    getSchedulesForDayByDrugs = async (patientUserId: string, date: Date)
+    getSchedulesForDayByDrugs = async (patientUserId: uuid, date: Date)
     : Promise<SummaryForDayDto> => {
     
         var consumptions = await this._medicationConsumptionRepo.getSchedulesForDay(patientUserId, date);
@@ -445,7 +449,7 @@ export class MedicationConsumptionService implements IUserActionService {
         return true;
     }
 
-    completeAction = async (actionId: string, completionTime?: Date, success?: boolean): Promise<boolean> => {
+    completeAction = async (actionId: uuid, completionTime?: Date, success?: boolean): Promise<boolean> => {
 
         if (success === undefined || success === false) {
             var updatedDto = await this._medicationConsumptionRepo.markAsMissed(actionId);
@@ -474,7 +478,7 @@ export class MedicationConsumptionService implements IUserActionService {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    cancelAction = async(actionId: string, cancellationTime?: Date, cancellationReason?: string): Promise<boolean> => {
+    cancelAction = async(actionId: uuid, cancellationTime?: Date, cancellationReason?: string): Promise<boolean> => {
         return await this._medicationConsumptionRepo.cancelSchedule(actionId);
     }
 

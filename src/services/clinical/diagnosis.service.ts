@@ -1,4 +1,3 @@
-//import { Loader } from '../startup/loader';
 import { inject, injectable } from 'tsyringe';
 import { IDiagnosisRepo } from '../../database/repository.interfaces/clinical/diagnosis.repo.interface';
 import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
@@ -8,11 +7,13 @@ import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.i
 import { DiagnosisDomainModel } from '../../domain.types/clinical/diagnosis/diagnosis.domain.model';
 import { DiagnosisDto } from '../../domain.types/clinical/diagnosis/diagnosis.dto';
 import { DiagnosisSearchFilters, DiagnosisSearchResults } from '../../domain.types/clinical/diagnosis/diagnosis.search.types';
+import { uuid } from "../../domain.types/miscellaneous/system.types";
+import { BaseResourceService } from "../../services/base.resource.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class DiagnosisService {
+export class DiagnosisService  extends BaseResourceService {
 
     //_ehrDiagnosisStore: DiagnosisStore = null;
 
@@ -23,7 +24,7 @@ export class DiagnosisService {
         @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
     ) {
-
+        super();
         //this._ehrDiagnosisStore = Loader.container.resolve(DiagnosisStore);
     }
 
@@ -40,7 +41,7 @@ export class DiagnosisService {
         return dto;
     };
 
-    public getByUserId = async (id: string): Promise<DiagnosisDto> => {
+    public getByUserId = async (id: uuid): Promise<DiagnosisDto> => {
         var dto = await this._diagnosisRepo.getById(id);
         dto = await this.updateDto(dto);
         return dto;
@@ -60,7 +61,7 @@ export class DiagnosisService {
     };
 
     public update = async (
-        id: string,
+        id: uuid,
         updateModel: DiagnosisDomainModel
     ): Promise<DiagnosisDto> => {
         var dto = await this._diagnosisRepo.update(id, updateModel);
@@ -80,7 +81,7 @@ export class DiagnosisService {
         return dto;
     }
 
-    getById = async (id: string): Promise<DiagnosisDto> => {
+    getById = async (id: uuid): Promise<DiagnosisDto> => {
         return await this._diagnosisRepo.getById(id);
     };
 
@@ -88,11 +89,11 @@ export class DiagnosisService {
     //return await this._diagnosisRepo.search(filters);
     //};
 
-    //update = async (id: string, diagnosisDomainModel: DiagnosisDomainModel): Promise<DiagnosisDto> => {
+    //update = async (id: uuid, diagnosisDomainModel: DiagnosisDomainModel): Promise<DiagnosisDto> => {
     //return await this._diagnosisRepo.update(id, diagnosisDomainModel);
     //};
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._diagnosisRepo.delete(id);
     };
 

@@ -1,19 +1,21 @@
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IBloodOxygenSaturationRepo } from "../../../database/repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface";
 import { BloodOxygenSaturationDomainModel } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
 import { BloodOxygenSaturationDto } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { BloodOxygenSaturationSearchFilters, BloodOxygenSaturationSearchResults } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.search.types';
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { BaseResourceService } from "../../../services/base.resource.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class BloodOxygenSaturationService {
+export class BloodOxygenSaturationService extends BaseResourceService {
 
     constructor(
         @inject('IBloodOxygenSaturationRepo') private _bloodOxygenSaturationRepo: IBloodOxygenSaturationRepo,
-    ) { }
+    ) {
+        super();
+    }
 
     create = async (bloodOxygenSaturationDomainModel: BloodOxygenSaturationDomainModel):
     Promise<BloodOxygenSaturationDto> => {

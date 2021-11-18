@@ -1,18 +1,21 @@
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IBodyTemperatureRepo } from "../../../database/repository.interfaces/clinical/biometrics/body.temperature.repo.interface";
 import { BodyTemperatureDomainModel } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
 import { BodyTemperatureDto } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.dto';
 import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.search.types';
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { BaseResourceService } from "../../../services/base.resource.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class BodyTemperatureService {
+export class BodyTemperatureService extends BaseResourceService {
 
     constructor(
         @inject('IBodyTemperatureRepo') private _bodyTemperatureRepo: IBodyTemperatureRepo,
-    ) { }
+    ) {
+        super();
+    }
 
     create = async (bodyTemperatureDomainModel: BodyTemperatureDomainModel):
     Promise<BodyTemperatureDto> => {

@@ -1,18 +1,21 @@
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IPulseRepo } from "../../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ";
 import { PulseDomainModel } from '../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
 import { PulseDto } from '../../../domain.types/clinical/biometrics/pulse/pulse.dto';
 import { PulseSearchFilters, PulseSearchResults } from '../../../domain.types/clinical/biometrics/pulse/pulse.search.types';
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { BaseResourceService } from "../../../services/base.resource.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class PulseService {
+export class PulseService extends BaseResourceService {
 
     constructor(
         @inject('IPulseRepo') private _pulseRepo: IPulseRepo,
-    ) { }
+    ) {
+        super();
+    }
 
     create = async (pulseDomainModel: PulseDomainModel):
     Promise<PulseDto> => {

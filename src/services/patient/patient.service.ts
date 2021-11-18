@@ -14,6 +14,7 @@ import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults
 import { Roles } from '../../domain.types/role/role.types';
 import { PatientStore } from '../../modules/ehr/services/patient.store';
 import { Loader } from '../../startup/loader';
+import { uuid } from "../../domain.types/miscellaneous/system.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,7 +48,7 @@ export class PatientService {
         return dto;
     };
 
-    public getByUserId = async (id: string): Promise<PatientDetailsDto> => {
+    public getByUserId = async (id: uuid): Promise<PatientDetailsDto> => {
         var dto = await this._patientRepo.getByUserId(id);
         dto = await this.updateDetailsDto(dto);
         return dto;
@@ -85,7 +86,7 @@ export class PatientService {
         return results;
     };
 
-    public updateByUserId = async (id: string, updateModel: PatientDomainModel): Promise<PatientDetailsDto> => {
+    public updateByUserId = async (id: uuid, updateModel: PatientDomainModel): Promise<PatientDetailsDto> => {
         var dto = await this._patientRepo.updateByUserId(id, updateModel);
         dto = await this.updateDetailsDto(dto);
         return dto;

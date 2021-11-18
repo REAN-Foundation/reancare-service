@@ -10,6 +10,20 @@ import HealthProfile from '../../models/patient/health.profile.model';
 
 export class HealthProfileRepo implements IHealthProfileRepo {
 
+    getById = async (id: string): Promise<HealthProfileDto> => {
+        try {
+            const patientHealthProfile = await HealthProfile.findOne({
+                where : {
+                    id : id
+                }
+            });
+            return HealthProfileMapper.toDto(patientHealthProfile);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
     create = async (patientHealthProfileDomainModel: HealthProfileDomainModel)
     : Promise<HealthProfileDto> => {
         try {

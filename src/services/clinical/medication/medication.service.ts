@@ -8,17 +8,21 @@ import { MedicationDomainModel } from '../../../domain.types/clinical/medication
 import { MedicationDto } from '../../../domain.types/clinical/medication/medication/medication.dto';
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
 import { MedicationDosageUnits, MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from "../../../domain.types/clinical/medication/medication/medication.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
+import { BaseResourceService } from "../../../services/base.resource.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class MedicationService {
+export class MedicationService extends BaseResourceService {
 
     constructor(
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,
         @inject('IMedicationStockImageRepo') private _medicationStockImageRepo: IMedicationStockImageRepo,
-    ) {}
+    ) {
+        super();
+    }
 
     create = async (model: MedicationDomainModel): Promise<MedicationDto> => {
 
@@ -46,11 +50,11 @@ export class MedicationService {
         return medicationDto;
     };
 
-    getById = async (id: string): Promise<MedicationDto> => {
+    getById = async (id: uuid): Promise<MedicationDto> => {
         return await this._medicationRepo.getById(id);
     };
 
-    getCurrentMedications = async (patientUserId: string): Promise<MedicationDto[]> => {
+    getCurrentMedications = async (patientUserId: uuid): Promise<MedicationDto[]> => {
         return await this._medicationRepo.getCurrentMedications(patientUserId);
     };
 
@@ -58,11 +62,11 @@ export class MedicationService {
         return await this._medicationRepo.search(filters);
     };
 
-    update = async (id: string, medicationDomainModel: MedicationDomainModel): Promise<MedicationDto> => {
+    update = async (id: uuid, medicationDomainModel: MedicationDomainModel): Promise<MedicationDto> => {
         return await this._medicationRepo.update(id, medicationDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._medicationRepo.delete(id);
     };
 

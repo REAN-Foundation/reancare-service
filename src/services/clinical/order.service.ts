@@ -3,22 +3,26 @@ import { IOrderRepo } from "../../database/repository.interfaces/clinical/order.
 import { OrderDomainModel } from '../../domain.types/clinical/order/order.domain.model';
 import { OrderDto } from '../../domain.types/clinical/order/order.dto';
 import { OrderSearchFilters, OrderSearchResults } from '../../domain.types/clinical/order/order.search.types';
+import { uuid } from "../../domain.types/miscellaneous/system.types";
+import { BaseResourceService } from "../../services/base.resource.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class OrderService {
+export class OrderService extends BaseResourceService {
 
     constructor(
         @inject('IOrderRepo') private _orderRepo: IOrderRepo,
-    ) { }
+    ) {
+        super();
+    }
 
     create = async (orderDomainModel: OrderDomainModel):
     Promise<OrderDto> => {
         return await this._orderRepo.create(orderDomainModel);
     };
 
-    getById = async (id: string): Promise<OrderDto> => {
+    getById = async (id: uuid): Promise<OrderDto> => {
         return await this._orderRepo.getById(id);
     };
 
@@ -26,12 +30,12 @@ export class OrderService {
         return await this._orderRepo.search(filters);
     };
 
-    update = async (id: string, orderDomainModel: OrderDomainModel):
+    update = async (id: uuid, orderDomainModel: OrderDomainModel):
     Promise<OrderDto> => {
         return await this._orderRepo.update(id, orderDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._orderRepo.delete(id);
     };
 

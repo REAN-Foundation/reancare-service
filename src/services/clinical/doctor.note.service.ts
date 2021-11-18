@@ -3,21 +3,25 @@ import { IDoctorNoteRepo } from "../../database/repository.interfaces/clinical/d
 import { DoctorNoteDomainModel } from '../../domain.types/clinical/doctor.note/doctor.note.domain.model';
 import { DoctorNoteDto } from '../../domain.types/clinical/doctor.note/doctor.note.dto';
 import { DoctorNoteSearchFilters, DoctorNoteSearchResults } from '../../domain.types/clinical/doctor.note/doctor.note.search.types';
+import { uuid } from "../../domain.types/miscellaneous/system.types";
+import { BaseResourceService } from "../../services/base.resource.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class DoctorNoteService {
+export class DoctorNoteService extends BaseResourceService {
 
     constructor(
         @inject('IDoctorNoteRepo') private _doctorNoteRepo: IDoctorNoteRepo,
-    ) {}
+    ) {
+        super();
+    }
 
     create = async (doctorNoteDomainModel: DoctorNoteDomainModel): Promise<DoctorNoteDto> => {
         return await this._doctorNoteRepo.create(doctorNoteDomainModel);
     };
 
-    getById = async (id: string): Promise<DoctorNoteDto> => {
+    getById = async (id: uuid): Promise<DoctorNoteDto> => {
         return await this._doctorNoteRepo.getById(id);
     };
 
@@ -26,11 +30,11 @@ export class DoctorNoteService {
     };
 
     // eslint-disable-next-line max-len
-    update = async (id: string, doctorNoteDomainModel: DoctorNoteDomainModel): Promise<DoctorNoteDto> => {
+    update = async (id: uuid, doctorNoteDomainModel: DoctorNoteDomainModel): Promise<DoctorNoteDto> => {
         return await this._doctorNoteRepo.update(id, doctorNoteDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._doctorNoteRepo.delete(id);
     };
 

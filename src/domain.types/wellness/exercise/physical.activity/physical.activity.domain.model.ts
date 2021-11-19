@@ -1,16 +1,17 @@
 import { PhysicalActivityCategories, Intensity } from './physical.activity.types';
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 
 export interface PhysicalActivityDomainModel {
-    id?: string;
-    EhrId?: string;
-    PatientUserId?: string;
-    Exercise?: string;
-    Description?: string;
-    Category?: PhysicalActivityCategories;
-    CaloriesBurned?: number;
-    Intensity?: Intensity;
-    ImageResourceId?: string;
-    StartTime?: Date;
-    EndTime?: Date;
-    DurationInMin?: number;
+    id?             : uuid;
+    EhrId?          : uuid;
+    PatientUserId?  : uuid;
+    Exercise?       : string;
+    Description?    : string;
+    Category?       : PhysicalActivityCategories;
+    CaloriesBurned? : number;
+    Intensity?      : Intensity;
+    ImageResourceId?: uuid;
+    StartTime?      : Date;
+    EndTime?        : Date;
+    DurationInMin?  : number;
 }

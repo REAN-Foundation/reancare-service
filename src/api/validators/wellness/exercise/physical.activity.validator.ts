@@ -1,14 +1,13 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../../common/helper';
 import { PhysicalActivityDomainModel } from '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
 import { PhysicalActivitySearchFilters } from '../../../../domain.types/wellness/exercise/physical.activity/physical.activity.search.types';
+import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PhysicalActivityValidator {
+export class PhysicalActivityValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): PhysicalActivityDomainModel => {
+    getDomainModel = (request: express.Request): PhysicalActivityDomainModel => {
 
         const physicalActivityModel: PhysicalActivityDomainModel = {
             PatientUserId  : request.body.PatientUserId ?? null,
@@ -25,162 +24,74 @@ export class PhysicalActivityValidator {
         return physicalActivityModel;
     };
 
-    static create = async (request: express.Request): Promise<PhysicalActivityDomainModel> => {
-        await PhysicalActivityValidator.validateBody(request);
-        return PhysicalActivityValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<PhysicalActivityDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await PhysicalActivityValidator.getParamId(request);
-    };
+    search = async (request: express.Request): Promise<PhysicalActivitySearchFilters> => {
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await PhysicalActivityValidator.getParamId(request);
-    };
+        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
+        await this.validateString(request, 'exercise', Where.Query, false, false, true);
+        await this.validateString(request, 'category', Where.Query, false, false, true);
 
-    static search = async (request: express.Request): Promise<PhysicalActivitySearchFilters> => {
-
-        await query('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateBaseSearchFilters(request);
         
-        await query('Exercise').optional()
-            .trim()
-            .escape()
-            .run(request);
+        this.validateRequest(request);
 
-        await query('Category').optional()
-            .trim()
-            .escape()
-            .run(request);
-        
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-        
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return PhysicalActivityValidator.getFilter(request);
+        return this.getFilter(request);
     };
 
-    static update = async (request: express.Request): Promise<PhysicalActivityDomainModel> => {
+    update = async (request: express.Request): Promise<PhysicalActivityDomainModel> => {
 
-        const id = await PhysicalActivityValidator.getParamId(request);
-        await PhysicalActivityValidator.validateBody(request);
+        await this.validateUpdateBody(request);
 
-        const domainModel = PhysicalActivityValidator.getDomainModel(request);
-        domainModel.id = id;
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
 
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private async validateCreateBody(request) {
 
-        await body('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateString(request, 'Exercise', Where.Body, true, false);
+        await this.validateString(request, 'Description', Where.Body, true, false);
+        await this.validateString(request, 'Category', Where.Body, true, false);
+        await this.validateString(request, 'Intensity', Where.Body, true, false);
+        await this.validateDecimal(request, 'CaloriesBurned', Where.Body, true, false);
+        await this.validateDate(request, 'StartTime', Where.Body, true, false);
+        await this.validateDate(request, 'EndTime', Where.Body, true, false);
+        await this.validateDecimal(request, 'DurationInMin', Where.Body, true, true);
 
-        await body('Exercise').exists()
-            .trim()
-            .escape()
-            .run(request);
+        this.validateRequest(request);
 
-        await body('Description').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Category').optional()
-            .trim()
-            .run(request);
-
-        await body('Intensity').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('CaloriesBurned').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('StartTime').optional()
-            .trim()
-            .escape()
-            .run(request);
-        
-        await body('EndTime').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('DurationInMin').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
     }
 
-    private static getFilter(request): PhysicalActivitySearchFilters {
-        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
+    private  async validateUpdateBody(request) {
 
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateString(request, 'Exercise', Where.Body, false, false);
+        await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateString(request, 'Category', Where.Body, false, false);
+        await this.validateString(request, 'Intensity', Where.Body, false, false);
+        await this.validateDecimal(request, 'CaloriesBurned', Where.Body, false, false);
+        await this.validateDate(request, 'StartTime', Where.Body, false, false);
+        await this.validateDate(request, 'EndTime', Where.Body, false, false);
+        await this.validateDecimal(request, 'DurationInMin', Where.Body, false, false);
 
-        const filters: PhysicalActivitySearchFilters = {
+        this.validateRequest(request);
+    }
+
+    private getFilter(request): PhysicalActivitySearchFilters {
+
+        var filters: PhysicalActivitySearchFilters = {
             PatientUserId : request.query.patientUserId ?? null,
             Exercise      : request.query.exercise ?? null,
             Category      : request.query.category ?? null,
-            OrderBy       : request.query.orderBy ?? 'CreatedAt',
-            Order         : request.query.order ?? 'descending',
-            PageIndex     : pageIndex,
-            ItemsPerPage  : itemsPerPage,
+
         };
-        return filters;
-    }
-
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

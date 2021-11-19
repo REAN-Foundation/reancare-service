@@ -1,154 +1,83 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../../common/helper';
 import { CalorieBalanceDomainModel } from '../../../../domain.types/wellness/daily.records/calorie.balance/calorie.balance.domain.model';
 import { CalorieBalanceSearchFilters } from '../../../../domain.types/wellness/daily.records/calorie.balance/calorie.balance.search.types';
+import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CalorieBalanceValidator {
+export class CalorieBalanceValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): CalorieBalanceDomainModel => {
+    getDomainModel = (request: express.Request): CalorieBalanceDomainModel => {
 
         const calorieBalanceModel: CalorieBalanceDomainModel = {
             PatientUserId    : request.body.PatientUserId ?? null,
-            CaloriesConsumed : request.body.CaloriesConsumed ?? 0,
-            CaloriesBurned   : request.body.CaloriesBurned ?? 0,
+            CaloriesConsumed : request.body.CaloriesConsumed ?? null,
+            CaloriesBurned   : request.body.CaloriesBurned ?? null,
             Unit             : request.body.Unit ?? 'kcal',
+            RecordDate       : request.body.RecordDate ?? new Date(),
         };
 
         return calorieBalanceModel;
     };
 
-    static create = async (request: express.Request): Promise<CalorieBalanceDomainModel> => {
-        await CalorieBalanceValidator.validateBody(request);
-        return CalorieBalanceValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<CalorieBalanceDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await CalorieBalanceValidator.getParamId(request);
+    search = async (request: express.Request): Promise<CalorieBalanceSearchFilters> => {
+
+        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
+        await this.validateDecimal(request, 'minCaloriesConsumedValue', Where.Query, false, false);
+        await this.validateDecimal(request, 'maxCaloriesConsumedValue', Where.Query, false, false);
+        await this.validateDecimal(request, 'minCaloriesBurnedValue', Where.Query, false, false);
+        await this.validateDecimal(request, 'maxCaloriesBurnedValue', Where.Query, false, false);
+        await this.validateDecimal(request, 'minCalorieBalanceValue', Where.Query, false, false);
+        await this.validateDecimal(request, 'maxCalorieBalanceValue', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
+
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+
+        return this.getFilter(request);
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await CalorieBalanceValidator.getParamId(request);
-    };
+    update = async (request: express.Request): Promise<CalorieBalanceDomainModel> => {
 
-    static search = async (request: express.Request): Promise<CalorieBalanceSearchFilters> => {
-
-        await query('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('CaloriesConsumed').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('CaloriesBurned').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('Unit').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('createdDateFrom').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('createdDateTo').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return CalorieBalanceValidator.getFilter(request);
-    };
-
-    static update = async (request: express.Request): Promise<CalorieBalanceDomainModel> => {
-
-        const id = await CalorieBalanceValidator.getParamId(request);
-        await CalorieBalanceValidator.validateBody(request);
-
-        const domainModel = CalorieBalanceValidator.getDomainModel(request);
-        domainModel.id = id;
-
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private  async validateCreateBody(request) {
 
-        await body('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateDecimal(request, 'CaloriesConsumed', Where.Body, true, false);
+        await this.validateDecimal(request, 'CaloriesBurned', Where.Body, true, false);
+        await this.validateString(request, 'Unit', Where.Body, false, true);
+        await this.validateDate(request, 'RecordDate', Where.Body, true, false);
+    
+        this.validateRequest(request);
+    }
+    
+    private  async validateUpdateBody(request) {
 
-        await body('CaloriesConsumed').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateDecimal(request, 'CaloriesConsumed', Where.Body, false, false);
+        await this.validateDecimal(request, 'CaloriesBurned', Where.Body, false, false);
+        await this.validateDecimal(request, 'CalorieBalance', Where.Body, false, false);
+        await this.validateString(request, 'Unit', Where.Body, false, false);
+        await this.validateDate(request, 'RecordDate', Where.Body, false, false);
 
-        await body('CaloriesBurned').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await body('Unit').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
     }
 
-    private static getFilter(request): CalorieBalanceSearchFilters {
-        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
-
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
-
-        const filters: CalorieBalanceSearchFilters = {
+    private getFilter(request): CalorieBalanceSearchFilters {
+        
+        var filters: CalorieBalanceSearchFilters = {
             PatientUserId            : request.query.patientUserId ?? null,
             MinCaloriesConsumedValue : request.query.minCaloriesConsumedValue ?? null,
             MaxCaloriesConsumedValue : request.query.maxCaloriesConsumedValue ?? null,
@@ -158,27 +87,9 @@ export class CalorieBalanceValidator {
             MaxCalorieBalanceValue   : request.query.maxCalorieBalanceValue ?? null,
             CreatedDateFrom          : request.query.createdDateFrom ?? null,
             CreatedDateTo            : request.query.createdDateTo ?? null,
-            OrderBy                  : request.query.orderBy ?? 'CreatedAt',
-            Order                    : request.query.order ?? 'descending',
-            PageIndex                : pageIndex,
-            ItemsPerPage             : itemsPerPage,
         };
-        return filters;
-    }
 
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

@@ -40,6 +40,7 @@ import { PersonRepo } from './repositories/person.repo';
 import { PersonRoleRepo } from './repositories/person.role.repo';
 import { RolePrivilegeRepo } from './repositories/role.privilege.repo';
 import { RoleRepo } from './repositories/role.repo';
+import { MedicalConditionRepo } from './repositories/clinical/medical.condition.repo';
 import { UserDeviceDetailsRepo } from './repositories/user/user.device.details.repo';
 import { UserRepo } from './repositories/user/user.repo';
 import { UserTaskRepo } from './repositories/user/user.task.repo';
@@ -113,6 +114,8 @@ export class SequelizeInjector {
         container.register('IMedicationRepo', MedicationRepo);
         container.register('IMedicationConsumptionRepo', MedicationConsumptionRepo);
         container.register('IUserTaskRepo', UserTaskRepo);
+        container.register('IMedicalConditionRepo', MedicalConditionRepo);
+
     }
 
 }

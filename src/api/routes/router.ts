@@ -33,6 +33,7 @@ import { register as registerGoalRoutes } from './patient/goal.routes';
 import { register as registerPatientHealthProfileRoutes } from './patient/health.profile.routes';
 import { register as registerPatientRoutes } from "./patient/patient.routes";
 import { register as registerPersonRoutes } from './person.routes';
+import { register as registerMedicalConditionRoutes } from './clinical/medical.condition.routes';
 import { register as registerTypesRoutes } from './types.routes';
 import { register as registerUserDeviceDetailsRoutes } from './user/user.device.details.routes';
 import { register as registerUserRoutes } from "./user/user.routes";
@@ -116,6 +117,7 @@ export class Router {
                 registerMedicationRoutes(this._app);
                 registerMedicationConsumptionRoutes(this._app);
                 registerUserTaskRoutes(this._app);
+                registerMedicalConditionRoutes(this._app);
 
                 resolve(true);
 

@@ -1,3 +1,4 @@
+import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { inject, injectable } from 'tsyringe';
 import { ApiError } from '../../common/api.error';
 import { Helper } from '../../common/helper';
@@ -60,6 +61,19 @@ export class PatientService {
         for await (var dto of results.Items) {
             dto = await this.updateDto(dto);
             items.push(dto);
+        }
+
+        if (items.length > 0) {
+            const currentUser: CurrentUser = {
+                UserId        : items[0].id,
+                DisplayName   : items[0].DisplayName,
+                Phone         : items[0].Phone,
+                Email         : items[0].Email,
+                UserName      : items[0].UserName,
+                CurrentRoleId : 2,
+            };
+            const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
+            items[0].accessToken = accessToken;
         }
         results.Items = items;
         return results;

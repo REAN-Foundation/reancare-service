@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { ISleepRepo } from "../../../database/repository.interfaces/wellness/daily.records/sleep.repo.interface";
 import { SleepDomainModel } from '../../../domain.types/wellness/daily.records/sleep/sleep.domain.model';
@@ -17,7 +18,7 @@ export class SleepService {
         return await this._sleepRepo.create(sleepDomainModel);
     };
 
-    getById = async (id: string): Promise<SleepDto> => {
+    getById = async (id: uuid): Promise<SleepDto> => {
         return await this._sleepRepo.getById(id);
     };
 
@@ -25,11 +26,11 @@ export class SleepService {
         return await this._sleepRepo.search(filters);
     };
 
-    update = async (id: string, sleepDomainModel: SleepDomainModel): Promise<SleepDto> => {
+    update = async (id: uuid, sleepDomainModel: SleepDomainModel): Promise<SleepDto> => {
         return await this._sleepRepo.update(id, sleepDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._sleepRepo.delete(id);
     };
 

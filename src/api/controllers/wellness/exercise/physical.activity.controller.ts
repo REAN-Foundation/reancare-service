@@ -9,8 +9,6 @@ import { PhysicalActivityService } from '../../../../services/wellness/exercise/
 import { Loader } from '../../../../startup/loader';
 import { PhysicalActivityValidator } from '../../../validators/wellness/exercise/physical.activity.validator';
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class PhysicalActivityController {
@@ -41,7 +39,7 @@ export class PhysicalActivityController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PhysicalActivity.Create';
+            request.context = 'Exercise.PhysicalActivity.Create';
             await this._authorizer.authorize(request, response);
             
             const domainModel = await PhysicalActivityValidator.create(request);
@@ -68,7 +66,7 @@ export class PhysicalActivityController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PhysicalActivity.GetById';
+            request.context = 'Exercise.PhysicalActivity.GetById';
             
             await this._authorizer.authorize(request, response);
 
@@ -89,7 +87,7 @@ export class PhysicalActivityController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PhysicalActivity.Search';
+            request.context = 'Exercise.PhysicalActivity.Search';
             await this._authorizer.authorize(request, response);
 
             const filters = await PhysicalActivityValidator.search(request);
@@ -111,7 +109,7 @@ export class PhysicalActivityController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PhysicalActivity.Update';
+            request.context = 'Exercise.PhysicalActivity.Update';
             await this._authorizer.authorize(request, response);
 
             const domainModel = await PhysicalActivityValidator.update(request);
@@ -137,7 +135,7 @@ export class PhysicalActivityController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PhysicalActivity.Delete';
+            request.context = 'Exercise.PhysicalActivity.Delete';
             await this._authorizer.authorize(request, response);
 
             const id: string = await PhysicalActivityValidator.getById(request);

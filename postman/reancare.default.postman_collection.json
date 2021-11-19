@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6c85daee-81c6-4afe-9153-759c64e695ed",
+		"_postman_id": "00300029-e737-4f58-8e10-079e4b85dd14",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -6194,8 +6194,7 @@
 										"exec": [
 											"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
 											"let addressId = pm.environment.get('ADDRESS_ID');\r",
-											"let orgId = pm.environment.get('ORGANIZATION_ID');\r",
-											""
+											"let orgId = pm.environment.get('ORGANIZATION_ID');"
 										],
 										"type": "text/javascript"
 									}
@@ -17090,7 +17089,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"MedicalPractitionerUserId\": \"0652a79e-c549-478d-bc99-42187dd91d30\",\r\n    \"MedicalConditionId\": \"06fbc6fd-b819-416e-8dc9-e20bb59c11c9\",\r\n    \"Comments\": \"better than earlier\",\r\n    \"IsClinicallyActive\": false,\r\n    \"ValidationStatus\": \"Confirmed\",\r\n    \"Interpretation\": \"Significant change up\",\r\n    \"OnsetDate\": \"2021-09-15\",\r\n    \"EndDate\": \"2021-09-25\"\r\n}"
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"MedicalPractitionerUserId\": \"0652a79e-c549-478d-bc99-42187dd91d30\",\r\n    \"VisitId\": \"0f5958d4-d872-453c-a8dd-df6e6d4cac1e\",\r\n    \"MedicalConditionId\": \"06fbc6fd-b819-416e-8dc9-e20bb59c11c9\",\r\n    \"Comments\": \"Better than earlier\",\r\n    \"IsClinicallyActive\": false,\r\n    \"ValidationStatus\": \"Negated\",\r\n    \"Interpretation\": \"Significant change up\",\r\n    \"OnsetDate\": \"2021-09-15\",\r\n    \"EndDate\": \"2021-09-25\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/clinical/diagnoses",

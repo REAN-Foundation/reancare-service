@@ -25,6 +25,7 @@ import { SymptomAssessmentRepo } from './repositories/clinical/symptom/symptom.a
 import { SymptomAssessmentTemplateRepo } from './repositories/clinical/symptom/symptom.assessment.template.repo';
 import { SymptomRepo } from './repositories/clinical/symptom/symptom.repo';
 import { SymptomTypeRepo } from './repositories/clinical/symptom/symptom.type.repo';
+import { DailyAssessmentRepo } from './repositories/clinical/daily.assessment/daily.assessment.repo';
 import { DoctorRepo } from './repositories/doctor.repo';
 import { KnowledgeNuggetRepo } from './repositories/educational/knowledge.nugget.repo';
 import { FileResourceRepo } from './repositories/file.resource.repo';
@@ -113,6 +114,8 @@ export class SequelizeInjector {
         container.register('IMedicationRepo', MedicationRepo);
         container.register('IMedicationConsumptionRepo', MedicationConsumptionRepo);
         container.register('IUserTaskRepo', UserTaskRepo);
+        container.register('IDailyAssessmentRepo', DailyAssessmentRepo);
+
     }
 
 }

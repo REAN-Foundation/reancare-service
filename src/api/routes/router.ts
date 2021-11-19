@@ -46,6 +46,7 @@ import { register as registerMeditationtRoutes } from './wellness/exercise/medit
 import { register as registerPhysicalActivityRoutes } from './wellness/exercise/physical.activity.routes';
 import { register as registerNutritionFoodConsumptionRoutes } from './wellness/nutrition/food.consumption.routes';
 import { register as registerWaterConsumptionRoutes } from './wellness/nutrition/water.consumption.routes';
+import { register as registerDailyAssessmentRoutes } from './clinical/daily.assessment/daily.assessment.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -116,6 +117,7 @@ export class Router {
                 registerMedicationRoutes(this._app);
                 registerMedicationConsumptionRoutes(this._app);
                 registerUserTaskRoutes(this._app);
+                registerDailyAssessmentRoutes(this._app);
 
                 resolve(true);
 

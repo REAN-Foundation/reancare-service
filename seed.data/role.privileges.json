@@ -275,6 +275,8 @@
             "UserTask.FinishTask",
             "UserTask.CancelTask",
             "UserTask.SummaryForDay",
+            "DailyAssessment.Create",
+            "DailyAssessment.Search",
             "KnowledgeNugget.GetTodaysTopic",
             "KnowledgeNugget.GetById",
             "KnowledgeNugget.Search",
@@ -516,7 +518,9 @@
             "UserTask.StartTask",
             "UserTask.FinishTask",
             "UserTask.CancelTask",
-            "UserTask.SummaryForDay"
+            "UserTask.SummaryForDay",
+            "DailyAssessment.Create",
+            "DailyAssessment.Search"
         ]
     },
     {

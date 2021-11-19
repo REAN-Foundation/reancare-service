@@ -24510,6 +24510,133 @@
 							]
 						}
 					]
+				},
+				{
+					"name": "Daily Assessment",
+					"item": [
+						{
+							"name": "Create daily assessment record",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Feeling\": \"Worst\",\n    \"Mood\": \"Stressed\",\n    \"EnergyLevels\": [\n        \"Eat\",\n        \"Get off the bed\"\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/daily-assessments",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"daily-assessments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search daily assessment records",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/daily-assessments/search?pageIndex=0&itemsPerPage=25&patientUserId=430e4586-14f1-4021-9da9-7bc67c99b26a",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"daily-assessments",
+										"search"
+									],
+									"query": [
+										{
+											"key": "dateFrom",
+											"value": "2021-11-18",
+											"disabled": true
+										},
+										{
+											"key": "dateTo",
+											"value": "2021-11-19",
+											"disabled": true
+										},
+										{
+											"key": "orderBy",
+											"value": "RecordDate",
+											"disabled": true
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"disabled": true
+										},
+										{
+											"key": "pageIndex",
+											"value": "0"
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "feeling",
+											"value": "Same",
+											"disabled": true
+										},
+										{
+											"key": "mood",
+											"value": "Stressed",
+											"disabled": true
+										},
+										{
+											"key": "energyLevels",
+											"value": "Get off the bed",
+											"disabled": true
+										},
+										{
+											"key": "patientUserId",
+											"value": "430e4586-14f1-4021-9da9-7bc67c99b26a"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		},

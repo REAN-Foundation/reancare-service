@@ -12,9 +12,11 @@ import { BodyTemperatureRepo } from './repositories/clinical/biometrics/body.tem
 import { BodyWeightRepo } from './repositories/clinical/biometrics/body.weight.repo';
 import { PulseRepo } from './repositories/clinical/biometrics/pulse.repo';
 import { ComplaintRepo } from './repositories/clinical/complaint.repo';
+import { DailyAssessmentRepo } from './repositories/clinical/daily.assessment/daily.assessment.repo';
 import { DiagnosisRepo } from './repositories/clinical/diagnosis.repo';
 import { DoctorNoteRepo } from './repositories/clinical/doctor.note.repo';
 import { EmergencyEventRepo } from './repositories/clinical/emergency.event.repo';
+import { MedicalConditionRepo } from './repositories/clinical/medical.condition.repo';
 import { DrugRepo } from './repositories/clinical/medication/drug.repo';
 import { MedicationConsumptionRepo } from './repositories/clinical/medication/medication.consumption.repo';
 import { MedicationRepo } from './repositories/clinical/medication/medication.repo';
@@ -40,7 +42,6 @@ import { PersonRepo } from './repositories/person.repo';
 import { PersonRoleRepo } from './repositories/person.role.repo';
 import { RolePrivilegeRepo } from './repositories/role.privilege.repo';
 import { RoleRepo } from './repositories/role.repo';
-import { MedicalConditionRepo } from './repositories/clinical/medical.condition.repo';
 import { UserDeviceDetailsRepo } from './repositories/user/user.device.details.repo';
 import { UserRepo } from './repositories/user/user.repo';
 import { UserTaskRepo } from './repositories/user/user.task.repo';
@@ -115,6 +116,7 @@ export class SequelizeInjector {
         container.register('IMedicationConsumptionRepo', MedicationConsumptionRepo);
         container.register('IUserTaskRepo', UserTaskRepo);
         container.register('IMedicalConditionRepo', MedicalConditionRepo);
+        container.register('IDailyAssessmentRepo', DailyAssessmentRepo);
 
     }
 

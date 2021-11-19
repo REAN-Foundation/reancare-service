@@ -11,9 +11,11 @@ import { register as registerBodyTemperatureRoutes } from './clinical/biometrics
 import { register as registerBodyWeightRoutes } from './clinical/biometrics/body.weight.routes';
 import { register as registerBiometricsPulse } from './clinical/biometrics/pulse.routes';
 import { register as registerComplaintRoutes } from './clinical/complaint.routes';
+import { register as registerDailyAssessmentRoutes } from './clinical/daily.assessment/daily.assessment.routes';
 import { register as registerDiagnosisRoutes } from './clinical/diagnosis.routes';
 import { register as registerDoctorNoteRoutes } from './clinical/doctor.note.routes';
 import { register as registerEmergencyEventRoutes } from './clinical/emergency.event.routes';
+import { register as registerMedicalConditionRoutes } from './clinical/medical.condition.routes';
 import { register as registerDrugRoutes } from './clinical/medication/drug.routes';
 import { register as registerMedicationConsumptionRoutes } from './clinical/medication/medication.consumption.routes';
 import { register as registerMedicationRoutes } from './clinical/medication/medication.routes';
@@ -33,7 +35,6 @@ import { register as registerGoalRoutes } from './patient/goal.routes';
 import { register as registerPatientHealthProfileRoutes } from './patient/health.profile.routes';
 import { register as registerPatientRoutes } from "./patient/patient.routes";
 import { register as registerPersonRoutes } from './person.routes';
-import { register as registerMedicalConditionRoutes } from './clinical/medical.condition.routes';
 import { register as registerTypesRoutes } from './types.routes';
 import { register as registerUserDeviceDetailsRoutes } from './user/user.device.details.routes';
 import { register as registerUserRoutes } from "./user/user.routes";
@@ -118,6 +119,7 @@ export class Router {
                 registerMedicationConsumptionRoutes(this._app);
                 registerUserTaskRoutes(this._app);
                 registerMedicalConditionRoutes(this._app);
+                registerDailyAssessmentRoutes(this._app);
 
                 resolve(true);
 

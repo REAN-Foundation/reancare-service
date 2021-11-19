@@ -55,8 +55,6 @@ export class EmergencyContactValidator extends BaseValidator {
     private async validateCreateBody(request) {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
-        await this.validateUuid(request, 'ContactPersonId', Where.Body, true, false);
-        await this.validateString(request, 'ContactPerson', Where.Body, true, false);
         await this.validateUuid(request, 'AddressId', Where.Body, false, false);
         await this.validateString(request, 'Address', Where.Body, true, false);
         await this.validateString(request, 'ContactRelation', Where.Body, true, false);
@@ -70,9 +68,7 @@ export class EmergencyContactValidator extends BaseValidator {
 
         await oneOf([
             body('ContactPersonId').optional({ nullable: true })
-                .trim()
-                .isUUID()
-                .escape(),
+                .isUUID(),
             body('ContactPerson').optional({ nullable: true })
                 .isObject()
                 .notEmpty()
@@ -156,17 +152,6 @@ export class EmergencyContactValidator extends BaseValidator {
         await this.validateString(request, 'AdditionalPhoneNumbers', Where.Body, false, false);
 
         this.validateRequest(request);
-
-        await oneOf([
-            body('ContactPersonId').optional({ nullable: true })
-                .trim()
-                .isUUID()
-                .escape(),
-            body('ContactPerson').optional({ nullable: true })
-                .isObject()
-                .notEmpty()
-                .withMessage('ContactPerson if added cannot be empty!'),
-        ]).run(request);
 
         if (request.body.ContactPerson !== undefined) {
 

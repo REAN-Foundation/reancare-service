@@ -1,42 +1,33 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ComplaintService } from '../../../services/clinical/complaint.service';
 import { DoctorService } from '../../../services/doctor.service';
 import { PatientService } from '../../../services/patient/patient.service';
-import { PersonService } from '../../../services/person.service';
-import { RoleService } from '../../../services/role.service';
 import { Loader } from '../../../startup/loader';
 import { ComplaintValidator } from '../../validators/clinical/complaint.validator';
-
-
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ComplaintController {
+export class ComplaintController extends BaseController {
 
     //#region member variables and constructors
 
     _service: ComplaintService = null;
 
-    _roleService: RoleService = null;
-
-    _personService: PersonService = null;
+    _validator: ComplaintValidator = new ComplaintValidator();
 
     _patientService: PatientService = null;
-
-    _authorizer: Authorizer = null;
 
     _doctorService: DoctorService = null;
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(ComplaintService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
         this._patientService = Loader.container.resolve(PatientService);
         this._doctorService = Loader.container.resolve(DoctorService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -45,10 +36,9 @@ export class ComplaintController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Complaint.Create';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Complaint.Create', request, response);
             
-            const domainModel = await ComplaintValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             if (domainModel.PatientUserId != null) {
                 const patientUser = await this._patientService.getByUserId(domainModel.PatientUserId);
@@ -79,11 +69,9 @@ export class ComplaintController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Complaint.GetById';
-            
-            await this._authorizer.authorize(request, response);
+            this.setContext('Complaint.GetById', request, response);
 
-            const id: string = await ComplaintValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const complaint = await this._service.getById(id);
             if (complaint == null) {
@@ -100,10 +88,9 @@ export class ComplaintController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Complaint.Search';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Complaint.Search', request, response);
 
-            const filters = await ComplaintValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -122,12 +109,11 @@ export class ComplaintController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Complaint.Update';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Complaint.Update', request, response);
 
-            const domainModel = await ComplaintValidator.update(request);
+            const domainModel = await this._validator.update(request);
 
-            const id: string = await ComplaintValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingComplaint = await this._service.getById(id);
             if (existingComplaint == null) {
                 throw new ApiError(404, 'Complaint not found.');
@@ -148,10 +134,9 @@ export class ComplaintController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Complaint.Delete';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Complaint.Delete', request, response);
 
-            const id: string = await ComplaintValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingComplaint = await this._service.getById(id);
             if (existingComplaint == null) {
                 throw new ApiError(404, 'Complaint not found.');

@@ -1,25 +1,17 @@
+import { BaseSearchFilters, BaseSearchResults } from "../../../../domain.types/miscellaneous/base.search.types";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 import { SymptomAssessmentDto } from "./symptom.assessment.dto";
 
 //////////////////////////////////////////////////////////////////////
 
-export interface SymptomAssessmentSearchFilters {
+export interface SymptomAssessmentSearchFilters extends BaseSearchFilters{
     Title?               : string;
-    PatientUserId?       : string;
-    AssessmentTemplateId?: string;
+    PatientUserId?       : uuid;
+    AssessmentTemplateId?: uuid;
     DateFrom?            : Date;
     DateTo?              : Date;
-    OrderBy              : string;
-    Order                : string;
-    PageIndex            : number;
-    ItemsPerPage         : number;
 }
 
-export interface SymptomAssessmentSearchResults {
-    TotalCount    : number;
-    RetrievedCount: number;
-    PageIndex     : number;
-    ItemsPerPage  : number;
-    Order         : string;
-    OrderedBy     : string;
+export interface SymptomAssessmentSearchResults extends BaseSearchResults{
     Items         : SymptomAssessmentDto[];
 }

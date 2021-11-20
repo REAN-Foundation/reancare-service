@@ -1,10 +1,10 @@
 import express from 'express';
-import { ClinicalInterpretation, ClinicalValidationStatus } from '../../../../domain.types/miscellaneous/clinical.types';
 import { SymptomDomainModel } from '../../../../domain.types/clinical/symptom/symptom/symptom.domain.model';
 import { SymptomSearchFilters } from '../../../../domain.types/clinical/symptom/symptom/symptom.search.types';
+import { ClinicalInterpretation, ClinicalValidationStatus } from '../../../../domain.types/miscellaneous/clinical.types';
 import { Severity } from '../../../../domain.types/miscellaneous/system.types';
-import { SymptomTypeService } from '../../../../services/clinical/symptom/symptom.type.service';
 import { SymptomAssessmentService } from '../../../../services/clinical/symptom/symptom.assessment.service';
+import { SymptomTypeService } from '../../../../services/clinical/symptom/symptom.type.service';
 import { Loader } from '../../../../startup/loader';
 import { BaseValidator, Where } from '../../base.validator';
 
@@ -103,7 +103,7 @@ export class SymptomValidator extends BaseValidator {
         await this.validateString(request, 'ValidationStatus', Where.Body, true, false);
         await this.validateString(request, 'Interpretation', Where.Body, false, false);
         await this.validateString(request, 'Comments', Where.Body, false, false);
-        await this.validateDate(request, 'RecordDate', Where.Body, true, false);
+        await this.validateDate(request, 'RecordDate', Where.Body, false, false);
 
         this.validateRequest(request);
     }

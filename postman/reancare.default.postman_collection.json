@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "00300029-e737-4f58-8e10-079e4b85dd14",
+		"_postman_id": "6c85daee-81c6-4afe-9153-759c64e695ed",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -1179,7 +1179,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Purpose\": \"Login\",\r\n    \"RoleId\": 2\r\n}\r\n"
+									"raw": "{\r\n    \"Phone\": \"+91-7798074981\",\r\n    \"Purpose\": \"Login\",\r\n    \"RoleId\": 2\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/users/generate-otp",
@@ -3268,7 +3268,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/doctors/search?phone={{DOCTOR_PHONE_NUMBER}}&email={{DOCTOR_EMAIL}}&name={{DOCTOR_FIRST_NAME}}&gender={{DOCTOR_GENDER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
+							"raw": "{{BASE_URL}}/doctors/search?phone={{DOCTOR_PHONE_NUMBER}}&birthdateFrom=1975-01-01&birthdateTo=2021-12-12&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -3285,17 +3285,20 @@
 								{
 									"key": "email",
 									"value": "{{DOCTOR_EMAIL}}",
-									"description": "Search by patient email"
+									"description": "Search by patient email",
+									"disabled": true
 								},
 								{
 									"key": "name",
 									"value": "{{DOCTOR_FIRST_NAME}}",
-									"description": "Search by name"
+									"description": "Search by name",
+									"disabled": true
 								},
 								{
 									"key": "gender",
 									"value": "{{DOCTOR_GENDER}}",
-									"description": "Search by patient gender"
+									"description": "Search by patient gender",
+									"disabled": true
 								},
 								{
 									"key": "birthdateFrom",
@@ -3310,12 +3313,14 @@
 								{
 									"key": "createdDateFrom",
 									"value": "2021-05-01",
-									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
+									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
+									"disabled": true
 								},
 								{
 									"key": "createdDateTo",
 									"value": "2021-12-12",
-									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
+									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
+									"disabled": true
 								},
 								{
 									"key": "orderBy",
@@ -3436,6 +3441,93 @@
 					"response": []
 				},
 				{
+					"name": "Create second address",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"ADDRESS_TYPE\", 'Home');\r",
+									"pm.environment.set(\"ADDRESS_LINE\", '89/88, Sembudoss St, Parrys');\r",
+									"pm.environment.set(\"ADDRESS_CITY\", 'Pune');\r",
+									"pm.environment.set(\"ADDRESS_DISTRICT\", 'Greater Pune');\r",
+									"pm.environment.set(\"ADDRESS_STATE\", 'Maharashtra');\r",
+									"pm.environment.set(\"ADDRESS_COUNTRY\", 'India');\r",
+									"pm.environment.set(\"ADDRESS_POSTAL_CODE\", '411001');\r",
+									"pm.environment.set(\"ADDRESS_LONGITUDE\", 36.732324);\r",
+									"pm.environment.set(\"ADDRESS_LATTITUDE\", 6.611966);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"ADDRESS_ID\", jsonRes.Data.Address.id);\r",
+									"    pm.environment.set(\"ADDRESS_ID_1\", jsonRes.Data.Address.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Type\": \"{{ADDRESS_TYPE}}\",\r\n    \"AddressLine\": \"{{ADDRESS_LINE}}\",\r\n    \"City\": \"{{ADDRESS_CITY}}\",\r\n    \"Country\": \"{{ADDRESS_COUNTRY}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/addresses",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"addresses"
+							]
+						},
+						"description": "Add an address."
+					},
+					"response": []
+				},
+				{
 					"name": "Get address by id",
 					"event": [
 						{
@@ -3459,15 +3551,13 @@
 									"\r",
 									"pm.test(\"Address is returned\", function () {\r",
 									"\r",
-									"    var expectedType = pm.environment.get(\"ADDRESS_TYPE\");\r",
+									"    var expectedType = \"Home\";\r",
 									"    var expectedAddressLine = pm.environment.get(\"ADDRESS_LINE\");\r",
 									"    var expectedCity = pm.environment.get(\"ADDRESS_CITY\");\r",
-									"    var expectedDistrict = pm.environment.get(\"ADDRESS_DISTRICT\");\r",
-									"    var expectedState = pm.environment.get(\"ADDRESS_STATE\");\r",
+									"    var expectedDistrict = null;\r",
+									"    var expectedState = null;\r",
 									"    var expectedCountry = pm.environment.get(\"ADDRESS_COUNTRY\");\r",
-									"    var expectedPostalCode = pm.environment.get(\"ADDRESS_POSTAL_CODE\");\r",
-									"    var expectedLongitude = pm.environment.get(\"ADDRESS_LONGITUDE\");\r",
-									"    var expectedLattitude = pm.environment.get(\"ADDRESS_LATTITUDE\");\r",
+									"    var expectedPostalCode = null;\r",
 									"\r",
 									"    var jsonRes = pm.response.json();\r",
 									"    pm.expect(jsonRes.Data).to.have.property('Address');\r",
@@ -3490,13 +3580,6 @@
 									"    pm.expect(jsonRes.Data.Address.State).equals(expectedState);\r",
 									"    pm.expect(jsonRes.Data.Address.Country).equals(expectedCountry);\r",
 									"    pm.expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);\r",
-									"\r",
-									"    var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
-									"    var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);\r",
-									"    pm.expect(diffLong).to.be.lessThan(1.0); //difference less than 1%\r",
-									"\r",
 									"\r",
 									"});\r",
 									"\r",
@@ -5369,6 +5452,219 @@
 					"name": "Patient health profile",
 					"item": [
 						{
+							"name": "Get severity list",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    var personRoles = jsonRes.Data.PersonRoleTypes;\r",
+											"    for(var i = 0; i < personRoles.length; i++) {\r",
+											"        var r = personRoles[i];\r",
+											"        var name = r.RoleName;\r",
+											"        var id = r.id;\r",
+											"        var str = \"ROLE_\" + name.toUpperCase();\r",
+											"        console.log(str);\r",
+											"        console.log(id);\r",
+											"        pm.environment.set(str, id);\r",
+											"    }\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Person roles are retrieved\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Severities');\r",
+											"    pm.expect(jsonRes.Data.Severities).to.not.be.empty;\r",
+											"    var count = jsonRes.Data.Severities.length;\r",
+											"    pm.expect(count).greaterThan(0);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/types/severities",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"types",
+										"severities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get blood-groups",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    var personRoles = jsonRes.Data.PersonRoleTypes;\r",
+											"    for(var i = 0; i < personRoles.length; i++) {\r",
+											"        var r = personRoles[i];\r",
+											"        var name = r.RoleName;\r",
+											"        var id = r.id;\r",
+											"        var str = \"ROLE_\" + name.toUpperCase();\r",
+											"        console.log(str);\r",
+											"        console.log(id);\r",
+											"        pm.environment.set(str, id);\r",
+											"    }\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Person roles are retrieved\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('BloodGroups');\r",
+											"    pm.expect(jsonRes.Data.BloodGroups).to.not.be.empty;\r",
+											"    var count = jsonRes.Data.BloodGroups.length;\r",
+											"    pm.expect(count).greaterThan(0);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/types/blood-groups",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"types",
+										"blood-groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get marital statuses",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    var personRoles = jsonRes.Data.PersonRoleTypes;\r",
+											"    for(var i = 0; i < personRoles.length; i++) {\r",
+											"        var r = personRoles[i];\r",
+											"        var name = r.RoleName;\r",
+											"        var id = r.id;\r",
+											"        var str = \"ROLE_\" + name.toUpperCase();\r",
+											"        console.log(str);\r",
+											"        console.log(id);\r",
+											"        pm.environment.set(str, id);\r",
+											"    }\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Person roles are retrieved\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('MaritalStatuses');\r",
+											"    pm.expect(jsonRes.Data.MaritalStatuses).to.not.be.empty;\r",
+											"    var count = jsonRes.Data.MaritalStatuses.length;\r",
+											"    pm.expect(count).greaterThan(0);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/types/marital-statuses",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"types",
+										"marital-statuses"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Get health profile",
 							"event": [
 								{
@@ -5456,7 +5752,126 @@
 							"response": []
 						},
 						{
-							"name": "Update health profile",
+							"name": "Update health profile - 1",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated patient health profile is returned\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('HealthProfile');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('MajorAilment');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('OtherConditions');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('BloodGroup');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('IsDiabetic');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('HasHeartAilment');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('MaritalStatus');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('Ethnicity');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('Nationality');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('Occupation');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('SedentaryLifestyle');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('IsSmoker');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('IsDrinker');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('DrinkingSeverity');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('DrinkingSince');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('ProcedureHistory');\r",
+											"    pm.expect(jsonRes.Data.HealthProfile).to.have.property('SubstanceAbuse');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.PatientUserId).equals(expectedPatientUserId);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.BloodGroup).equals(\"\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.MajorAilment).equals(\"\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.OtherConditions).equals(\"\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.IsDiabetic).equals(false);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.HasHeartAilment).equals(true);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.MaritalStatus).equals(\"Single\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.Ethnicity).equals(\"South-Asian\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.Nationality).equals(\"Indian\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.Occupation).equals(\"Software engineer\");\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.SedentaryLifestyle).equals(true);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.IsSmoker).equals(false);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.IsDrinker).equals(true);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.DrinkingSeverity).equals(\"Medium\");\r",
+											"\r",
+											"    var drinkingSince = jsonRes.Data.HealthProfile.DrinkingSince;\r",
+											"    if(drinkingSince){\r",
+											"        drinkingSince = drinkingSince.split('T')[0];\r",
+											"    }\r",
+											"    pm.expect(drinkingSince).equals(\"2010-01-01\");\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.SubstanceAbuse).equals(true);\r",
+											"    pm.expect(jsonRes.Data.HealthProfile.ProcedureHistory).equals(\"Had a toncil operation\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"BloodGroup\": \"\",\r\n    \"MajorAilment\": \"\",\r\n    \"OtherConditions\": \"\",\r\n    \"IsDiabetic\": false,\r\n    \"HasHeartAilment\": true,\r\n    \"MaritalStatus\": \"Single\",\r\n    \"Ethnicity\": \"South-Asian\",\r\n    \"Nationality\": \"Indian\",\r\n    \"Occupation\": \"Software engineer\",\r\n    \"SedentaryLifestyle\": true,\r\n    \"IsSmoker\": false,\r\n    \"IsDrinker\": true,\r\n    \"DrinkingSeverity\": \"Medium\",\r\n    \"DrinkingSince\": \"2010-01-01\",\r\n    \"SubstanceAbuse\": true,\r\n    \"ProcedureHistory\": \"Had a toncil operation\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient-health-profiles/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-health-profiles",
+										"{{PATIENT_USER_ID}}"
+									]
+								},
+								"description": "Add an address."
+							},
+							"response": []
+						},
+						{
+							"name": "Update health profile - 2",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -5753,7 +6168,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"ContactPersonId\":\"{{PERSON_ID}}\",\r\n    \"ContactRelation\":\"{{CONTACT_RELATION}}\",\r\n    \"AddressId\":\"{{ADDRESS_ID}}\",\r\n    \"OrganizationId\":\"{{ORGANIZATION_ID}}\",\r\n    \"IsAvailableForEmergency\":true,\r\n    \"TimeOfAvailability\":\"10:00 AM - 5:00 PM\",\r\n    \"Description\":\"Some description here\",\r\n    \"AdditionalPhoneNumbers\":\"+91-3243243334\"\r\n}"
+									"raw": "{\r\n    \"PatientUserId\":\"{{PATIENT_USER_ID}}\",\r\n    \"ContactPersonId\":\"{{PERSON_ID}}\",\r\n    \"ContactRelation\":\"{{CONTACT_RELATION}}\",\r\n    \"AddressId\":\"{{ADDRESS_ID}}\",\r\n    \"IsAvailableForEmergency\":true,\r\n    \"TimeOfAvailability\":\"10:00 AM - 5:00 PM\",\r\n    \"Description\":\"Some description here\",\r\n    \"AdditionalPhoneNumbers\":\"+91-3243243334\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patient-emergency-contacts",
@@ -5777,7 +6192,8 @@
 										"exec": [
 											"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
 											"let addressId = pm.environment.get('ADDRESS_ID');\r",
-											"let orgId = pm.environment.get('ORGANIZATION_ID');"
+											"let orgId = pm.environment.get('ORGANIZATION_ID');\r",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -5857,7 +6273,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"ContactPersonId\": \"{{PERSON_ID_1}}\",\r\n    \"ContactPerson\": {\r\n        \"Prefix\": \"Mrs.\",\r\n        \"FirstName\": \"Abc\",\r\n        \"LastName\": \"Xyz\",\r\n        \"Phone\": \"+91-3243243334\"\r\n    },\r\n    \"ContactRelation\": \"Patient family member\",\r\n    \"Address\": {\r\n        \"AddressLine\": \"GSG Schlesische Straße, Gebäude 3, Schlesische Straße 27\",\r\n        \"City\": \"Berlin\",\r\n        \"Country\": \"Germany\",\r\n        \"PostalCode\": \"10997\"\r\n    },\r\n    \"IsAvailableForEmergency\": true,\r\n    \"TimeOfAvailability\": \"10:00 AM - 5:00 PM\",\r\n    \"Description\": \"Some description here\",\r\n    \"AdditionalPhoneNumbers\": \"+91-3243243334\"\r\n}"
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"ContactPerson\": {\r\n        \"Prefix\": \"Mrs.\",\r\n        \"FirstName\": \"Abc\",\r\n        \"LastName\": \"Xyz\",\r\n        \"Phone\": \"+91-1111243334\"\r\n    },\r\n    \"ContactRelation\": \"Patient family member\",\r\n    \"Address\": {\r\n        \"AddressLine\": \"GSG Schlesische Straße, Gebäude 3, Schlesische Straße 27\",\r\n        \"City\": \"Berlin\",\r\n        \"Country\": \"Germany\",\r\n        \"PostalCode\": \"10997\"\r\n    },\r\n    \"IsAvailableForEmergency\": true,\r\n    \"TimeOfAvailability\": \"10:00 AM - 5:00 PM\",\r\n    \"Description\": \"Some description here\",\r\n    \"AdditionalPhoneNumbers\": \"+91-3243243334\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patient-emergency-contacts",
@@ -6131,7 +6547,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/patient-emergency-contacts/search?createdDateFrom=2021-05-01&createdDateTo=2021-12-12&orderBy=IsAvailableForEmergency&order=ascending&pageIndex=0&itemsPerPage=25",
+									"raw": "{{BASE_URL}}/patient-emergency-contacts/search?patientUserId={{PATIENT_USER_ID}}&isAvailableForEmergency=true",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -6142,45 +6558,49 @@
 									"query": [
 										{
 											"key": "createdDateFrom",
-											"value": "2021-05-01"
+											"value": "2021-05-01",
+											"disabled": true
 										},
 										{
 											"key": "createdDateTo",
-											"value": "2021-12-12"
+											"value": "2021-12-12",
+											"disabled": true
 										},
 										{
 											"key": "orderBy",
-											"value": "IsAvailableForEmergency"
+											"value": "IsAvailableForEmergency",
+											"disabled": true
 										},
 										{
 											"key": "order",
-											"value": "ascending"
+											"value": "ascending",
+											"disabled": true
 										},
 										{
 											"key": "pageIndex",
-											"value": "0"
+											"value": "0",
+											"disabled": true
 										},
 										{
 											"key": "itemsPerPage",
-											"value": "25"
+											"value": "25",
+											"disabled": true
 										},
 										{
-											"key": "PatientUserId",
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										},
+										{
+											"key": "contactPersonId",
 											"value": "",
 											"disabled": true
 										},
 										{
-											"key": "ContactPersonId",
-											"value": "",
-											"disabled": true
+											"key": "isAvailableForEmergency",
+											"value": "true"
 										},
 										{
-											"key": "IsAvailableForEmergency",
-											"value": "",
-											"disabled": true
-										},
-										{
-											"key": "ContactRelation",
+											"key": "contactRelation",
 											"value": "Doctor",
 											"disabled": true
 										}
@@ -8871,7 +9291,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/search?status=completed&order=ascending&pageIndex=0&itemsPerPage=25",
+									"raw": "{{BASE_URL}}/user-tasks/search",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -8893,7 +9313,8 @@
 										{
 											"key": "status",
 											"value": "completed",
-											"description": "The other possible options are - \n1) inProgress : Tasks which are currently in progress\n2) pending / upcoming- Upcoming tasks\n3) completed- Finished tasks\n4) delayed / overdue- Tasks which are delayed beyond their scheduled duration\n5) cancelled- Tasks which have been cancelled\n"
+											"description": "The other possible options are - \n1) inProgress : Tasks which are currently in progress\n2) pending / upcoming- Upcoming tasks\n3) completed- Finished tasks\n4) delayed / overdue- Tasks which are delayed beyond their scheduled duration\n5) cancelled- Tasks which have been cancelled\n",
+											"disabled": true
 										},
 										{
 											"key": "actionId",
@@ -8937,15 +9358,18 @@
 										},
 										{
 											"key": "order",
-											"value": "ascending"
+											"value": "ascending",
+											"disabled": true
 										},
 										{
 											"key": "pageIndex",
-											"value": "0"
+											"value": "0",
+											"disabled": true
 										},
 										{
 											"key": "itemsPerPage",
-											"value": "25"
+											"value": "25",
+											"disabled": true
 										}
 									]
 								},
@@ -9161,7 +9585,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Volume\": 7,\n    \"Time\": \"2021-09-21\"\n\n}"
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Volume\": 7,\n    \"Time\": \"2021-09-21\"\n}"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/wellness/nutrition/water-consumptions",
@@ -10791,8 +11215,7 @@
 													"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
 													"pm.environment.set(\"HEART_POINT_PERSONID\", personId);\r",
 													"pm.environment.set(\"HEART_POINT_PATIENTUSERID\", patientUserId);\r",
-													"pm.environment.set(\"HEART_POINT_VALUE\", '120');\r",
-													"pm.environment.set(\"HEART_POINT_UNIT\", 'bpm');"
+													"pm.environment.set(\"HEART_POINT_VALUE\", 120);"
 												],
 												"type": "text/javascript"
 											}
@@ -10820,18 +11243,16 @@
 													"\r",
 													"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
 													"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
-													"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
-													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
 													"\r",
 													"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(\"\" + expectedHeartPoints);\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
+													"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(expectedHeartPoints);\r",
+													"\r",
 													"});\r",
 													"\r",
 													""
@@ -10907,19 +11328,16 @@
 													"pm.test(\"Calorie record should have correct data\", function () {\r",
 													"\r",
 													"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
-													"    var expectedPersonId = pm.environment.get(\"HEART_POINT_PERSONID\");\r",
 													"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
 													"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PersonId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
 													"\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.PersonId).equals(expectedPersonId);\r",
 													"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
 													"    pm.expect(\"\" + jsonRes.Data.HeartPoints.HeartPoints).equals(expectedHeartPoints);\r",
 													"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
@@ -10982,8 +11400,7 @@
 											"listen": "prerequest",
 											"script": {
 												"exec": [
-													"let heartPoints = pm.environment.get(\"HEART_POINT_VALUE\");",
-													"pm.environment.set(\"HEART_POINT_Value\", Number(heartPoints) + 10);"
+													"pm.environment.set(\"HEART_POINT_Value\", 150);"
 												],
 												"type": "text/javascript"
 											}
@@ -11003,22 +11420,17 @@
 													"pm.test(\"Correct updates should be reflected\", function () {\r",
 													"\r",
 													"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
-													"    var expectedPersonId = pm.environment.get(\"HEART_POINT_PERSONID\");\r",
-													"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
-													"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PersonId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
 													"\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.PersonId).equals(expectedPersonId);\r",
 													"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(expectedHeartPoints);\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
+													"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(150);\r",
+													"\r",
 													"});\r",
 													"\r",
 													""
@@ -11050,7 +11462,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"PersonId\": \"{{HEART_POINT_PERSONID}}\",\r\n    \"PatientUserId\": \"{{HEART_POINT_PATIENTUSERID}}\",\r\n    \"HeartPoints\": {{HEART_POINT_VALUE}},\r\n    \"Unit\": \"{{HEART_POINT_UNIT}}\"\r\n}"
+											"raw": "{\r\n    \"PersonId\": \"{{HEART_POINT_PERSONID}}\",\r\n    \"PatientUserId\": \"{{HEART_POINT_PATIENTUSERID}}\",\r\n    \"HeartPoints\": 150,\r\n    \"Unit\": \"{{HEART_POINT_UNIT}}\"\r\n}"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/wellness/daily-records/heart-points/{{HEART_POINT_ID}}",
@@ -11090,11 +11502,11 @@
 													"    pm.expect(jsonRes.Status).to.eql('success');\r",
 													"});\r",
 													"\r",
-													"pm.test(\"List of Calorie Record is returned\", function () {\r",
+													"pm.test(\"List of heart point records is returned\", function () {\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.Items.length).to.be.greaterThan(0);\r",
+													"    pm.expect(jsonRes.Data).to.have.property('HeartPointsRecords');\r",
+													"    pm.expect(jsonRes.Data.HeartPointsRecords.Items.length).to.be.greaterThan(0);\r",
 													"\r",
 													"});\r",
 													""
@@ -11295,10 +11707,9 @@
 												"exec": [
 													"let personId = pm.environment.get('PERSON_ID');\r",
 													"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
-													"pm.environment.set(\"CALORIE_BALANCE_PERSONID\", personId);\r",
 													"pm.environment.set(\"CALORIE_BALANCE_PATIENTUSERID\", patientUserId);\r",
-													"pm.environment.set(\"CALORIE_BALANCE_CALORIESCONSUMED\", '120');\r",
-													"pm.environment.set(\"CALORIE_BALANCE_CALORIESBURNED\", '100');\r",
+													"pm.environment.set(\"CALORIE_BALANCE_CALORIESCONSUMED\", 120);\r",
+													"pm.environment.set(\"CALORIE_BALANCE_CALORIESBURNED\", 100);\r",
 													"pm.environment.set(\"CALORIE_BALANCE_UNIT\", 'kcal');"
 												],
 												"type": "text/javascript"
@@ -11603,8 +12014,8 @@
 													"pm.test(\"List of Calorie Record is returned\", function () {\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('CalorieBalances');\r",
-													"    pm.expect(jsonRes.Data.CalorieBalances.Items.length).to.be.greaterThan(0);\r",
+													"    pm.expect(jsonRes.Data).to.have.property('CalorieBalanceRecords');\r",
+													"    pm.expect(jsonRes.Data.CalorieBalanceRecords.Items.length).to.be.greaterThan(0);\r",
 													"\r",
 													"});\r",
 													""
@@ -14605,7 +15016,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugName\": \"Tylenol 8 HR Arthritis Pain: 650 mg\",\n    \"Dose\": 1,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\", \n        \"Evening\", \n        \"Night\"\n    ],\n    \"Frequency\": 4,\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 25,\n    \"DurationUnit\": \"Weeks\",\n    \"StartDate\": \"2021-04-25\",\n    \"RefillNeeded\": false,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\",\n    \"MedicationImageResourceId\": \"{{STOCK_MEDICATION_IMAGE_RESOURCE_ID}}\"\n}",
+											"raw": "{\n\t\"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugName\": \"Tylenol 8 HR Arthritis Pain: 650 mg\",\n    \"Dose\": 1,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\", \n        \"Evening\", \n        \"Night\"\n    ],\n    \"Frequency\": 4,\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 25,\n    \"DurationUnit\": \"Weeks\",\n    \"StartDate\": \"2021-04-25\",\n    \"RefillNeeded\": false,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\",\n    \"ImageResourceId\": \"{{STOCK_MEDICATION_IMAGE_RESOURCE_ID}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -15706,7 +16117,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/medication-consumptions/summary-for-day/{{PATIENT_USER_ID}}/{{MEDICATION_CONSUMPTION_FOR_DATE}}?date={{MEDICATION_CONSUMPTION_FOR_DATE}}&groupByDrug=true",
+											"raw": "{{BASE_URL}}/clinical/medication-consumptions/summary-for-day/{{PATIENT_USER_ID}}/{{MEDICATION_CONSUMPTION_FOR_DATE}}?groupByDrug=true",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -15718,10 +16129,6 @@
 												"{{MEDICATION_CONSUMPTION_FOR_DATE}}"
 											],
 											"query": [
-												{
-													"key": "date",
-													"value": "{{MEDICATION_CONSUMPTION_FOR_DATE}}"
-												},
 												{
 													"key": "date",
 													"value": "2021-10-14",
@@ -16603,7 +17010,7 @@
 					"name": "Diagnosis",
 					"item": [
 						{
-							"name": "Add diagnosis details",
+							"name": "Add diagnosis",
 							"event": [
 								{
 									"listen": "test",
@@ -16668,7 +17075,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"MedicalPractitionerUserId\": \"0652a79e-c549-478d-bc99-42187dd91d30\",\r\n    \"VisitId\": \"0f5958d4-d872-453c-a8dd-df6e6d4cac1e\",\r\n    \"MedicalConditionId\": \"06fbc6fd-b819-416e-8dc9-e20bb59c11c9\",\r\n    \"Comments\": \"Better than earlier\",\r\n    \"IsClinicallyActive\": false,\r\n    \"ValidationStatus\": \"Negated\",\r\n    \"Interpretation\": \"Significant change up\",\r\n    \"OnsetDate\": \"2021-09-15\",\r\n    \"EndDate\": \"2021-09-25\"\r\n}"
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"MedicalPractitionerUserId\": \"{{DOCTOR_USER_ID}}\",\r\n    \"MedicalConditionId\": null,\r\n    \"Comments\": \"better than earlier\",\r\n    \"IsClinicallyActive\": false,\r\n    \"ValidationStatus\": \"Confirmed\",\r\n    \"Interpretation\": \"Significant change up\",\r\n    \"OnsetDate\": \"2021-09-15\",\r\n    \"EndDate\": \"2021-09-25\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/clinical/diagnoses",
@@ -18822,7 +19229,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/clinical/symptom-assessment-templates/search",
+											"raw": "{{BASE_URL}}/clinical/symptom-assessment-templates/search?title=Heart",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -18834,8 +19241,7 @@
 											"query": [
 												{
 													"key": "title",
-													"value": "Heart",
-													"disabled": true
+													"value": "Heart"
 												}
 											]
 										}
@@ -19720,9 +20126,10 @@
 													"\r",
 													"pm.test(\"New symptom is created\", function () {\r",
 													"\r",
+													"    var assessmentId = pm.environment.get(\"SYMPTOM_ASSESSMENT_ID\");\r",
 													"    var assessmentTemplateId = pm.environment.get(\"ASSESSMENT_TEMPLATE_ID\");\r",
-													"    var symptomTypeId = pm.environment.get(\"SYMPTOM_TYPE_HEADACHE_ID\");\r",
-													"    var symptomName = \"Headache\";\r",
+													"    var symptomTypeId = pm.environment.get(\"SYMPTOM_TYPE_FACIAL_DROPPING_ID\");\r",
+													"    var symptomName = \"Facial dropping\";\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('Symptom');\r",
@@ -19736,6 +20143,7 @@
 													"    pm.expect(jsonRes.Data.Symptom).to.have.property('RecordDate');\r",
 													"\r",
 													"    pm.expect(jsonRes.Data.Symptom.AssessmentTemplateId).equals(assessmentTemplateId);\r",
+													"    pm.expect(jsonRes.Data.Symptom.AssessmentId).equals(assessmentId);\r",
 													"    pm.expect(jsonRes.Data.Symptom.Symptom).equals(symptomName);\r",
 													"    pm.expect(jsonRes.Data.Symptom.SymptomTypeId).equals(symptomTypeId);\r",
 													"});\r",
@@ -19766,7 +20174,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"AssessmentId\": \"{{SYMPTOM_ASSESSMENT_ID}}\",\n\t\"SymptomTypeId\": \"{{SYMPTOM_TYPE_HEADACHE_ID}}\",\n    \"IsPresent\": true,\n    \"Severity\": 1,\n\t\"Status\": 1,\n\t\"Interpretation\": 1,\n\t\"Comments\": \"The chronic hypertension for the patient with critically high levels.\",\n    \"RecordDate\": \"2021-06-20\"\n}",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"AssessmentId\": \"{{SYMPTOM_ASSESSMENT_ID}}\",\n\t\"SymptomTypeId\": \"{{SYMPTOM_TYPE_FACIAL_DROPPING_ID}}\",\n    \"IsPresent\": true,\n    \"Severity\": 1,\n\t\"Status\": 1,\n\t\"Interpretation\": 1,\n\t\"Comments\": \"The chronic hypertension for the patient with critically high levels.\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -19804,8 +20212,8 @@
 													"\r",
 													"    var assessmentId = pm.environment.get(\"SYMPTOM_ASSESSMENT_ID\");\r",
 													"    var assessmentTemplateId = pm.environment.get(\"ASSESSMENT_TEMPLATE_ID\");\r",
-													"    var symptomTypeId = pm.environment.get(\"SYMPTOM_TYPE_HEADACHE_ID\");\r",
-													"    var symptomName = \"Headache\";\r",
+													"    var symptomTypeId = pm.environment.get(\"SYMPTOM_TYPE_FACIAL_DROPPING_ID\");\r",
+													"    var symptomName = \"Facial dropping\";\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('Symptom');\r",
@@ -19892,8 +20300,8 @@
 													"\r",
 													"    var assessmentId = pm.environment.get(\"SYMPTOM_ASSESSMENT_ID\");\r",
 													"    var assessmentTemplateId = pm.environment.get(\"ASSESSMENT_TEMPLATE_ID\");\r",
-													"    var symptomTypeId = pm.environment.get(\"SYMPTOM_TYPE_HEADACHE_ID\");\r",
-													"    var symptomName = \"Headache\";\r",
+													"    var symptomTypeId = pm.environment.get(\"SYMPTOM_TYPE_FACIAL_DROPPING_ID\");\r",
+													"    var symptomName = \"Facial dropping\";\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('Symptom');\r",
@@ -26193,6 +26601,363 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Authorization checks",
+			"item": [
+				{
+					"name": "Add blood pressure record for first patient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();",
+									"",
+									"try {",
+									"    pm.environment.set(\"BIOMETRICS_BLOOD_PRESSURE_ID\", jsonRes.Data.BloodPressure.id);",
+									"}",
+									"catch (error) {",
+									"    console.log(error.message);",
+									"}",
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Systolic\": 160,\n    \"Diastolic\": 180,\n    \"Unit\": \"mm Hg\",\n    \"RecordDate\": \"2021-09-22\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/clinical/biometrics/blood-pressures",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"clinical",
+								"biometrics",
+								"blood-pressures"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register second patient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"SECOND_PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+									"    pm.environment.set(\"SECOND_PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+									"var password = \"Test@123\";\r",
+									"\r",
+									"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+									"pm.environment.set(\"PASSWORD\", password);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patients",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log-in second patient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"SECOND_PATIENT_USER_JWT\", jsonRes.Data.AccessToken);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/login-with-password",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"login-with-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Second patient tries to get blood pressure of first",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Request is failure\", function () {",
+									"    pm.response.to.have.status(403);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('failure');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECOND_PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/clinical/biometrics/blood-pressures/{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"clinical",
+								"biometrics",
+								"blood-pressures",
+								"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Second patient tries to update blood pressure of first",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Request is failure\", function () {",
+									"    pm.response.to.have.status(403);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('failure');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECOND_PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Systolic\": 100,\n    \"Diastolic\": 80,\n    \"Unit\": \"mm Hg\",\n    \"RecordDate\": \"2021-09-22\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/clinical/biometrics/blood-pressures/{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"clinical",
+								"biometrics",
+								"blood-pressures",
+								"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Second patient tries to delete blood pressure of first",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Request is failure\", function () {",
+									"    pm.response.to.have.status(403);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('failure');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECOND_PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/clinical/biometrics/blood-pressures/{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"clinical",
+								"biometrics",
+								"blood-pressures",
+								"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The set of requests in this folder are mean to test the authorization logic such as ownership authorization and consent authorization.\n\nWe will be testing following scenarios.\n\n1. One patient account should not be able to access the biometrics data of another patient's account.\n\n1. Without consent authorization, a doctor cannot access the patient data."
 		}
 	]
 }

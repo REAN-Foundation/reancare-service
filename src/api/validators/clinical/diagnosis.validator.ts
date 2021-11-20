@@ -71,10 +71,9 @@ export class DiagnosisValidator extends BaseValidator {
     private async validateCreateBody(request) {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
-        await this.validateUuid(request, 'EhrId', Where.Body, false, false);
-        await this.validateUuid(request, 'MedicalPractitionerUserId', Where.Body, false, false);
-        await this.validateUuid(request, 'VisitId', Where.Body, false, false);
-        await this.validateUuid(request, 'MedicalConditionId', Where.Body, false, false);
+        await this.validateUuid(request, 'MedicalPractitionerUserId', Where.Body, false, true);
+        await this.validateUuid(request, 'VisitId', Where.Body, false, true);
+        await this.validateUuid(request, 'MedicalConditionId', Where.Body, false, true);
         await this.validateString(request, 'Comments', Where.Body, true, false);
         await this.validateString(request, 'ValidationStatus', Where.Body, true, false);
         await this.validateString(request, 'Interpretation', Where.Body, true, false);

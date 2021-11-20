@@ -10,10 +10,12 @@ export class HeartPointsMapper {
             return null;
         }
 
+        var points = typeof heartPoint.HeartPoints === 'string' ? parseInt(heartPoint.HeartPoints) : heartPoint.HeartPoints;
+
         const dto: HeartPointsDto = {
             id            : heartPoint.id,
             PatientUserId : heartPoint.PatientUserId,
-            HeartPoints   : heartPoint.HeartPoints,
+            HeartPoints   : points,
             Unit          : heartPoint.Unit,
             RecordDate    : heartPoint.RecordDate,
         };

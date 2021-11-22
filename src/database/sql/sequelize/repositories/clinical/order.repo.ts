@@ -12,28 +12,28 @@ import OrderModel from '../../models/clinical/order.model';
 
 export class OrderRepo implements IOrderRepo {
 
-    create = async (orderDomainModel: OrderDomainModel):
+    create = async (createModel: OrderDomainModel):
     Promise<OrderDto> => {
         try {
             const entity = {
-                Type                      : orderDomainModel.Type,
-                DisplayId                 : orderDomainModel.DisplayId,
-                PatientUserId             : orderDomainModel.PatientUserId,
-                MedicalPractitionerUserId : orderDomainModel.MedicalPractitionerUserId,
-                VisitId                   : orderDomainModel.VisitId,
-                ResourceId                : orderDomainModel.ResourceId,
-                ReferenceOrderId          : orderDomainModel.ReferenceOrderId,
-                CurrentState              : orderDomainModel.CurrentState,
-                OrderDate                 : orderDomainModel.OrderDate,
-                FulfilledByUserId         : orderDomainModel.FulfilledByUserId,
-                FulfilledByOrganizationId : orderDomainModel.FulfilledByOrganizationId,
-                AdditionalInformation     : orderDomainModel.AdditionalInformation,
+                Type                      : createModel.Type,
+                DisplayId                 : createModel.DisplayId,
+                PatientUserId             : createModel.PatientUserId,
+                MedicalPractitionerUserId : createModel.MedicalPractitionerUserId,
+                VisitId                   : createModel.VisitId,
+                ResourceId                : createModel.ResourceId,
+                ReferenceOrderId          : createModel.ReferenceOrderId,
+                CurrentState              : createModel.CurrentState,
+                OrderDate                 : createModel.OrderDate,
+                FulfilledByUserId         : createModel.FulfilledByUserId,
+                FulfilledByOrganizationId : createModel.FulfilledByOrganizationId,
+                AdditionalInformation     : createModel.AdditionalInformation,
 
             };
 
             const order = await OrderModel.create(entity);
-            const dto = await OrderMapper.toDto(order);
-            return dto;
+            return await OrderMapper.toDto(order);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -43,8 +43,8 @@ export class OrderRepo implements IOrderRepo {
     getById = async (id: string): Promise<OrderDto> => {
         try {
             const order = await OrderModel.findByPk(id);
-            const dto = await OrderMapper.toDto(order);
-            return dto;
+            return await OrderMapper.toDto(order);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -141,51 +141,51 @@ export class OrderRepo implements IOrderRepo {
         }
     };
 
-    update = async (id: string, orderDomainModel: OrderDomainModel):
+    update = async (id: string, updateModel: OrderDomainModel):
     Promise<OrderDto> => {
         try {
             const order = await OrderModel.findByPk(id);
 
-            if (orderDomainModel.Type != null) {
-                order.Type = orderDomainModel.Type;
+            if (updateModel.Type != null) {
+                order.Type = updateModel.Type;
             }
-            if (orderDomainModel.DisplayId != null) {
-                order.DisplayId = orderDomainModel.DisplayId;
+            if (updateModel.DisplayId != null) {
+                order.DisplayId = updateModel.DisplayId;
             }
-            if (orderDomainModel.PatientUserId != null) {
-                order.PatientUserId = orderDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                order.PatientUserId = updateModel.PatientUserId;
             }
-            if (orderDomainModel.MedicalPractitionerUserId != null) {
-                order.MedicalPractitionerUserId = orderDomainModel.MedicalPractitionerUserId;
+            if (updateModel.MedicalPractitionerUserId != null) {
+                order.MedicalPractitionerUserId = updateModel.MedicalPractitionerUserId;
             }
-            if (orderDomainModel.VisitId != null) {
-                order.VisitId = orderDomainModel.VisitId;
+            if (updateModel.VisitId != null) {
+                order.VisitId = updateModel.VisitId;
             }
-            if (orderDomainModel.ResourceId != null) {
-                order.ResourceId = orderDomainModel.ResourceId;
+            if (updateModel.ResourceId != null) {
+                order.ResourceId = updateModel.ResourceId;
             }
-            if (orderDomainModel.ReferenceOrderId != null) {
-                order.ReferenceOrderId = orderDomainModel.ReferenceOrderId;
+            if (updateModel.ReferenceOrderId != null) {
+                order.ReferenceOrderId = updateModel.ReferenceOrderId;
             }
-            if (orderDomainModel.CurrentState != null) {
-                order.CurrentState = orderDomainModel.CurrentState;
+            if (updateModel.CurrentState != null) {
+                order.CurrentState = updateModel.CurrentState;
             }
-            if (orderDomainModel.OrderDate != null) {
-                order.OrderDate = orderDomainModel.OrderDate;
+            if (updateModel.OrderDate != null) {
+                order.OrderDate = updateModel.OrderDate;
             }
-            if (orderDomainModel.FulfilledByUserId != null) {
-                order.FulfilledByUserId = orderDomainModel.FulfilledByUserId;
+            if (updateModel.FulfilledByUserId != null) {
+                order.FulfilledByUserId = updateModel.FulfilledByUserId;
             }
-            if (orderDomainModel.FulfilledByOrganizationId != null) {
-                order.FulfilledByOrganizationId = orderDomainModel.FulfilledByOrganizationId;
+            if (updateModel.FulfilledByOrganizationId != null) {
+                order.FulfilledByOrganizationId = updateModel.FulfilledByOrganizationId;
             }
-            if (orderDomainModel.VisitId != null) {
-                order.AdditionalInformation = orderDomainModel.AdditionalInformation;
+            if (updateModel.AdditionalInformation != null) {
+                order.AdditionalInformation = updateModel.AdditionalInformation;
             }
             await order.save();
 
-            const dto = await OrderMapper.toDto(order);
-            return dto;
+            return await OrderMapper.toDto(order);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -194,8 +194,7 @@ export class OrderRepo implements IOrderRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            Logger.instance().log(id);
-
+            
             const result = await OrderModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {

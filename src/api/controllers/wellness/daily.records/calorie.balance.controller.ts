@@ -1,36 +1,25 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
-import { PatientService } from '../../../../services/patient/patient.service';
-import { PersonService } from '../../../../services/person.service';
-import { RoleService } from '../../../../services/role.service';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { CalorieBalanceService } from '../../../../services/wellness/daily.records/calorie.balance.service';
 import { Loader } from '../../../../startup/loader';
 import { CalorieBalanceValidator } from '../../../validators/wellness/daily.records/calorie.balance.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class CalorieBalanceController {
+export class CalorieBalanceController extends BaseController{
 
     //#region member variables and constructors
 
     _service: CalorieBalanceService = null;
 
-    _roleService: RoleService = null;
-
-    _personService: PersonService = null;
-
-    _patientService: PatientService = null;
-
-    _authorizer: Authorizer = null;
+    _validator: CalorieBalanceValidator = new CalorieBalanceValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(CalorieBalanceService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -39,24 +28,17 @@ export class CalorieBalanceController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'CalorieBalance.Create';
-            await this._authorizer.authorize(request, response);
             
-            const domainModel = await CalorieBalanceValidator.create(request);
-
-            if (domainModel.PatientUserId != null) {
-                var organization = await this._patientService.getByUserId(domainModel.PatientUserId);
-                if (organization == null) {
-                    throw new ApiError(404, `Patient with an id ${domainModel.PatientUserId} cannot be found.`);
-                }
-            }
+            this.setContext('DailyRecords.CalorieBalance.Create', request, response);
+            
+            const domainModel = await this._validator.create(request);
 
             const calorieBalance = await this._service.create(domainModel);
             if (calorieBalance == null) {
-                throw new ApiError(400, 'Cannot create calorieBalance!');
+                throw new ApiError(400, 'Cannot create calorie balance record!');
             }
 
-            ResponseHandler.success(request, response, 'CalorieBalance created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Calorie balance record created successfully!', 201, {
                 CalorieBalance : calorieBalance,
             });
         } catch (error) {
@@ -66,18 +48,16 @@ export class CalorieBalanceController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'CalorieBalance.GetById';
             
-            await this._authorizer.authorize(request, response);
+            this.setContext('DailyRecords.CalorieBalance.GetById', request, response);
 
-            const id: string = await CalorieBalanceValidator.getById(request);
-
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const calorieBalance = await this._service.getById(id);
             if (calorieBalance == null) {
-                throw new ApiError(404, 'CalorieBalance not found.');
+                throw new ApiError(404, 'Calorie balance record not found.');
             }
 
-            ResponseHandler.success(request, response, 'CalorieBalance retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Calorie balance record retrieved successfully!', 200, {
                 CalorieBalance : calorieBalance,
             });
         } catch (error) {
@@ -87,20 +67,18 @@ export class CalorieBalanceController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'CalorieBalance.Search';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('DailyRecords.CalorieBalance.Search', request, response);
 
-            const filters = await CalorieBalanceValidator.search(request);
-
+            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
-
             const count = searchResults.Items.length;
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} calorieBalance records retrieved successfully!`;
+                    : `Total ${count} calorie balance records retrieved successfully!`;
                     
-            ResponseHandler.success(request, response, message, 200, { CalorieBalances: searchResults });
+            ResponseHandler.success(request, response, message, 200, { CalorieBalanceRecords: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -109,23 +87,22 @@ export class CalorieBalanceController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'CalorieBalance.Update';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('DailyRecords.CalorieBalance.Update', request, response);
 
-            const domainModel = await CalorieBalanceValidator.update(request);
-
-            const id: string = await CalorieBalanceValidator.getById(request);
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
-                throw new ApiError(404, 'CalorieBalance not found.');
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Calorie balance record not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update calorieBalance record!');
+                throw new ApiError(400, 'Unable to update calorie balance record!');
             }
 
-            ResponseHandler.success(request, response, 'CalorieBalance record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Calorie balance record updated successfully!', 200, {
                 CalorieBalance : updated,
             });
         } catch (error) {
@@ -135,21 +112,21 @@ export class CalorieBalanceController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'CalorieBalance.Delete';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('DailyRecords.CalorieBalance.Delete', request, response);
 
-            const id: string = await CalorieBalanceValidator.getById(request);
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
-                throw new ApiError(404, 'CalorieBalance not found.');
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Calorie balance record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'CalorieBalance cannot be deleted.');
+                throw new ApiError(400, 'Calorie balance record cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'CalorieBalance record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Calorie balance record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

@@ -21,21 +21,22 @@ export class DrugRepo implements IDrugRepo {
         }
     };
 
-    create = async (drugDomainModel: DrugDomainModel):
+    create = async (createModel: DrugDomainModel):
     Promise<DrugDto> => {
         try {
             const entity = {
-                DrugName             : drugDomainModel.DrugName,
-                GenericName          : drugDomainModel.GenericName,
-                Ingredients          : drugDomainModel.Ingredients,
-                Strength             : drugDomainModel.Strength,
-                OtherCommercialNames : drugDomainModel.OtherCommercialNames,
-                Manufacturer         : drugDomainModel.Manufacturer,
-                OtherInformation     : drugDomainModel.OtherInformation
+                DrugName             : createModel.DrugName,
+                GenericName          : createModel.GenericName,
+                Ingredients          : createModel.Ingredients,
+                Strength             : createModel.Strength,
+                OtherCommercialNames : createModel.OtherCommercialNames,
+                Manufacturer         : createModel.Manufacturer,
+                OtherInformation     : createModel.OtherInformation
             };
 
             const drug = await Drug.create(entity);
-            return DrugMapper.toDto(drug);
+            return await DrugMapper.toDto(drug);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -45,7 +46,8 @@ export class DrugRepo implements IDrugRepo {
     getById = async (id: string): Promise<DrugDto> => {
         try {
             const drug = await Drug.findByPk(id);
-            return DrugMapper.toDto(drug);
+            return await DrugMapper.toDto(drug);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -59,7 +61,7 @@ export class DrugRepo implements IDrugRepo {
                     DrugName : { [Op.like]: '%' + drugName + '%' }
                 }
             });
-            return DrugMapper.toDto(drug);
+            return await DrugMapper.toDto(drug);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -121,36 +123,36 @@ export class DrugRepo implements IDrugRepo {
         }
     };
 
-    update = async (id: string, drugDomainModel: DrugDomainModel):
+    update = async (id: string, updateModel: DrugDomainModel):
     Promise<DrugDto> => {
         try {
             const drug = await Drug.findByPk(id);
 
-            if (drugDomainModel.DrugName != null) {
-                drug.DrugName = drugDomainModel.DrugName;
+            if (updateModel.DrugName != null) {
+                drug.DrugName = updateModel.DrugName;
             }
-            if (drugDomainModel.GenericName != null) {
-                drug.GenericName = drugDomainModel.GenericName;
+            if (updateModel.GenericName != null) {
+                drug.GenericName = updateModel.GenericName;
             }
-            if (drugDomainModel.Ingredients != null) {
-                drug.Ingredients = drugDomainModel.Ingredients;
+            if (updateModel.Ingredients != null) {
+                drug.Ingredients = updateModel.Ingredients;
             }
-            if (drugDomainModel.Strength != null) {
-                drug.Strength = drugDomainModel.Strength;
+            if (updateModel.Strength != null) {
+                drug.Strength = updateModel.Strength;
             }
-            if (drugDomainModel.OtherCommercialNames != null) {
-                drug.OtherCommercialNames = drugDomainModel.OtherCommercialNames;
+            if (updateModel.OtherCommercialNames != null) {
+                drug.OtherCommercialNames = updateModel.OtherCommercialNames;
             }
-            if (drugDomainModel.Manufacturer != null) {
-                drug.Manufacturer = drugDomainModel.Manufacturer;
+            if (updateModel.Manufacturer != null) {
+                drug.Manufacturer = updateModel.Manufacturer;
             }
-            if (drugDomainModel.OtherInformation != null) {
-                drug.OtherInformation = drugDomainModel.OtherInformation;
+            if (updateModel.OtherInformation != null) {
+                drug.OtherInformation = updateModel.OtherInformation;
             }
     
             await drug.save();
 
-            return DrugMapper.toDto(drug);
+            return await DrugMapper.toDto(drug);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -160,8 +162,7 @@ export class DrugRepo implements IDrugRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            Logger.instance().log(id);
-
+            
             const result = await Drug.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {

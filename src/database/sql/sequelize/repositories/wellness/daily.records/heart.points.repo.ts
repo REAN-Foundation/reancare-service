@@ -12,17 +12,18 @@ import HeartPoints from '../../../models/wellness/daily.records/heart.points.mod
 
 export class HeartPointsRepo implements IHeartPointsRepo {
 
-    create = async (heartPointsDomainModel: HeartPointsDomainModel): Promise<HeartPointsDto> => {
+    create = async (createModel: HeartPointsDomainModel): Promise<HeartPointsDto> => {
         try {
             const entity = {
-                PersonId      : heartPointsDomainModel.PersonId ?? null,
-                PatientUserId : heartPointsDomainModel.PatientUserId ?? null,
-                HeartPoints   : heartPointsDomainModel.HeartPoints ?? null,
-                Unit          : heartPointsDomainModel.Unit ?? null
+                PatientUserId : createModel.PatientUserId,
+                HeartPoints   : createModel.HeartPoints,
+                Unit          : createModel.Unit,
+                RecordDate    : createModel.RecordDate
+
             };
             const heartPoint = await HeartPoints.create(entity);
-            const dto = await HeartPointsMapper.toDto(heartPoint);
-            return dto;
+            return await HeartPointsMapper.toDto(heartPoint);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -32,8 +33,8 @@ export class HeartPointsRepo implements IHeartPointsRepo {
     getById = async (id: string): Promise<HeartPointsDto> => {
         try {
             const heartPoint = await HeartPoints.findByPk(id);
-            const dto = await HeartPointsMapper.toDto(heartPoint);
-            return dto;
+            return await HeartPointsMapper.toDto(heartPoint);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -44,16 +45,21 @@ export class HeartPointsRepo implements IHeartPointsRepo {
         try {
             const search = { where: {} };
 
-            if (filters.PersonId != null) {
-                search.where['PersonId'] = { [Op.eq]: filters.PersonId };
-            }
             if (filters.PatientUserId != null) {
-                search.where['PatientUserId'] = { [Op.eq]: filters.PatientUserId };
+                search.where['PatientUserId'] = filters.PatientUserId;
             }
             if (filters.MinValue != null && filters.MaxValue != null) {
                 search.where['HeartPoints'] = {
                     [Op.gte] : filters.MinValue,
                     [Op.lte] : filters.MaxValue,
+                };
+            } else if (filters.MinValue === null && filters.MaxValue !== null) {
+                search.where['HeartPoints'] = {
+                    [Op.lte] : filters.MaxValue,
+                };
+            } else if (filters.MinValue !== null && filters.MaxValue === null) {
+                search.where['HeartPoints'] = {
+                    [Op.gte] : filters.MinValue,
                 };
             }
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
@@ -71,7 +77,7 @@ export class HeartPointsRepo implements IHeartPointsRepo {
                 };
             }
 
-            let orderByColum = 'HeartPoints';
+            let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }
@@ -119,26 +125,27 @@ export class HeartPointsRepo implements IHeartPointsRepo {
         }
     };
 
-    update = async (id: string, heartPointsDomainModel: HeartPointsDomainModel): Promise<HeartPointsDto> => {
+    update = async (id: string, updateModel: HeartPointsDomainModel): Promise<HeartPointsDto> => {
         try {
             const heartPoint = await HeartPoints.findByPk(id);
 
-            if (heartPointsDomainModel.PersonId != null) {
-                heartPoint.PersonId = heartPointsDomainModel.PersonId;
+            if (updateModel.PatientUserId != null) {
+                heartPoint.PatientUserId = updateModel.PatientUserId;
             }
-            if (heartPointsDomainModel.PatientUserId != null) {
-                heartPoint.PatientUserId = heartPointsDomainModel.PatientUserId;
+            if (updateModel.HeartPoints != null) {
+                heartPoint.HeartPoints = updateModel.HeartPoints;
             }
-            if (heartPointsDomainModel.HeartPoints != null) {
-                heartPoint.HeartPoints = heartPointsDomainModel.HeartPoints;
+            if (updateModel.Unit != null) {
+                heartPoint.Unit = updateModel.Unit;
             }
-            if (heartPointsDomainModel.Unit != null) {
-                heartPoint.Unit = heartPointsDomainModel.Unit;
+            if (updateModel.RecordDate != null) {
+                heartPoint.RecordDate = updateModel.RecordDate;
             }
+
             await heartPoint.save();
 
-            const dto = await HeartPointsMapper.toDto(heartPoint);
-            return dto;
+            return await HeartPointsMapper.toDto(heartPoint);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -147,8 +154,8 @@ export class HeartPointsRepo implements IHeartPointsRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            await HeartPoints.destroy({ where: { id: id } });
-            return true;
+            const result = await HeartPoints.destroy({ where: { id: id } });
+            return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

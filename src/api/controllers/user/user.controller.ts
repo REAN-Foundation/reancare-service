@@ -119,7 +119,7 @@ export class UserController {
 
     loginWithOtp = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'User.LoginWithPassword';
+            request.context = 'User.LoginWithOtp';
 
             const loginObject = await UserValidator.loginWithOtp(request, response);
             const userDetails = await this._service.loginWithOtp(loginObject);

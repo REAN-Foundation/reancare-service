@@ -1,9 +1,9 @@
-
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 export interface KnowledgeNuggetDomainModel {
-    id?: string,
-    TopicName?: string;
-    BriefInformation?: string;
+    id?                 : uuid,
+    TopicName?          : string;
+    BriefInformation?   : string;
     DetailedInformation?: string;
     AdditionalResources?: string[];
-    Tags?: string[];
+    Tags?               : string[];
 }

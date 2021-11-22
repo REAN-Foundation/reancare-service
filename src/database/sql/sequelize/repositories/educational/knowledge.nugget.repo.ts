@@ -58,7 +58,7 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
             };
 
             const knowledgeNugget = await KnowledgeNugget.create(entity);
-            return KnowledgeNuggetMapper.toDto(knowledgeNugget);
+            return await KnowledgeNuggetMapper.toDto(knowledgeNugget);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -69,8 +69,7 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
     getById = async (id: string): Promise<KnowledgeNuggetDto> => {
         try {
             const knowledgeNugget = await KnowledgeNugget.findByPk(id);
-            const dto = await KnowledgeNuggetMapper.toDto(knowledgeNugget);
-            return dto;
+            return await KnowledgeNuggetMapper.toDto(knowledgeNugget);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -136,31 +135,31 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
         }
     };
 
-    update = async (id: string, knowledgeNuggetDomainModel: KnowledgeNuggetDomainModel):
+    update = async (id: string, updateModel: KnowledgeNuggetDomainModel):
     Promise<KnowledgeNuggetDto> => {
         try {
             const knowledgeNugget = await KnowledgeNugget.findByPk(id);
 
-            if (knowledgeNuggetDomainModel.TopicName != null) {
-                knowledgeNugget.TopicName = knowledgeNuggetDomainModel.TopicName;
+            if (updateModel.TopicName != null) {
+                knowledgeNugget.TopicName = updateModel.TopicName;
             }
-            if (knowledgeNuggetDomainModel.BriefInformation != null) {
-                knowledgeNugget.BriefInformation = knowledgeNuggetDomainModel.BriefInformation;
+            if (updateModel.BriefInformation != null) {
+                knowledgeNugget.BriefInformation = updateModel.BriefInformation;
             }
-            if (knowledgeNuggetDomainModel.DetailedInformation != null) {
-                knowledgeNugget.DetailedInformation = knowledgeNuggetDomainModel.DetailedInformation;
+            if (updateModel.DetailedInformation != null) {
+                knowledgeNugget.DetailedInformation = updateModel.DetailedInformation;
             }
-            if (knowledgeNuggetDomainModel.AdditionalResources != null) {
+            if (updateModel.AdditionalResources != null) {
                 
-                var additionalResources = knowledgeNuggetDomainModel.AdditionalResources.length > 0 ?
-                    JSON.stringify(knowledgeNuggetDomainModel.AdditionalResources) : '[]';
+                var additionalResources = updateModel.AdditionalResources.length > 0 ?
+                    JSON.stringify(updateModel.AdditionalResources) : '[]';
 
                 knowledgeNugget.AdditionalResources = additionalResources;
             }
-            if (knowledgeNuggetDomainModel.Tags != null && knowledgeNuggetDomainModel.Tags.length > 0) {
+            if (updateModel.Tags != null && updateModel.Tags.length > 0) {
 
-                var tags = knowledgeNuggetDomainModel.Tags.length > 0 ?
-                    JSON.stringify(knowledgeNuggetDomainModel.Tags) : '[]';
+                var tags = updateModel.Tags.length > 0 ?
+                    JSON.stringify(updateModel.Tags) : '[]';
 
                 knowledgeNugget.Tags = tags;
             }

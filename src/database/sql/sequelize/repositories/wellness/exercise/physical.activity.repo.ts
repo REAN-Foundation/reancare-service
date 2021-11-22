@@ -12,23 +12,23 @@ import PhysicalActivity from '../../../models/wellness/exercise/physical.activit
 
 export class PhysicalActivityRepo implements IPhysicalActivityRepo {
 
-    create = async (physicalActivityDomainModel: PhysicalActivityDomainModel): Promise<PhysicalActivityDto> => {
+    create = async (createModel: PhysicalActivityDomainModel): Promise<PhysicalActivityDto> => {
         try {
             const entity = {
-                id             : physicalActivityDomainModel.id,
-                PatientUserId  : physicalActivityDomainModel.PatientUserId,
-                Exercise       : physicalActivityDomainModel.Exercise ?? null,
-                Description    : physicalActivityDomainModel.Description ?? null,
-                Category       : physicalActivityDomainModel.Category,
-                Intensity      : physicalActivityDomainModel.Intensity ?? null,
-                CaloriesBurned : physicalActivityDomainModel.CaloriesBurned ?? null,
-                StartTime      : physicalActivityDomainModel.StartTime ?? null,
-                EndTime        : physicalActivityDomainModel.EndTime ?? null,
-                DurationInMin  : physicalActivityDomainModel.DurationInMin ?? null,
+                id             : createModel.id,
+                PatientUserId  : createModel.PatientUserId,
+                Exercise       : createModel.Exercise ?? null,
+                Description    : createModel.Description ?? null,
+                Category       : createModel.Category,
+                Intensity      : createModel.Intensity ?? null,
+                CaloriesBurned : createModel.CaloriesBurned ?? null,
+                StartTime      : createModel.StartTime ?? null,
+                EndTime        : createModel.EndTime ?? null,
+                DurationInMin  : createModel.DurationInMin ?? null,
             };
             const physicalActivity = await PhysicalActivity.create(entity);
-            const dto = await PhysicalActivityMapper.toDto(physicalActivity);
-            return dto;
+            return await PhysicalActivityMapper.toDto(physicalActivity);
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -38,8 +38,8 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
     getById = async (id: string): Promise<PhysicalActivityDto> => {
         try {
             const physicalActivity = await PhysicalActivity.findByPk(id);
-            const dto = await PhysicalActivityMapper.toDto(physicalActivity);
-            return dto;
+            return await PhysicalActivityMapper.toDto(physicalActivity);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -51,13 +51,13 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
-                search.where['PatientUserId'] = { [Op.eq]: filters.PatientUserId };
+                search.where['PatientUserId'] = filters.PatientUserId;
             }
             if (filters.Exercise != null) {
-                search.where['Exercise'] = { [Op.eq]: filters.Exercise };
+                search.where['Exercise'] = { [Op.like]: '%' + filters.Exercise + '%' };
             }
             if (filters.Category != null) {
-                search.where['Category'] = { [Op.eq]: filters.Category };
+                search.where['Category'] = { [Op.like]: '%' + filters.Category + '%' };
             }
             
             let orderByColum = 'PhysicalActivity';
@@ -99,7 +99,6 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                 Order          : order === 'DESC' ? 'descending' : 'ascending',
                 OrderedBy      : orderByColum,
                 Items          : dtos,
-                length         : undefined
             };
             return searchResults;
         } catch (error) {
@@ -109,41 +108,41 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
     };
 
     // eslint-disable-next-line max-len
-    update = async (id: string, physicalActivityDomainModel: PhysicalActivityDomainModel): Promise<PhysicalActivityDto> => {
+    update = async (id: string, updateModel: PhysicalActivityDomainModel): Promise<PhysicalActivityDto> => {
         try {
-            const physicalActivity = await PhysicalActivity.findByPk(id);
+            const physicalActivity = await PhysicalActivity.findOne({ where: { id: id } });
 
-            if (physicalActivityDomainModel.PatientUserId != null) {
-                physicalActivity.PatientUserId = physicalActivityDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                physicalActivity.PatientUserId = updateModel.PatientUserId;
             }
-            if (physicalActivityDomainModel.Exercise != null) {
-                physicalActivity.Exercise = physicalActivityDomainModel.Exercise;
+            if (updateModel.Exercise != null) {
+                physicalActivity.Exercise = updateModel.Exercise;
             }
-            if (physicalActivityDomainModel.Description != null) {
-                physicalActivity.Description = physicalActivityDomainModel.Description;
+            if (updateModel.Description != null) {
+                physicalActivity.Description = updateModel.Description;
             }
-            if (physicalActivityDomainModel.Category != null) {
-                physicalActivity.Category = physicalActivityDomainModel.Category;
+            if (updateModel.Category != null) {
+                physicalActivity.Category = updateModel.Category;
             }
-            if (physicalActivityDomainModel.Intensity != null) {
-                physicalActivity.Intensity = physicalActivityDomainModel.Intensity;
+            if (updateModel.Intensity != null) {
+                physicalActivity.Intensity = updateModel.Intensity;
             }
-            if (physicalActivityDomainModel.CaloriesBurned != null) {
-                physicalActivity.CaloriesBurned = physicalActivityDomainModel.CaloriesBurned;
+            if (updateModel.CaloriesBurned != null) {
+                physicalActivity.CaloriesBurned = updateModel.CaloriesBurned;
             }
-            if (physicalActivityDomainModel.StartTime != null) {
-                physicalActivity.StartTime = physicalActivityDomainModel.StartTime;
+            if (updateModel.StartTime != null) {
+                physicalActivity.StartTime = updateModel.StartTime;
             }
-            if (physicalActivityDomainModel.EndTime != null) {
-                physicalActivity.EndTime = physicalActivityDomainModel.EndTime;
+            if (updateModel.EndTime != null) {
+                physicalActivity.EndTime = updateModel.EndTime;
             }
-            if (physicalActivityDomainModel.DurationInMin != null) {
-                physicalActivity.DurationInMin = physicalActivityDomainModel.DurationInMin;
+            if (updateModel.DurationInMin != null) {
+                physicalActivity.DurationInMin = updateModel.DurationInMin;
             }
             await physicalActivity.save();
 
-            const dto = await PhysicalActivityMapper.toDto(physicalActivity);
-            return dto;
+            return await PhysicalActivityMapper.toDto(physicalActivity);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

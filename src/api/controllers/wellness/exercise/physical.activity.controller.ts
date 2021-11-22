@@ -1,36 +1,29 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
-import { PersonService } from '../../../../services/person.service';
-import { RoleService } from '../../../../services/role.service';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { UserService } from '../../../../services/user/user.service';
 import { PhysicalActivityService } from '../../../../services/wellness/exercise/physical.activity.service';
 import { Loader } from '../../../../startup/loader';
 import { PhysicalActivityValidator } from '../../../validators/wellness/exercise/physical.activity.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PhysicalActivityController {
+export class PhysicalActivityController extends BaseController {
 
     //#region member variables and constructors
 
     _service: PhysicalActivityService = null;
 
-    _roleService: RoleService = null;
-
-    _personService: PersonService = null;
+    _validator: PhysicalActivityValidator = new PhysicalActivityValidator();
 
     _userService: UserService = null;
 
-    _authorizer: Authorizer = null;
-
     constructor() {
+        super();
         this._service = Loader.container.resolve(PhysicalActivityService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
         this._userService = Loader.container.resolve(UserService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -39,10 +32,9 @@ export class PhysicalActivityController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Exercise.PhysicalActivity.Create';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Exercise.PhysicalActivity.Create', request, response);
             
-            const domainModel = await PhysicalActivityValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             if (domainModel.PatientUserId != null) {
                 const person = await this._userService.getById(domainModel.PatientUserId);
@@ -66,11 +58,9 @@ export class PhysicalActivityController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Exercise.PhysicalActivity.GetById';
-            
-            await this._authorizer.authorize(request, response);
+            this.setContext('Exercise.PhysicalActivity.GetById', request, response);
 
-            const id: string = await PhysicalActivityValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const physicalActivity = await this._service.getById(id);
             if (physicalActivity == null) {
@@ -87,14 +77,13 @@ export class PhysicalActivityController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Exercise.PhysicalActivity.Search';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Exercise.PhysicalActivity.Search', request, response);
 
-            const filters = await PhysicalActivityValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
-            const count = searchResults.length;
+            const count = searchResults.Items.length;
             const message =
                 count === 0
                     ? 'No records found!'
@@ -109,15 +98,14 @@ export class PhysicalActivityController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Exercise.PhysicalActivity.Update';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Exercise.PhysicalActivity.Update', request, response);
 
-            const domainModel = await PhysicalActivityValidator.update(request);
+            const domainModel = await this._validator.update(request);
 
-            const id: string = await PhysicalActivityValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const physicalActivity = await this._service.getById(id);
             if (physicalActivity == null) {
-                throw new ApiError(404, 'physical activity not found.');
+                throw new ApiError(404, 'Physical activity not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
@@ -135,10 +123,9 @@ export class PhysicalActivityController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Exercise.PhysicalActivity.Delete';
-            await this._authorizer.authorize(request, response);
-
-            const id: string = await PhysicalActivityValidator.getById(request);
+            this.setContext('Exercise.PhysicalActivity.Delete', request, response);
+            
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const physicalActivity = await this._service.getById(id);
             if (physicalActivity == null) {
                 throw new ApiError(404, 'Physical activity not found.');

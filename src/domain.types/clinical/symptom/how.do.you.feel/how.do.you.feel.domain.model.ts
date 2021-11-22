@@ -1,9 +1,10 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 import { SymptomsProgress } from "./symptom.progress.types";
 
 export interface HowDoYouFeelDomainModel {
-    id?           : string,
+    id?           : uuid,
     EhrId?        : string;
-    PatientUserId?: string;
+    PatientUserId?: uuid;
     Feeling?      : SymptomsProgress;
     Comments?     : string;
     RecordDate?   : Date;

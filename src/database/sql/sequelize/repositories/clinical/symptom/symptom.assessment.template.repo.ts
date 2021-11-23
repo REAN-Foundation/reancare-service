@@ -147,8 +147,8 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
                 template.Title = updateModel.Title;
             }
             if (updateModel.Tags != null) {
-                var existingTags = [JSON.parse(template.Tags)];
-                existingTags.push(...updateModel.Tags);
+                var existingTags = [JSON.parse(symptomType.Tags) as Array<string>];
+                existingTags.push(updateModel.Tags);
                 existingTags = [...new Set(existingTags)];
                 template.Tags = JSON.stringify(existingTags);
             }

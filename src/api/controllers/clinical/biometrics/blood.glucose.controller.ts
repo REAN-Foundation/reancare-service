@@ -1,7 +1,7 @@
 import express from 'express';
 import { ApiError } from '../../../../common/api.error';
-import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ResponseHandler } from '../../../../common/response.handler';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { BloodGlucoseService } from '../../../../services/clinical/biometrics/blood.glucose.service';
 import { Loader } from '../../../../startup/loader';
 import { BloodGlucoseValidator } from '../../../validators/clinical/biometrics/blood.glucose.validator';

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "acee17ff-d5d2-46ec-afeb-d2fde7788be3",
+		"_postman_id": "6c85daee-81c6-4afe-9153-759c64e695ed",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -2577,14 +2577,12 @@
 								{
 									"key": "createdDateFrom",
 									"value": "2021-05-01",
-									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
-									"disabled": true
+									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search"
 								},
 								{
 									"key": "createdDateTo",
 									"value": "2021-12-12",
-									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
-									"disabled": true
+									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search"
 								},
 								{
 									"key": "orderBy",
@@ -9587,7 +9585,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Volume\": 7,\n    \"Time\": \"2021-09-21\"\n\n}"
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Volume\": 7,\n    \"Time\": \"2021-09-21\"\n}"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/wellness/nutrition/water-consumptions",
@@ -11217,8 +11215,7 @@
 													"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
 													"pm.environment.set(\"HEART_POINT_PERSONID\", personId);\r",
 													"pm.environment.set(\"HEART_POINT_PATIENTUSERID\", patientUserId);\r",
-													"pm.environment.set(\"HEART_POINT_VALUE\", '120');\r",
-													"pm.environment.set(\"HEART_POINT_UNIT\", 'bpm');"
+													"pm.environment.set(\"HEART_POINT_VALUE\", 120);"
 												],
 												"type": "text/javascript"
 											}
@@ -11246,18 +11243,16 @@
 													"\r",
 													"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
 													"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
-													"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
-													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
 													"\r",
 													"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(\"\" + expectedHeartPoints);\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
+													"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(expectedHeartPoints);\r",
+													"\r",
 													"});\r",
 													"\r",
 													""
@@ -11333,19 +11328,16 @@
 													"pm.test(\"Calorie record should have correct data\", function () {\r",
 													"\r",
 													"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
-													"    var expectedPersonId = pm.environment.get(\"HEART_POINT_PERSONID\");\r",
 													"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
 													"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PersonId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
 													"\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.PersonId).equals(expectedPersonId);\r",
 													"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
 													"    pm.expect(\"\" + jsonRes.Data.HeartPoints.HeartPoints).equals(expectedHeartPoints);\r",
 													"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
@@ -11408,8 +11400,7 @@
 											"listen": "prerequest",
 											"script": {
 												"exec": [
-													"let heartPoints = pm.environment.get(\"HEART_POINT_VALUE\");",
-													"pm.environment.set(\"HEART_POINT_Value\", Number(heartPoints) + 10);"
+													"pm.environment.set(\"HEART_POINT_Value\", 150);"
 												],
 												"type": "text/javascript"
 											}
@@ -11429,22 +11420,17 @@
 													"pm.test(\"Correct updates should be reflected\", function () {\r",
 													"\r",
 													"    var expectedPatientUserId = pm.environment.get(\"HEART_POINT_PATIENTUSERID\");\r",
-													"    var expectedPersonId = pm.environment.get(\"HEART_POINT_PERSONID\");\r",
-													"    var expectedHeartPoints = pm.environment.get(\"HEART_POINT_VALUE\");\r",
-													"    var expectedHeartPointUnit = pm.environment.get(\"HEART_POINT_UNIT\");\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
 													"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PersonId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');\r",
 													"    pm.expect(jsonRes.Data.HeartPoints).to.have.property('Unit');\r",
 													"\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.PersonId).equals(expectedPersonId);\r",
 													"    pm.expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(expectedHeartPoints);\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);\r",
+													"    pm.expect(jsonRes.Data.HeartPoints.HeartPoints).equals(150);\r",
+													"\r",
 													"});\r",
 													"\r",
 													""
@@ -11476,7 +11462,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"PersonId\": \"{{HEART_POINT_PERSONID}}\",\r\n    \"PatientUserId\": \"{{HEART_POINT_PATIENTUSERID}}\",\r\n    \"HeartPoints\": {{HEART_POINT_VALUE}},\r\n    \"Unit\": \"{{HEART_POINT_UNIT}}\"\r\n}"
+											"raw": "{\r\n    \"PersonId\": \"{{HEART_POINT_PERSONID}}\",\r\n    \"PatientUserId\": \"{{HEART_POINT_PATIENTUSERID}}\",\r\n    \"HeartPoints\": 150,\r\n    \"Unit\": \"{{HEART_POINT_UNIT}}\"\r\n}"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/wellness/daily-records/heart-points/{{HEART_POINT_ID}}",
@@ -11516,11 +11502,11 @@
 													"    pm.expect(jsonRes.Status).to.eql('success');\r",
 													"});\r",
 													"\r",
-													"pm.test(\"List of Calorie Record is returned\", function () {\r",
+													"pm.test(\"List of heart point records is returned\", function () {\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('HeartPoints');\r",
-													"    pm.expect(jsonRes.Data.HeartPoints.Items.length).to.be.greaterThan(0);\r",
+													"    pm.expect(jsonRes.Data).to.have.property('HeartPointsRecords');\r",
+													"    pm.expect(jsonRes.Data.HeartPointsRecords.Items.length).to.be.greaterThan(0);\r",
 													"\r",
 													"});\r",
 													""
@@ -11721,10 +11707,9 @@
 												"exec": [
 													"let personId = pm.environment.get('PERSON_ID');\r",
 													"let patientUserId = pm.environment.get('PATIENT_USER_ID');\r",
-													"pm.environment.set(\"CALORIE_BALANCE_PERSONID\", personId);\r",
 													"pm.environment.set(\"CALORIE_BALANCE_PATIENTUSERID\", patientUserId);\r",
-													"pm.environment.set(\"CALORIE_BALANCE_CALORIESCONSUMED\", '120');\r",
-													"pm.environment.set(\"CALORIE_BALANCE_CALORIESBURNED\", '100');\r",
+													"pm.environment.set(\"CALORIE_BALANCE_CALORIESCONSUMED\", 120);\r",
+													"pm.environment.set(\"CALORIE_BALANCE_CALORIESBURNED\", 100);\r",
 													"pm.environment.set(\"CALORIE_BALANCE_UNIT\", 'kcal');"
 												],
 												"type": "text/javascript"
@@ -12029,8 +12014,8 @@
 													"pm.test(\"List of Calorie Record is returned\", function () {\r",
 													"\r",
 													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('CalorieBalances');\r",
-													"    pm.expect(jsonRes.Data.CalorieBalances.Items.length).to.be.greaterThan(0);\r",
+													"    pm.expect(jsonRes.Data).to.have.property('CalorieBalanceRecords');\r",
+													"    pm.expect(jsonRes.Data.CalorieBalanceRecords.Items.length).to.be.greaterThan(0);\r",
 													"\r",
 													"});\r",
 													""
@@ -17025,7 +17010,7 @@
 					"name": "Diagnosis",
 					"item": [
 						{
-							"name": "Add diagnosis details",
+							"name": "Add diagnosis",
 							"event": [
 								{
 									"listen": "test",
@@ -17090,7 +17075,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"MedicalPractitionerUserId\": \"0652a79e-c549-478d-bc99-42187dd91d30\",\r\n    \"MedicalConditionId\": \"06fbc6fd-b819-416e-8dc9-e20bb59c11c9\",\r\n    \"Comments\": \"better than earlier\",\r\n    \"IsClinicallyActive\": false,\r\n    \"ValidationStatus\": \"Confirmed\",\r\n    \"Interpretation\": \"Significant change up\",\r\n    \"OnsetDate\": \"2021-09-15\",\r\n    \"EndDate\": \"2021-09-25\"\r\n}"
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"MedicalPractitionerUserId\": \"{{DOCTOR_USER_ID}}\",\r\n    \"MedicalConditionId\": null,\r\n    \"Comments\": \"better than earlier\",\r\n    \"IsClinicallyActive\": false,\r\n    \"ValidationStatus\": \"Confirmed\",\r\n    \"Interpretation\": \"Significant change up\",\r\n    \"OnsetDate\": \"2021-09-15\",\r\n    \"EndDate\": \"2021-09-25\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/clinical/diagnoses",
@@ -26616,6 +26601,363 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Authorization checks",
+			"item": [
+				{
+					"name": "Add blood pressure record for first patient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();",
+									"",
+									"try {",
+									"    pm.environment.set(\"BIOMETRICS_BLOOD_PRESSURE_ID\", jsonRes.Data.BloodPressure.id);",
+									"}",
+									"catch (error) {",
+									"    console.log(error.message);",
+									"}",
+									"",
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(201);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Systolic\": 160,\n    \"Diastolic\": 180,\n    \"Unit\": \"mm Hg\",\n    \"RecordDate\": \"2021-09-22\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/clinical/biometrics/blood-pressures",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"clinical",
+								"biometrics",
+								"blood-pressures"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register second patient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"SECOND_PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+									"    pm.environment.set(\"SECOND_PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+									"var password = \"Test@123\";\r",
+									"\r",
+									"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+									"pm.environment.set(\"PASSWORD\", password);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patients",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Log-in second patient",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"SECOND_PATIENT_USER_JWT\", jsonRes.Data.AccessToken);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/login-with-password",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"login-with-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Second patient tries to get blood pressure of first",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Request is failure\", function () {",
+									"    pm.response.to.have.status(403);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('failure');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECOND_PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/clinical/biometrics/blood-pressures/{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"clinical",
+								"biometrics",
+								"blood-pressures",
+								"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Second patient tries to update blood pressure of first",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Request is failure\", function () {",
+									"    pm.response.to.have.status(403);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('failure');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECOND_PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Systolic\": 100,\n    \"Diastolic\": 80,\n    \"Unit\": \"mm Hg\",\n    \"RecordDate\": \"2021-09-22\",\n    \"RecordedByUserId\": \"{{RECORDED_BY_USER_ID}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/clinical/biometrics/blood-pressures/{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"clinical",
+								"biometrics",
+								"blood-pressures",
+								"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Second patient tries to delete blood pressure of first",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Request is failure\", function () {",
+									"    pm.response.to.have.status(403);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('failure');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECOND_PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/clinical/biometrics/blood-pressures/{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"clinical",
+								"biometrics",
+								"blood-pressures",
+								"{{BIOMETRICS_BLOOD_PRESSURE_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The set of requests in this folder are mean to test the authorization logic such as ownership authorization and consent authorization.\n\nWe will be testing following scenarios.\n\n1. One patient account should not be able to access the biometrics data of another patient's account.\n\n1. Without consent authorization, a doctor cannot access the patient data."
 		}
 	]
 }

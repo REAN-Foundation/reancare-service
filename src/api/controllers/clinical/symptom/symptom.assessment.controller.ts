@@ -1,26 +1,26 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { SymptomAssessmentService } from '../../../../services/clinical/symptom/symptom.assessment.service';
 import { Loader } from '../../../../startup/loader';
 import { SymptomAssessmentValidator } from '../../../validators/clinical/symptom/symptom.assessment.validator';
-
-
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SymptomAssessmentController {
+export class SymptomAssessmentController extends BaseController {
 
     //#region member variables and constructors
 
     _service: SymptomAssessmentService = null;
 
-    _authorizer: Authorizer = null;
+    _validator: SymptomAssessmentValidator = new SymptomAssessmentValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(SymptomAssessmentService);
-        this._authorizer = Loader.authorizer;
+
     }
 
     //#endregion
@@ -29,10 +29,9 @@ export class SymptomAssessmentController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessment.Create';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomAssessment.Create', request, response);
             
-            const domainModel = await SymptomAssessmentValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             const assessment = await this._service.create(domainModel);
             if (assessment == null) {
@@ -49,11 +48,10 @@ export class SymptomAssessmentController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessment.GetById';
-            
-            await this._authorizer.authorize(request, response);
 
-            const id: string = await SymptomAssessmentValidator.getById(request);
+            this.setContext('SymptomAssessment.GetById', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const assessment = await this._service.getById(id);
             if (assessment == null) {
@@ -70,10 +68,9 @@ export class SymptomAssessmentController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessment.Search';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomAssessment.Search', request, response);
 
-            const filters = await SymptomAssessmentValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -92,12 +89,11 @@ export class SymptomAssessmentController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessment.Update';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomAssessment.Update', request, response);
 
-            const domainModel = await SymptomAssessmentValidator.update(request);
+            const domainModel = await this._validator.update(request);
 
-            const id: string = await SymptomAssessmentValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptomAssessment = await this._service.getById(id);
             if (existingSymptomAssessment == null) {
                 throw new ApiError(404, 'Symptom assessment not found.');
@@ -118,10 +114,9 @@ export class SymptomAssessmentController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessment.Delete';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomAssessment.Delete', request, response);
 
-            const id: string = await SymptomAssessmentValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptomAssessment = await this._service.getById(id);
             if (existingSymptomAssessment == null) {
                 throw new ApiError(404, 'Symptom assessment not found.');

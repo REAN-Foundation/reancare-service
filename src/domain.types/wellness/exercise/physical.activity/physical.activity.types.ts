@@ -1,16 +1,16 @@
 export enum PhysicalActivityCategories {
-    Aerobic = 'Aerobic',
-    Anaerobic = 'Anaerobic',
-    StrengthTraining = 'Strength training',
-    YogAsanas = 'Yog asanas',
+    Aerobic           = 'Aerobic',
+    Anaerobic         = 'Anaerobic',
+    StrengthTraining  = 'Strength training',
+    YogAsanas         = 'Yog asanas',
     AtheleticTraining = 'Atheletic training',
-    Other = 'Other',
+    Other             = 'Other',
 }
 
 export enum Intensity {
     Vigorous = 'Vigorous',
     Moderate = 'Moderate',
-    Low = 'Low',
+    Low      = 'Low',
 }
 
 export const PhysicalActivityCategoriesList: PhysicalActivityCategories [] = [

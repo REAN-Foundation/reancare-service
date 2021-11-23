@@ -1,7 +1,8 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+
 export interface HeartPointsDomainModel {
-    id?           : string;
-    PersonId      : string;
-    PatientUserId?: string;
+    id?           : uuid;
+    PatientUserId?: uuid;
     HeartPoints   : number;
     Unit          : string;
     RecordDate?   : Date;

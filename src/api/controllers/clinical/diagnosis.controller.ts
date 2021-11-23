@@ -1,41 +1,28 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { DiagnosisService } from '../../../services/clinical/diagnosis.service';
-import { PatientService } from '../../../services/patient/patient.service';
-import { PersonService } from '../../../services/person.service';
 import { UserService } from '../../../services/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { DiagnosisValidator } from '../../validators/clinical/diagnosis.validator';
-
-
-//import { DiagnosisDomainModel } from '../../domain.types/diagnosis/diagnosis.domain.model';
-//import { PatientDomainModel } from '../../domain.types/patient/patient/patient.domain.model';
-//import { PersonDomainModel } from '../../domain.types/person/person.domain.model';
-//import { DiagnosisDto } from '../../domain.types/diagnosis/diagnosis.dto';
-
+import { BaseController } from '../base.controller';
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DiagnosisController {
+export class DiagnosisController extends BaseController {
 
     //#region member variables and constructors
 
     _service: DiagnosisService = null;
 
+    _validator: DiagnosisValidator = new DiagnosisValidator();
+
     _userService: UserService = null;
 
-    _personService: PersonService = null;
-
-    _patientService: PatientService = null;
-
-    _authorizer: Authorizer = null;
-
     constructor() {
+        super();
         this._service = Loader.container.resolve(DiagnosisService);
         this._userService = Loader.container.resolve(UserService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -44,10 +31,10 @@ export class DiagnosisController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Diagnosis.Create';
-            await this._authorizer.authorize(request, response);
-            
-            const domainModel = await DiagnosisValidator.create(request);
+
+            this.setContext('Diagnosis.Create', request, response);
+
+            const domainModel = await this._validator.create(request);
 
             if (domainModel.PatientUserId != null) {
                 const person = await this._userService.getById(domainModel.PatientUserId);
@@ -61,7 +48,7 @@ export class DiagnosisController {
                 throw new ApiError(400, 'Cannot create diagnosis!');
             }
 
-            ResponseHandler.success(request, response, 'diagnosis created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Diagnosis created successfully!', 201, {
                 Diagnosis : diagnosis,
             });
         } catch (error) {
@@ -71,25 +58,17 @@ export class DiagnosisController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Diagnosis.GetById';
-            
-            await this._authorizer.authorize(request, response);
+            this.setContext('Diagnosis.GetById', request, response);
 
-            const id: string = await DiagnosisValidator.getById(request);
-            const medicalPractitionerUserId: string = await DiagnosisValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
-            const existingUser = await this._service.getById(id);
-            if (existingUser == null) {
-                throw new ApiError(404, 'User not found.');
-            }
-
-            const medicalPractitioner = await this._service.getById(medicalPractitionerUserId);
-            if (medicalPractitioner == null) {
-                throw new ApiError(404, 'Medical practitioner not found.');
+            const diagnosis = await this._service.getById(id);
+            if (diagnosis == null) {
+                throw new ApiError(404, 'Diagnosis record not found.');
             }
 
             ResponseHandler.success(request, response, 'Diagnosis retrieved successfully!', 200, {
-                Diagnosis : medicalPractitioner,
+                Diagnosis : diagnosis,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -98,15 +77,9 @@ export class DiagnosisController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Diagnosis.Search';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Diagnosis.Search', request, response);
 
-            const filters = await DiagnosisValidator.search(request);
-
-            // const extractFull: boolean =
-            //     request.query.fullDetails !== 'undefined' && typeof request.query.fullDetails === 'boolean'
-            //         ? request.query.fullDetails
-            //         : false;
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
@@ -124,21 +97,17 @@ export class DiagnosisController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Diagnosis.Update';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Diagnosis.Update', request, response);
 
-            const diagnosisDomainModel = await DiagnosisValidator.update(request);
+            const domainModel = await this._validator.update(request);
 
-            const id: string = await DiagnosisValidator.getById(request);
-            const existingUser = await this._service.getByUserId(id);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingUser = await this._service.getById(id);
             if (existingUser == null) {
-                throw new ApiError(404, 'User not found.');
+                throw new ApiError(404, 'Diagnosis record not found.');
             }
 
-            const updatedDiagnosis = await this._service.update(
-                diagnosisDomainModel.id,
-                diagnosisDomainModel
-            );
+            const updatedDiagnosis = await this._service.update(id, domainModel);
             if (updatedDiagnosis == null) {
                 throw new ApiError(400, 'Unable to update diagnosis record!');
             }
@@ -153,10 +122,9 @@ export class DiagnosisController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Diagnosis.Delete';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Diagnosis.Delete', request, response);
 
-            const id: string = await DiagnosisValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingUser = await this._service.getById(id);
             if (existingUser == null) {
                 throw new ApiError(404, 'Diagnosis record not found.');

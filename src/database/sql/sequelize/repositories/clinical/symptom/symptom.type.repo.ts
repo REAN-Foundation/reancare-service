@@ -22,7 +22,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
                 ImageResourceId : model.ImageResourceId ?? null,
             };
             const symptom = await SymptomType.create(entity);
-            return SymptomTypeMapper.toDto(symptom);
+            return await SymptomTypeMapper.toDto(symptom);
             
         } catch (error) {
             Logger.instance().log(error.message);
@@ -33,7 +33,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
     getById = async (id: string): Promise<SymptomTypeDto> => {
         try {
             const symptomType = await SymptomType.findByPk(id);
-            return SymptomTypeMapper.toDto(symptomType);
+            return await SymptomTypeMapper.toDto(symptomType);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -47,7 +47,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
                     Symptom : { [Op.like]: '%' + name + '%' }
                 }
             });
-            return SymptomTypeMapper.toDto(symptomType);
+            return await SymptomTypeMapper.toDto(symptomType);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -110,31 +110,32 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
         }
     };
 
-    update = async (id: string, model: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
+    update = async (id: string, updateModel: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
         try {
             const symptomType = await SymptomType.findByPk(id);
 
-            if (model.Symptom != null) {
-                symptomType.Symptom = model.Symptom;
+            if (updateModel.Symptom != null) {
+                symptomType.Symptom = updateModel.Symptom;
             }
-            if (model.Tags != null) {
-                var existingTags = symptomType.Tags ? JSON.parse(symptomType.Tags) as Array<string> : [];
-                existingTags.push(...model.Tags);
+            if (updateModel.Tags != null) {
+
+                var existingTags = [JSON.parse(symptomType.Tags) as Array<string>];
+                existingTags.push(updateModel.Tags);
                 existingTags = [...new Set(existingTags)];
                 symptomType.Tags = JSON.stringify(existingTags);
             }
-            if (model.Description != null) {
-                symptomType.Description = model.Description;
+            if (updateModel.Description != null) {
+                symptomType.Description = updateModel.Description;
             }
-            if (model.Language != null) {
-                symptomType.Language = model.Language;
+            if (updateModel.Language != null) {
+                symptomType.Language = updateModel.Language;
             }
-            if (model.ImageResourceId != null) {
-                symptomType.ImageResourceId = model.ImageResourceId;
+            if (updateModel.ImageResourceId != null) {
+                symptomType.ImageResourceId = updateModel.ImageResourceId;
             }
 
             await symptomType.save();
-            return SymptomTypeMapper.toDto(symptomType);
+            return await SymptomTypeMapper.toDto(symptomType);
 
         } catch (error) {
             Logger.instance().log(error.message);

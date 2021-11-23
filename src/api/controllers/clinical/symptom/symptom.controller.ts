@@ -1,26 +1,26 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { SymptomService } from '../../../../services/clinical/symptom/symptom.service';
 import { Loader } from '../../../../startup/loader';
 import { SymptomValidator } from '../../../validators/clinical/symptom/symptom.validator';
-
-
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SymptomController {
+export class SymptomController extends BaseController {
 
     //#region member variables and constructors
 
     _service: SymptomService = null;
 
-    _authorizer: Authorizer = null;
+    _validator: SymptomValidator = new SymptomValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(SymptomService);
-        this._authorizer = Loader.authorizer;
+        
     }
 
     //#endregion
@@ -29,10 +29,9 @@ export class SymptomController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Symptom.Create';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Symptom.Create', request, response);
             
-            const domainModel = await SymptomValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             const symptom = await this._service.create(domainModel);
             if (symptom == null) {
@@ -53,8 +52,7 @@ export class SymptomController {
             
             await this._authorizer.authorize(request, response);
 
-            const id: string = await SymptomValidator.getById(request);
-
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const symptom = await this._service.getById(id);
             if (symptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
@@ -73,7 +71,7 @@ export class SymptomController {
             request.context = 'Symptom.Search';
             await this._authorizer.authorize(request, response);
 
-            const filters = await SymptomValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -95,9 +93,9 @@ export class SymptomController {
             request.context = 'Symptom.Update';
             await this._authorizer.authorize(request, response);
 
-            const domainModel = await SymptomValidator.update(request);
+            const domainModel = await this._validator.update(request);
 
-            const id: string = await SymptomValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptom = await this._service.getById(id);
             if (existingSymptom == null) {
                 throw new ApiError(404, 'Symptom not found.');
@@ -121,7 +119,7 @@ export class SymptomController {
             request.context = 'Symptom.Delete';
             await this._authorizer.authorize(request, response);
 
-            const id: string = await SymptomValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptom = await this._service.getById(id);
             if (existingSymptom == null) {
                 throw new ApiError(404, 'Symptom not found.');

@@ -25,8 +25,8 @@ export class AllergyRepo implements IAllergyRepo {
                 LastOccurrence        : allergyDomainModel.LastOccurrence ?? null,
             };
             const allergy = await Allergy.create(entity);
-            const dto = await AllergyMapper.toDto(allergy);
-            return dto;
+            return await AllergyMapper.toDto(allergy);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -36,8 +36,8 @@ export class AllergyRepo implements IAllergyRepo {
     getById = async (id: string): Promise<AllergyDto> => {
         try {
             const allergy = await Allergy.findByPk(id);
-            const dto = await AllergyMapper.toDto(allergy);
-            return dto;
+            return await AllergyMapper.toDto(allergy);
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -65,38 +65,38 @@ export class AllergyRepo implements IAllergyRepo {
         }
     };
 
-    update = async (id: string, allergyDomainModel: AllergyDomainModel): Promise<AllergyDto> => {
+    update = async (id: string, updateModel: AllergyDomainModel): Promise<AllergyDto> => {
         try {
             const allergy = await Allergy.findByPk(id);
 
-            if (allergyDomainModel.PatientUserId != null) {
-                allergy.PatientUserId = allergyDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                allergy.PatientUserId = updateModel.PatientUserId;
             }
-            if (allergyDomainModel.Allergy != null) {
-                allergy.Allergy = allergyDomainModel.Allergy;
+            if (updateModel.Allergy != null) {
+                allergy.Allergy = updateModel.Allergy;
             }
-            if (allergyDomainModel.AllergenCategory != null) {
-                allergy.AllergenCategory = allergyDomainModel.AllergenCategory;
+            if (updateModel.AllergenCategory != null) {
+                allergy.AllergenCategory = updateModel.AllergenCategory;
             }
-            if (allergyDomainModel.AllergenExposureRoute != null) {
-                allergy.AllergenExposureRoute = allergyDomainModel.AllergenExposureRoute;
+            if (updateModel.AllergenExposureRoute != null) {
+                allergy.AllergenExposureRoute = updateModel.AllergenExposureRoute;
             }
-            if (allergyDomainModel.Severity != null) {
-                allergy.Severity = allergyDomainModel.Severity;
+            if (updateModel.Severity != null) {
+                allergy.Severity = updateModel.Severity;
             }
-            if (allergyDomainModel.Reaction != null) {
-                allergy.Reaction = allergyDomainModel.Reaction;
+            if (updateModel.Reaction != null) {
+                allergy.Reaction = updateModel.Reaction;
             }
-            if (allergyDomainModel.OtherInformation != null) {
-                allergy.OtherInformation = allergyDomainModel.OtherInformation;
+            if (updateModel.OtherInformation != null) {
+                allergy.OtherInformation = updateModel.OtherInformation;
             }
-            if (allergyDomainModel.LastOccurrence != null) {
-                allergy.LastOccurrence = allergyDomainModel.LastOccurrence;
+            if (updateModel.LastOccurrence != null) {
+                allergy.LastOccurrence = updateModel.LastOccurrence;
             }
             await allergy.save();
 
-            const dto = await AllergyMapper.toDto(allergy);
-            return dto;
+            return await AllergyMapper.toDto(allergy);
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

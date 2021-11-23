@@ -32,7 +32,12 @@
             "KnowledgeNugget.GetById",
             "KnowledgeNugget.Search",
             "KnowledgeNugget.Update",
-            "KnowledgeNugget.Delete"
+            "KnowledgeNugget.Delete",
+            "MedicalCondition.Create",
+            "MedicalCondition.GetById",
+            "MedicalCondition.Update",
+            "MedicalCondition.Search",
+            "MedicalCondition.Delete"
         ]
     },
     {
@@ -275,6 +280,8 @@
             "UserTask.FinishTask",
             "UserTask.CancelTask",
             "UserTask.SummaryForDay",
+            "DailyAssessment.Create",
+            "DailyAssessment.Search",
             "KnowledgeNugget.GetTodaysTopic",
             "KnowledgeNugget.GetById",
             "KnowledgeNugget.Search",
@@ -282,7 +289,12 @@
             "Order.Update",
             "Order.Search",
             "DoctorNote.GetById",
-            "DoctorNote.Search"
+            "DoctorNote.Search",
+            "MedicalCondition.Create",
+            "MedicalCondition.GetById",
+            "MedicalCondition.Update",
+            "MedicalCondition.Search",
+            "MedicalCondition.Delete"
         ]
     },
     {
@@ -516,7 +528,14 @@
             "UserTask.StartTask",
             "UserTask.FinishTask",
             "UserTask.CancelTask",
-            "UserTask.SummaryForDay"
+            "UserTask.SummaryForDay",
+            "MedicalCondition.Create",
+            "MedicalCondition.GetById",
+            "MedicalCondition.Update",
+            "MedicalCondition.Search",
+            "MedicalCondition.Delete",
+            "DailyAssessment.Create",
+            "DailyAssessment.Search"
         ]
     },
     {

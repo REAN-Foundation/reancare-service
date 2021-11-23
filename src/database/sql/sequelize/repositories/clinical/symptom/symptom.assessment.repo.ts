@@ -26,8 +26,7 @@ export class SymptomAssessmentRepo implements ISymptomAssessmentRepo {
             };
 
             const assessment = await SymptomAssessment.create(entity);
-            const dto = SymptomAssessmentMapper.toDto(assessment);
-            return dto;
+            return await SymptomAssessmentMapper.toDto(assessment);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -39,9 +38,7 @@ export class SymptomAssessmentRepo implements ISymptomAssessmentRepo {
         try {
 
             const assessment = await SymptomAssessment.findByPk(id);
-            const dto = SymptomAssessmentMapper.toDto(assessment);
-
-            return dto;
+            return await SymptomAssessmentMapper.toDto(assessment);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -122,34 +119,32 @@ export class SymptomAssessmentRepo implements ISymptomAssessmentRepo {
         }
     };
 
-    update = async (id: string, model: SymptomAssessmentDomainModel): Promise<SymptomAssessmentDto> => {
+    update = async (id: string, updateModel: SymptomAssessmentDomainModel): Promise<SymptomAssessmentDto> => {
         try {
             const assessment = await SymptomAssessment.findByPk(id);
 
-            if (model.Title != null) {
-                assessment.Title = model.Title;
+            if (updateModel.Title != null) {
+                assessment.Title = updateModel.Title;
             }
-            if (model.PatientUserId != null) {
-                assessment.PatientUserId = model.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                assessment.PatientUserId = updateModel.PatientUserId;
             }
-            if (model.AssessmentTemplateId != null) {
-                assessment.AssessmentTemplateId = model.AssessmentTemplateId;
+            if (updateModel.AssessmentTemplateId != null) {
+                assessment.AssessmentTemplateId = updateModel.AssessmentTemplateId;
             }
-            if (model.AssessmentDate != null) {
-                assessment.AssessmentDate = model.AssessmentDate;
+            if (updateModel.AssessmentDate != null) {
+                assessment.AssessmentDate = updateModel.AssessmentDate;
             }
-            if (model.OverallStatus != null) {
-                assessment.OverallStatus = model.OverallStatus;
+            if (updateModel.OverallStatus != null) {
+                assessment.OverallStatus = updateModel.OverallStatus;
             }
-            if (model.EhrId != null) {
-                assessment.EhrId = model.EhrId;
+            if (updateModel.EhrId != null) {
+                assessment.EhrId = updateModel.EhrId;
             }
 
             await assessment.save();
 
-            const dto = SymptomAssessmentMapper.toDto(assessment);
-
-            return dto;
+            return await SymptomAssessmentMapper.toDto(assessment);
 
         } catch (error) {
             Logger.instance().log(error.message);

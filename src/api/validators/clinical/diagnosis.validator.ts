@@ -1,16 +1,15 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../common/helper';
 import { DiagnosisDomainModel } from '../../../domain.types/clinical/diagnosis/diagnosis.domain.model';
 import { DiagnosisSearchFilters } from '../../../domain.types/clinical/diagnosis/diagnosis.search.types';
+import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DiagnosisValidator {
+export class DiagnosisValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): DiagnosisDomainModel => {
+    getDomainModel = (request: express.Request): DiagnosisDomainModel => {
 
-        const entity: DiagnosisDomainModel = {
+        const diagnosisDomainModel: DiagnosisDomainModel = {
             
             PatientUserId             : request.body.PatientUserId ?? null,
             EhrId                     : request.body.EhrId ?? null,
@@ -25,204 +24,87 @@ export class DiagnosisValidator {
             EndDate                   : request.body.EndDate,
         };
 
-        return entity;
+        return diagnosisDomainModel;
     };
 
-    static create = async (
+    create = async (
         request: express.Request
     ): Promise<DiagnosisDomainModel> => {
-        await DiagnosisValidator.validateBody(request);
-        return DiagnosisValidator.getDomainModel(request);
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    private static async validateBody(request) {
-
-        await body('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('EhrId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('MedicalPractitionerUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('VisitId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('MedicalConditionId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('Comments').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('IsClinicallyActive').optional()
-            .trim()
-            .isBoolean()
-            .run(request);
-
-        await body('ValidationStatus').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Interpretation').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('OnsetDate').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-            
-        await body('EndDate').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-    }
-
-    static getById = async (request: express.Request): Promise<string> => {
-        return await DiagnosisValidator.getParamId(request);
-    };
-
-    static delete = async (request: express.Request): Promise<string> => {
-        return await DiagnosisValidator.getParamId(request);
-    };
-
-    static search = async (
+    search = async (
         request: express.Request
     ): Promise<DiagnosisSearchFilters> => {
 
-        await query('type').optional()
-            .trim()
-            .run(request);
+        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
+        await this.validateUuid(request, 'medicalPractitionerUserId', Where.Query, false, false);
+        await this.validateUuid(request, 'visitId', Where.Query, false, false);
+        await this.validateUuid(request, 'medicalConditionId', Where.Query, false, false);
+        await this.validateUuid(request, 'fulfilledByOrganizationId', Where.Query, false, false);
+        await this.validateBoolean(request, 'isClinicallyActive', Where.Query, false, false);
+        await this.validateString(request, 'validationStatus', Where.Query, false, false, true);
+        await this.validateString(request, 'interpretation', Where.Query, false, false, true);
+        await this.validateString(request, 'type', Where.Query, false, false, true);
+        await this.validateDate(request, 'onSetDateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'onSetDateTo', Where.Query, false, false);
 
-        await query('patientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
 
-        await query('MedicalPractitionerUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        return this.getFilter(request);
 
-        await query('visitId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('medicalConditionId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('isClinicallyActive').optional()
-            .trim()
-            .escape()
-            .isBoolean()
-            .run(request);
-
-        await query('fulfilledByOrganizationId').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('validationStatus').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('interpretation').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('onSetDateFrom').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        await query('onSetDateTo').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex')
-            .optional()
-            .isInt()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('itemsPerPage')
-            .optional()
-            .isInt()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return DiagnosisValidator.getFilter(request);
     };
 
-    private static getFilter(request): DiagnosisSearchFilters {
+    update = async (request: express.Request): Promise<DiagnosisDomainModel> => {
 
-        const pageIndex =
-            request.query.pageIndex !== 'undefined'
-                ? parseInt(request.query.pageIndex as string, 10)
-                : 0;
+        await this.validateUpdateBody(request);
 
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined'
-                ? parseInt(request.query.itemsPerPage as string, 10)
-                : 25;
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
 
-        const filters: DiagnosisSearchFilters = {
+        return domainModel;
+    };
+
+    private async validateCreateBody(request) {
+
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateUuid(request, 'MedicalPractitionerUserId', Where.Body, false, true);
+        await this.validateUuid(request, 'VisitId', Where.Body, false, true);
+        await this.validateUuid(request, 'MedicalConditionId', Where.Body, false, true);
+        await this.validateString(request, 'Comments', Where.Body, true, false);
+        await this.validateString(request, 'ValidationStatus', Where.Body, true, false);
+        await this.validateString(request, 'Interpretation', Where.Body, true, false);
+        await this.validateBoolean(request, 'IsClinicallyActive', Where.Body, false, true);
+        await this.validateDate(request, 'OnsetDate', Where.Body, true, false);
+        await this.validateDate(request, 'EndDate', Where.Body, true, false);
+
+        this.validateRequest(request);
+
+    }
+
+    private  async validateUpdateBody(request) {
+
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'EhrId', Where.Body, false, false);
+        await this.validateUuid(request, 'MedicalPractitionerUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'VisitId', Where.Body, false, false);
+        await this.validateUuid(request, 'MedicalConditionId', Where.Body, false, false);
+        await this.validateString(request, 'Comments', Where.Body, false, false);
+        await this.validateString(request, 'ValidationStatus', Where.Body, false, false);
+        await this.validateString(request, 'Interpretation', Where.Body, false, false);
+        await this.validateBoolean(request, 'IsClinicallyActive', Where.Body, false, true);
+        await this.validateDate(request, 'OnsetDate', Where.Body, false, false);
+        await this.validateDate(request, 'EndDate', Where.Body, false, false);
+
+        this.validateRequest(request);
+    }
+
+    private getFilter(request): DiagnosisSearchFilters {
+
+        var filters: DiagnosisSearchFilters = {
             Type                      : request.query.type ?? null,
             PatientUserId             : request.query.patientUserId ?? null,
             MedicalPractitionerUserId : request.query.medicalPractitionerUserId ?? null,
@@ -234,39 +116,9 @@ export class DiagnosisValidator {
             Interpretation            : request.query.interpretation ?? null,
             OnsetDateFrom             : request.query.onsetDateFrom ?? null,
             OnsetDateTo               : request.query.onsetDateTo ?? null,
-            OrderBy                   : request.query.orderBy ?? 'CreatedAt',
-            Order                     : request.query.order ?? 'descending',
-            PageIndex                 : pageIndex,
-            ItemsPerPage              : itemsPerPage,
         };
 
-        return filters;
+        return this.updateBaseSearchFilters(request, filters);
     }
-
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
-    }
-
-    static update = async (request: express.Request): Promise<DiagnosisDomainModel> => {
-
-        const id = await DiagnosisValidator.getParamId(request);
-        await DiagnosisValidator.validateBody(request);
-
-        var domainModel = DiagnosisValidator.getDomainModel(request);
-        domainModel.id = id;
-
-        return domainModel;
-    };
 
 }

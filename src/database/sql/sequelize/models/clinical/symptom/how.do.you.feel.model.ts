@@ -59,7 +59,7 @@ export default class HowDoYouFeel extends Model {
         type      : DataType.DATE,
         allowNull : false,
     })
-    RecordDate: string;
+    RecordDate: Date;
     
     @Length({ max: 256 })
     @Column({

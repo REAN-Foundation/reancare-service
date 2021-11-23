@@ -1,14 +1,17 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../common/helper';
 import { AllergyDomainModel } from '../../../domain.types/clinical/allergy/allergy.domain.model';
 import { AllergySearchFilters } from '../../../domain.types/clinical/allergy/allergy.search.types';
+import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AllergyValidator {
+export class AllergyValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): AllergyDomainModel => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = (request: express.Request): AllergyDomainModel => {
 
         const patientAllergyModel: AllergyDomainModel = {
             PatientUserId         : request.body.PatientUserId ?? null,
@@ -24,201 +27,77 @@ export class AllergyValidator {
         return patientAllergyModel;
     };
 
-    static create = async (request: express.Request): Promise<AllergyDomainModel> => {
-        await AllergyValidator.validateBody(request);
-        return AllergyValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<AllergyDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await AllergyValidator.getParamId(request);
-    };
-
-    static delete = async (request: express.Request): Promise<string> => {
-        return await AllergyValidator.getParamId(request);
-    };
-
-    static search = async (
+    search = async (
         request: express.Request
     ): Promise<AllergySearchFilters> => {
 
-        await query('patientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
+        await this.validateString(request, 'allergy', Where.Query, false, false, true);
+        await this.validateString(request, 'allergenCategory', Where.Query, false, false, true);
+        await this.validateString(request, 'allergenExposureRoute', Where.Query, false, false, true);
+        await this.validateString(request, 'severity', Where.Query, false, false, true);
+        await this.validateString(request, 'reaction', Where.Query, false, false, true);
 
-        await query('allergy').optional()
-            .trim()
-            .isString()
-            .run(request);
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
 
-        await query('allergenCategory').optional()
-            .trim()
-            .isString()
-            .run(request);
+        return this.getFilter(request);
 
-        await query('allergenExposureRoute').optional()
-            .trim()
-            .isString()
-            .run(request);
-
-        await query('severity').optional()
-            .trim()
-            .isString()
-            .run(request);
-
-        await query('reaction').optional()
-            .trim()
-            .isString()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex')
-            .optional()
-            .isInt()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('itemsPerPage')
-            .optional()
-            .isInt()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return AllergyValidator.getFilter(request);
     };
 
-    private static getFilter(request): AllergySearchFilters {
+    private getFilter(request): AllergySearchFilters {
 
-        const pageIndex =
-            request.query.pageIndex !== 'undefined'
-                ? parseInt(request.query.pageIndex as string, 10)
-                : 0;
-
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined'
-                ? parseInt(request.query.itemsPerPage as string, 10)
-                : 25;
-
-        const filters: AllergySearchFilters = {
+        var filters: AllergySearchFilters = {
             PatientUserId         : request.query.patientUserId ?? null,
             AllergenCategory      : request.query.allergenCategory ?? null,
             AllergenExposureRoute : request.query.allergenExposureRoute ?? null,
             Allergy               : request.query.allergy ?? null,
             Severity              : request.query.severity ?? null,
             Reaction              : request.query.reaction ?? null,
-            OrderBy               : request.query.orderBy ?? 'CreatedAt',
-            Order                 : request.query.order ?? 'descending',
-            PageIndex             : pageIndex,
-            ItemsPerPage          : itemsPerPage,
         };
 
-        return filters;
+        return this.updateBaseSearchFilters(request, filters);
     }
 
-    static update = async (request: express.Request): Promise<AllergyDomainModel> => {
+    update = async (request: express.Request): Promise<AllergyDomainModel> => {
 
-        const id = await AllergyValidator.getParamId(request);
-        await AllergyValidator.validateBody(request);
-
-        const domainModel = AllergyValidator.getDomainModel(request);
-        domainModel.id = id;
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
 
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private async validateCreateBody(request) {
 
-        await body('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Query, true, false);
+        await this.validateString(request, 'Allergy', Where.Query, true, false);
+        await this.validateString(request, 'AllergenCategory', Where.Query, false, false);
+        await this.validateString(request, 'AllergenExposureRoute', Where.Query, false, false);
+        await this.validateString(request, 'Severity', Where.Query, true, false);
+        await this.validateString(request, 'Reaction', Where.Query, false, false);
 
-        await body('Allergy').exists()
-            .trim()
-            .escape()
-            .run(request);
+        this.validateRequest(request);
 
-        await body('AllergenCategory').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('AllergenExposureRoute').optional()
-            .trim()
-            .run(request);
-
-        await body('Severity').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Reaction').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('OtherInformation').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('LastOccurrence').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
     }
 
-    static async getPatientUserId(request) {
+    private async validateUpdateBody(request) {
 
-        await param('patientUserId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Query, false, false);
+        await this.validateString(request, 'Allergy', Where.Query, false, false);
+        await this.validateString(request, 'AllergenCategory', Where.Query, false, false);
+        await this.validateString(request, 'AllergenExposureRoute', Where.Query, false, false);
+        await this.validateString(request, 'Severity', Where.Query, false, false);
+        await this.validateString(request, 'Reaction', Where.Query, false, false);
 
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.patientUserId;
-    }
-
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+        this.validateRequest(request);
+        
     }
 
 }

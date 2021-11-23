@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IDrugRepo } from "../../../database/repository.interfaces/clinical/medication/drug.repo.interface";
 import { DrugDomainModel } from '../../../domain.types/clinical/medication/drug/drug.domain.model';
@@ -18,7 +19,7 @@ export class DrugService {
         return await this._drugRepo.create(drugDomainModel);
     };
 
-    getById = async (id: string): Promise<DrugDto> => {
+    getById = async (id: uuid): Promise<DrugDto> => {
         return await this._drugRepo.getById(id);
     };
 
@@ -30,12 +31,12 @@ export class DrugService {
         return await this._drugRepo.search(filters);
     };
 
-    update = async (id: string, drugDomainModel: DrugDomainModel):
+    update = async (id: uuid, drugDomainModel: DrugDomainModel):
     Promise<DrugDto> => {
         return await this._drugRepo.update(id, drugDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._drugRepo.delete(id);
     };
 

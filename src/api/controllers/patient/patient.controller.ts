@@ -158,7 +158,7 @@ export class PatientController extends BaseUserController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Patient.Search', request, response);
+            await this.setContext('Patient.Search', request, response, false);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);

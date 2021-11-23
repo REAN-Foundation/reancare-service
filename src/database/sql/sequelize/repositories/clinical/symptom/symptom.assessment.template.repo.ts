@@ -23,7 +23,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
                 Tags        : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
             };
             const template = await SymptomAssessmentTemplate.create(entity);
-            return SymptomAssessmentTemplateMapper.toDto(template);
+            return await SymptomAssessmentTemplateMapper.toDto(template);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -44,7 +44,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
                 ]
             });
 
-            return SymptomAssessmentTemplateMapper.toDto(template);
+            return await SymptomAssessmentTemplateMapper.toDto(template);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -138,21 +138,22 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
         }
     };
 
-    update = async (id: string, model: SymptomAssessmentTemplateDomainModel): Promise<SymptomAssessmentTemplateDto> => {
+    // eslint-disable-next-line max-len
+    update = async (id: string, updateModel: SymptomAssessmentTemplateDomainModel): Promise<SymptomAssessmentTemplateDto> => {
         try {
             const template = await SymptomAssessmentTemplate.findByPk(id);
 
-            if (model.Title != null) {
-                template.Title = model.Title;
+            if (updateModel.Title != null) {
+                template.Title = updateModel.Title;
             }
-            if (model.Tags != null) {
-                var existingTags = template.Tags ? JSON.parse(template.Tags) as Array<string> : [];
-                existingTags.push(...model.Tags);
+            if (updateModel.Tags != null) {
+                var existingTags = [JSON.parse(template.Tags)];
+                existingTags.push(...updateModel.Tags);
                 existingTags = [...new Set(existingTags)];
                 template.Tags = JSON.stringify(existingTags);
             }
-            if (model.Description != null) {
-                template.Description = model.Description;
+            if (updateModel.Description != null) {
+                template.Description = updateModel.Description;
             }
 
             await template.save();

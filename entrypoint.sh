@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Add config/creds copying here...
+# Add config/creds copying here..
 aws s3 cp s3://$S3_CONFIG_BUCKET/$S3_CONFIG_PATH/env.config /app/.env
 aws s3 cp s3://$S3_CONFIG_BUCKET/$S3_CONFIG_PATH/reancare.config.json /app/reancare.config.json
 aws s3 cp s3://$S3_CONFIG_BUCKET/$S3_CONFIG_PATH/seed_data/internal.clients.seed.json /app/seed.data/internal.clients.seed.json

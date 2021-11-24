@@ -30,7 +30,7 @@ jobs:
           VALIDATE_TYPESCRIPT_ES: true
 
   Deploy-ECS:
-    environment: uat
+    environment: aha-uat
     runs-on: ubuntu-latest
 
     steps:

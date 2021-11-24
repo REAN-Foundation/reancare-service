@@ -5,7 +5,7 @@
 # file with configuration.  For more information, see:
 # https://github.com/actions/labeler
 
-name: AHA UAT-CI-CD
+name: AHA-UAT-CI-CD
 
 # Controls when the workflow will run
 on:

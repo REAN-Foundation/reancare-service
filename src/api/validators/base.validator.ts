@@ -161,13 +161,9 @@ export class BaseValidator {
         var chain: ValidationChain = this.getValidationChain(field, where);
         chain = this.checkRequired(required, chain, nullable);
 
-        chain = chain.customSanitizer((value) => {
-            if (value !== null && value !== undefined) {
-                chain = chain.trim();
-                chain = chain.isEmail();
-                chain = chain.normalizeEmail();
-            }
-        });
+        chain = chain.trim();
+        chain = chain.isEmail();
+        chain = chain.normalizeEmail();
 
         await chain.run(request);
     }

@@ -1,6 +1,8 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+
 export interface MoveMinutesDomainModel {
-    id?          : string;
-    PatientUserId: string;
+    id?          : uuid;
+    PatientUserId: uuid;
     MoveMinutes  : number;
     Unit         : string;
     RecordDate?  : Date;

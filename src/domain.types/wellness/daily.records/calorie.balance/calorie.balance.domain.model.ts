@@ -1,8 +1,10 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+
 export interface CalorieBalanceDomainModel {
-    id?: string;
-    PatientUserId?: string;
+    id?              : uuid;
+    PatientUserId?   : uuid;
     CaloriesConsumed?: number;
-    CaloriesBurned?: number;
-    Unit?: string;
-    RecordDate?: Date;
+    CaloriesBurned?  : number;
+    Unit?            : string;
+    RecordDate?      : Date;
 }

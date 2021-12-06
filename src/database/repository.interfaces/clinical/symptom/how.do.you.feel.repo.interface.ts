@@ -10,7 +10,7 @@ export interface IHowDoYouFeelRepo {
 
     search(filters: HowDoYouFeelSearchFilters): Promise<HowDoYouFeelSearchResults>;
 
-    update(id: string, addressDomainModel: HowDoYouFeelDomainModel): Promise<HowDoYouFeelDto>;
+    update(id: string, howDoYouFeelDomainModel: HowDoYouFeelDomainModel): Promise<HowDoYouFeelDto>;
 
     delete(id: string): Promise<boolean>;
 

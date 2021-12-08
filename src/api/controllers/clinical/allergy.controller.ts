@@ -1,38 +1,31 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { AllergySearchFilters } from '../../../domain.types/clinical/allergy/allergy.search.types';
 import { AllergenCategoriesList, AllergenExposureRoutesList } from '../../../domain.types/clinical/allergy/allergy.types';
 import { AllergyService } from '../../../services/clinical/allergy.service';
-import { PersonService } from '../../../services/person.service';
-import { RoleService } from '../../../services/role.service';
 import { UserService } from '../../../services/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { AllergyValidator } from '../../validators/clinical/allergy.validator';
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class AllergyController {
+export class AllergyController extends BaseController {
 
     //#region member variables and constructors
 
     _service: AllergyService = null;
 
-    _roleService: RoleService = null;
-
-    _personService: PersonService = null;
+    _validator: AllergyValidator = new AllergyValidator();
 
     _userService: UserService = null;
 
-    _authorizer: Authorizer = null;
-
     constructor() {
+        super();
         this._service = Loader.container.resolve(AllergyService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
         this._userService = Loader.container.resolve(UserService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -63,10 +56,9 @@ export class AllergyController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Allergy.Create';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Allergy.Create', request, response);
             
-            const domainModel = await AllergyValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             if (domainModel.PatientUserId != null) {
                 const person = await this._userService.getById(domainModel.PatientUserId);
@@ -90,12 +82,9 @@ export class AllergyController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Allergy.GetById';
-            
-            await this._authorizer.authorize(request, response);
+            this.setContext('Allergy.Create', request, response);
 
-            const id: string = await AllergyValidator.getById(request);
-
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const allergy = await this._service.getById(id);
             if (allergy == null) {
                 throw new ApiError(404, 'Allergy not found.');
@@ -111,10 +100,9 @@ export class AllergyController {
 
     getForPatient = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Allergy.GetForPatient';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Allergy.GetForPatient', request, response);
 
-            const patientUserId = await AllergyValidator.getPatientUserId(request);
+            const patientUserId = await this._validator.getParamUuid(request, 'patientUserId');
 
             const allergies = await this._service.getForPatient(patientUserId);
                    
@@ -129,10 +117,9 @@ export class AllergyController {
     
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Allergy.Search';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Allergy.Search', request, response);
 
-            const filters: AllergySearchFilters  = await AllergyValidator.search(request);
+            const filters: AllergySearchFilters  = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -151,12 +138,11 @@ export class AllergyController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Allergy.Update';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Allergy.Update', request, response);
 
-            const domainModel = await AllergyValidator.update(request);
+            const domainModel = await this._validator.update(request);
 
-            const id: string = await AllergyValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingAllergy = await this._service.getById(id);
             if (existingAllergy == null) {
                 throw new ApiError(404, 'Allergy not found.');
@@ -177,10 +163,9 @@ export class AllergyController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Allergy.Delete';
-            await this._authorizer.authorize(request, response);
+            this.setContext('Allergy.Delete', request, response);
 
-            const id: string = await AllergyValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingAllergy = await this._service.getById(id);
             if (existingAllergy == null) {
                 throw new ApiError(404, 'Allergy not found.');

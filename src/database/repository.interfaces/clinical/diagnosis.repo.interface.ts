@@ -14,5 +14,4 @@ export interface IDiagnosisRepo {
 
     delete(id: string): Promise<boolean>;
 
-    // searchFull(filters: DoctorSearchFilters): Promise<DoctorDetailsSearchResults>;
 }

@@ -1,24 +1,15 @@
 //////////////////////////////////////////////////////////////////////
 
 import { PhysicalActivityDto, PhysicalActivityForDayDto } from "./physical.activity.dto";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+import { BaseSearchFilters, BaseSearchResults } from "../../../../domain.types/miscellaneous/base.search.types";
 
-export interface PhysicalActivitySearchFilters {
-    PatientUserId?: string;
-    Exercise?: string;
-    Category?: string;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+export interface PhysicalActivitySearchFilters extends BaseSearchFilters{
+    PatientUserId?: uuid;
+    Exercise?     : string;
+    Category?     : string;
 }
 
-export interface PhysicalActivitySearchResults {
-    length: any;
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface PhysicalActivitySearchResults extends BaseSearchResults{
     Items: PhysicalActivityDto[] | PhysicalActivityForDayDto[];
 }

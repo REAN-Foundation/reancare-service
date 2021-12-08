@@ -10,6 +10,7 @@ export const register = (app: express.Application): void => {
 
     router.post('/', authenticator.authenticateClient, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
+    router.get('/internal/search', controller.search);
     router.get('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByUserId);
     router.put('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateByUserId);
     

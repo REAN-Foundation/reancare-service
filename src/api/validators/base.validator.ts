@@ -129,6 +129,23 @@ export class BaseValidator {
         await chain.run(request);
     }
 
+    validateArray = async(
+        request: express.Request,
+        field: string,
+        where: Where,
+        required: boolean,
+        nullable: boolean,
+        minLength?: number,
+        maxLength?: number) => {
+
+        var chain: ValidationChain = this.getValidationChain(field, where);
+        chain = this.checkRequired(required, chain, nullable);
+        chain = chain.isArray();
+        chain = this.checkLength(chain, minLength, maxLength);
+
+        await chain.run(request);
+    }
+
     validateDate = async(
         request: express.Request,
         field: string,
@@ -161,13 +178,9 @@ export class BaseValidator {
         var chain: ValidationChain = this.getValidationChain(field, where);
         chain = this.checkRequired(required, chain, nullable);
 
-        chain = chain.customSanitizer((value) => {
-            if (value !== null && value !== undefined) {
-                chain = chain.trim();
-                chain = chain.isEmail();
-                chain = chain.normalizeEmail();
-            }
-        });
+        chain = chain.trim();
+        chain = chain.isEmail();
+        chain = chain.normalizeEmail();
 
         await chain.run(request);
     }

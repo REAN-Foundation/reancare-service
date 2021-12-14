@@ -32,7 +32,8 @@
             "KnowledgeNugget.GetById",
             "KnowledgeNugget.Search",
             "KnowledgeNugget.Update",
-            "KnowledgeNugget.Delete"
+            "KnowledgeNugget.Delete",
+            "Careplan.Enrollment.Create"
         ]
     },
     {
@@ -282,7 +283,8 @@
             "Order.Update",
             "Order.Search",
             "DoctorNote.GetById",
-            "DoctorNote.Search"
+            "DoctorNote.Search",
+            "Careplan.Enrollment.Create"
         ]
     },
     {
@@ -516,7 +518,8 @@
             "UserTask.StartTask",
             "UserTask.FinishTask",
             "UserTask.CancelTask",
-            "UserTask.SummaryForDay"
+            "UserTask.SummaryForDay",
+            "Careplan.Enrollment.Create"
         ]
     },
     {

@@ -1,0 +1,29 @@
+import { EnrollmentDto } from "../../../../../modules/careplan/domain.types/enrollment/enrollment.dto";
+import Enrollment from "../../models/careplan/enrollment.model";
+
+///////////////////////////////////////////////////////////////////////////////////
+
+export class EnrollmentMapper {
+
+    static toDto = async (enrollment: Enrollment): Promise<EnrollmentDto> => {
+
+        if (enrollment == null){
+            return null;
+        }
+
+        const dto: EnrollmentDto = {
+            id               : enrollment.id,
+            UserId           : enrollment.UserId,
+            EnrollmentId     : enrollment.EnrollmentId,
+            ParticipantId    : enrollment.ParticipantId,
+            CareplanCode     : enrollment.CareplanCode,
+            CareplanProvider : "AHA",
+            CareplanName     : enrollment.CareplanName,
+            StartAt          : enrollment.StartDate,
+            EndAt            : enrollment.EndDate,
+            IsActive         : enrollment.IsActive,
+        };
+        return dto;
+    }
+
+}

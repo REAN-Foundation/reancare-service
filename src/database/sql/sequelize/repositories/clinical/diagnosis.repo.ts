@@ -182,9 +182,11 @@ export class DiagnosisRepo implements IDiagnosisRepo {
                 const dto = await DiagnosisMapper.toDto(diagnosis);
                 dtos.push(dto);
             }
+            const count = foundResults.count;
+            const totalCount = typeof count === "number" ? count : count[0];
 
             const searchResults: DiagnosisSearchResults = {
-                TotalCount     : foundResults.count,
+                TotalCount     : totalCount,
                 RetrievedCount : dtos.length,
                 PageIndex      : pageIndex,
                 ItemsPerPage   : limit,

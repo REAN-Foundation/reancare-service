@@ -171,9 +171,11 @@ export class PatientRepo implements IPatientRepo {
                 const dto = await PatientMapper.toDto(patient);
                 dtos.push(dto);
             }
+            const count = foundResults.count;
+            const totalCount = typeof count === "number" ? count : count[0];
 
             const searchResults: PatientSearchResults = {
-                TotalCount     : foundResults.count,
+                TotalCount     : totalCount,
                 RetrievedCount : dtos.length,
                 PageIndex      : pageIndex,
                 ItemsPerPage   : limit,

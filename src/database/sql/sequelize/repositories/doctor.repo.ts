@@ -246,9 +246,12 @@ export class DoctorRepo implements IDoctorRepo {
                 const dto = await DoctorMapper.toDto(doctor);
                 dtos.push(dto);
             }
+            
+            const count = foundResults.count;
+            const totalCount = typeof count === "number" ? count : count[0];
 
             const searchResults: DoctorSearchResults = {
-                TotalCount     : foundResults.count,
+                TotalCount     : totalCount,
                 RetrievedCount : dtos.length,
                 PageIndex      : pageIndex,
                 ItemsPerPage   : limit,

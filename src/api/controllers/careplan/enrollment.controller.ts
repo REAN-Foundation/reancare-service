@@ -18,7 +18,6 @@ export class EnrollmentController extends BaseController {
     constructor() {
         super();
         this._service = Loader.container.resolve(EnrollmentService);
-
     }
 
     //#endregion

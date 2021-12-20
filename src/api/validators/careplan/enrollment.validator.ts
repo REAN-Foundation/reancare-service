@@ -36,8 +36,8 @@ export class EnrollmentValidator extends BaseValidator {
 
         await this.validateUuid(request, 'UserId', Where.Body, false, false);
         await this.validateString(request, 'CareplanCode', Where.Body, true, false);
-        await this.validateString(request, 'CareplanProvider', Where.Body, true, false);
-        await this.validateString(request, 'CareplanName', Where.Body, true, false);
+        await this.validateString(request, 'CareplanProvider', Where.Body, false, true);
+        await this.validateString(request, 'CareplanName', Where.Body, false, false);
         await this.validateDate(request, 'StartDate', Where.Body, false, true);
         await this.validateDate(request, 'EndDate', Where.Body, true, false);
         await this.validateString(request, 'Gender', Where.Body, true, false);

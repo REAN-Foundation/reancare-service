@@ -31,15 +31,18 @@ export class EnrollmentService {
         patientDto.User = user;
 
         var enrollment = await Loader.carePlanService.registerPatientToCarePlan(patientDto, enrollmentDomainModel);
-
+        
         if (!enrollment) {
             throw new ApiError(500, 'Error while enrolling patient to careplan');
         }
-
+        
         enrollmentDomainModel.EnrollmentId = enrollment.id;
         enrollmentDomainModel.ParticipantId = enrollment.participantId;
+        
+        var dto = await this._enrollmentRepo.create(enrollmentDomainModel);
+        Loader.carePlanService.fetchTasks(dto);
 
-        return await this._enrollmentRepo.create(enrollmentDomainModel);
+        return dto;
     };
 
 }

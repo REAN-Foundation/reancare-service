@@ -1,17 +1,17 @@
-import { CareplanArtifactDto } from "../../../../../modules/careplan/domain.types/artifact/careplan.artifact.dto";
+import { CareplanActivityDto } from "../../../../../modules/careplan/domain.types/activity/careplan.activity.dto";
 import CareplanArtifact from "../../models/careplan/careplan.artifact.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class CareplanArtifactMapper {
 
-    static toDto = async (careplanArtifact: CareplanArtifact): Promise<CareplanArtifactDto> => {
+    static toDto = async (careplanArtifact: CareplanArtifact): Promise<CareplanActivityDto> => {
 
         if (careplanArtifact == null){
             return null;
         }
 
-        const dto: CareplanArtifactDto = {
+        const dto: CareplanActivityDto = {
             id               : careplanArtifact.id,
             UserId           : careplanArtifact.UserId,
             EnrollmentId     : careplanArtifact.EnrollmentId,

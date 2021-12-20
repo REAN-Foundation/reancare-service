@@ -1,4 +1,4 @@
-export interface CareplanArtifactDomainModel {
+export interface CareplanActivityDomainModel {
     id?         : string;
     UserId      : string;
     EnrollmentId: number;

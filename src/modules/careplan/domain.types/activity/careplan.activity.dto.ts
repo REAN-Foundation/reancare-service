@@ -1,6 +1,6 @@
 import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 
-export interface CareplanArtifactDto {
+export interface CareplanActivityDto {
     id              : uuid;
     UserId          : string;
     EnrollmentId    : number;

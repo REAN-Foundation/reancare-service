@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { IEnrollmentRepo } from "../../database/repository.interfaces/careplan/enrollment.repo.interface";
+import { ICareplanRepo } from "../../database/repository.interfaces/careplan/enrollment.repo.interface";
 import { EnrollmentDomainModel } from '../../modules/careplan/domain.types/enrollment/enrollment.domain.model';
 import { EnrollmentDto } from '../../modules/careplan/domain.types/enrollment/enrollment.dto';
 import { IPatientRepo } from "../../database/repository.interfaces/patient/patient.repo.interface";
@@ -14,14 +14,14 @@ import { IUserRepo } from "../../database/repository.interfaces/user/user.repo.i
 export class EnrollmentService {
 
     constructor(
-        @inject('IEnrollmentRepo') private _enrollmentRepo: IEnrollmentRepo,
+        @inject('IEnrollmentRepo') private _enrollmentRepo: ICareplanRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
 
     ) {}
 
-    create = async (enrollmentDomainModel: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+    enroll = async (enrollmentDomainModel: EnrollmentDomainModel): Promise<EnrollmentDto> => {
         var patientDto = await this._patientRepo.getByUserId(enrollmentDomainModel.UserId);
 
         var user = await this._userRepo.getById(patientDto.UserId);
@@ -39,7 +39,7 @@ export class EnrollmentService {
         enrollmentDomainModel.EnrollmentId = enrollment.id;
         enrollmentDomainModel.ParticipantId = enrollment.participantId;
         
-        var dto = await this._enrollmentRepo.create(enrollmentDomainModel);
+        var dto = await this._enrollmentRepo.enroll(enrollmentDomainModel);
         Loader.carePlanService.fetchTasks(dto);
 
         return dto;

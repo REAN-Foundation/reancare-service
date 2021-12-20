@@ -1,8 +1,10 @@
 
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { PatientDomainModel } from "../../../domain.types/patient/patient/patient.domain.model";
-import { CareplanArtifactDto } from "../domain.types/artifact/careplan.artifact.dto";
+import { CareplanActivityDto } from "../domain.types/activity/careplan.activity.dto";
 import { EnrollmentDomainModel } from "../domain.types/enrollment/enrollment.domain.model";
-import { EnrollmentDto } from "../domain.types/enrollment/enrollment.dto";
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export interface ICarePlanService {
 
@@ -11,11 +13,32 @@ export interface ICarePlanService {
     providerName(): string;
 
     registerPatient(patientDomainModel: PatientDomainModel): Promise<any>;
-    enrollPatientToCarePlan (patientDomainModel: PatientDomainModel,
-        enrollmentDomainModel: EnrollmentDomainModel): Promise<any>;
 
-    fetchTasks(enrollmentDto: EnrollmentDto): Promise<CareplanArtifactDto[]>;
-    fetchTasksForDay(id: string, startDay: Date, endDay: Date): Promise<any>;
+    enrollPatientToCarePlan (patient: PatientDomainModel,
+        enrollmentDetails: EnrollmentDomainModel): Promise<any>;
 
-    delete(id: string): Promise<any>;
+    fetchActivitiesForDay(patientUserId: uuid,
+        careplanCode: string,
+        enrollmentId: string,
+        day: Date): Promise<CareplanActivityDto[]>;
+
+    fetchActivities(patientUserId: uuid,
+        careplanCode: string,
+        enrollmentId: string): Promise<CareplanActivityDto[]>;
+    
+    getActivity(
+            patientUserId: uuid,
+            careplanCode: string,
+            enrollmentId: string,
+            activityId: string
+        ): Promise<CareplanActivityDto>;
+
+    updateActivity(
+            patientUserId: uuid,
+            careplanCode: string,
+            enrollmentId: string,
+            activityId: string,
+            updates: any
+        ): Promise<CareplanActivityDto>;
+
 }

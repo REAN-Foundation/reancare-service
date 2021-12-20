@@ -27,7 +27,7 @@ export class EnrollmentValidator extends BaseValidator {
         return enrollmentDomainModel;
     };
 
-    create = async (request: express.Request): Promise<EnrollmentDomainModel> => {
+    enroll = async (request: express.Request): Promise<EnrollmentDomainModel> => {
         await this.validateCreateBody(request);
         return this.getDomainModel(request);
     };

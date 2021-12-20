@@ -3,7 +3,7 @@ import { ICarePlanService } from "../../interfaces/careplan.service.interface";
 import needle = require('needle');
 import { Logger } from '../../../../common/logger';
 import { AhaCache } from './aha.cache';
-import Participant from "../../../../database/sql/sequelize/models/careplan/participant.model";
+
 import { ParticipantMapper } from "../../../../database/sql/sequelize/mappers/participant.mapper";
 import { ApiError } from "../../../../common/api.error";
 import { IPersonRepo } from "../../../../database/repository.interfaces/person.repo.interface";
@@ -11,8 +11,9 @@ import { inject, injectable } from "tsyringe";
 import { EnrollmentDomainModel } from "../../domain.types/enrollment/enrollment.domain.model";
 import { Helper } from "../../../../common/helper";
 import { EnrollmentDto } from "../../domain.types/enrollment/enrollment.dto";
-import CareplanArtifact from "../../../../database/sql/sequelize/models/careplan/careplan.artifact.model";
+
 import { CareplanArtifactMapper } from "../../../../database/sql/sequelize/mappers/careplan/artifact.mapper";
+import { CareplanActivityDto } from "../../domain.types/activity/careplan.activity.dto";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -178,6 +179,7 @@ export class AhaCarePlanService implements ICarePlanService {
             if (!participantDetails) {
                 throw new ApiError(500, 'Unable to register participant with careplan service');
             }
+
             Logger.instance().log(`Participant details2: ${JSON.stringify(participantDetails)}`);
 
             var enrollmentData = {
@@ -212,38 +214,50 @@ export class AhaCarePlanService implements ICarePlanService {
         }
     };
 
-    public fetchTasks = async(enrollmentDto:EnrollmentDto): Promise<any> => {
+    fetchActivitiesForDay(
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string,
+        day: Date): Promise<CareplanActivityDto[]> {
+        throw new Error("Method not implemented.");
+    }
 
+    fetchActivities = async (
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string,
+        fromDate: Date,
+        toDate: Date): Promise<CareplanActivityDto[]> => {
         try {
         
-            var startDate = Helper.formatDate(enrollmentDto.StartAt);
-            var endDate = Helper.formatDate(enrollmentDto.EndAt);
-
+            var startDate = Helper.formatDate(fromDate);
+            var endDate = Helper.formatDate(toDate);
+    
             Logger.instance().log(`Start Date: ${(startDate)}`);
             Logger.instance().log(`End Date: ${(endDate)}`);
-
+    
             const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
-            var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentDto.EnrollmentId}/activities?fromDate=${startDate}&toDate=${endDate}&pageSize=500`;
-        
+            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities?fromDate=${startDate}&toDate=${endDate}&pageSize=500`;
+            
             var response = await needle("get", url, this.getHeaderOptions());
-
+    
             if (response.statusCode !== 200) {
                 Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
                 Logger.instance().error('Unable to fetch tasks for given enrollment id!', response.statusCode, null);
                 throw new ApiError(500, "Careplan service error: " + response.body.error.message);
             }
-
+    
             // AHA response has incorrect spelling of activities: "activitites"
             Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.activitites.length)}`);
             var activities = response.body.data.activitites;
             var activityEntities = [];
-
+    
             activities.forEach(activity => {
                 var entity = {
-                    Provider         : enrollmentDto.Provider,
-                    PlanName         : enrollmentDto.PlanName,
-                    UserId           : enrollmentDto.UserId,
-                    EnrollmentId     : enrollmentDto.EnrollmentId,
+                    Provider         : this.providerName(),
+                    PlanName         : careplanCode,
+                    UserId           : patientUserId,
+                    EnrollmentId     : enrollmentId,
                     Type             : activity.type,
                     ProviderActionId : activity.code,
                     Title            : activity.title,
@@ -252,26 +266,47 @@ export class AhaCarePlanService implements ICarePlanService {
                     Frequency        : activity.frequency,
                     Status           : activity.status
                 };
-
+    
                 activityEntities.push(entity);
             });
-            
+                
             const tasks = await CareplanArtifact.bulkCreate(activityEntities);
-
+    
             var taskDtos = [];
             tasks.forEach(async (task) => {
                 var dto = await CareplanArtifactMapper.toDto(task);
                 taskDtos.push(dto);
             });
-
-            Logger.instance().log(`Imported all AHA tasks for enrollment id: ${enrollmentDto.EnrollmentId}`);
-
+    
+            Logger.instance().log(`Imported all AHA tasks for enrollment id: ${enrollmentId}`);
+    
             return taskDtos;
-
+    
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    }
+
+    getActivity(
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string,
+        activityId: string): Promise<CareplanActivityDto> {
+        throw new Error("Method not implemented.");
+    }
+
+    updateActivity(
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string,
+        activityId: string,
+        updates: any): Promise<CareplanActivityDto> {
+        throw new Error("Method not implemented.");
+    }
+
+    public fetchTasks = async(enrollmentDto:EnrollmentDto): Promise<any> => {
+
     }
 
     fetchTasksForDay(id: string, startDate: Date, endDate: Date): Promise<any> {

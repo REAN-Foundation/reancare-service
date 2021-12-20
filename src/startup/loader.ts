@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { CarePlanService } from '../modules/careplan/services/careplan.service';
+import { CarePlanHandler } from '../modules/careplan/careplan.service';
 import { container, DependencyContainer } from 'tsyringe';
 import { Authenticator } from '../auth/authenticator';
 import { Authorizer } from '../auth/authorizer';
@@ -32,7 +32,7 @@ export class Loader {
 
     private static _ehrStore: StorageService = null;
 
-    private static _carePlanService: CarePlanService = null;
+    private static _carePlanService: CarePlanHandler = null;
 
     private static _container: DependencyContainer = container;
 
@@ -96,7 +96,7 @@ export class Loader {
             Loader._messagingService = container.resolve(MessagingService);
             Loader._messagingService.init();
 
-            Loader._carePlanService = container.resolve(CarePlanService);
+            Loader._carePlanService = container.resolve(CarePlanHandler);
             Loader._carePlanService.init();
 
             return true;

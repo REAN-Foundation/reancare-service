@@ -8,6 +8,8 @@ import { EnrollmentDomainModel } from "../domain.types/enrollment/enrollment.dom
 import { ConfigurationManager } from "../../../config/configuration.manager";
 import { Loader } from "../../../startup/loader";
 import Dictionary from "../../../common/dictionary";
+import { CareplanArtifactDto } from "../domain.types/artifact/careplan.artifact.dto";
+import { EnrollmentDto } from "../domain.types/enrollment/enrollment.dto";
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -42,12 +44,11 @@ export class CarePlanService {
     }
 
     fetchTasksForDay = async (patientUserId: uuid, day: Date): Promise<CarePlanTaskDto[]> => {
-        
         return await this._services[0].fetchTasksForDay(patientUserId, day);
     }
 
-    fetchTasks = async (id: string, startDate: Date, endDate: Date): Promise<any> => {
-        return await this._services[0].fetchTasks(id, startDate, endDate);
+    fetchTasks = async (enrollmentDto: EnrollmentDto): Promise<CareplanArtifactDto[]> => {
+        return await this._services[0].fetchTasks(enrollmentDto);
     }
 
     delete = async (id: string): Promise<any> => {

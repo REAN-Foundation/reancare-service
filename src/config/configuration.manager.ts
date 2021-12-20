@@ -39,6 +39,7 @@ export class ConfigurationManager {
                 // eslint-disable-next-line max-len
                 InAppNotificationProvider : configuration.Communication.InAppNotifications.Provider as InAppNotificationServiceProvider,
             },
+            CarePlans        : configuration.CarePlans,
             TemporaryFolders : {
                 Upload                     : configuration.TemporaryFolders.Upload as string,
                 Download                   : configuration.TemporaryFolders.Download as string,
@@ -118,6 +119,10 @@ export class ConfigurationManager {
     
     public static InAppNotificationServiceProvider = (): InAppNotificationServiceProvider => {
         return ConfigurationManager._config.Communication.InAppNotificationProvider;
+    };
+
+    public static careplans = (): { Provider: string; Service: string; } [] => {
+        return ConfigurationManager._config.CarePlans;
     };
 
     private static checkConfigSanity() {

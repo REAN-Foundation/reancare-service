@@ -4,6 +4,6 @@ import { uuid } from "../../../domain.types/miscellaneous/system.types";
 export interface CarePlanTaskDto extends UserTaskDto{
     ProviderTaskId?: string|number;
     CareplanId      : uuid;    //REANCare Care-plan isntance id
-    CarePlanProvider: string;  //AHA
-    CarePlanName    : string;  //AHA-HF
+    Provider: string;  //AHA
+    PlanName    : string;  //AHA-HF
 }

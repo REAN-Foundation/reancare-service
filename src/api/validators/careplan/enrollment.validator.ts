@@ -13,15 +13,15 @@ export class EnrollmentValidator extends BaseValidator {
     getDomainModel = (request: express.Request): EnrollmentDomainModel => {
 
         const enrollmentDomainModel: EnrollmentDomainModel = {
-            UserId           : request.body.UserId,
-            EnrollmentId     : request.body.EnrollmentId,
-            ParticipantId    : request.body.ParticipantId,
-            CareplanProvider : request.body.CareplanProvider,
-            CareplanName     : request.body.CareplanName,
-            CareplanCode     : request.body.CareplanCode,
-            StartDate        : request.body.StartDate,
-            EndDate          : request.body.EndDate,
-            Gender           : request.body.Gender,
+            UserId        : request.body.UserId,
+            Provider      : request.body.Provider,
+            EnrollmentId  : request.body.EnrollmentId,
+            ParticipantId : request.body.ParticipantId,
+            PlanName      : request.body.PlanName,
+            PlanCode      : request.body.PlanCode,
+            StartDate     : request.body.StartDate,
+            EndDate       : request.body.EndDate,
+            Gender        : request.body.Gender,
         };
 
         return enrollmentDomainModel;
@@ -35,9 +35,9 @@ export class EnrollmentValidator extends BaseValidator {
     private async validateCreateBody(request) {
 
         await this.validateUuid(request, 'UserId', Where.Body, false, false);
-        await this.validateString(request, 'CareplanCode', Where.Body, true, false);
-        await this.validateString(request, 'CareplanProvider', Where.Body, true, false);
-        await this.validateString(request, 'CareplanName', Where.Body, true, false);
+        await this.validateString(request, 'PlanCode', Where.Body, true, false);
+        await this.validateString(request, 'Provider', Where.Body, true, false);
+        await this.validateString(request, 'PlanName', Where.Body, true, false);
         await this.validateDate(request, 'StartDate', Where.Body, false, true);
         await this.validateDate(request, 'EndDate', Where.Body, true, false);
         await this.validateString(request, 'Gender', Where.Body, true, false);

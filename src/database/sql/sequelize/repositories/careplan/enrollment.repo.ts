@@ -14,15 +14,15 @@ export class EnrollmentRepo implements IEnrollmentRepo {
     Promise<EnrollmentDto> => {
         try {
             const entity = {
-                UserId           : createModel.UserId,
-                ParticipantId    : createModel.ParticipantId,
-                EnrollmentId     : createModel.EnrollmentId,
-                CareplanCode     : createModel.CareplanCode,
-                CareplanProvider : createModel.CareplanProvider,
-                CareplanName     : createModel.CareplanName,
-                StartDate        : createModel.StartDate,
-                EndDate          : createModel.EndDate,
-                Gender           : createModel.Gender,
+                UserId        : createModel.UserId,
+                Provider      : createModel.Provider,
+                ParticipantId : createModel.ParticipantId,
+                EnrollmentId  : createModel.EnrollmentId,
+                PlanCode      : createModel.PlanCode,
+                PlanName      : createModel.PlanName,
+                StartDate     : createModel.StartDate,
+                EndDate       : createModel.EndDate,
+                Gender        : createModel.Gender,
             };
 
             const enrollment = await Enrollment.create(entity);

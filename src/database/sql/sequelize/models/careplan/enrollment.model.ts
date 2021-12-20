@@ -47,20 +47,20 @@ export default class Enrollment extends Model {
         type      : DataType.STRING(64),
         allowNull : false,
     })
-    CareplanCode: string;
+    PlanCode: string;
 
     @Column({
         type         : DataType.STRING(64),
         allowNull    : false,
         defaultValue : "AHA"
     })
-    CareplanProvider: string;
+    Provider: string;
 
     @Column({
         type      : DataType.STRING(64),
         allowNull : false,
     })
-    CareplanName: string;
+    PlanName: string;
 
     @Column({
         type      : DataType.DATE,

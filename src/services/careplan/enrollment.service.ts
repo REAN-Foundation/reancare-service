@@ -30,7 +30,7 @@ export class EnrollmentService {
         }
         patientDto.User = user;
 
-        var enrollment = await Loader.carePlanService.registerPatientToCarePlan(patientDto, enrollmentDomainModel);
+        var enrollment = await Loader.carePlanService.enrollPatientToCarePlan(patientDto, enrollmentDomainModel);
 
         if (!enrollment) {
             throw new ApiError(500, 'Error while enrolling patient to careplan');

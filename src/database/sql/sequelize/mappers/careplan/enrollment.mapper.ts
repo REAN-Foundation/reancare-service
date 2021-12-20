@@ -12,16 +12,16 @@ export class EnrollmentMapper {
         }
 
         const dto: EnrollmentDto = {
-            id               : enrollment.id,
-            UserId           : enrollment.UserId,
-            EnrollmentId     : enrollment.EnrollmentId,
-            ParticipantId    : enrollment.ParticipantId,
-            CareplanCode     : enrollment.CareplanCode,
-            CareplanProvider : "AHA",
-            CareplanName     : enrollment.CareplanName,
-            StartAt          : enrollment.StartDate,
-            EndAt            : enrollment.EndDate,
-            IsActive         : enrollment.IsActive,
+            id            : enrollment.id,
+            UserId        : enrollment.UserId,
+            EnrollmentId  : enrollment.EnrollmentId,
+            ParticipantId : enrollment.ParticipantId,
+            PlanCode      : enrollment.PlanCode,
+            Provider      : "AHA",
+            PlanName      : enrollment.PlanName,
+            StartAt       : enrollment.StartDate,
+            EndAt         : enrollment.EndDate,
+            IsActive      : enrollment.IsActive,
         };
         return dto;
     }

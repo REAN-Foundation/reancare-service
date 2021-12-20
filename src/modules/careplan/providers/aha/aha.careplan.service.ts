@@ -9,14 +9,19 @@ import Participant from "../../../../database/sql/sequelize/models/careplan/part
 import { ParticipantMapper } from "../../../../database/sql/sequelize/mappers/participant.mapper";
 import { ApiError } from "../../../../common/api.error";
 import { IPersonRepo } from "../../../../database/repository.interfaces/person.repo.interface";
-import { inject } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { EnrollmentDomainModel } from "../../domain.types/enrollment/enrollment.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
+@injectable()
 export class AhaCarePlanService implements ICarePlanService {
 
     constructor(@inject('IPersonRepo') private _personRepo: IPersonRepo) {}
+
+    public providerName(): string {
+        return "AHA";
+    }
 
     public init = async (): Promise<boolean> => {
         try {
@@ -155,7 +160,7 @@ export class AhaCarePlanService implements ICarePlanService {
         }
     };
 
-    public registerPatientToCarePlan = async (
+    public enrollPatientToCarePlan = async (
         patientDomainModel: PatientDomainModel,
         enrollmentDomainModel: EnrollmentDomainModel
     ): Promise<any> => {
@@ -175,7 +180,7 @@ export class AhaCarePlanService implements ICarePlanService {
 
             var enrollmentData = {
                 userId       : participantDetails.UserId,
-                careplanCode : enrollmentDomainModel.CareplanCode,
+                PlanCode : enrollmentDomainModel.PlanCode,
                 startAt      : enrollmentDomainModel.StartDate,
                 endAt        : enrollmentDomainModel.EndDate,
                 meta         : {

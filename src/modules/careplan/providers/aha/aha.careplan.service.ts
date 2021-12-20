@@ -179,11 +179,11 @@ export class AhaCarePlanService implements ICarePlanService {
             Logger.instance().log(`Participant details2: ${JSON.stringify(participantDetails)}`);
 
             var enrollmentData = {
-                userId       : participantDetails.UserId,
+                userId   : participantDetails.UserId,
                 PlanCode : enrollmentDomainModel.PlanCode,
-                startAt      : enrollmentDomainModel.StartDate,
-                endAt        : enrollmentDomainModel.EndDate,
-                meta         : {
+                startAt  : enrollmentDomainModel.StartDate,
+                endAt    : enrollmentDomainModel.EndDate,
+                meta     : {
                     gender : participantDetails.Gender,
                 },
             };

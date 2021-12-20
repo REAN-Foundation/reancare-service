@@ -1,3 +1,4 @@
+import { injectable } from "tsyringe";
 import { ICarePlanService } from "../interfaces/careplan.service.interface";
 // import { AhaCarePlanService } from "../providers/aha/aha.careplan.service";
 import { PatientDomainModel } from "../../../domain.types/patient/patient/patient.domain.model";
@@ -10,6 +11,7 @@ import Dictionary from "../../../common/dictionary";
 
 ////////////////////////////////////////////////////////////////////////
 
+@injectable()
 export class CarePlanService {
 
     _services = new Dictionary<ICarePlanService>();
@@ -21,7 +23,7 @@ export class CarePlanService {
             this._services.add(cp.Provider, service);
         }
     }
-
+    
     init = async (): Promise<boolean> => {
 
         for await (var s of this._services.getKeys()) {

@@ -1,18 +1,14 @@
-import { PatientDomainModel } from "../../../../domain.types/patient/patient/patient.domain.model";
 import { ICarePlanService } from "../../interfaces/careplan.service.interface";
 import needle = require('needle');
 import { Logger } from '../../../../common/logger';
 import { AhaCache } from './aha.cache';
-import { ParticipantMapper } from "../../../../database/sql/sequelize/mappers/participant.mapper";
 import { ApiError } from "../../../../common/api.error";
 import { IPersonRepo } from "../../../../database/repository.interfaces/person.repo.interface";
 import { inject, injectable } from "tsyringe";
 import { EnrollmentDomainModel } from "../../domain.types/enrollment/enrollment.domain.model";
 import { Helper } from "../../../../common/helper";
-import { EnrollmentDto } from "../../domain.types/enrollment/enrollment.dto";
-import { CareplanArtifactMapper } from "../../../../database/sql/sequelize/mappers/careplan/artifact.mapper";
-import { CareplanActivityDto } from "../../domain.types/activity/careplan.activity.dto";
-import { CareplanActivityDomainModel } from "../../domain.types/activity/careplan.activity.domain.model";
+import { CareplanActivity } from "../../domain.types/activity/careplan.activity.dto";
+import { ParticipantDomainModel } from "../../domain.types/participant/participant.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -68,32 +64,14 @@ export class AhaCarePlanService implements ICarePlanService {
         }
     };
 
-    public registerPatient = async (patientDomainModel: PatientDomainModel): Promise<any> => {
+    registerPatient = async (patientDetails: ParticipantDomainModel): Promise<string> => {
         try {
-            var existingParticipant = await Participant.findOne({ where: { UserId: patientDomainModel.UserId } });
-
-            if (existingParticipant) {
-                const dto = await ParticipantMapper.toDto(existingParticipant);
-                return dto;
-            }
-
-            Logger.instance().log(`Person id: ${JSON.stringify(patientDomainModel)}`);
-
-            if (!patientDomainModel.User.Person) {
-                throw new ApiError(500, 'Unable to register participant as Person not found!');
-            }
-
-            var personDetails = await this._personRepo.getById(patientDomainModel.User.Person.id);
-
-            Logger.instance().log(`Person Details: ${JSON.stringify(personDetails)}`);
-
             const entity = {
-                UserId         : patientDomainModel.UserId,
-                ParticipantId  : null,
-                Name           : personDetails.FirstName,
+                UserId         : patientDetails.UserId,
+                Name           : patientDetails.Name,
                 IsActive       : true,
-                Gender         : personDetails.Gender,
-                Age            : parseInt(personDetails.Age),
+                Gender         : patientDetails.Gender,
+                Age            : patientDetails.Age,
                 DOB            : null,
                 HeightInInches : null,
                 WeightInLbs    : null,
@@ -137,96 +115,60 @@ export class AhaCarePlanService implements ICarePlanService {
 
             var url = process.env.AHA_API_BASE_URL + '/participants';
 
-            Logger.instance().log(`body: ${JSON.stringify(body)}`);
+            //Logger.instance().log(`body: ${JSON.stringify(body)}`);
 
             var response = await needle('post', url, body, this.getHeaderOptions());
             if (response.statusCode !== 200) {
-                Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
-                Logger.instance().error(
-                    'Unable to register participant with AHA API service!',
-                    response.statusCode,
-                    null
-                );
-                return false;
+                Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
+                throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
             }
-
             Logger.instance().log(`response body: ${JSON.stringify(response.body)}`);
-            entity.ParticipantId = response.body.data.participant.id;
+            return response.body.data.participant.id;
 
-            const participant = await Participant.create(entity);
-            const dto = await ParticipantMapper.toDto(participant);
-            return dto;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    };
+    }
 
     public enrollPatientToCarePlan = async (
-        patientDomainModel: PatientDomainModel,
-        enrollmentDomainModel: EnrollmentDomainModel
-    ): Promise<any> => {
+        enrollmentDomainModel: EnrollmentDomainModel): Promise<string> => {
         try {
-            var participantDetails = await Participant.findOne({ where: { UserId: patientDomainModel.UserId } });
-
-            Logger.instance().log(`Participant details1: ${JSON.stringify(participantDetails)}`);
-
-            if (!participantDetails) {
-                participantDetails = await this.registerPatient(patientDomainModel);
-            }
-
-            if (!participantDetails) {
-                throw new ApiError(500, 'Unable to register participant with careplan service');
-            }
-
-            Logger.instance().log(`Participant details2: ${JSON.stringify(participantDetails)}`);
-
             var enrollmentData = {
-                userId   : participantDetails.UserId,
+                userId   : enrollmentDomainModel.UserId,
                 PlanCode : enrollmentDomainModel.PlanCode,
                 startAt  : enrollmentDomainModel.StartDate,
                 endAt    : enrollmentDomainModel.EndDate,
                 meta     : {
-                    gender : participantDetails.Gender,
+                    gender : enrollmentDomainModel.Gender,
                 },
             };
-
-            Logger.instance().log(`Enrollment details: ${JSON.stringify(enrollmentData)}`);
 
             var url = process.env.AHA_API_BASE_URL + '/enrollments';
 
             var response = await needle('post', url, enrollmentData, this.getHeaderOptions());
 
-            Logger.instance().log(`Enrollment response code: ${JSON.stringify(response.statusCode)}`);
-
             if (response.statusCode !== 200) {
-                Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
-                Logger.instance().error('Unable to enroll patient with AHA API service!', response.statusCode, null);
+                Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
                 throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
             }
 
             Logger.instance().log(`response body: ${JSON.stringify(response.body)}`);
-            return response.body.data.enrollment;
+
+            return response.body.data.enrollment.id;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
-
-    fetchActivitiesForDay(
-        patientUserId: string,
-        careplanCode: string,
-        enrollmentId: string,
-        day: Date): Promise<CareplanActivityDto[]> {
-        throw new Error("Method not implemented.");
-    }
 
     fetchActivities = async (
         patientUserId: string,
         careplanCode: string,
         enrollmentId: string,
         fromDate: Date,
-        toDate: Date): Promise<CareplanActivityDto[]> => {
+        toDate: Date): Promise<CareplanActivity[]> => {
         try {
         
             var startDate = Helper.formatDate(fromDate);
@@ -249,12 +191,12 @@ export class AhaCarePlanService implements ICarePlanService {
             // AHA response has incorrect spelling of activities: "activitites"
             Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.activitites.length)}`);
             var activities = response.body.data.activitites;
-            var activityEntities: CareplanActivityDomainModel[] = [];
-    
+            var activityEntities: CareplanActivity[] = [];
             activities.forEach(activity => {
-                var entity: CareplanActivityDomainModel = {
+                var entity: CareplanActivity = {
                     Provider         : this.providerName(),
                     PlanName         : careplanCode,
+                    PlanCode         : careplanCode,
                     UserId           : patientUserId,
                     EnrollmentId     : enrollmentId,
                     Type             : activity.type,
@@ -264,24 +206,11 @@ export class AhaCarePlanService implements ICarePlanService {
                     Sequence         : activity.sequence,
                     Frequency        : activity.frequency,
                     Status           : activity.status,
-                    ParticipantId    : "",
-                    PlanCode         : careplanCode
                 };
-    
                 activityEntities.push(entity);
             });
                 
-            const tasks = await CareplanArtifact.bulkCreate(activityEntities);
-    
-            var taskDtos = [];
-            tasks.forEach(async (task) => {
-                var dto = await CareplanArtifactMapper.toDto(task);
-                taskDtos.push(dto);
-            });
-    
-            Logger.instance().log(`Imported all AHA tasks for enrollment id: ${enrollmentId}`);
-    
-            return taskDtos;
+            return activities;
     
         } catch (error) {
             Logger.instance().log(error.message);
@@ -293,7 +222,7 @@ export class AhaCarePlanService implements ICarePlanService {
         patientUserId: string,
         careplanCode: string,
         enrollmentId: string,
-        activityId: string): Promise<CareplanActivityDto> {
+        activityId: string): Promise<CareplanActivity> {
         throw new Error("Method not implemented.");
     }
 
@@ -302,20 +231,8 @@ export class AhaCarePlanService implements ICarePlanService {
         careplanCode: string,
         enrollmentId: string,
         activityId: string,
-        updates: any): Promise<CareplanActivityDto> {
+        updates: any): Promise<CareplanActivity> {
         throw new Error("Method not implemented.");
-    }
-
-    public fetchTasks = async(enrollmentDto:EnrollmentDto): Promise<any> => {
-
-    }
-
-    fetchTasksForDay(id: string, startDate: Date, endDate: Date): Promise<any> {
-        throw new Error("Method not implemented.");
-    }
-
-    delete(id: string): Promise<any> {
-        throw new Error('Method not implemented.');
     }
 
     getHeaderOptions() {

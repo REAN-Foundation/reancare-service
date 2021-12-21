@@ -1,7 +1,6 @@
 
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
-import { PatientDomainModel } from "../../../domain.types/patient/patient/patient.domain.model";
-import { CareplanActivityDto } from "../domain.types/activity/careplan.activity.dto";
+import { CareplanActivity } from "../domain.types/activity/careplan.activity.dto";
 import { EnrollmentDomainModel } from "../domain.types/enrollment/enrollment.domain.model";
 import { ParticipantDomainModel } from "../domain.types/participant/participant.domain.model";
 
@@ -13,26 +12,22 @@ export interface ICarePlanService {
 
     providerName(): string;
 
-    registerPatient(patientDetails: ParticipantDomainModel): Promise<any>;
+    registerPatient(patientDetails: ParticipantDomainModel): Promise<string>;
 
-    enrollPatientToCarePlan (patient: PatientDomainModel,
-        enrollmentDetails: EnrollmentDomainModel): Promise<any>;
+    enrollPatientToCarePlan(enrollmentDetails: EnrollmentDomainModel): Promise<string>;
 
-    fetchActivitiesForDay(patientUserId: uuid,
+    fetchActivities(patientUserId: string,
         careplanCode: string,
         enrollmentId: string,
-        day: Date): Promise<CareplanActivityDto[]>;
-
-    fetchActivities(patientUserId: uuid,
-        careplanCode: string,
-        enrollmentId: string): Promise<CareplanActivityDto[]>;
+        fromDate: Date,
+        toDate: Date): Promise<CareplanActivity[]>;
     
     getActivity(
             patientUserId: uuid,
             careplanCode: string,
             enrollmentId: string,
             activityId: string
-        ): Promise<CareplanActivityDto>;
+        ): Promise<CareplanActivity>;
 
     updateActivity(
             patientUserId: uuid,
@@ -40,6 +35,6 @@ export interface ICarePlanService {
             enrollmentId: string,
             activityId: string,
             updates: any
-        ): Promise<CareplanActivityDto>;
+        ): Promise<CareplanActivity>;
 
 }

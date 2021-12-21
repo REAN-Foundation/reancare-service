@@ -19,15 +19,15 @@ export class CareplanValidator extends BaseValidator {
             ParticipantId : request.body.ParticipantId,
             PlanName      : request.body.PlanName,
             PlanCode      : request.body.PlanCode,
-            StartDate     : request.body.StartDate,
-            EndDate       : request.body.EndDate,
+            StartDateStr  : request.body.StartDate,
+            EndDateStr    : request.body.EndDate,
             Gender        : request.body.Gender,
         };
 
         return enrollmentDomainModel;
     };
 
-    enrollParticipant = async (request: express.Request): Promise<EnrollmentDomainModel> => {
+    enrollPatient = async (request: express.Request): Promise<EnrollmentDomainModel> => {
         await this.validateCreateBody(request);
         return this.getEnrollmentDomainModel(request);
     };
@@ -38,8 +38,8 @@ export class CareplanValidator extends BaseValidator {
         await this.validateString(request, 'PlanCode', Where.Body, true, false);
         await this.validateString(request, 'Provider', Where.Body, true, false);
         await this.validateString(request, 'PlanName', Where.Body, true, false);
-        await this.validateDate(request, 'StartDate', Where.Body, false, true);
-        await this.validateDate(request, 'EndDate', Where.Body, true, false);
+        await this.validateString(request, 'StartDate', Where.Body, false, true);
+        await this.validateString(request, 'EndDate', Where.Body, true, false);
         await this.validateString(request, 'Gender', Where.Body, true, false);
 
         this.validateRequest(request);

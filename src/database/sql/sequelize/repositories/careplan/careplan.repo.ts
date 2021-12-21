@@ -1,5 +1,5 @@
 import { CareplanActivityDomainModel } from '../../../../../modules/careplan/domain.types/activity/careplan.activity.domain.model';
-import { CareplanActivityDto } from '../../../../../modules/careplan/domain.types/activity/careplan.activity.dto';
+import { CareplanActivity } from '../../../../../modules/careplan/domain.types/activity/careplan.activity.dto';
 import { ParticipantDto } from '../../../../../modules/careplan/domain.types/participant/participant.dto';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
@@ -18,7 +18,7 @@ import { Op } from 'sequelize';
 
 export class CareplanRepo implements ICareplanRepo {
 
-    addParticipantWithProvider = async (
+    addPatientWithProvider = async (
         patientUserId: string,
         provider: string,
         participantId: string
@@ -37,7 +37,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    getParticipantDetails = async (patientUserId: string, provider: string): Promise<ParticipantDto> => {
+    getPatientRegistrationDetails = async (patientUserId: string, provider: string): Promise<ParticipantDto> => {
         try {
             var participant = await Participant.findOne({
                 where : {
@@ -51,7 +51,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    enrollParticipant = async (model: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+    enrollPatient = async (model: EnrollmentDomainModel): Promise<EnrollmentDto> => {
         try {
             const entity = {
                 UserId        : model.UserId,
@@ -72,7 +72,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    getParticipantEnrollments = async (patientUserId: string): Promise<EnrollmentDto[]> => {
+    getPatientEnrollments = async (patientUserId: string): Promise<EnrollmentDto[]> => {
         try {
             const enrollments = await Enrollment.findAll({
                 where : {
@@ -89,7 +89,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     }
 
-    getParticipantEnrollment = async (
+    getPatientEnrollment = async (
         patientUserId: string, provider: string, enrollmentId: any): Promise<EnrollmentDto> => {
         try {
             var enrollment = await Enrollment.findOne({
@@ -111,7 +111,7 @@ export class CareplanRepo implements ICareplanRepo {
         planCode: string,
         patientUserId: uuid,
         enrollmentId: string,
-        activities: CareplanActivityDomainModel[]): Promise<CareplanActivityDto[]> => {
+        activities: CareplanActivityDomainModel[]): Promise<CareplanActivity[]> => {
         try {
 
             var activityEntities = [];
@@ -153,7 +153,7 @@ export class CareplanRepo implements ICareplanRepo {
         planCode: string,
         patientUserId: uuid,
         enrollmentId: string,
-        activity: CareplanActivityDomainModel): Promise<CareplanActivityDto> => {
+        activity: CareplanActivityDomainModel): Promise<CareplanActivity> => {
         try {
             var entity = {
                 Provider         : provider,
@@ -177,7 +177,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     }
 
-    getActivities = async (patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivityDto[]> => {
+    getActivities = async (patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivity[]> => {
         try {
             const orderByColum = 'ScheduledAt';
             const order = 'ASC';
@@ -192,7 +192,7 @@ export class CareplanRepo implements ICareplanRepo {
                 },
                 order : [[orderByColum, order]]
             });
-            const dtos: CareplanActivityDto[] = [];
+            const dtos: CareplanActivity[] = [];
             for (const activity of foundResults.rows) {
                 const dto = CareplanArtifactMapper.toDto(activity);
                 dtos.push(dto);
@@ -212,7 +212,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     }
 
-    getActivity = async (activityId: uuid): Promise<CareplanActivityDto> => {
+    getActivity = async (activityId: uuid): Promise<CareplanActivity> => {
         try {
             const record = await CareplanArtifact.findByPk(activityId);
             return CareplanArtifactMapper.toDto(record);

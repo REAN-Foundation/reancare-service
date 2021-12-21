@@ -1,17 +1,17 @@
-import { CareplanActivityDto } from "../../../../../modules/careplan/domain.types/activity/careplan.activity.dto";
+import { CareplanActivity } from "../../../../../modules/careplan/domain.types/activity/careplan.activity.dto";
 import CareplanArtifact from "../../models/careplan/careplan.artifact.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class CareplanArtifactMapper {
 
-    static toDto = (careplanArtifact: CareplanArtifact): CareplanActivityDto => {
+    static toDto = (careplanArtifact: CareplanArtifact): CareplanActivity => {
 
         if (careplanArtifact == null){
             return null;
         }
 
-        const dto: CareplanActivityDto = {
+        const dto: CareplanActivity = {
             id               : careplanArtifact.id,
             UserId           : careplanArtifact.UserId,
             EnrollmentId     : careplanArtifact.EnrollmentId,

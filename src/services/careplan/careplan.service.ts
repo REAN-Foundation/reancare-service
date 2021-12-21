@@ -69,24 +69,24 @@ export class CareplanService {
 
         const activityModels = activities.map(x => {
             var a: CareplanActivityDomainModel = {
-                UserId: "",
-                EnrollmentId: "",
-                ParticipantId: "",
-                Provider: "",
-                PlanName: "",
-                PlanCode: "",
-                Type: "",
-                ProviderActionId: "",
-                Title: "",
-                ScheduledAt: undefined,
-                Sequence: 0,
-                Frequency: 0,
-                Status: ""
+                UserId           : x.UserId,
+                EnrollmentId     : x.EnrollmentId,
+                ParticipantId    : x.ParticipantIdId,
+                Provider         : x.Provider,
+                PlanName         : x.PlanName,
+                PlanCode         : x.PlanCode,
+                Type             : x.Type,
+                ProviderActionId : x.ProviderActionId,
+                Title            : x.Title,
+                ScheduledAt      : x.ScheduledAt,
+                Sequence         : x.Sequence,
+                Frequency        : x.Frequency,
+                Status           : x.Status
             };
             return a;
         });
 
-        var activityDtos = await this._careplanRepo.addActivities(
+        await this._careplanRepo.addActivities(
             enrollmentDetails.Provider,
             enrollmentDetails.PlanName,
             enrollmentDetails.PlanCode,

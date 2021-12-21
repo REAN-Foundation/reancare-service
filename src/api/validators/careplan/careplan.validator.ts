@@ -4,13 +4,13 @@ import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class EnrollmentValidator extends BaseValidator {
+export class CareplanValidator extends BaseValidator {
 
     constructor() {
         super();
     }
 
-    getDomainModel = (request: express.Request): EnrollmentDomainModel => {
+    getEnrollmentDomainModel = (request: express.Request): EnrollmentDomainModel => {
 
         const enrollmentDomainModel: EnrollmentDomainModel = {
             UserId        : request.body.UserId,
@@ -27,9 +27,9 @@ export class EnrollmentValidator extends BaseValidator {
         return enrollmentDomainModel;
     };
 
-    enroll = async (request: express.Request): Promise<EnrollmentDomainModel> => {
+    enrollParticipant = async (request: express.Request): Promise<EnrollmentDomainModel> => {
         await this.validateCreateBody(request);
-        return this.getDomainModel(request);
+        return this.getEnrollmentDomainModel(request);
     };
 
     private async validateCreateBody(request) {

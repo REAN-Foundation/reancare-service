@@ -1,12 +1,15 @@
 export interface CareplanActivityDomainModel {
-    id?         : string;
-    UserId      : string;
-    EnrollmentId: number;
-    FromDate    : Date;
-    ToDate      : Date;
-    Status      : string;
-    PageNumber  : number;
-    PageOffset  : number;
-    PageSize    : string;
-    PageOrder   : string;
+    UserId          : string;
+    EnrollmentId    : string;
+    ParticipantId   : string;
+    Provider        : string;
+    PlanName        : string;
+    PlanCode        : string;
+    Type            : string;
+    ProviderActionId: string;
+    Title           : string;
+    ScheduledAt     : Date;
+    Sequence        : number;
+    Frequency       : number;
+    Status          : string;
 }

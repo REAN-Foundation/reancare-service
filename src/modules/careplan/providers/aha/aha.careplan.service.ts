@@ -3,7 +3,6 @@ import { ICarePlanService } from "../../interfaces/careplan.service.interface";
 import needle = require('needle');
 import { Logger } from '../../../../common/logger';
 import { AhaCache } from './aha.cache';
-
 import { ParticipantMapper } from "../../../../database/sql/sequelize/mappers/participant.mapper";
 import { ApiError } from "../../../../common/api.error";
 import { IPersonRepo } from "../../../../database/repository.interfaces/person.repo.interface";
@@ -11,9 +10,9 @@ import { inject, injectable } from "tsyringe";
 import { EnrollmentDomainModel } from "../../domain.types/enrollment/enrollment.domain.model";
 import { Helper } from "../../../../common/helper";
 import { EnrollmentDto } from "../../domain.types/enrollment/enrollment.dto";
-
 import { CareplanArtifactMapper } from "../../../../database/sql/sequelize/mappers/careplan/artifact.mapper";
 import { CareplanActivityDto } from "../../domain.types/activity/careplan.activity.dto";
+import { CareplanActivityDomainModel } from "../../domain.types/activity/careplan.activity.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -250,10 +249,10 @@ export class AhaCarePlanService implements ICarePlanService {
             // AHA response has incorrect spelling of activities: "activitites"
             Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.activitites.length)}`);
             var activities = response.body.data.activitites;
-            var activityEntities = [];
+            var activityEntities: CareplanActivityDomainModel[] = [];
     
             activities.forEach(activity => {
-                var entity = {
+                var entity: CareplanActivityDomainModel = {
                     Provider         : this.providerName(),
                     PlanName         : careplanCode,
                     UserId           : patientUserId,
@@ -264,7 +263,9 @@ export class AhaCarePlanService implements ICarePlanService {
                     ScheduledAt      : activity.scheduledAt,
                     Sequence         : activity.sequence,
                     Frequency        : activity.frequency,
-                    Status           : activity.status
+                    Status           : activity.status,
+                    ParticipantId    : "",
+                    PlanCode         : careplanCode
                 };
     
                 activityEntities.push(entity);

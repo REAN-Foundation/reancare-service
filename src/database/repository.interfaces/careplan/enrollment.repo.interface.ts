@@ -9,7 +9,7 @@ import { CareplanActivityDomainModel } from '../../../modules/careplan/domain.ty
 
 export interface ICareplanRepo {
 
-    registerParticipantToProvider(
+    addParticipantWithProvider(
         patientUserId: uuid, provider: string, participantId: string): Promise<ParticipantDto>;
 
     getParticipantDetails(patientUserId: uuid, provider?: string): Promise<ParticipantDto>;
@@ -18,15 +18,26 @@ export interface ICareplanRepo {
 
     enrollParticipant(model: EnrollmentDomainModel): Promise<EnrollmentDto>;
 
-    getParticipantEnrollments(patientUserId: uuid): Promise<EnrollmentDto>;
+    getParticipantEnrollments(patientUserId: uuid): Promise<EnrollmentDto[]>;
 
     getParticipantEnrollment(patientUserId: uuid, provider: string, enrollmentId): Promise<EnrollmentDto>;
 
-    addActivities(activities: CareplanActivityDomainModel[]): Promise<CareplanActivityDto>;
+    addActivities(
+        provider: string,
+        planName: string,
+        planCode: string,
+        patientUserId: uuid,
+        enrollmentId: string,
+        activities: CareplanActivityDomainModel[]): Promise<CareplanActivityDto[]>;
 
-    addActivity(activity: CareplanActivityDomainModel): Promise<CareplanActivityDto>;
+    addActivity(provider: string,
+        planName: string,
+        planCode: string,
+        patientUserId: uuid,
+        enrollmentId: string,
+        activities: CareplanActivityDomainModel): Promise<CareplanActivityDto>;
 
-    getActivities(patientUserId: uuid, day: Date): Promise<CareplanActivityDto[]>;
+    getActivities(patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivityDto[]>;
 
     getActivity(activityId: uuid): Promise<CareplanActivityDto>;
 }

@@ -1,36 +1,36 @@
 import express from 'express';
+import { CareplanService } from '../../../services/careplan/careplan.service';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
-import { CareplanService } from '../../../modules/careplan/careplan.service';
 import { Loader } from '../../../startup/loader';
-import { EnrollmentValidator } from '../../validators/careplan/enrollment.validator';
+import { CareplanValidator } from '../../validators/careplan/careplan.validator';
 import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class EnrollmentController extends BaseController {
+export class CareplanController extends BaseController {
 
     //#region member variables and constructors
     _service: CareplanService = null;
 
-    _validator: EnrollmentValidator = new EnrollmentValidator();
+    _validator: CareplanValidator = new CareplanValidator();
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(EnrollmentService);
+        this._service = Loader.container.resolve(CareplanService);
     }
 
     //#endregion
 
     //#region Action methods
 
-    enroll = async (request: express.Request, response: express.Response): Promise<void> => {
+    enrollParticipant = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Careplan.Enrollment.Create', request, response);
+            this.setContext('Careplan.EnrollParticipant', request, response);
 
-            const enrollmentDomainModel = await this._validator.enroll(request);
+            const enrollmentDomainModel = await this._validator.enrollParticipant(request);
 
-            const enrollment = await this._service.enroll(enrollmentDomainModel);
+            const enrollment = await this._service.enrollParticipant(enrollmentDomainModel);
             if (enrollment == null) {
                 throw new ApiError(400, 'Cannot enroll patient to careplan!');
             }

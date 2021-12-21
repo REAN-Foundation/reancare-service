@@ -5,7 +5,7 @@ import CareplanArtifact from "../../models/careplan/careplan.artifact.model";
 
 export class CareplanArtifactMapper {
 
-    static toDto = async (careplanArtifact: CareplanArtifact): Promise<CareplanActivityDto> => {
+    static toDto = (careplanArtifact: CareplanArtifact): CareplanActivityDto => {
 
         if (careplanArtifact == null){
             return null;

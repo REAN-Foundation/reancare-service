@@ -5,7 +5,7 @@ import Enrollment from "../../models/careplan/enrollment.model";
 
 export class EnrollmentMapper {
 
-    static toDto = async (enrollment: Enrollment): Promise<EnrollmentDto> => {
+    static toDto = (enrollment: Enrollment): EnrollmentDto => {
 
         if (enrollment == null){
             return null;

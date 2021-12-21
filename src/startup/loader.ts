@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { CarePlanHandler } from '../modules/careplan/careplan.service';
+import { CarePlanHandler } from '../modules/careplan/careplan.handler';
 import { container, DependencyContainer } from 'tsyringe';
 import { Authenticator } from '../auth/authenticator';
 import { Authorizer } from '../auth/authorizer';

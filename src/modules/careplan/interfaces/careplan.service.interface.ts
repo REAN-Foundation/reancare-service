@@ -3,6 +3,7 @@ import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { PatientDomainModel } from "../../../domain.types/patient/patient/patient.domain.model";
 import { CareplanActivityDto } from "../domain.types/activity/careplan.activity.dto";
 import { EnrollmentDomainModel } from "../domain.types/enrollment/enrollment.domain.model";
+import { ParticipantDomainModel } from "../domain.types/participant/participant.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -12,7 +13,7 @@ export interface ICarePlanService {
 
     providerName(): string;
 
-    registerPatient(patientDomainModel: PatientDomainModel): Promise<any>;
+    registerPatient(patientDetails: ParticipantDomainModel): Promise<any>;
 
     enrollPatientToCarePlan (patient: PatientDomainModel,
         enrollmentDetails: EnrollmentDomainModel): Promise<any>;

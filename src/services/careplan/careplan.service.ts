@@ -35,10 +35,12 @@ export class CareplanService {
         }
 
         var participantId = null;
+        const provider = enrollmentDetails.Provider;
+        const planCode = enrollmentDetails.PlanCode;
 
         //Check if the participant is already registered with the care plan provider
         var participant = await this._careplanRepo.getPatientRegistrationDetails(
-            patient.UserId, enrollmentDetails.Provider);
+            patient.UserId, provider);
 
         if (!participant) {
 
@@ -50,6 +52,7 @@ export class CareplanService {
             var participantDetails: ParticipantDomainModel = {
                 Name           : patient.User.Person.DisplayName,
                 UserId         : enrollmentDetails.PatientUserId,
+                Provider       : provider,
                 Gender         : patient.User.Person.Gender,
                 Age            : null, //Helper.getAgeFromBirthDate(patient.User.Person.BirthDate),
                 Dob            : patient.User.Person.BirthDate,
@@ -58,9 +61,23 @@ export class CareplanService {
                 MaritalStatus  : null,
                 ZipCode        : null,
             };
+
+            const isAvailablePlan = this._handler.IsPlanAvailable(provider, planCode);
+            if (!isAvailablePlan) {
+                throw new Error(`Specified care plan '${provider}-${planCode}' is not available.`);
+            }
+
             participantId = await this._handler.registerPatientWithProvider(
                 participantDetails, enrollmentDetails.Provider);
+
+            participant = await this._careplanRepo.addPatientWithProvider(
+                enrollmentDetails.PatientUserId, provider, participantId);
+
+            if (!participant) {
+                throw new Error('Error while adding care plan participant details to database.');
+            }
         }
+        
         enrollmentDetails.ParticipantId = participantId;
         var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);
         if (!enrollmentId) {

@@ -35,7 +35,21 @@
     "Careplans" : [
         { 
             "Provider": "AHA",
-            "Service": "AhaCarePlanService"
+            "Service": "AhaCarePlanService",
+            "Plans": [
+                {
+                    "ProviderName": "Core",
+                    "ProviderCode": "Core",
+                    "DisplayName": "AHA-Core",
+                    "DefaultDurationDays": 84
+                },
+                {
+                    "ProviderName": "Heart Failure",
+                    "ProviderCode": "HeartFailure",
+                    "DisplayName": "AHA-Heart Failure",
+                    "DefaultDurationDays": 84
+                }
+            ]
         }
     ],
     "MaxUploadFileSize": 104857600

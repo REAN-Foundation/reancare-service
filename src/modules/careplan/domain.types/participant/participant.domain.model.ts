@@ -1,5 +1,6 @@
 export interface ParticipantDomainModel {
     id?            : string;
+    Provider       : string;
     Name           : string;
     UserId         : string;
     Gender?        : string;

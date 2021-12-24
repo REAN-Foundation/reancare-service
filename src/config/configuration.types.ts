@@ -47,6 +47,13 @@ export interface TemporaryFoldersConfig {
     CleanupFolderBeforeMinutes: number
 }
 
+export interface CareplanConfig {
+    ProviderName: string;
+    ProviderCode: string;
+    DisplayName: string;
+    DefaultDurationDays?: number;
+}
+
 export interface Configurations {
     SystemIdentifier: string;
     BaseUrl: string;
@@ -56,6 +63,6 @@ export interface Configurations {
     FileStorage: FileStorageConfig;
     Communication: CommunicationConfig;
     TemporaryFolders: TemporaryFoldersConfig;
-    Careplans: { Provider: string; Service: string; } [];
+    Careplans: { Provider: string; Service: string; Plans: CareplanConfig[] } [];
     MaxUploadFileSize: number;
 }

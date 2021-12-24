@@ -5,6 +5,7 @@ import Dictionary from "../../common/dictionary";
 import { CareplanActivity } from "./domain.types/activity/careplan.activity.dto";
 import { ParticipantDomainModel } from "./domain.types/participant/participant.domain.model";
 import { ProviderResolver } from "./provider.resolver";
+import { ConfigurationManager } from "../../config/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +23,23 @@ export class CareplanHandler {
         }
         return true;
     };
+
+    public IsPlanAvailable(provider: string, planCode: string): boolean {
+        var careplans = ConfigurationManager.careplans();
+        var foundProvider = careplans.find(x => {
+            return x.Provider === provider;
+        });
+        if (foundProvider) {
+            var providerPlans = foundProvider.Plans;
+            const foundPlan = providerPlans.find(y => {
+                return y.ProviderCode === planCode;
+            });
+            if (foundPlan) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public registerPatientWithProvider = async(patientDetails: ParticipantDomainModel, provider: string) => {
         var service = CareplanHandler._services.getItem(provider);

@@ -2,7 +2,7 @@ import path from 'path';
 import * as configuration from '../../reancare.config.json';
 import {
     AuthenticationType,
-    AuthorizationType, Configurations, DatabaseFlavour, DatabaseORM, DatabaseType, EHRProvider,
+    AuthorizationType, CareplanConfig, Configurations, DatabaseFlavour, DatabaseORM, DatabaseType, EHRProvider,
     EHRSpecification, EmailServiceProvider, FileStorageProvider, InAppNotificationServiceProvider, SMSServiceProvider
 } from './configuration.types';
 
@@ -121,7 +121,7 @@ export class ConfigurationManager {
         return ConfigurationManager._config.Communication.InAppNotificationProvider;
     };
 
-    public static careplans = (): { Provider: string; Service: string; } [] => {
+    public static careplans = (): { Provider: string; Service: string; Plans: CareplanConfig[] } [] => {
         return ConfigurationManager._config.Careplans;
     };
 

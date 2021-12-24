@@ -1,4 +1,4 @@
-import { ICarePlanService } from "../../interfaces/careplan.service.interface";
+import { ICareplanService } from "../../interfaces/careplan.service.interface";
 import needle = require('needle');
 import { Logger } from '../../../../common/logger';
 import { AhaCache } from './aha.cache';
@@ -13,7 +13,7 @@ import { ParticipantDomainModel } from "../../domain.types/participant/participa
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class AhaCarePlanService implements ICarePlanService {
+export class AhaCareplanService implements ICareplanService {
 
     constructor(@inject('IPersonRepo') private _personRepo: IPersonRepo) {}
 
@@ -135,7 +135,7 @@ export class AhaCarePlanService implements ICarePlanService {
         enrollmentDomainModel: EnrollmentDomainModel): Promise<string> => {
         try {
             var enrollmentData = {
-                userId   : enrollmentDomainModel.UserId,
+                userId   : enrollmentDomainModel.PatientUserId,
                 PlanCode : enrollmentDomainModel.PlanCode,
                 startAt  : enrollmentDomainModel.StartDate,
                 endAt    : enrollmentDomainModel.EndDate,

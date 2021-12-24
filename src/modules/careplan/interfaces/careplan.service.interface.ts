@@ -6,7 +6,7 @@ import { ParticipantDomainModel } from "../domain.types/participant/participant.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export interface ICarePlanService {
+export interface ICareplanService {
 
     init(): Promise<boolean>;
 

@@ -32,23 +32,29 @@ export default class CareplanArtifact extends Model {
     UserId: string;
 
     @Column({
-        type      : DataType.INTEGER,
+        type      : DataType.STRING(128),
         allowNull : false,
     })
-    EnrollmentId: number;
+    EnrollmentId: string;
 
     @Column({
         type         : DataType.STRING(64),
         allowNull    : false,
         defaultValue : "AHA"
     })
-    CareplanProvider: string;
+    Provider: string;
 
     @Column({
-        type      : DataType.STRING(64),
+        type      : DataType.STRING(128),
         allowNull : false,
     })
-    CareplanName: string;
+    PlanName: string;
+    
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : false,
+    })
+    PlanCode: string;
 
     @Column({
         type      : DataType.STRING(128),

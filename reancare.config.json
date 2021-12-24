@@ -32,10 +32,10 @@
         "Download": "./tmp/resources/downloads/",
         "CleanupFolderBeforeMinutes": 10
     },
-    "CarePlans" : [
+    "Careplans" : [
         { 
             "Provider": "AHA",
-            "Service": "AHACarePlanService"
+            "Service": "AhaCarePlanService"
         }
     ],
     "MaxUploadFileSize": 104857600

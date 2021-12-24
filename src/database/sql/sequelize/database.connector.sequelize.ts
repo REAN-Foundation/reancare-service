@@ -33,6 +33,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
                 __dirname + '/models/wellness/daily.records',
                 __dirname + '/models/wellness/exercise',
                 __dirname + '/models/wellness/nutrition',
+                __dirname + '/models/careplan',
             ];
             const options = {
                 host    : config.host,

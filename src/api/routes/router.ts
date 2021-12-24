@@ -48,7 +48,7 @@ import { register as registerMeditationtRoutes } from './wellness/exercise/medit
 import { register as registerPhysicalActivityRoutes } from './wellness/exercise/physical.activity.routes';
 import { register as registerNutritionFoodConsumptionRoutes } from './wellness/nutrition/food.consumption.routes';
 import { register as registerWaterConsumptionRoutes } from './wellness/nutrition/water.consumption.routes';
-import { register as registerEnrollmentRoutes } from './careplan/enrollment.routes';
+import { register as registerEnrollmentRoutes } from './careplan/careplan.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 

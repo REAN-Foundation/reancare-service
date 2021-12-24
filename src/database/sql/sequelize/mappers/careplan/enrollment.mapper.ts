@@ -1,11 +1,11 @@
 import { EnrollmentDto } from "../../../../../modules/careplan/domain.types/enrollment/enrollment.dto";
-import Enrollment from "../../models/careplan/enrollment.model";
+import CareplanEnrollment from "../../models/careplan/enrollment.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class EnrollmentMapper {
 
-    static toDto = (enrollment: Enrollment): EnrollmentDto => {
+    static toDto = (enrollment: CareplanEnrollment): EnrollmentDto => {
 
         if (enrollment == null){
             return null;

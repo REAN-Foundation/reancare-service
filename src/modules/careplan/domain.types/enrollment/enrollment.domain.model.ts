@@ -1,7 +1,7 @@
 export interface EnrollmentDomainModel {
     id?           : string;
     Name?         : string;
-    UserId        : string;
+    PatientUserId : string;
     Provider?     : string;
     PlanCode?     : string;
     PlanName?     : string;

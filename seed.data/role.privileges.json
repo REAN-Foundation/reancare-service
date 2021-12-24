@@ -38,7 +38,7 @@
             "MedicalCondition.Update",
             "MedicalCondition.Search",
             "MedicalCondition.Delete",
-            "Careplan.Enrollment.Create"
+            "Careplan.Enroll"
         ]
     },
     {
@@ -296,7 +296,7 @@
             "MedicalCondition.Update",
             "MedicalCondition.Search",
             "MedicalCondition.Delete",
-            "Careplan.Enrollment.Create"
+            "Careplan.Enroll"
         ]
     },
     {
@@ -538,7 +538,7 @@
             "MedicalCondition.Delete",
             "DailyAssessment.Create",
             "DailyAssessment.Search",
-            "Careplan.Enrollment.Create"
+            "Careplan.Enroll"
         ]
     },
     {

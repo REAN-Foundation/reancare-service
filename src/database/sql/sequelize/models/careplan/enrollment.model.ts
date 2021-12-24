@@ -12,7 +12,7 @@ import { v4 } from 'uuid';
     paranoid        : true,
     freezeTableName : true,
 })
-export default class Enrollment extends Model {
+export default class CareplanEnrollment extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -42,19 +42,19 @@ export default class Enrollment extends Model {
         allowNull : false,
     })
     ParticipantId: number;
-
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : false,
-    })
-    PlanCode: string;
-
+    
     @Column({
         type         : DataType.STRING(64),
         allowNull    : false,
         defaultValue : "AHA"
     })
     Provider: string;
+
+    @Column({
+        type      : DataType.STRING(64),
+        allowNull : false,
+    })
+    PlanCode: string;
 
     @Column({
         type      : DataType.STRING(64),

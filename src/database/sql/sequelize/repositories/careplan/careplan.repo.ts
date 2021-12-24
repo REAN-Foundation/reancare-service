@@ -5,10 +5,10 @@ import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { EnrollmentDomainModel } from "../../../../../modules/careplan/domain.types/enrollment/enrollment.domain.model";
 import { EnrollmentDto } from "../../../../../modules/careplan/domain.types/enrollment/enrollment.dto";
-import { ICareplanRepo } from "../../../../repository.interfaces/careplan/enrollment.repo.interface";
+import { ICareplanRepo } from "../../../../repository.interfaces/careplan/careplan.repo.interface";
 import { EnrollmentMapper } from "../../mappers/careplan/enrollment.mapper";
-import Enrollment from "../../models/careplan/enrollment.model";
-import Participant from "../../../../../database/sql/sequelize/models/careplan/participant.model";
+import CareplanEnrollment from "../../models/careplan/enrollment.model";
+import CareplanParticipant from "../../../../../database/sql/sequelize/models/careplan/participant.model";
 import CareplanArtifact from "../../../../../database/sql/sequelize/models/careplan/careplan.artifact.model";
 import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 import { CareplanArtifactMapper } from '../../mappers/careplan/artifact.mapper';
@@ -29,7 +29,7 @@ export class CareplanRepo implements ICareplanRepo {
                 Provider      : provider,
                 ParticipantId : participantId,
             };
-            const participant = await Participant.create(entity);
+            const participant = await CareplanParticipant.create(entity);
             return participant;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -39,7 +39,7 @@ export class CareplanRepo implements ICareplanRepo {
 
     getPatientRegistrationDetails = async (patientUserId: string, provider: string): Promise<ParticipantDto> => {
         try {
-            var participant = await Participant.findOne({
+            var participant = await CareplanParticipant.findOne({
                 where : {
                     UserId   : patientUserId,
                     Provider : provider,
@@ -54,7 +54,7 @@ export class CareplanRepo implements ICareplanRepo {
     enrollPatient = async (model: EnrollmentDomainModel): Promise<EnrollmentDto> => {
         try {
             const entity = {
-                UserId        : model.UserId,
+                UserId        : model.PatientUserId,
                 Provider      : model.Provider,
                 ParticipantId : model.ParticipantId,
                 EnrollmentId  : model.EnrollmentId,
@@ -64,7 +64,7 @@ export class CareplanRepo implements ICareplanRepo {
                 EndDate       : model.EndDate,
                 Gender        : model.Gender,
             };
-            const enrollment = await Enrollment.create(entity);
+            const enrollment = await CareplanEnrollment.create(entity);
             return await EnrollmentMapper.toDto(enrollment);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -74,7 +74,7 @@ export class CareplanRepo implements ICareplanRepo {
 
     getPatientEnrollments = async (patientUserId: string): Promise<EnrollmentDto[]> => {
         try {
-            const enrollments = await Enrollment.findAll({
+            const enrollments = await CareplanEnrollment.findAll({
                 where : {
                     UserId : patientUserId
                 }
@@ -92,7 +92,7 @@ export class CareplanRepo implements ICareplanRepo {
     getPatientEnrollment = async (
         patientUserId: string, provider: string, enrollmentId: any): Promise<EnrollmentDto> => {
         try {
-            var enrollment = await Enrollment.findOne({
+            var enrollment = await CareplanEnrollment.findOne({
                 where : {
                     UserId       : patientUserId,
                     Provider     : provider,

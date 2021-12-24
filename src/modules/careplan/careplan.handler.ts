@@ -1,27 +1,21 @@
-import { ICarePlanService } from "./interfaces/careplan.service.interface";
+import { ICareplanService } from "./interfaces/careplan.service.interface";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { EnrollmentDomainModel } from "./domain.types/enrollment/enrollment.domain.model";
-import { ConfigurationManager } from "../../config/configuration.manager";
-import { Loader } from "../../startup/loader";
 import Dictionary from "../../common/dictionary";
 import { CareplanActivity } from "./domain.types/activity/careplan.activity.dto";
 import { ParticipantDomainModel } from "./domain.types/participant/participant.domain.model";
+import { ProviderResolver } from "./provider.resolver";
 
 ////////////////////////////////////////////////////////////////////////
 
 export class CareplanHandler {
 
-    static _services = new Dictionary<ICarePlanService>();
-
-    public static registerProviders() {
-        var careplans = ConfigurationManager.careplans();
-        for (var cp of careplans) {
-            var service = Loader.container.resolve(cp.Service) as ICarePlanService;
-            CareplanHandler._services.add(cp.Provider, service);
-        }
-    }
+    static _services:Dictionary<ICareplanService> = new Dictionary<ICareplanService>()
 
     public static init = async (): Promise<boolean> => {
+
+        CareplanHandler._services = ProviderResolver.resolve();
+
         for await (var s of CareplanHandler._services.getKeys()) {
             var service = CareplanHandler._services.getItem(s);
             await service.init();

@@ -1,11 +1,11 @@
 import { ParticipantDto } from "../../../../modules/careplan/domain.types/participant/participant.dto";
-import Participant from "../models/careplan/participant.model";
+import CareplanParticipant from "../models/careplan/participant.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class ParticipantMapper {
 
-    static toDto = async (participant: Participant): Promise<ParticipantDto> => {
+    static toDto = async (participant: CareplanParticipant): Promise<ParticipantDto> => {
 
         if (participant == null){
             return null;

@@ -56,6 +56,6 @@ export interface Configurations {
     FileStorage: FileStorageConfig;
     Communication: CommunicationConfig;
     TemporaryFolders: TemporaryFoldersConfig;
-    CarePlans: { Provider: string; Service: string; } [];
+    Careplans: { Provider: string; Service: string; } [];
     MaxUploadFileSize: number;
 }

@@ -118,7 +118,7 @@ export class SequelizeInjector {
         container.register('IUserTaskRepo', UserTaskRepo);
         container.register('IMedicalConditionRepo', MedicalConditionRepo);
         container.register('IDailyAssessmentRepo', DailyAssessmentRepo);
-        container.register('IEnrollmentRepo', CareplanRepo);
+        container.register('ICareplanRepo', CareplanRepo);
 
     }
 

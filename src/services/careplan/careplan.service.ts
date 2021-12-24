@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { ICareplanRepo } from "../../database/repository.interfaces/careplan/enrollment.repo.interface";
+import { ICareplanRepo } from "../../database/repository.interfaces/careplan/careplan.repo.interface";
 import { EnrollmentDomainModel } from '../../modules/careplan/domain.types/enrollment/enrollment.domain.model';
 import { EnrollmentDto } from '../../modules/careplan/domain.types/enrollment/enrollment.dto';
 import { IPatientRepo } from "../../database/repository.interfaces/patient/patient.repo.interface";
@@ -10,6 +10,7 @@ import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { ParticipantDomainModel } from "../../modules/careplan/domain.types/participant/participant.domain.model";
 import { CareplanActivityDomainModel } from "../../modules/careplan/domain.types/activity/careplan.activity.domain.model";
+import { Helper } from "../../common/helper";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,9 +27,12 @@ export class CareplanService {
 
     ) {}
 
-    enrollPatient = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+    enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 
-        var patient = await this.getPatient(enrollmentDetails.UserId);
+        var patient = await this.getPatient(enrollmentDetails.PatientUserId);
+        if (!patient) {
+            throw new Error('Patient does not exist!');
+        }
 
         var participantId = null;
 
@@ -37,13 +41,18 @@ export class CareplanService {
             patient.UserId, enrollmentDetails.Provider);
 
         if (!participant) {
+
+            if (!patient.User.Person.Gender || !patient.User.Person.BirthDate) {
+                throw new Error('Gender and date of birth need to be specified before enrollment to care plan.');
+            }
+
             //Since not registered with provider, register
             var participantDetails: ParticipantDomainModel = {
-                Name           : enrollmentDetails.Name,
-                UserId         : enrollmentDetails.UserId,
-                Gender         : enrollmentDetails.Gender,
-                Age            : null,
-                Dob            : enrollmentDetails.BirthDate,
+                Name           : patient.User.Person.DisplayName,
+                UserId         : enrollmentDetails.PatientUserId,
+                Gender         : patient.User.Person.Gender,
+                Age            : null, //Helper.getAgeFromBirthDate(patient.User.Person.BirthDate),
+                Dob            : patient.User.Person.BirthDate,
                 HeightInInches : null,
                 WeightInLbs    : null,
                 MaritalStatus  : null,
@@ -64,7 +73,7 @@ export class CareplanService {
         var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
 
         var activities = await this._handler.fetchActivities(
-            enrollmentDetails.UserId, enrollmentDetails.Provider, enrollmentDetails.PlanCode, enrollmentId,
+            enrollmentDetails.PatientUserId, enrollmentDetails.Provider, enrollmentDetails.PlanCode, enrollmentId,
             enrollmentDetails.StartDate, enrollmentDetails.EndDate);
 
         const activityModels = activities.map(x => {
@@ -90,7 +99,7 @@ export class CareplanService {
             enrollmentDetails.Provider,
             enrollmentDetails.PlanName,
             enrollmentDetails.PlanCode,
-            enrollmentDetails.UserId,
+            enrollmentDetails.PatientUserId,
             enrollmentId,
             activityModels);
 

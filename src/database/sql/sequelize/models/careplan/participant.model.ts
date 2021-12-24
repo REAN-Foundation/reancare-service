@@ -29,7 +29,7 @@ export default class CareplanParticipant extends Model {
         type      : DataType.STRING(64),
         allowNull : false,
     })
-    UserId: string;
+    PatientUserId: string;
 
     @Column({
         type      : DataType.STRING(64),
@@ -45,58 +45,10 @@ export default class CareplanParticipant extends Model {
     Provider: string;
 
     @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    Name: string;
-
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : false,
-    })
-    Gender: string;
-
-    @Column({
         type      : DataType.BOOLEAN,
         allowNull : true,
     })
     IsActive: boolean;
-
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
-    })
-    Age: number;
-
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    Dob: Date;
-
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
-    })
-    Height: number;
-
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
-    })
-    Weight: number;
-
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    MaritalStatus: string;
-
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
-    })
-    ZipCode: number;
 
     @Column
     @CreatedAt

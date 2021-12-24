@@ -10,7 +10,6 @@ import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { ParticipantDomainModel } from "../../modules/careplan/domain.types/participant/participant.domain.model";
 import { CareplanActivityDomainModel } from "../../modules/careplan/domain.types/activity/careplan.activity.domain.model";
-import { Helper } from "../../common/helper";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,7 +76,7 @@ export class CareplanService {
                 throw new Error('Error while adding care plan participant details to database.');
             }
         }
-        
+
         enrollmentDetails.ParticipantId = participantId;
         var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);
         if (!enrollmentId) {

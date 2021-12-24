@@ -12,17 +12,11 @@ export class ParticipantMapper {
         }
 
         const dto: ParticipantDto = {
-            id             : participant.id,
-            UserId         : participant.UserId,
-            ParticipantId  : participant.ParticipantId,
-            Name           : participant.Name,
-            IsActive       : participant.IsActive,
-            Gender         : participant.Gender,
-            Dob            : participant.Dob,
-            HeightInInches : participant.Height,
-            WeightInLbs    : participant.Weight,
-            MaritalStatus  : participant.MaritalStatus,
-            ZipCode        : participant.ZipCode,
+            id            : participant.id,
+            PatientUserId : participant.PatientUserId,
+            ParticipantId : participant.ParticipantId,
+            Provider      : participant.Provider,
+            IsActive      : participant.IsActive,
         };
         return dto;
     }

@@ -2,7 +2,7 @@ import { ParticipantDto } from '../../../modules/careplan/domain.types/participa
 import { EnrollmentDomainModel } from '../../../modules/careplan/domain.types/enrollment/enrollment.domain.model';
 import { EnrollmentDto } from "../../../modules/careplan/domain.types/enrollment/enrollment.dto";
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { CareplanActivity } from '../../../modules/careplan/domain.types/activity/careplan.activity.dto';
+import { CareplanActivityDto } from '../../../modules/careplan/domain.types/activity/careplan.activity.dto';
 import { CareplanActivityDomainModel } from '../../../modules/careplan/domain.types/activity/careplan.activity.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,16 +26,16 @@ export interface ICareplanRepo {
         planCode: string,
         patientUserId: uuid,
         enrollmentId: string,
-        activities: CareplanActivityDomainModel[]): Promise<CareplanActivity[]>;
+        activities: CareplanActivityDomainModel[]): Promise<CareplanActivityDto[]>;
 
     addActivity(provider: string,
         planName: string,
         planCode: string,
         patientUserId: uuid,
         enrollmentId: string,
-        activities: CareplanActivityDomainModel): Promise<CareplanActivity>;
+        activities: CareplanActivityDomainModel): Promise<CareplanActivityDto>;
 
-    getActivities(patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivity[]>;
+    getActivities(patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivityDto[]>;
 
-    getActivity(activityId: uuid): Promise<CareplanActivity>;
+    getActivity(activityId: uuid): Promise<CareplanActivityDto>;
 }

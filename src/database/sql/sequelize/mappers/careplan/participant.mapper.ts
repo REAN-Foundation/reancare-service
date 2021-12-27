@@ -1,5 +1,5 @@
-import { ParticipantDto } from "../../../../modules/careplan/domain.types/participant/participant.dto";
-import CareplanParticipant from "../models/careplan/participant.model";
+import { ParticipantDto } from "../../../../../modules/careplan/domain.types/participant/participant.dto";
+import CareplanParticipant from "../../models/careplan/participant.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

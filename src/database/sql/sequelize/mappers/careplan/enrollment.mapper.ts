@@ -13,7 +13,7 @@ export class EnrollmentMapper {
 
         const dto: EnrollmentDto = {
             id            : enrollment.id,
-            UserId        : enrollment.UserId,
+            PatientUserId : enrollment.PatientUserId,
             EnrollmentId  : enrollment.EnrollmentId,
             ParticipantId : enrollment.ParticipantId,
             PlanCode      : enrollment.PlanCode,

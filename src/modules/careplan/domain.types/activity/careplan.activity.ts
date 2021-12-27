@@ -1,15 +1,14 @@
 import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 
-export interface CareplanActivityDto {
-    id?              : uuid;
-    PatientUserId    : string;
+export interface CareplanActivity {
+    PatientUserId?   : uuid;
     Provider         : string;
-    ParticipantIdId? : string;
+    ParticipantId?   : string;
     EnrollmentId?    : string;
     PlanName?        : string;
     PlanCode?        : string;
     Type?            : string;
-    ProviderActionId?: string;
+    ProviderActionId : string;
     Title?           : string;
     ScheduledAt?     : Date;
     Sequence?        : number;

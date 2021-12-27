@@ -1,5 +1,7 @@
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+
 export interface CareplanActivityDomainModel {
-    UserId          : string;
+    PatientUserId   : uuid;
     EnrollmentId    : string;
     ParticipantId   : string;
     Provider        : string;

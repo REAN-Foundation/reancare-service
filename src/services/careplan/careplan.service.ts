@@ -37,6 +37,13 @@ export class CareplanService {
         const provider = enrollmentDetails.Provider;
         const planCode = enrollmentDetails.PlanCode;
 
+        const planDetails = this._handler.getPlanDetails(provider, planCode);
+        if (!planDetails) {
+            throw new Error(`Specified care plan '${provider}-${planCode}' is not available.`);
+        }
+        const planName = planDetails.DisplayName;
+        enrollmentDetails.PlanName = planName;
+
         //Check if the participant is already registered with the care plan provider
         var participant = await this._careplanRepo.getPatientRegistrationDetails(
             patient.UserId, provider);
@@ -50,7 +57,7 @@ export class CareplanService {
             //Since not registered with provider, register
             var participantDetails: ParticipantDomainModel = {
                 Name           : patient.User.Person.DisplayName,
-                UserId         : enrollmentDetails.PatientUserId,
+                PatientUserId  : enrollmentDetails.PatientUserId,
                 Provider       : provider,
                 Gender         : patient.User.Person.Gender,
                 Age            : null, //Helper.getAgeFromBirthDate(patient.User.Person.BirthDate),
@@ -60,11 +67,6 @@ export class CareplanService {
                 MaritalStatus  : null,
                 ZipCode        : null,
             };
-
-            const isAvailablePlan = this._handler.IsPlanAvailable(provider, planCode);
-            if (!isAvailablePlan) {
-                throw new Error(`Specified care plan '${provider}-${planCode}' is not available.`);
-            }
 
             participantId = await this._handler.registerPatientWithProvider(
                 participantDetails, enrollmentDetails.Provider);
@@ -77,14 +79,14 @@ export class CareplanService {
             }
         }
 
-        enrollmentDetails.ParticipantId = participantId;
+        enrollmentDetails.ParticipantId = participant.ParticipantId;
+        enrollmentDetails.Gender = patient.User.Person.Gender;
+
         var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);
         if (!enrollmentId) {
             throw new ApiError(500, 'Error while enrolling patient to careplan');
         }
-        
         enrollmentDetails.EnrollmentId = enrollmentId;
-        enrollmentDetails.ParticipantId = participantId;
         
         var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
 
@@ -94,12 +96,12 @@ export class CareplanService {
 
         const activityModels = activities.map(x => {
             var a: CareplanActivityDomainModel = {
-                UserId           : x.UserId,
-                EnrollmentId     : x.EnrollmentId,
-                ParticipantId    : x.ParticipantIdId,
-                Provider         : x.Provider,
-                PlanName         : x.PlanName,
-                PlanCode         : x.PlanCode,
+                PatientUserId    : enrollmentDetails.PatientUserId,
+                EnrollmentId     : enrollmentId,
+                ParticipantId    : enrollmentDetails.ParticipantId,
+                Provider         : enrollmentDetails.Provider,
+                PlanName         : enrollmentDetails.PlanName,
+                PlanCode         : enrollmentDetails.PlanCode,
                 Type             : x.Type,
                 ProviderActionId : x.ProviderActionId,
                 Title            : x.Title,

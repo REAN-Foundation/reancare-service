@@ -29,7 +29,7 @@ export default class CareplanEnrollment extends Model {
         type      : DataType.STRING(64),
         allowNull : false,
     })
-    UserId: string;
+    PatientUserId: string;
 
     @Column({
         type      : DataType.INTEGER,

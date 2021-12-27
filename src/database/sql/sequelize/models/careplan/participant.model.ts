@@ -45,8 +45,9 @@ export default class CareplanParticipant extends Model {
     Provider: string;
 
     @Column({
-        type      : DataType.BOOLEAN,
-        allowNull : true,
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : true
     })
     IsActive: boolean;
 

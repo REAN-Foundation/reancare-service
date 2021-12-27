@@ -3,19 +3,16 @@ import needle = require('needle');
 import { Logger } from '../../../../common/logger';
 import { AhaCache } from './aha.cache';
 import { ApiError } from "../../../../common/api.error";
-import { IPersonRepo } from "../../../../database/repository.interfaces/person.repo.interface";
-import { inject, injectable } from "tsyringe";
+import { injectable } from "tsyringe";
 import { EnrollmentDomainModel } from "../../domain.types/enrollment/enrollment.domain.model";
 import { Helper } from "../../../../common/helper";
-import { CareplanActivity } from "../../domain.types/activity/careplan.activity.dto";
+import { CareplanActivity } from "../../domain.types/activity/careplan.activity";
 import { ParticipantDomainModel } from "../../domain.types/participant/participant.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class AhaCareplanService implements ICareplanService {
-
-    constructor(@inject('IPersonRepo') private _personRepo: IPersonRepo) {}
 
     public providerName(): string {
         return "AHA";
@@ -67,7 +64,7 @@ export class AhaCareplanService implements ICareplanService {
     registerPatient = async (patientDetails: ParticipantDomainModel): Promise<string> => {
         try {
             const entity = {
-                UserId         : patientDetails.UserId,
+                PatientUserId  : patientDetails.PatientUserId,
                 Name           : patientDetails.Name,
                 IsActive       : true,
                 Gender         : patientDetails.Gender,
@@ -106,7 +103,7 @@ export class AhaCareplanService implements ICareplanService {
             var body = {
                 isActive : 1,
                 meta     : meta,
-                userId   : entity.UserId,
+                userId   : entity.PatientUserId,
             };
 
             if (entity.Name) {
@@ -132,15 +129,15 @@ export class AhaCareplanService implements ICareplanService {
     }
 
     public enrollPatientToCarePlan = async (
-        enrollmentDomainModel: EnrollmentDomainModel): Promise<string> => {
+        model: EnrollmentDomainModel): Promise<string> => {
         try {
             var enrollmentData = {
-                userId   : enrollmentDomainModel.PatientUserId,
-                PlanCode : enrollmentDomainModel.PlanCode,
-                startAt  : enrollmentDomainModel.StartDate,
-                endAt    : enrollmentDomainModel.EndDate,
-                meta     : {
-                    gender : enrollmentDomainModel.Gender,
+                userId       : model.PatientUserId,
+                careplanCode : model.PlanCode,
+                startAt      : model.StartDate,
+                endAt        : model.EndDate,
+                meta         : {
+                    gender : model.Gender,
                 },
             };
 
@@ -164,7 +161,6 @@ export class AhaCareplanService implements ICareplanService {
     };
 
     fetchActivities = async (
-        patientUserId: string,
         careplanCode: string,
         enrollmentId: string,
         fromDate: Date,
@@ -195,10 +191,6 @@ export class AhaCareplanService implements ICareplanService {
             activities.forEach(activity => {
                 var entity: CareplanActivity = {
                     Provider         : this.providerName(),
-                    PlanName         : careplanCode,
-                    PlanCode         : careplanCode,
-                    UserId           : patientUserId,
-                    EnrollmentId     : enrollmentId,
                     Type             : activity.type,
                     ProviderActionId : activity.code,
                     Title            : activity.title,
@@ -209,8 +201,8 @@ export class AhaCareplanService implements ICareplanService {
                 };
                 activityEntities.push(entity);
             });
-                
-            return activities;
+
+            return activityEntities;
     
         } catch (error) {
             Logger.instance().log(error.message);

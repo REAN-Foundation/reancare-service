@@ -1,6 +1,6 @@
 export interface EnrollmentDto {
     id?          : string;
-    UserId       : string;
+    PatientUserId: string;
     Provider?    : string;
     PlanCode?    : string;
     PlanName?    : string;

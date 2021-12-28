@@ -1,3 +1,5 @@
+import { ICareplanRepo } from "../../database/repository.interfaces/careplan/enrollment.repo.interface";
+import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 import { inject, injectable } from "tsyringe";
 import { Helper } from "../../common/helper";
 import { IMedicationConsumptionRepo } from "../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface";
@@ -12,9 +14,12 @@ import { UserTaskSearchFilters, UserTaskSearchResults } from '../../domain.types
 @injectable()
 export class UserTaskService {
 
+    _careplanHandler: CareplanHandler = new CareplanHandler();
+
     constructor(
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IMedicationConsumptionRepo') private _medicationConsumptionRepo: IMedicationConsumptionRepo,
+        @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {}
 
     create = async (userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
@@ -50,6 +55,20 @@ export class UserTaskService {
 
     update = async (id: string, userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
         var dto = await this._userTaskRepo.update(id, userTaskDomainModel);
+        if (dto.ActionType === UserActionType.Careplan &&
+            dto.ActionId !== null) {
+            var careplanArtifact = await this._careplanRepo.updateActivity(dto.ActionId, dto.Status, dto.FinishedAt);
+
+            var updateBody = {
+                CompletedAt : careplanArtifact.CompletedAt,
+                Status      : careplanArtifact.Status,
+            };
+
+            var careplanActivityDetails = await this._careplanHandler.updateActivity(careplanArtifact.UserId,
+                careplanArtifact.Provider, careplanArtifact.PlanCode, careplanArtifact.EnrollmentId,
+                careplanArtifact.ProviderActionId, updateBody);
+            dto.ActionDto = careplanActivityDetails;
+        }
         dto = await this.updateDto(dto);
         return dto;
     };
@@ -104,8 +123,14 @@ export class UserTaskService {
             dto.ActionId !== null) {
             actionDto = await this._medicationConsumptionRepo.getById(dto.ActionId);
             dto.ActionDto = actionDto;
+        } else if (dto.ActionType === UserActionType.Careplan &&
+            dto.ActionId !== null) {
+            var careplanArtifact = await this._careplanRepo.getActivity(dto.ActionId);
+            var careplanActivityDetails = await this._careplanHandler.getActivity(careplanArtifact.UserId,
+                careplanArtifact.Provider, careplanArtifact.PlanCode, careplanArtifact.EnrollmentId,
+                careplanArtifact.ProviderActionId);
+            dto.ActionDto = careplanActivityDetails;
         }
-        
         return dto;
     }
 

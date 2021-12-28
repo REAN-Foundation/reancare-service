@@ -221,4 +221,22 @@ export class CareplanRepo implements ICareplanRepo {
         }
     }
 
+    updateActivity = async (activityId: uuid, status: string, finishedAt: Date ): Promise<CareplanActivity> => {
+        try {
+            const record = await CareplanArtifact.findByPk(activityId);
+
+            if (status != null) {
+                record.Status = status;
+            }
+
+            if (finishedAt != null) {
+                record.CompletedAt = finishedAt;
+            }
+
+            return CareplanArtifactMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    }
+
 }

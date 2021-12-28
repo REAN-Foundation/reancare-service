@@ -38,4 +38,6 @@ export interface ICareplanRepo {
     getActivities(patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivity[]>;
 
     getActivity(activityId: uuid): Promise<CareplanActivity>;
+
+    updateActivity(activityId: uuid, status: string, finishedAt: Date): Promise<CareplanActivity>;
 }

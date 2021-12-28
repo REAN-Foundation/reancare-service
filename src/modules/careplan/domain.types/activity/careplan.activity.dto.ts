@@ -12,6 +12,7 @@ export interface CareplanActivity {
     ProviderActionId?: string;
     Title?           : string;
     ScheduledAt?     : Date;
+    CompletedAt?     : Date;
     Sequence?        : number;
     Frequency?       : number;
     Status?          : string;

@@ -22,6 +22,8 @@ export class CareplanArtifactMapper {
             ProviderActionId : careplanArtifact.ProviderActionId,
             Title            : careplanArtifact.Title,
             ScheduledAt      : careplanArtifact.ScheduledAt,
+            CompletedAt      : careplanArtifact.CompletedAt,
+            Comments         : careplanArtifact.Comments,
             Sequence         : careplanArtifact.Sequence,
             Frequency        : careplanArtifact.Frequency,
             Status           : careplanArtifact.Status,

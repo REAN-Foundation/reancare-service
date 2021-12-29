@@ -81,6 +81,18 @@ export default class CareplanArtifact extends Model {
     ScheduledAt: Date;
 
     @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    CompletedAt: Date;
+
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    Comments: string;
+
+    @Column({
         type      : DataType.INTEGER,
         allowNull : false,
     })

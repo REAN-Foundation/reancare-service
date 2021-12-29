@@ -8,6 +8,7 @@ import { EnrollmentDomainModel } from "../../domain.types/enrollment/enrollment.
 import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../domain.types/activity/careplan.activity";
 import { ParticipantDomainModel } from "../../domain.types/participant/participant.domain.model";
+import { CareplanActivityDetails } from "../../domain.types/activity/careplan.activity.details.dto";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -210,21 +211,76 @@ export class AhaCareplanService implements ICareplanService {
         }
     }
 
-    getActivity(
+    getActivity = async(
         patientUserId: string,
         careplanCode: string,
         enrollmentId: string,
-        activityId: string): Promise<CareplanActivity> {
-        throw new Error("Method not implemented.");
+        providerActionId: string): Promise<CareplanActivityDetails> => {
+        try {
+    
+            const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+    
+            var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities/${providerActionId}`;
+    
+            Logger.instance().log(`URL: ${JSON.stringify(url)}`);
+    
+            var response = await needle("get", url, this.getHeaderOptions());
+    
+            if (response.statusCode !== 200) {
+                Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+                Logger.instance().error('Unable to fetch details for given artifact id!', response.statusCode, null);
+            }
+    
+            Logger.instance().log(`response body for activity details: ${JSON.stringify(response.body.data.activity)}`);
+    
+            var activityDetails = response.body.data.activity;
+    
+            var entity: CareplanActivityDetails = {
+                Type        : activityDetails.type ?? "",
+                Name        : activityDetails.name ?? "",
+                Text        : activityDetails.text ?? "",
+                Description : activityDetails.description ?? "",
+                URL         : activityDetails.url ?? "",
+                Category    : activityDetails.category ?? [],
+                Items       : activityDetails.items ?? [],
+            };
+    
+            return entity;
+    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
-    updateActivity(
+    updateActivity = async(
         patientUserId: string,
         careplanCode: string,
         enrollmentId: string,
-        activityId: string,
-        updates: any): Promise<CareplanActivity> {
-        throw new Error("Method not implemented.");
+        providerActionId: string,
+        updates: any): Promise<CareplanActivity> => {
+        try {
+
+            const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+
+            var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities/${providerActionId}`;
+
+            Logger.instance().log(`URL: ${JSON.stringify(url)}`);
+
+            var response = await needle("patch", url, updates, this.getHeaderOptions());
+
+            if (response.statusCode !== 200) {
+                Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+                Logger.instance().error('Unable to fetch details for given artifact id!', response.statusCode, null);
+            }
+
+            Logger.instance().log(`response body for activity details: ${JSON.stringify(response.body.data.activity)}`);
+            return response.body.data.activity;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
     getHeaderOptions() {

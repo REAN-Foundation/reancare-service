@@ -8,6 +8,7 @@ import { BaseController } from '../base.controller';
 import { UserService } from '../../../services/user/user.service';
 import { TimeHelper } from '../../../common/time.helper';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
+import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,6 +40,8 @@ export class CareplanController extends BaseController {
             var startDate = await this._userService.getDateInUserTimeZone(
                 model.PatientUserId, model.StartDateStr);
 
+            Logger.instance().log(`Start Date: ${JSON.stringify(startDate)}`);
+
             var endDate: Date = null;
             if (model.EndDateStr) {
                 endDate = await this._userService.getDateInUserTimeZone(model.PatientUserId, model.EndDateStr);
@@ -47,6 +50,8 @@ export class CareplanController extends BaseController {
             else {
                 endDate = TimeHelper.addDuration(startDate, 84, DurationType.Day);
             }
+
+            Logger.instance().log(`End Date: ${JSON.stringify(endDate)}`);
 
             model.StartDate = startDate;
             model.EndDate = endDate;

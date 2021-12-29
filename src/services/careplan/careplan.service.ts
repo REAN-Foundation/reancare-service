@@ -10,6 +10,12 @@ import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { ParticipantDomainModel } from "../../modules/careplan/domain.types/participant/participant.domain.model";
 import { CareplanActivityDomainModel } from "../../modules/careplan/domain.types/activity/careplan.activity.domain.model";
+import { UserTaskCategory } from "../../domain.types/user/user.task/user.task..types";
+import { UserActionType } from "../../domain.types/user/user.task/user.task..types";
+import { TimeHelper } from "../../common/time.helper";
+import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
+import { DurationType } from "../../domain.types/miscellaneous/time.types";
+import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +28,7 @@ export class CareplanService {
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
+        @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
 
     ) {}
@@ -94,6 +101,8 @@ export class CareplanService {
             enrollmentDetails.PatientUserId, enrollmentDetails.Provider, enrollmentDetails.PlanCode, enrollmentId,
             enrollmentDetails.StartDate, enrollmentDetails.EndDate);
 
+        Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
+
         const activityModels = activities.map(x => {
             var a: CareplanActivityDomainModel = {
                 PatientUserId    : enrollmentDetails.PatientUserId,
@@ -113,13 +122,19 @@ export class CareplanService {
             return a;
         });
 
-        await this._careplanRepo.addActivities(
+        var careplanActivities = await this._careplanRepo.addActivities(
             enrollmentDetails.Provider,
             enrollmentDetails.PlanName,
             enrollmentDetails.PlanCode,
             enrollmentDetails.PatientUserId,
             enrollmentId,
             activityModels);
+
+        Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
+
+        //task scheduling
+
+        this.createScheduledUserTasks(careplanActivities);
 
         return dto;
     };
@@ -134,6 +149,55 @@ export class CareplanService {
         }
         patientDto.User = user;
         return patientDto;
+    }
+
+    async createScheduledUserTasks(careplanActivities) {
+        // creare user.tasks based on activities
+        var activitiesGroupedByDate = {};
+        for (const activity of careplanActivities) {
+
+            var scheduledDate = TimeHelper.timestamp(activity.ScheduledAt);
+            if (!activitiesGroupedByDate[scheduledDate]) {
+                activitiesGroupedByDate[scheduledDate] = [];
+            }
+
+            activitiesGroupedByDate[scheduledDate].push(activity);
+        }
+
+        for (const scheduledDate in activitiesGroupedByDate) {
+            var activities = activitiesGroupedByDate[scheduledDate];
+
+            Logger.instance().log(`Creating user tasks for: ${scheduledDate}, total tasks: ${activities.length}`);
+
+            activities.sort((a, b) => {
+                return a.Sequence - b.Sequence;
+            });
+
+            activities.forEach( async (activity) => {
+                var dayStart = TimeHelper.addDuration(activity.ScheduledAt, 7, DurationType.Hour);       // Start at 7:00 AM
+                var scheduleDelay = (activity.Sequence - 1) * 1;
+                var startTime = TimeHelper.addDuration(dayStart, scheduleDelay, DurationType.Second);   // Scheduled at every 1 sec
+                var endTime = TimeHelper.addDuration(activity.ScheduledAt, 23, DurationType.Hour);       // End at 11:00 PM
+
+                var userTaskModel = {
+                    UserId             : activity.PatientUserId,
+                    DisplayId          : activity.PlanName + '-' + activity.ProviderActionId,
+                    Task               : activity.Title,
+                    Category           : UserTaskCategory[activity.Type] ?? UserTaskCategory.Custom,
+                    Description        : null,
+                    ActionType         : UserActionType.Careplan,
+                    ActionId           : activity.id,
+                    ScheduledStartTime : startTime,
+                    ScheduledEndTime   : endTime
+                };
+
+                var userTaskDto = await this._userTaskRepo.create(userTaskModel);
+
+                Logger.instance().log(`User task dto: ${JSON.stringify(userTaskDto)}`);
+
+                Logger.instance().log(`New user task created for AHA careplan with id: ${userTaskDto.id}`);
+            });
+        }
     }
     
 }

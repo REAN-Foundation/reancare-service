@@ -6,15 +6,20 @@ import { UserActionType } from "../../domain.types/user/user.task/user.task..typ
 import { UserTaskDomainModel } from '../../domain.types/user/user.task/user.task.domain.model';
 import { TaskSummaryDto, UserTaskDto } from '../../domain.types/user/user.task/user.task.dto';
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../domain.types/user/user.task/user.task.search.types';
+import { ICareplanRepo } from "../../database/repository.interfaces/careplan/careplan.repo.interface";
+import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class UserTaskService {
 
+    _careplanHandler: CareplanHandler = new CareplanHandler();
+
     constructor(
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IMedicationConsumptionRepo') private _medicationConsumptionRepo: IMedicationConsumptionRepo,
+        @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {}
 
     create = async (userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
@@ -50,6 +55,20 @@ export class UserTaskService {
 
     update = async (id: string, userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
         var dto = await this._userTaskRepo.update(id, userTaskDomainModel);
+        if (dto.ActionType === UserActionType.Careplan &&
+            dto.ActionId !== null) {
+            var careplanArtifact = await this._careplanRepo.updateActivity(dto.ActionId, dto.Status, dto.FinishedAt);
+
+            var updateBody = {
+                CompletedAt : careplanArtifact.CompletedAt,
+                Status      : careplanArtifact.Status,
+            };
+
+            var careplanActivityDetails = await this._careplanHandler.updateActivity(careplanArtifact.PatientUserId,
+                careplanArtifact.Provider, careplanArtifact.PlanCode, careplanArtifact.EnrollmentId,
+                careplanArtifact.ProviderActionId, updateBody);
+            dto.ActionDto = careplanActivityDetails;
+        }
         dto = await this.updateDto(dto);
         return dto;
     };
@@ -104,9 +123,17 @@ export class UserTaskService {
             dto.ActionId !== null) {
             actionDto = await this._medicationConsumptionRepo.getById(dto.ActionId);
             dto.ActionDto = actionDto;
-        }
+        } else if (dto.ActionType === UserActionType.Careplan &&
+            dto.ActionId !== null) {
+            var careplanArtifact = await this._careplanRepo.getActivity(dto.ActionId);
+            var careplanActivityDetails = await this._careplanHandler.getActivity(careplanArtifact.PatientUserId,
+                careplanArtifact.Provider, careplanArtifact.PlanCode, careplanArtifact.EnrollmentId,
+                careplanArtifact.ProviderActionId);
+            dto.ActionDto = careplanActivityDetails;
         
-        return dto;
+            return dto;
+        }
+
     }
 
 }

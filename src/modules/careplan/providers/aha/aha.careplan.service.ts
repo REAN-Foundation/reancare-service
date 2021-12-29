@@ -229,6 +229,7 @@ export class AhaCareplanService implements ICareplanService {
             if (response.statusCode !== 200) {
                 Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
                 Logger.instance().error('Unable to fetch details for given artifact id!', response.statusCode, null);
+                throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
             }
     
             Logger.instance().log(`response body for activity details: ${JSON.stringify(response.body.data.activity)}`);
@@ -272,10 +273,26 @@ export class AhaCareplanService implements ICareplanService {
             if (response.statusCode !== 200) {
                 Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
                 Logger.instance().error('Unable to fetch details for given artifact id!', response.statusCode, null);
+                throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
             }
 
             Logger.instance().log(`response body for activity details: ${JSON.stringify(response.body.data.activity)}`);
-            return response.body.data.activity;
+            var activity = response.body.data.activity;
+
+            var entity: CareplanActivity = {
+                Provider         : this.providerName(),
+                Type             : activity.type,
+                ProviderActionId : activity.code,
+                Title            : activity.title,
+                ScheduledAt      : activity.scheduledAt,
+                Sequence         : activity.sequence,
+                Frequency        : activity.frequency,
+                Status           : activity.status,
+                CompletedAt      : activity.completedAt,
+                Comments         : activity.comments,
+            };
+
+            return entity;
 
         } catch (error) {
             Logger.instance().log(error.message);

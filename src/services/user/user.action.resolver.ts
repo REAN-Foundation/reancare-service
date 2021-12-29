@@ -1,6 +1,7 @@
 import { UserActionType } from "../../domain.types/user/user.task/user.task..types";
 import { Loader } from "../../startup/loader";
 import { MedicationConsumptionService } from "../clinical/medication/medication.consumption.service";
+import { CareplanService } from "../careplan/careplan.service";
 import { IUserActionService } from "./user.action.service.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +37,8 @@ export class UserActionResolver {
             
             //return Loader.container.resolve(AppointmentService);
             return null;
+        } else if (actionType === UserActionType.Careplan) {
+            return Loader.container.resolve(CareplanService);
         }
         return null;
     }

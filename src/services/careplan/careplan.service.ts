@@ -199,5 +199,24 @@ export class CareplanService {
             });
         }
     }
+
+    async completeAction(activityId, time, success) {
+        var activity = await this._careplanRepo.getActivity(activityId);
+        var updateFields = {
+            completedAt : time,
+            comments    : ""
+        };
+
+        var updatedActivity = await this._handler.updateActivity(
+            activity.PatientUserId, activity.Provider, activity.PlanCode,
+            activity.EnrollmentId, activity.ProviderActionId, updateFields);
+
+        return updatedActivity.CompletedAt ? true : false;
+    }
+
+    async cancelAction(actionType, actionId) {
+        // @TODO
+        return true;
+    }
     
 }

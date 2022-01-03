@@ -204,7 +204,8 @@ export class CareplanService {
         var activity = await this._careplanRepo.getActivity(activityId);
         var updateFields = {
             completedAt : time,
-            comments    : ""
+            comments    : "",
+            status      : "COMPLETED"
         };
 
         var updatedActivity = await this._handler.updateActivity(

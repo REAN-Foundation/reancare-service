@@ -4,7 +4,6 @@ import { EnrollmentDto } from "../../../modules/careplan/domain.types/enrollment
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityDto } from '../../../modules/careplan/domain.types/activity/careplan.activity.dto';
 import { CareplanActivityDomainModel } from '../../../modules/careplan/domain.types/activity/careplan.activity.domain.model';
-import { CareplanActivity } from '../../../modules/careplan/domain.types/activity/careplan.activity';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

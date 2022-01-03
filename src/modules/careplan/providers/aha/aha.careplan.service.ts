@@ -240,6 +240,7 @@ export class AhaCareplanService implements ICareplanService {
                 Type        : activityDetails.type ?? "",
                 Name        : activityDetails.name ?? "",
                 Text        : activityDetails.text ?? "",
+                Status      : activityDetails.status ?? "",
                 Description : activityDetails.description ?? "",
                 URL         : activityDetails.url ?? "",
                 Category    : activityDetails.category ?? [],
@@ -268,7 +269,13 @@ export class AhaCareplanService implements ICareplanService {
 
             Logger.instance().log(`URL: ${JSON.stringify(url)}`);
 
-            var response = await needle("patch", url, updates, this.getHeaderOptions());
+            var updateData = {
+                completedAt : Helper.formatDate(updates.completedAt),
+                comments    : updates.comments ?? "",
+                status      : updates.status,
+            };
+
+            var response = await needle("patch", url, updateData, this.getHeaderOptions());
 
             if (response.statusCode !== 200) {
                 Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);

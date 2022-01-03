@@ -37,14 +37,17 @@ export class CareplanController extends BaseController {
 
             const model = await this._validator.enroll(request);
 
-            var startDate = await this._userService.getDateInUserTimeZone(
-                model.PatientUserId, model.StartDateStr);
+            //var startDate = await this._userService.getDateInUserTimeZone(
+            //model.PatientUserId, model.StartDateStr);
+
+            var startDate = new Date(model.StartDateStr);
 
             Logger.instance().log(`Start Date: ${JSON.stringify(startDate)}`);
 
             var endDate: Date = null;
             if (model.EndDateStr) {
-                endDate = await this._userService.getDateInUserTimeZone(model.PatientUserId, model.EndDateStr);
+                //endDate = await this._userService.getDateInUserTimeZone(model.PatientUserId, model.EndDateStr);
+                endDate = new Date(model.EndDateStr);
                 endDate = TimeHelper.addDuration(endDate, 1, DurationType.Day);
             }
             else {

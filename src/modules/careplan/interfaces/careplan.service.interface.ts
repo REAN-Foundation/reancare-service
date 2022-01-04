@@ -1,6 +1,7 @@
 
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { CareplanActivity } from "../domain.types/activity/careplan.activity";
+import { CareplanActivityDetails } from "../domain.types/activity/careplan.activity.details.dto";
 import { EnrollmentDomainModel } from "../domain.types/enrollment/enrollment.domain.model";
 import { ParticipantDomainModel } from "../domain.types/participant/participant.domain.model";
 
@@ -27,7 +28,7 @@ export interface ICareplanService {
             careplanCode: string,
             enrollmentId: string,
             activityId: string
-        ): Promise<CareplanActivity>;
+        ): Promise<CareplanActivityDetails>;
 
     updateActivity(
             patientUserId: uuid,

@@ -7,6 +7,7 @@ import { ParticipantDomainModel } from "./domain.types/participant/participant.d
 import { ProviderResolver } from "./provider.resolver";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { CareplanConfig } from "../../config/configuration.types";
+import { CareplanActivityDetails } from "./domain.types/activity/careplan.activity.details.dto";
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -90,7 +91,7 @@ export class CareplanHandler {
         careplanCode: string,
         enrollmentId: string,
         activityId: string
-    ): Promise<CareplanActivity> => {
+    ): Promise<CareplanActivityDetails> => {
         var service = CareplanHandler._services.getItem(provider);
         return await service.getActivity(patientUserId, careplanCode, enrollmentId, activityId);
     };

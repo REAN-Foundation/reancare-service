@@ -36,9 +36,11 @@ export const UserTaskCategoryList: UserTaskCategory [] = [
 export enum UserActionType {
     Medication  = 'Medication',
     Appointment = 'Appointment',
+    Careplan = "Careplan"
 }
 
 export const UserActionTypeList: UserActionType [] = [
     UserActionType.Medication,
     UserActionType.Appointment,
+    UserActionType.Careplan,
 ];

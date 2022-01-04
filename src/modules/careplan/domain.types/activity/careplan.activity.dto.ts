@@ -12,6 +12,8 @@ export interface CareplanActivityDto {
     ProviderActionId?: string;
     Title?           : string;
     ScheduledAt?     : Date;
+    CompletedAt?     : Date;
+    Comments?        : string;
     Sequence?        : number;
     Frequency?       : number;
     Status?          : string;

@@ -18,7 +18,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
                 PatientUserId    : createModel.PatientUserId,
                 BodyWeight       : createModel.BodyWeight,
                 Unit             : createModel.Unit,
-                RecordDate       : createModel.RecordDate ?? null,
+                RecordDate       : createModel.RecordDate ?? new Date(),
                 RecordedByUserId : createModel.RecordedByUserId ?? null,
             };
 

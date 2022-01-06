@@ -65,7 +65,7 @@ export class CareplanRepo implements ICareplanRepo {
                 Gender        : model.Gender,
             };
             const enrollment = await CareplanEnrollment.create(entity);
-            return await EnrollmentMapper.toDto(enrollment);
+            return EnrollmentMapper.toDto(enrollment);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -138,7 +138,7 @@ export class CareplanRepo implements ICareplanRepo {
 
             var dtos = [];
             records.forEach(async (task) => {
-                var dto = await CareplanArtifactMapper.toDto(task);
+                var dto = CareplanArtifactMapper.toDto(task);
                 dtos.push(dto);
             });
             return dtos;

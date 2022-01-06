@@ -14,14 +14,11 @@ export class AssessmentTemplateValidator extends BaseValidator {
     getDomainModel = (request: express.Request): AssessmentTemplateDomainModel => {
 
         const patientAssessmentTemplateModel: AssessmentTemplateDomainModel = {
-            PatientUserId         : request.body.PatientUserId ?? null,
-            AssessmentTemplate    : request.body.AssessmentTemplate ?? null,
-            AllergenCategory      : request.body.AllergenCategory ?? null,
-            AllergenExposureRoute : request.body.AllergenExposureRoute,
-            Severity              : request.body.Severity ?? null,
-            Reaction              : request.body.Reaction ?? null,
-            OtherInformation      : request.body.OtherInformation ?? null,
-            LastOccurrence        : request.body.LastOccurrence ?? null,
+            Type                   : request.body.Type ?? null,
+            Title                  : request.body.Title ?? null,
+            Description            : request.body.Description,
+            ProviderAssessmentCode : request.body.ProviderAssessmentCode ?? null,
+            Provider               : request.body.Provider ?? null,
         };
 
         return patientAssessmentTemplateModel;
@@ -36,12 +33,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
         request: express.Request
     ): Promise<AssessmentTemplateSearchFilters> => {
 
-        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
-        await this.validateString(request, 'allergy', Where.Query, false, false, true);
-        await this.validateString(request, 'allergenCategory', Where.Query, false, false, true);
-        await this.validateString(request, 'allergenExposureRoute', Where.Query, false, false, true);
-        await this.validateString(request, 'severity', Where.Query, false, false, true);
-        await this.validateString(request, 'reaction', Where.Query, false, false, true);
+        await this.validateUuid(request, 'title', Where.Query, false, false);
+        await this.validateString(request, 'type', Where.Query, false, false, true);
 
         await this.validateBaseSearchFilters(request);
         
@@ -54,12 +47,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
     private getFilter(request): AssessmentTemplateSearchFilters {
 
         var filters: AssessmentTemplateSearchFilters = {
-            PatientUserId         : request.query.patientUserId ?? null,
-            AllergenCategory      : request.query.allergenCategory ?? null,
-            AllergenExposureRoute : request.query.allergenExposureRoute ?? null,
-            AssessmentTemplate    : request.query.allergy ?? null,
-            Severity              : request.query.severity ?? null,
-            Reaction              : request.query.reaction ?? null,
+            Title : request.query.title ?? null,
+            Type  : request.query.type ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -76,12 +65,11 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     private async validateCreateBody(request) {
 
-        await this.validateUuid(request, 'PatientUserId', Where.Query, true, false);
-        await this.validateString(request, 'AssessmentTemplate', Where.Query, true, false);
-        await this.validateString(request, 'AllergenCategory', Where.Query, false, false);
-        await this.validateString(request, 'AllergenExposureRoute', Where.Query, false, false);
-        await this.validateString(request, 'Severity', Where.Query, true, false);
-        await this.validateString(request, 'Reaction', Where.Query, false, false);
+        await this.validateString(request, 'Type', Where.Body, true, false);
+        await this.validateString(request, 'Title', Where.Body, true, false);
+        await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
+        await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
 
         this.validateRequest(request);
 
@@ -89,12 +77,11 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     private async validateUpdateBody(request) {
 
-        await this.validateUuid(request, 'PatientUserId', Where.Query, false, false);
-        await this.validateString(request, 'AssessmentTemplate', Where.Query, false, false);
-        await this.validateString(request, 'AllergenCategory', Where.Query, false, false);
-        await this.validateString(request, 'AllergenExposureRoute', Where.Query, false, false);
-        await this.validateString(request, 'Severity', Where.Query, false, false);
-        await this.validateString(request, 'Reaction', Where.Query, false, false);
+        await this.validateString(request, 'Type', Where.Body, false, false);
+        await this.validateString(request, 'Title', Where.Body, false, false);
+        await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
+        await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
 
         this.validateRequest(request);
         

@@ -1,10 +1,11 @@
+import { uuid } from "../../miscellaneous/system.types";
 
 export interface AssessmentTemplateDto {
-    id?              : string;
-    EhrId?           : string;
-    PatientUserId    : string;
-    BloodGlucose     : number;
-    Unit             : string;
-    RecordDate?      : Date;
-    RecordedByUserId?: string;
+    id?                    : uuid;
+    DisplayCode?           : string;
+    Type                   : string;
+    Title                  : string;
+    Description?           : string;
+    ProviderAssessmentCode?: string;
+    Provider?              : string;
 }

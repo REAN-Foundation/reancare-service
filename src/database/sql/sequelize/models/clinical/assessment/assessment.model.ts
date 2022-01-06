@@ -53,6 +53,13 @@ export default class Assessment extends Model {
     })
     DisplayCode: string;
 
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : false,
+    })
+    Title: string;
+
     @Column({
         type         : DataType.ENUM,
         values       : AssessmentTypeList,
@@ -61,6 +68,14 @@ export default class Assessment extends Model {
     })
     Type: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => User)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    PatientUserId: string;
+    
     @IsUUID(4)
     @ForeignKey(() => AssessmentTemplate)
     @Column({
@@ -71,14 +86,6 @@ export default class Assessment extends Model {
 
     @BelongsTo(() => AssessmentTemplate)
     Template: AssessmentTemplate;
-
-    @IsUUID(4)
-    @ForeignKey(() => User)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : false,
-    })
-    PatientUserId: string;
     
     @BelongsTo(() => User)
     User: User;
@@ -96,13 +103,6 @@ export default class Assessment extends Model {
         allowNull : true,
     })
     ProviderAssessmentCode: string;
-
-    @Length({ max: 128 })
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : false,
-    })
-    Title: string;
 
     @Length({ max: 128 })
     @Column({

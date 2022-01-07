@@ -55,6 +55,8 @@ import { PhysicalActivityRepo } from './repositories/wellness/exercise/physical.
 import { FoodConsumptionRepo } from './repositories/wellness/nutrition/food.consumption.repo';
 import { WaterConsumptionRepo } from './repositories/wellness/nutrition/water.consumption.repo';
 import { CareplanRepo } from './repositories/careplan/careplan.repo';
+import { AssessmentRepo } from './repositories/clinical/assessment/assessment.repo';
+import { AssessmentTemplateRepo } from './repositories/clinical/assessment/assessment.template.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -119,6 +121,8 @@ export class SequelizeInjector {
         container.register('IMedicalConditionRepo', MedicalConditionRepo);
         container.register('IDailyAssessmentRepo', DailyAssessmentRepo);
         container.register('ICareplanRepo', CareplanRepo);
+        container.register('IAssessmentRepo', AssessmentRepo);
+        container.register('IAssessmentTemplateRepo', AssessmentTemplateRepo);
 
     }
 

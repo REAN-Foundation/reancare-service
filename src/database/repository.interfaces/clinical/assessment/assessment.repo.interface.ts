@@ -4,13 +4,13 @@ import { AssessmentSearchFilters, AssessmentSearchResults } from '../../../../do
 
 export interface IAssessmentRepo {
 
-    create(bloodGlucoseDomainModel: AssessmentDomainModel): Promise<AssessmentDto>;
+    create(model: AssessmentDomainModel): Promise<AssessmentDto>;
 
     getById(id: string): Promise<AssessmentDto>;
 
     search(filters: AssessmentSearchFilters): Promise<AssessmentSearchResults>;
 
-    update(id: string, bloodGlucoseDomainModel: AssessmentDomainModel): Promise<AssessmentDto>;
+    update(id: string, model: AssessmentDomainModel): Promise<AssessmentDto>;
 
     delete(id: string): Promise<boolean>;
 

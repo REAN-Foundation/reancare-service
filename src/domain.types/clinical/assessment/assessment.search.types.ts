@@ -4,11 +4,12 @@ import { AssessmentDto } from "./assessment.dto";
 import { AssessmentType } from "./assessment.types";
 
 export interface AssessmentSearchFilters extends BaseSearchFilters {
-    PatientUserId?   : uuid;
-    Title?           : string;
-    Type?            : AssessmentType;
-    CreatedDateFrom? : Date;
-    CreatedDateTo?   : Date;
+    PatientUserId?       : uuid;
+    AssessmentTemplateId?: uuid;
+    Title?               : string;
+    Type?                : AssessmentType;
+    CreatedDateFrom?     : Date;
+    CreatedDateTo?       : Date;
 }
 
 export interface AssessmentSearchResults extends BaseSearchResults{

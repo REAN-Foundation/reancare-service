@@ -1,8 +1,10 @@
 import {
+    BelongsTo,
     Column,
     CreatedAt,
     DataType,
     DeletedAt,
+    ForeignKey,
     IsUUID,
     Length,
     Model,
@@ -15,6 +17,7 @@ import {
     AssessmentType,
     AssessmentTypeList,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
+import FileResource from '../../file.resource/file.resource.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -79,6 +82,17 @@ export default class AssessmentTemplate extends Model {
         allowNull : true,
     })
     Provider: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => FileResource)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    FileResourceId: string;
+
+    @BelongsTo(() => FileResource)
+    FileResource: FileResource;
 
     @Column
     @CreatedAt

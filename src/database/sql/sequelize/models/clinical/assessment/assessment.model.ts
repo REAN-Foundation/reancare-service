@@ -75,7 +75,10 @@ export default class Assessment extends Model {
         allowNull : false,
     })
     PatientUserId: string;
-    
+
+    @BelongsTo(() => User)
+    User: User;
+
     @IsUUID(4)
     @ForeignKey(() => AssessmentTemplate)
     @Column({
@@ -86,9 +89,6 @@ export default class Assessment extends Model {
 
     @BelongsTo(() => AssessmentTemplate)
     Template: AssessmentTemplate;
-    
-    @BelongsTo(() => User)
-    User: User;
 
     @Length({ max: 128 })
     @Column({

@@ -2,9 +2,9 @@ import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
-import { AssessmentService } from '../../../../services/clinical/biometrics/assessment.service';
+import { AssessmentService } from '../../../../services/clinical/assessment/assessment.service';
 import { Loader } from '../../../../startup/loader';
-import { AssessmentValidator } from '../../../validators/clinical/biometrics/assessment.validator';
+import { AssessmentValidator } from '../../../validators/clinical/assessment/assessment.validator';
 import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ export class AssessmentController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('Biometrics.Assessment.Create', request, response);
+            this.setContext('Assessment.Create', request, response);
 
             const model = await this._validator.create(request);
             const assessment = await this._service.create(model);
@@ -48,7 +48,7 @@ export class AssessmentController extends BaseController{
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('Biometrics.Assessment.GetById', request, response);
+            this.setContext('Assessment.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const assessment = await this._service.getById(id);
@@ -67,7 +67,7 @@ export class AssessmentController extends BaseController{
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('Biometrics.Assessment.Search', request, response);
+            this.setContext('Assessment.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -90,7 +90,7 @@ export class AssessmentController extends BaseController{
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('Biometrics.Assessment.Update', request, response);
+            this.setContext('Assessment.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -115,7 +115,7 @@ export class AssessmentController extends BaseController{
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('Biometrics.Assessment.Delete', request, response);
+            this.setContext('Assessment.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -130,6 +130,82 @@ export class AssessmentController extends BaseController{
 
             ResponseHandler.success(request, response, 'Assessment record deleted successfully!', 200, {
                 Deleted : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    startAssessment = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            this.setContext('Assessment.StartAssessment', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const assessment = await this._service.getById(id);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment record not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment record retrieved successfully!', 200, {
+                Assessment : assessment,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getNextQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            this.setContext('Assessment.GetNextQuestion', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const assessment = await this._service.getById(id);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment record not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment record retrieved successfully!', 200, {
+                Assessment : assessment,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getQuestionById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            this.setContext('Assessment.GetQuestionById', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const assessment = await this._service.getById(id);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment record not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment record retrieved successfully!', 200, {
+                Assessment : assessment,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    answerQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            this.setContext('Assessment.AnswerQuestion', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const assessment = await this._service.getById(id);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment record not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment record retrieved successfully!', 200, {
+                Assessment : assessment,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

@@ -10,11 +10,14 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new AssessmentTemplateController();
 
+    // router.post('/import-from-file', authenticator.authenticateClient, authenticator.authenticateUser, controller.importFromFile);
+    // router.post('/import-from-json', authenticator.authenticateClient, authenticator.authenticateUser, controller.importFromJson);
+
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
     
-    app.use('/api/v1/clinical/assessments/', router);
+    app.use('/api/v1/clinical/assessment-templates/', router);
 };

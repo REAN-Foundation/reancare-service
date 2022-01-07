@@ -87,4 +87,9 @@ export class AssessmentTemplateValidator extends BaseValidator {
         
     }
 
+    importFromJson = async (request: express.Request): Promise<AssessmentTemplateDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
+    };
+
 }

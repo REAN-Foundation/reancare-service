@@ -66,6 +66,7 @@ export class UserTaskValidator extends BaseValidator{
      };
 
      finishTask = async (request: express.Request): Promise<any> => {
+         
          const id: string = await this.getParamUuid(request, 'id');
          await this.validateDate(request, 'FinishedAt', Where.Body, false, false);
          await this.validateString(request, 'Comments', Where.Body, false, false);

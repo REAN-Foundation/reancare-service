@@ -17,7 +17,7 @@ export class UserActionResolver {
         completionTime?: Date): Promise<boolean> => {
         var actionService = this.getActionService(actionType);
         var time = completionTime ?? new Date();
-        return await actionService.completeAction(actionId, time, success);
+        return await actionService?.completeAction(actionId, time, success);
     }
 
     cancelAction = async (
@@ -26,7 +26,7 @@ export class UserActionResolver {
         cancellationTime?: Date,
         cancellationReason?: string): Promise<boolean> => {
         var actionService = this.getActionService(actionType);
-        return await actionService.cancelAction(actionId, cancellationTime, cancellationReason);
+        return await actionService?.cancelAction(actionId, cancellationTime, cancellationReason);
     }
 
     getActionService = (actionType: string): IUserActionService => {
@@ -34,7 +34,6 @@ export class UserActionResolver {
             return Loader.container.resolve(MedicationConsumptionService);
         }
         else if (actionType === UserActionType.Appointment) {
-            
             //return Loader.container.resolve(AppointmentService);
             return null;
         } else if (actionType === UserActionType.Careplan) {

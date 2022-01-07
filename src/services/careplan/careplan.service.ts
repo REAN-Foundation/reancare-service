@@ -16,11 +16,12 @@ import { TimeHelper } from "../../common/time.helper";
 import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
 import { DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
+import { IUserActionService } from "../user/user.action.service.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class CareplanService {
+export class CareplanService implements IUserActionService {
 
     _handler: CareplanHandler = new CareplanHandler();
 
@@ -33,7 +34,7 @@ export class CareplanService {
 
     ) {}
 
-    enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+    public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 
         var patient = await this.getPatient(enrollmentDetails.PatientUserId);
         if (!patient) {
@@ -139,6 +140,30 @@ export class CareplanService {
         return dto;
     };
 
+    public completeAction = async (activityId, time, success) => {
+        var activity = await this._careplanRepo.getActivity(activityId);
+        var updateFields = {
+            completedAt : time,
+            comments    : "",
+            status      : "COMPLETED"
+        };
+        Logger.instance().log(`Action success: ${success}`);
+        var updatedActivity = await this._handler.updateActivity(
+            activity.PatientUserId, activity.Provider, activity.PlanCode,
+            activity.EnrollmentId, activity.ProviderActionId, updateFields);
+
+        return updatedActivity.CompletedAt ? true : false;
+    }
+
+    public cancelAction = async (actionType, actionId) => {
+        // @TODO
+        Logger.instance().log(`Action type: ${actionType}`);
+        Logger.instance().log(`Action is: ${actionId}`);
+        return true;
+    }
+
+    //#region Privates
+
     private async getPatient(patientUserId: uuid) {
 
         var patientDto = await this._patientRepo.getByUserId(patientUserId);
@@ -151,8 +176,10 @@ export class CareplanService {
         return patientDto;
     }
 
-    async createScheduledUserTasks(careplanActivities) {
+    private async createScheduledUserTasks(careplanActivities) {
+
         // creare user.tasks based on activities
+
         var activitiesGroupedByDate = {};
         for (const activity of careplanActivities) {
 
@@ -199,25 +226,7 @@ export class CareplanService {
             });
         }
     }
-
-    async completeAction(activityId, time, success) {
-        var activity = await this._careplanRepo.getActivity(activityId);
-        var updateFields = {
-            completedAt : time,
-            comments    : "",
-            status      : "COMPLETED"
-        };
-
-        var updatedActivity = await this._handler.updateActivity(
-            activity.PatientUserId, activity.Provider, activity.PlanCode,
-            activity.EnrollmentId, activity.ProviderActionId, updateFields);
-
-        return updatedActivity.CompletedAt ? true : false;
-    }
-
-    async cancelAction(actionType, actionId) {
-        // @TODO
-        return true;
-    }
+    
+    //#endregion
     
 }

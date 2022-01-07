@@ -180,6 +180,7 @@ export class UserTaskController {
             await this._authorizer.authorize(request, response);
 
             const { id, finishedAt, comments } = await this._validator.finishTask(request);
+            Logger.instance().log(`Task comments: ${comments}`);
 
             const existing = await this._service.getById(id);
             if (existing == null) {

@@ -8,6 +8,7 @@ import { TaskSummaryDto, UserTaskDto } from '../../domain.types/user/user.task/u
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../domain.types/user/user.task/user.task.search.types';
 import { ICareplanRepo } from "../../database/repository.interfaces/careplan/careplan.repo.interface";
 import { CareplanHandler } from '../../modules/careplan/careplan.handler';
+import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -126,14 +127,15 @@ export class UserTaskService {
         } else if (dto.ActionType === UserActionType.Careplan &&
             dto.ActionId !== null) {
             var careplanArtifact = await this._careplanRepo.getActivity(dto.ActionId);
+
+            Logger.instance().log(`Patient user id: ${JSON.stringify(careplanArtifact.PatientUserId)}`);
             var careplanActivityDetails = await this._careplanHandler.getActivity(careplanArtifact.PatientUserId,
                 careplanArtifact.Provider, careplanArtifact.PlanCode, careplanArtifact.EnrollmentId,
-                careplanArtifact.ProviderActionId);
+                careplanArtifact.ProviderActionId, careplanArtifact.ScheduledAt, careplanArtifact.Sequence);
             dto.ActionDto = careplanActivityDetails;
         
-            return dto;
         }
-
+        return dto;
     }
 
 }

@@ -9,6 +9,8 @@ import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../domain.types/activity/careplan.activity";
 import { ParticipantDomainModel } from "../../domain.types/participant/participant.domain.model";
 import { CareplanActivityDetails } from "../../domain.types/activity/careplan.activity.details.dto";
+import { TimeHelper } from "../../../../common/time.helper";
+import { DateStringFormat } from "../../../../domain.types/miscellaneous/time.types";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -215,12 +217,17 @@ export class AhaCareplanService implements ICareplanService {
         patientUserId: string,
         careplanCode: string,
         enrollmentId: string,
-        providerActionId: string): Promise<CareplanActivityDetails> => {
+        providerActionId: string,
+        scheduledAt: Date,
+        sequence: number): Promise<CareplanActivityDetails> => {
         try {
     
             const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+
+            var scheduledDate = TimeHelper.getDateString(scheduledAt, DateStringFormat.YYYY_MM_DD);
+            var queryParam = `scheduledAt=${scheduledDate}&sequence=${sequence}`;
     
-            var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities/${providerActionId}`;
+            var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities/${providerActionId}?${queryParam}`;
     
             Logger.instance().log(`URL: ${JSON.stringify(url)}`);
     

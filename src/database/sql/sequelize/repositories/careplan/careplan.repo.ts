@@ -9,7 +9,7 @@ import { ICareplanRepo } from "../../../../repository.interfaces/careplan/carepl
 import { EnrollmentMapper } from "../../mappers/careplan/enrollment.mapper";
 import CareplanEnrollment from "../../models/careplan/enrollment.model";
 import CareplanParticipant from "../../../../../database/sql/sequelize/models/careplan/participant.model";
-import CareplanArtifact from "../../../../../database/sql/sequelize/models/careplan/careplan.artifact.model";
+import CareplanActivity from "../../models/careplan/careplan.activity.model";
 import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 import { CareplanArtifactMapper } from '../../mappers/careplan/artifact.mapper';
 import { Op } from 'sequelize';
@@ -134,7 +134,7 @@ export class CareplanRepo implements ICareplanRepo {
                 activityEntities.push(entity);
             });
             
-            const records = await CareplanArtifact.bulkCreate(activityEntities);
+            const records = await CareplanActivity.bulkCreate(activityEntities);
 
             var dtos = [];
             records.forEach(async (task) => {
@@ -169,7 +169,7 @@ export class CareplanRepo implements ICareplanRepo {
                 Frequency        : activity.Frequency,
                 Status           : activity.Status
             };
-            const record = await CareplanArtifact.create(entity);
+            const record = await CareplanActivity.create(entity);
             var dto = await CareplanArtifactMapper.toDto(record);
             return dto;
         } catch (error) {
@@ -182,7 +182,7 @@ export class CareplanRepo implements ICareplanRepo {
             const orderByColum = 'ScheduledAt';
             const order = 'ASC';
 
-            const foundResults = await CareplanArtifact.findAndCountAll({
+            const foundResults = await CareplanActivity.findAndCountAll({
                 where : {
                     PatientUserId : patientUserId,
                     ScheduledAt   : {
@@ -214,7 +214,7 @@ export class CareplanRepo implements ICareplanRepo {
 
     getActivity = async (activityId: uuid): Promise<CareplanActivityDto> => {
         try {
-            const record = await CareplanArtifact.findByPk(activityId);
+            const record = await CareplanActivity.findByPk(activityId);
             return CareplanArtifactMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -223,7 +223,7 @@ export class CareplanRepo implements ICareplanRepo {
 
     updateActivity = async (activityId: uuid, status: string, finishedAt: Date ): Promise<CareplanActivityDto> => {
         try {
-            const record = await CareplanArtifact.findByPk(activityId);
+            const record = await CareplanActivity.findByPk(activityId);
 
             if (status != null) {
                 record.Status = status;

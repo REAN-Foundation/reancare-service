@@ -16,7 +16,7 @@ import { MedicationDto } from "../../../domain.types/clinical/medication/medicat
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
 import { MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from "../../../domain.types/clinical/medication/medication/medication.types";
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
-import { UserActionType, UserTaskCategory } from "../../../domain.types/user/user.task/user.task..types";
+import { UserActionType, UserTaskCategory } from "../../../domain.types/user/user.task/user.task.types";
 import { UserTaskDomainModel } from "../../../domain.types/user/user.task/user.task.domain.model";
 import { IUserActionService } from "../../../services/user/user.action.service.interface";
 import { Loader } from "../../../startup/loader";

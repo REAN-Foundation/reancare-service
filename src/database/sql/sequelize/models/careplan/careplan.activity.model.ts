@@ -1,18 +1,20 @@
 import {
-    Column, CreatedAt, DataType, DeletedAt, IsUUID, Model, PrimaryKey, Table, UpdatedAt
+    Column, CreatedAt, DataType, DeletedAt, IsUrl, IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
+import { ProgressStatus, ProgressStatusList } from '../../../../../domain.types/miscellaneous/system.types';
+import { UserTaskCategory, UserTaskCategoryList } from '../../../../../domain.types/user/user.task/user.task.types';
 import { v4 } from 'uuid';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'CareplanArtifact',
-    tableName       : 'careplan_artifacts',
+    modelName       : 'CareplanActivity',
+    tableName       : 'careplan_activities',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class CareplanArtifact extends Model {
+export default class CareplanActivity extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -30,6 +32,12 @@ export default class CareplanArtifact extends Model {
         allowNull : false,
     })
     PatientUserId: string;
+
+    @Column({
+        type      : DataType.STRING(64),
+        allowNull : false,
+    })
+    ProviderActionId: string;
 
     @Column({
         type      : DataType.STRING(128),
@@ -63,16 +71,38 @@ export default class CareplanArtifact extends Model {
     Type: string;
 
     @Column({
-        type      : DataType.STRING(64),
-        allowNull : false,
+        type         : DataType.ENUM,
+        values       : UserTaskCategoryList,
+        defaultValue : UserTaskCategory.Custom,
+        allowNull    : false,
     })
-    ProviderActionId: string;
+    Category: string;
 
     @Column({
         type      : DataType.STRING(128),
         allowNull : false,
     })
     Title: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Description: string;
+
+    @IsUrl
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Url: string;
+
+    @Column({
+        type         : DataType.STRING(16),
+        allowNull    : false,
+        defaultValue : 'English'
+    })
+    Language: string;
 
     @Column({
         type      : DataType.DATE,
@@ -87,12 +117,6 @@ export default class CareplanArtifact extends Model {
     CompletedAt: Date;
 
     @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
-    })
-    Comments: string;
-
-    @Column({
         type      : DataType.INTEGER,
         allowNull : false,
     })
@@ -105,10 +129,24 @@ export default class CareplanArtifact extends Model {
     Frequency: number;
 
     @Column({
-        type      : DataType.STRING(128),
-        allowNull : false,
+        type         : DataType.ENUM,
+        values       : ProgressStatusList,
+        defaultValue : ProgressStatus.Pending,
+        allowNull    : false,
     })
     Status: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Comments: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    RawContent: string;
 
     @Column
     @CreatedAt

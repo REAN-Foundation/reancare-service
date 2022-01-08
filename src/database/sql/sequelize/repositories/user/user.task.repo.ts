@@ -5,7 +5,7 @@ import { Logger } from '../../../../../common/logger';
 import { TimeHelper } from '../../../../../common/time.helper';
 import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system.types';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
-import { UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task..types';
+import { UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task.types';
 import { UserTaskDomainModel } from '../../../../../domain.types/user/user.task/user.task.domain.model';
 import { TaskSummaryDto, UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../../../../domain.types/user/user.task/user.task.search.types';

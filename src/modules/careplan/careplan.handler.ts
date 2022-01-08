@@ -7,7 +7,8 @@ import { ParticipantDomainModel } from "./domain.types/participant/participant.d
 import { ProviderResolver } from "./provider.resolver";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { CareplanConfig } from "../../config/configuration.types";
-import { CareplanActivityDetails } from "./domain.types/activity/careplan.activity.details.dto";
+import { AssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.template";
+import { Assessment } from "../../domain.types/clinical/assessment/assessment";
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -91,7 +92,7 @@ export class CareplanHandler {
         careplanCode: string,
         enrollmentId: string,
         activityId: string
-    ): Promise<CareplanActivityDetails> => {
+    ): Promise<CareplanActivity> => {
         var service = CareplanHandler._services.getItem(provider);
         return await service.getActivity(patientUserId, careplanCode, enrollmentId, activityId);
     };
@@ -107,5 +108,16 @@ export class CareplanHandler {
         var service = CareplanHandler._services.getItem(provider);
         return await service.updateActivity(patientUserId, careplanCode, enrollmentId, activityId, updates);
     };
+
+    public convertToAssessmentTemplate = async (assessmentActivity: CareplanActivity)
+        : Promise<AssessmentTemplate> => {
+        var service = CareplanHandler._services.getItem(assessmentActivity.Provider);
+        return await service.convertToAssessmentTemplate(assessmentActivity);
+    }
+
+    public updateAssessment = async (assessment: Assessment): Promise<boolean> => {
+        var service = CareplanHandler._services.getItem(assessment.Provider);
+        return await service.updateAssessment(assessment);
+    }
 
 }

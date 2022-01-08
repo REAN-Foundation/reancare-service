@@ -41,6 +41,22 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
         }
     };
 
+    getByProviderAssessmentCode = async (provider: string, providerAssessmentCode: string)
+        : Promise<AssessmentTemplateDto> => {
+        try {
+            const assessmentTemplate = await AssessmentTemplate.findOne({
+                where : {
+                    Provider               : provider,
+                    ProviderAssessmentCode : providerAssessmentCode
+                }
+            });
+            return await AssessmentTemplateMapper.toDto(assessmentTemplate);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
     search = async (filters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchResults> => {
         try {
             const search = { where: {} };

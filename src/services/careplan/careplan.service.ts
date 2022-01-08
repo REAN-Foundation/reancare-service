@@ -1,22 +1,29 @@
 import { inject, injectable } from "tsyringe";
 import { ICareplanRepo } from "../../database/repository.interfaces/careplan/careplan.repo.interface";
-import { EnrollmentDomainModel } from '../../modules/careplan/domain.types/enrollment/enrollment.domain.model';
-import { EnrollmentDto } from '../../modules/careplan/domain.types/enrollment/enrollment.dto';
 import { IPatientRepo } from "../../database/repository.interfaces/patient/patient.repo.interface";
-import { ApiError } from "../../common/api.error";
 import { IPersonRepo } from "../../database/repository.interfaces/person.repo.interface";
 import { IUserRepo } from "../../database/repository.interfaces/user/user.repo.interface";
+import { IAssessmentRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
+import { IAssessmentTemplateRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
+import { IAssessmentHelperRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
+import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
+import { EnrollmentDomainModel } from '../../modules/careplan/domain.types/enrollment/enrollment.domain.model';
+import { EnrollmentDto } from '../../modules/careplan/domain.types/enrollment/enrollment.dto';
+import { ApiError } from "../../common/api.error";
 import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { ParticipantDomainModel } from "../../modules/careplan/domain.types/participant/participant.domain.model";
 import { CareplanActivityDomainModel } from "../../modules/careplan/domain.types/activity/careplan.activity.domain.model";
-import { UserTaskCategory } from "../../domain.types/user/user.task/user.task..types";
-import { UserActionType } from "../../domain.types/user/user.task/user.task..types";
+import { UserTaskCategory } from "../../domain.types/user/user.task/user.task.types";
+import { UserActionType } from "../../domain.types/user/user.task/user.task.types";
 import { TimeHelper } from "../../common/time.helper";
-import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
 import { DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
 import { IUserActionService } from "../user/user.action.service.interface";
+import { AssessmentTemplateDto } from "../../domain.types/clinical/assessment/assessment.template.dto";
+import { AssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.template";
+import { Assessment } from "../../domain.types/clinical/assessment/assessment";
+import { CareplanActivity } from "../../modules/careplan/domain.types/activity/careplan.activity";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +38,9 @@ export class CareplanService implements IUserActionService {
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
+        @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
+        @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
+        @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
 
     ) {}
 
@@ -162,6 +172,40 @@ export class CareplanService implements IUserActionService {
         return true;
     }
 
+    public createAssessmentTemplate = async (model: CareplanActivity): Promise<AssessmentTemplateDto> => {
+
+        const assessmentActivity = await this._handler.getActivity(
+            model.PatientUserId,
+            model.Provider,
+            model.PlanCode,
+            model.EnrollmentId,
+            model.ProviderActionId);
+        
+        if (!assessmentActivity) {
+            throw new Error('Invalid careplan activity encountered!');
+        }
+
+        if (assessmentActivity.Category !== UserTaskCategory.Assessment) {
+            throw new Error('The given careplan activity is not an assessment activity!');
+        }
+
+        var existingTemplate = await this._assessmentTemplateRepo.getByProviderAssessmentCode(
+            model.Provider, assessmentActivity.ProviderActionId);
+        if (existingTemplate) {
+            return existingTemplate;
+        }
+        
+        var assessmentTemplate: AssessmentTemplate =
+            await this._handler.convertToAssessmentTemplate(assessmentActivity);
+
+        const templateDto = await this._assessmentHelperRepo.addTemplate(assessmentTemplate);
+        return templateDto;
+    }
+
+    public updateAssessment = async (assessment: Assessment): Promise<boolean> => {
+        return await this._handler.updateAssessment(assessment);
+    }
+
     //#region Privates
 
     private async getPatient(patientUserId: uuid) {
@@ -178,7 +222,7 @@ export class CareplanService implements IUserActionService {
 
     private async createScheduledUserTasks(careplanActivities) {
 
-        // creare user.tasks based on activities
+        // create user tasks based on activities
 
         var activitiesGroupedByDate = {};
         for (const activity of careplanActivities) {
@@ -221,12 +265,11 @@ export class CareplanService implements IUserActionService {
                 var userTaskDto = await this._userTaskRepo.create(userTaskModel);
 
                 Logger.instance().log(`User task dto: ${JSON.stringify(userTaskDto)}`);
-
                 Logger.instance().log(`New user task created for AHA careplan with id: ${userTaskDto.id}`);
             });
         }
     }
     
     //#endregion
-    
+
 }

@@ -4,7 +4,7 @@ import {
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import { UserTaskCategory, UserTaskCategoryList } from '../../../../../domain.types/user/user.task/user.task..types';
+import { UserTaskCategory, UserTaskCategoryList } from '../../../../../domain.types/user/user.task/user.task.types';
 import User from './user.model';
 
 ///////////////////////////////////////////////////////////////////////

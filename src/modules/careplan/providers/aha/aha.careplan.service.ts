@@ -8,7 +8,10 @@ import { EnrollmentDomainModel } from "../../domain.types/enrollment/enrollment.
 import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../domain.types/activity/careplan.activity";
 import { ParticipantDomainModel } from "../../domain.types/participant/participant.domain.model";
-import { CareplanActivityDetails } from "../../domain.types/activity/careplan.activity.details.dto";
+import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
+import { UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
+import { Assessment } from "../../../../domain.types/clinical/assessment/assessment";
+import { AssessmentTemplate } from "../../../../domain.types/clinical/assessment/assessment.template";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -215,7 +218,7 @@ export class AhaCareplanService implements ICareplanService {
         patientUserId: string,
         careplanCode: string,
         enrollmentId: string,
-        providerActionId: string): Promise<CareplanActivityDetails> => {
+        providerActionId: string): Promise<CareplanActivity> => {
         try {
 
             Logger.instance().log(`Fetching activity for patient user id '${patientUserId} associated with carte plan '${careplanCode}'.`);
@@ -236,17 +239,25 @@ export class AhaCareplanService implements ICareplanService {
     
             Logger.instance().log(`response body for activity details: ${JSON.stringify(response.body.data.activity)}`);
     
-            var activityDetails = response.body.data.activity;
-    
-            var entity: CareplanActivityDetails = {
-                Type        : activityDetails.type ?? "",
-                Name        : activityDetails.name ?? "",
-                Text        : activityDetails.text ?? "",
-                Status      : activityDetails.status ?? "",
-                Description : activityDetails.description ?? "",
-                URL         : activityDetails.url ?? "",
-                Category    : activityDetails.category ?? [],
-                Items       : activityDetails.items ?? [],
+            var activity = response.body.data.activity;
+            const title = activity.name ? activity.name : (activity.title ? activity.title : '');
+            const category: UserTaskCategory = this.getUserTaskCategory(activity.type);
+            const status = this.getActivityStatus(activity.status);
+            const description = this.getActivityDescription(activity.text, activity.description);
+            
+            const entity: CareplanActivity = {
+                ProviderActionId : activity.code,
+                EnrollmentId     : enrollmentId,
+                Provider         : 'AHA',
+                Type             : activity.type,
+                Category         : category,
+                Title            : title,
+                Description      : description,
+                Url              : activity.url ?? null,
+                Language         : 'English',
+                Status           : status,
+                // Comments        : ,
+                RawContent       : JSON.stringify(activity),
             };
     
             return entity;
@@ -365,6 +376,16 @@ export class AhaCareplanService implements ICareplanService {
         }
     }
 
+    public convertToAssessmentTemplate = async (assessmentActivity: CareplanActivity): Promise<AssessmentTemplate> => {
+        throw new Error("Method not implemented.");
+    }
+
+    public updateAssessment = async (assessment: Assessment): Promise<boolean> => {
+        throw new Error("Method not implemented.");
+    }
+
+    //#region Privates
+
     private getHeaderOptions() {
         var headers = {
             'Content-Type' : 'application/json',
@@ -378,5 +399,59 @@ export class AhaCareplanService implements ICareplanService {
 
         return options;
     }
+
+    private getActivityStatus(status: string) {
+        if (status === "PENDING") {
+            return ProgressStatus.Pending;
+        }
+        else if (status === "COMPLETED") {
+            return ProgressStatus.Completed;
+        }
+        else {
+            return ProgressStatus.Unknown;
+        }
+    }
+
+    private getUserTaskCategory(activityType: string, title?: string): UserTaskCategory {
+        if (activityType === 'Questionnaire' || activityType === 'Assessment') {
+            return UserTaskCategory.Assessment;
+        }
+        if (activityType === 'Video' ||
+            activityType === 'Audio' ||
+            activityType === 'Animation' ||
+            activityType === 'Link' ||
+            activityType === 'Infographic') {
+            return UserTaskCategory.Educational;
+        }
+        if (activityType === 'Message') {
+            return UserTaskCategory.Message;
+        }
+        if (activityType === 'Goal') {
+            return UserTaskCategory.Goal;
+        }
+        if (activityType === 'Challenge') {
+            return UserTaskCategory.Challenge;
+        }
+        if ((activityType === 'Professional' && title === 'Weekely review') ||
+            (activityType === 'Professional' && title === 'Week televisit')) {
+            return UserTaskCategory.Consultation;
+        }
+        return UserTaskCategory.Custom;
+    }
+
+    private getActivityDescription(text: string, description: string) {
+        var desc = '';
+        if (text && text.length > 0) {
+            desc = text;
+            desc += '\n';
+        }
+        if (description && description.length > 0) {
+            desc = description;
+            desc += '\n';
+        }
+        return desc;
+    }
+
+    #endregion
 
 }

@@ -10,7 +10,7 @@ export interface UserTaskDto {
     Description?         : string;
     ActionType?          : UserActionType;
     ActionId?            : string;
-    ActionDto?           : any;
+    Action?              : any;
     ScheduledStartTime?  : Date;
     ScheduledEndTime?    : Date;
     Status?              : ProgressStatus;

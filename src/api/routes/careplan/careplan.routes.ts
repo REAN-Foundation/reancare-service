@@ -10,6 +10,7 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new CareplanController();
 
+    router.get('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAvailableCareplans);
     router.post('/:patientUserId/enroll', authenticator.authenticateClient, authenticator.authenticateUser, controller.enroll);
     
     app.use('/api/v1/care-plans', router);

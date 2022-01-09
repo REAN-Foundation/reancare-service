@@ -8009,7 +8009,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2021-12-27\"\r\n}"
+									"raw": ""
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/care-plans?provider=AHA",
@@ -8052,7 +8052,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-01-01\"\r\n}"
+									"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-01-10\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/care-plans/{{PATIENT_USER_ID}}/enroll",
@@ -8063,6 +8063,299 @@
 										"care-plans",
 										"{{PATIENT_USER_ID}}",
 										"enroll"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search careplan tasks",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {",
+											"    var jsonRes = pm.response.json();",
+											"    var tasks = jsonRes.Data.UserTasks.Items;",
+											"    var filtered = [];",
+											"    for(var i = 0; i < tasks.length; i++) {",
+											"        if (filtered.length > 9) {",
+											"            break;",
+											"        }",
+											"        var r = tasks[i];",
+											"        if(r.ActionType === 'Careplan' && r.Category === 'Assessment') {",
+											"            filtered.push(r);",
+											"        }",
+											"    }",
+											"    if (filtered.length > 0) {",
+											"        console.log(filtered.length.toString());",
+											"        var task = filtered[0];",
+											"        var dt = task.ScheduledStartTime.split('T')[0];",
+											"        pm.environment.set('CAREPLAN_ASSESSMENT_TASK_ID', task.id);",
+											"        pm.environment.set('CAREPLAN_ASSESSMENT_TASK_START_TIME', dt);",
+											"    }",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"List of User task records is returned\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTasks');",
+											"    pm.expect(jsonRes.Data.UserTasks.Items.length).greaterThan(0);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/user-tasks/search?actionType=careplan&userId={{PATIENT_USER_ID}}&orderBy=ScheduledStartTime&order=ascending",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"user-tasks",
+										"search"
+									],
+									"query": [
+										{
+											"key": "task",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "actionType",
+											"value": "careplan"
+										},
+										{
+											"key": "status",
+											"value": "completed",
+											"description": "The other possible options are - \n1) inProgress : Tasks which are currently in progress\n2) pending / upcoming- Upcoming tasks\n3) completed- Finished tasks\n4) delayed / overdue- Tasks which are delayed beyond their scheduled duration\n5) cancelled- Tasks which have been cancelled\n",
+											"disabled": true
+										},
+										{
+											"key": "actionId",
+											"value": "{{MEDICATION_CONSUMPTION_ID}}",
+											"disabled": true
+										},
+										{
+											"key": "userId",
+											"value": "{{PATIENT_USER_ID}}"
+										},
+										{
+											"key": "category",
+											"value": "Medication",
+											"disabled": true
+										},
+										{
+											"key": "dateFrom",
+											"value": "2021-09-01",
+											"disabled": true
+										},
+										{
+											"key": "dateTo",
+											"value": "2021-10-14",
+											"disabled": true
+										},
+										{
+											"key": "createdDateTo",
+											"value": "2021-10-14",
+											"disabled": true
+										},
+										{
+											"key": "createdDateFrom",
+											"value": "2021-09-01",
+											"disabled": true
+										},
+										{
+											"key": "orderBy",
+											"value": "ScheduledStartTime"
+										},
+										{
+											"key": "order",
+											"value": "ascending"
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"disabled": true
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Search User Task records with filters"
+							},
+							"response": []
+						},
+						{
+							"name": "Get assessment task by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
+											"    var assessmentId = jsonRes.Data.UserTask.ActionId;",
+											"    pm.environment.set(\"CAREPLAN_ASSESSMENT_ID\", assessmentId);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"User Task is created\", function () {",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
+											"",
+											"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take a dog for walk\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/user-tasks/{{CAREPLAN_ASSESSMENT_TASK_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"user-tasks",
+										"{{CAREPLAN_ASSESSMENT_TASK_ID}}"
+									]
+								},
+								"description": "Gets list of User Task records"
+							},
+							"response": []
+						},
+						{
+							"name": "Start assessment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Assessment is returned\", function () {",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Started');",
+											"    pm.expect(jsonRes.Data.Started).equals(true);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}/start",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"assessments",
+										"{{CAREPLAN_ASSESSMENT_ID}}",
+										"start"
 									]
 								}
 							},
@@ -9406,7 +9699,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/search",
+									"raw": "{{BASE_URL}}/user-tasks/search?userId={{PATIENT_USER_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -9438,8 +9731,7 @@
 										},
 										{
 											"key": "userId",
-											"value": "{{PATIENT_USER_ID}}",
-											"disabled": true
+											"value": "{{PATIENT_USER_ID}}"
 										},
 										{
 											"key": "category",
@@ -16207,7 +16499,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugName\": \"Tylenol 8 HR Arthritis Pain: 650 mg\",\n    \"Dose\": 1,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\", \n        \"Evening\", \n        \"Night\"\n    ],\n    \"Frequency\": 4,\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 25,\n    \"DurationUnit\": \"Weeks\",\n    \"StartDate\": \"2021-04-25\",\n    \"RefillNeeded\": false,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\",\n    \"ImageResourceId\": \"{{STOCK_MEDICATION_IMAGE_RESOURCE_ID}}\"\n}",
+											"raw": "{\n\t\"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"DrugName\": \"Tylenol 8 HR Arthritis Pain: 650 mg\",\n    \"Dose\": 1,\n    \"DosageUnit\": \"Tablet\",\n    \"TimeSchedules\": [\n        \"Morning\", \n        \"Afternoon\", \n        \"Evening\", \n        \"Night\"\n    ],\n    \"Frequency\": 4,\n    \"FrequencyUnit\": \"Daily\",\n    \"Route\": \"Oral\",\n    \"Duration\": 25,\n    \"DurationUnit\": \"Days\",\n    \"StartDate\": \"2022-01-01\",\n    \"RefillNeeded\": false,\n    \"Instructions\": \"If there is reaction or allergy, please contact immediately.\",\n    \"ImageResourceId\": \"{{STOCK_MEDICATION_IMAGE_RESOURCE_ID}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"

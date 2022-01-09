@@ -8,6 +8,7 @@ import { TaskSummaryDto, UserTaskDto } from '../../domain.types/user/user.task/u
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../domain.types/user/user.task/user.task.search.types';
 import { ICareplanRepo } from "../../database/repository.interfaces/careplan/careplan.repo.interface";
 import { CareplanHandler } from '../../modules/careplan/careplan.handler';
+import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +33,7 @@ export class UserTaskService {
 
     getById = async (id: string): Promise<UserTaskDto> => {
         var dto = await this._userTaskRepo.getById(id);
-        dto = await this.updateDto(dto);
+        dto = await this.updateDto(dto, true);
         return dto;
     };
 
@@ -54,20 +55,23 @@ export class UserTaskService {
     };
 
     update = async (id: string, userTaskDomainModel: UserTaskDomainModel): Promise<UserTaskDto> => {
+
         var dto = await this._userTaskRepo.update(id, userTaskDomainModel);
-        if (dto.ActionType === UserActionType.Careplan &&
-            dto.ActionId !== null) {
-            var careplanArtifact = await this._careplanRepo.updateActivity(dto.ActionId, dto.Status, dto.FinishedAt);
+
+        if (dto.ActionType === UserActionType.Careplan && dto.ActionId !== null) {
+
+            var activity = await this._careplanRepo.updateActivity(dto.ActionId, dto.Status, dto.FinishedAt);
 
             var updateBody = {
-                CompletedAt : careplanArtifact.CompletedAt,
-                Status      : careplanArtifact.Status,
+                CompletedAt : activity.CompletedAt,
+                Status      : activity.Status,
             };
 
-            var careplanActivityDetails = await this._careplanHandler.updateActivity(careplanArtifact.PatientUserId,
-                careplanArtifact.Provider, careplanArtifact.PlanCode, careplanArtifact.EnrollmentId,
-                careplanArtifact.ProviderActionId, updateBody);
-            dto.ActionDto = careplanActivityDetails;
+            var details = await this._careplanHandler.updateActivity(activity.PatientUserId,
+                activity.Provider, activity.PlanCode, activity.EnrollmentId,
+                activity.ProviderActionId, updateBody);
+            
+            Logger.instance().log(JSON.stringify(details, null, 2));
         }
         dto = await this.updateDto(dto);
         return dto;
@@ -112,24 +116,36 @@ export class UserTaskService {
         return updatedDtos;
     }
 
-    private updateDto = async (dto: UserTaskDto): Promise<UserTaskDto> => {
+    private updateDto = async (dto: UserTaskDto, addDetails?: boolean): Promise<UserTaskDto> => {
 
         if (dto == null) {
             return null;
         }
         
         var actionDto: any = null;
+
         if (dto.ActionType === UserActionType.Medication &&
             dto.ActionId !== null) {
             actionDto = await this._medicationConsumptionRepo.getById(dto.ActionId);
-            dto.ActionDto = actionDto;
-        } else if (dto.ActionType === UserActionType.Careplan &&
-            dto.ActionId !== null) {
-            var careplanArtifact = await this._careplanRepo.getActivity(dto.ActionId);
-            var careplanActivityDetails = await this._careplanHandler.getActivity(careplanArtifact.PatientUserId,
-                careplanArtifact.Provider, careplanArtifact.PlanCode, careplanArtifact.EnrollmentId,
-                careplanArtifact.ProviderActionId);
-            dto.ActionDto = careplanActivityDetails;
+            dto.Action = actionDto;
+        }
+        else if (dto.ActionType === UserActionType.Careplan && dto.ActionId !== null) {
+            var activity = await this._careplanRepo.getActivity(dto.ActionId);
+            if (addDetails) {
+                var scheduledAt = activity.ScheduledAt ? activity.ScheduledAt.toISOString().split('T')[0] : null;
+                const details = await this._careplanHandler.getActivity(
+                    activity.PatientUserId,
+                    activity.Provider,
+                    activity.PlanCode,
+                    activity.EnrollmentId,
+                    activity.ProviderActionId,
+                    scheduledAt);
+                if (details) {
+                    activity['Details'] = details;
+                }
+            }
+
+            dto.Action = activity;
         
             return dto;
         }

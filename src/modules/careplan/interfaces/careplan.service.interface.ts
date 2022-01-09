@@ -26,7 +26,8 @@ export interface ICareplanService {
             patientUserId: uuid,
             careplanCode: string,
             enrollmentId: string,
-            activityId: string
+            activityId: string,
+            scheduledAt?:string
         ): Promise<CareplanActivity>;
 
     updateActivity(

@@ -22,5 +22,5 @@ export interface CareplanActivity {
     Frequency?      : number;
     Status?         : string;
     Comments?       : string;
-    RawContent?     : string;
+    RawContent?     : any;
 }

@@ -26,6 +26,25 @@ export class CareplanHandler {
         return true;
     };
 
+    public getAvailableCarePlans(provider?: string): CareplanConfig[] {
+        var careplans = ConfigurationManager.careplans();
+        var plans: CareplanConfig[] = [];
+        if (provider) {
+            for (var c of careplans) {
+                if (c.Provider === provider) {
+                    return c.Plans;
+                }
+            }
+        }
+        else {
+            for (var c of careplans) {
+                var tmp = c.Plans;
+                plans.push(...tmp);
+            }
+        }
+        return plans;
+    }
+
     public isPlanAvailable(provider: string, planCode: string): boolean {
         var careplans = ConfigurationManager.careplans();
         var foundProvider = careplans.find(x => {
@@ -90,10 +109,11 @@ export class CareplanHandler {
         provider: string,
         careplanCode: string,
         enrollmentId: string,
-        activityId: string
+        activityId: string,
+        scheduledAt?: string
     ): Promise<CareplanActivity> => {
         var service = CareplanHandler._services.getItem(provider);
-        return await service.getActivity(patientUserId, careplanCode, enrollmentId, activityId);
+        return await service.getActivity(patientUserId, careplanCode, enrollmentId, activityId, scheduledAt);
     };
 
     public updateActivity = async (

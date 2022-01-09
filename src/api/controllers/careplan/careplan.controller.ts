@@ -31,6 +31,21 @@ export class CareplanController extends BaseController {
 
     //#region Action methods
 
+    getAvailableCareplans = (request: express.Request, response: express.Response): void => {
+        try {
+            this.setContext('Careplan.GetAvailableCareplans', request, response);
+
+            var plans = this._service.getAvailableCarePlans(request.params.provider);
+
+            ResponseHandler.success(request, response, 'Available careplans retrieved successfully!', 200, {
+                AvailablePlans : plans,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     enroll = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             this.setContext('Careplan.Enroll', request, response);

@@ -23,6 +23,7 @@ import { IUserActionService } from "../user/user.action.service.interface";
 import { AssessmentTemplateDto } from "../../domain.types/clinical/assessment/assessment.template.dto";
 import { SAssessment, SAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import { CareplanActivity } from "../../domain.types/clinical/careplan/activity/careplan.activity";
+import { CareplanConfig } from "../../config/configuration.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,6 +43,10 @@ export class CareplanService implements IUserActionService {
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
 
     ) {}
+
+    public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
+        return this._handler.getAvailableCarePlans(provider);
+    }
 
     public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 

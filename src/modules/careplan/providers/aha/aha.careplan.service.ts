@@ -217,7 +217,8 @@ export class AhaCareplanService implements ICareplanService {
         patientUserId: string,
         careplanCode: string,
         enrollmentId: string,
-        providerActionId: string): Promise<CareplanActivity> => {
+        providerActionId: string,
+        scheduledAt?:string): Promise<CareplanActivity> => {
         try {
 
             Logger.instance().log(`Fetching activity for patient user id '${patientUserId} associated with carte plan '${careplanCode}'.`);
@@ -225,7 +226,9 @@ export class AhaCareplanService implements ICareplanService {
             const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
     
             var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities/${providerActionId}`;
-    
+            if (scheduledAt) {
+                url += `?scheduledAt=${scheduledAt}`;
+            }
             Logger.instance().log(`URL: ${JSON.stringify(url)}`);
     
             var response = await needle("get", url, this.getHeaderOptions());
@@ -256,7 +259,7 @@ export class AhaCareplanService implements ICareplanService {
                 Language         : 'English',
                 Status           : status,
                 // Comments        : ,
-                RawContent       : JSON.stringify(activity),
+                RawContent       : activity,
             };
     
             return entity;

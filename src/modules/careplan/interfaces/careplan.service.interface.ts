@@ -1,10 +1,8 @@
-
-import { Assessment } from "../../../domain.types/clinical/assessment/types/assessment";
-import { AssessmentTemplate } from "../../../domain.types/clinical/assessment/types/assessment.template";
+import { SAssessment, SAssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.types";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
-import { CareplanActivity } from "../domain.types/activity/careplan.activity";
-import { EnrollmentDomainModel } from "../domain.types/enrollment/enrollment.domain.model";
-import { ParticipantDomainModel } from "../domain.types/participant/participant.domain.model";
+import { CareplanActivity } from "../../../domain.types/clinical/careplan/activity/careplan.activity";
+import { EnrollmentDomainModel } from "../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model";
+import { ParticipantDomainModel } from "../../../domain.types/clinical/careplan/participant/participant.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,8 +37,8 @@ export interface ICareplanService {
             updates: any
         ): Promise<CareplanActivity>;
     
-    convertToAssessmentTemplate(assessmentActivity: CareplanActivity): Promise<AssessmentTemplate>;
+    convertToAssessmentTemplate(assessmentActivity: CareplanActivity): Promise<SAssessmentTemplate>;
 
-    updateAssessment(assessment: Assessment): boolean | PromiseLike<boolean>;
+    updateAssessment(assessment: SAssessment): boolean | PromiseLike<boolean>;
     
 }

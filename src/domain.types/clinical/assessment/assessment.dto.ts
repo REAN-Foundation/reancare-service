@@ -5,6 +5,7 @@ export interface AssessmentDto {
     id                     : uuid;
     DisplayCode            : string;
     Title                  : string;
+    Description            : string;
     Type                   : AssessmentType;
     PatientUserId          : uuid;
     AssessmentTemplateId   : uuid;

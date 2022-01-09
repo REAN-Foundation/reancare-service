@@ -13,19 +13,19 @@ export class AssessmentMapper {
         }
 
         const dto: AssessmentDto = {
-            id                     : assessment.id,
-            DisplayCode            : assessment.DisplayCode,
-            Title                  : assessment.Title,
-            Type                   : assessment.Type as AssessmentType,
-            PatientUserId          : assessment.PatientUserId,
-            AssessmentTemplateId   : assessment.AssessmentTemplateId,
-            Provider               : assessment.Provider,
-            ProviderAssessmentCode : assessment.ProviderAssessmentCode,
-            ProviderEnrollmentId   : assessment.ProviderEnrollmentId,
-            Status                 : assessment.Status as ProgressStatus,
-            CreatedAt              : assessment.CreatedAt,
-            StartedAt              : assessment.StartedAt,
-            FinishedAt             : assessment.FinishedAt,
+            id                   : assessment.id,
+            Type                 : assessment.Type as AssessmentType,
+            DisplayCode          : assessment.Template.DisplayCode,
+            Title                : assessment.Template.Title,
+            Description          : assessment.Template.Description,
+            PatientUserId        : assessment.PatientUserId,
+            AssessmentTemplateId : assessment.AssessmentTemplateId,
+            Provider             : assessment.Provider,
+            ProviderEnrollmentId : assessment.ProviderEnrollmentId,
+            Status               : assessment.Status as ProgressStatus,
+            CreatedAt            : assessment.CreatedAt,
+            StartedAt            : assessment.StartedAt,
+            FinishedAt           : assessment.FinishedAt,
         };
         return dto;
     }

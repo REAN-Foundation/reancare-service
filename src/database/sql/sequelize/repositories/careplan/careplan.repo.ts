@@ -1,10 +1,10 @@
-import { CareplanActivityDomainModel } from '../../../../../modules/careplan/domain.types/activity/careplan.activity.domain.model';
-import { CareplanActivityDto } from '../../../../../modules/careplan/domain.types/activity/careplan.activity.dto';
-import { ParticipantDto } from '../../../../../modules/careplan/domain.types/participant/participant.dto';
+import { CareplanActivityDomainModel } from '../../../../../domain.types/clinical/careplan/activity/careplan.activity.domain.model';
+import { CareplanActivityDto } from '../../../../../domain.types/clinical/careplan/activity/careplan.activity.dto';
+import { ParticipantDto } from '../../../../../domain.types/clinical/careplan/participant/participant.dto';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
-import { EnrollmentDomainModel } from "../../../../../modules/careplan/domain.types/enrollment/enrollment.domain.model";
-import { EnrollmentDto } from "../../../../../modules/careplan/domain.types/enrollment/enrollment.dto";
+import { EnrollmentDomainModel } from "../../../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model";
+import { EnrollmentDto } from "../../../../../domain.types/clinical/careplan/enrollment/enrollment.dto";
 import { ICareplanRepo } from "../../../../repository.interfaces/careplan/careplan.repo.interface";
 import { EnrollmentMapper } from "../../mappers/careplan/enrollment.mapper";
 import CareplanEnrollment from "../../models/careplan/enrollment.model";

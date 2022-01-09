@@ -7,13 +7,13 @@ import { IAssessmentRepo } from "../../database/repository.interfaces/clinical/a
 import { IAssessmentTemplateRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
 import { IAssessmentHelperRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
 import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
-import { EnrollmentDomainModel } from '../../modules/careplan/domain.types/enrollment/enrollment.domain.model';
-import { EnrollmentDto } from '../../modules/careplan/domain.types/enrollment/enrollment.dto';
+import { EnrollmentDomainModel } from '../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
+import { EnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/enrollment.dto';
 import { ApiError } from "../../common/api.error";
 import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
-import { ParticipantDomainModel } from "../../modules/careplan/domain.types/participant/participant.domain.model";
-import { CareplanActivityDomainModel } from "../../modules/careplan/domain.types/activity/careplan.activity.domain.model";
+import { ParticipantDomainModel } from "../../domain.types/clinical/careplan/participant/participant.domain.model";
+import { CareplanActivityDomainModel } from "../../domain.types/clinical/careplan/activity/careplan.activity.domain.model";
 import { UserTaskCategory } from "../../domain.types/user/user.task/user.task.types";
 import { UserActionType } from "../../domain.types/user/user.task/user.task.types";
 import { TimeHelper } from "../../common/time.helper";
@@ -21,9 +21,8 @@ import { DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
 import { IUserActionService } from "../user/user.action.service.interface";
 import { AssessmentTemplateDto } from "../../domain.types/clinical/assessment/assessment.template.dto";
-import { AssessmentTemplate } from "../../domain.types/clinical/assessment/types/assessment.template";
-import { Assessment } from "../../domain.types/clinical/assessment/types/assessment";
-import { CareplanActivity } from "../../modules/careplan/domain.types/activity/careplan.activity";
+import { SAssessment, SAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
+import { CareplanActivity } from "../../domain.types/clinical/careplan/activity/careplan.activity";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -195,14 +194,14 @@ export class CareplanService implements IUserActionService {
             return existingTemplate;
         }
         
-        var assessmentTemplate: AssessmentTemplate =
+        var assessmentTemplate: SAssessmentTemplate =
             await this._handler.convertToAssessmentTemplate(assessmentActivity);
 
         const templateDto = await this._assessmentHelperRepo.addTemplate(assessmentTemplate);
         return templateDto;
     }
 
-    public updateAssessment = async (assessment: Assessment): Promise<boolean> => {
+    public updateAssessment = async (assessment: SAssessment): Promise<boolean> => {
         return await this._handler.updateAssessment(assessment);
     }
 

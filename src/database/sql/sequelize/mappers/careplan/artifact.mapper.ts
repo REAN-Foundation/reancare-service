@@ -1,4 +1,4 @@
-import { CareplanActivityDto } from "../../../../../modules/careplan/domain.types/activity/careplan.activity.dto";
+import { CareplanActivityDto } from "../../../../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import CareplanActivity from "../../models/careplan/careplan.activity.model";
 
 ///////////////////////////////////////////////////////////////////////////////////

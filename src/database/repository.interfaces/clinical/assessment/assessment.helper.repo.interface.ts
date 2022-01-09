@@ -1,11 +1,11 @@
-import { AssessmentTemplate } from '../../../../domain.types/clinical/assessment/types/assessment.template';
+import { SAssessmentTemplate } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateDto } from "../../../../domain.types/clinical/assessment/assessment.template.dto";
 import { AssessmentTemplateSearchFilters, AssessmentTemplateSearchResults } from '../../../../domain.types/clinical/assessment/assessment.template.search.types';
 
 export interface IAssessmentHelperRepo {
 
-    addTemplate(assessment: AssessmentTemplate): Promise<AssessmentTemplateDto>;
+    addTemplate(assessment: SAssessmentTemplate): Promise<AssessmentTemplateDto>;
 
     create(model: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto>;
 

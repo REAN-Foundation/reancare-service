@@ -1,9 +1,9 @@
-import { ParticipantDto } from '../../../modules/careplan/domain.types/participant/participant.dto';
-import { EnrollmentDomainModel } from '../../../modules/careplan/domain.types/enrollment/enrollment.domain.model';
-import { EnrollmentDto } from "../../../modules/careplan/domain.types/enrollment/enrollment.dto";
+import { ParticipantDto } from '../../../domain.types/clinical/careplan/participant/participant.dto';
+import { EnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
+import { EnrollmentDto } from "../../../domain.types/clinical/careplan/enrollment/enrollment.dto";
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { CareplanActivityDto } from '../../../modules/careplan/domain.types/activity/careplan.activity.dto';
-import { CareplanActivityDomainModel } from '../../../modules/careplan/domain.types/activity/careplan.activity.domain.model';
+import { CareplanActivityDto } from '../../../domain.types/clinical/careplan/activity/careplan.activity.dto';
+import { CareplanActivityDomainModel } from '../../../domain.types/clinical/careplan/activity/careplan.activity.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

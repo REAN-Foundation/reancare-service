@@ -1,5 +1,5 @@
-import { UserTaskDto } from "../../../domain.types/user/user.task/user.task.dto";
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { UserTaskDto } from "../../user/user.task/user.task.dto";
+import { uuid } from "../../miscellaneous/system.types";
 
 export interface CarePlanTaskDto extends UserTaskDto{
     ProviderTaskId?: string|number;

@@ -18,8 +18,6 @@ export class AssessmentRepo implements IAssessmentRepo {
         try {
             const entity = {
                 PatientUserId          : model.PatientUserId ?? null,
-                Title                  : model.Title ?? null,
-                DisplayCode            : model.DisplayCode ?? null,
                 Type                   : model.Type ?? AssessmentType.Custom,
                 AssessmentTemplateId   : model.AssessmentTemplateId ?? null,
                 Provider               : model.Provider ?? null,
@@ -77,9 +75,6 @@ export class AssessmentRepo implements IAssessmentRepo {
             }
             if (updateModel.AssessmentTemplateId != null) {
                 assessment.AssessmentTemplateId = updateModel.AssessmentTemplateId;
-            }
-            if (updateModel.Title != null) {
-                assessment.Title = updateModel.Title;
             }
             if (updateModel.Status != null) {
                 assessment.Status = updateModel.Status as ProgressStatus;

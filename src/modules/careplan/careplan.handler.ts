@@ -1,14 +1,13 @@
 import { ICareplanService } from "./interfaces/careplan.service.interface";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
-import { EnrollmentDomainModel } from "./domain.types/enrollment/enrollment.domain.model";
+import { EnrollmentDomainModel } from "../../domain.types/clinical/careplan/enrollment/enrollment.domain.model";
 import Dictionary from "../../common/dictionary";
-import { CareplanActivity } from "./domain.types/activity/careplan.activity";
-import { ParticipantDomainModel } from "./domain.types/participant/participant.domain.model";
+import { CareplanActivity } from "../../domain.types/clinical/careplan/activity/careplan.activity";
+import { ParticipantDomainModel } from "../../domain.types/clinical/careplan/participant/participant.domain.model";
 import { ProviderResolver } from "./provider.resolver";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { CareplanConfig } from "../../config/configuration.types";
-import { AssessmentTemplate } from "../../domain.types/clinical/assessment/types/assessment.template";
-import { Assessment } from "../../domain.types/clinical/assessment/types/assessment";
+import { SAssessment, SAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -110,12 +109,12 @@ export class CareplanHandler {
     };
 
     public convertToAssessmentTemplate = async (assessmentActivity: CareplanActivity)
-        : Promise<AssessmentTemplate> => {
+        : Promise<SAssessmentTemplate> => {
         var service = CareplanHandler._services.getItem(assessmentActivity.Provider);
         return await service.convertToAssessmentTemplate(assessmentActivity);
     }
 
-    public updateAssessment = async (assessment: Assessment): Promise<boolean> => {
+    public updateAssessment = async (assessment: SAssessment): Promise<boolean> => {
         var service = CareplanHandler._services.getItem(assessment.Provider);
         return await service.updateAssessment(assessment);
     }

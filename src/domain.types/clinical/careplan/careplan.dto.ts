@@ -1,4 +1,4 @@
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { uuid } from "../../miscellaneous/system.types";
 
 export interface CarePlanDto {
     id              : uuid;    //REANCare Care-plan isntance id

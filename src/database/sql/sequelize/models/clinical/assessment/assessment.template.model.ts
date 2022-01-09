@@ -53,7 +53,7 @@ export default class AssessmentTemplate extends Model {
         type      : DataType.STRING(128),
         allowNull : false,
     })
-    Title: string;
+    Version: string;
 
     @Column({
         type         : DataType.ENUM,
@@ -62,6 +62,13 @@ export default class AssessmentTemplate extends Model {
         allowNull    : false,
     })
     Type: string;
+
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : false,
+    })
+    Title: string;
 
     @Column({
         type      : DataType.TEXT,

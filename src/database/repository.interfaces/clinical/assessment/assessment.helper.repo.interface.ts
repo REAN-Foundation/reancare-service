@@ -1,4 +1,4 @@
-import { AssessmentTemplate } from '../../../../domain.types/clinical/assessment/assessment.template';
+import { AssessmentTemplate } from '../../../../domain.types/clinical/assessment/types/assessment.template';
 import { AssessmentTemplateDomainModel } from '../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateDto } from "../../../../domain.types/clinical/assessment/assessment.template.dto";
 import { AssessmentTemplateSearchFilters, AssessmentTemplateSearchResults } from '../../../../domain.types/clinical/assessment/assessment.template.search.types';

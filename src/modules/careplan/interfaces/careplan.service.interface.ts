@@ -1,6 +1,6 @@
 
-import { Assessment } from "../../../domain.types/clinical/assessment/assessment";
-import { AssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.template";
+import { Assessment } from "../../../domain.types/clinical/assessment/types/assessment";
+import { AssessmentTemplate } from "../../../domain.types/clinical/assessment/types/assessment.template";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { CareplanActivity } from "../domain.types/activity/careplan.activity";
 import { EnrollmentDomainModel } from "../domain.types/enrollment/enrollment.domain.model";

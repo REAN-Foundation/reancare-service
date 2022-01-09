@@ -24,12 +24,12 @@ import AssessmentNode from './assessment.node.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'AssessmentNodeResponse',
-    tableName       : 'assessment_node_responses',
+    modelName       : 'AssessmentQuestionResponse',
+    tableName       : 'assessment_question_responses',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class AssessmentNodeResponse extends Model {
+export default class AssessmentQuestionResponse extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -56,7 +56,7 @@ export default class AssessmentNodeResponse extends Model {
         type      : DataType.UUID,
         allowNull : false,
     })
-    AssessmentNodeId: string;
+    NodeId: string;
 
     @Column({
         type         : DataType.ENUM,
@@ -71,14 +71,14 @@ export default class AssessmentNodeResponse extends Model {
         type      : DataType.INTEGER,
         allowNull : false,
     })
-    IntegerValue: string;
+    IntegerValue: number;
 
     @IsFloat
     @Column({
         type      : DataType.FLOAT,
         allowNull : false,
     })
-    FloatValue: string;
+    FloatValue: number;
 
     //Should also handle multiple choice selections in stringified array format
     @Column({

@@ -10,8 +10,7 @@ import { CareplanActivity } from "../../domain.types/activity/careplan.activity"
 import { ParticipantDomainModel } from "../../domain.types/participant/participant.domain.model";
 import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
 import { UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
-import { Assessment } from "../../../../domain.types/clinical/assessment/assessment";
-import { AssessmentTemplate } from "../../../../domain.types/clinical/assessment/assessment.template";
+import { SAssessment, SAssessmentTemplate } from "../../../../domain.types/clinical/assessment/assessment.types";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -376,11 +375,11 @@ export class AhaCareplanService implements ICareplanService {
         }
     }
 
-    public convertToAssessmentTemplate = async (assessmentActivity: CareplanActivity): Promise<AssessmentTemplate> => {
+    public convertToAssessmentTemplate = async (assessmentActivity: CareplanActivity): Promise<SAssessmentTemplate> => {
         throw new Error("Method not implemented.");
     }
 
-    public updateAssessment = async (assessment: Assessment): Promise<boolean> => {
+    public updateAssessment = async (assessment: SAssessment): Promise<boolean> => {
         throw new Error("Method not implemented.");
     }
 

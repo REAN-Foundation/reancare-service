@@ -5,7 +5,6 @@ import {
     DataType,
     DeletedAt,
     ForeignKey,
-    IsInt,
     IsUUID,
     Length,
     Model,

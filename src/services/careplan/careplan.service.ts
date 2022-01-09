@@ -21,8 +21,8 @@ import { DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
 import { IUserActionService } from "../user/user.action.service.interface";
 import { AssessmentTemplateDto } from "../../domain.types/clinical/assessment/assessment.template.dto";
-import { AssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.template";
-import { Assessment } from "../../domain.types/clinical/assessment/assessment";
+import { AssessmentTemplate } from "../../domain.types/clinical/assessment/types/assessment.template";
+import { Assessment } from "../../domain.types/clinical/assessment/types/assessment";
 import { CareplanActivity } from "../../modules/careplan/domain.types/activity/careplan.activity";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

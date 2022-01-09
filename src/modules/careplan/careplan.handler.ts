@@ -7,8 +7,8 @@ import { ParticipantDomainModel } from "./domain.types/participant/participant.d
 import { ProviderResolver } from "./provider.resolver";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { CareplanConfig } from "../../config/configuration.types";
-import { AssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.template";
-import { Assessment } from "../../domain.types/clinical/assessment/assessment";
+import { AssessmentTemplate } from "../../domain.types/clinical/assessment/types/assessment.template";
+import { Assessment } from "../../domain.types/clinical/assessment/types/assessment";
 
 ////////////////////////////////////////////////////////////////////////
 

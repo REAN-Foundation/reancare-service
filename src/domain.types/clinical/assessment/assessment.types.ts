@@ -1,15 +1,18 @@
+
+import { ProgressStatus, uuid } from "../../../domain.types/miscellaneous/system.types";
+
+//#region Enums
+
 export enum AssessmentNodeType {
-    Message             = 'Message',
-    Question            = 'Question',
-    ContinueToNext      = 'Continue to next', //Terminate current questioning path and return
-    TerminateAssessment = 'Terminate assessment',
+    Message  = 'Message',
+    Question = 'Question',
+    NodeList = 'Node list',
 }
 
 export const AssessmentNodeTypeList: AssessmentNodeType[] = [
     AssessmentNodeType.Message,
-    AssessmentNodeType.Question,
-    AssessmentNodeType.ContinueToNext,
-    AssessmentNodeType.TerminateAssessment,
+    AssessmentNodeType.Question, //This is decision node
+    AssessmentNodeType.NodeList,
 ];
 
 export enum QueryResponseType {
@@ -99,3 +102,117 @@ export const ConditionOperandDataTypeList: ConditionOperandDataType[] = [
     ConditionOperandDataType.Text,
     ConditionOperandDataType.Array,
 ];
+
+//#endregion
+
+//#region Interfaces
+
+export interface SAssessmentTemplate {
+    TemplateId?            : uuid;
+    DisplayCode?           : string;
+    Type                   : AssessmentType;
+    Title                  : string;
+    Description?           : string;
+    ProviderAssessmentCode?: string;
+    Provider?              : string;
+    FileResourceId?        : uuid; //assessment template storage file
+    RootNode               : SAssessmentNode;
+}
+
+export interface SAssessment extends SAssessmentTemplate {
+    AssessmentId?          : uuid;
+    PatientUserId          : uuid;
+    EnrollmentId?          : string;
+    Status?                : ProgressStatus;
+    StartedAt?             : Date;
+    FinishedAt?            : Date;
+    CurrentNode?           : SAssessmentNode;
+}
+
+export interface SAssessmentNode {
+    Nodeid?             : uuid;
+    DisplayCode?        : string;
+    TemplateId          : uuid;
+    TemplateVersion?    : string;
+    NodeType            : AssessmentNodeType;
+    ParentNodeId?       : uuid;
+    Title               : string;
+    Description?        : string;
+    Sequence?           : number;
+    Score               : number;
+}
+
+export interface SAssessmentListNode extends SAssessmentNode {
+    ChildrenNodes : SAssessmentNode[];
+}
+
+export interface SAssessmentQuestionNode extends SAssessmentNode {
+    ResponseType : QueryResponseType;
+    DefaultPathId: uuid;
+    Paths        : SAssessmentNodePath[];
+    Options      : SAssessmentQueryOption[];
+    UserResponse?: SAssessmentQuestionResponse;
+}
+
+export interface SAssessmentMessageNode extends SAssessmentNode {
+    Message     : string;
+    Acknowledged: boolean;
+}
+
+export interface SAssessmentNodePath {
+    id?         : uuid;
+    DisplayCode : string;
+    ParentNodeId: string;
+    NextNodeId  : string;
+    ConditionId : string;
+    Condition   : SAssessmentPathCondition;
+}
+
+export interface SAssessmentQueryOption {
+    id?        : uuid;
+    DisplayCode: string;
+    NodeId     : uuid;
+    Text       : string;
+    ImageUrl   : string;
+    Sequence   : number;
+}
+
+export interface SAssessmentQuestionResponse {
+    id?                  : uuid;
+    NodeId?              : uuid;
+    AssessmentId?        : uuid;
+    ResponseType         : QueryResponseType;
+    IntegerValue         : number;
+    FloatValue           : number;
+    TextValue            : string;
+    SatisfiedConditionId?: uuid;
+    ChosenPathId?        : uuid;
+    CreatedAt            : Date;
+}
+
+export interface SAssessmentPathCondition {
+    id?        : uuid;
+    DisplayCode: string;
+    NodeId     : uuid;
+    PathId     : uuid;    //Chosen path if the condition satisfies
+
+    //For composition type condition
+    IsCompositeCondition: boolean;
+    CompositionType     : ConditionCompositionType;
+    ParentConditionId   : uuid;
+    OperatorType        : ConditionOperatorType;
+
+    FirstOperandName    : string;
+    FirstOperandValue   : string;
+    FirstOperandDataType: ConditionOperandDataType;
+
+    SecondOperandName    : string;
+    SecondOperandValue   : string;
+    SecondOperandDataType: ConditionOperandDataType;
+
+    ThirdOperandName    : string;
+    ThirdOperandValue   : string;
+    ThirdOperandDataType: ConditionOperandDataType;
+}
+
+//#endregion

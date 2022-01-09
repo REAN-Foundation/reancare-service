@@ -22,6 +22,7 @@ import {
     ProgressStatus, ProgressStatusList
 } from '../../../../../../domain.types/miscellaneous/system.types';
 import User from '../../user/user.model';
+import AssessmentNode from './assessment.node.model';
 import AssessmentTemplate from './assessment.template.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -46,19 +47,16 @@ export default class Assessment extends Model {
     })
     id: string;
 
-    @Length({ max: 128 })
+    @IsUUID(4)
+    @ForeignKey(() => AssessmentTemplate)
     @Column({
-        type      : DataType.STRING(128),
+        type      : DataType.UUID,
         allowNull : false,
     })
-    DisplayCode: string;
+    AssessmentTemplateId: string;
 
-    @Length({ max: 128 })
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : false,
-    })
-    Title: string;
+    @BelongsTo(() => AssessmentTemplate)
+    Template: AssessmentTemplate;
 
     @Column({
         type         : DataType.ENUM,
@@ -79,30 +77,12 @@ export default class Assessment extends Model {
     @BelongsTo(() => User)
     User: User;
 
-    @IsUUID(4)
-    @ForeignKey(() => AssessmentTemplate)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : false,
-    })
-    AssessmentTemplateId: string;
-
-    @BelongsTo(() => AssessmentTemplate)
-    Template: AssessmentTemplate;
-
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
     ProviderEnrollmentId: string;
-
-    @Length({ max: 128 })
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
-    })
-    ProviderAssessmentCode: string;
 
     @Length({ max: 128 })
     @Column({
@@ -133,6 +113,17 @@ export default class Assessment extends Model {
         allowNull : true,
     })
     FinishedAt: Date;
+
+    @IsUUID(4)
+    @ForeignKey(() => AssessmentNode)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    CurrentId: string;
+
+    @BelongsTo(() => AssessmentNode)
+    CurrentNode: AssessmentNode;
 
     @Column
     @CreatedAt

@@ -11,7 +11,7 @@ import { EnrollmentDomainModel } from '../../domain.types/clinical/careplan/enro
 import { EnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/enrollment.dto';
 import { ApiError } from "../../common/api.error";
 import { CareplanHandler } from '../../modules/careplan/careplan.handler';
-import { uuid } from "../../domain.types/miscellaneous/system.types";
+import { ProgressStatus, uuid } from "../../domain.types/miscellaneous/system.types";
 import { ParticipantDomainModel } from "../../domain.types/clinical/careplan/participant/participant.domain.model";
 import { CareplanActivityDomainModel } from "../../domain.types/clinical/careplan/activity/careplan.activity.domain.model";
 import { UserTaskCategory } from "../../domain.types/user/user.task/user.task.types";
@@ -24,6 +24,9 @@ import { AssessmentTemplateDto } from "../../domain.types/clinical/assessment/as
 import { SAssessment, SAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import { CareplanActivity } from "../../domain.types/clinical/careplan/activity/careplan.activity";
 import { CareplanConfig } from "../../config/configuration.types";
+import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/assessment.domain.model";
+import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
+import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -154,8 +157,71 @@ export class CareplanService implements IUserActionService {
         return dto;
     };
 
-    public completeAction = async (activityId, time, success) => {
+    public getAction = async (activityId: uuid): Promise<any> => {
+
         var activity = await this._careplanRepo.getActivity(activityId);
+
+        var scheduledAt = activity.ScheduledAt ? activity.ScheduledAt.toISOString().split('T')[0] : null;
+
+        const details = await this._handler.getActivity(
+            activity.PatientUserId,
+            activity.Provider,
+            activity.PlanCode,
+            activity.EnrollmentId,
+            activity.ProviderActionId,
+            scheduledAt);
+        if (details) {
+            activity['Details'] = details;
+        }
+
+        if (activity.Category === UserTaskCategory.Assessment) {
+            var template = await this.getAssessmentTemplate(details);
+            const assessment = await this.getAssessment(activity, template, scheduledAt);
+            activity['Assessment'] = assessment;
+        }
+        return activity;
+    }
+
+    public updateAction = async (activityId: uuid, updates: any): Promise<any> => {
+        
+        var activity = await this._careplanRepo.updateActivity(activityId, ProgressStatus.Completed, new Date());
+
+        var activityUpdates = {
+            CompletedAt : updates.CompletedAt,
+            Status      : updates.Status,
+        };
+
+        var details = await this._handler.updateActivity(
+            activity.PatientUserId,
+            activity.Provider,
+            activity.PlanCode,
+            activity.EnrollmentId,
+            activity.ProviderActionId, activityUpdates);
+        
+        Logger.instance().log(JSON.stringify(details, null, 2));
+    
+        activity['Details'] = details;
+
+        return activity;
+    }
+
+    public startAction = async (activityId: uuid): Promise<boolean> => {
+        var activity = await this._careplanRepo.getActivity(activityId);
+        activity = await this._careplanRepo.startActivity(activityId);
+        Logger.instance().log(`Successfully started activity - ${activity.id}`);
+        return true;
+    }
+
+    public completeAction = async (activityId: uuid, time: Date, success: boolean) => {
+        var activity = await this._careplanRepo.getActivity(activityId);
+        activity = await this._careplanRepo.completeActivity(activityId);
+        
+        //KK: TODO
+        //NOTE: Provider specific details are not to be handled here..
+        //The details here are provider agnostic and should be converted to provider
+        //specific details in the provider specific careplan service.
+        //TODO: move this to aha.careplan.service.ts
+
         var updateFields = {
             completedAt : time,
             comments    : "",
@@ -169,14 +235,21 @@ export class CareplanService implements IUserActionService {
         return updatedActivity.CompletedAt ? true : false;
     }
 
-    public cancelAction = async (actionType, actionId) => {
-        // @TODO
-        Logger.instance().log(`Action type: ${actionType}`);
-        Logger.instance().log(`Action is: ${actionId}`);
+    public cancelAction = async (
+        actionId: uuid,
+        cancellationTime?: Date,
+        cancellationReason?: string): Promise<boolean> => {
+
+        // @TODO - We are not yet supporting cancellation of careplan activity
+
+        Logger.instance().log(`Action id: ${actionId}`);
+        Logger.instance().log(`Cancelled at: ${cancellationTime.toISOString()}`);
+        Logger.instance().log(`Cancellation reason: ${cancellationReason}`);
+
         return true;
     }
 
-    public createAssessmentTemplate = async (model: CareplanActivity): Promise<AssessmentTemplateDto> => {
+    public getAssessmentTemplate = async (model: CareplanActivity): Promise<AssessmentTemplateDto> => {
 
         const assessmentActivity = await this._handler.getActivity(
             model.PatientUserId,
@@ -195,6 +268,7 @@ export class CareplanService implements IUserActionService {
 
         var existingTemplate = await this._assessmentTemplateRepo.getByProviderAssessmentCode(
             model.Provider, assessmentActivity.ProviderActionId);
+
         if (existingTemplate) {
             return existingTemplate;
         }
@@ -202,12 +276,39 @@ export class CareplanService implements IUserActionService {
         var assessmentTemplate: SAssessmentTemplate =
             await this._handler.convertToAssessmentTemplate(assessmentActivity);
 
-        const templateDto = await this._assessmentHelperRepo.addTemplate(assessmentTemplate);
-        return templateDto;
+        const template = await this._assessmentHelperRepo.addTemplate(assessmentTemplate);
+        return template;
     }
 
     public updateAssessment = async (assessment: SAssessment): Promise<boolean> => {
         return await this._handler.updateAssessment(assessment);
+    }
+
+    private getAssessment = async (
+        activity: CareplanActivityDto,
+        template: AssessmentTemplateDto,
+        scheduledAt: string): Promise<AssessmentDto> => {
+
+        var existingAssessment = await this._assessmentRepo.getByTemplateAndSchedule(
+            template.id, activity.Sequence, scheduledAt);
+
+        if (existingAssessment) {
+            return existingAssessment;
+        }
+
+        const assessmentModel: AssessmentDomainModel = {
+            PatientUserId          : activity.PatientUserId,
+            Title                  : template.Title,
+            DisplayCode            : template.DisplayCode + '-' + scheduledAt,
+            AssessmentTemplateId   : template.id,
+            Type                   : template.Type,
+            Provider               : template.Provider,
+            ProviderAssessmentCode : template.ProviderAssessmentCode,
+            Status                 : ProgressStatus.Pending
+        };
+
+        const assessment = await this._assessmentRepo.create(assessmentModel);
+        return assessment;
     }
 
     //#region Privates

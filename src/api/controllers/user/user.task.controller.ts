@@ -96,6 +96,14 @@ export class UserTaskController {
                 throw new ApiError(404, 'User task not found.');
             }
 
+            if (userTask.ActionId != null && userTask.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const action = await actionResolver.getAction(userTask.ActionType, userTask.ActionId);
+                if (action) {
+                    userTask['Action'] = action;
+                }
+            }
+
             ResponseHandler.success(request, response, 'User task retrieved successfully!', 200, {
                 UserTask : userTask,
             });
@@ -116,6 +124,14 @@ export class UserTaskController {
             const userTask = await this._service.getByDisplayId(id);
             if (userTask == null) {
                 throw new ApiError(404, 'User task not found.');
+            }
+
+            if (userTask.ActionId != null && userTask.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const action = await actionResolver.getAction(userTask.ActionType, userTask.ActionId);
+                if (action) {
+                    userTask['Action'] = action;
+                }
             }
 
             ResponseHandler.success(request, response, 'User task retrieved successfully!', 200, {
@@ -161,9 +177,24 @@ export class UserTaskController {
                 throw new ApiError(404, 'User task not found.');
             }
 
+            if (existing.ActionId != null && existing.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const result = await actionResolver.startAction(
+                    existing.ActionType, existing.ActionId);
+                Logger.instance().log(`Starting ${existing.ActionType} - Action result : ${result.toString()}`);
+            }
+
             const updated = await this._service.startTask(id);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update user task record!');
+            }
+
+            if (updated.ActionId != null && updated.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
+                if (action) {
+                    updated['Action'] = action;
+                }
             }
 
             ResponseHandler.success(request, response, 'User task started successfully!', 200, {
@@ -187,6 +218,13 @@ export class UserTaskController {
                 throw new ApiError(404, 'User task not found.');
             }
 
+            if (existing.ActionId != null && existing.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const result = await actionResolver.completeAction(
+                    existing.ActionType, existing.ActionId, true, finishedAt);
+                Logger.instance().log(`${existing.ActionType} - Action result : ${result.toString()}`);
+            }
+
             const updated = await this._service.finishTask(id);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update user task record!');
@@ -194,12 +232,54 @@ export class UserTaskController {
 
             if (updated.ActionId != null && updated.ActionType !== null) {
                 var actionResolver = new UserActionResolver();
-                const result = await actionResolver.completeAction(
-                    updated.ActionType, updated.ActionId, true, finishedAt);
-                Logger.instance().log(`${updated.ActionType} - Action result : ${result.toString()}`);
+                const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
+                if (action) {
+                    updated['Action'] = action;
+                }
             }
-            
+
             ResponseHandler.success(request, response, 'User task finished successfully!', 200, {
+                UserTask : updated,
+            });
+            
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    update = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'UserTask.Update';
+            await this._authorizer.authorize(request, response);
+
+            const updateModel = await this._validator.update(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
+            
+            const userTask = await this._service.getById(id);
+            if (userTask == null) {
+                throw new ApiError(404, 'User task not found.');
+            }
+
+            if (userTask.ActionId != null && userTask.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const updates = updateModel;
+                await actionResolver.updateAction(userTask.ActionType, userTask.ActionId, updates);
+            }
+
+            const updated = await this._service.update(id, updateModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update userTask record!');
+            }
+
+            if (updated.ActionId != null && updated.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
+                if (action) {
+                    updated['Action'] = action;
+                }
+            }
+
+            ResponseHandler.success(request, response, 'User task record updated successfully!', 200, {
                 UserTask : updated,
             });
             
@@ -220,6 +300,12 @@ export class UserTaskController {
                 throw new ApiError(404, 'User task not found.');
             }
 
+            if (existing.ActionId != null && existing.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const result = await actionResolver.cancelAction(existing.ActionType, existing.ActionId);
+                Logger.instance().log(`${existing.ActionType} - Action result : ${result.toString()}`);
+            }
+
             const updated = await this._service.cancelTask(id, reason);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update user task record!');
@@ -227,8 +313,10 @@ export class UserTaskController {
 
             if (updated.ActionId != null && updated.ActionType !== null) {
                 var actionResolver = new UserActionResolver();
-                const result = await actionResolver.cancelAction(updated.ActionType, updated.ActionId);
-                Logger.instance().log(`${updated.ActionType} - Action result : ${result.toString()}`);
+                const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
+                if (action) {
+                    updated['Action'] = action;
+                }
             }
 
             ResponseHandler.success(request, response, 'User task cancelled successfully!', 200, {
@@ -252,33 +340,6 @@ export class UserTaskController {
                 UserTaskSummaryForDay : summary
             });
 
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    update = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'UserTask.Update';
-            await this._authorizer.authorize(request, response);
-
-            const domainModel = await this._validator.update(request);
-            const id: string = await this._validator.getParamUuid(request, 'id');
-            
-            const existingUserTask = await this._service.getById(id);
-            if (existingUserTask == null) {
-                throw new ApiError(404, 'User task not found.');
-            }
-
-            const updated = await this._service.update(id, domainModel);
-            if (updated == null) {
-                throw new ApiError(400, 'Unable to update userTask record!');
-            }
-
-            ResponseHandler.success(request, response, 'User task record updated successfully!', 200, {
-                UserTask : updated,
-            });
-            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

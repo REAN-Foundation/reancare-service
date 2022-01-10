@@ -10,7 +10,7 @@ import { EnrollmentMapper } from "../../../mappers/careplan/enrollment.mapper";
 import CareplanEnrollment from "../../../models/careplan/enrollment.model";
 import CareplanParticipant from "../../../models/careplan/participant.model";
 import CareplanActivity from "../../../models/careplan/careplan.activity.model";
-import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { CareplanArtifactMapper } from '../../../mappers/careplan/artifact.mapper';
 import { Op } from 'sequelize';
 
@@ -215,6 +215,34 @@ export class CareplanRepo implements ICareplanRepo {
     getActivity = async (activityId: uuid): Promise<CareplanActivityDto> => {
         try {
             const record = await CareplanActivity.findByPk(activityId);
+            return CareplanArtifactMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    }
+
+    startActivity = async (activityId: string): Promise<CareplanActivityDto> => {
+        try {
+            var record = await CareplanActivity.findByPk(activityId);
+            if (record !== null) {
+                record.Status = ProgressStatus.InProgress;
+                record.StartedAt = new Date();
+                await record.save();
+            }
+            return CareplanArtifactMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    }
+
+    completeActivity = async (activityId: string): Promise<CareplanActivityDto> => {
+        try {
+            var record = await CareplanActivity.findByPk(activityId);
+            if (record !== null) {
+                record.Status = ProgressStatus.Completed;
+                record.CompletedAt = new Date();
+                await record.save();
+            }
             return CareplanArtifactMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);

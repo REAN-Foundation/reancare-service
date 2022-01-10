@@ -3,6 +3,7 @@ import { Loader } from "../../startup/loader";
 import { MedicationConsumptionService } from "../clinical/medication/medication.consumption.service";
 import { CareplanService } from "../careplan/careplan.service";
 import { IUserActionService } from "./user.action.service.interface";
+import { uuid } from "../../domain.types/miscellaneous/system.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -10,9 +11,23 @@ export class UserActionResolver {
 
     //#region Methods to be called from UserTaskService
 
+    getAction = async (
+        actionType: string,
+        actionId: uuid): Promise<any> => {
+        var actionService = this.getActionService(actionType);
+        return await actionService?.getAction(actionId);
+    }
+
+    startAction = async (
+        actionType: string,
+        actionId: uuid): Promise<boolean> => {
+        var actionService = this.getActionService(actionType);
+        return await actionService?.startAction(actionId);
+    }
+
     completeAction = async (
         actionType: string,
-        actionId: string,
+        actionId: uuid,
         success?: boolean,
         completionTime?: Date): Promise<boolean> => {
         var actionService = this.getActionService(actionType);
@@ -20,9 +35,17 @@ export class UserActionResolver {
         return await actionService?.completeAction(actionId, time, success);
     }
 
+    updateAction = async (
+        actionType: string,
+        actionId: uuid,
+        updates: any): Promise<any> => {
+        var actionService = this.getActionService(actionType);
+        return await actionService?.updateAction(actionId, updates);
+    }
+
     cancelAction = async (
         actionType: string,
-        actionId: string,
+        actionId: uuid,
         cancellationTime?: Date,
         cancellationReason?: string): Promise<boolean> => {
         var actionService = this.getActionService(actionType);

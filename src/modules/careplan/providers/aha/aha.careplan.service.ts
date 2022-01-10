@@ -131,8 +131,7 @@ export class AhaCareplanService implements ICareplanService {
         }
     }
 
-    public enrollPatientToCarePlan = async (
-        model: EnrollmentDomainModel): Promise<string> => {
+    public enrollPatientToCarePlan = async (model: EnrollmentDomainModel): Promise<string> => {
         try {
             var enrollmentData = {
                 userId       : model.PatientUserId,
@@ -378,7 +377,7 @@ export class AhaCareplanService implements ICareplanService {
         }
     }
 
-    public convertToAssessmentTemplate = async (assessmentActivity: CareplanActivity): Promise<SAssessmentTemplate> => {
+    public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<SAssessmentTemplate> => {
         throw new Error("Method not implemented.");
     }
 
@@ -415,6 +414,7 @@ export class AhaCareplanService implements ICareplanService {
     }
 
     private getUserTaskCategory(activityType: string, title?: string): UserTaskCategory {
+        
         if (activityType === 'Questionnaire' || activityType === 'Assessment') {
             return UserTaskCategory.Assessment;
         }

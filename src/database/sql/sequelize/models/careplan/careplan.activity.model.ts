@@ -114,6 +114,12 @@ export default class CareplanActivity extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
+    StartedAt: Date;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
     CompletedAt: Date;
 
     @Column({

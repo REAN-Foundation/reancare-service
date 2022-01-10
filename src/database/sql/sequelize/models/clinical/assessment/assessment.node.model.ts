@@ -59,18 +59,29 @@ export default class AssessmentNode extends Model {
         type      : DataType.UUID,
         allowNull : false,
     })
-    AssessmentTemplateId: string;
+    TemplateId: string;
 
     @BelongsTo(() => AssessmentTemplate)
     Template: AssessmentTemplate;
     
+    @IsUUID(4)
+    @ForeignKey(() => AssessmentNode)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    ParentNodeId: string;
+
+    @BelongsTo(() => AssessmentNode)
+    Parent: AssessmentNode;
+
     @Column({
         type         : DataType.ENUM,
         values       : AssessmentNodeTypeList,
         defaultValue : AssessmentNodeType.Question,
         allowNull    : false,
     })
-    Type: string;
+    NodeType: string;
 
     @Column({
         type      : DataType.TEXT,
@@ -103,10 +114,10 @@ export default class AssessmentNode extends Model {
     @Column({
         type         : DataType.ENUM,
         values       : QueryResponseTypeList,
-        defaultValue : QueryResponseType.SingleChoiceSelection,
+        defaultValue : QueryResponseType.None,
         allowNull    : false,
     })
-    ResponseType: string;
+    QueryResponseType: string;
 
     @IsUUID(4)
     @ForeignKey(() => AssessmentNodePath)
@@ -115,6 +126,19 @@ export default class AssessmentNode extends Model {
         allowNull : true,
     })
     DefaultPathId: string;
+
+    @Column({
+        type      : DataType.ENUM,
+        allowNull : true,
+    })
+    Message: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    Acknowledged: boolean;
 
     @Column
     @CreatedAt

@@ -20,6 +20,7 @@ import { UserActionType, UserTaskCategory } from "../../../domain.types/user/use
 import { UserTaskDomainModel } from "../../../domain.types/user/user.task/user.task.domain.model";
 import { IUserActionService } from "../../../services/user/user.action.service.interface";
 import { Loader } from "../../../startup/loader";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -445,7 +446,16 @@ export class MedicationConsumptionService implements IUserActionService {
         return true;
     }
 
-    completeAction = async (actionId: string, completionTime?: Date, success?: boolean): Promise<boolean> => {
+    startAction = async (actionId: uuid): Promise<boolean> => {
+        var medConsumption = await this._medicationConsumptionRepo.getById(actionId);
+        if (medConsumption === null) {
+            Logger.instance().log('Medication consumption instance with given id cannot be found.');
+            return false;
+        }
+        return true;
+    }
+
+    completeAction = async (actionId: uuid, completionTime?: Date, success?: boolean): Promise<boolean> => {
 
         if (success === undefined || success === false) {
             var updatedDto = await this._medicationConsumptionRepo.markAsMissed(actionId);
@@ -476,6 +486,15 @@ export class MedicationConsumptionService implements IUserActionService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     cancelAction = async(actionId: string, cancellationTime?: Date, cancellationReason?: string): Promise<boolean> => {
         return await this._medicationConsumptionRepo.cancelSchedule(actionId);
+    }
+
+    getAction = async(actionId: string): Promise<any> => {
+        return await this.getById(actionId);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    updateAction = async(actionId: string, updates: any): Promise<any> => {
+        return await this.getById(actionId);
     }
 
     //#region Privates

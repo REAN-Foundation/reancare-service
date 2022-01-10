@@ -23,6 +23,7 @@ export enum QueryResponseType {
     MultiChoiceSelection  = 'Multi Choice Selection',
     Boolean               = 'Boolean',
     Ok                    = 'Ok',
+    None                  = 'None',
 }
 
 export const QueryResponseTypeList: QueryResponseType[] = [
@@ -110,6 +111,7 @@ export const ConditionOperandDataTypeList: ConditionOperandDataType[] = [
 export interface SAssessmentTemplate {
     TemplateId?            : uuid;
     DisplayCode?           : string;
+    Version?               : string;
     Type                   : AssessmentType;
     Title                  : string;
     Description?           : string;
@@ -130,10 +132,9 @@ export interface SAssessment extends SAssessmentTemplate {
 }
 
 export interface SAssessmentNode {
-    Nodeid?             : uuid;
+    id?                 : uuid;
     DisplayCode?        : string;
     TemplateId          : uuid;
-    TemplateVersion?    : string;
     NodeType            : AssessmentNodeType;
     ParentNodeId?       : uuid;
     Title               : string;
@@ -147,11 +148,11 @@ export interface SAssessmentListNode extends SAssessmentNode {
 }
 
 export interface SAssessmentQuestionNode extends SAssessmentNode {
-    ResponseType : QueryResponseType;
-    DefaultPathId: uuid;
-    Paths        : SAssessmentNodePath[];
-    Options      : SAssessmentQueryOption[];
-    UserResponse?: SAssessmentQuestionResponse;
+    QueryResponseType: QueryResponseType;
+    DefaultPathId    : uuid;
+    Paths            : SAssessmentNodePath[];
+    Options          : SAssessmentQueryOption[];
+    UserResponse?    : SAssessmentQuestionResponse;
 }
 
 export interface SAssessmentMessageNode extends SAssessmentNode {

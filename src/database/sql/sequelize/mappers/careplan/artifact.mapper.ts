@@ -1,3 +1,4 @@
+import { UserTaskCategory } from "../../../../../domain.types/user/user.task/user.task.types";
 import { CareplanActivityDto } from "../../../../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import CareplanActivity from "../../models/careplan/careplan.activity.model";
 
@@ -5,28 +6,30 @@ import CareplanActivity from "../../models/careplan/careplan.activity.model";
 
 export class CareplanArtifactMapper {
 
-    static toDto = (careplanArtifact: CareplanActivity): CareplanActivityDto => {
+    static toDto = (activity: CareplanActivity): CareplanActivityDto => {
 
-        if (careplanArtifact == null){
+        if (activity == null){
             return null;
         }
 
         const dto: CareplanActivityDto = {
-            id               : careplanArtifact.id,
-            PatientUserId    : careplanArtifact.PatientUserId,
-            EnrollmentId     : careplanArtifact.EnrollmentId,
-            Provider         : careplanArtifact.Provider,
-            PlanName         : careplanArtifact.PlanName,
-            PlanCode         : careplanArtifact.PlanCode,
-            Type             : careplanArtifact.Type,
-            ProviderActionId : careplanArtifact.ProviderActionId,
-            Title            : careplanArtifact.Title,
-            ScheduledAt      : careplanArtifact.ScheduledAt,
-            CompletedAt      : careplanArtifact.CompletedAt,
-            Comments         : careplanArtifact.Comments,
-            Sequence         : careplanArtifact.Sequence,
-            Frequency        : careplanArtifact.Frequency,
-            Status           : careplanArtifact.Status,
+            id               : activity.id,
+            PatientUserId    : activity.PatientUserId,
+            EnrollmentId     : activity.EnrollmentId,
+            Provider         : activity.Provider,
+            PlanName         : activity.PlanName,
+            PlanCode         : activity.PlanCode,
+            Type             : activity.Type,
+            Category         : activity.Category as UserTaskCategory,
+            ProviderActionId : activity.ProviderActionId,
+            Title            : activity.Title,
+            ScheduledAt      : activity.ScheduledAt,
+            StartedAt        : activity.StartedAt,
+            CompletedAt      : activity.CompletedAt,
+            Comments         : activity.Comments,
+            Sequence         : activity.Sequence,
+            Frequency        : activity.Frequency,
+            Status           : activity.Status,
         };
         return dto;
     }

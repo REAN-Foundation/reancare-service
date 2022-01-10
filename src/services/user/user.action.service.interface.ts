@@ -1,8 +1,15 @@
+import { uuid } from "../../domain.types/miscellaneous/system.types";
 
 export interface IUserActionService {
 
-    completeAction(actionId: string, completionTime?: Date, success?: boolean): Promise<boolean>;
+    getAction(actionId: uuid): Promise<any>;
 
-    cancelAction(actionId: string, cancellationTime?: Date, cancellationReason?: string): Promise<boolean>;
+    startAction(actionId: uuid): Promise<boolean>;
+
+    completeAction(actionId: uuid, completionTime?: Date, success?: boolean): Promise<boolean>;
+
+    cancelAction(actionId: uuid, cancellationTime?: Date, cancellationReason?: string): Promise<boolean>;
+
+    updateAction(actionId: uuid, updates: any): Promise<any>;
 
 }

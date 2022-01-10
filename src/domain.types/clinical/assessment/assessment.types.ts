@@ -165,6 +165,7 @@ export interface SAssessmentNodePath {
     DisplayCode : string;
     ParentNodeId: string;
     NextNodeId  : string;
+    NextNode    : SAssessmentNode;
     ConditionId : string;
     Condition   : SAssessmentPathCondition;
 }
@@ -214,6 +215,8 @@ export interface SAssessmentPathCondition {
     ThirdOperandName    : string;
     ThirdOperandValue   : string;
     ThirdOperandDataType: ConditionOperandDataType;
+
+    Children: SAssessmentPathCondition[];
 }
 
 //#endregion

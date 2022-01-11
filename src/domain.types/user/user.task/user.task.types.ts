@@ -31,6 +31,7 @@ export const UserTaskCategoryList: UserTaskCategory [] = [
     UserTaskCategory.Goal,
     UserTaskCategory.Consultation,
     UserTaskCategory.PersonalReflection,
+    UserTaskCategory.Message,
     UserTaskCategory.Custom,
 ];
 

@@ -1,3 +1,4 @@
+/* eslint-disable lines-between-class-members */
 
 import { ProgressStatus, uuid } from "../../../domain.types/miscellaneous/system.types";
 
@@ -108,7 +109,8 @@ export const ConditionOperandDataTypeList: ConditionOperandDataType[] = [
 
 //#region Interfaces
 
-export interface SAssessmentTemplate {
+export class SAssessmentTemplate {
+
     TemplateId?            : uuid;
     DisplayCode?           : string;
     Version?               : string;
@@ -117,11 +119,13 @@ export interface SAssessmentTemplate {
     Description?           : string;
     ProviderAssessmentCode?: string;
     Provider?              : string;
-    FileResourceId?        : uuid; //assessment template storage file
-    RootNode               : SAssessmentNode;
+    FileResourceId?        : uuid; //Assessment template storage file
+    RootNode?              : SAssessmentNode;
+
 }
 
-export interface SAssessment extends SAssessmentTemplate {
+export class SAssessment extends SAssessmentTemplate {
+
     AssessmentId?          : uuid;
     PatientUserId          : uuid;
     EnrollmentId?          : string;
@@ -129,9 +133,11 @@ export interface SAssessment extends SAssessmentTemplate {
     StartedAt?             : Date;
     FinishedAt?            : Date;
     CurrentNode?           : SAssessmentNode;
+
 }
 
-export interface SAssessmentNode {
+export class SAssessmentNode {
+
     id?                 : uuid;
     DisplayCode?        : string;
     TemplateId          : uuid;
@@ -142,26 +148,34 @@ export interface SAssessmentNode {
     Description?        : string;
     Sequence?           : number;
     Score               : number;
+
 }
 
-export interface SAssessmentListNode extends SAssessmentNode {
+export class SAssessmentListNode extends SAssessmentNode {
+
     ChildrenNodes : SAssessmentNode[];
+
 }
 
-export interface SAssessmentQuestionNode extends SAssessmentNode {
+export class SAssessmentQuestionNode extends SAssessmentNode {
+
     QueryResponseType: QueryResponseType;
     DefaultPathId    : uuid;
     Paths            : SAssessmentNodePath[];
     Options          : SAssessmentQueryOption[];
     UserResponse?    : SAssessmentQuestionResponse;
+
 }
 
-export interface SAssessmentMessageNode extends SAssessmentNode {
+export class SAssessmentMessageNode extends SAssessmentNode {
+
     Message     : string;
     Acknowledged: boolean;
+
 }
 
-export interface SAssessmentNodePath {
+export class SAssessmentNodePath {
+
     id?         : uuid;
     DisplayCode : string;
     ParentNodeId: string;
@@ -169,18 +183,22 @@ export interface SAssessmentNodePath {
     NextNode    : SAssessmentNode;
     ConditionId : string;
     Condition   : SAssessmentPathCondition;
+
 }
 
-export interface SAssessmentQueryOption {
+export class SAssessmentQueryOption {
+
     id?        : uuid;
     DisplayCode: string;
     NodeId     : uuid;
     Text       : string;
     ImageUrl   : string;
     Sequence   : number;
+
 }
 
-export interface SAssessmentQuestionResponse {
+export class SAssessmentQuestionResponse {
+
     id?                  : uuid;
     NodeId?              : uuid;
     AssessmentId?        : uuid;
@@ -191,9 +209,11 @@ export interface SAssessmentQuestionResponse {
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
     CreatedAt            : Date;
+
 }
 
-export interface SAssessmentPathCondition {
+export class SAssessmentPathCondition {
+
     id?        : uuid;
     DisplayCode: string;
     NodeId     : uuid;
@@ -218,6 +238,7 @@ export interface SAssessmentPathCondition {
     ThirdOperandDataType: ConditionOperandDataType;
 
     Children: SAssessmentPathCondition[];
+
 }
 
 //#endregion

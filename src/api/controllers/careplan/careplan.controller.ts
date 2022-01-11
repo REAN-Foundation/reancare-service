@@ -88,6 +88,40 @@ export class CareplanController extends BaseController {
         }
     };
 
+    getPatientEnrollments = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            this.setContext('Careplan.GetPatientEnrollments', request, response);
+
+            const patientUserId = request.params.patientUserId;
+            const enrollments = await this._service.getPatientEnrollments(patientUserId);
+            ResponseHandler.success(request, response, 'Patient enrollments retrieved successfully!', 200, {
+                PatientEnrollments : enrollments,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    fetchTasks = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            this.setContext('Careplan.FetchTasks', request, response);
+
+            const careplanId = request.params.id;
+            const fetched = await this._service.fetchTasks(careplanId);
+            if (!fetched) {
+                ResponseHandler.failure(request, response, 'Problem encountered fetching careplan tasks!', 500);
+                return;
+            }
+            ResponseHandler.success(request, response, 'Careplan tasks fetched successfully!', 200, {
+                Fetched : fetched,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

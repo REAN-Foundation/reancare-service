@@ -14,6 +14,8 @@ export interface CareplanActivityDto {
     Category?        : UserTaskCategory;
     ProviderActionId?: string;
     Title?           : string;
+    Description?     : string;
+    Url?             : string;
     ScheduledAt?     : Date;
     StartedAt?       : Date;
     CompletedAt?     : Date;
@@ -21,4 +23,5 @@ export interface CareplanActivityDto {
     Sequence?        : number;
     Frequency?       : number;
     Status?          : string;
+    RawContent?      : string;
 }

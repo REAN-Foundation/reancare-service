@@ -10,7 +10,7 @@ import { CareplanActivity } from "../../../../domain.types/clinical/careplan/act
 import { ParticipantDomainModel } from "../../../../domain.types/clinical/careplan/participant/participant.domain.model";
 import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
 import { UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
-import { SAssessment, SAssessmentTemplate } from "../../../../domain.types/clinical/assessment/assessment.types";
+import { AssessmentType, SAssessment, SAssessmentTemplate } from "../../../../domain.types/clinical/assessment/assessment.types";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -188,18 +188,31 @@ export class AhaCareplanService implements ICareplanService {
     
             // AHA response has incorrect spelling of activities: "activitites"
             Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.activitites.length)}`);
+
             var activities = response.body.data.activitites;
             var activityEntities: CareplanActivity[] = [];
+
             activities.forEach(activity => {
+
+                const title = activity.name ? activity.name : (activity.title ? activity.title : '');
+                const category: UserTaskCategory = this.getUserTaskCategory(activity.type);
+                const status = this.getActivityStatus(activity.status);
+                const description = this.getActivityDescription(activity.text, activity.description);
+
                 var entity: CareplanActivity = {
+                    EnrollmentId     : enrollmentId,
                     Provider         : this.providerName(),
                     Type             : activity.type,
+                    Category         : category,
                     ProviderActionId : activity.code,
-                    Title            : activity.title,
+                    Title            : title,
+                    Description      : description,
+                    Url              : activity.url ?? null,
+                    Language         : 'English',
                     ScheduledAt      : activity.scheduledAt,
                     Sequence         : activity.sequence,
                     Frequency        : activity.frequency,
-                    Status           : activity.status,
+                    Status           : status,
                 };
                 activityEntities.push(entity);
             });
@@ -378,7 +391,17 @@ export class AhaCareplanService implements ICareplanService {
     }
 
     public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<SAssessmentTemplate> => {
-        throw new Error("Method not implemented.");
+
+        var template: SAssessmentTemplate = new SAssessmentTemplate();
+        template.Title = AssessmentType.Careplan;
+
+        const items = activity.RawContent.items;
+        for (var item of items) {
+            var str = JSON.stringify(item, null, 2);
+            Logger.instance().log(str);
+        }
+
+        return template;
     }
 
     public updateAssessment = async (assessment: SAssessment): Promise<boolean> => {

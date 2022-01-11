@@ -4,7 +4,7 @@ import CareplanActivity from "../../models/careplan/careplan.activity.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-export class CareplanArtifactMapper {
+export class CareplanActivityMapper {
 
     static toDto = (activity: CareplanActivity): CareplanActivityDto => {
 
@@ -23,6 +23,8 @@ export class CareplanArtifactMapper {
             Category         : activity.Category as UserTaskCategory,
             ProviderActionId : activity.ProviderActionId,
             Title            : activity.Title,
+            Description      : activity.Description,
+            Url              : activity.Url,
             ScheduledAt      : activity.ScheduledAt,
             StartedAt        : activity.StartedAt,
             CompletedAt      : activity.CompletedAt,
@@ -30,6 +32,7 @@ export class CareplanArtifactMapper {
             Sequence         : activity.Sequence,
             Frequency        : activity.Frequency,
             Status           : activity.Status,
+            RawContent       : activity.RawContent,
         };
         return dto;
     }

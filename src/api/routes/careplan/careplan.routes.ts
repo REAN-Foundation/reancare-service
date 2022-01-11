@@ -11,7 +11,9 @@ export const register = (app: express.Application): void => {
     const controller = new CareplanController();
 
     router.get('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAvailableCareplans);
-    router.post('/:patientUserId/enroll', authenticator.authenticateClient, authenticator.authenticateUser, controller.enroll);
+    router.post('/patients/:patientUserId/enroll', authenticator.authenticateClient, authenticator.authenticateUser, controller.enroll);
+    router.get('/patients/:patientUserId/enrollments', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientEnrollments);
+    router.get('/:id/fetch-tasks', authenticator.authenticateClient, authenticator.authenticateUser, controller.fetchTasks);
     
     app.use('/api/v1/care-plans', router);
 };

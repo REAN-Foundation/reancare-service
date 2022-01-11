@@ -11,7 +11,7 @@ import CareplanEnrollment from "../../../models/careplan/enrollment.model";
 import CareplanParticipant from "../../../models/careplan/participant.model";
 import CareplanActivity from "../../../models/careplan/careplan.activity.model";
 import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
-import { CareplanArtifactMapper } from '../../../mappers/careplan/artifact.mapper';
+import { CareplanActivityMapper } from '../../../mappers/careplan/artifact.mapper';
 import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
@@ -72,6 +72,20 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
+    getCareplanEnrollment = async (careplanId: uuid): Promise<EnrollmentDto> => {
+        try {
+            const enrollment = await CareplanEnrollment.findOne({
+                where : {
+                    id : careplanId
+                }
+            });
+            return EnrollmentMapper.toDto(enrollment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
     getPatientEnrollments = async (patientUserId: string): Promise<EnrollmentDto[]> => {
         try {
             const enrollments = await CareplanEnrollment.findAll({
@@ -124,8 +138,12 @@ export class CareplanRepo implements ICareplanRepo {
                     EnrollmentId     : enrollmentId,
                     PatientUserId    : patientUserId,
                     Type             : activity.Type,
+                    Category         : activity.Category,
                     ProviderActionId : activity.ProviderActionId,
                     Title            : activity.Title,
+                    Description      : activity.Description,
+                    Url              : activity.Url,
+                    Language         : activity.Language,
                     ScheduledAt      : activity.ScheduledAt,
                     Sequence         : activity.Sequence,
                     Frequency        : activity.Frequency,
@@ -138,7 +156,7 @@ export class CareplanRepo implements ICareplanRepo {
 
             var dtos = [];
             records.forEach(async (task) => {
-                var dto = CareplanArtifactMapper.toDto(task);
+                var dto = CareplanActivityMapper.toDto(task);
                 dtos.push(dto);
             });
             return dtos;
@@ -170,7 +188,7 @@ export class CareplanRepo implements ICareplanRepo {
                 Status           : activity.Status
             };
             const record = await CareplanActivity.create(entity);
-            var dto = await CareplanArtifactMapper.toDto(record);
+            var dto = await CareplanActivityMapper.toDto(record);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -194,7 +212,7 @@ export class CareplanRepo implements ICareplanRepo {
             });
             const dtos: CareplanActivityDto[] = [];
             for (const activity of foundResults.rows) {
-                const dto = CareplanArtifactMapper.toDto(activity);
+                const dto = CareplanActivityMapper.toDto(activity);
                 dtos.push(dto);
             }
 
@@ -215,7 +233,7 @@ export class CareplanRepo implements ICareplanRepo {
     getActivity = async (activityId: uuid): Promise<CareplanActivityDto> => {
         try {
             const record = await CareplanActivity.findByPk(activityId);
-            return CareplanArtifactMapper.toDto(record);
+            return CareplanActivityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -229,7 +247,7 @@ export class CareplanRepo implements ICareplanRepo {
                 record.StartedAt = new Date();
                 await record.save();
             }
-            return CareplanArtifactMapper.toDto(record);
+            return CareplanActivityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -243,7 +261,7 @@ export class CareplanRepo implements ICareplanRepo {
                 record.CompletedAt = new Date();
                 await record.save();
             }
-            return CareplanArtifactMapper.toDto(record);
+            return CareplanActivityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -260,8 +278,20 @@ export class CareplanRepo implements ICareplanRepo {
             if (finishedAt != null) {
                 record.CompletedAt = finishedAt;
             }
+            await record.save();
 
-            return CareplanArtifactMapper.toDto(record);
+            return CareplanActivityMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    }
+
+    updateActivityDetails = async (activityId: uuid, rawContent: any ): Promise<CareplanActivityDto> => {
+        try {
+            var record = await CareplanActivity.findByPk(activityId);
+            record.RawContent = rawContent;
+            await record.save();
+            return CareplanActivityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -273,6 +303,30 @@ export class CareplanRepo implements ICareplanRepo {
             record.UserTaskId = userTaskId;
             await record.save();
             return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    }
+
+    activityExists = async (
+        provider: string,
+        planCode: string,
+        enrollmentId: string,
+        providerActionId: string,
+        sequence: number,
+        scheduledAt: Date): Promise<boolean> => {
+        try {
+            const record = await CareplanActivity.findOne({
+                where : {
+                    Provider         : provider,
+                    PlanCode         : planCode,
+                    EnrollmentId     : enrollmentId,
+                    ProviderActionId : providerActionId,
+                    Sequence         : sequence,
+                    ScheduledAt      : scheduledAt,
+                }
+            });
+            return record !== null;
         } catch (error) {
             Logger.instance().log(error.message);
         }

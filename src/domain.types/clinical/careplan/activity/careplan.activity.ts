@@ -6,6 +6,7 @@ export interface CareplanActivity {
     PatientUserId?  : uuid;
     ProviderActionId: string;
     EnrollmentId?   : string;
+    UserTaskId?      : uuid;
     Provider        : string;
     ParticipantId?  : string;
     PlanName?       : string;

@@ -22,6 +22,7 @@ import {
     ProgressStatus, ProgressStatusList
 } from '../../../../../../domain.types/miscellaneous/system.types';
 import User from '../../user/user.model';
+import UserTask from '../../user/user.task.model';
 import AssessmentNode from './assessment.node.model';
 import AssessmentTemplate from './assessment.template.model';
 
@@ -56,7 +57,7 @@ export default class Assessment extends Model {
     AssessmentTemplateId: string;
 
     @BelongsTo(() => AssessmentTemplate)
-    Template: AssessmentTemplate;
+    AssessmentTemplate: AssessmentTemplate;
 
     @Column({
         type         : DataType.ENUM,
@@ -113,17 +114,41 @@ export default class Assessment extends Model {
         allowNull : true,
     })
     FinishedAt: Date;
+ 
+    @Column({
+        type      : DataType.STRING(16),
+        allowNull : true,
+    })
+    ScheduledDateString: string;
 
     @IsUUID(4)
     @ForeignKey(() => AssessmentNode)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
-    CurrentId: string;
+    CurrentNodeId: string;
 
     @BelongsTo(() => AssessmentNode)
     CurrentNode: AssessmentNode;
+
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    ParentActivityId: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => UserTask)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    UserTaskId: string;
+
+    @BelongsTo(() => UserTask)
+    UserTask: UserTask;
 
     @Column
     @CreatedAt

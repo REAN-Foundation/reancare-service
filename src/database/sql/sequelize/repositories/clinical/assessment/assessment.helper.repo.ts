@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+//import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { AssessmentTemplateDto } from '../../../../../../domain.types/clinical/assessment/assessment.template.dto';
@@ -68,14 +68,15 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         snode: SAssessmentNode): Promise<AssessmentNode> {
 
         const nodeEntity = {
-            DisplayCode : templateDisplayCode + `:${nodeIndex.toString()}`,
-            TemplateId  : templateId,
-            ParentId    : parentNodeId,
-            NodeType    : snode.NodeType,
-            Title       : snode.Title,
-            Description : snode.Description,
-            Sequence    : snode.Sequence,
-            Score       : snode.Score,
+            DisplayCode     : templateDisplayCode + `:${nodeIndex.toString()}`,
+            TemplateId      : templateId,
+            ParentId        : parentNodeId,
+            NodeType        : snode.NodeType,
+            ProviderGivenId : snode.ProviderGivenId,
+            Title           : snode.Title,
+            Description     : snode.Description,
+            Sequence        : snode.Sequence,
+            Score           : snode.Score,
         };
 
         var thisNode = await AssessmentNode.create(nodeEntity);

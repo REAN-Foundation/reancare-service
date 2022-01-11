@@ -44,4 +44,7 @@ export interface ICareplanRepo {
     completeActivity(activityId: uuid): Promise<CareplanActivityDto>;
 
     updateActivity(activityId: uuid, status: string, finishedAt: Date): Promise<CareplanActivityDto>;
+
+    setUserTaskToActivity(activityId: any, userTaskId: string): Promise<boolean>;
+
 }

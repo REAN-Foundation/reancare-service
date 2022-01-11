@@ -3,10 +3,11 @@ import { uuid } from "../../../miscellaneous/system.types";
 
 export interface CareplanActivityDto {
     id?              : uuid;
-    PatientUserId    : string;
+    PatientUserId    : uuid;
     Provider         : string;
     ParticipantIdId? : string;
     EnrollmentId?    : string;
+    UserTaskId?      : uuid;
     PlanName?        : string;
     PlanCode?        : string;
     Type?            : string;

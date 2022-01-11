@@ -289,9 +289,11 @@ export class CareplanService implements IUserActionService {
         template: AssessmentTemplateDto,
         scheduledAt: string): Promise<AssessmentDto> => {
 
-        var existingAssessment = await this._assessmentRepo.getByTemplateAndSchedule(
-            template.id, activity.Sequence, scheduledAt);
+        // var existingAssessment = await this._assessmentRepo.getByTemplateAndSchedule(
+        //     template.id, activity.Sequence, scheduledAt);
 
+        var existingAssessment = await this._assessmentRepo.getByActivityId(activity.id);
+    
         if (existingAssessment) {
             return existingAssessment;
         }
@@ -299,12 +301,15 @@ export class CareplanService implements IUserActionService {
         const assessmentModel: AssessmentDomainModel = {
             PatientUserId          : activity.PatientUserId,
             Title                  : template.Title,
-            DisplayCode            : template.DisplayCode + '-' + scheduledAt,
+            DisplayCode            : template.DisplayCode + ':' + scheduledAt,
             AssessmentTemplateId   : template.id,
             Type                   : template.Type,
             Provider               : template.Provider,
             ProviderAssessmentCode : template.ProviderAssessmentCode,
-            Status                 : ProgressStatus.Pending
+            Status                 : ProgressStatus.Pending,
+            ParentActivityId       : activity.id,
+            UserTaskId             : activity.UserTaskId,
+            ScheduledDateString    : scheduledAt,
         };
 
         const assessment = await this._assessmentRepo.create(assessmentModel);
@@ -350,6 +355,7 @@ export class CareplanService implements IUserActionService {
             });
 
             activities.forEach( async (activity) => {
+
                 var dayStart = TimeHelper.addDuration(activity.ScheduledAt, 7, DurationType.Hour);       // Start at 7:00 AM
                 var scheduleDelay = (activity.Sequence - 1) * 1;
                 var startTime = TimeHelper.addDuration(dayStart, scheduleDelay, DurationType.Second);   // Scheduled at every 1 sec
@@ -367,10 +373,12 @@ export class CareplanService implements IUserActionService {
                     ScheduledEndTime   : endTime
                 };
 
-                var userTaskDto = await this._userTaskRepo.create(userTaskModel);
+                var userTask = await this._userTaskRepo.create(userTaskModel);
 
-                Logger.instance().log(`User task dto: ${JSON.stringify(userTaskDto)}`);
-                Logger.instance().log(`New user task created for AHA careplan with id: ${userTaskDto.id}`);
+                await this._careplanRepo.setUserTaskToActivity(activity.id, userTask.id);
+
+                Logger.instance().log(`User task dto: ${JSON.stringify(userTask)}`);
+                Logger.instance().log(`New user task created for AHA careplan with id: ${userTask.id}`);
             });
         }
     }

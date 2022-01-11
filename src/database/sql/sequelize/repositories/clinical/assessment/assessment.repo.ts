@@ -8,7 +8,7 @@ import { AssessmentSearchFilters, AssessmentSearchResults } from '../../../../..
 import { IAssessmentRepo } from '../../../../../repository.interfaces/clinical/assessment/assessment.repo.interface';
 import { AssessmentMapper } from '../../../mappers/clinical/assessment/assessment.mapper';
 import Assessment from '../../../models/clinical/assessment/assessment.model';
-import { ProgressStatus } from '../../../../../../domain.types/miscellaneous/system.types';
+import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -24,6 +24,8 @@ export class AssessmentRepo implements IAssessmentRepo {
                 ProviderAssessmentCode : model.ProviderAssessmentCode ?? null,
                 ProviderEnrollmentId   : model.ProviderEnrollmentId ?? null,
                 Status                 : model.Status ?? ProgressStatus.Pending,
+                ParentActivityId       : model.ParentActivityId ?? null,
+                ScheduledDateString    : model.ScheduledDateString ?? null,
             };
             const assessment = await Assessment.create(entity);
             return await AssessmentMapper.toDto(assessment);
@@ -34,7 +36,7 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     };
 
-    getById = async (id: string): Promise<AssessmentDto> => {
+    getById = async (id: uuid): Promise<AssessmentDto> => {
         try {
             const assessment = await Assessment.findByPk(id);
             return await AssessmentMapper.toDto(assessment);
@@ -45,11 +47,11 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     };
 
-    getForPatient = async (id: string): Promise<AssessmentDto[]> => {
+    getForPatient = async (patientUserId: uuid): Promise<AssessmentDto[]> => {
         try {
             const search = { where: {} };
 
-            search.where['PatientUserId'] = { [Op.eq]: id };
+            search.where['PatientUserId'] = { [Op.eq]: patientUserId };
 
             const foundResults = await Assessment.findAll(search);
 
@@ -66,7 +68,7 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     };
 
-    update = async (id: string, updateModel: AssessmentDomainModel): Promise<AssessmentDto> => {
+    update = async (id: uuid, updateModel: AssessmentDomainModel): Promise<AssessmentDto> => {
         try {
             const assessment = await Assessment.findByPk(id);
 
@@ -161,7 +163,7 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     }
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         try {
             await Assessment.destroy({ where: { id: id } });
             return true;
@@ -170,5 +172,50 @@ export class AssessmentRepo implements IAssessmentRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    getByTemplateAndSchedule = async (
+        templateId: string, sequence: number, scheduledDate: string): Promise<AssessmentDto> => {
+        try {
+            const assessment = await Assessment.findOne({
+                where : {
+                    TemplateId          : templateId,
+                    Sequence            : sequence,
+                    ScheduledDateString : scheduledDate
+                },
+            });
+            return AssessmentMapper.toDto(assessment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    getByActivityId = async (activityId: uuid): Promise<AssessmentDto> => {
+        try {
+            const assessment = await Assessment.findOne({
+                where : {
+                    ParentActivityId : activityId,
+                },
+            });
+            return AssessmentMapper.toDto(assessment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    getByUserTaskId = async (taskId: uuid): Promise<AssessmentDto> => {
+        try {
+            const assessment = await Assessment.findOne({
+                where : {
+                    UserTaskId : taskId,
+                },
+            });
+            return AssessmentMapper.toDto(assessment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
 }

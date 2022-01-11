@@ -251,7 +251,7 @@ export class CareplanRepo implements ICareplanRepo {
 
     updateActivity = async (activityId: uuid, status: string, finishedAt: Date ): Promise<CareplanActivityDto> => {
         try {
-            const record = await CareplanActivity.findByPk(activityId);
+            var record = await CareplanActivity.findByPk(activityId);
 
             if (status != null) {
                 record.Status = status;
@@ -262,6 +262,17 @@ export class CareplanRepo implements ICareplanRepo {
             }
 
             return CareplanArtifactMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    }
+
+    setUserTaskToActivity = async (activityId: any, userTaskId: string): Promise<boolean> => {
+        try {
+            var record = await CareplanActivity.findByPk(activityId);
+            record.UserTaskId = userTaskId;
+            await record.save();
+            return true;
         } catch (error) {
             Logger.instance().log(error.message);
         }

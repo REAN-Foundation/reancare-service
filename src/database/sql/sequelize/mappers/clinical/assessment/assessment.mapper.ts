@@ -15,9 +15,9 @@ export class AssessmentMapper {
         const dto: AssessmentDto = {
             id                   : assessment.id,
             Type                 : assessment.Type as AssessmentType,
-            DisplayCode          : assessment.Template.DisplayCode,
-            Title                : assessment.Template.Title,
-            Description          : assessment.Template.Description,
+            DisplayCode          : assessment.AssessmentTemplate.DisplayCode,
+            Title                : assessment.AssessmentTemplate.Title,
+            Description          : assessment.AssessmentTemplate.Description,
             PatientUserId        : assessment.PatientUserId,
             AssessmentTemplateId : assessment.AssessmentTemplateId,
             Provider             : assessment.Provider,
@@ -26,6 +26,8 @@ export class AssessmentMapper {
             CreatedAt            : assessment.CreatedAt,
             StartedAt            : assessment.StartedAt,
             FinishedAt           : assessment.FinishedAt,
+            ParentActivityId     : assessment.ParentActivityId,
+            UserTaskId           : assessment.UserTaskId,
         };
         return dto;
     }

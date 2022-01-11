@@ -13,6 +13,8 @@ export interface AssessmentDto {
     ProviderAssessmentCode?: string;
     Provider?              : string;
     Status                 : ProgressStatus;
+    ParentActivityId?      : uuid;
+    UserTaskId?            : uuid;
     StartedAt?             : Date;
     FinishedAt?            : Date;
     CreatedAt              : Date;

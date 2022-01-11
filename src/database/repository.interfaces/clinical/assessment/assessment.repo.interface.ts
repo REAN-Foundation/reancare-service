@@ -5,8 +5,6 @@ import { AssessmentSearchFilters, AssessmentSearchResults } from '../../../../do
 
 export interface IAssessmentRepo {
 
-    getByTemplateAndSchedule(templateId: uuid, sequence: number, scheduledAt: string): Promise<AssessmentDto>;
-
     create(model: AssessmentDomainModel): Promise<AssessmentDto>;
 
     getById(id: string): Promise<AssessmentDto>;
@@ -16,5 +14,11 @@ export interface IAssessmentRepo {
     update(id: string, model: AssessmentDomainModel): Promise<AssessmentDto>;
 
     delete(id: string): Promise<boolean>;
+
+    getByActivityId(activityId: uuid): Promise<AssessmentDto>;
+
+    getByTemplateAndSchedule(templateId: uuid, sequence: number, scheduledDate: string): Promise<AssessmentDto>;
+
+    getForPatient(patientUserId: uuid): Promise<AssessmentDto[]>;
 
 }

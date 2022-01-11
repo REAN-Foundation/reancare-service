@@ -136,6 +136,7 @@ export interface SAssessmentNode {
     DisplayCode?        : string;
     TemplateId          : uuid;
     NodeType            : AssessmentNodeType;
+    ProviderGivenId     : string;
     ParentNodeId?       : uuid;
     Title               : string;
     Description?        : string;

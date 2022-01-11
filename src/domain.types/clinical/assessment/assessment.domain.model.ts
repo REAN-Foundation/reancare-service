@@ -14,4 +14,7 @@ export interface AssessmentDomainModel {
     Status?                : ProgressStatus;
     StartedAt?             : Date;
     FinishedAt?            : Date;
+    ParentActivityId?      : uuid;
+    UserTaskId?            : uuid;
+    ScheduledDateString?   : uuid;
 }

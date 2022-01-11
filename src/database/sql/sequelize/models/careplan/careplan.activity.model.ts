@@ -1,9 +1,11 @@
 import {
-    Column, CreatedAt, DataType, DeletedAt, IsUrl, IsUUID, Model, PrimaryKey, Table, UpdatedAt
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUrl, IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { ProgressStatus, ProgressStatusList } from '../../../../../domain.types/miscellaneous/system.types';
 import { UserTaskCategory, UserTaskCategoryList } from '../../../../../domain.types/user/user.task/user.task.types';
 import { v4 } from 'uuid';
+import UserTask from '../user/user.task.model';
+import User from '../user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -27,11 +29,21 @@ export default class CareplanActivity extends Model {
     })
     id: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => User)
     @Column({
         type      : DataType.STRING(64),
         allowNull : false,
     })
     PatientUserId: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => UserTask)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    UserTaskId: string;
 
     @Column({
         type      : DataType.STRING(64),

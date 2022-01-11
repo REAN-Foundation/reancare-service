@@ -40,4 +40,13 @@ export interface ICareplanService {
             updates: any
         ): Promise<CareplanActivity>;
 
+    updateAssessmentActivity(
+            patientUserId: uuid,
+            careplanCode: string,
+            enrollmentId: string,
+            activityId: string,
+            scheduledAt: Date,
+            sequence: number,
+            updates: any
+        ): Promise<CareplanActivity>;
 }

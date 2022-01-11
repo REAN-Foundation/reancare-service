@@ -1,4 +1,5 @@
 import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+import { AssessmentItem } from "./assessment.item";
 
 export interface CareplanActivity {
     PatientUserId?  : uuid;
@@ -16,4 +17,5 @@ export interface CareplanActivity {
     Sequence?       : number;
     Frequency?      : number;
     Status?         : string;
+    Items?         : AssessmentItem []
 }

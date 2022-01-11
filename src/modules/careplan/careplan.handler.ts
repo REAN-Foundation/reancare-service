@@ -110,4 +110,18 @@ export class CareplanHandler {
         return await service.updateActivity(patientUserId, careplanCode, enrollmentId, activityId, updates);
     };
 
+    public updateAssessmentActivity = async (
+        patientUserId: uuid,
+        provider: string,
+        careplanCode: string,
+        enrollmentId: string,
+        activityId: string,
+        scheduledAt: Date,
+        sequence: number,
+        updates: any
+    ): Promise<CareplanActivity> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.updateAssessmentActivity(patientUserId, careplanCode, enrollmentId,
+            activityId, scheduledAt, sequence, updates);
+    };
 }

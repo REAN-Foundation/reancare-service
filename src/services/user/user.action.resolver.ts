@@ -14,10 +14,11 @@ export class UserActionResolver {
         actionType: string,
         actionId: string,
         success?: boolean,
-        completionTime?: Date): Promise<boolean> => {
+        completionTime?: Date,
+        items?: [],): Promise<boolean> => {
         var actionService = this.getActionService(actionType);
         var time = completionTime ?? new Date();
-        return await actionService.completeAction(actionId, time, success);
+        return await actionService.completeAction(actionId, time, success, items);
     }
 
     cancelAction = async (

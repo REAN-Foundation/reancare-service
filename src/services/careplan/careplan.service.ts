@@ -200,8 +200,26 @@ export class CareplanService {
         }
     }
 
-    async completeAction(activityId, time, success) {
+    async completeAction(activityId, time, success, items) {
         var activity = await this._careplanRepo.getActivity(activityId);
+
+        if (activity.Type === "Assessment") {
+
+            var updateAssessmentFields = {
+                completedAt : time,
+                comments    : "",
+                status      : "COMPLETED",
+                items: []
+            };
+
+            var updatedActivity = await this._handler.updateAssessmentActivity(
+                activity.PatientUserId, activity.Provider, activity.PlanCode,
+                activity.EnrollmentId, activity.ProviderActionId,
+                activity.ScheduledAt, activity.Sequence, updateFields);
+    
+            return updatedActivity.CompletedAt ? true : false;
+
+        }
         var updateFields = {
             completedAt : time,
             comments    : "",

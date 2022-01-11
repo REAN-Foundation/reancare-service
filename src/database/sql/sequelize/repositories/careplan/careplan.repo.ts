@@ -13,6 +13,7 @@ import CareplanArtifact from "../../../../../database/sql/sequelize/models/carep
 import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 import { CareplanArtifactMapper } from '../../mappers/careplan/artifact.mapper';
 import { Op } from 'sequelize';
+import { AssessmentItem } from '../../../../../modules/careplan/domain.types/activity/assessment.item';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -233,6 +234,27 @@ export class CareplanRepo implements ICareplanRepo {
                 record.CompletedAt = finishedAt;
             }
 
+            return CareplanArtifactMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    }
+
+    updateAssessmentActivity = async (activityId: uuid, status: string,
+        finishedAt: Date, items: AssessmentItem [] ): Promise<CareplanActivityDto> => {
+        try {
+            const record = await CareplanArtifact.findByPk(activityId);
+
+            if (status != null) {
+                record.Status = status;
+            }
+
+            if (finishedAt != null) {
+                record.CompletedAt = finishedAt;
+            }
+
+            record.Items = JSON.stringify(items);
+            
             return CareplanArtifactMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);

@@ -179,7 +179,7 @@ export class UserTaskController {
             request.context = 'UserTask.FinishTask';
             await this._authorizer.authorize(request, response);
 
-            const { id, finishedAt, comments } = await this._validator.finishTask(request);
+            const { id, finishedAt, items, comments } = await this._validator.finishTask(request);
 
             const existing = await this._service.getById(id);
             if (existing == null) {
@@ -194,7 +194,7 @@ export class UserTaskController {
             if (updated.ActionId != null && updated.ActionType !== null) {
                 var actionResolver = new UserActionResolver();
                 const result = await actionResolver.completeAction(
-                    updated.ActionType, updated.ActionId, true, finishedAt);
+                    updated.ActionType, updated.ActionId, true, finishedAt, items);
                 Logger.instance().log(`${updated.ActionType} - Action result : ${result.toString()}`);
             }
             

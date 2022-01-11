@@ -314,6 +314,56 @@ export class AhaCareplanService implements ICareplanService {
         }
     }
 
+    updateAssessmentActivity = async(
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string,
+        providerActionId: string,
+        scheduledAt: Date,
+        sequence: number,
+        updates: any): Promise<CareplanActivity> => {
+        try {
+
+            const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+
+            var scheduledDate = TimeHelper.getDateString(scheduledAt, DateStringFormat.YYYY_MM_DD);
+            var queryParam = `scheduledAt=${scheduledDate}&sequence=${sequence}`;
+
+            var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities/${providerActionId}?${queryParam}`;
+
+            Logger.instance().log(`URL: ${JSON.stringify(url)}`);
+
+            var updateData = {
+                completedAt : Helper.formatDate(updates.completedAt),
+                status      : updates.status,
+                items       : updates.items
+            };
+
+            var response = await needle("patch", url, updateData, this.getHeaderOptions());
+
+            if (response.statusCode !== 200) {
+                Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+                Logger.instance().error('Unable to fetch details for given artifact id!', response.statusCode, null);
+                throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
+            }
+
+            Logger.instance().log(`response body for activity details: ${JSON.stringify(response.body.data.assessment)}`);
+            var assessment = response.body.data.assessment;
+
+            var entity: CareplanActivity = {
+                Provider         : this.providerName(),
+                ProviderActionId : assessment.code,
+                Title            : assessment.title,
+                Items            : assessment.items
+            };
+
+            return entity;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
     getHeaderOptions() {
         var headers = {
             'Content-Type' : 'application/json',

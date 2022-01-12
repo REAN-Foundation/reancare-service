@@ -307,4 +307,13 @@ export class CareplanRepo implements ICareplanRepo {
         }
     }
 
+    getGoal = async (id: uuid): Promise<CareplanGoalDto> => {
+        try {
+            const record = await CareplanGoal.findByPk(id);
+            return CareplanGoalMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    }
+
 }

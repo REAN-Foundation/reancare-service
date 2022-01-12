@@ -57,4 +57,6 @@ export interface ICareplanRepo {
 
     getGoals(patientUserId: string, enrollmentId: string, activityId: uuid): Promise<CareplanGoalDto[]>;
 
+    getGoal(id: uuid): Promise<CareplanGoalDto>;
+
 }

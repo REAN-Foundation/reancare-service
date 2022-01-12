@@ -17,6 +17,7 @@ export class GoalMapper {
             TypeCode      : goal.TypeCode,
             TypeName      : goal.TypeName,
             GoalId        : goal.GoalId ?? null,
+            ActionId      : goal.ActionId ?? null,
             GoalAchieved  : goal.GoalAchieved,
             GoalAbandoned : goal.GoalAbandoned
         };

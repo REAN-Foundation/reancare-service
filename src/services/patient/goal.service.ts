@@ -1,3 +1,4 @@
+import { CareplanHandler } from "../../modules/careplan/careplan.handler";
 import { inject, injectable } from "tsyringe";
 import { IGoalRepo } from "../../database/repository.interfaces/patient/goal.repo.interface";
 import { GoalDomainModel } from '../../domain.types/patient/goal/goal.domain.model';
@@ -8,6 +9,8 @@ import { GoalSearchResults, GoalSearchFilters } from '../../domain.types/patient
 
 @injectable()
 export class GoalService {
+
+    _careplanHandler: CareplanHandler = new CareplanHandler();
 
     constructor(
         @inject('IGoalRepo') private _goalRepo: IGoalRepo,
@@ -22,7 +25,21 @@ export class GoalService {
     };
 
     search = async (filters: GoalSearchFilters): Promise<GoalSearchResults> => {
-        return await this._goalRepo.search(filters);
+        var searchResults = await this._goalRepo.search(filters);
+
+        for (const i of searchResults.Items) {
+            if (i.ActionId != null && i.ActionType === 'Careplan' ) {
+
+                goals = await this._handler.getGoals(
+                    participantDetails, enrollmentDetails.Provider);
+            }
+
+            //await this._rolePrivilegeRepo.create({
+                RoleId    : role.id,
+                Privilege : p,
+            });
+        }
+        return searchResults;
     };
 
     update = async (id: string, goalDomainModel: GoalDomainModel): Promise<GoalDto> => {

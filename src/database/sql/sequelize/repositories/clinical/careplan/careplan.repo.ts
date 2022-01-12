@@ -289,7 +289,7 @@ export class CareplanRepo implements ICareplanRepo {
     updateActivityDetails = async (activityId: uuid, rawContent: any ): Promise<CareplanActivityDto> => {
         try {
             var record = await CareplanActivity.findByPk(activityId);
-            record.RawContent = rawContent;
+            record.RawContent = JSON.stringify(rawContent);
             await record.save();
             return CareplanActivityMapper.toDto(record);
         } catch (error) {

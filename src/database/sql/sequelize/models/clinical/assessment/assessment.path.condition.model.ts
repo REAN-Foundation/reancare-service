@@ -73,8 +73,8 @@ export default class AssessmentPathCondition extends Model {
     })
     PathId: string; //Chosen path if the condition satisfies
 
-    @BelongsTo(() => AssessmentNodePath)
-    Path: AssessmentNodePath;
+    // @BelongsTo(() => AssessmentNodePath)
+    // Path: AssessmentNodePath;
 
     @Column({
         type         : DataType.BOOLEAN,

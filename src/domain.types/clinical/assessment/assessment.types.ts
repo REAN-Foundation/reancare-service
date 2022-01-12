@@ -33,6 +33,9 @@ export const QueryResponseTypeList: QueryResponseType[] = [
     QueryResponseType.IntegerValue,
     QueryResponseType.SingleChoiceSelection,
     QueryResponseType.MultiChoiceSelection,
+    QueryResponseType.Boolean,
+    QueryResponseType.Ok,
+    QueryResponseType.None,
 ];
 
 export enum AssessmentType {

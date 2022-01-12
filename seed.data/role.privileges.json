@@ -296,7 +296,9 @@
             "MedicalCondition.Update",
             "MedicalCondition.Search",
             "MedicalCondition.Delete",
-            "Careplan.Enroll"
+            "Careplan.Enroll",
+            "Careplan.GetPatientEnrollments",
+            "Careplan.FetchTasks"
         ]
     },
     {
@@ -538,7 +540,9 @@
             "MedicalCondition.Delete",
             "DailyAssessment.Create",
             "DailyAssessment.Search",
-            "Careplan.Enroll"
+            "Careplan.Enroll",
+            "Careplan.GetPatientEnrollments",
+            "Careplan.FetchTasks"
         ]
     },
     {

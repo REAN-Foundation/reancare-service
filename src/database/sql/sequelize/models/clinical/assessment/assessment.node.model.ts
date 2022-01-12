@@ -128,7 +128,7 @@ export default class AssessmentNode extends Model {
     DefaultPathId: string;
 
     @Column({
-        type      : DataType.ENUM,
+        type      : DataType.TEXT,
         allowNull : true,
     })
     Message: string;

@@ -20,6 +20,7 @@ export class EmergencyContactValidator extends BaseValidator {
                 FirstName : request.body.ContactPerson.FirstName ?? null,
                 LastName  : request.body.ContactPerson.LastName ?? null,
                 Phone     : request.body.ContactPerson.Phone ?? null,
+                Email     : request.body.ContactPerson.Email ?? null,
             };
         }
 
@@ -81,6 +82,7 @@ export class EmergencyContactValidator extends BaseValidator {
             await this.validateString(request, 'ContactPerson.Prefix', Where.Body, false, true);
             await this.validateString(request, 'ContactPerson.LastName', Where.Body, false, true);
             await this.validateString(request, 'ContactPerson.Phone', Where.Body, true, false);
+            await this.validateString(request, 'ContactPerson.Email', Where.Body, false, true);
 
         }
 

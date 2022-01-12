@@ -51,8 +51,9 @@ export default class AssessmentTemplate extends Model {
 
     @Length({ max: 128 })
     @Column({
-        type      : DataType.STRING(128),
-        allowNull : false,
+        type         : DataType.STRING(128),
+        allowNull    : false,
+        defaultValue : "1.0"
     })
     Version: string;
 
@@ -95,12 +96,9 @@ export default class AssessmentTemplate extends Model {
     @ForeignKey(() => AssessmentNode)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
     RootNodeId: string;
-
-    @BelongsTo(() => AssessmentNode)
-    RootNode: AssessmentNode;
     
     @IsUUID(4)
     @ForeignKey(() => FileResource)

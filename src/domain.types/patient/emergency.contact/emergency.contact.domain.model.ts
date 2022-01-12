@@ -16,5 +16,4 @@ export interface EmergencyContactDomainModel {
     TimeOfAvailability?     : string;
     Description?            : string;
     AdditionalPhoneNumbers? : string;
-    Email?                  : string;
 }

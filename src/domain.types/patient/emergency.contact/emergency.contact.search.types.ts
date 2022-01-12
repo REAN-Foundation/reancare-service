@@ -10,7 +10,6 @@ export interface EmergencyContactSearchFilters extends BaseSearchFilters{
     ContactPersonId?        : uuid;
     IsAvailableForEmergency?: boolean;
     ContactRelation?        : EmergencyContactRoles;
-    Email?                  : string;
 }
 
 export interface EmergencyContactSearchResults extends BaseSearchResults{

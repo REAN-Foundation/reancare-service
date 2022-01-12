@@ -1,6 +1,5 @@
 import {
-    BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsEmail,
-    IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
+    BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey,IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.types';
@@ -108,14 +107,6 @@ export default class EmergencyContact extends Model {
         allowNull : true,
     })
     AdditionalPhoneNumbers: string;
-
-    @Length({ max: 128 })
-    @IsEmail
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
-    })
-    Email: string;
 
     @Column
     @CreatedAt

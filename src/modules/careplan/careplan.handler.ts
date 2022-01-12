@@ -8,6 +8,7 @@ import { ProviderResolver } from "./provider.resolver";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { CareplanConfig } from "../../config/configuration.types";
 import { CareplanActivityDetails } from "./domain.types/activity/careplan.activity.details.dto";
+import { CareplanGoalDto } from "./domain.types/goal/goal.dto";
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -124,4 +125,20 @@ export class CareplanHandler {
         return await service.updateAssessmentActivity(patientUserId, careplanCode, enrollmentId,
             activityId, scheduledAt, sequence, updates);
     };
+
+    public getGoals = async (
+        patientUserId: uuid,
+        provider: string,
+        careplanCode: string,
+        enrollmentId: string,
+        activityId: string,
+        scheduledAt: Date,
+        sequence: number,
+        catagories: any
+    ): Promise<CareplanGoalDto[]> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.getGoals(patientUserId, careplanCode, enrollmentId,
+            activityId, scheduledAt, sequence, catagories);
+    };
+
 }

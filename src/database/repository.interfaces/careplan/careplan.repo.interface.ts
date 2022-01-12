@@ -5,6 +5,8 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityDto } from '../../../modules/careplan/domain.types/activity/careplan.activity.dto';
 import { CareplanActivityDomainModel } from '../../../modules/careplan/domain.types/activity/careplan.activity.domain.model';
 import { AssessmentItem } from '../../../modules/careplan/domain.types/activity/assessment.item';
+import { CareplanGoalDto } from '../../../modules/careplan/domain.types/goal/goal.dto';
+import { CareplanGoalDomainModel } from '../../../modules/careplan/domain.types/goal/goal.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,4 +46,15 @@ export interface ICareplanRepo {
 
     updateAssessmentActivity(activityId: uuid, status: string,
     finishedAt: Date, items: AssessmentItem []): Promise<CareplanActivityDto>;
+
+    addGoals(
+        provider: string,
+        planName: string,
+        planCode: string,
+        patientUserId: uuid,
+        enrollmentId: string,
+        goals: CareplanGoalDomainModel[]): Promise<CareplanGoalDto[]>;
+
+    getGoals(patientUserId: string, enrollmentId: string, activityId: uuid): Promise<CareplanGoalDto[]>;
+
 }

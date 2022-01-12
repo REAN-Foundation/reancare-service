@@ -10,7 +10,9 @@ import { CareplanActivity } from "../../domain.types/activity/careplan.activity"
 import { ParticipantDomainModel } from "../../domain.types/participant/participant.domain.model";
 import { CareplanActivityDetails } from "../../domain.types/activity/careplan.activity.details.dto";
 import { TimeHelper } from "../../../../common/time.helper";
-import { DateStringFormat } from "../../../../domain.types/miscellaneous/time.types";
+import { DateStringFormat, DurationType } from "../../../../domain.types/miscellaneous/time.types";
+import { CareplanGoalDomainModel } from "../../domain.types/goal/goal.domain.model";
+import { CareplanGoalDto } from "../../domain.types/goal/goal.dto";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -364,6 +366,50 @@ export class AhaCareplanService implements ICareplanService {
             throw new ApiError(500, error.message);
         }
     }
+
+    getGoals = async (
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string,
+        providerActionId: string,
+    ): Promise<CareplanGoalDto[]> => {
+        try {
+        
+            const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${providerActionId}?pageSize=500`;
+            
+            var response = await needle("get", url, this.getHeaderOptions());
+    
+            if (response.statusCode !== 200) {
+                Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+                Logger.instance().error('Unable to fetch tasks for given enrollment id!', response.statusCode, null);
+                throw new ApiError(500, "Careplan service error: " + response.body.error.message);
+            }
+    
+            Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.goals.length)}`);
+            var goals = response.body.data.goals;
+            var goalEntities: CareplanGoalDomainModel[] = [];
+            goals.forEach(goal => {
+                var entity: CareplanGoalDomainModel = {
+                    Provider         : this.providerName(),
+                    ProviderActionId : goal.code,
+                    Name             : goal.name,
+                    GoalId           : goal.id,
+                    GoalCode         : goal.code,
+                    Categories       : goal.Categories,
+
+                };
+                goalEntities.push(entity);
+            });
+
+            return goalEntities;
+    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
     getHeaderOptions() {
         var headers = {
             'Content-Type' : 'application/json',

@@ -14,6 +14,10 @@ import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 import { CareplanArtifactMapper } from '../../mappers/careplan/artifact.mapper';
 import { Op } from 'sequelize';
 import { AssessmentItem } from '../../../../../modules/careplan/domain.types/activity/assessment.item';
+import { CareplanGoalDomainModel } from '../../../../../modules/careplan/domain.types/goal/goal.domain.model';
+import { CareplanGoalDto } from '../../../../../modules/careplan/domain.types/goal/goal.dto';
+import CareplanGoal from '../../models/careplan/careplan.goal.model';
+import { CareplanGoalMapper } from '../../mappers/careplan/goal.mapper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -256,6 +260,48 @@ export class CareplanRepo implements ICareplanRepo {
             record.Items = JSON.stringify(items);
             
             return CareplanArtifactMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    }
+
+    addGoals = async (
+        provider: string,
+        planName: string,
+        planCode: string,
+        patientUserId: uuid,
+        enrollmentId: string,
+        goals: CareplanGoalDomainModel[]): Promise<CareplanGoalDto[]> => {
+        try {
+
+            var goalEntities = [];
+
+            goals.forEach(activity => {
+                var entity = {
+                    Provider         : provider,
+                    PlanName         : planName,
+                    PlanCode         : planCode,
+                    EnrollmentId     : enrollmentId,
+                    PatientUserId    : patientUserId,
+                    ProviderActionId : activity.ProviderActionId,
+                    GoalId           : activity.GoalId,
+                    Name             : activity.Name,
+                    Sequence         : activity.Sequence,
+                    Categories       : activity.Categories,
+                    ScheduledAt      : activity.ScheduledAt,
+                    
+                };
+                goalEntities.push(entity);
+            });
+            
+            const records = await CareplanGoal.bulkCreate(goalEntities);
+
+            var dtos = [];
+            records.forEach(async (task) => {
+                var dto = await CareplanGoalMapper.toDto(task);
+                dtos.push(dto);
+            });
+            return dtos;
         } catch (error) {
             Logger.instance().log(error.message);
         }

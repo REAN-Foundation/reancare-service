@@ -17,6 +17,7 @@ export class GoalValidator {
             TypeCode      : request.body.TypeCode ?? null,
             TypeName      : request.body.TypeName ?? null,
             GoalId        : request.body.GoalId ?? null,
+            ActionId      : request.body.ActionId ?? null,
             GoalAchieved  : request.body.GoalAchieved ?? null,
             GoalAbandoned : request.body.GoalAbandoned ?? null
         };
@@ -61,6 +62,12 @@ export class GoalValidator {
             .run(request);
 
         await query('GoalId').optional()
+            .trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        await query('ActionId').optional()
             .trim()
             .escape()
             .isUUID()
@@ -128,6 +135,7 @@ export class GoalValidator {
             TypeCode        : request.query.TypeCode ?? null,
             TypeName        : request.query.TypeName ?? null,
             GoalId          : request.query.GoalId ?? null,
+            ActionId        : request.query.ActionId ?? null,
             GoalAchieved    : request.query.GoalAchieved ?? null,
             GoalAbandoned   : request.query.GoalAbandoned ?? null,
             CreatedDateFrom : request.query.CreatedDateFrom ?? null,

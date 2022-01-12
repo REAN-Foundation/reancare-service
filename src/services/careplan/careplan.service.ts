@@ -209,7 +209,7 @@ export class CareplanService {
                 completedAt : time,
                 comments    : "",
                 status      : "COMPLETED",
-                items: []
+                items       : []
             };
 
             var updatedActivity = await this._handler.updateAssessmentActivity(
@@ -237,5 +237,4 @@ export class CareplanService {
         // @TODO
         return true;
     }
-    
 }

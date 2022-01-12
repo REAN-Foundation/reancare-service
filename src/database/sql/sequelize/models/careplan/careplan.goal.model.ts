@@ -7,12 +7,12 @@ import { v4 } from 'uuid';
 
 @Table({
     timestamps      : true,
-    modelName       : 'CareplanArtifact',
-    tableName       : 'careplan_artifacts',
+    modelName       : 'CareplanGoal',
+    tableName       : 'careplan_goals',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class CareplanArtifact extends Model {
+export default class CareplanGoal extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -57,40 +57,22 @@ export default class CareplanArtifact extends Model {
     PlanCode: string;
 
     @Column({
-        type      : DataType.STRING(128),
-        allowNull : false,
-    })
-    Type: string;
-
-    @Column({
         type      : DataType.STRING(64),
         allowNull : false,
     })
-    ProviderActionId: string;
+    ProviderActionId: string; // activity code
+
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    GoalId: number;
 
     @Column({
         type      : DataType.STRING(128),
         allowNull : false,
     })
-    Title: string;
-
-    @Column({
-        type      : DataType.DATE,
-        allowNull : false,
-    })
-    ScheduledAt: Date;
-
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    CompletedAt: Date;
-
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : true,
-    })
-    Comments: string;
+    Name: string;
 
     @Column({
         type      : DataType.INTEGER,
@@ -99,22 +81,16 @@ export default class CareplanArtifact extends Model {
     Sequence: number;
 
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : false,
+        type      : DataType.STRING(128),
+        allowNull : true,
     })
-    Frequency: number;
+    Categories: string;
 
     @Column({
-        type      : DataType.STRING(128),
+        type      : DataType.DATE,
         allowNull : false,
     })
-    Status: string;
-
-    @Column({
-        type      : DataType.STRING(128),
-        allowNull : false,
-    })
-    Items: string;
+    ScheduledAt: Date;
 
     @Column
     @CreatedAt

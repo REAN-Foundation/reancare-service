@@ -1,7 +1,8 @@
 export interface GoalDto {
     id?: string;
     PatientUserId: string;
-    CarePlanId?: number;
+    ActionId: string;
+    CarePlanId: number;
     TypeCode?: number;
     TypeName?: string;
     GoalId?: string;

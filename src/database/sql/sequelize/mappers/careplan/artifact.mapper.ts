@@ -23,6 +23,7 @@ export class CareplanArtifactMapper {
             Title            : careplanArtifact.Title,
             ScheduledAt      : careplanArtifact.ScheduledAt,
             CompletedAt      : careplanArtifact.CompletedAt,
+            Items            : careplanArtifact.Items ? JSON.parse(careplanArtifact.Items) : [],
             Comments         : careplanArtifact.Comments,
             Sequence         : careplanArtifact.Sequence,
             Frequency        : careplanArtifact.Frequency,

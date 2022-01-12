@@ -46,7 +46,9 @@ export class EmergencyContactValidator extends BaseValidator {
             IsAvailableForEmergency : request.body.IsAvailableForEmergency ?? null,
             TimeOfAvailability      : request.body.TimeOfAvailability ?? null,
             Description             : request.body.Description ?? null,
-            AdditionalPhoneNumbers  : request.body.AdditionalPhoneNumbers ?? null
+            AdditionalPhoneNumbers  : request.body.AdditionalPhoneNumbers ?? null,
+            Email                   : request.body.Email ?? null,
+
         };
 
         return domainModel;
@@ -62,6 +64,7 @@ export class EmergencyContactValidator extends BaseValidator {
         await this.validateBoolean(request, 'IsAvailableForEmergency', Where.Body, true, false);
         await this.validateString(request, 'TimeOfAvailability', Where.Body, false, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateEmail(request, 'Email', Where.Body, false, false);
         await this.validateString(request, 'AdditionalPhoneNumbers', Where.Body, false, false);
 
         this.validateRequest(request);
@@ -117,6 +120,7 @@ export class EmergencyContactValidator extends BaseValidator {
         await this.validateUuid(request, 'contactPersonId', Where.Query, false, false);
         await this.validateBoolean(request, 'isAvailableForEmergency', Where.Query, false, false);
         await this.validateString(request, 'contactRelation', Where.Query, false, false, true);
+        await this.validateEmail(request, 'Email', Where.Query, false, false);
 
         await this.validateBaseSearchFilters(request);
         
@@ -133,6 +137,8 @@ export class EmergencyContactValidator extends BaseValidator {
             ContactPersonId         : request.query.contactPersonId ?? null,
             IsAvailableForEmergency : request.query.isAvailableForEmergency,
             ContactRelation         : request.query.contactRelation ?? null,
+            Email                   : request.query.email ?? null,
+
         };
         return this.updateBaseSearchFilters(request, filters);
     }
@@ -150,6 +156,7 @@ export class EmergencyContactValidator extends BaseValidator {
         await this.validateString(request, 'TimeOfAvailability', Where.Body, false, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
         await this.validateString(request, 'AdditionalPhoneNumbers', Where.Body, false, false);
+        await this.validateEmail(request, 'Email', Where.Body, false, false);
 
         this.validateRequest(request);
 

@@ -28,6 +28,7 @@ export class EmergencyContactMapper {
             TimeOfAvailability      : contact.TimeOfAvailability,
             Description             : contact.Description,
             AdditionalPhoneNumbers  : contact.AdditionalPhoneNumbers,
+            Email                   : contact.Email,
         };
         return dto;
     }

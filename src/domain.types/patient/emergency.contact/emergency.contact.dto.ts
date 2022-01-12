@@ -17,4 +17,5 @@ export interface EmergencyContactDto {
     TimeOfAvailability?     : string;
     Description?            : string;
     AdditionalPhoneNumbers? : string;
+    Email?                  : string;
 }

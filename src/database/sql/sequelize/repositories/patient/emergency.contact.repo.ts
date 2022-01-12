@@ -24,6 +24,8 @@ export class EmergencyContactRepo implements IEmergencyContactRepo {
                 TimeOfAvailability      : contactDomainModel.TimeOfAvailability ?? null,
                 Description             : contactDomainModel.Description ?? null,
                 AdditionalPhoneNumbers  : contactDomainModel.AdditionalPhoneNumbers ?? null,
+                Email                   : contactDomainModel.Email ?? null,
+
             };
             const contact = await EmergencyContact.create(entity);
             return await EmergencyContactMapper.toDto(contact);
@@ -90,6 +92,9 @@ export class EmergencyContactRepo implements IEmergencyContactRepo {
             }
             if (filters.ContactRelation != null) {
                 search.where['ContactRelation'] = { [Op.like]: '%' + filters.ContactRelation + '%' };
+            }
+            if (filters.Email != null) {
+                search.where['Email'] = filters.Email;
             }
 
             let orderByColum = 'IsAvailableForEmergency';
@@ -170,6 +175,9 @@ export class EmergencyContactRepo implements IEmergencyContactRepo {
             }
             if (updateModel.AdditionalPhoneNumbers != null) {
                 contact.AdditionalPhoneNumbers = updateModel.AdditionalPhoneNumbers;
+            }
+            if (updateModel.Email != null) {
+                contact.Email = updateModel.Email;
             }
             await contact.save();
 

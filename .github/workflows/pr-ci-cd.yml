@@ -32,7 +32,7 @@ jobs:
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: main
+          DEFAULT_BRANCH: echo ${GITHUB_REF#refs/heads/}
 
   Build-Docker-Image:
     runs-on: ubuntu-latest

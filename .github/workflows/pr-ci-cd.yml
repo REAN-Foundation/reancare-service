@@ -31,6 +31,7 @@ jobs:
           LINTER_RULES_PATH: /
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
           VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_ALL_CODEBASE: false
 
   Build-Docker-Image:
     runs-on: ubuntu-latest

@@ -22,7 +22,7 @@ export class BloodGlucoseController extends BaseController {
 
     }
 
-    //#endregion
+    //#endregion.
 
     //#region Action methods
 
@@ -73,12 +73,12 @@ export class BloodGlucoseController extends BaseController {
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
-            
+
             const message =
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} blood glucose records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
                 BloodGlucoseRecords : searchResults });
 

@@ -24,15 +24,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Declare some variables
-        id: vars
+      - name: Get the current branch name
         shell: bash
-        run: |
-          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+        id: myref
 
       - name: Another step
         run: |
-          echo "Branch: ${{ steps.vars.outputs.branch }}"
+          echo "Branch: ${{ steps.myref.outputs.branch }}"
 
       - name: Lint Code Base
         uses: github/super-linter@v4
@@ -42,7 +41,7 @@ jobs:
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: ${{ steps.vars.outputs.branch }}
+          DEFAULT_BRANCH: ${{ steps.myref.outputs.branch }}
 
   Build-Docker-Image:
     runs-on: ubuntu-latest

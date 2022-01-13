@@ -41,7 +41,7 @@ jobs:
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: ${{ steps.myref.outputs.branch }}
+          DEFAULT_BRANCH: feature/superlint-updates
 
   Build-Docker-Image:
     runs-on: ubuntu-latest

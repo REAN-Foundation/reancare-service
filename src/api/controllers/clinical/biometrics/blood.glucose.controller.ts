@@ -124,6 +124,12 @@ export class BloodGlucoseController extends BaseController {
                 throw new ApiError(404, 'Blood glucose record not found.');
             }
 
+
+
+
+
+
+
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Blood glucose record cannot be deleted.');
@@ -142,6 +148,11 @@ export class BloodGlucoseController extends BaseController {
 
 
         } catch (error) {
+
+
+
+
+
             ResponseHandler.handleError(request, response, error);
         }
     };

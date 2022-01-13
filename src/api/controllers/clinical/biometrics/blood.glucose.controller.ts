@@ -137,10 +137,6 @@ export class BloodGlucoseController extends BaseController {
 
             ResponseHandler.success(request, response, 'Blood glucose record deleted successfully!', 200, {
 
-
-
-
-
                 Deleted : true,
             });
 

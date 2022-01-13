@@ -117,6 +117,8 @@ export class BloodGlucoseController extends BaseController {
             this.setContext('Biometrics.BloodGlucose.Delete', request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
+
+
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Blood glucose record not found.');

@@ -91,7 +91,6 @@ export class EmergencyContactRepo implements IEmergencyContactRepo {
             if (filters.ContactRelation != null) {
                 search.where['ContactRelation'] = { [Op.like]: '%' + filters.ContactRelation + '%' };
             }
-
             let orderByColum = 'IsAvailableForEmergency';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

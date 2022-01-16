@@ -397,6 +397,17 @@ export class Helper {
         return identifier;
     }
 
+    public static generateAlphaDisplayCode = (prefix = null) => {
+        const code = generate({
+            length    : 12,
+            numbers   : false,
+            lowercase : true,
+            uppercase : true,
+            symbols   : false,
+        });
+        return prefix ? prefix + '#' + code : code;
+    }
+
     public static convertCamelCaseToPascalCase = (str: string): string => {
         if (str.length > 0) {
             return str.charAt(0).toUpperCase() + str.substring(1);

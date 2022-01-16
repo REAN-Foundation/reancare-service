@@ -10,7 +10,21 @@ import { CareplanActivity } from "../../../../domain.types/clinical/careplan/act
 import { ParticipantDomainModel } from "../../../../domain.types/clinical/careplan/participant/participant.domain.model";
 import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
 import { UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
-import { AssessmentType, SAssessment, SAssessmentTemplate } from "../../../../domain.types/clinical/assessment/assessment.types";
+import {
+    AssessmentType,
+    //ConditionCompositionType,
+    ConditionOperandDataType,
+    ConditionOperatorType,
+    SAssessment,
+    SAssessmentListNode,
+    SAssessmentMessageNode,
+    SAssessmentNode,
+    SAssessmentNodePath,
+    SAssessmentPathCondition,
+    SAssessmentQueryOption,
+    SAssessmentQuestionNode,
+    SAssessmentTemplate,
+} from '../../../../domain.types/clinical/assessment/assessment.types';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -393,12 +407,31 @@ export class AhaCareplanService implements ICareplanService {
     public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<SAssessmentTemplate> => {
 
         var template: SAssessmentTemplate = new SAssessmentTemplate();
-        template.Title = AssessmentType.Careplan;
+        template.Type = AssessmentType.Careplan;
+        template.ProviderAssessmentCode = activity.ProviderActionId;
+        template.Title = activity.Title;
+        template.DisplayCode = Helper.generateAlphaDisplayCode('ASTMPL#');
+        template.Provider = 'AHA';
+        template.Version = '1.0';
+
+        //Root node
+        const rootNodeDisplayCode = Helper.generateAlphaDisplayCode('RNODE#');
+        template.RootNodeDisplayCode = rootNodeDisplayCode;
+        const rootNode = new SAssessmentListNode();
+        rootNode.DisplayCode = rootNodeDisplayCode;
+        template.Nodes.push(rootNode);
 
         const items = activity.RawContent.items;
-        for (var item of items) {
+
+        for (var item of activity.RawContent.items) {
+
             var str = JSON.stringify(item, null, 2);
             Logger.instance().log(str);
+
+            if (item.type === 'choice' || item.type === 'boolean') { //This is question node
+                const node = this.createQuestionNode(item, template, items);
+                Logger.instance().log(`Node created: ${node.DisplayCode}`);
+            }
         }
 
         return template;
@@ -406,6 +439,152 @@ export class AhaCareplanService implements ICareplanService {
 
     public updateAssessment = async (assessment: SAssessment): Promise<boolean> => {
         throw new Error("Method not implemented.");
+    }
+
+    private createQuestionNode(item: any, template: SAssessmentTemplate, items: any): SAssessmentQuestionNode {
+
+        var node = new SAssessmentQuestionNode();
+        node.Description = item.description;
+        node.ProviderGivenId = item.id;
+        node.ProviderGivenCode = item.code;
+        node.Sequence = item.sequence;
+        node.Title = item.title;
+        node.DisplayCode = Helper.generateAlphaDisplayCode('QNode#');
+
+        //Set options
+        this.addOptionsToQuestionNode(item, node);
+
+        template.Nodes.push(node);
+
+        //Add paths
+        this.addPathsToNode(item, node, template, items);
+
+        return node;
+    }
+
+    private addPathsToNode(item: any, node: SAssessmentQuestionNode, template: SAssessmentTemplate, items: any) {
+
+        var pathIndex = 0;
+
+        for (var act of item.actions) {
+
+            Logger.instance().log(JSON.stringify(act));
+
+            const actionType = act.action;
+            pathIndex++;
+            var path = new SAssessmentNodePath();
+            path.DisplayCode = node.DisplayCode + ':Path#' + pathIndex.toString();
+            this.constructConditionFromRules(act.Rules, path, node);
+
+            if (actionType === 'TriggerQuestion') {
+                const nextProviderQuestionId = act.questionId;
+                var nextNodeDisplayCode = this.createNextTriggerQuestionNode(
+                    template, items, nextProviderQuestionId);
+                path.NextNodeDisplayCode = nextNodeDisplayCode;
+            }
+            else if (actionType === 'MessagePatient') {
+                const message = act.message;
+                var nextNodeDisplayCode = this.createNextMessageNode(template, message);
+                path.NextNodeDisplayCode = nextNodeDisplayCode;
+            }
+            node.Paths.push(path);
+        }
+    }
+
+    private createNextMessageNode(template: SAssessmentTemplate, message: string): string {
+        const messageNode = new SAssessmentMessageNode();
+        messageNode.Message = message;
+        messageNode.ProviderGivenCode = null;
+        messageNode.ProviderGivenId = null;
+        messageNode.DisplayCode = Helper.generateAlphaDisplayCode('MNode#');
+        template.Nodes.push(messageNode);
+        return messageNode.DisplayCode;
+    }
+
+    private addOptionsToQuestionNode(item: any, node: SAssessmentQuestionNode) {
+        for (var opt of item.options) {
+            var option = new SAssessmentQueryOption();
+            option.DisplayCode = node.DisplayCode + ':Option#' + opt.code;
+            option.ProviderGivenCode = opt.code;
+            option.Text = opt.display;
+            option.Sequence = opt.sequence;
+            node.Options.push(option);
+        }
+        return node;
+    }
+
+    private constructConditionFromRules(rules: any[], path: SAssessmentNodePath, node: SAssessmentQuestionNode) {
+
+        if (rules.length === 0) {
+
+            var rule = rules[0];
+            var condition = new SAssessmentPathCondition();
+            condition.IsCompositeCondition = false;
+            condition.DisplayCode = path.DisplayCode + ':Condition';
+
+            if (rule.operator === 'equals') {
+
+                condition.OperatorType = ConditionOperatorType.EqualTo;
+
+                condition.FirstOperandName = 'ReceivedAnswer';
+                condition.FirstOperandValue = null;
+                condition.FirstOperandDataType = ConditionOperandDataType.Integer;
+
+                var optionSequence: number = this.getOptionSequenceForAnswer(node.Options, rule.value);
+                condition.SecondOperandName = 'ExpectedAnswer';
+                condition.SecondOperandValue = optionSequence;
+                condition.SecondOperandDataType = ConditionOperandDataType.Integer;
+            }
+            else if (rule.operator === 'in') {
+
+                condition.OperatorType = ConditionOperatorType.In;
+
+                condition.FirstOperandName = 'ReceivedAnswer';
+                condition.FirstOperandValue = null;
+                condition.FirstOperandDataType = ConditionOperandDataType.Integer;
+
+                var arr = this.getOptionSequenceArrayForAnswer(node.Options, rule.value);
+                condition.SecondOperandName = 'ExpectedAnswer';
+                condition.SecondOperandValue = arr;
+                condition.SecondOperandDataType = ConditionOperandDataType.Array;
+            }
+            path.Condition = condition;
+        }
+    }
+
+    private createNextTriggerQuestionNode(
+        template: SAssessmentTemplate,
+        items: any[],
+        nextQuestionItemId: string): string {
+
+        if (items.length === 0 || !nextQuestionItemId) {
+            return null;
+        }
+        const questionObject = items.find(x => x.id === nextQuestionItemId);
+        if (!questionObject) {
+            return null;
+        }
+        if (questionObject.type !== 'boolean' && questionObject.type !== 'choice') {
+            return null;
+        }
+
+        var itemId = questionObject.id;
+        const existingNode = this.getNodeByProviderItemId(template.Nodes, itemId);
+        if (existingNode != null) {
+            return existingNode.DisplayCode;
+        }
+
+        const node = this.createQuestionNode(questionObject, template, items);
+        return node.DisplayCode;
+    }
+
+    private getNodeByProviderItemId(nodes: SAssessmentNode[], providerItemId): SAssessmentNode {
+        for (var node of nodes) {
+            if (node.ProviderGivenId === providerItemId) {
+                return node;
+            }
+        }
+        return null;
     }
 
     //#region Privates
@@ -475,6 +654,27 @@ export class AhaCareplanService implements ICareplanService {
             desc += '\n';
         }
         return desc;
+    }
+
+    getOptionSequenceForAnswer(options: SAssessmentQueryOption[], value: any): number {
+        for (var option of options) {
+            if (option.Text === value) {
+                return option.Sequence;
+            }
+        }
+        return -1;
+    }
+
+    getOptionSequenceArrayForAnswer(options: SAssessmentQueryOption[], valueArray: []): any[] {
+        var selectionArray: any[]  = [];
+        for (var option of options) {
+            for (var val of valueArray) {
+                if (option.Text === val) {
+                    selectionArray.push(option.Sequence);
+                }
+            }
+        }
+        return selectionArray;
     }
 
     #endregion

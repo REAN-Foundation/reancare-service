@@ -31,10 +31,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
     addTemplate = async (t: SAssessmentTemplate): Promise<AssessmentTemplateDto> => {
         try {
 
-            const templateDisplayCode = Helper.generateDisplayId('ASSMT');
-
             const templateModel: AssessmentTemplateDomainModel = {
-                DisplayCode            : templateDisplayCode,
+                DisplayCode            : t.DisplayCode,
                 Title                  : t.Title,
                 Description            : t.Description,
                 Type                   : t.Type,
@@ -84,7 +82,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
         if (snode.NodeType === AssessmentNodeType.NodeList) {
             var listNode: SAssessmentListNode = snode as SAssessmentListNode;
-            var children = listNode.ChildrenNodes;
+            var children = listNode.ChildrenNodeDisplayCodes;
             for await (var child of children) {
                 var childNode = await this.createNewNode(
                     templateId, templateDisplayCode, child.Sequence, currentNodeId, child);

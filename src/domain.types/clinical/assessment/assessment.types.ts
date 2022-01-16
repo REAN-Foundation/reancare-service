@@ -123,7 +123,8 @@ export class SAssessmentTemplate {
     ProviderAssessmentCode?: string;
     Provider?              : string;
     FileResourceId?        : uuid; //Assessment template storage file
-    RootNode?              : SAssessmentNode;
+    RootNodeDisplayCode?   : string;
+    Nodes?                 : SAssessmentNode[];
 
 }
 
@@ -143,9 +144,10 @@ export class SAssessmentNode {
 
     id?                 : uuid;
     DisplayCode?        : string;
+    ProviderGivenId     : string;
+    ProviderGivenCode   : string;
     TemplateId          : uuid;
     NodeType            : AssessmentNodeType;
-    ProviderGivenId     : string;
     ParentNodeId?       : uuid;
     Title               : string;
     Description?        : string;
@@ -156,7 +158,13 @@ export class SAssessmentNode {
 
 export class SAssessmentListNode extends SAssessmentNode {
 
-    ChildrenNodes : SAssessmentNode[];
+    ChildrenNodeDisplayCodes : string[];
+
+    constructor() {
+        super();
+        this.NodeType = AssessmentNodeType.NodeList;
+        this.ChildrenNodeDisplayCodes = [];
+    }
 
 }
 
@@ -168,6 +176,11 @@ export class SAssessmentQuestionNode extends SAssessmentNode {
     Options          : SAssessmentQueryOption[];
     UserResponse?    : SAssessmentQuestionResponse;
 
+    constructor() {
+        super();
+        this.NodeType = AssessmentNodeType.Question;
+    }
+
 }
 
 export class SAssessmentMessageNode extends SAssessmentNode {
@@ -175,28 +188,34 @@ export class SAssessmentMessageNode extends SAssessmentNode {
     Message     : string;
     Acknowledged: boolean;
 
+    constructor() {
+        super();
+        this.NodeType = AssessmentNodeType.Message;
+    }
+
 }
 
 export class SAssessmentNodePath {
 
-    id?         : uuid;
-    DisplayCode : string;
-    ParentNodeId: string;
-    NextNodeId  : string;
-    NextNode    : SAssessmentNode;
-    ConditionId : string;
-    Condition   : SAssessmentPathCondition;
+    id?                : uuid;
+    DisplayCode        : string;
+    ParentNodeId       : string;
+    NextNodeId         : string;
+    NextNodeDisplayCode: string;
+    ConditionId        : string;
+    Condition          : SAssessmentPathCondition;
 
 }
 
 export class SAssessmentQueryOption {
 
-    id?        : uuid;
-    DisplayCode: string;
-    NodeId     : uuid;
-    Text       : string;
-    ImageUrl   : string;
-    Sequence   : number;
+    id?          : uuid;
+    DisplayCode  : string;
+    ProviderGivenCode?: string;
+    NodeId       : uuid;
+    Text         : string;
+    ImageUrl     : string;
+    Sequence     : number;
 
 }
 
@@ -229,15 +248,15 @@ export class SAssessmentPathCondition {
     OperatorType        : ConditionOperatorType;
 
     FirstOperandName    : string;
-    FirstOperandValue   : string;
+    FirstOperandValue   : string | number | any[] | null;
     FirstOperandDataType: ConditionOperandDataType;
 
     SecondOperandName    : string;
-    SecondOperandValue   : string;
+    SecondOperandValue   : string | number | any[] | null;
     SecondOperandDataType: ConditionOperandDataType;
 
     ThirdOperandName    : string;
-    ThirdOperandValue   : string;
+    ThirdOperandValue   : string | number | any[] | null;
     ThirdOperandDataType: ConditionOperandDataType;
 
     Children: SAssessmentPathCondition[];

@@ -18,7 +18,7 @@ import AssessmentPathCondition from './assessment.path.condition.model';
 
 ///////////////////////////////////////////////////////////////////////
 
-//These are possible paths available at a given node. 
+//These are possible paths available at a given node.
 //They could be presented as options t
 
 @Table({
@@ -70,6 +70,12 @@ export default class AssessmentNodePath extends Model {
 
     @BelongsTo(() => AssessmentNode)
     NextNode: AssessmentNode;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    NextNodeDisplayCode: string;
 
     //The condition based on which this path will be chosen
     @IsUUID(4)

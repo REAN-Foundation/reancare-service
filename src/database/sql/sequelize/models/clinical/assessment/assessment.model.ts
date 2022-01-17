@@ -104,7 +104,7 @@ export default class Assessment extends Model {
     @IsDate
     @Column({
         type      : DataType.DATE,
-        allowNull : false,
+        allowNull : true,
     })
     StartedAt: Date;
  

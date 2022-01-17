@@ -91,7 +91,7 @@ export default class AssessmentNode extends Model {
 
     @Column({
         type      : DataType.TEXT,
-        allowNull : false,
+        allowNull : true,
     })
     Description: string;
 

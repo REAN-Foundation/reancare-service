@@ -18,6 +18,7 @@ export class AssessmentRepo implements IAssessmentRepo {
         try {
             const entity = {
                 PatientUserId          : model.PatientUserId ?? null,
+                DisplayCode            : model.DisplayCode,
                 Type                   : model.Type ?? AssessmentType.Custom,
                 AssessmentTemplateId   : model.AssessmentTemplateId ?? null,
                 Provider               : model.Provider ?? null,

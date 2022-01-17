@@ -124,7 +124,15 @@ export class SAssessmentTemplate {
     Provider?              : string;
     FileResourceId?        : uuid; //Assessment template storage file
     RootNodeDisplayCode?   : string;
-    Nodes?                 : SAssessmentNode[];
+    Nodes                  : SAssessmentNode[];
+
+    constructor() {
+        this.Nodes = [];
+    }
+
+    getNodeByDisplayCode(displayCode:string): SAssessmentNode {
+        return this.Nodes.find(x => x.DisplayCode === displayCode);
+    }
 
 }
 
@@ -179,6 +187,9 @@ export class SAssessmentQuestionNode extends SAssessmentNode {
     constructor() {
         super();
         this.NodeType = AssessmentNodeType.Question;
+        this.QueryResponseType = QueryResponseType.SingleChoiceSelection;
+        this.Paths = [];
+        this.Options = [];
     }
 
 }
@@ -209,13 +220,13 @@ export class SAssessmentNodePath {
 
 export class SAssessmentQueryOption {
 
-    id?          : uuid;
-    DisplayCode  : string;
+    id?               : uuid;
+    DisplayCode       : string;
     ProviderGivenCode?: string;
-    NodeId       : uuid;
-    Text         : string;
-    ImageUrl     : string;
-    Sequence     : number;
+    NodeId            : uuid;
+    Text              : string;
+    ImageUrl          : string;
+    Sequence          : number;
 
 }
 
@@ -231,6 +242,10 @@ export class SAssessmentQuestionResponse {
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
     CreatedAt            : Date;
+
+    constructor() {
+        this.ResponseType = QueryResponseType.None;
+    }
 
 }
 
@@ -248,18 +263,22 @@ export class SAssessmentPathCondition {
     OperatorType        : ConditionOperatorType;
 
     FirstOperandName    : string;
-    FirstOperandValue   : string | number | any[] | null;
+    FirstOperandValue   : string | number | boolean | any[] | null;
     FirstOperandDataType: ConditionOperandDataType;
 
     SecondOperandName    : string;
-    SecondOperandValue   : string | number | any[] | null;
+    SecondOperandValue   : string | number | boolean | any[] | null;
     SecondOperandDataType: ConditionOperandDataType;
 
     ThirdOperandName    : string;
-    ThirdOperandValue   : string | number | any[] | null;
+    ThirdOperandValue   : string | number | boolean | any[] | null;
     ThirdOperandDataType: ConditionOperandDataType;
 
     Children: SAssessmentPathCondition[];
+
+    constructor() {
+        this.Children = [];
+    }
 
 }
 

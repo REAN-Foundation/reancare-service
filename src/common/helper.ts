@@ -397,12 +397,12 @@ export class Helper {
         return identifier;
     }
 
-    public static generateAlphaDisplayCode = (prefix = null) => {
+    public static generateDisplayCode = (prefix = null) => {
         const code = generate({
-            length    : 12,
-            numbers   : false,
+            length    : 24,
+            numbers   : true,
             lowercase : true,
-            uppercase : true,
+            uppercase : false,
             symbols   : false,
         });
         return prefix ? prefix + '#' + code : code;

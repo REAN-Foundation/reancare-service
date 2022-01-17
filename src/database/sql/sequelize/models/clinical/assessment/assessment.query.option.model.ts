@@ -48,6 +48,12 @@ export default class AssessmentQueryOption extends Model {
     })
     DisplayCode: string;
 
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    ProviderGivenCode: string;
+
     @IsUUID(4)
     @ForeignKey(() => AssessmentNode)
     @Column({

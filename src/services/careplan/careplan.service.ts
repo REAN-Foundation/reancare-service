@@ -375,13 +375,19 @@ export class CareplanService implements IUserActionService {
             return existingAssessment;
         }
 
+        var code = template.DisplayCode ? template.DisplayCode.split('#')[1] : '';
+        const displayCode = 'Assessment#' + code + ':' +
+            (activity.EnrollmentId ? activity.EnrollmentId : 'x') + ':' + scheduledAt;
+
         const assessmentModel: AssessmentDomainModel = {
             PatientUserId          : activity.PatientUserId,
+            DisplayCode            : displayCode,
             Title                  : template.Title,
-            DisplayCode            : template.DisplayCode + ':' + scheduledAt,
+            Description            : template.Description,
             AssessmentTemplateId   : template.id,
             Type                   : template.Type,
             Provider               : template.Provider,
+            ProviderEnrollmentId   : activity.EnrollmentId,
             ProviderAssessmentCode : template.ProviderAssessmentCode,
             Status                 : ProgressStatus.Pending,
             ParentActivityId       : activity.id,

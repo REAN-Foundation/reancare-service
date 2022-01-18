@@ -1,14 +1,14 @@
 import { Op } from 'sequelize';
-import { AssessmentType } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { AssessmentDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.domain.model';
 import { AssessmentDto } from '../../../../../../domain.types/clinical/assessment/assessment.dto';
 import { AssessmentSearchFilters, AssessmentSearchResults } from '../../../../../../domain.types/clinical/assessment/assessment.search.types';
+import { AssessmentType } from '../../../../../../domain.types/clinical/assessment/assessment.types';
+import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { IAssessmentRepo } from '../../../../../repository.interfaces/clinical/assessment/assessment.repo.interface';
 import { AssessmentMapper } from '../../../mappers/clinical/assessment/assessment.mapper';
 import Assessment from '../../../models/clinical/assessment/assessment.model';
-import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -17,15 +17,18 @@ export class AssessmentRepo implements IAssessmentRepo {
     create = async (model: AssessmentDomainModel): Promise<AssessmentDto> => {
         try {
             const entity = {
-                PatientUserId          : model.PatientUserId ?? null,
                 DisplayCode            : model.DisplayCode,
+                Title                  : model.Title,
+                Description            : model.Description,
                 Type                   : model.Type ?? AssessmentType.Custom,
+                PatientUserId          : model.PatientUserId ?? null,
                 AssessmentTemplateId   : model.AssessmentTemplateId ?? null,
                 Provider               : model.Provider ?? null,
                 ProviderAssessmentCode : model.ProviderAssessmentCode ?? null,
                 ProviderEnrollmentId   : model.ProviderEnrollmentId ?? null,
                 Status                 : model.Status ?? ProgressStatus.Pending,
                 ParentActivityId       : model.ParentActivityId ?? null,
+                UserTaskId             : model.UserTaskId,
                 ScheduledDateString    : model.ScheduledDateString ?? null,
             };
             const assessment = await Assessment.create(entity);

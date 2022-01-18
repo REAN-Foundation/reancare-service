@@ -65,9 +65,8 @@ export default class AssessmentTemplate extends Model {
     })
     Type: string;
 
-    @Length({ max: 128 })
     @Column({
-        type      : DataType.STRING(128),
+        type      : DataType.TEXT,
         allowNull : false,
     })
     Title: string;
@@ -78,9 +77,8 @@ export default class AssessmentTemplate extends Model {
     })
     Description: string;
 
-    @Length({ max: 128 })
     @Column({
-        type      : DataType.STRING(128),
+        type      : DataType.TEXT,
         allowNull : true,
     })
     ProviderAssessmentCode: string;

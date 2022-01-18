@@ -48,6 +48,25 @@ export default class Assessment extends Model {
     })
     id: string;
 
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : false,
+    })
+    DisplayCode: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : false,
+    })
+    Title: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Description: string;
+
     @IsUUID(4)
     @ForeignKey(() => AssessmentTemplate)
     @Column({
@@ -83,14 +102,20 @@ export default class Assessment extends Model {
         type      : DataType.STRING(128),
         allowNull : true,
     })
-    ProviderEnrollmentId: string;
+    Provider: string;
 
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    ProviderAssessmentCode: string;
+    
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
-    Provider: string;
+    ProviderEnrollmentId: string;
 
     @Length({ max: 32 })
     @Column({

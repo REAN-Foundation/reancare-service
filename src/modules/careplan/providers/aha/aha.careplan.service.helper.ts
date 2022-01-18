@@ -14,7 +14,7 @@ import {
     SAssessmentQuestionNode,
     SAssessmentTemplate,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
-import { Logger } from '../../../../common/logger';
+//import { Logger } from '../../../../common/logger';
 import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
 
@@ -46,13 +46,12 @@ export class AhaCareplanServiceHelper {
 
         for (var item of activity.RawContent.items) {
 
-            var str = JSON.stringify(item, null, 2);
-            Logger.instance().log(str);
+            //var str = JSON.stringify(item, null, 2);
+            //Logger.instance().log(str);
 
             if (item.type === 'choice' || item.type === 'boolean') { //This is question node
                 const node = this.createQuestionNode(item, template, items);
                 rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
-                Logger.instance().log(`Node created: ${node.DisplayCode}`);
             }
         }
 
@@ -70,12 +69,8 @@ export class AhaCareplanServiceHelper {
         node.QueryResponseType = this.getQueryResponseType(item);
         node.DisplayCode = Helper.generateDisplayCode('QNode');
 
-        //Set options
         this.addOptionsToQuestionNode(item, node);
-
         template.Nodes.push(node);
-
-        //Add paths
         this.addPathsToNode(item, node, template, items);
 
         return node;
@@ -91,7 +86,7 @@ export class AhaCareplanServiceHelper {
 
         for (var act of item.actions) {
 
-            Logger.instance().log(JSON.stringify(act));
+            //Logger.instance().log(JSON.stringify(act));
 
             const actionType = act.action;
             pathIndex++;

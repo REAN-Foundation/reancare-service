@@ -239,6 +239,7 @@ export class SAssessmentQuestionResponse {
     IntegerValue         : number;
     FloatValue           : number;
     TextValue            : string;
+    ArrayValue           : any[];
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
     CreatedAt            : Date;

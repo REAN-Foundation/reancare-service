@@ -1,11 +1,12 @@
 import express from 'express';
-import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { ProgressStatus, uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { AssessmentService } from '../../../../services/clinical/assessment/assessment.service';
 import { Loader } from '../../../../startup/loader';
 import { AssessmentValidator } from '../../../validators/clinical/assessment/assessment.validator';
 import { BaseController } from '../../base.controller';
+import { AssessmentQuestionResponseDto } from '../../../../domain.types/clinical/assessment/assessment.question.response.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -146,9 +147,10 @@ export class AssessmentController extends BaseController{
             if (assessment == null) {
                 throw new ApiError(404, 'Assessment record not found.');
             }
-
-            ResponseHandler.success(request, response, 'Assessment record retrieved successfully!', 200, {
-                Assessment : assessment,
+            const nextQuestion = await this._service.startAssessment(id);
+            
+            ResponseHandler.success(request, response, 'Assessment record started successfully!', 200, {
+                NextQuestion : nextQuestion,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -165,10 +167,29 @@ export class AssessmentController extends BaseController{
             if (assessment == null) {
                 throw new ApiError(404, 'Assessment record not found.');
             }
-
-            ResponseHandler.success(request, response, 'Assessment record retrieved successfully!', 200, {
-                Assessment : assessment,
-            });
+            const progressStatus: ProgressStatus = await this._service.getAssessmentStatus(id);
+            if (progressStatus === ProgressStatus.Pending) {
+                const nextQuestion = this._service.startAssessment(id);
+                ResponseHandler.success(request, response, 'Assessment next question retrieved successfully!', 200, {
+                    NextQuestion : nextQuestion,
+                });
+            }
+            else if (progressStatus === ProgressStatus.InProgress) {
+                const nextQuestion = this._service.getNextQuestion(id);
+                ResponseHandler.success(request, response, 'Assessment next question retrieved successfully!', 200, {
+                    NextQuestion : nextQuestion,
+                });
+            }
+            else if (progressStatus === ProgressStatus.Completed) {
+                ResponseHandler.failure(request, response, 'The assessment is already completed!', 404);
+            }
+            else if (progressStatus === ProgressStatus.Cancelled) {
+                ResponseHandler.failure(request, response, 'The assessment is cancelled!', 404);
+            }
+            else {
+                ResponseHandler.failure(request, response, 'The assessment is in invalid state!', 404);
+            }
+            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -184,9 +205,13 @@ export class AssessmentController extends BaseController{
             if (assessment == null) {
                 throw new ApiError(404, 'Assessment record not found.');
             }
-
-            ResponseHandler.success(request, response, 'Assessment record retrieved successfully!', 200, {
-                Assessment : assessment,
+            const questionId: uuid = await this._validator.getParamUuid(request, 'questionId');
+            const question = await this._service.getQuestionById(id, questionId);
+            if (question == null) {
+                throw new ApiError(404, 'Assessment question not found.');
+            }
+            ResponseHandler.success(request, response, 'Assessment question retrieved successfully!', 200, {
+                Question : question,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -199,14 +224,26 @@ export class AssessmentController extends BaseController{
             this.setContext('Assessment.AnswerQuestion', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const questionId: uuid = await this._validator.getParamUuid(request, 'questionId');
+            const answerModel = await this._validator.answerQuestion(request);
+
             const assessment = await this._service.getById(id);
             if (assessment == null) {
                 throw new ApiError(404, 'Assessment record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Assessment record retrieved successfully!', 200, {
-                Assessment : assessment,
+            const question = await this._service.getQuestionById(id, questionId);
+            if (question == null) {
+                throw new ApiError(404, 'Assessment question not found.');
+            }
+
+            const answerResponse: AssessmentQuestionResponseDto =
+                await this._service.answerQuestion(questionId, answerModel);
+
+            ResponseHandler.success(request, response, 'Assessment question answered successfully!', 200, {
+                AnswerResponse : answerResponse,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

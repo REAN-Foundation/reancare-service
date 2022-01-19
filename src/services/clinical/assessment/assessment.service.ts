@@ -33,4 +33,24 @@ export class AssessmentService {
         return await this._assessmentRepo.delete(id);
     };
 
+    answerQuestion(questionId: string, answerModel: void): any {
+        throw new Error('Method not implemented.');
+    }
+    
+    getQuestionById(id: string, questionId: string) {
+        throw new Error('Method not implemented.');
+    }
+
+    getNextQuestion(id: string) {
+        throw new Error('Method not implemented.');
+    }
+
+    getAssessmentStatus(id: string): import("../../../domain.types/miscellaneous/system.types").ProgressStatus | PromiseLike<import("../../../domain.types/miscellaneous/system.types").ProgressStatus> {
+        throw new Error('Method not implemented.');
+    }
+
+    startAssessment(id: string) {
+        throw new Error('Method not implemented.');
+    }
+
 }

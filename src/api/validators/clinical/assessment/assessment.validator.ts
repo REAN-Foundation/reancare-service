@@ -47,6 +47,10 @@ export class AssessmentValidator extends BaseValidator {
         return this.getFilter(request);
 
     };
+        
+    answerQuestion = async (request: express.Request) => {
+        throw new Error('Method not implemented.');
+    }
 
     private getFilter(request): AssessmentSearchFilters {
 

@@ -67,6 +67,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
 
+    getNodeById = async (nodeId: string): Promise<SAssessmentNode> => {
+        throw new Error('Method not implemented.');
+    }
+
     private async createNewNode(
         sTemplate: SAssessmentTemplate,
         templateId: uuid,

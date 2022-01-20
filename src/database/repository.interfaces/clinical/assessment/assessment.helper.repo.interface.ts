@@ -1,28 +1,10 @@
-import { SAssessmentTemplate } from '../../../../domain.types/clinical/assessment/assessment.types';
-// import {
-//     AssessmentTemplateDomainModel
-//  } from '../../../../domain.types/clinical/assessment/assessment.template.domain.model';
+import { SAssessmentNode, SAssessmentTemplate } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDto } from "../../../../domain.types/clinical/assessment/assessment.template.dto";
-
-// import {
-//     AssessmentTemplateSearchFilters,
-//     AssessmentTemplateSearchResults
-// } from '../../../../domain.types/clinical/assessment/assessment.template.search.types';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 
 export interface IAssessmentHelperRepo {
 
-    addTemplate(assessment: SAssessmentTemplate): Promise<AssessmentTemplateDto>;
+    addTemplate(template: SAssessmentTemplate): Promise<AssessmentTemplateDto>;
 
-    // create(model: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto>;
-
-    // getById(id: string): Promise<AssessmentTemplateDto>;
-
-    // getByProviderAssessmentCode(Provider: string, ProviderActionId: string): Promise<AssessmentTemplateDto>;
-
-    // search(filters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchResults>;
-
-    // update(id: string, model: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto>;
-
-    // delete(id: string): Promise<boolean>;
-
+    getNodeById(nodeId: uuid): Promise<SAssessmentNode>;
 }

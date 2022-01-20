@@ -21,4 +21,6 @@ export interface IAssessmentRepo {
 
     getForPatient(patientUserId: uuid): Promise<AssessmentDto[]>;
 
+    startAssessment(id: uuid): Promise<AssessmentDto>;
+
 }

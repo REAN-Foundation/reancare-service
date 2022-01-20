@@ -222,4 +222,17 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     }
 
+    startAssessment = async (id: uuid): Promise<AssessmentDto> => {
+        try {
+            var assessment = await Assessment.findByPk(id);
+            assessment.StartedAt = new Date();
+            assessment.Status = ProgressStatus.InProgress;
+            await assessment.save();
+            return AssessmentMapper.toDto(assessment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
 }

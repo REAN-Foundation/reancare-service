@@ -19,6 +19,7 @@ export class AssessmentTemplateMapper {
             Description            : template.Description,
             Provider               : template.Provider,
             ProviderAssessmentCode : template.ProviderAssessmentCode,
+            RootNodeId             : template.RootNodeId,
         };
         return dto;
     }

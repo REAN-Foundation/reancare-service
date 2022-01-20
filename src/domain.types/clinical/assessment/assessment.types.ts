@@ -1,6 +1,7 @@
 /* eslint-disable lines-between-class-members */
 
 import { ProgressStatus, uuid } from "../../../domain.types/miscellaneous/system.types";
+import { BiometricsType } from "../biometrics/biometrics.types";
 
 //#region Enums
 
@@ -16,12 +17,23 @@ export const AssessmentNodeTypeList: AssessmentNodeType[] = [
     AssessmentNodeType.NodeList,
 ];
 
+export interface AssessmentBiometrics {
+    BiometricValue: number;
+    BiometricsType: BiometricsType;
+    Unit          : string;
+    ProviderCode  : string;
+}
+
 export enum QueryResponseType {
     Text                  = 'Text',
     FloatValue            = 'Float value',
     IntegerValue          = 'Integer value',
     SingleChoiceSelection = 'Single Choice Selection',
     MultiChoiceSelection  = 'Multi Choice Selection',
+    FloatArray            = 'Float Array',
+    IntegerArray          = 'Integer Array',
+    ObjectArray           = 'Object Array', //Dictionary of key-value pairs
+    Biometrics          = 'Integer Array',
     Boolean               = 'Boolean',
     Ok                    = 'Ok',
     None                  = 'None',
@@ -239,7 +251,7 @@ export class SAssessmentQuestionResponse {
     IntegerValue         : number;
     FloatValue           : number;
     TextValue            : string;
-    ArrayValue           : any[];
+    ArrayValue           : number[];
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
     CreatedAt            : Date;

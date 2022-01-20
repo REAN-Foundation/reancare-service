@@ -50,7 +50,10 @@ export class AhaCareplanServiceHelper {
             //Logger.instance().log(str);
 
             if (item.type === 'choice' || item.type === 'boolean') { //This is question node
-                const node = this.createQuestionNode(item, template, items);
+                const node = this.createOptionBasedQuestionNode(item, template, items);
+                rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
+            } else if (item.type === 'text') {
+                const node = this.createQueryBasedQuestionNode(item, template);
                 rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
             }
         }
@@ -58,8 +61,10 @@ export class AhaCareplanServiceHelper {
         return template;
     }
 
-    private createQuestionNode(item: any, template: SAssessmentTemplate, items: any): SAssessmentQuestionNode {
-
+    private createOptionBasedQuestionNode(
+        item: any, template: SAssessmentTemplate, items: any): SAssessmentQuestionNode {
+        //Option based question node has options associated and
+        //may have multiple paths connected based on those options
         var node = new SAssessmentQuestionNode();
         node.Description = item.description;
         node.ProviderGivenId = item.id;
@@ -73,6 +78,22 @@ export class AhaCareplanServiceHelper {
         template.Nodes.push(node);
         this.addPathsToNode(item, node, template, items);
 
+        return node;
+    }
+
+    private createQueryBasedQuestionNode(
+        item: any, template: SAssessmentTemplate): SAssessmentQuestionNode {
+        //Query based question node has no paths and simple text answer is expected
+        //and will not have further paths associated.
+        var node = new SAssessmentQuestionNode();
+        node.Description = item.description;
+        node.ProviderGivenId = item.id;
+        node.ProviderGivenCode = item.code;
+        node.Sequence = item.sequence;
+        node.Title = item.title;
+        node.QueryResponseType = this.getQueryResponseType(item);
+        node.DisplayCode = Helper.generateDisplayCode('QNode');
+        template.Nodes.push(node);
         return node;
     }
 
@@ -192,7 +213,7 @@ export class AhaCareplanServiceHelper {
             return existingNode.DisplayCode;
         }
 
-        const node = this.createQuestionNode(questionObject, template, items);
+        const node = this.createOptionBasedQuestionNode(questionObject, template, items);
         return node.DisplayCode;
     }
 
@@ -235,6 +256,9 @@ export class AhaCareplanServiceHelper {
         }
         if (item.type === 'boolean') {
             return QueryResponseType.SingleChoiceSelection;
+        }
+        if (item.type === 'text') {
+            return QueryResponseType.Text;
         }
         return QueryResponseType.Ok;
     }

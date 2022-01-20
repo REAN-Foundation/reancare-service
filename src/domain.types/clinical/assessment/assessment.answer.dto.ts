@@ -12,5 +12,5 @@ export interface AssessmentAnswerDto {
     IntegerValue           : number;
     FloatValue             : number;
     TextValue              : string;
-    ArrayValue             : any[];
+    ArrayValue             : number[];
 }

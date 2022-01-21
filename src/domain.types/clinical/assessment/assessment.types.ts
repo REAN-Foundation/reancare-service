@@ -91,12 +91,14 @@ export const ConditionOperatorTypeList: ConditionOperatorType[] = [
     ConditionOperatorType.In,
     ConditionOperatorType.Between,
     ConditionOperatorType.IsTrue,
-    ConditionOperatorType.IsFalse
+    ConditionOperatorType.IsFalse,
+    ConditionOperatorType.Exists,
 ];
 
 export enum ConditionCompositionType {
     And = 'And',
     Or  = 'Or',
+    XOr = 'XOr',
 }
 
 export const ConditionCompositionTypeList: ConditionCompositionType[] = [
@@ -164,8 +166,8 @@ export class SAssessmentNode {
 
     id?                 : uuid;
     DisplayCode?        : string;
-    ProviderGivenId     : string;
-    ProviderGivenCode   : string;
+    ProviderGivenId?    : string;
+    ProviderGivenCode?  : string;
     TemplateId          : uuid;
     NodeType            : AssessmentNodeType;
     ParentNodeId?       : uuid;
@@ -178,12 +180,16 @@ export class SAssessmentNode {
 
 export class SAssessmentListNode extends SAssessmentNode {
 
-    ChildrenNodeDisplayCodes : string[];
+    ChildrenNodeDisplayCodes: string[];
+    ChildrenNodeIds         : uuid[];
+    Children?               : SAssessmentNode[];
 
     constructor() {
         super();
         this.NodeType = AssessmentNodeType.NodeList;
         this.ChildrenNodeDisplayCodes = [];
+        this.ChildrenNodeIds = [];
+        this.Children = [];
     }
 
 }
@@ -192,8 +198,8 @@ export class SAssessmentQuestionNode extends SAssessmentNode {
 
     QueryResponseType: QueryResponseType;
     DefaultPathId    : uuid;
-    Paths            : SAssessmentNodePath[];
-    Options          : SAssessmentQueryOption[];
+    Paths?           : SAssessmentNodePath[];
+    Options?         : SAssessmentQueryOption[];
     UserResponse?    : SAssessmentQuestionResponse;
 
     constructor() {

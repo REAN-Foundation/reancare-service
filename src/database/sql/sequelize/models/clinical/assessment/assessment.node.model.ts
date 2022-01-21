@@ -95,6 +95,12 @@ export default class AssessmentNode extends Model {
     })
     Description: string;
 
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    ProviderGivenCode: string;
+
     @IsInt
     @Column({
         type         : DataType.INTEGER,

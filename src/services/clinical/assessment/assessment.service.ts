@@ -72,6 +72,8 @@ export class AssessmentService {
             throw new Error(`Error while starting assessment. Cannot find template root node.`);
         }
 
+        var childrenNodes = await this._assessmentHelperRepo.getNodeChildren(rootNodeId);
+        
         return nextQuestion;
     }
 

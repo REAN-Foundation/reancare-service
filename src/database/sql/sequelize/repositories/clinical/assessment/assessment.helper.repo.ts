@@ -23,6 +23,7 @@ import { uuid } from '../../../../../../domain.types/miscellaneous/system.types'
 import AssessmentQueryOption from '../../../models/clinical/assessment/assessment.query.option.model';
 import AssessmentNodePath from '../../../models/clinical/assessment/assessment.node.path.model';
 import AssessmentPathCondition from '../../../models/clinical/assessment/assessment.path.condition.model';
+import { AssessmentHelperMapper } from '../../../mappers/clinical/assessment/assessment.helper.mapper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -67,8 +68,114 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
 
-    getNodeById = async (nodeId: string): Promise<SAssessmentNode> => {
-        throw new Error('Method not implemented.');
+    getNodeById = async (nodeId: string)
+     : Promise<SAssessmentQuestionNode | SAssessmentListNode | SAssessmentMessageNode> => {
+        try {
+            const node = await AssessmentNode.findByPk(nodeId);
+            return await this.populateNodeDetails(node);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    public getQuestionNodeOptions = async (nodeType: AssessmentNodeType, nodeId: uuid)
+        : Promise<SAssessmentQueryOption[]> => {
+        if (nodeType === AssessmentNodeType.Question) {
+            const options = await AssessmentQueryOption.findAll({
+                where : {
+                    NodeId : nodeId
+                }
+            });
+            return options.map(x => AssessmentHelperMapper.toOptionDto(x));
+        }
+        return [];
+    }
+
+    public getQuestionNodePaths = async (nodeType: AssessmentNodeType, nodeId: uuid)
+        : Promise<SAssessmentNodePath[]> => {
+
+        if (nodeType === AssessmentNodeType.Question) {
+            var paths = await AssessmentNodePath.findAll({
+                where : {
+                    ParentNodeId : nodeId
+                }
+            });
+            var pathDtos: SAssessmentNodePath[] = [];
+            for await (var path of paths) {
+                const conditionId = path.ConditionId;
+                const pathId = path.id;
+                const condition = await this.getPathCondition(conditionId, nodeId, pathId);
+                var pathDto = AssessmentHelperMapper.toPathDto(path);
+                pathDto['Condition'] = condition;
+                pathDtos.push(pathDto);
+            }
+            return pathDtos;
+        }
+        return [];
+    }
+
+    public getNodeChildren = async (nodeId: uuid): Promise<SAssessmentNode[]> => {
+        try {
+            var children = await AssessmentNode.findAll({
+                where : {
+                    ParentNodeId : nodeId
+                }
+            });
+            var childrenDtos: SAssessmentNode[] = [];
+            for await (var child of children) {
+                var childDto = await this.populateNodeDetails(child);
+                childrenDtos.push(childDto);
+            }
+            return childrenDtos;
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    private async populateNodeDetails(node: AssessmentNode)
+        : Promise<SAssessmentQuestionNode | SAssessmentListNode | SAssessmentMessageNode> {
+        if (node == null) {
+            return null;
+        }
+        const nodeId: uuid = node.id;
+        const options = await this.getQuestionNodeOptions(node.NodeType as AssessmentNodeType, nodeId);
+        const paths = await this.getQuestionNodePaths(node.NodeType as AssessmentNodeType, nodeId);
+        const children = await this.getNodeChildren(nodeId);
+        var nodeDto = AssessmentHelperMapper.toNodeDto(node, children, paths, options);
+        return nodeDto;
+    }
+
+    public getPathCondition = async (conditionId: string, nodeId: string, pathId: string)
+        : Promise<SAssessmentPathCondition> => {
+        var condition = await AssessmentPathCondition.findByPk(conditionId);
+        if (condition == null) {
+            return null;
+        }
+        if (condition.IsCompositeCondition === true) {
+            const children = await AssessmentPathCondition.findAll({
+                where : {
+                    NodeId            : nodeId,
+                    PathId            : pathId,
+                    ParentConditionId : conditionId,
+                }
+            });
+            var childrenDtos: SAssessmentPathCondition[] = [];
+            for await ( var child of children) {
+                var childDto = await this.getPathCondition(child.id, nodeId, pathId);
+                childrenDtos.push(childDto);
+            }
+            var conditionDto = AssessmentHelperMapper.toConditionDto(condition);
+            conditionDto['Children'] = childrenDtos;
+            return conditionDto;
+        }
+        else {
+            return AssessmentHelperMapper.toConditionDto(condition);
+        }
+
     }
 
     private async createNewNode(

@@ -16,6 +16,7 @@ import { TimeHelper } from "../../common/time.helper";
 import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
 import { DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
+import { IHealthPriorityRepo } from "../../database/repository.interfaces/health.priority/health.priority.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +31,7 @@ export class CareplanService {
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
+        @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
 
     ) {}
 
@@ -133,7 +135,6 @@ export class CareplanService {
         Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
 
         //task scheduling
-
         this.createScheduledUserTasks(careplanActivities);
 
         return dto;
@@ -237,4 +238,5 @@ export class CareplanService {
         // @TODO
         return true;
     }
+
 }

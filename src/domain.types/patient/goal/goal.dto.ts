@@ -1,11 +1,16 @@
 export interface GoalDto {
-    id?: string;
-    PatientUserId: string;
-    ActionId: string;
-    CarePlanId: number;
-    TypeCode?: number;
-    TypeName?: string;
-    GoalId?: string;
-    GoalAchieved: boolean;
-    GoalAbandoned: boolean;
+    id?                  : string;
+    PatientUserId?       : string;
+    Provider?            : string;
+    ProviderEnrollmentId?: string;
+    ProviderCareplanName?: string;
+    ProviderCareplanCode?: string;
+    ProviderGoalCode?    : string;
+    Title?               : string;
+    Sequence?            : string;
+    HealthPriorityId?    : string;
+    GoalAchieved?        : boolean;
+    GoalAbandoned?       : boolean;
+    StartedAt?           : Date;
+    ScheduledEndDate?    : Date;
 }

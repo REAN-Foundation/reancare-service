@@ -14,10 +14,9 @@ import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 import { CareplanArtifactMapper } from '../../mappers/careplan/artifact.mapper';
 import { Op } from 'sequelize';
 import { AssessmentItem } from '../../../../../modules/careplan/domain.types/activity/assessment.item';
-import { CareplanGoalDomainModel } from '../../../../../modules/careplan/domain.types/goal/goal.domain.model';
-import { CareplanGoalDto } from '../../../../../modules/careplan/domain.types/goal/goal.dto';
-import CareplanGoal from '../../models/careplan/careplan.goal.model';
-import { CareplanGoalMapper } from '../../mappers/careplan/goal.mapper';
+import { HealthPriorityDto } from '../../../../../domain.types/health.priority/health.priority.dto';
+import HealthPriority from '../../models/health.priority/health.priority.model';
+import { HealthPriorityMapper } from '../../mappers/health.priority/health.priority.mapper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -202,16 +201,8 @@ export class CareplanRepo implements ICareplanRepo {
                 const dto = CareplanArtifactMapper.toDto(activity);
                 dtos.push(dto);
             }
-
-            // const searchResults = {
-            //     TotalCount     : foundResults.count,
-            //     RetrievedCount : dtos.length,
-            //     Order          : order === 'ASC' ? 'ascending' : 'descending',
-            //     OrderedBy      : orderByColum,
-            //     Items          : dtos,
-            // };
-
             return dtos;
+
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -265,52 +256,10 @@ export class CareplanRepo implements ICareplanRepo {
         }
     }
 
-    addGoals = async (
-        provider: string,
-        planName: string,
-        planCode: string,
-        patientUserId: uuid,
-        enrollmentId: string,
-        goals: CareplanGoalDomainModel[]): Promise<CareplanGoalDto[]> => {
+    getPriority = async (id: uuid): Promise<HealthPriorityDto> => {
         try {
-
-            var goalEntities = [];
-
-            goals.forEach(activity => {
-                var entity = {
-                    Provider         : provider,
-                    PlanName         : planName,
-                    PlanCode         : planCode,
-                    EnrollmentId     : enrollmentId,
-                    PatientUserId    : patientUserId,
-                    ProviderActionId : activity.ProviderActionId,
-                    GoalId           : activity.GoalId,
-                    Name             : activity.Name,
-                    Sequence         : activity.Sequence,
-                    Categories       : activity.Categories,
-                    ScheduledAt      : activity.ScheduledAt,
-                    
-                };
-                goalEntities.push(entity);
-            });
-            
-            const records = await CareplanGoal.bulkCreate(goalEntities);
-
-            var dtos = [];
-            records.forEach(async (task) => {
-                var dto = await CareplanGoalMapper.toDto(task);
-                dtos.push(dto);
-            });
-            return dtos;
-        } catch (error) {
-            Logger.instance().log(error.message);
-        }
-    }
-
-    getGoal = async (id: uuid): Promise<CareplanGoalDto> => {
-        try {
-            const record = await CareplanGoal.findByPk(id);
-            return CareplanGoalMapper.toDto(record);
+            const record = await HealthPriority.findByPk(id);
+            return HealthPriorityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }

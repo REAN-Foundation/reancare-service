@@ -10,17 +10,24 @@ import { CareplanActivity } from "../../domain.types/activity/careplan.activity"
 import { ParticipantDomainModel } from "../../domain.types/participant/participant.domain.model";
 import { CareplanActivityDetails } from "../../domain.types/activity/careplan.activity.details.dto";
 import { TimeHelper } from "../../../../common/time.helper";
-import { DateStringFormat, DurationType } from "../../../../domain.types/miscellaneous/time.types";
-import { CareplanGoalDomainModel } from "../../domain.types/goal/goal.domain.model";
-import { CareplanGoalDto } from "../../domain.types/goal/goal.dto";
+import { DateStringFormat } from "../../../../domain.types/miscellaneous/time.types";
+import { ActionPlanDto } from "../../../../domain.types/goal.action.plan/goal.action.plan.dto";
+import { HealthPriorityType } from "../../../../domain.types/health.priority.type/health.priority.types";
+import { GoalDto } from "../../../../domain.types/patient/goal/goal.dto";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class AhaCareplanService implements ICareplanService {
 
+    private ActivityCode = '9999';
+
     public providerName(): string {
         return "AHA";
+    }
+
+    private getActivityCode(): string {
+        return this.ActivityCode;
     }
 
     public init = async (): Promise<boolean> => {
@@ -116,8 +123,6 @@ export class AhaCareplanService implements ICareplanService {
             }
 
             var url = process.env.AHA_API_BASE_URL + '/participants';
-
-            //Logger.instance().log(`body: ${JSON.stringify(body)}`);
 
             var response = await needle('post', url, body, this.getHeaderOptions());
             if (response.statusCode !== 200) {
@@ -369,40 +374,94 @@ export class AhaCareplanService implements ICareplanService {
 
     getGoals = async (
         patientUserId: string,
-        careplanCode: string,
         enrollmentId: string,
-        providerActionId: string,
-    ): Promise<CareplanGoalDto[]> => {
+        category: string
+    ): Promise<GoalDto[]> => {
         try {
         
+            var activityCode = this.getActivityCode();
+            for (const key in HealthPriorityType) {
+                if (HealthPriorityType[key] === category) {
+                    var categoryCode = key;
+                }
+            }
+
             const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
-            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${providerActionId}?pageSize=500`;
+            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${activityCode}?categories=${categoryCode}&pageSize=500`;
             
             var response = await needle("get", url, this.getHeaderOptions());
     
             if (response.statusCode !== 200) {
                 Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
-                Logger.instance().error('Unable to fetch tasks for given enrollment id!', response.statusCode, null);
+                Logger.instance().error('Unable to fetch goals for given enrollment id!', response.statusCode, null);
                 throw new ApiError(500, "Careplan service error: " + response.body.error.message);
             }
     
-            Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.goals.length)}`);
+            Logger.instance().log(`response body for goals: ${JSON.stringify(response.body.data.goals.length)}`);
             var goals = response.body.data.goals;
-            var goalEntities: CareplanGoalDomainModel[] = [];
+            var goalEntities: GoalDto[] = [];
             goals.forEach(goal => {
-                var entity: CareplanGoalDomainModel = {
+                var entity: GoalDto = {
                     Provider         : this.providerName(),
-                    ProviderActionId : goal.code,
-                    Name             : goal.name,
-                    GoalId           : goal.id,
-                    GoalCode         : goal.code,
-                    Categories       : goal.Categories,
+                    Title            : goal.name,
+                    ProviderGoalCode : goal.code,
+                    Sequence         : goal.sequence,
 
                 };
                 goalEntities.push(entity);
             });
 
             return goalEntities;
+    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    getActionPlans = async (
+        patientUserId: string,
+        enrollmentId: string,
+        category: string
+    ): Promise<ActionPlanDto[]> => {
+        try {
+        
+            var activityCode = this.getActivityCode();
+
+            Logger.instance().log(`Category :: ${JSON.stringify(category)}`);
+
+            for (const key in HealthPriorityType) {
+                if (HealthPriorityType[key] === category) {
+                    var categoryCode = key;
+                }
+            }
+
+            Logger.instance().log(`Category code:: ${JSON.stringify(categoryCode)}`);
+
+            const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/actionPlans/${activityCode}?categories=${categoryCode}&pageSize=500`;
+            
+            var response = await needle("get", url, this.getHeaderOptions());
+    
+            if (response.statusCode !== 200) {
+                Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+                Logger.instance().error('Unable to fetch action plans for given enrollment id!', response.statusCode, null);
+                throw new ApiError(500, "Careplan service error: " + response.body.error.message);
+            }
+    
+            Logger.instance().log(`response body for action plans: ${JSON.stringify(response.body.data.actionPlans.length)}`);
+            var actionPlans = response.body.data.actionPlans;
+            var actionPlanEntities: ActionPlanDto[] = [];
+            actionPlans.forEach(actionPlan => {
+                var entity: ActionPlanDto = {
+                    Provider : this.providerName(),
+                    Title    : actionPlan.name,
+
+                };
+                actionPlanEntities.push(entity);
+            });
+
+            return actionPlanEntities;
     
         } catch (error) {
             Logger.instance().log(error.message);

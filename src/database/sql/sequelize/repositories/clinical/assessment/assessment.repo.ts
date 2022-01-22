@@ -30,6 +30,7 @@ export class AssessmentRepo implements IAssessmentRepo {
                 ParentActivityId       : model.ParentActivityId ?? null,
                 UserTaskId             : model.UserTaskId,
                 ScheduledDateString    : model.ScheduledDateString ?? null,
+                CurrentNodeId          : model.CurrentNodeId,
             };
             const assessment = await Assessment.create(entity);
             return await AssessmentMapper.toDto(assessment);

@@ -1,8 +1,8 @@
 import { uuid } from "../../miscellaneous/system.types";
 import { AssessmentNodeType, QueryResponseType, SAssessmentQueryOption } from "./assessment.types";
 
-export interface AssessmentQuestionDto {
-    NodeId                  : uuid;
+export interface AssessmentQueryDto {
+    NodeId              : uuid;
     DisplayCode         : string;
     PatientUserId       : uuid;
     AssessmentTemplateId: uuid;

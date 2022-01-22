@@ -116,11 +116,15 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         return [];
     }
 
-    public getNodeChildren = async (nodeId: uuid): Promise<SAssessmentNode[]> => {
+    public getNodeListChildren = async (nodeId: uuid): Promise<SAssessmentNode[]> => {
         try {
+            const node = await AssessmentNode.findByPk(nodeId);
+            if (node.NodeType !== AssessmentNodeType.NodeList) {
+                return [];
+            }
             var children = await AssessmentNode.findAll({
                 where : {
-                    ParentNodeId : nodeId
+                    ParentNodeId : nodeId,
                 }
             });
             var childrenDtos: SAssessmentNode[] = [];
@@ -128,6 +132,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 var childDto = await this.populateNodeDetails(child);
                 childrenDtos.push(childDto);
             }
+            //Sort in ascending order by sequence
+            childrenDtos = childrenDtos.sort((a, b) =>  {
+                return a.Sequence - b.Sequence;
+            });
             return childrenDtos;
         }
         catch (error) {
@@ -144,7 +152,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         const nodeId: uuid = node.id;
         const options = await this.getQuestionNodeOptions(node.NodeType as AssessmentNodeType, nodeId);
         const paths = await this.getQuestionNodePaths(node.NodeType as AssessmentNodeType, nodeId);
-        const children = await this.getNodeChildren(nodeId);
+        const children = await this.getNodeListChildren(nodeId);
         var nodeDto = AssessmentHelperMapper.toNodeDto(node, children, paths, options);
         return nodeDto;
     }

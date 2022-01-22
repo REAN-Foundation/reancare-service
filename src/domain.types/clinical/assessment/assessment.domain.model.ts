@@ -12,6 +12,7 @@ export interface AssessmentDomainModel {
     Provider?              : string;
     ProviderEnrollmentId?  : string;
     ProviderAssessmentCode?: string;
+    CurrentNodeId?         : uuid;
     Status?                : ProgressStatus;
     StartedAt?             : Date;
     FinishedAt?            : Date;

@@ -393,6 +393,7 @@ export class CareplanService implements IUserActionService {
             ParentActivityId       : activity.id,
             UserTaskId             : activity.UserTaskId,
             ScheduledDateString    : scheduledAt,
+            CurrentNodeId          : template.RootNodeId,
         };
 
         const assessment = await this._assessmentRepo.create(assessmentModel);

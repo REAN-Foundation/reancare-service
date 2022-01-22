@@ -4,7 +4,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 
 export interface IAssessmentHelperRepo {
 
-    getNodeChildren(nodeId: string): Promise<SAssessmentNode[]>;
+    getNodeListChildren(nodeId: string): Promise<SAssessmentNode[]>;
 
     addTemplate(template: SAssessmentTemplate): Promise<AssessmentTemplateDto>;
 

@@ -1,8 +1,9 @@
-import { AssessmentNodeType, ConditionCompositionType, ConditionOperandDataType, ConditionOperatorType, QueryResponseType, SAssessmentListNode, SAssessmentMessageNode, SAssessmentNode, SAssessmentNodePath, SAssessmentPathCondition, SAssessmentQueryOption, SAssessmentQuestionNode } from '../../../../../../domain.types/clinical/assessment/assessment.types';
+import { AssessmentNodeType, ConditionCompositionType, ConditionOperandDataType, ConditionOperatorType, QueryResponseType, SAssessmentListNode, SAssessmentMessageNode, SAssessmentNode, SAssessmentNodePath, SAssessmentPathCondition, SAssessmentQueryOption, SAssessmentQueryResponse, SAssessmentQuestionNode } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import AssessmentNode from '../../../models/clinical/assessment/assessment.node.model';
 import AssessmentNodePath from '../../../models/clinical/assessment/assessment.node.path.model';
 import AssessmentPathCondition from '../../../models/clinical/assessment/assessment.path.condition.model';
 import AssessmentQueryOption from '../../../models/clinical/assessment/assessment.query.option.model';
+import AssessmentQueryResponse from '../../../models/clinical/assessment/assessment.query.response.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -116,6 +117,53 @@ export class AssessmentHelperMapper {
             return listNodeDto;
         }
         return null;
+    }
+
+    static toQueryResponseDto(response: AssessmentQueryResponse): SAssessmentQueryResponse {
+        if (response == null){
+            return null;
+        }
+        
+        const responseType = response.Type as QueryResponseType;
+
+        var responseDto = new SAssessmentQueryResponse();
+        responseDto.id = response.id;
+        responseDto.NodeId = response.NodeId;
+        responseDto.AssessmentId = response.AssessmentId;
+        responseDto.ResponseType = responseType;
+
+        if (responseType === QueryResponseType.Text ||
+            responseType === QueryResponseType.Ok) {
+            responseDto.TextValue = response.TextValue;
+        }
+        else if (responseType === QueryResponseType.Float) {
+            responseDto.FloatValue = response.FloatValue;
+        }
+        else if (responseType === QueryResponseType.Integer) {
+            responseDto.IntegerValue = response.IntegerValue;
+        }
+        else if (responseType === QueryResponseType.Boolean) {
+            responseDto.BooleanValue = response.BooleanValue;
+        }
+        else if (responseType === QueryResponseType.SingleChoiceSelection) {
+            responseDto.IntegerValue = response.IntegerValue;
+        }
+        else if (responseType === QueryResponseType.MultiChoiceSelection ||
+            responseType === QueryResponseType.FloatArray ||
+            responseType === QueryResponseType.IntegerArray ||
+            responseType === QueryResponseType.BooleanArray ||
+            responseType === QueryResponseType.ObjectArray) {
+            responseDto.ArrayValue = JSON.parse(response.TextValue);
+        }
+        else if (responseType === QueryResponseType.File) {
+            responseDto.TextValue = response.TextValue; //This is file resource uuid
+        }
+        else if (responseType === QueryResponseType.Object ||
+            responseType === QueryResponseType.Biometrics) {
+            responseDto.ObjectValue = JSON.parse(response.TextValue);
+        }
+
+        return responseDto;
     }
 
 }

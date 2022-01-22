@@ -14,7 +14,8 @@ import {
     SAssessmentQueryOption,
     SAssessmentNodePath,
     SAssessmentPathCondition,
-    ConditionOperandDataType
+    ConditionOperandDataType,
+    SAssessmentQueryResponse
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -24,6 +25,7 @@ import AssessmentQueryOption from '../../../models/clinical/assessment/assessmen
 import AssessmentNodePath from '../../../models/clinical/assessment/assessment.node.path.model';
 import AssessmentPathCondition from '../../../models/clinical/assessment/assessment.path.condition.model';
 import { AssessmentHelperMapper } from '../../../mappers/clinical/assessment/assessment.helper.mapper';
+import AssessmentQueryResponse from '../../../models/clinical/assessment/assessment.query.response.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -366,6 +368,21 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             Logger.instance().log(`Composition type: ${child.CompositionType}`);
         }
         return condition;
+    }
+
+    getQueryResponse = async (assessmentId: uuid, nodeId: uuid): Promise<SAssessmentQueryResponse> => {
+        try {
+            var response = await AssessmentQueryResponse.findOne({
+                where : {
+                    AssessmentId : assessmentId,
+                    NodeId       : nodeId
+                }
+            });
+            return AssessmentHelperMapper.toQueryResponseDto(response);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
 }

@@ -3,9 +3,9 @@ import { AssessmentDomainModel } from '../../../../domain.types/clinical/assessm
 import { AssessmentDto } from "../../../../domain.types/clinical/assessment/assessment.dto";
 import { AssessmentSearchFilters, AssessmentSearchResults } from '../../../../domain.types/clinical/assessment/assessment.search.types';
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 export interface IAssessmentRepo {
-    setCurrentNode(assessmentId: string, id: string);
-    getQueryResponse(assessmentId: string, id: string);
 
     create(model: AssessmentDomainModel): Promise<AssessmentDto>;
 
@@ -24,5 +24,7 @@ export interface IAssessmentRepo {
     getForPatient(patientUserId: uuid): Promise<AssessmentDto[]>;
 
     startAssessment(id: uuid): Promise<AssessmentDto>;
+
+    setCurrentNode(assessmentId: string, id: string): Promise<AssessmentDto>;
 
 }

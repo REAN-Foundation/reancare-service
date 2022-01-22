@@ -26,25 +26,38 @@ export interface AssessmentBiometrics {
 
 export enum QueryResponseType {
     Text                  = 'Text',
-    FloatValue            = 'Float value',
-    IntegerValue          = 'Integer value',
-    SingleChoiceSelection = 'Single Choice Selection',
-    MultiChoiceSelection  = 'Multi Choice Selection',
+    Float                 = 'Float',
+    Integer               = 'Integer',
+    Boolean               = 'Boolean',
+    Object                = 'Object',
     FloatArray            = 'Float Array',
     IntegerArray          = 'Integer Array',
-    ObjectArray           = 'Object Array', //Dictionary of key-value pairs
-    Biometrics          = 'Integer Array',
-    Boolean               = 'Boolean',
-    Ok                    = 'Ok',
-    None                  = 'None',
+    BooleanArray          = 'Boolean Array',
+    ObjectArray           = 'Object Array',
+    Biometrics            = 'Biometrics',
+    SingleChoiceSelection = 'Single Choice Selection',
+    MultiChoiceSelection  = 'Multi Choice Selection',
+    File                  = 'File',
+    Date                  = 'Date',
+    DateTime              = 'DateTime',
+    Rating                = 'Rating',
+    Location              = 'Location',
+    Ok                    = 'Ok', //Acknowledgement
+    None                  = 'None', //Not expecting response
 }
 
 export const QueryResponseTypeList: QueryResponseType[] = [
     QueryResponseType.Text,
-    QueryResponseType.FloatValue,
-    QueryResponseType.IntegerValue,
+    QueryResponseType.Float,
+    QueryResponseType.Integer,
+    QueryResponseType.Object,
     QueryResponseType.SingleChoiceSelection,
     QueryResponseType.MultiChoiceSelection,
+    QueryResponseType.FloatArray,
+    QueryResponseType.IntegerArray,
+    QueryResponseType.BooleanArray,
+    QueryResponseType.ObjectArray,
+    QueryResponseType.Biometrics,
     QueryResponseType.Boolean,
     QueryResponseType.Ok,
     QueryResponseType.None,
@@ -200,7 +213,7 @@ export class SAssessmentQuestionNode extends SAssessmentNode {
     DefaultPathId    : uuid;
     Paths?           : SAssessmentNodePath[];
     Options?         : SAssessmentQueryOption[];
-    UserResponse?    : SAssessmentQuestionResponse;
+    UserResponse?    : SAssessmentQueryResponse;
 
     constructor() {
         super();
@@ -248,22 +261,29 @@ export class SAssessmentQueryOption {
 
 }
 
-export class SAssessmentQuestionResponse {
+export class SAssessmentQueryResponse {
 
     id?                  : uuid;
     NodeId?              : uuid;
     AssessmentId?        : uuid;
     ResponseType         : QueryResponseType;
-    IntegerValue         : number;
-    FloatValue           : number;
-    TextValue            : string;
-    ArrayValue           : number[];
+    IntegerValue?        : number;
+    FloatValue?          : number;
+    TextValue?           : string;
+    BooleanValue?        : boolean;
+    ArrayValue?          : number[];
+    ObjectValue?         : any;
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
     CreatedAt            : Date;
 
     constructor() {
         this.ResponseType = QueryResponseType.None;
+        this.IntegerValue = -1;
+        this.FloatValue = -1.0;
+        this.BooleanValue = false;
+        this.ArrayValue = [];
+        this.ObjectValue = null;
     }
 
 }

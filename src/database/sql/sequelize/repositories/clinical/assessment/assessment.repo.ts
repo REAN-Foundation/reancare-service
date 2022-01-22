@@ -236,4 +236,16 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     }
 
+    setCurrentNode = async (assessmentId: uuid, nodeId: uuid): Promise<AssessmentDto> => {
+        try {
+            var assessment = await Assessment.findByPk(assessmentId);
+            assessment.CurrentNodeId = nodeId;
+            await assessment.save();
+            return AssessmentMapper.toDto(assessment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
 }

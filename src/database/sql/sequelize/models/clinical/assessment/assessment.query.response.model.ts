@@ -4,6 +4,7 @@ import {
     DataType,
     DeletedAt,
     ForeignKey,
+    IsDate,
     IsFloat,
     IsInt,
     IsUUID,
@@ -24,12 +25,12 @@ import AssessmentNode from './assessment.node.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'AssessmentQuestionResponse',
-    tableName       : 'assessment_question_responses',
+    modelName       : 'AssessmentQueryResponse',
+    tableName       : 'assessment_query_responses',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class AssessmentQuestionResponse extends Model {
+export default class AssessmentQueryResponse extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -69,21 +70,34 @@ export default class AssessmentQuestionResponse extends Model {
     @IsInt
     @Column({
         type      : DataType.INTEGER,
-        allowNull : false,
+        allowNull : true,
     })
     IntegerValue: number;
 
     @IsFloat
     @Column({
         type      : DataType.FLOAT,
-        allowNull : false,
+        allowNull : true,
     })
     FloatValue: number;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    BooleanValue: boolean;
+
+    @IsDate
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    DateValue: boolean;
 
     //Should also handle multiple choice selections in stringified array format
     @Column({
         type      : DataType.TEXT,
-        allowNull : false,
+        allowNull : true,
     })
     TextValue: string;
     

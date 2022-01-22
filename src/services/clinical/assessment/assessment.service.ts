@@ -11,6 +11,7 @@ import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces
 import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
 import { AssessmentNodeType, QueryResponseType, SAssessmentMessageNode, SAssessmentNode, SAssessmentQuestionNode } from "../../../domain.types/clinical/assessment/assessment.types";
 import { AssessmentTemplateDto } from "../../../domain.types/clinical/assessment/assessment.template.dto";
+import { ApiError } from "../../../common/api.error";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -74,10 +75,39 @@ export class AssessmentService {
         return nextQuestion;
     }
 
-    answerQuestion = async (
-        questionId: uuid,
-        answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> => {
-        throw new Error('Method not implemented.');
+    answerQuestion = async (answerModel: AssessmentAnswerDomainModel)
+        : Promise<AssessmentQuestionResponseDto> => {
+        
+        const questionNodeId = answerModel.QuestionNodeId;
+        const assessmentId = answerModel.AssessmentId;
+
+        //Check if the this question node is from same template as assessment
+        const questionNode = await this._assessmentHelperRepo.getNodeById(questionNodeId);
+        if (!questionNode) {
+            throw new ApiError(404, `Question with id ${questionNodeId} cannot be found!`);
+        }
+        const assessment = await this._assessmentRepo.getById(assessmentId);
+        if (!assessment) {
+            throw new ApiError(404, `Assessment with id ${assessmentId} cannot be found!`);
+        }
+        if (questionNode.TemplateId !== assessment.AssessmentTemplateId) {
+            throw new ApiError(400, `Template associated with assessment dows not match with the question!`);
+        }
+
+        var isAnswered = await this.isAnswered(assessmentId, questionNodeId);
+        if (!isAnswered) {
+            throw new ApiError(400, `The question has already been answered!`);
+        }
+
+        const responseType = answerModel.ResponseType;
+        
+        //Convert the answer to the format which we can persist
+        if (responseType === QueryResponseType.SingleChoiceSelection) {
+            const res: AssessmentQuestionResponseDto = await this.handleSingleChoiceSelectionAnswer(answerModel);
+            return res;
+        }
+
+        return null;
     }
     
     getQuestionById = async (id: uuid, questionId: uuid): Promise<AssessmentQueryDto> => {
@@ -146,7 +176,7 @@ export class AssessmentService {
             }
         }
         else if (currentNode.NodeType === AssessmentNodeType.Question) {
-            var isAnswered = await this.isAnswered(assessment, currentNodeId);
+            var isAnswered = await this.isAnswered(assessment.id, currentNodeId);
             if (!isAnswered) {
                 return await this.returnAsCurrentQuestionNode(assessment, template, currentNode);
             }
@@ -156,7 +186,7 @@ export class AssessmentService {
             }
         }
         else if (currentNode.NodeType === AssessmentNodeType.Message) {
-            var isAnswered = await this.isAnswered(assessment, currentNodeId);
+            var isAnswered = await this.isAnswered(assessment.id, currentNodeId);
             if (!isAnswered) {
                 return await this.returnAsCurrentMessageNode(assessment, template, currentNode);
             }
@@ -224,9 +254,14 @@ export class AssessmentService {
         return query;
     }
 
-    private async isAnswered(assessment: AssessmentDto, currentNodeId: string) {
-        const response = await this._assessmentRepo.getQueryResponse(assessment.id, currentNodeId);
+    private async isAnswered(assessmentId: uuid, currentNodeId: uuid) {
+        const response = await this._assessmentHelperRepo.getQueryResponse(assessmentId, currentNodeId);
         return response !== null;
+    }
+
+    private async handleSingleChoiceSelectionAnswer(
+        answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
+        throw new Error("Method not implemented.");
     }
 
 }

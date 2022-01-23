@@ -26,19 +26,27 @@ import AssessmentNodePath from '../../../models/clinical/assessment/assessment.n
 import AssessmentPathCondition from '../../../models/clinical/assessment/assessment.path.condition.model';
 import { AssessmentHelperMapper } from '../../../mappers/clinical/assessment/assessment.helper.mapper';
 import AssessmentQueryResponse from '../../../models/clinical/assessment/assessment.query.response.model';
+import {
+    SingleChoiceQueryAnswer,
+    MultipleChoiceQueryAnswer,
+    MessageAnswer,
+    TextQueryAnswer,
+    IntegerQueryAnswer,
+    FloatQueryAnswer,
+    BiometricQueryAnswer,
+} from '../../../../../../domain.types/clinical/assessment/assessment.answer.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
 export class AssessmentHelperRepo implements IAssessmentHelperRepo {
-
+    
     addTemplate = async (t: SAssessmentTemplate): Promise<AssessmentTemplateDto> => {
         try {
-
             const existing = await AssessmentTemplate.findOne({
                 where : {
                     Provider               : t.Provider,
-                    ProviderAssessmentCode : t.ProviderAssessmentCode
-                }
+                    ProviderAssessmentCode : t.ProviderAssessmentCode,
+                },
             });
             if (existing) {
                 return AssessmentTemplateMapper.toDto(existing);
@@ -50,7 +58,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 Description            : t.Description,
                 Type                   : t.Type,
                 Provider               : t.Provider,
-                ProviderAssessmentCode : t.ProviderAssessmentCode
+                ProviderAssessmentCode : t.ProviderAssessmentCode,
             };
             var template = await AssessmentTemplate.create(templateModel);
 
@@ -63,46 +71,53 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
             const templateDto = AssessmentTemplateMapper.toDto(template);
             return templateDto;
-
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    getNodeById = async (nodeId: string)
-     : Promise<SAssessmentQuestionNode | SAssessmentListNode | SAssessmentMessageNode> => {
+    getNodeById = async (
+        nodeId: string
+    ): Promise<SAssessmentQuestionNode | SAssessmentListNode | SAssessmentMessageNode> => {
         try {
             const node = await AssessmentNode.findByPk(nodeId);
             return await this.populateNodeDetails(node);
-        }
-        catch (error) {
+        } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    public getQuestionNodeOptions = async (nodeType: AssessmentNodeType, nodeId: uuid)
-        : Promise<SAssessmentQueryOption[]> => {
+    public getQuestionNodeOptions = async (
+        nodeType: AssessmentNodeType,
+        nodeId: uuid
+    ): Promise<SAssessmentQueryOption[]> => {
         if (nodeType === AssessmentNodeType.Question) {
             const options = await AssessmentQueryOption.findAll({
                 where : {
-                    NodeId : nodeId
-                }
+                    NodeId : nodeId,
+                },
             });
-            return options.map(x => AssessmentHelperMapper.toOptionDto(x));
+            var dtos = options.map((x) => AssessmentHelperMapper.toOptionDto(x));
+            //Sort in ascending order by sequence
+            dtos = dtos.sort((a, b) => {
+                return a.Sequence - b.Sequence;
+            });
+            return dtos;
         }
         return [];
-    }
+    };
 
-    public getQuestionNodePaths = async (nodeType: AssessmentNodeType, nodeId: uuid)
-        : Promise<SAssessmentNodePath[]> => {
-
+    public getQuestionNodePaths = async (
+        nodeType: AssessmentNodeType,
+        nodeId: uuid
+    ): Promise<SAssessmentNodePath[]> => {
         if (nodeType === AssessmentNodeType.Question) {
             var paths = await AssessmentNodePath.findAll({
                 where : {
-                    ParentNodeId : nodeId
-                }
+                    ParentNodeId : nodeId,
+                },
             });
             var pathDtos: SAssessmentNodePath[] = [];
             for await (var path of paths) {
@@ -116,7 +131,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             return pathDtos;
         }
         return [];
-    }
+    };
 
     public getNodeListChildren = async (nodeId: uuid): Promise<SAssessmentNode[]> => {
         try {
@@ -127,7 +142,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             var children = await AssessmentNode.findAll({
                 where : {
                     ParentNodeId : nodeId,
-                }
+                },
             });
             var childrenDtos: SAssessmentNode[] = [];
             for await (var child of children) {
@@ -135,19 +150,19 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 childrenDtos.push(childDto);
             }
             //Sort in ascending order by sequence
-            childrenDtos = childrenDtos.sort((a, b) =>  {
+            childrenDtos = childrenDtos.sort((a, b) => {
                 return a.Sequence - b.Sequence;
             });
             return childrenDtos;
-        }
-        catch (error) {
+        } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    private async populateNodeDetails(node: AssessmentNode)
-        : Promise<SAssessmentQuestionNode | SAssessmentListNode | SAssessmentMessageNode> {
+    private async populateNodeDetails(
+        node: AssessmentNode
+    ): Promise<SAssessmentQuestionNode | SAssessmentListNode | SAssessmentMessageNode> {
         if (node == null) {
             return null;
         }
@@ -159,8 +174,11 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         return nodeDto;
     }
 
-    public getPathCondition = async (conditionId: string, nodeId: string, pathId: string)
-        : Promise<SAssessmentPathCondition> => {
+    public getPathCondition = async (
+        conditionId: string,
+        nodeId: string,
+        pathId: string
+    ): Promise<SAssessmentPathCondition> => {
         var condition = await AssessmentPathCondition.findByPk(conditionId);
         if (condition == null) {
             return null;
@@ -171,38 +189,36 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                     NodeId            : nodeId,
                     PathId            : pathId,
                     ParentConditionId : conditionId,
-                }
+                },
             });
             var childrenDtos: SAssessmentPathCondition[] = [];
-            for await ( var child of children) {
+            for await (var child of children) {
                 var childDto = await this.getPathCondition(child.id, nodeId, pathId);
                 childrenDtos.push(childDto);
             }
             var conditionDto = AssessmentHelperMapper.toConditionDto(condition);
             conditionDto['Children'] = childrenDtos;
             return conditionDto;
-        }
-        else {
+        } else {
             return AssessmentHelperMapper.toConditionDto(condition);
         }
-
-    }
+    };
 
     private async createNewNode(
         sTemplate: SAssessmentTemplate,
         templateId: uuid,
         parentNodeId: uuid,
-        snode: SAssessmentNode): Promise<AssessmentNode> {
-
+        snode: SAssessmentNode
+    ): Promise<AssessmentNode> {
         const existingNode = await AssessmentNode.findOne({
             where : {
-                DisplayCode : snode.DisplayCode
-            }
+                DisplayCode : snode.DisplayCode,
+            },
         });
         if (existingNode) {
             return existingNode;
         }
-        
+
         const nodeEntity = {
             DisplayCode     : snode.DisplayCode,
             TemplateId      : templateId,
@@ -219,7 +235,6 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         const currentNodeId = thisNode.id;
 
         if (snode.NodeType === AssessmentNodeType.NodeList) {
-
             var listNode: SAssessmentListNode = snode as SAssessmentListNode;
             var childrenDisplayCodes = listNode.ChildrenNodeDisplayCodes;
 
@@ -232,14 +247,12 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                     }
                 }
             }
-        }
-        else if (snode.NodeType === AssessmentNodeType.Message) {
+        } else if (snode.NodeType === AssessmentNodeType.Message) {
             const messageNode = snode as SAssessmentMessageNode;
             thisNode.Message = messageNode.Message;
             thisNode.Acknowledged = false;
             await thisNode.save();
-        }
-        else {
+        } else {
             //thisNode.NodeType === AssessmentNodeType.Question
             const questionNode = snode as SAssessmentQuestionNode;
             thisNode.QueryResponseType = questionNode.QueryResponseType;
@@ -254,8 +267,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         sTemplate: SAssessmentTemplate,
         questionNode: SAssessmentQuestionNode,
         thisNode: AssessmentNode,
-        templateId: string) {
-
+        templateId: string
+    ) {
         //Create question answer options...
         const options: SAssessmentQueryOption[] = questionNode.Options;
 
@@ -266,7 +279,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 NodeId            : thisNode.id,
                 Text              : option.Text,
                 ImageUrl          : option.ImageUrl,
-                Sequence          : option.Sequence
+                Sequence          : option.Sequence,
             };
             const queryOption = await AssessmentQueryOption.create(optEntity);
             Logger.instance().log(`QueryOption - ${queryOption.DisplayCode}`);
@@ -298,7 +311,6 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                     await path.save();
                 }
             }
-
         }
     }
 
@@ -306,9 +318,11 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         if (!operand) {
             return null;
         }
-        if (dataType === ConditionOperandDataType.Text ||
+        if (
+            dataType === ConditionOperandDataType.Text ||
             dataType === ConditionOperandDataType.Float ||
-            dataType === ConditionOperandDataType.Integer) {
+            dataType === ConditionOperandDataType.Integer
+        ) {
             return operand.ToString();
         }
         if (dataType === ConditionOperandDataType.Array) {
@@ -327,15 +341,21 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         sCondition: SAssessmentPathCondition,
         currentNodeId: string,
         pathId: string,
-        parentConditionId: any) {
-        
+        parentConditionId: any
+    ) {
         const firstOperandValue = this.getOperandValueString(
-            sCondition.FirstOperandValue, sCondition.FirstOperandDataType);
+            sCondition.FirstOperandValue,
+            sCondition.FirstOperandDataType
+        );
         const secondOperandValue = this.getOperandValueString(
-            sCondition.SecondOperandValue, sCondition.SecondOperandDataType);
+            sCondition.SecondOperandValue,
+            sCondition.SecondOperandDataType
+        );
         const thirdOperandValue = this.getOperandValueString(
-            sCondition.ThirdOperandValue, sCondition.ThirdOperandDataType);
-            
+            sCondition.ThirdOperandValue,
+            sCondition.ThirdOperandDataType
+        );
+
         var conditionEntity = {
             NodeId                : currentNodeId,
             PathId                : pathId,
@@ -358,11 +378,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         const condition = await AssessmentPathCondition.create(conditionEntity);
 
         for await (var childCondition of sCondition.Children) {
-
             const parentConditionId = condition.id;
 
-            var child = await this.createNewPathCondition(
-                childCondition, pathId, currentNodeId, parentConditionId);
+            var child = await this.createNewPathCondition(childCondition, pathId, currentNodeId, parentConditionId);
 
             Logger.instance().log(`Operator type: ${child.OperatorType}`);
             Logger.instance().log(`Composition type: ${child.CompositionType}`);
@@ -370,19 +388,32 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         return condition;
     }
 
-    getQueryResponse = async (assessmentId: uuid, nodeId: uuid): Promise<SAssessmentQueryResponse> => {
+    public getQueryResponse = async (assessmentId: uuid, nodeId: uuid): Promise<SAssessmentQueryResponse> => {
         try {
             var response = await AssessmentQueryResponse.findOne({
                 where : {
                     AssessmentId : assessmentId,
-                    NodeId       : nodeId
-                }
+                    NodeId       : nodeId,
+                },
             });
             return AssessmentHelperMapper.toQueryResponseDto(response);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    };
+
+    createQueryResponse(
+        answer:
+            | SingleChoiceQueryAnswer
+            | MultipleChoiceQueryAnswer
+            | MessageAnswer
+            | TextQueryAnswer
+            | IntegerQueryAnswer
+            | FloatQueryAnswer
+            | BiometricQueryAnswer
+    ): Promise<boolean> {
+        throw new Error('Method not implemented.');
     }
 
 }

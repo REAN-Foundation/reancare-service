@@ -1,17 +1,18 @@
-import { AssessmentAnswerDomainModel } from "../../../domain.types/clinical/assessment/assessment.answer.domain.model";
-import { AssessmentQuestionResponseDto } from "../../../domain.types/clinical/assessment/assessment.question.response.dto";
 import { inject, injectable } from "tsyringe";
+import { ApiError } from "../../../common/api.error";
+import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
 import { IAssessmentRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
+import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
+import { AssessmentHelperMapper } from "../../../database/sql/sequelize/mappers/clinical/assessment/assessment.helper.mapper";
+import { AssessmentAnswerDomainModel } from "../../../domain.types/clinical/assessment/assessment.answer.domain.model";
 import { AssessmentDomainModel } from '../../../domain.types/clinical/assessment/assessment.domain.model';
 import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
-import { AssessmentSearchFilters, AssessmentSearchResults } from "../../../domain.types/clinical/assessment/assessment.search.types";
-import { ProgressStatus, uuid } from "../../../domain.types/miscellaneous/system.types";
 import { AssessmentQueryDto } from "../../../domain.types/clinical/assessment/assessment.query.dto";
-import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
-import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
-import { AssessmentNodeType, QueryResponseType, SAssessmentMessageNode, SAssessmentNode, SAssessmentQuestionNode } from "../../../domain.types/clinical/assessment/assessment.types";
-import { AssessmentTemplateDto } from "../../../domain.types/clinical/assessment/assessment.template.dto";
-import { ApiError } from "../../../common/api.error";
+import { AssessmentQuestionResponseDto } from "../../../domain.types/clinical/assessment/assessment.question.response.dto";
+import { AssessmentSearchFilters, AssessmentSearchResults } from "../../../domain.types/clinical/assessment/assessment.search.types";
+import { AssessmentNodeType, QueryResponseType, SAssessmentMessageNode, SAssessmentNode, SAssessmentNodePath, SAssessmentQueryOption, SAssessmentQuestionNode } from "../../../domain.types/clinical/assessment/assessment.types";
+import { ProgressStatus, uuid } from "../../../domain.types/miscellaneous/system.types";
+import { ConditionProcessor } from "./condition.processor";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +71,7 @@ export class AssessmentService {
         }
 
         var nextQuestion : AssessmentQueryDto =
-            await this.traverseDeep(assessment, template, rootNodeId);
+            await this.traverseDeep(assessment, rootNodeId);
         
         return nextQuestion;
     }
@@ -82,7 +83,7 @@ export class AssessmentService {
         const assessmentId = answerModel.AssessmentId;
 
         //Check if the this question node is from same template as assessment
-        const questionNode = await this._assessmentHelperRepo.getNodeById(questionNodeId);
+        const questionNode = await this._assessmentHelperRepo.getNodeById(questionNodeId) as SAssessmentQuestionNode;
         if (!questionNode) {
             throw new ApiError(404, `Question with id ${questionNodeId} cannot be found!`);
         }
@@ -103,7 +104,8 @@ export class AssessmentService {
         
         //Convert the answer to the format which we can persist
         if (responseType === QueryResponseType.SingleChoiceSelection) {
-            const res: AssessmentQuestionResponseDto = await this.handleSingleChoiceSelectionAnswer(answerModel);
+            const res: AssessmentQuestionResponseDto =
+                await this.handleSingleChoiceSelectionAnswer(assessment, questionNode, answerModel);
             return res;
         }
 
@@ -149,7 +151,6 @@ export class AssessmentService {
 
     private async traverseDeep(
         assessment: AssessmentDto,
-        template: AssessmentTemplateDto,
         currentNodeId: uuid): Promise<AssessmentQueryDto> {
 
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
@@ -162,7 +163,7 @@ export class AssessmentService {
             var childrenNodes = await this._assessmentHelperRepo.getNodeListChildren(currentNodeId);
             for await (var childNode of childrenNodes) {
                 if (childNode.NodeType as AssessmentNodeType === AssessmentNodeType.NodeList) {
-                    const nextNode = await this.traverseDeep(assessment, template, childNode.id);
+                    const nextNode = await this.traverseDeep(assessment, childNode.id);
                     if (nextNode != null) {
                         return nextNode;
                     }
@@ -171,28 +172,28 @@ export class AssessmentService {
                     }
                 }
                 else {
-                    return await this.traverseDeep(assessment, template, childNode.id);
+                    return await this.traverseDeep(assessment, childNode.id);
                 }
             }
         }
         else if (currentNode.NodeType === AssessmentNodeType.Question) {
             var isAnswered = await this.isAnswered(assessment.id, currentNodeId);
             if (!isAnswered) {
-                return await this.returnAsCurrentQuestionNode(assessment, template, currentNode);
+                return await this.returnAsCurrentQuestionNode(assessment, currentNode as SAssessmentQuestionNode);
             }
             else {
                 const nextSiblingNode = await this.traverseUpstream(currentNode);
-                return await this.traverseDeep(assessment, template, nextSiblingNode.id);
+                return await this.traverseDeep(assessment, nextSiblingNode.id);
             }
         }
         else if (currentNode.NodeType === AssessmentNodeType.Message) {
             var isAnswered = await this.isAnswered(assessment.id, currentNodeId);
             if (!isAnswered) {
-                return await this.returnAsCurrentMessageNode(assessment, template, currentNode);
+                return await this.returnAsCurrentMessageNode(assessment, currentNode as SAssessmentMessageNode);
             }
             else {
                 const nextSiblingNode = await this.traverseUpstream(currentNode);
-                return await this.traverseDeep(assessment, template, nextSiblingNode.id);
+                return await this.traverseDeep(assessment, nextSiblingNode.id);
             }
         }
 
@@ -201,47 +202,107 @@ export class AssessmentService {
 
     private async returnAsCurrentMessageNode(
         assessment: AssessmentDto,
-        template: AssessmentTemplateDto,
-        currentNode: SAssessmentNode): Promise<AssessmentQueryDto> {
-
+        currentNode: SAssessmentMessageNode): Promise<AssessmentQueryDto> {
+        //Set as current node if not already
         await this._assessmentRepo.setCurrentNode(assessment.id, currentNode.id);
-
-        const messageNode = currentNode as SAssessmentMessageNode;
-
-        const query: AssessmentQueryDto = {
-            NodeId               : messageNode.id,
-            DisplayCode          : messageNode.DisplayCode,
-            PatientUserId        : assessment.PatientUserId,
-            AssessmentTemplateId : template.id,
-            ParentNodeId         : currentNode.id,
-            AssessmentId         : assessment.id,
-            Sequence             : messageNode.Sequence,
-            NodeType             : messageNode.NodeType as AssessmentNodeType,
-            Title                : messageNode.Title,
-            Description          : messageNode.Description,
-            QueryResponseType    : QueryResponseType.Ok,
-            Options              : [],
-            ProviderGivenCode    : messageNode.ProviderGivenCode,
-        };
-        return query;
+        return this.messageNodeAsQueryDto(currentNode, assessment);
     }
 
     private async returnAsCurrentQuestionNode(
         assessment: AssessmentDto,
-        template: AssessmentTemplateDto,
-        currentNode: SAssessmentNode): Promise<AssessmentQueryDto> {
-
+        currentNode: SAssessmentQuestionNode): Promise<AssessmentQueryDto> {
         //Set as current node if not already
         await this._assessmentRepo.setCurrentNode(assessment.id, currentNode.id);
+        return this.questionNodeAsQueryDto(currentNode, assessment);
+    }
 
-        const questionNode = currentNode as SAssessmentQuestionNode;
+    private async isAnswered(assessmentId: uuid, currentNodeId: uuid) {
+        const response = await this._assessmentHelperRepo.getQueryResponse(assessmentId, currentNodeId);
+        return response !== null;
+    }
 
+    private async handleSingleChoiceSelectionAnswer(
+        assessment: AssessmentDto,
+        questionNode: SAssessmentQuestionNode,
+        answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
+        
+        const { minSequenceValue, maxSequenceValue, options, paths, nodeId } =
+            await this.getChoiceSelectionParams(questionNode);
+
+        const chosenOptionSequence = answerModel.IntegerValue;
+        if (!chosenOptionSequence ||
+            chosenOptionSequence < minSequenceValue ||
+            chosenOptionSequence > maxSequenceValue) {
+            throw new Error(`Invalid option index! Cannot process the condition!`);
+        }
+        const answer = options.find(x => x.Sequence === chosenOptionSequence);
+        const answerDto = AssessmentHelperMapper.toSingleChoiceAnswerDto(questionNode, chosenOptionSequence, answer);
+        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+
+        if (paths.length === 0) {
+            //In case there are no paths...
+            //This question node is a leaf node and should use traverseUp to find the next stop...
+            const next = await this.traverseDeep(assessment, nodeId);
+            const response : AssessmentQuestionResponseDto = {
+                AssessmentId : assessment.id,
+                Parent       : this.questionNodeAsQueryDto(questionNode, assessment),
+                Answer       : answerDto,
+                Next         : next,
+            };
+            return response;
+        }
+        else {
+
+            var chosenPath: SAssessmentNodePath = null;
+
+            for await (var path of paths) {
+                const pathId = path.id;
+                const conditionId = path.ConditionId;
+                const condition = await this._assessmentHelperRepo.getPathCondition(conditionId, nodeId, pathId);
+                if (!condition) {
+                    continue;
+                }
+                const resolved = await ConditionProcessor.processCondition(condition, chosenOptionSequence);
+                if (resolved === true) {
+                    chosenPath = path;
+                    break;
+                }
+            }
+            if (chosenPath !== null) {
+                const nextNode = chosenPath.NextNodeId;
+
+            }
+        }
+
+        return null;
+    }
+
+    private async getChoiceSelectionParams(questionNode: SAssessmentNode) {
+        const nodeId = questionNode.id;
+        const nodeType = questionNode.NodeType as AssessmentNodeType;
+
+        const paths: SAssessmentNodePath[] = await this._assessmentHelperRepo.getQuestionNodePaths(nodeType, nodeId);
+
+        const options: SAssessmentQueryOption[] = await this._assessmentHelperRepo.getQuestionNodeOptions(nodeType, nodeId);
+
+        if (options.length === 0) {
+            throw new Error(`Invalid options found for the question!`);
+        }
+
+        const sequenceArray = Array.from(options, o => o.Sequence);
+        const maxSequenceValue = Math.max(...sequenceArray);
+        const minSequenceValue = Math.min(...sequenceArray);
+        return { minSequenceValue, maxSequenceValue, options, paths, nodeId };
+    }
+
+    private questionNodeAsQueryDto(node: SAssessmentNode, assessment: AssessmentDto) {
+        const questionNode              = node as SAssessmentQuestionNode;
         const query: AssessmentQueryDto = {
             NodeId               : questionNode.id,
             DisplayCode          : questionNode.DisplayCode,
             PatientUserId        : assessment.PatientUserId,
-            AssessmentTemplateId : template.id,
-            ParentNodeId         : currentNode.id,
+            AssessmentTemplateId : assessment.AssessmentTemplateId,
+            ParentNodeId         : questionNode.ParentNodeId,
             AssessmentId         : assessment.id,
             Sequence             : questionNode.Sequence,
             NodeType             : questionNode.NodeType as AssessmentNodeType,
@@ -254,14 +315,24 @@ export class AssessmentService {
         return query;
     }
 
-    private async isAnswered(assessmentId: uuid, currentNodeId: uuid) {
-        const response = await this._assessmentHelperRepo.getQueryResponse(assessmentId, currentNodeId);
-        return response !== null;
-    }
-
-    private async handleSingleChoiceSelectionAnswer(
-        answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
-        throw new Error("Method not implemented.");
+    private messageNodeAsQueryDto(node: SAssessmentMessageNode, assessment: AssessmentDto) {
+        const messageNode = node as SAssessmentMessageNode;
+        const query: AssessmentQueryDto = {
+            NodeId               : messageNode.id,
+            DisplayCode          : messageNode.DisplayCode,
+            PatientUserId        : assessment.PatientUserId,
+            AssessmentTemplateId : assessment.AssessmentTemplateId,
+            ParentNodeId         : messageNode.ParentNodeId,
+            AssessmentId         : assessment.id,
+            Sequence             : messageNode.Sequence,
+            NodeType             : messageNode.NodeType as AssessmentNodeType,
+            Title                : messageNode.Title,
+            Description          : messageNode.Description,
+            QueryResponseType    : QueryResponseType.Ok,
+            Options              : [],
+            ProviderGivenCode    : messageNode.ProviderGivenCode,
+        };
+        return query;
     }
 
 }

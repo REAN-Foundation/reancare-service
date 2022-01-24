@@ -1,3 +1,4 @@
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import {
     SingleChoiceQueryAnswer,
     MultipleChoiceQueryAnswer,
@@ -182,11 +183,13 @@ export class AssessmentHelperMapper {
     }
 
     static toSingleChoiceAnswerDto(
+        assessmentId: uuid,
         questionNode: SAssessmentQuestionNode,
         answer: number,
         option: SAssessmentQueryOption
     ): SingleChoiceQueryAnswer {
         var dto: SingleChoiceQueryAnswer = {
+            AssessmentId    : assessmentId,
             NodeId          : questionNode.id,
             NodeDisplayCode : questionNode.DisplayCode,
             Title           : questionNode.Title,
@@ -198,11 +201,13 @@ export class AssessmentHelperMapper {
     }
 
     static toMultiChoiceAnswerDto(
+        assessmentId: uuid,
         questionNode: SAssessmentQuestionNode,
         answers: number[],
         options: SAssessmentQueryOption[]
     ): MultipleChoiceQueryAnswer {
         var dto: MultipleChoiceQueryAnswer = {
+            AssessmentId    : assessmentId,
             NodeId          : questionNode.id,
             NodeDisplayCode : questionNode.DisplayCode,
             Title           : questionNode.Title,
@@ -214,9 +219,11 @@ export class AssessmentHelperMapper {
     }
 
     static toMessageAnswerDto(
+        assessmentId: uuid,
         node: SAssessmentMessageNode,
     ): MessageAnswer {
         var dto: MessageAnswer = {
+            AssessmentId    : assessmentId,
             NodeId          : node.id,
             NodeDisplayCode : node.DisplayCode,
             Title           : node.Title,
@@ -227,10 +234,12 @@ export class AssessmentHelperMapper {
     }
 
     static toBiometricsAnswerDto(
+        assessmentId: uuid,
         node: SAssessmentQuestionNode,
         values: BiometricsEntry[]
     ): BiometricQueryAnswer {
         var dto: BiometricQueryAnswer = {
+            AssessmentId    : assessmentId,
             NodeId          : node.id,
             NodeDisplayCode : node.DisplayCode,
             Title           : node.Title,
@@ -241,10 +250,12 @@ export class AssessmentHelperMapper {
     }
 
     static toTextAnswerDto(
+        assessmentId: uuid,
         node: SAssessmentQuestionNode,
         text: string,
     ): TextQueryAnswer {
         var dto: TextQueryAnswer = {
+            AssessmentId    : assessmentId,
             NodeId          : node.id,
             NodeDisplayCode : node.DisplayCode,
             Title           : node.Title,
@@ -255,11 +266,13 @@ export class AssessmentHelperMapper {
     }
 
     static toIntegerAnswerDto(
+        assessmentId: uuid,
         node: SAssessmentQuestionNode,
         field: string,
         value: number
     ): IntegerQueryAnswer {
         var dto: IntegerQueryAnswer = {
+            AssessmentId    : assessmentId,
             NodeId          : node.id,
             NodeDisplayCode : node.DisplayCode,
             Title           : node.Title,
@@ -271,11 +284,13 @@ export class AssessmentHelperMapper {
     }
 
     static toFloatAnswerDto(
+        assessmentId: uuid,
         node: SAssessmentQuestionNode,
         field: string,
         value: number
     ): FloatQueryAnswer {
         var dto: FloatQueryAnswer = {
+            AssessmentId    : assessmentId,
             NodeId          : node.id,
             NodeDisplayCode : node.DisplayCode,
             Title           : node.Title,

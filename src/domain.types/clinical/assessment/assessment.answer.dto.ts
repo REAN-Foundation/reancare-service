@@ -10,6 +10,7 @@ import { PulseDto } from "../biometrics/pulse/pulse.dto";
 import { QueryResponseType, SAssessmentQueryOption } from "./assessment.types";
 
 export interface BaseQueryAnswer {
+    AssessmentId    : uuid;
     NodeId?         : uuid;
     NodeDisplayCode?: string;
     Title?          : string;

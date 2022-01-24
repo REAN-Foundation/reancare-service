@@ -1,3 +1,6 @@
+import { BiometricQueryAnswer } from "src/domain.types/clinical/assessment/assessment.answer.dto";
+import { SingleChoiceQueryAnswer } from "src/domain.types/clinical/assessment/assessment.answer.dto";
+import { SingleChoiceQueryAnswer } from "src/domain.types/clinical/assessment/assessment.answer.dto";
 import { inject, injectable } from "tsyringe";
 import { ApiError } from "../../../common/api.error";
 import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
@@ -71,7 +74,7 @@ export class AssessmentService {
         }
 
         var nextQuestion : AssessmentQueryDto =
-            await this.traverseDeep(assessment, rootNodeId);
+            await this.traverse(assessment, rootNodeId);
         
         return nextQuestion;
     }
@@ -149,13 +152,13 @@ export class AssessmentService {
 
     //To be used while starting assessment
 
-    private async traverseDeep(
+    private async traverse(
         assessment: AssessmentDto,
         currentNodeId: uuid): Promise<AssessmentQueryDto> {
 
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
         if (!currentNode) {
-            throw new Error(`Error while continueing assessment. Cannot find template root node.`);
+            throw new Error(`Error while executing assessment. Cannot find the node!`);
         }
 
         if (currentNode.NodeType === AssessmentNodeType.NodeList) {
@@ -163,7 +166,7 @@ export class AssessmentService {
             var childrenNodes = await this._assessmentHelperRepo.getNodeListChildren(currentNodeId);
             for await (var childNode of childrenNodes) {
                 if (childNode.NodeType as AssessmentNodeType === AssessmentNodeType.NodeList) {
-                    const nextNode = await this.traverseDeep(assessment, childNode.id);
+                    const nextNode = await this.traverse(assessment, childNode.id);
                     if (nextNode != null) {
                         return nextNode;
                     }
@@ -172,7 +175,7 @@ export class AssessmentService {
                     }
                 }
                 else {
-                    return await this.traverseDeep(assessment, childNode.id);
+                    return await this.traverse(assessment, childNode.id);
                 }
             }
         }
@@ -183,7 +186,7 @@ export class AssessmentService {
             }
             else {
                 const nextSiblingNode = await this.traverseUpstream(currentNode);
-                return await this.traverseDeep(assessment, nextSiblingNode.id);
+                return await this.traverse(assessment, nextSiblingNode.id);
             }
         }
         else if (currentNode.NodeType === AssessmentNodeType.Message) {
@@ -193,7 +196,7 @@ export class AssessmentService {
             }
             else {
                 const nextSiblingNode = await this.traverseUpstream(currentNode);
-                return await this.traverseDeep(assessment, nextSiblingNode.id);
+                return await this.traverse(assessment, nextSiblingNode.id);
             }
         }
 
@@ -228,6 +231,8 @@ export class AssessmentService {
         
         const { minSequenceValue, maxSequenceValue, options, paths, nodeId } =
             await this.getChoiceSelectionParams(questionNode);
+        
+        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
 
         const chosenOptionSequence = answerModel.IntegerValue;
         if (!chosenOptionSequence ||
@@ -236,25 +241,22 @@ export class AssessmentService {
             throw new Error(`Invalid option index! Cannot process the condition!`);
         }
         const answer = options.find(x => x.Sequence === chosenOptionSequence);
-        const answerDto = AssessmentHelperMapper.toSingleChoiceAnswerDto(questionNode, chosenOptionSequence, answer);
+        const answerDto = AssessmentHelperMapper.toSingleChoiceAnswerDto(
+            assessment.id, questionNode, chosenOptionSequence, answer);
+        
+        //Persist the answer
         await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        // if (answerDto.ResponseType === QueryResponseType.Biometrics) {
+        //     await this.persistBiometrics(answerDto);
+        // }
 
         if (paths.length === 0) {
             //In case there are no paths...
             //This question node is a leaf node and should use traverseUp to find the next stop...
-            const next = await this.traverseDeep(assessment, nodeId);
-            const response : AssessmentQuestionResponseDto = {
-                AssessmentId : assessment.id,
-                Parent       : this.questionNodeAsQueryDto(questionNode, assessment),
-                Answer       : answerDto,
-                Next         : next,
-            };
-            return response;
+            return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
         }
         else {
-
             var chosenPath: SAssessmentNodePath = null;
-
             for await (var path of paths) {
                 const pathId = path.id;
                 const conditionId = path.ConditionId;
@@ -269,26 +271,38 @@ export class AssessmentService {
                 }
             }
             if (chosenPath !== null) {
-                const nextNode = chosenPath.NextNodeId;
-
+                return await this.respondToUserAnswer(assessment, chosenPath.NextNodeId, currentQueryDto, answerDto);
+            }
+            else {
+                return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
             }
         }
+    }
 
-        return null;
+    private async respondToUserAnswer(
+        assessment: AssessmentDto,
+        nextNodeId: string,
+        currentQueryDto: AssessmentQueryDto,
+        answerDto: SingleChoiceQueryAnswer) {
+        const next = await this.traverse(assessment, nextNodeId);
+        const response: AssessmentQuestionResponseDto = {
+            AssessmentId : assessment.id,
+            Parent       : currentQueryDto,
+            Answer       : answerDto,
+            Next         : next,
+        };
+        return response;
     }
 
     private async getChoiceSelectionParams(questionNode: SAssessmentNode) {
         const nodeId = questionNode.id;
         const nodeType = questionNode.NodeType as AssessmentNodeType;
-
         const paths: SAssessmentNodePath[] = await this._assessmentHelperRepo.getQuestionNodePaths(nodeType, nodeId);
-
-        const options: SAssessmentQueryOption[] = await this._assessmentHelperRepo.getQuestionNodeOptions(nodeType, nodeId);
-
+        const options: SAssessmentQueryOption[] =
+            await this._assessmentHelperRepo.getQuestionNodeOptions(nodeType, nodeId);
         if (options.length === 0) {
             throw new Error(`Invalid options found for the question!`);
         }
-
         const sequenceArray = Array.from(options, o => o.Sequence);
         const maxSequenceValue = Math.max(...sequenceArray);
         const minSequenceValue = Math.min(...sequenceArray);
@@ -334,5 +348,9 @@ export class AssessmentService {
         };
         return query;
     }
+
+    // private persistBiometrics(answer: BiometricQueryAnswer) {
+    //     throw new Error("Method not implemented.");
+    // }
 
 }

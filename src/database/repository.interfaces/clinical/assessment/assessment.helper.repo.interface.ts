@@ -35,12 +35,12 @@ export interface IAssessmentHelperRepo {
 
     getPathCondition(conditionId: string, nodeId: string, pathId: string): Promise<SAssessmentPathCondition>;
 
-    createQueryResponse(answerDto: | SingleChoiceQueryAnswer
+    createQueryResponse(answer: | SingleChoiceQueryAnswer
         | MultipleChoiceQueryAnswer
         | MessageAnswer
         | TextQueryAnswer
         | IntegerQueryAnswer
         | FloatQueryAnswer
-        | BiometricQueryAnswer): Promise<boolean>;
+        | BiometricQueryAnswer): Promise<SAssessmentQueryResponse>;
 
 }

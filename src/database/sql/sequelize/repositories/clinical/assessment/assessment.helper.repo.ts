@@ -15,7 +15,8 @@ import {
     SAssessmentNodePath,
     SAssessmentPathCondition,
     ConditionOperandDataType,
-    SAssessmentQueryResponse
+    SAssessmentQueryResponse,
+    QueryResponseType
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -160,20 +161,6 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
 
-    private async populateNodeDetails(
-        node: AssessmentNode
-    ): Promise<SAssessmentQuestionNode | SAssessmentListNode | SAssessmentMessageNode> {
-        if (node == null) {
-            return null;
-        }
-        const nodeId: uuid = node.id;
-        const options = await this.getQuestionNodeOptions(node.NodeType as AssessmentNodeType, nodeId);
-        const paths = await this.getQuestionNodePaths(node.NodeType as AssessmentNodeType, nodeId);
-        const children = await this.getNodeListChildren(nodeId);
-        var nodeDto = AssessmentHelperMapper.toNodeDto(node, children, paths, options);
-        return nodeDto;
-    }
-
     public getPathCondition = async (
         conditionId: string,
         nodeId: string,
@@ -203,6 +190,55 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             return AssessmentHelperMapper.toConditionDto(condition);
         }
     };
+
+    public getQueryResponse = async (assessmentId: uuid, nodeId: uuid): Promise<SAssessmentQueryResponse> => {
+        try {
+            var response = await AssessmentQueryResponse.findOne({
+                where : {
+                    AssessmentId : assessmentId,
+                    NodeId       : nodeId,
+                },
+            });
+            return AssessmentHelperMapper.toQueryResponseDto(response);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public createQueryResponse = async (
+        answer:
+            | SingleChoiceQueryAnswer
+            | MultipleChoiceQueryAnswer
+            | MessageAnswer
+            | TextQueryAnswer
+            | IntegerQueryAnswer
+            | FloatQueryAnswer
+            | BiometricQueryAnswer
+    ): Promise<SAssessmentQueryResponse> => {
+        try {
+            const model = this.generateQueryAnswerModel(answer);
+            var response = await AssessmentQueryResponse.create(model);
+            return AssessmentHelperMapper.toQueryResponseDto(response);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    private async populateNodeDetails(
+        node: AssessmentNode
+    ): Promise<SAssessmentQuestionNode | SAssessmentListNode | SAssessmentMessageNode> {
+        if (node == null) {
+            return null;
+        }
+        const nodeId: uuid = node.id;
+        const options = await this.getQuestionNodeOptions(node.NodeType as AssessmentNodeType, nodeId);
+        const paths = await this.getQuestionNodePaths(node.NodeType as AssessmentNodeType, nodeId);
+        const children = await this.getNodeListChildren(nodeId);
+        var nodeDto = AssessmentHelperMapper.toNodeDto(node, children, paths, options);
+        return nodeDto;
+    }
 
     private async createNewNode(
         sTemplate: SAssessmentTemplate,
@@ -388,32 +424,86 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         return condition;
     }
 
-    public getQueryResponse = async (assessmentId: uuid, nodeId: uuid): Promise<SAssessmentQueryResponse> => {
-        try {
-            var response = await AssessmentQueryResponse.findOne({
-                where : {
-                    AssessmentId : assessmentId,
-                    NodeId       : nodeId,
-                },
-            });
-            return AssessmentHelperMapper.toQueryResponseDto(response);
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
+    private generateQueryAnswerModel = (answer:
+        SingleChoiceQueryAnswer |
+        MultipleChoiceQueryAnswer |
+        MessageAnswer |
+        TextQueryAnswer |
+        IntegerQueryAnswer |
+        FloatQueryAnswer |
+        BiometricQueryAnswer) => {
+        
+        if (answer.ResponseType === QueryResponseType.SingleChoiceSelection) {
+            const a = answer as SingleChoiceQueryAnswer;
+            const model = {
+                AssessmentId : a.AssessmentId,
+                NodeId       : a.NodeId,
+                Type         : a.ResponseType,
+                IntegerValue : a.ChosenSequence,
+            };
+            return model;
         }
-    };
-
-    createQueryResponse(
-        answer:
-            | SingleChoiceQueryAnswer
-            | MultipleChoiceQueryAnswer
-            | MessageAnswer
-            | TextQueryAnswer
-            | IntegerQueryAnswer
-            | FloatQueryAnswer
-            | BiometricQueryAnswer
-    ): Promise<boolean> {
-        throw new Error('Method not implemented.');
+        if (answer.ResponseType === QueryResponseType.MultiChoiceSelection) {
+            const a = answer as MultipleChoiceQueryAnswer;
+            const model = {
+                AssessmentId : a.AssessmentId,
+                NodeId       : a.NodeId,
+                Type         : a.ResponseType,
+                TextValue    : JSON.stringify(a.ChosenSequences),
+            };
+            return model;
+        }
+        if (answer.ResponseType === QueryResponseType.Ok) {
+            const a = answer as MessageAnswer;
+            const model = {
+                AssessmentId : a.AssessmentId,
+                NodeId       : a.NodeId,
+                Type         : a.ResponseType,
+                BooleanValue : a.Achnowledged,
+            };
+            return model;
+        }
+        if (answer.ResponseType === QueryResponseType.Text) {
+            const a = answer as TextQueryAnswer;
+            const model = {
+                AssessmentId : a.AssessmentId,
+                NodeId       : a.NodeId,
+                Type         : a.ResponseType,
+                TextValue    : a.Text,
+            };
+            return model;
+        }
+        if (answer.ResponseType === QueryResponseType.Integer) {
+            const a = answer as IntegerQueryAnswer;
+            const model = {
+                AssessmentId : a.AssessmentId,
+                NodeId       : a.NodeId,
+                Type         : a.ResponseType,
+                IntegerValue : a.Value,
+            };
+            return model;
+        }
+        if (answer.ResponseType === QueryResponseType.Float) {
+            const a = answer as FloatQueryAnswer;
+            const model = {
+                AssessmentId : a.AssessmentId,
+                NodeId       : a.NodeId,
+                Type         : a.ResponseType,
+                FloatValue   : a.Value,
+            };
+            return model;
+        }
+        if (answer.ResponseType === QueryResponseType.Biometrics) {
+            const a = answer as BiometricQueryAnswer;
+            const model = {
+                AssessmentId : a.AssessmentId,
+                NodeId       : a.NodeId,
+                Type         : a.ResponseType,
+                TextValue    : JSON.stringify(a.Values),
+            };
+            return model;
+        }
+        return null;
     }
-
+    
 }

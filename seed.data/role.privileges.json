@@ -38,7 +38,16 @@
             "MedicalCondition.Update",
             "MedicalCondition.Search",
             "MedicalCondition.Delete",
-            "Careplan.Enroll"
+            "Careplan.Enroll",
+            "HealthPriority.getPriorities",
+            "HealthPriority.getPrioritiesTypes",
+            "HealthPriority.Create",
+            "Goal.getGoals",
+            "Goal.getSelcetedGoals",
+            "ActionPlan.getActionPlans",
+            "ActionPlan.Create",
+            "ActionPlan.getSelectedActionPlans"
+    
         ]
     },
     {
@@ -298,7 +307,15 @@
             "MedicalCondition.Delete",
             "Careplan.Enroll",
             "Careplan.GetPatientEnrollments",
-            "Careplan.FetchTasks"
+            "Careplan.FetchTasks",
+            "HealthPriority.getPriorities",
+            "HealthPriority.getPrioritiesTypes",
+            "HealthPriority.Create",
+            "Goal.getGoals",
+            "Goal.getSelcetedGoals",
+            "ActionPlan.getActionPlans",
+            "ActionPlan.Create",
+            "ActionPlan.getSelectedActionPlans"
         ]
     },
     {
@@ -542,7 +559,15 @@
             "DailyAssessment.Search",
             "Careplan.Enroll",
             "Careplan.GetPatientEnrollments",
-            "Careplan.FetchTasks"
+            "Careplan.FetchTasks",
+            "HealthPriority.getPriorities",
+            "HealthPriority.getPrioritiesTypes",
+            "HealthPriority.Create",
+            "Goal.getGoals",
+            "Goal.getSelcetedGoals",
+            "ActionPlan.getActionPlans",
+            "ActionPlan.Create",
+            "ActionPlan.getSelectedActionPlans"
         ]
     },
     {

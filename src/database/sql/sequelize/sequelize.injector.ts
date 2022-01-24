@@ -58,6 +58,8 @@ import { CareplanRepo } from './repositories/clinical/careplan/careplan.repo';
 import { AssessmentRepo } from './repositories/clinical/assessment/assessment.repo';
 import { AssessmentTemplateRepo } from './repositories/clinical/assessment/assessment.template.repo';
 import { AssessmentHelperRepo } from './repositories/clinical/assessment/assessment.helper.repo';
+import { HealthPriorityRepo } from './repositories/health.priority/health.priority.repo';
+import { ActionPlanRepo } from './repositories/goal.action.plan/goal.action.plan.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -125,6 +127,8 @@ export class SequelizeInjector {
         container.register('IAssessmentRepo', AssessmentRepo);
         container.register('IAssessmentTemplateRepo', AssessmentTemplateRepo);
         container.register('IAssessmentHelperRepo', AssessmentHelperRepo);
+        container.register('IHealthPriorityRepo', HealthPriorityRepo);
+        container.register('IActionPlanRepo', ActionPlanRepo);
         
     }
 

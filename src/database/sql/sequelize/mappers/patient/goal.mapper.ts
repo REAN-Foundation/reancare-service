@@ -11,14 +11,20 @@ export class GoalMapper {
         }
 
         const dto: GoalDto = {
-            id            : goal.id ?? null,
-            PatientUserId : goal.PatientUserId ?? null,
-            CarePlanId    : goal.CarePlanId ?? null,
-            TypeCode      : goal.TypeCode,
-            TypeName      : goal.TypeName,
-            GoalId        : goal.GoalId ?? null,
-            GoalAchieved  : goal.GoalAchieved,
-            GoalAbandoned : goal.GoalAbandoned
+            id                   : goal.id ?? null,
+            PatientUserId        : goal.PatientUserId ?? null,
+            ProviderEnrollmentId : goal.ProviderEnrollmentId ?? null,
+            Provider             : goal.Provider ?? null,
+            ProviderCareplanCode : goal.ProviderCareplanCode ?? null,
+            ProviderCareplanName : goal.ProviderCareplanName ?? null,
+            ProviderGoalCode     : goal.ProviderGoalCode ?? null,
+            Title                : goal.Title ?? null,
+            Sequence             : goal.Sequence ?? null,
+            HealthPriorityId     : goal.HealthPriorityId ?? null,
+            StartedAt            : goal.StartedAt ?? null,
+            ScheduledEndDate     : goal.ScheduledEndDate ?? null,
+            GoalAchieved         : goal.GoalAchieved,
+            GoalAbandoned        : goal.GoalAbandoned
         };
         return dto;
     }

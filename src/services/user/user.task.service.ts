@@ -7,6 +7,7 @@ import { TaskSummaryDto, UserTaskDto } from '../../domain.types/user/user.task/u
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../domain.types/user/user.task/user.task.search.types';
 import { ICareplanRepo } from "../../database/repository.interfaces/careplan/careplan.repo.interface";
 import { CareplanHandler } from '../../modules/careplan/careplan.handler';
+import { Logger } from "../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

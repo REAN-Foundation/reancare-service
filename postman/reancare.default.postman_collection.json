@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6c85daee-81c6-4afe-9153-759c64e695ed",
+		"_postman_id": "411bc08b-96b2-4a60-83d0-b73dac7078d0",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -28441,6 +28441,495 @@
 				}
 			],
 			"description": "The set of requests in this folder are mean to test the authorization logic such as ownership authorization and consent authorization.\n\nWe will be testing following scenarios.\n\n1. One patient account should not be able to access the biometrics data of another patient's account.\n\n1. Without consent authorization, a doctor cannot access the patient data."
+		},
+		{
+			"name": "AHA",
+			"item": [
+				{
+					"name": "Priority",
+					"item": [
+						{
+							"name": "Get Priority Types",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/health-priorities/types",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"health-priorities",
+										"types"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create priority",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"0188cf7b-d281-4070-92b9-808fbaac8f2d\",\n    \"Provider\": \"AHA\",\n    \"Source\": \"Careplan\",\n    \"ProviderEnrollmentId\": \"94\",\n    \"ProviderCareplanCode\": \"HeartFailure\",\n    \"ProviderCareplanName\": \"AHA-HF\",\n    \"HealthPriorityType\": \"Blood Pressure\",\n    \"IsPrimary\": true\n\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/health-priorities",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"health-priorities"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get priorities by patient user id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/health-priorities/0188cf7b-d281-4070-92b9-808fbaac8f2d",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"health-priorities",
+										"0188cf7b-d281-4070-92b9-808fbaac8f2d"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Goal",
+					"item": [
+						{
+							"name": "Get goals by priority id - AHA Goals",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/patient-goals/get-by-priority/dc7a38da-5bd2-45a4-9bfd-9855bbe64d5b",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-goals",
+										"get-by-priority",
+										"dc7a38da-5bd2-45a4-9bfd-9855bbe64d5b"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create goal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"GOAL_ID\", jsonRes.Data.Goal.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New Goal record is created\", function () {",
+											"",
+											"    var expectedPatientUserId = pm.environment.get(\"GOAL_PATIENTUSERID\");",
+											"    var expectedCarePlanId = pm.environment.get(\"GOAL_CAREPLANID\");",
+											"    var expectedTypeCode = pm.environment.get(\"GOAL_TYPECODE\");",
+											"    var expectedTypeName = pm.environment.get(\"GOAL_TYPENAME\");",
+											"    var expectedGoalAchieved = pm.environment.get(\"GOAL_GOALACHIEVED\");",
+											"    var expectedGoalAbandoned = pm.environment.get(\"GOAL_GOALABANDONED\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Goal');",
+											"    pm.expect(jsonRes.Data.Goal).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('id');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('PatientUserId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('CarePlanId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('TypeCode');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('TypeName');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalId');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalAchieved');",
+											"    pm.expect(jsonRes.Data.Goal).to.have.property('GoalAbandoned');",
+											"",
+											"    pm.expect(jsonRes.Data.Goal.PatientUserId).equals(expectedPatientUserId);",
+											"    pm.expect(jsonRes.Data.Goal.CarePlanId).equals('' + expectedCarePlanId);",
+											"    pm.expect(jsonRes.Data.Goal.TypeCode).equals('' + expectedTypeCode);",
+											"    pm.expect(jsonRes.Data.Goal.TypeName).equals(expectedTypeName);",
+											"    pm.expect(jsonRes.Data.Goal.GoalAchieved).equals(expectedGoalAchieved);",
+											"    pm.expect(jsonRes.Data.Goal.GoalAbandoned).equals(expectedGoalAbandoned);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var userId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"pm.environment.set(\"GOAL_PATIENTUSERID\", userId);\r",
+											"pm.environment.set(\"GOAL_CAREPLANID\", 1);\r",
+											"pm.environment.set(\"GOAL_TYPECODE\", 1);\r",
+											"pm.environment.set(\"GOAL_TYPENAME\", \"Name\");\r",
+											"pm.environment.set(\"GOAL_GOALACHIEVED\", true);\r",
+											"pm.environment.set(\"GOAL_GOALABANDONED\",false);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"0188cf7b-d281-4070-92b9-808fbaac8f2d\",\n    \"ProviderEnrollmentId\": \"94\",\n    \"Provider\": \"AHA\",\n    \"ProviderCareplanName\": \"AHA-HF\",\n    \"ProviderCareplanCode\": \"HeartFailure\",\n    \"Title\": \"Lower systolic blood pressure\",\n    \"Sequence\": 0,\n    \"HealthPriorityId\": \"dc7a38da-5bd2-45a4-9bfd-9855bbe64d5b\",\n    \"GoalAchieved\": false,\n    \"GoalAbandoned\": false\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patient-goals",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-goals"
+									]
+								},
+								"description": "Create new Goal record"
+							},
+							"response": []
+						},
+						{
+							"name": "Get selected goals by patient user id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/patient-goals/get-for-patient/0188cf7b-d281-4070-92b9-808fbaac8f2d",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patient-goals",
+										"get-for-patient",
+										"0188cf7b-d281-4070-92b9-808fbaac8f2d"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Action Plan",
+					"item": [
+						{
+							"name": "Get action plans by goal id - AHA Action plans",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/goal-action-plans/get-by-goal/ce6eafcc-8878-4991-a61f-6f9d32b345e2",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"goal-action-plans",
+										"get-by-goal",
+										"ce6eafcc-8878-4991-a61f-6f9d32b345e2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create action plan",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PatientUserId\": \"0188cf7b-d281-4070-92b9-808fbaac8f2d\",\n    \"Provider\": \"AHA\",\n    \"Source\": \"Self\",\n    \"ProviderEnrollmentId\": \"94\",\n    \"ProviderCareplanCode\": \"HeartFailure\",\n    \"ProviderCareplanName\": \"AHA-HF\",\n    \"GoalId\": \"ce6eafcc-8878-4991-a61f-6f9d32b345e2\",\n    \"Title\": \"Monitor blood pressure on regular basis\",\n    \"ScheduledEndDate\": \"2022-01-30\"\n\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/goal-action-plans",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"goal-action-plans"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get selected action plans by patient user id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/goal-action-plans/0188cf7b-d281-4070-92b9-808fbaac8f2d",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"goal-action-plans",
+										"0188cf7b-d281-4070-92b9-808fbaac8f2d"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Enrollment",
+					"item": [
+						{
+							"name": "Token generation",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"grant_type\": \"client_credentials\",\n    \"client_id\": \"REANFOUNDATION\",\n    \"client_secret\": \"bf4a35df-0b12-43fc-9fb2-157e064efef3\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://careplans-api-stg.heartblr.org/thirdparty/v1/token",
+									"protocol": "https",
+									"host": [
+										"careplans-api-stg",
+										"heartblr",
+										"org"
+									],
+									"path": [
+										"thirdparty",
+										"v1",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Enrollment to careplan - RHG",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"PlanCode\": \"HeartFailure\",\n    \"PlanName\": \"AHA-HF\",\n    \"Provider\": \"AHA\",\n    \"StartDate\": \"2022-01-29\",\n    \"EndDate\": \"2022-01-30\"\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/care-plans/0188cf7b-d281-4070-92b9-808fbaac8f2d/enroll",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"care-plans",
+										"0188cf7b-d281-4070-92b9-808fbaac8f2d",
+										"enroll"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
 		}
 	]
 }

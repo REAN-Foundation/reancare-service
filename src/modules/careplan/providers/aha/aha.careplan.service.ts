@@ -15,14 +15,25 @@ import {
     SAssessmentTemplate,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AhaCareplanServiceHelper } from "./aha.careplan.service.helper";
+import { TimeHelper } from "../../../../common/time.helper";
+import { DateStringFormat } from "../../../../domain.types/miscellaneous/time.types";
+import { ActionPlanDto } from "../../../../domain.types/goal.action.plan/goal.action.plan.dto";
+import { HealthPriorityType } from "../../../../domain.types/health.priority.type/health.priority.types";
+import { GoalDto } from "../../../../domain.types/patient/goal/goal.dto";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class AhaCareplanService implements ICareplanService {
 
+    private ActivityCode = '9999';
+
     public providerName(): string {
         return "AHA";
+    }
+
+    private getActivityCode(): string {
+        return this.ActivityCode;
     }
 
     public init = async (): Promise<boolean> => {
@@ -347,7 +358,152 @@ export class AhaCareplanService implements ICareplanService {
         return await ahaServiceHelper.convertToAssessmentTemplate(activity);
     }
 
-    //#region Privates
+    updateAssessmentActivity = async(
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string,
+        providerActionId: string,
+        scheduledAt: Date,
+        sequence: number,
+        updates: any): Promise<CareplanActivity> => {
+        try {
+
+            const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+
+            var scheduledDate = TimeHelper.getDateString(scheduledAt, DateStringFormat.YYYY_MM_DD);
+            var queryParam = `scheduledAt=${scheduledDate}&sequence=${sequence}`;
+
+            var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities/${providerActionId}?${queryParam}`;
+
+            Logger.instance().log(`URL: ${JSON.stringify(url)}`);
+
+            var updateData = {
+                completedAt : Helper.formatDate(updates.completedAt),
+                status      : updates.status,
+                items       : updates.items
+            };
+
+            var response = await needle("patch", url, updateData, this.getHeaderOptions());
+
+            if (response.statusCode !== 200) {
+                Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+                Logger.instance().error('Unable to fetch details for given artifact id!', response.statusCode, null);
+                throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
+            }
+
+            Logger.instance().log(`response body for activity details: ${JSON.stringify(response.body.data.assessment)}`);
+            var assessment = response.body.data.assessment;
+
+            var entity: CareplanActivity = {
+                Provider         : this.providerName(),
+                ProviderActionId : assessment.code,
+                Title            : assessment.title,
+            };
+
+            return entity;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    getGoals = async (
+        patientUserId: string,
+        enrollmentId: string,
+        category: string
+    ): Promise<GoalDto[]> => {
+        try {
+        
+            var activityCode = this.getActivityCode();
+            for (const key in HealthPriorityType) {
+                if (HealthPriorityType[key] === category) {
+                    var categoryCode = key;
+                }
+            }
+
+            const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${activityCode}?categories=${categoryCode}&pageSize=500`;
+            
+            var response = await needle("get", url, this.getHeaderOptions());
+    
+            if (response.statusCode !== 200) {
+                Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+                Logger.instance().error('Unable to fetch goals for given enrollment id!', response.statusCode, null);
+                throw new ApiError(500, "Careplan service error: " + response.body.error.message);
+            }
+    
+            Logger.instance().log(`response body for goals: ${JSON.stringify(response.body.data.goals.length)}`);
+            var goals = response.body.data.goals;
+            var goalEntities: GoalDto[] = [];
+            goals.forEach(goal => {
+                var entity: GoalDto = {
+                    Provider         : this.providerName(),
+                    Title            : goal.name,
+                    ProviderGoalCode : goal.code,
+                    Sequence         : goal.sequence,
+
+                };
+                goalEntities.push(entity);
+            });
+
+            return goalEntities;
+    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    getActionPlans = async (
+        patientUserId: string,
+        enrollmentId: string,
+        category: string
+    ): Promise<ActionPlanDto[]> => {
+        try {
+        
+            var activityCode = this.getActivityCode();
+
+            Logger.instance().log(`Category :: ${JSON.stringify(category)}`);
+
+            for (const key in HealthPriorityType) {
+                if (HealthPriorityType[key] === category) {
+                    var categoryCode = key;
+                }
+            }
+
+            Logger.instance().log(`Category code:: ${JSON.stringify(categoryCode)}`);
+
+            const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+            const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/actionPlans/${activityCode}?categories=${categoryCode}&pageSize=500`;
+            
+            var response = await needle("get", url, this.getHeaderOptions());
+    
+            if (response.statusCode !== 200) {
+                Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+                Logger.instance().error('Unable to fetch action plans for given enrollment id!', response.statusCode, null);
+                throw new ApiError(500, "Careplan service error: " + response.body.error.message);
+            }
+    
+            Logger.instance().log(`response body for action plans: ${JSON.stringify(response.body.data.actionPlans.length)}`);
+            var actionPlans = response.body.data.actionPlans;
+            var actionPlanEntities: ActionPlanDto[] = [];
+            actionPlans.forEach(actionPlan => {
+                var entity: ActionPlanDto = {
+                    Provider : this.providerName(),
+                    Title    : actionPlan.name,
+
+                };
+                actionPlanEntities.push(entity);
+            });
+
+            return actionPlanEntities;
+    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
     private getHeaderOptions() {
         var headers = {

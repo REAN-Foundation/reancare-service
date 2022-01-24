@@ -13,6 +13,10 @@ import CareplanActivity from "../../../models/careplan/careplan.activity.model";
 import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityMapper } from '../../../mappers/careplan/artifact.mapper';
 import { Op } from 'sequelize';
+import { AssessmentItem } from '../../../../../modules/careplan/domain.types/activity/assessment.item';
+import { HealthPriorityDto } from '../../../../../domain.types/health.priority/health.priority.dto';
+import HealthPriority from '../../models/health.priority/health.priority.model';
+import { HealthPriorityMapper } from '../../mappers/health.priority/health.priority.mapper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -215,16 +219,8 @@ export class CareplanRepo implements ICareplanRepo {
                 const dto = CareplanActivityMapper.toDto(activity);
                 dtos.push(dto);
             }
-
-            // const searchResults = {
-            //     TotalCount     : foundResults.count,
-            //     RetrievedCount : dtos.length,
-            //     Order          : order === 'ASC' ? 'ascending' : 'descending',
-            //     OrderedBy      : orderByColum,
-            //     Items          : dtos,
-            // };
-
             return dtos;
+
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -327,6 +323,36 @@ export class CareplanRepo implements ICareplanRepo {
                 }
             });
             return record !== null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    }
+
+    updateAssessmentActivity = async (activityId: uuid, status: string,
+        finishedAt: Date, items: AssessmentItem [] ): Promise<CareplanActivityDto> => {
+        try {
+            const record = await CareplanArtifact.findByPk(activityId);
+
+            if (status != null) {
+                record.Status = status;
+            }
+
+            if (finishedAt != null) {
+                record.CompletedAt = finishedAt;
+            }
+
+            record.Items = JSON.stringify(items);
+            
+            return CareplanArtifactMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    }
+
+    getPriority = async (id: uuid): Promise<HealthPriorityDto> => {
+        try {
+            const record = await HealthPriority.findByPk(id);
+            return HealthPriorityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }

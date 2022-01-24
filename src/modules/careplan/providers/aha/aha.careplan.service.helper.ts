@@ -165,27 +165,27 @@ export class AhaCareplanServiceHelper {
 
                 condition.OperatorType = ConditionOperatorType.EqualTo;
 
-                condition.FirstOperandName = 'ReceivedAnswer';
-                condition.FirstOperandValue = null;
-                condition.FirstOperandDataType = ConditionOperandDataType.Integer;
+                condition.FirstOperand.Name = 'ReceivedAnswer';
+                condition.FirstOperand.Value = null;
+                condition.FirstOperand.DataType = ConditionOperandDataType.Integer;
 
                 var optionSequence: number = this.getOptionSequenceForAnswer(node.Options, rule.value);
-                condition.SecondOperandName = 'ExpectedAnswer';
-                condition.SecondOperandValue = optionSequence;
-                condition.SecondOperandDataType = ConditionOperandDataType.Integer;
+                condition.SecondOperand.Name = 'ExpectedAnswer';
+                condition.SecondOperand.Value = optionSequence;
+                condition.SecondOperand.DataType = ConditionOperandDataType.Integer;
             }
             else if (rule.operator === 'in') {
 
                 condition.OperatorType = ConditionOperatorType.In;
 
-                condition.FirstOperandName = 'ReceivedAnswer';
-                condition.FirstOperandValue = null;
-                condition.FirstOperandDataType = ConditionOperandDataType.Integer;
+                condition.FirstOperand.Name = 'ReceivedAnswer';
+                condition.FirstOperand.Value = null;
+                condition.FirstOperand.DataType = ConditionOperandDataType.Integer;
 
                 var arr = this.getOptionSequenceArrayForAnswer(node.Options, rule.value);
-                condition.SecondOperandName = 'ExpectedAnswer';
-                condition.SecondOperandValue = arr;
-                condition.SecondOperandDataType = ConditionOperandDataType.Array;
+                condition.SecondOperand.Name = 'ExpectedAnswer';
+                condition.SecondOperand.Value = arr;
+                condition.SecondOperand.DataType = ConditionOperandDataType.Array;
             }
             path.Condition = condition;
         }

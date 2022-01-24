@@ -20,6 +20,7 @@ import {
 } from '../../../../domain.types/clinical/assessment/assessment.answer.dto';
 
 export interface IAssessmentHelperRepo {
+    getChildrenConditions(id: string): SAssessmentPathCondition[] | PromiseLike<SAssessmentPathCondition[]>;
     
     getNodeListChildren(nodeId: string): Promise<SAssessmentNode[]>;
 

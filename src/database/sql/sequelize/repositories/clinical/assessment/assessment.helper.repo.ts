@@ -40,7 +40,7 @@ import {
 ///////////////////////////////////////////////////////////////////////
 
 export class AssessmentHelperRepo implements IAssessmentHelperRepo {
-    
+
     addTemplate = async (t: SAssessmentTemplate): Promise<AssessmentTemplateDto> => {
         try {
             const existing = await AssessmentTemplate.findOne({
@@ -225,6 +225,22 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             throw new ApiError(500, error.message);
         }
     }
+    
+    public getChildrenConditions = async (conditionId: uuid): Promise<SAssessmentPathCondition[]> => {
+        try {
+            var conditions = await AssessmentPathCondition.findAll({
+                where : {
+                    ParentConditionId : conditionId
+                }
+            });
+            return conditions.map(x => {
+                return AssessmentHelperMapper.toConditionDto(x);
+            });
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
     private async populateNodeDetails(
         node: AssessmentNode
@@ -380,16 +396,16 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         parentConditionId: any
     ) {
         const firstOperandValue = this.getOperandValueString(
-            sCondition.FirstOperandValue,
-            sCondition.FirstOperandDataType
+            sCondition.FirstOperand.Value,
+            sCondition.FirstOperand.DataType
         );
         const secondOperandValue = this.getOperandValueString(
-            sCondition.SecondOperandValue,
-            sCondition.SecondOperandDataType
+            sCondition.SecondOperand.Value,
+            sCondition.SecondOperand.DataType
         );
         const thirdOperandValue = this.getOperandValueString(
-            sCondition.ThirdOperandValue,
-            sCondition.ThirdOperandDataType
+            sCondition.ThirdOperand.Value,
+            sCondition.ThirdOperand.DataType
         );
 
         var conditionEntity = {
@@ -400,15 +416,15 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             CompositionType       : sCondition.CompositionType,
             ParentConditionId     : parentConditionId,
             OperatorType          : sCondition.OperatorType,
-            FirstOperandName      : sCondition.FirstOperandName,
+            FirstOperandName      : sCondition.FirstOperand.Name,
             FirstOperandValue     : firstOperandValue,
-            FirstOperandDataType  : sCondition.FirstOperandDataType,
-            SecondOperandName     : sCondition.SecondOperandName,
+            FirstOperandDataType  : sCondition.FirstOperand.DataType,
+            SecondOperandName     : sCondition.SecondOperand.Name,
             SecondOperandValue    : secondOperandValue,
-            SecondOperandDataType : sCondition.SecondOperandDataType,
-            ThirdOperandName      : sCondition.ThirdOperandName,
+            SecondOperandDataType : sCondition.SecondOperand.DataType,
+            ThirdOperandName      : sCondition.ThirdOperand.Name,
             ThirdOperandValue     : thirdOperandValue,
-            ThirdOperandDataType  : sCondition.ThirdOperandDataType,
+            ThirdOperandDataType  : sCondition.ThirdOperand.DataType,
         };
 
         const condition = await AssessmentPathCondition.create(conditionEntity);

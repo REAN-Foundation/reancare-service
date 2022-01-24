@@ -33,17 +33,22 @@ import {
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ConditionProcessor } from './condition.processor';
+import { Loader } from '../../../startup/loader';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class AssessmentService {
     
+    _conditionProcessor: ConditionProcessor = null;
+
     constructor(
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
-        @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
-        @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo
-    ) {}
+        @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
+        @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo
+    ) {
+        this._conditionProcessor = Loader.container.resolve(ConditionProcessor);
+    }
 
     create = async (assessmentDomainModel: AssessmentDomainModel): Promise<AssessmentDto> => {
         return await this._assessmentRepo.create(assessmentDomainModel);
@@ -288,7 +293,7 @@ export class AssessmentService {
                 if (!condition) {
                     continue;
                 }
-                const resolved = await ConditionProcessor.processCondition(condition, chosenOptionSequence);
+                const resolved = await this._conditionProcessor.processCondition(condition, chosenOptionSequence);
                 if (resolved === true) {
                     chosenPath = path;
                     break;
@@ -349,7 +354,7 @@ export class AssessmentService {
                 if (!condition) {
                     continue;
                 }
-                const resolved = await ConditionProcessor.processCondition(condition, chosenOptionSequences);
+                const resolved = await this._conditionProcessor.processCondition(condition, chosenOptionSequences);
                 if (resolved === true) {
                     chosenPath = path;
                     break;

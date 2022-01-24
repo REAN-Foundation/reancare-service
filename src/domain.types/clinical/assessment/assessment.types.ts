@@ -288,6 +288,12 @@ export class SAssessmentQueryResponse {
 
 }
 
+export interface ConditionOperand {
+    DataType: ConditionOperandDataType;
+    Name    : string;
+    Value   : string | number | boolean | any[] | null;
+}
+
 export class SAssessmentPathCondition {
 
     id?        : uuid;
@@ -301,17 +307,21 @@ export class SAssessmentPathCondition {
     ParentConditionId   : uuid;
     OperatorType        : ConditionOperatorType;
 
-    FirstOperandName    : string;
-    FirstOperandValue   : string | number | boolean | any[] | null;
-    FirstOperandDataType: ConditionOperandDataType;
+    FirstOperand: ConditionOperand;
+    SecondOperand?: ConditionOperand;
+    ThirdOperand?: ConditionOperand;
+    
+    // FirstOperandName    : string;
+    // FirstOperandValue   : string | number | boolean | any[] | null;
+    // FirstOperandDataType: ConditionOperandDataType;
 
-    SecondOperandName    : string;
-    SecondOperandValue   : string | number | boolean | any[] | null;
-    SecondOperandDataType: ConditionOperandDataType;
+    // SecondOperandName    : string;
+    // SecondOperandValue   : string | number | boolean | any[] | null;
+    // SecondOperandDataType: ConditionOperandDataType;
 
-    ThirdOperandName    : string;
-    ThirdOperandValue   : string | number | boolean | any[] | null;
-    ThirdOperandDataType: ConditionOperandDataType;
+    // ThirdOperandName    : string;
+    // ThirdOperandValue   : string | number | boolean | any[] | null;
+    // ThirdOperandDataType: ConditionOperandDataType;
 
     Children: SAssessmentPathCondition[];
 

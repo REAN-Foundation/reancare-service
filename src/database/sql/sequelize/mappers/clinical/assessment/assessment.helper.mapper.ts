@@ -49,17 +49,17 @@ export class AssessmentHelperMapper {
 
         conditionDto.IsCompositeCondition = condition.IsCompositeCondition;
         conditionDto.CompositionType = condition.CompositionType as ConditionCompositionType;
-        conditionDto.FirstOperandDataType = condition.FirstOperandDataType as ConditionOperandDataType;
-        conditionDto.FirstOperandName = condition.FirstOperandName;
-        conditionDto.FirstOperandValue = condition.FirstOperandValue;
+        conditionDto.FirstOperand.DataType = condition.FirstOperandDataType as ConditionOperandDataType;
+        conditionDto.FirstOperand.Name = condition.FirstOperandName;
+        conditionDto.FirstOperand.Value = condition.FirstOperandValue;
 
-        conditionDto.SecondOperandDataType = condition.SecondOperandDataType as ConditionOperandDataType;
-        conditionDto.SecondOperandName = condition.SecondOperandName;
-        conditionDto.SecondOperandValue = condition.SecondOperandValue;
+        conditionDto.SecondOperand.DataType = condition.SecondOperandDataType as ConditionOperandDataType;
+        conditionDto.SecondOperand.Name = condition.SecondOperandName;
+        conditionDto.SecondOperand.Value = condition.SecondOperandValue;
 
-        conditionDto.ThirdOperandDataType = condition.ThirdOperandDataType as ConditionOperandDataType;
-        conditionDto.ThirdOperandName = condition.ThirdOperandName;
-        conditionDto.ThirdOperandValue = condition.ThirdOperandValue;
+        conditionDto.ThirdOperand.DataType = condition.ThirdOperandDataType as ConditionOperandDataType;
+        conditionDto.ThirdOperand.Name = condition.ThirdOperandName;
+        conditionDto.ThirdOperand.Value = condition.ThirdOperandValue;
 
         return conditionDto;
     }

@@ -17,7 +17,7 @@ import {
     MultipleChoiceQueryAnswer,
     SingleChoiceQueryAnswer,
     TextQueryAnswer,
-} from '../../../../domain.types/clinical/assessment/assessment.answer.dto';
+} from '../../../../domain.types/clinical/assessment/assessment.types';
 
 export interface IAssessmentHelperRepo {
     getChildrenConditions(id: string): SAssessmentPathCondition[] | PromiseLike<SAssessmentPathCondition[]>;

@@ -1,19 +1,14 @@
-import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import {
-    SingleChoiceQueryAnswer,
-    MultipleChoiceQueryAnswer,
-    MessageAnswer,
-    TextQueryAnswer,
-    IntegerQueryAnswer,
-    FloatQueryAnswer,
-    BiometricQueryAnswer,
-    BiometricsEntry,
-} from '../../../../../../domain.types/clinical/assessment/assessment.answer.dto';
-import {
+    AssessmentBiometrics,
     AssessmentNodeType,
+    BiometricQueryAnswer,
     ConditionCompositionType,
     ConditionOperandDataType,
     ConditionOperatorType,
+    FloatQueryAnswer,
+    IntegerQueryAnswer,
+    MessageAnswer,
+    MultipleChoiceQueryAnswer,
     QueryResponseType,
     SAssessmentListNode,
     SAssessmentMessageNode,
@@ -22,8 +17,9 @@ import {
     SAssessmentPathCondition,
     SAssessmentQueryOption,
     SAssessmentQueryResponse,
-    SAssessmentQuestionNode,
+    SAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import AssessmentNode from '../../../models/clinical/assessment/assessment.node.model';
 import AssessmentNodePath from '../../../models/clinical/assessment/assessment.node.path.model';
 import AssessmentPathCondition from '../../../models/clinical/assessment/assessment.path.condition.model';
@@ -236,7 +232,7 @@ export class AssessmentHelperMapper {
     static toBiometricsAnswerDto(
         assessmentId: uuid,
         node: SAssessmentQuestionNode,
-        values: BiometricsEntry[]
+        values: AssessmentBiometrics[]
     ): BiometricQueryAnswer {
         var dto: BiometricQueryAnswer = {
             AssessmentId    : assessmentId,

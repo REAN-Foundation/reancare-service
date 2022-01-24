@@ -1,5 +1,13 @@
 import { uuid } from "../../miscellaneous/system.types";
-import { BiometricQueryAnswer, FloatQueryAnswer, IntegerQueryAnswer, MessageAnswer, MultipleChoiceQueryAnswer, SingleChoiceQueryAnswer, TextQueryAnswer } from "./assessment.answer.dto";
+import {
+    BiometricQueryAnswer,
+    FloatQueryAnswer,
+    IntegerQueryAnswer,
+    MessageAnswer,
+    MultipleChoiceQueryAnswer,
+    SingleChoiceQueryAnswer,
+    TextQueryAnswer,
+} from './assessment.types';
 import { AssessmentQueryDto } from "./assessment.query.dto";
 
 export interface AssessmentQuestionResponseDto {

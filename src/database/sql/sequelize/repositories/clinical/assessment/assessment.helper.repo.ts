@@ -35,7 +35,7 @@ import {
     IntegerQueryAnswer,
     FloatQueryAnswer,
     BiometricQueryAnswer,
-} from '../../../../../../domain.types/clinical/assessment/assessment.answer.dto';
+} from '../../../../../../domain.types/clinical/assessment/assessment.types';
 
 ///////////////////////////////////////////////////////////////////////
 

@@ -106,24 +106,36 @@ export class AssessmentService {
         
         //Convert the answer to the format which we can persist
         if (responseType === QueryResponseType.SingleChoiceSelection) {
-            const res: AssessmentQuestionResponseDto =
-                await this.handleSingleChoiceSelectionAnswer(assessment, questionNode, answerModel);
-            return res;
+            return await this.handleSingleChoiceSelectionAnswer(assessment, questionNode, answerModel);
         }
 
         return null;
     }
     
-    getQuestionById = async (id: uuid, questionId: uuid): Promise<AssessmentQueryDto> => {
-        throw new Error('Method not implemented.');
+    getQuestionById = async (assessmentId: uuid, questionId: uuid): Promise<AssessmentQueryDto | string> => {
+        const questionNode = await this._assessmentHelperRepo.getNodeById(questionId);
+        if (questionNode.NodeType !== AssessmentNodeType.Question &&
+            questionNode.NodeType !== AssessmentNodeType.Message) {
+            return `The node with id ${questionId} is not a question!`;
+        }
+        const assessment = await this._assessmentRepo.getById(assessmentId);
+        if (questionNode.NodeType !== AssessmentNodeType.Question) {
+            return this.questionNodeAsQueryDto(questionNode, assessment);
+        }
+        else {
+            return this.messageNodeAsQueryDto(questionNode, assessment);
+        }
     }
 
-    getNextQuestion = async (id: uuid): Promise<AssessmentQueryDto> => {
-        throw new Error('Method not implemented.');
+    getNextQuestion = async (assessmentId: uuid): Promise<AssessmentQueryDto> => {
+        const assessment = await this._assessmentRepo.getById(assessmentId);
+        const currentNodeId = assessment.CurrentNodeId;
+        return this.traverse(assessment, currentNodeId);
     }
 
-    getAssessmentStatus = async (id: uuid): Promise<ProgressStatus> => {
-        throw new Error('Method not implemented.');
+    getAssessmentStatus = async (assessmentId: uuid): Promise<ProgressStatus> => {
+        const assessment = await this._assessmentRepo.getById(assessmentId);
+        return assessment.Status as ProgressStatus;
     }
 
     private async traverseUpstream(currentNode: SAssessmentNode): Promise<SAssessmentNode> {
@@ -328,7 +340,7 @@ export class AssessmentService {
         return query;
     }
 
-    private messageNodeAsQueryDto(node: SAssessmentMessageNode, assessment: AssessmentDto) {
+    private messageNodeAsQueryDto(node: SAssessmentNode, assessment: AssessmentDto) {
         const messageNode = node as SAssessmentMessageNode;
         const query: AssessmentQueryDto = {
             NodeId               : messageNode.id,

@@ -30,6 +30,7 @@ export class AssessmentMapper {
             FinishedAt             : assessment.FinishedAt,
             ParentActivityId       : assessment.ParentActivityId,
             UserTaskId             : assessment.UserTaskId,
+            CurrentNodeId          : assessment.CurrentNodeId,
         };
         
         return dto;

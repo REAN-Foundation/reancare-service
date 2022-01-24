@@ -15,6 +15,7 @@ export interface AssessmentDto {
     Status                 : ProgressStatus;
     ParentActivityId?      : uuid;
     UserTaskId?            : uuid;
+    CurrentNodeId?         : uuid;
     StartedAt?             : Date;
     FinishedAt?            : Date;
     CreatedAt              : Date;

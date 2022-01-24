@@ -238,7 +238,7 @@ export class AssessmentController extends BaseController{
             }
 
             const answerResponse: AssessmentQuestionResponseDto =
-                await this._service.answerQuestion(questionId, answerModel);
+                await this._service.answerQuestion(answerModel);
 
             ResponseHandler.success(request, response, 'Assessment question answered successfully!', 200, {
                 AnswerResponse : answerResponse,

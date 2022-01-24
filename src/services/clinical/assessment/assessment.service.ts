@@ -1,6 +1,5 @@
-import { BiometricQueryAnswer } from "src/domain.types/clinical/assessment/assessment.answer.dto";
-import { SingleChoiceQueryAnswer } from "src/domain.types/clinical/assessment/assessment.answer.dto";
-import { SingleChoiceQueryAnswer } from "src/domain.types/clinical/assessment/assessment.answer.dto";
+import { BiometricQueryAnswer } from "../../../domain.types/clinical/assessment/assessment.answer.dto";
+import { SingleChoiceQueryAnswer } from "../../../domain.types/clinical/assessment/assessment.answer.dto";
 import { inject, injectable } from "tsyringe";
 import { ApiError } from "../../../common/api.error";
 import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";

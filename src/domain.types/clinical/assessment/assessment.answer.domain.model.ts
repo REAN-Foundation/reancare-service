@@ -12,5 +12,5 @@ export interface AssessmentAnswerDomainModel {
     FloatArray?     : number[];
     IntegerArray?   : number[];
     ObjectArray?    : any[];
-    BiometricsArray?: AssessmentBiometrics[];
+    Biometrics?     : AssessmentBiometrics[];
 }

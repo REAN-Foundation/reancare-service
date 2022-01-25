@@ -190,7 +190,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"ClientName\": \"My health app\",\r\n    \"Password\": \"{{API_CLIENT_PASSWORD}}\",\r\n    \"Phone\": \"+91 9876543219\",\r\n    \"Email\": \"dev@excell-medicos.com\"\r\n}",
+							"raw": "{\r\n    \"ClientName\": \"Rean Bot Wrapper\",\r\n    \"Password\": \"{{API_CLIENT_PASSWORD}}\",\r\n    \"Phone\": \"+91 9876543219\",\r\n    \"Email\": \"dev@excell-medicos.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -6298,7 +6298,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"ContactPerson\": {\r\n        \"Prefix\": \"Mrs.\",\r\n        \"FirstName\": \"Abc\",\r\n        \"LastName\": \"Xyz\",\r\n        \"Phone\": \"+91-1111243334\"\r\n    },\r\n    \"ContactRelation\": \"Patient family member\",\r\n    \"Address\": {\r\n        \"AddressLine\": \"GSG Schlesische Straße, Gebäude 3, Schlesische Straße 27\",\r\n        \"City\": \"Berlin\",\r\n        \"Country\": \"Germany\",\r\n        \"PostalCode\": \"10997\"\r\n    },\r\n    \"IsAvailableForEmergency\": true,\r\n    \"TimeOfAvailability\": \"10:00 AM - 5:00 PM\",\r\n    \"Description\": \"Some description here\",\r\n    \"AdditionalPhoneNumbers\": \"+91-3243243334\"\r\n}"
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"ContactPerson\": {\r\n        \"Prefix\": \"Mrs.\",\r\n        \"FirstName\": \"Abc\",\r\n        \"LastName\": \"Xyz\",\r\n        \"Phone\": \"+91-9633699633\",\r\n        \"Email\": \"kiran.kharade@reanfoundation.org\"\r\n    },\r\n    \"ContactRelation\": \"Patient family member\",\r\n    \"Address\": {\r\n        \"AddressLine\": \"GSG Schlesische Straße, Gebäude 3, Schlesische Straße 27\",\r\n        \"City\": \"Berlin\",\r\n        \"Country\": \"Germany\",\r\n        \"PostalCode\": \"10997\"\r\n    },\r\n    \"IsAvailableForEmergency\": true,\r\n    \"TimeOfAvailability\": \"10:00 AM - 5:00 PM\",\r\n    \"Description\": \"Some description here\",\r\n    \"AdditionalPhoneNumbers\": \"+91-3243243334\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patient-emergency-contacts",
@@ -8031,6 +8031,46 @@
 						},
 						{
 							"name": "Enroll to care plan",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    var careplanId = jsonRes.Data.Enrollment.id;\r",
+											"    pm.environment.set(\"CAREPLAN_ID\", careplanId);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient is enrolled to careplan\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Enrollment');\r",
+											"    pm.expect(jsonRes.Data.Enrollment).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Enrollment).to.have.property('PatientUserId');\r",
+											"    pm.expect(jsonRes.Data.Enrollment).to.have.property('EnrollmentId');\r",
+											"    pm.expect(jsonRes.Data.Enrollment).to.have.property('ParticipantId');\r",
+											"    pm.expect(jsonRes.Data.Enrollment).to.have.property('PlanCode');\r",
+											"    pm.expect(jsonRes.Data.Enrollment).to.have.property('Provider');\r",
+											"    pm.expect(jsonRes.Data.Enrollment).to.have.property('PlanName');\r",
+											"    pm.expect(jsonRes.Data.Enrollment).to.have.property('StartAt');\r",
+											"    pm.expect(jsonRes.Data.Enrollment).to.have.property('EndAt');\r",
+											"    pm.expect(jsonRes.Data.Enrollment).to.have.property('IsActive');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [
@@ -8052,17 +8092,103 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-01-10\"\r\n}"
+									"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"Core\",\r\n    \"StartDate\": \"2022-01-25\"\r\n}"
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/care-plans/{{PATIENT_USER_ID}}/enroll",
+									"raw": "{{BASE_URL}}/care-plans/patients/{{PATIENT_USER_ID}}/enroll",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"care-plans",
+										"patients",
 										"{{PATIENT_USER_ID}}",
 										"enroll"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all careplan enrollments for patient",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-01-11\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/care-plans/patients/{{PATIENT_USER_ID}}/enrollments",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"care-plans",
+										"patients",
+										"{{PATIENT_USER_ID}}",
+										"enrollments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch careplan tasks",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-01-11\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/care-plans/{{CAREPLAN_ID}}/fetch-tasks",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"care-plans",
+										"{{CAREPLAN_ID}}",
+										"fetch-tasks"
 									]
 								}
 							},
@@ -8089,8 +8215,7 @@
 											"        }",
 											"    }",
 											"    if (filtered.length > 0) {",
-											"        console.log(filtered.length.toString());",
-											"        var task = filtered[0];",
+											"        var task = filtered[Math.floor(Math.random() * filtered.length)];",
 											"        var dt = task.ScheduledStartTime.split('T')[0];",
 											"        pm.environment.set('CAREPLAN_ASSESSMENT_TASK_ID', task.id);",
 											"        pm.environment.set('CAREPLAN_ASSESSMENT_TASK_START_TIME', dt);",
@@ -8139,7 +8264,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/user-tasks/search?actionType=careplan&userId={{PATIENT_USER_ID}}&orderBy=ScheduledStartTime&order=ascending",
+									"raw": "{{BASE_URL}}/user-tasks/search?userId={{PATIENT_USER_ID}}&category=Assessment&itemsPerPage=175",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -8155,7 +8280,8 @@
 										},
 										{
 											"key": "actionType",
-											"value": "careplan"
+											"value": "careplan",
+											"disabled": true
 										},
 										{
 											"key": "status",
@@ -8174,8 +8300,7 @@
 										},
 										{
 											"key": "category",
-											"value": "Medication",
-											"disabled": true
+											"value": "Assessment"
 										},
 										{
 											"key": "dateFrom",
@@ -8199,11 +8324,13 @@
 										},
 										{
 											"key": "orderBy",
-											"value": "ScheduledStartTime"
+											"value": "ScheduledStartTime",
+											"disabled": true
 										},
 										{
 											"key": "order",
-											"value": "ascending"
+											"value": "ascending",
+											"disabled": true
 										},
 										{
 											"key": "pageIndex",
@@ -8212,8 +8339,7 @@
 										},
 										{
 											"key": "itemsPerPage",
-											"value": "25",
-											"disabled": true
+											"value": "175"
 										}
 									]
 								},
@@ -8232,7 +8358,7 @@
 											"",
 											"try {",
 											"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
-											"    var assessmentId = jsonRes.Data.UserTask.ActionId;",
+											"    var assessmentId = jsonRes.Data.UserTask.Action.Assessment.id;",
 											"    pm.environment.set(\"CAREPLAN_ASSESSMENT_ID\", assessmentId);",
 											"}",
 											"catch (error) {",
@@ -8303,23 +8429,166 @@
 							"response": []
 						},
 						{
-							"name": "Start assessment",
+							"name": "Get assessment by id",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
 										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"USER_TASK_ID\", jsonRes.Data.UserTask.id);",
+											"    var assessmentId = jsonRes.Data.UserTask.Action.Assessment.id;",
+											"    pm.environment.set(\"CAREPLAN_ASSESSMENT_ID\", assessmentId);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
 											"pm.test(\"Request is successfull\", function () {",
 											"    pm.response.to.have.status(200);",
 											"    var jsonRes = pm.response.json();",
 											"    pm.expect(jsonRes.Status).to.eql('success');",
 											"});",
 											"",
-											"pm.test(\"Assessment is returned\", function () {",
+											"pm.test(\"User Task is created\", function () {",
+											"",
 											"    var jsonRes = pm.response.json();",
-											"    pm.expect(jsonRes.Data).to.have.property('Started');",
-											"    pm.expect(jsonRes.Data.Started).equals(true);",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+											"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
+											"",
+											"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take a dog for walk\");",
 											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"assessments",
+										"{{CAREPLAN_ASSESSMENT_ID}}"
+									]
+								},
+								"description": "Gets list of User Task records"
+							},
+							"response": []
+						},
+						{
+							"name": "Start assessment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"ASSESSMENT_QUESTION_ID\", jsonRes.Data.Next.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Assessment is started and next question is returned\", function () {",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Next');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}/start",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"assessments",
+										"{{CAREPLAN_ASSESSMENT_ID}}",
+										"start"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Try to start assessment again",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is unsuccessfull\", function () {",
+											"    pm.response.to.have.status(400);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('failure');",
+											"});",
+											"",
 											"",
 											""
 										],
@@ -8356,6 +8625,435 @@
 										"assessments",
 										"{{CAREPLAN_ASSESSMENT_ID}}",
 										"start"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get next question",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"ASSESSMENT_QUESTION_ID\", jsonRes.Data.Next.id);",
+											"    pm.environment.set(\"ASSESSMENT_NEXT_QUESTION_ID\", jsonRes.Data.Next.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Assessment is returned\", function () {",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Next');",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}/questions/next",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"assessments",
+										"{{CAREPLAN_ASSESSMENT_ID}}",
+										"questions",
+										"next"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get question by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"ASSESSMENT_QUESTION_ID\", jsonRes.Data.Next.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Assessment is returned\", function () {",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('Question');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}/questions/{{ASSESSMENT_QUESTION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"assessments",
+										"{{CAREPLAN_ASSESSMENT_ID}}",
+										"questions",
+										"{{ASSESSMENT_QUESTION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Answer test question",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"ASSESSMENT_NEXT_QUESTION_ID\", jsonRes.Data.AnswerResponse.Next.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Assessment is returned\", function () {",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('AnswerResponse');",
+											"    pm.expect(jsonRes.Data.AnswerResponse).to.have.property('Next');",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"ResponseType\": \"Text\",\r\n    \"Answer\": \"5\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}/questions/{{ASSESSMENT_QUESTION_ID}}/answer",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"assessments",
+										"{{CAREPLAN_ASSESSMENT_ID}}",
+										"questions",
+										"{{ASSESSMENT_QUESTION_ID}}",
+										"answer"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Answer next question - Text value",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"ASSESSMENT_NEXT_QUESTION_ID\", jsonRes.Data.AnswerResponse.Next.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Assessment is returned\", function () {",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('AnswerResponse');",
+											"    pm.expect(jsonRes.Data.AnswerResponse).to.have.property('Next');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"ResponseType\": \"Text\",\r\n    \"Answer\": \"5\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}/questions/{{ASSESSMENT_NEXT_QUESTION_ID}}/answer",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"assessments",
+										"{{CAREPLAN_ASSESSMENT_ID}}",
+										"questions",
+										"{{ASSESSMENT_NEXT_QUESTION_ID}}",
+										"answer"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Answer next question - Single option type",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"ASSESSMENT_NEXT_QUESTION_ID\", jsonRes.Data.AnswerResponse.Next.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Assessment is returned\", function () {",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('AnswerResponse');",
+											"    pm.expect(jsonRes.Data.AnswerResponse).to.have.property('Next');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"ResponseType\": \"Single Choice Selection\",\r\n    \"Answer\": 2\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}/questions/{{ASSESSMENT_NEXT_QUESTION_ID}}/answer",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"assessments",
+										"{{CAREPLAN_ASSESSMENT_ID}}",
+										"questions",
+										"{{ASSESSMENT_NEXT_QUESTION_ID}}",
+										"answer"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Answer next question - Biometrics",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"ASSESSMENT_NEXT_QUESTION_ID\", jsonRes.Data.AnswerResponse.Next.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Assessment is returned\", function () {",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('AnswerResponse');",
+											"    pm.expect(jsonRes.Data.AnswerResponse).to.have.property('Next');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"ResponseType\": \"Biometrics\",\r\n    \"Answer\": [\r\n        {\r\n            \"BiometricsType\": \"Blood Glucose\",\r\n            \"Value\": {\r\n                \"BloodGlucose\": 98,\r\n                \"Unit\": \"mg|dL\",\r\n                \"RecordDate\": \"2021-09-02\"\r\n            }\r\n        },\r\n                {\r\n            \"BiometricsType\": \"Blood Oxygen Saturation\",\r\n            \"Value\": {\r\n                \"BloodOxygenSaturation\": 98,\r\n                \"Unit\": \"%\",\r\n                \"RecordDate\": \"2021-09-02\"\r\n            }\r\n        }\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}/questions/{{ASSESSMENT_NEXT_QUESTION_ID}}/answer",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"assessments",
+										"{{CAREPLAN_ASSESSMENT_ID}}",
+										"questions",
+										"{{ASSESSMENT_NEXT_QUESTION_ID}}",
+										"answer"
 									]
 								}
 							},

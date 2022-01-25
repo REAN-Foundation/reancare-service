@@ -90,7 +90,7 @@ export class AssessmentValidator extends BaseValidator {
         }
         else if (responseType === QueryResponseType.Biometrics) {
             await this.validateArray(request, 'Answer', Where.Body, true, false);
-            answerModel['BiometricsArray'] = request.body.Answer;
+            answerModel['Biometrics'] = request.body.Answer;
         }
 
         return answerModel;

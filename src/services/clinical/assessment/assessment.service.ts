@@ -415,7 +415,7 @@ export class AssessmentService {
         const answerDto = AssessmentHelperMapper.toBiometricsAnswerDto(
             assessment.id,
             questionNode,
-            answerModel.BiometricsArray
+            answerModel.Biometrics
         );
 
         await this._assessmentHelperRepo.createQueryResponse(answerDto);

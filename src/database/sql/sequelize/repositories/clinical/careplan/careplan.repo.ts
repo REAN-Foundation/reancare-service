@@ -310,7 +310,6 @@ export class CareplanRepo implements ICareplanRepo {
 
     activityExists = async (
         provider: string,
-        planCode: string,
         enrollmentId: string,
         providerActionId: string,
         sequence: number,
@@ -319,7 +318,6 @@ export class CareplanRepo implements ICareplanRepo {
             const record = await CareplanActivity.findOne({
                 where : {
                     Provider         : provider,
-                    PlanCode         : planCode,
                     EnrollmentId     : enrollmentId,
                     ProviderActionId : providerActionId,
                     Sequence         : sequence,

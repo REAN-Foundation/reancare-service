@@ -298,7 +298,21 @@
             "MedicalCondition.Delete",
             "Careplan.Enroll",
             "Careplan.GetPatientEnrollments",
-            "Careplan.FetchTasks"
+            "Careplan.FetchTasks",
+            "Assessment.Create",
+            "Assessment.GetById",
+            "Assessment.Search",
+            "Assessment.Update",
+            "Assessment.Delete",
+            "Assessment.StartAssessment",
+            "Assessment.GetNextQuestion",
+            "Assessment.GetQuestionById",
+            "Assessment.AnswerQuestion",
+            "AssessmentTemplate.Create",
+            "AssessmentTemplate.GetById",
+            "AssessmentTemplate.Search",
+            "AssessmentTemplate.Update",
+            "AssessmentTemplate.Delete"
         ]
     },
     {
@@ -542,7 +556,21 @@
             "DailyAssessment.Search",
             "Careplan.Enroll",
             "Careplan.GetPatientEnrollments",
-            "Careplan.FetchTasks"
+            "Careplan.FetchTasks",
+            "Assessment.Create",
+            "Assessment.GetById",
+            "Assessment.Search",
+            "Assessment.Update",
+            "Assessment.Delete",
+            "Assessment.StartAssessment",
+            "Assessment.GetNextQuestion",
+            "Assessment.GetQuestionById",
+            "Assessment.AnswerQuestion",
+            "AssessmentTemplate.Create",
+            "AssessmentTemplate.GetById",
+            "AssessmentTemplate.Search",
+            "AssessmentTemplate.Update",
+            "AssessmentTemplate.Delete"
         ]
     },
     {

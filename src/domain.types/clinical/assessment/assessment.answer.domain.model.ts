@@ -5,9 +5,9 @@ export interface AssessmentAnswerDomainModel {
     QuestionNodeId  : uuid;
     AssessmentId?   : uuid;
     ResponseType    : QueryResponseType;
-    IsBiometric?    : boolean;
     IntegerValue?   : number;
     FloatValue?     : number;
+    BooleanValue?   : boolean;
     TextValue?      : string;
     FloatArray?     : number[];
     IntegerArray?   : number[];

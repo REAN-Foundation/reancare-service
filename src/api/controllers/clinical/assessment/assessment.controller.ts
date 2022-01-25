@@ -147,10 +147,10 @@ export class AssessmentController extends BaseController{
             if (assessment == null) {
                 throw new ApiError(404, 'Assessment record not found.');
             }
-            const nextQuestion = await this._service.startAssessment(id);
+            const next = await this._service.startAssessment(id);
             
             ResponseHandler.success(request, response, 'Assessment record started successfully!', 200, {
-                NextQuestion : nextQuestion,
+                Next : next,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -169,15 +169,15 @@ export class AssessmentController extends BaseController{
             }
             const progressStatus: ProgressStatus = await this._service.getAssessmentStatus(id);
             if (progressStatus === ProgressStatus.Pending) {
-                const nextQuestion = this._service.startAssessment(id);
+                const next = await this._service.startAssessment(id);
                 ResponseHandler.success(request, response, 'Assessment next question retrieved successfully!', 200, {
-                    NextQuestion : nextQuestion,
+                    Next : next,
                 });
             }
             else if (progressStatus === ProgressStatus.InProgress) {
-                const nextQuestion = this._service.getNextQuestion(id);
+                const next = await this._service.getNextQuestion(id);
                 ResponseHandler.success(request, response, 'Assessment next question retrieved successfully!', 200, {
-                    NextQuestion : nextQuestion,
+                    Next : next,
                 });
             }
             else if (progressStatus === ProgressStatus.Completed) {

@@ -141,7 +141,7 @@ export class AssessmentService {
         }
 
         var isAnswered = await this.isAnswered(assessmentId, nodeId);
-        if (!isAnswered) {
+        if (isAnswered) {
             throw new ApiError(400, `The question has already been answered!`);
         }
 
@@ -164,6 +164,10 @@ export class AssessmentService {
             const messageNode = node as SAssessmentMessageNode;
             return await this.handleAcknowledgement(assessment, messageNode);
         }
+        if (responseType === QueryResponseType.Text) {
+            const questionNode = node as SAssessmentQuestionNode;
+            return await this.handleTextAnswer(assessment, questionNode, answerModel);
+        }
 
         return null;
     };
@@ -177,7 +181,7 @@ export class AssessmentService {
             return `The node with id ${questionId} is not a question!`;
         }
         const assessment = await this._assessmentRepo.getById(assessmentId);
-        if (questionNode.NodeType !== AssessmentNodeType.Question) {
+        if (questionNode.NodeType === AssessmentNodeType.Question) {
             return this.questionNodeAsQueryDto(questionNode, assessment);
         } else {
             return this.messageNodeAsQueryDto(questionNode, assessment);
@@ -421,6 +425,23 @@ export class AssessmentService {
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
 
+    private async handleTextAnswer(
+        assessment: AssessmentDto,
+        questionNode: SAssessmentQuestionNode,
+        answerModel: AssessmentAnswerDomainModel
+    ): Promise<AssessmentQuestionResponseDto> {
+        
+        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
+        const answerDto = AssessmentHelperMapper.toTextAnswerDto(
+            assessment.id,
+            questionNode,
+            answerModel.TextValue
+        );
+
+        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
+    }
+
     private async handleAcknowledgement(
         assessment: AssessmentDto,
         messageNode: SAssessmentMessageNode
@@ -480,7 +501,7 @@ export class AssessmentService {
     private questionNodeAsQueryDto(node: SAssessmentNode, assessment: AssessmentDto) {
         const questionNode = node as SAssessmentQuestionNode;
         const query: AssessmentQueryDto = {
-            NodeId               : questionNode.id,
+            id                   : questionNode.id,
             DisplayCode          : questionNode.DisplayCode,
             PatientUserId        : assessment.PatientUserId,
             AssessmentTemplateId : assessment.AssessmentTemplateId,
@@ -490,7 +511,7 @@ export class AssessmentService {
             NodeType             : questionNode.NodeType as AssessmentNodeType,
             Title                : questionNode.Title,
             Description          : questionNode.Description,
-            QueryResponseType    : questionNode.QueryResponseType as QueryResponseType,
+            ExpectedResponseType : questionNode.QueryResponseType as QueryResponseType,
             Options              : questionNode.Options,
             ProviderGivenCode    : questionNode.ProviderGivenCode,
         };
@@ -500,7 +521,7 @@ export class AssessmentService {
     private messageNodeAsQueryDto(node: SAssessmentNode, assessment: AssessmentDto) {
         const messageNode = node as SAssessmentMessageNode;
         const query: AssessmentQueryDto = {
-            NodeId               : messageNode.id,
+            id                   : messageNode.id,
             DisplayCode          : messageNode.DisplayCode,
             PatientUserId        : assessment.PatientUserId,
             AssessmentTemplateId : assessment.AssessmentTemplateId,
@@ -510,7 +531,7 @@ export class AssessmentService {
             NodeType             : messageNode.NodeType as AssessmentNodeType,
             Title                : messageNode.Title,
             Description          : messageNode.Description,
-            QueryResponseType    : QueryResponseType.Ok,
+            ExpectedResponseType : QueryResponseType.Ok,
             Options              : [],
             ProviderGivenCode    : messageNode.ProviderGivenCode,
         };

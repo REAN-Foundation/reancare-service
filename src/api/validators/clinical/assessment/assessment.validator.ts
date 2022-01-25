@@ -1,4 +1,5 @@
 import express from 'express';
+import { QueryResponseType } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
 import { AssessmentSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.search.types';
 import { BaseValidator, Where } from '../../base.validator';
@@ -49,7 +50,50 @@ export class AssessmentValidator extends BaseValidator {
     };
         
     answerQuestion = async (request: express.Request) => {
-        throw new Error('Method not implemented.');
+
+        await this.validateString(request, 'ResponseType', Where.Body, true, false, false);
+
+        var answerModel = {
+            AssessmentId   : request.params.id,
+            QuestionNodeId : request.params.questionId,
+            ResponseType   : request.body.ResponseType,
+        };
+        
+        const responseType = request.body.ResponseType;
+        if (responseType === QueryResponseType.SingleChoiceSelection) {
+            await this.validateInt(request, 'Answer', Where.Body, true, false);
+            answerModel['IntegerValue'] = request.body.Answer;
+        }
+        else if (responseType === QueryResponseType.MultiChoiceSelection) {
+            await this.validateArray(request, 'Answer', Where.Body, true, false);
+            answerModel['IntegerValue'] = request.body.Answer;
+        }
+        else if (responseType === QueryResponseType.Text) {
+            await this.validateString(request, 'Answer', Where.Body, true, false);
+            answerModel['TextValue'] = request.body.Answer;
+        }
+        else if (responseType === QueryResponseType.Ok) {
+            await this.validateString(request, 'Answer', Where.Body, true, false);
+            answerModel['TextValue'] = request.body.Answer;
+        }
+        else if (responseType === QueryResponseType.Integer) {
+            await this.validateInt(request, 'Answer', Where.Body, true, false);
+            answerModel['IntegerValue'] = request.body.Answer;
+        }
+        else if (responseType === QueryResponseType.Float) {
+            await this.validateDecimal(request, 'Answer', Where.Body, true, false);
+            answerModel['FloatValue'] = request.body.Answer;
+        }
+        else if (responseType === QueryResponseType.Boolean) {
+            await this.validateBoolean(request, 'Answer', Where.Body, true, false);
+            answerModel['BooleanValue'] = request.body.Answer;
+        }
+        else if (responseType === QueryResponseType.Biometrics) {
+            await this.validateArray(request, 'Answer', Where.Body, true, false);
+            answerModel['BiometricsArray'] = request.body.Answer;
+        }
+
+        return answerModel;
     }
 
     private getFilter(request): AssessmentSearchFilters {

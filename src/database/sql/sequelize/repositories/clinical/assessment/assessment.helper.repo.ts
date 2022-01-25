@@ -274,7 +274,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         const nodeEntity = {
             DisplayCode     : snode.DisplayCode,
             TemplateId      : templateId,
-            ParentId        : parentNodeId,
+            ParentNodeId    : parentNodeId,
             NodeType        : snode.NodeType,
             ProviderGivenId : snode.ProviderGivenId,
             Title           : snode.Title,

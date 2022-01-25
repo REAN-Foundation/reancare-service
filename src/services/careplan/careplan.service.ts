@@ -186,7 +186,7 @@ export class CareplanService implements IUserActionService {
         for await (var x of activities) {
 
             var existing: boolean = await this._careplanRepo.activityExists(
-                x.Provider, x.PlanCode, x.EnrollmentId, x.ProviderActionId, x.Sequence, x.ScheduledAt);
+                x.Provider, x.EnrollmentId, x.ProviderActionId, x.Sequence, x.ScheduledAt);
             
             if (existing) {
                 continue;
@@ -251,7 +251,8 @@ export class CareplanService implements IUserActionService {
         // }
 
         //Handle assessment activities in special manner...
-        if (activity.Category === UserTaskCategory.Assessment) {
+        if (activity.Category === UserTaskCategory.Assessment ||
+            activity.Type === 'Assessment') {
             var template = await this.getAssessmentTemplate(details);
             const assessment = await this.getAssessment(activity, template, scheduledAt);
             activity['Assessment'] = assessment;

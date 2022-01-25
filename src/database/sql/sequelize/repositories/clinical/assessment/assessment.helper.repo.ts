@@ -272,15 +272,15 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
 
         const nodeEntity = {
-            DisplayCode     : snode.DisplayCode,
-            TemplateId      : templateId,
-            ParentNodeId    : parentNodeId,
-            NodeType        : snode.NodeType,
-            ProviderGivenId : snode.ProviderGivenId,
-            Title           : snode.Title,
-            Description     : snode.Description,
-            Sequence        : snode.Sequence,
-            Score           : snode.Score,
+            DisplayCode       : snode.DisplayCode,
+            TemplateId        : templateId,
+            ParentNodeId      : parentNodeId,
+            NodeType          : snode.NodeType,
+            ProviderGivenCode : snode.ProviderGivenCode,
+            Title             : snode.Title,
+            Description       : snode.Description,
+            Sequence          : snode.Sequence,
+            Score             : snode.Score,
         };
 
         var thisNode = await AssessmentNode.create(nodeEntity);

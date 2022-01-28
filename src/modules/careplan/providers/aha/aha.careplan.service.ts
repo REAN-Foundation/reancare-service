@@ -122,7 +122,8 @@ export class AhaCareplanService implements ICareplanService {
         }
 
         var url = process.env.AHA_API_BASE_URL + '/participants';
-        var response = await needle('post', url, body, this.getHeaderOptions());
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle('post', url, body, headerOptions);
 
         if (response.statusCode !== 200) {
             Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
@@ -145,8 +146,8 @@ export class AhaCareplanService implements ICareplanService {
         };
 
         var url = process.env.AHA_API_BASE_URL + '/enrollments';
-
-        var response = await needle('post', url, enrollmentData, this.getHeaderOptions());
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle('post', url, enrollmentData, headerOptions);
 
         if (response.statusCode !== 200) {
             Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
@@ -173,8 +174,8 @@ export class AhaCareplanService implements ICareplanService {
     
         const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
         const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities?fromDate=${startDate}&toDate=${endDate}&pageSize=500`;
-            
-        var response = await needle("get", url, this.getHeaderOptions());
+        const headerOptions = await this.getHeaderOptions();
+        var response = await needle("get", url, headerOptions);
     
         if (response.statusCode !== 200) {
             Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
@@ -229,7 +230,8 @@ export class AhaCareplanService implements ICareplanService {
             url += `?scheduledAt=${scheduledAt}`;
         }
     
-        var response = await needle("get", url, this.getHeaderOptions());
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle("get", url, headerOptions);
     
         if (response.statusCode !== 200) {
             Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
@@ -279,7 +281,8 @@ export class AhaCareplanService implements ICareplanService {
             status      : updates.status,
         };
 
-        var response = await needle("patch", url, updateData, this.getHeaderOptions());
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle("patch", url, updateData, headerOptions);
 
         if (response.statusCode !== 200) {
             Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
@@ -322,7 +325,8 @@ export class AhaCareplanService implements ICareplanService {
             status      : updates.status,
         };
 
-        var response = await needle("patch", url, updateData, this.getHeaderOptions());
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle("patch", url, updateData, headerOptions);
 
         if (response.statusCode !== 200) {
             Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
@@ -383,7 +387,8 @@ export class AhaCareplanService implements ICareplanService {
                 items       : updates.items
             };
 
-            var response = await needle("patch", url, updateData, this.getHeaderOptions());
+            var headerOptions = await this.getHeaderOptions();
+            var response = await needle("patch", url, updateData, headerOptions);
 
             if (response.statusCode !== 200) {
                 Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
@@ -424,8 +429,8 @@ export class AhaCareplanService implements ICareplanService {
 
             const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
             const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${activityCode}?categories=${categoryCode}&pageSize=500`;
-            
-            var response = await needle("get", url, this.getHeaderOptions());
+            var headerOptions = await this.getHeaderOptions();
+            var response = await needle("get", url, headerOptions);
     
             if (response.statusCode !== 200) {
                 Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
@@ -476,8 +481,8 @@ export class AhaCareplanService implements ICareplanService {
 
             const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
             const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/actionPlans/${activityCode}?categories=${categoryCode}&pageSize=500`;
-            
-            var response = await needle("get", url, this.getHeaderOptions());
+            var headerOptions = await this.getHeaderOptions();
+            var response = await needle("get", url, headerOptions);
     
             if (response.statusCode !== 200) {
                 Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
@@ -505,11 +510,19 @@ export class AhaCareplanService implements ICareplanService {
         }
     }
 
-    private getHeaderOptions() {
+    private async getHeaderOptions() {
+        const currentTime = new Date();
+
+        if (currentTime > AhaCache.GetTokenExpirationTime()) {
+            Logger.instance().log('AHA token expired, generating new token.');
+            await this.init();
+        }
+
+        const token = AhaCache.GetWebToken();
         var headers = {
             'Content-Type' : 'application/json',
             accept         : 'application/json',
-            Authorization  : 'Bearer ' + AhaCache.GetWebToken(),
+            Authorization  : `Bearer ${token}`,
         };
 
         var options = {

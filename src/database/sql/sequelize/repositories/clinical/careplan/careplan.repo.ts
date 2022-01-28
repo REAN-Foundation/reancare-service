@@ -13,10 +13,10 @@ import CareplanActivity from "../../../models/careplan/careplan.activity.model";
 import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityMapper } from '../../../mappers/careplan/artifact.mapper';
 import { Op } from 'sequelize';
-import { AssessmentItem } from '../../../../../modules/careplan/domain.types/activity/assessment.item';
-import { HealthPriorityDto } from '../../../../../domain.types/health.priority/health.priority.dto';
-import HealthPriority from '../../models/health.priority/health.priority.model';
-import { HealthPriorityMapper } from '../../mappers/health.priority/health.priority.mapper';
+import { AssessmentItem } from '../../../../../../domain.types/clinical/careplan/activity/assessment.item';
+import { HealthPriorityDto } from '../../../../../../domain.types/health.priority/health.priority.dto';
+import HealthPriority from '../../../models/health.priority/health.priority.model';
+import { HealthPriorityMapper } from '../../../mappers/health.priority/health.priority.mapper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -331,7 +331,7 @@ export class CareplanRepo implements ICareplanRepo {
     updateAssessmentActivity = async (activityId: uuid, status: string,
         finishedAt: Date, items: AssessmentItem [] ): Promise<CareplanActivityDto> => {
         try {
-            const record = await CareplanArtifact.findByPk(activityId);
+            const record = await CareplanActivity.findByPk(activityId);
 
             if (status != null) {
                 record.Status = status;
@@ -341,9 +341,9 @@ export class CareplanRepo implements ICareplanRepo {
                 record.CompletedAt = finishedAt;
             }
 
-            record.Items = JSON.stringify(items);
+            //record.Items = JSON.stringify(items);
             
-            return CareplanArtifactMapper.toDto(record);
+            return CareplanActivityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }

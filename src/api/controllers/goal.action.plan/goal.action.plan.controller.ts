@@ -73,13 +73,13 @@ export class ActionPlanController extends BaseController {
 
             const model = await this._validator.getSelectedActionPlans(request);
 
-            const priorities = await this._service.getSelectedActionPlans(model);
-            if (priorities == null) {
+            const actionPlans = await this._service.getSelectedActionPlans(model);
+            if (actionPlans == null) {
                 throw new ApiError(400, 'Cannot fetch action plans for given patient!');
             }
 
             ResponseHandler.success(request, response, 'Fetching action plans for given patient done successfully!', 200, {
-                Priorities : priorities,
+                ActionPlans : actionPlans,
             });
 
         } catch (error) {

@@ -38,7 +38,16 @@
             "MedicalCondition.Update",
             "MedicalCondition.Search",
             "MedicalCondition.Delete",
-            "Careplan.Enroll"
+            "Careplan.Enroll",
+            "HealthPriority.getPriorities",
+            "HealthPriority.getPrioritiesTypes",
+            "HealthPriority.Create",
+            "Goal.getGoals",
+            "Goal.getSelcetedGoals",
+            "ActionPlan.getActionPlans",
+            "ActionPlan.Create",
+            "ActionPlan.getSelectedActionPlans"
+    
         ]
     },
     {
@@ -312,7 +321,15 @@
             "AssessmentTemplate.GetById",
             "AssessmentTemplate.Search",
             "AssessmentTemplate.Update",
-            "AssessmentTemplate.Delete"
+            "AssessmentTemplate.Delete",
+            "HealthPriority.getPriorities",
+            "HealthPriority.getPrioritiesTypes",
+            "HealthPriority.Create",
+            "Goal.getGoals",
+            "Goal.getSelcetedGoals",
+            "ActionPlan.getActionPlans",
+            "ActionPlan.Create",
+            "ActionPlan.getSelectedActionPlans"
         ]
     },
     {
@@ -570,7 +587,15 @@
             "AssessmentTemplate.GetById",
             "AssessmentTemplate.Search",
             "AssessmentTemplate.Update",
-            "AssessmentTemplate.Delete"
+            "AssessmentTemplate.Delete",
+            "HealthPriority.getPriorities",
+            "HealthPriority.getPrioritiesTypes",
+            "HealthPriority.Create",
+            "Goal.getGoals",
+            "Goal.getSelcetedGoals",
+            "ActionPlan.getActionPlans",
+            "ActionPlan.Create",
+            "ActionPlan.getSelectedActionPlans"
         ]
     },
     {

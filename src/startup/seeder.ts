@@ -41,7 +41,12 @@ import { PatientService } from "../services/patient/patient.service";
 import { PersonService } from "../services/person.service";
 import { RoleService } from "../services/role.service";
 import { UserService } from "../services/user/user.service";
+import { HealthPriorityService } from "../services/health.priority/health.priority.service";
+import { HealthPriorityType } from "../domain.types/health.priority.type/health.priority.types";
+import { IHealthPriorityRepo } from "../database/repository.interfaces/health.priority/health.priority.repo.interface";
 import { Loader } from "./loader";
+import { HealthPriorityDomainModel } from "../domain.types/health.priority/health.priority.domain.model";
+import { HealthPriorityTypeDomainModel } from "../domain.types/health.priority.type/health.priority.type.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -70,6 +75,8 @@ export class Seeder {
 
     _drugService: DrugService = null;
 
+    _healthPriorityService: HealthPriorityService = null;
+
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IApiClientRepo') private _apiClientRepo: IApiClientRepo,
@@ -83,6 +90,7 @@ export class Seeder {
         @inject('ISymptomAssessmentTemplateRepo') private _symptomAssessmentTemplateRepo: ISymptomAssessmentTemplateRepo,
         @inject('IKnowledgeNuggetRepo') private _knowledgeNuggetRepo: IKnowledgeNuggetRepo,
         @inject('IDrugRepo') private _drugRepo: IDrugRepo,
+        @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -95,6 +103,7 @@ export class Seeder {
         this._symptomAssessmentTemplateService = Loader.container.resolve(SymptomAssessmentTemplateService);
         this._knowledgeNuggetsService = Loader.container.resolve(KnowledgeNuggetService);
         this._drugService = Loader.container.resolve(DrugService);
+        this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
     }
 
     public init = async (): Promise<void> => {
@@ -109,6 +118,8 @@ export class Seeder {
             await this.seedSymptomAsseessmentTemplates();
             await this.seedKnowledgeNuggets();
             await this.seedDrugs();
+            await this.seedHealthPriorityTypes();
+
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -520,6 +531,28 @@ export class Seeder {
                 DrugName : drugName
             };
             await this._drugService.create(model);
+        }
+    }
+
+    public seedHealthPriorityTypes = async () => {
+        
+        const count = await this._healthPriorityRepo.totalTypes();
+        if (count > 0) {
+            Logger.instance().log("Health priority types have already been seeded!");
+            return;
+        }
+
+        Logger.instance().log('Seeding health priority types...');
+
+        const types = HealthPriorityType;
+
+        for (const key in types) {
+            var value = types[key];
+            const model: HealthPriorityTypeDomainModel = {
+                Type : value,
+                Tags : ["HeartFailure"]
+            };
+            await this._healthPriorityService.createType(model);
         }
     }
 

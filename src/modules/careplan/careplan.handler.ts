@@ -8,6 +8,8 @@ import { ProviderResolver } from "./provider.resolver";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { CareplanConfig } from "../../config/configuration.types";
 import { SAssessment, SAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
+import { GoalDto } from "../../domain.types/patient/goal/goal.dto";
+import { ActionPlanDto } from "../../domain.types/goal.action.plan/goal.action.plan.dto";
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -138,5 +140,40 @@ export class CareplanHandler {
         var service = CareplanHandler._services.getItem(assessment.Provider);
         return await service.updateAssessment(assessment);
     }
+
+    public updateAssessmentActivity = async (
+        patientUserId: uuid,
+        provider: string,
+        careplanCode: string,
+        enrollmentId: string,
+        activityId: string,
+        scheduledAt: Date,
+        sequence: number,
+        updates: any
+    ): Promise<CareplanActivity> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.updateAssessmentActivity(patientUserId, careplanCode, enrollmentId,
+            activityId, scheduledAt, sequence, updates);
+    };
+
+    public getGoals = async (
+        patientUserId: uuid,
+        enrollmentId: string,
+        provider: string,
+        category: string
+    ): Promise<GoalDto[]> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.getGoals(patientUserId, enrollmentId, category);
+    };
+
+    public getActionPlans = async (
+        patientUserId: uuid,
+        enrollmentId: string,
+        provider: string,
+        category: string
+    ): Promise<ActionPlanDto[]> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.getActionPlans(patientUserId, enrollmentId, category);
+    };
 
 }

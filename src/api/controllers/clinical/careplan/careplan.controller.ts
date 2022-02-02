@@ -31,9 +31,9 @@ export class CareplanController extends BaseController {
 
     //#region Action methods
 
-    getAvailableCareplans = (request: express.Request, response: express.Response): void => {
+    getAvailableCareplans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Careplan.GetAvailableCareplans', request, response);
+            await this.setContext('Careplan.GetAvailableCareplans', request, response);
 
             var plans = this._service.getAvailableCarePlans(request.params.provider);
 
@@ -48,7 +48,7 @@ export class CareplanController extends BaseController {
 
     enroll = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Careplan.Enroll', request, response);
+            await this.setContext('Careplan.Enroll', request, response);
 
             const model = await this._validator.enroll(request);
 
@@ -90,7 +90,7 @@ export class CareplanController extends BaseController {
 
     getPatientEnrollments = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Careplan.GetPatientEnrollments', request, response);
+            await this.setContext('Careplan.GetPatientEnrollments', request, response);
 
             const patientUserId = request.params.patientUserId;
             const enrollments = await this._service.getPatientEnrollments(patientUserId);
@@ -105,7 +105,7 @@ export class CareplanController extends BaseController {
 
     fetchTasks = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Careplan.FetchTasks', request, response);
+            await this.setContext('Careplan.FetchTasks', request, response);
 
             const careplanId = request.params.id;
             const fetched = await this._service.fetchTasks(careplanId);

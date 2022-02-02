@@ -13,7 +13,7 @@ import {
 
 import { v4 } from 'uuid';
 import User from '../user/user.model';
-import Goal from '../patient/goal.model';
+import Goal from './goal.model';
 
 ///////////////////////////////////////////////////////////////////////
 

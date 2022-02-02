@@ -59,6 +59,10 @@ export default class Application {
             //Set-up cron jobs
             await Loader.scheduler.schedule();
             
+            process.on('exit', code => {
+                Logger.instance().log(`Process exited with code: ${code}`);
+            });
+
             //Start listening
             await this.listen();
             

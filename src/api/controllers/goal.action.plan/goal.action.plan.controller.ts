@@ -31,7 +31,7 @@ export class ActionPlanController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('ActionPlan.Create', request, response);
+            await this.setContext('ActionPlan.Create', request, response);
 
             const model = await this._validator.create(request);
             const actionPlan = await this._service.create(model);
@@ -49,7 +49,7 @@ export class ActionPlanController extends BaseController {
 
     getActionPlans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('ActionPlan.getActionPlans', request, response);
+            await this.setContext('ActionPlan.getActionPlans', request, response);
 
             const model = await this._validator.getActionPlans(request);
 
@@ -69,7 +69,7 @@ export class ActionPlanController extends BaseController {
 
     getSelectedActionPlans = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('ActionPlan.getSelectedActionPlans', request, response);
+            await this.setContext('ActionPlan.getSelectedActionPlans', request, response);
 
             const model = await this._validator.getSelectedActionPlans(request);
 

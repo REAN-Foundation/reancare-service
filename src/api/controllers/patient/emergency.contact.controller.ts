@@ -63,7 +63,7 @@ export class EmergencyContactController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Emergency.Contact.Create', request, response);
+            await this.setContext('Emergency.Contact.Create', request, response);
             
             const domainModel = await this._validator.create(request);
 
@@ -185,7 +185,7 @@ export class EmergencyContactController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Emergency.Contact.Search', request, response);
+            await this.setContext('Emergency.Contact.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -206,7 +206,7 @@ export class EmergencyContactController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Emergency.Contact.Update', request, response);
+            await this.setContext('Emergency.Contact.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -232,7 +232,7 @@ export class EmergencyContactController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            this.setContext('Emergency.Contact.Delete', request, response);
+            await this.setContext('Emergency.Contact.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingEmergencyContact = await this._service.getById(id);

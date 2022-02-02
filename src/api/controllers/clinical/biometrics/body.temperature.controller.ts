@@ -30,7 +30,7 @@ export class BodyTemperatureController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            this.setContext('Biometrics.BodyTemperature.Create', request, response);
+            await this.setContext('Biometrics.BodyTemperature.Create', request, response);
 
             const model = await this._validator.create(request);
             const bodyTemperature = await this._service.create(model);
@@ -49,7 +49,7 @@ export class BodyTemperatureController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('Biometrics.BodyTemperature.GetById', request, response);
+            await this.setContext('Biometrics.BodyTemperature.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const bodyTemperature = await this._service.getById(id);
@@ -68,7 +68,7 @@ export class BodyTemperatureController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('Biometrics.BodyTemperature.Search', request, response);
+            await this.setContext('Biometrics.BodyTemperature.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -89,7 +89,7 @@ export class BodyTemperatureController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('Biometrics.BodyTemperature.Update', request, response);
+            await this.setContext('Biometrics.BodyTemperature.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -114,7 +114,7 @@ export class BodyTemperatureController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('Biometrics.BodyTemperature.Delete', request, response);
+            await this.setContext('Biometrics.BodyTemperature.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

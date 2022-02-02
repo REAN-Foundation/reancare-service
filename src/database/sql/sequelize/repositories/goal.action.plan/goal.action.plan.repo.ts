@@ -3,7 +3,7 @@ import { ApiError } from '../../../../../common/api.error';
 import { IActionPlanRepo } from '../../../../../database/repository.interfaces/goal.action.plan/goal.action.plan.repo.interface';
 import { ActionPlanDto } from '../../../../../domain.types/goal.action.plan/goal.action.plan.dto';
 import { ActionPlanDomainModel } from '../../../../../domain.types/goal.action.plan/goal.action.plan.domain.model';
-import GoalAction from '../../models/goal.action.plan/goal.action.model';
+import GoalAction from '../../models/patient/goal.action.model';
 import { ActionPlanMapper } from '../../mappers/goal.action.plan/goal.action.plan.mapper';
 
 ///////////////////////////////////////////////////////////////////////

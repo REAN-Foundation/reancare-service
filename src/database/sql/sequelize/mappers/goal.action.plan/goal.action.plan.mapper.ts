@@ -1,4 +1,4 @@
-import GoalAction from "../../models/goal.action.plan/goal.action.model";
+import GoalAction from "../../models/patient/goal.action.model";
 import { ActionPlanDto } from "../../../../../domain.types/goal.action.plan/goal.action.plan.dto";
 
 ///////////////////////////////////////////////////////////////////////////////////

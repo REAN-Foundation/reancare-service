@@ -31,7 +31,7 @@ export class HealthPriorityController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('HealthPriority.Create', request, response);
+            await this.setContext('HealthPriority.Create', request, response);
 
             const model = await this._validator.create(request);
             const healthPriority = await this._service.create(model);
@@ -49,7 +49,7 @@ export class HealthPriorityController extends BaseController {
 
     getPriorities = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('HealthPriority.getPriorities', request, response);
+            await this.setContext('HealthPriority.getPriorities', request, response);
 
             const model = await this._validator.getPriorities(request);
 
@@ -69,7 +69,7 @@ export class HealthPriorityController extends BaseController {
     
     getPriorityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('HealthPriority.getPrioritiesTypes', request, response);
+            await this.setContext('HealthPriority.getPrioritiesTypes', request, response);
 
             const priorityTypes = await this._service.getPriorityTypes();
             if (priorityTypes.length === 0) {

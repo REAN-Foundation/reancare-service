@@ -100,7 +100,7 @@ export class EmergencyContactController extends BaseController {
                     FirstName : domainModel.ContactPerson.FirstName ?? null,
                     LastName  : domainModel.ContactPerson.LastName ?? null,
                     Phone     : domainModel.ContactPerson.Phone,
-                    Email     : domainModel.ContactPerson.Email ?? null,
+                    Email     : domainModel.ContactPerson.Email ?? null
                 };
                 
                 var existingPerson = await this._personService.getPersonWithPhone(domainModel.ContactPerson.Phone);

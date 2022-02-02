@@ -47,7 +47,7 @@ export class EmergencyContactValidator extends BaseValidator {
             IsAvailableForEmergency : request.body.IsAvailableForEmergency ?? null,
             TimeOfAvailability      : request.body.TimeOfAvailability ?? null,
             Description             : request.body.Description ?? null,
-            AdditionalPhoneNumbers  : request.body.AdditionalPhoneNumbers ?? null
+            AdditionalPhoneNumbers  : request.body.AdditionalPhoneNumbers ?? null,
         };
 
         return domainModel;
@@ -82,7 +82,7 @@ export class EmergencyContactValidator extends BaseValidator {
             await this.validateString(request, 'ContactPerson.Prefix', Where.Body, false, true);
             await this.validateString(request, 'ContactPerson.LastName', Where.Body, false, true);
             await this.validateString(request, 'ContactPerson.Phone', Where.Body, true, false);
-            await this.validateString(request, 'ContactPerson.Email', Where.Body, false, true);
+            await this.validateEmail(request, 'ContactPerson.Email', Where.Body, false, true);
 
         }
 
@@ -135,6 +135,7 @@ export class EmergencyContactValidator extends BaseValidator {
             ContactPersonId         : request.query.contactPersonId ?? null,
             IsAvailableForEmergency : request.query.isAvailableForEmergency,
             ContactRelation         : request.query.contactRelation ?? null,
+
         };
         return this.updateBaseSearchFilters(request, filters);
     }
@@ -161,6 +162,7 @@ export class EmergencyContactValidator extends BaseValidator {
             await this.validateString(request, 'ContactPerson.Prefix', Where.Body, false, false);
             await this.validateString(request, 'ContactPerson.LastName', Where.Body, false, false);
             await this.validateString(request, 'ContactPerson.Phone', Where.Body, false, false);
+            await this.validateEmail(request, 'ContactPerson.Email', Where.Body, false, false);
 
         }
 

@@ -51,6 +51,8 @@ import { register as registerWaterConsumptionRoutes } from './wellness/nutrition
 import { register as registerCareplanRoutes } from './careplan/careplan.routes';
 import { register as registerAssessmentRoutes } from './clinical/assessment/assessment.routes';
 import { register as registerAssessmentTemplateRoutes } from './clinical/assessment/assessment.template.routes';
+import { register as registerHealthPriorityRoutes } from './health.priority/health.priority.routes';
+import { register as registerActionPlanRoutes } from './goal.action.plan/goal.action.plan.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -126,6 +128,8 @@ export class Router {
                 registerCareplanRoutes(this._app);
                 registerAssessmentRoutes(this._app);
                 registerAssessmentTemplateRoutes(this._app);
+                registerHealthPriorityRoutes(this._app);
+                registerActionPlanRoutes(this._app);
 
                 resolve(true);
 

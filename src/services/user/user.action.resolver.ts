@@ -1,7 +1,7 @@
 import { UserActionType } from "../../domain.types/user/user.task/user.task.types";
 import { Loader } from "../../startup/loader";
 import { MedicationConsumptionService } from "../clinical/medication/medication.consumption.service";
-import { CareplanService } from "../careplan/careplan.service";
+import { CareplanService } from "../clinical/careplan.service";
 import { IUserActionService } from "./user.action.service.interface";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 

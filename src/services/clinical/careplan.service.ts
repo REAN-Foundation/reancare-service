@@ -248,9 +248,6 @@ export class CareplanService implements IUserActionService {
         if (!activity.RawContent) {
             activity = await this._careplanRepo.updateActivityDetails(activity.id, details.RawContent);
         }
-        // if (details) {
-        //     activity['Details'] = details;
-        // }
 
         //Handle assessment activities in special manner...
         if (activity.Category === UserTaskCategory.Assessment ||
@@ -295,12 +292,6 @@ export class CareplanService implements IUserActionService {
     public completeAction = async (activityId: uuid, time: Date, success: boolean) => {
         var activity = await this._careplanRepo.getActivity(activityId);
         activity = await this._careplanRepo.completeActivity(activityId);
-        
-        //KK: TODO
-        //NOTE: Provider specific details are not to be handled here..
-        //The details here are provider agnostic and should be converted to provider
-        //specific details in the provider specific careplan service.
-        //TODO: move this to aha.careplan.service.ts
 
         var updateFields = {
             completedAt : time,

@@ -1,5 +1,5 @@
 import express from 'express';
-import { CareplanService } from '../../../../services/careplan/careplan.service';
+import { CareplanService } from '../../../../services/clinical/careplan.service';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { Loader } from '../../../../startup/loader';

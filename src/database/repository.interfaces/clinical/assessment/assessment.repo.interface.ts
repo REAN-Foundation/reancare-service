@@ -27,4 +27,6 @@ export interface IAssessmentRepo {
 
     setCurrentNode(assessmentId: string, id: string): Promise<AssessmentDto>;
 
+    completeAssessment(assessmentId: string): Promise<AssessmentDto>;
+
 }

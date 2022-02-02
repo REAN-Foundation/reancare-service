@@ -73,6 +73,7 @@ export enum AssessmentType {
 }
 
 export const AssessmentTypeList: AssessmentType[] = [
+    AssessmentType.DailyUpdate,
     AssessmentType.Careplan,
     AssessmentType.Symptom,
     AssessmentType.Survey,

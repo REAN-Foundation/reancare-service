@@ -3,10 +3,13 @@ import { ProgressStatus, uuid } from '../../../../domain.types/miscellaneous/sys
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { AssessmentService } from '../../../../services/clinical/assessment/assessment.service';
+import { CareplanService } from '../../../../services/clinical/careplan.service';
+import { UserTaskService } from '../../../../services/user/user.task.service';
 import { Loader } from '../../../../startup/loader';
 import { AssessmentValidator } from '../../../validators/clinical/assessment/assessment.validator';
 import { BaseController } from '../../base.controller';
 import { AssessmentQuestionResponseDto } from '../../../../domain.types/clinical/assessment/assessment.question.response.dto';
+import { AssessmentType } from '../../../../domain.types/clinical/assessment/assessment.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,11 +19,17 @@ export class AssessmentController extends BaseController{
 
     _service: AssessmentService = null;
 
+    _careplanService: CareplanService = null;
+
+    _userTaskService: UserTaskService = null;
+
     _validator: AssessmentValidator = new AssessmentValidator();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(AssessmentService);
+        this._careplanService = Loader.container.resolve(CareplanService);
+        this._userTaskService = Loader.container.resolve(UserTaskService);
     }
 
     //#endregion
@@ -176,6 +185,11 @@ export class AssessmentController extends BaseController{
             }
             else if (progressStatus === ProgressStatus.InProgress) {
                 const next = await this._service.getNextQuestion(id);
+                if (next === null) {
+                    await this.completeAssessmentTask(id);
+                    ResponseHandler.failure(request, response, 'Assessment has already completed!', 422);
+                    return;
+                }
                 ResponseHandler.success(request, response, 'Assessment next question retrieved successfully!', 200, {
                     Next : next,
                 });
@@ -240,6 +254,14 @@ export class AssessmentController extends BaseController{
             const answerResponse: AssessmentQuestionResponseDto =
                 await this._service.answerQuestion(answerModel);
 
+            if (answerResponse.Next === null) {
+                //Assessment has no more questions left and is completed successfully!
+                await this.completeAssessmentTask(id);
+                ResponseHandler.success(request, response, 'Assessment has completed successfully!', 200, {
+                    AnswerResponse : answerResponse,
+                });
+                return;
+            }
             ResponseHandler.success(request, response, 'Assessment question answered successfully!', 200, {
                 AnswerResponse : answerResponse,
             });
@@ -248,6 +270,19 @@ export class AssessmentController extends BaseController{
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    private async completeAssessmentTask(assessmentId: uuid) {
+        var assessment = await this._service.completeAssessment(assessmentId);
+        var parentActivityId = assessment.ParentActivityId;
+        if (assessment.Type === AssessmentType.Careplan && parentActivityId !== null) {
+            var activity = await this._careplanService.getAction(parentActivityId);
+            if (activity !== null) {
+                var userTaskId = activity.UserTaskId;
+                await this._userTaskService.finishTask(userTaskId);
+            }
+            await this._careplanService.completeAction(parentActivityId, new Date(), true);
+        }
+    }
 
     //#endregion
 

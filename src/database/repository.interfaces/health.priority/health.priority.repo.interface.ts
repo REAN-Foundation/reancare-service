@@ -13,7 +13,7 @@ export interface IHealthPriorityRepo {
 
     getById(id: string): Promise<HealthPriorityDto>;
 
-    totalTypes(): Promise<number>;
+    totalTypesCount(): Promise<number>;
 
     createType(healthPriorityTypeDomainModel: HealthPriorityTypeDomainModel): Promise<HealthPriorityTypeDto>;
 

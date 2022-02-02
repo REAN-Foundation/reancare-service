@@ -1,5 +1,5 @@
-import { EnrollmentDto } from "../../../../../domain.types/clinical/careplan/enrollment/enrollment.dto";
-import CareplanEnrollment from "../../models/careplan/enrollment.model";
+import { EnrollmentDto } from "../../../../../../domain.types/clinical/careplan/enrollment/enrollment.dto";
+import CareplanEnrollment from "../../../models/clinical/careplan/enrollment.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

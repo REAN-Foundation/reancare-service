@@ -1,6 +1,6 @@
-import { UserTaskCategory } from "../../../../../domain.types/user/user.task/user.task.types";
-import { CareplanActivityDto } from "../../../../../domain.types/clinical/careplan/activity/careplan.activity.dto";
-import CareplanActivity from "../../models/careplan/careplan.activity.model";
+import { UserTaskCategory } from "../../../../../../domain.types/user/user.task/user.task.types";
+import { CareplanActivityDto } from "../../../../../../domain.types/clinical/careplan/activity/careplan.activity.dto";
+import CareplanActivity from "../../../models/clinical/careplan/careplan.activity.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 

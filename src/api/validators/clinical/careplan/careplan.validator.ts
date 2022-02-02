@@ -1,6 +1,6 @@
 import express from 'express';
-import { EnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
-import { BaseValidator, Where } from '../base.validator';
+import { EnrollmentDomainModel } from '../../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
+import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

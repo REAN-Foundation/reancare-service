@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { ICareplanRepo } from "../../database/repository.interfaces/careplan/careplan.repo.interface";
+import { ICareplanRepo } from "../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { IPatientRepo } from "../../database/repository.interfaces/patient/patient.repo.interface";
 import { IPersonRepo } from "../../database/repository.interfaces/person.repo.interface";
 import { IUserRepo } from "../../database/repository.interfaces/user/user.repo.interface";

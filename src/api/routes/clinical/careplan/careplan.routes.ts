@@ -1,6 +1,6 @@
 import express from 'express';
-import { Loader } from '../../../startup/loader';
-import { CareplanController } from '../../controllers/careplan/careplan.controller';
+import { Loader } from '../../../../startup/loader';
+import { CareplanController } from '../../../controllers/clinical/careplan/careplan.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

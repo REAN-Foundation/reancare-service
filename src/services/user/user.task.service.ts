@@ -5,7 +5,7 @@ import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.ta
 import { UserTaskDomainModel } from '../../domain.types/user/user.task/user.task.domain.model';
 import { TaskSummaryDto, UserTaskDto } from '../../domain.types/user/user.task/user.task.dto';
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../domain.types/user/user.task/user.task.search.types';
-import { ICareplanRepo } from "../../database/repository.interfaces/careplan/careplan.repo.interface";
+import { ICareplanRepo } from "../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -48,7 +48,7 @@ import { register as registerMeditationtRoutes } from './wellness/exercise/medit
 import { register as registerPhysicalActivityRoutes } from './wellness/exercise/physical.activity.routes';
 import { register as registerNutritionFoodConsumptionRoutes } from './wellness/nutrition/food.consumption.routes';
 import { register as registerWaterConsumptionRoutes } from './wellness/nutrition/water.consumption.routes';
-import { register as registerCareplanRoutes } from './careplan/careplan.routes';
+import { register as registerCareplanRoutes } from './clinical/careplan/careplan.routes';
 import { register as registerAssessmentRoutes } from './clinical/assessment/assessment.routes';
 import { register as registerAssessmentTemplateRoutes } from './clinical/assessment/assessment.template.routes';
 import { register as registerHealthPriorityRoutes } from './health.priority/health.priority.routes';

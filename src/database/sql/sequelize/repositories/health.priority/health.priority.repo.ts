@@ -96,7 +96,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
         }
     };
 
-    totalTypes = async (): Promise<number> => {
+    totalTypesCount = async (): Promise<number> => {
         try {
             return await HealthPriorityType.count();
         } catch (error) {

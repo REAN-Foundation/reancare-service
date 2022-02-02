@@ -10,6 +10,7 @@ import { IBodyHeightRepo } from '../../../database/repository.interfaces/clinica
 import { IBodyTemperatureRepo } from '../../../database/repository.interfaces/clinical/biometrics/body.temperature.repo.interface';
 import { IBodyWeightRepo } from '../../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface';
 import { IPulseRepo } from '../../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ';
+import { ICareplanRepo } from '../../../database/repository.interfaces/clinical/careplan.repo.interface';
 import { AssessmentHelperMapper } from '../../../database/sql/sequelize/mappers/clinical/assessment/assessment.helper.mapper';
 import { AssessmentAnswerDomainModel } from '../../../domain.types/clinical/assessment/assessment.answer.domain.model';
 import { AssessmentDomainModel } from '../../../domain.types/clinical/assessment/assessment.domain.model';
@@ -70,6 +71,7 @@ export class AssessmentService {
         @inject('IBodyHeightRepo') private _bodyHeightRepo: IBodyHeightRepo,
         @inject('IBodyTemperatureRepo') private _bodyTemperatureRepo: IBodyTemperatureRepo,
         @inject('IPulseRepo') private _pulseRepo: IPulseRepo,
+        @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {
         this._conditionProcessor = Loader.container.resolve(ConditionProcessor);
     }
@@ -191,13 +193,19 @@ export class AssessmentService {
     getNextQuestion = async (assessmentId: uuid): Promise<AssessmentQueryDto> => {
         const assessment = await this._assessmentRepo.getById(assessmentId);
         const currentNodeId = assessment.CurrentNodeId;
-        return this.traverse(assessment, currentNodeId);
+        return await this.traverse(assessment, currentNodeId);
     };
 
     getAssessmentStatus = async (assessmentId: uuid): Promise<ProgressStatus> => {
         const assessment = await this._assessmentRepo.getById(assessmentId);
         return assessment.Status as ProgressStatus;
     };
+
+    completeAssessment = async (assessmentId: uuid): Promise<AssessmentDto> => {
+        return await this._assessmentRepo.completeAssessment(assessmentId);
+    }
+
+    //#region Privates
 
     private async traverseUpstream(currentNode: SAssessmentNode): Promise<SAssessmentNode> {
         const parentNode = await this._assessmentHelperRepo.getNodeById(currentNode.ParentNodeId);
@@ -220,8 +228,6 @@ export class AssessmentService {
         //Since we no longer can find the next sibling, retract tracing by one step, move onto the parent
         return this.traverseUpstream(parentNode);
     }
-
-    //To be used while starting assessment
 
     private async traverse(assessment: AssessmentDto, currentNodeId: uuid): Promise<AssessmentQueryDto> {
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
@@ -249,6 +255,10 @@ export class AssessmentService {
                 return await this.returnAsCurrentQuestionNode(assessment, currentNode as SAssessmentQuestionNode);
             } else {
                 const nextSiblingNode = await this.traverseUpstream(currentNode);
+                if (nextSiblingNode === null) {
+                    //Assessment has finished
+                    return null;
+                }
                 return await this.traverse(assessment, nextSiblingNode.id);
             }
         } else if (currentNode.NodeType === AssessmentNodeType.Message) {
@@ -257,6 +267,10 @@ export class AssessmentService {
                 return await this.returnAsCurrentMessageNode(assessment, currentNode as SAssessmentMessageNode);
             } else {
                 const nextSiblingNode = await this.traverseUpstream(currentNode);
+                if (nextSiblingNode === null) {
+                    //Assessment has finished
+                    return null;
+                }
                 return await this.traverse(assessment, nextSiblingNode.id);
             }
         }
@@ -472,6 +486,9 @@ export class AssessmentService {
             | BiometricQueryAnswer
     ) {
         const next = await this.traverse(assessment, nextNodeId);
+        if (next === null) {
+            return null;
+        }
         const response: AssessmentQuestionResponseDto = {
             AssessmentId : assessment.id,
             Parent       : currentQueryDto,
@@ -646,5 +663,7 @@ export class AssessmentService {
         };
         await this._pulseRepo.create(model);
     }
+
+    //#endregion
 
 }

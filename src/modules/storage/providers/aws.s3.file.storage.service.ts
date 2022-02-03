@@ -151,7 +151,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         });
 
         return url;
-    };
+    }
 
     //#endregion
 

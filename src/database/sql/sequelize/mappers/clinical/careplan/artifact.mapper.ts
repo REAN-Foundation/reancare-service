@@ -14,6 +14,7 @@ export class CareplanActivityMapper {
 
         const dto: CareplanActivityDto = {
             id               : activity.id,
+            UserTaskId       : activity.UserTaskId,
             PatientUserId    : activity.PatientUserId,
             EnrollmentId     : activity.EnrollmentId,
             Provider         : activity.Provider,

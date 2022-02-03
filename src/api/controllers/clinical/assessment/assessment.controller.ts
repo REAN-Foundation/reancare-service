@@ -272,8 +272,10 @@ export class AssessmentController extends BaseController{
     };
 
     private async completeAssessmentTask(assessmentId: uuid) {
+        
         var assessment = await this._service.completeAssessment(assessmentId);
         var parentActivityId = assessment.ParentActivityId;
+
         if (assessment.Type === AssessmentType.Careplan && parentActivityId !== null) {
             var activity = await this._careplanService.getAction(parentActivityId);
             if (activity !== null) {

@@ -27,21 +27,21 @@ export class BaseValidator {
         this.validateUuid(request, field, Where.Param, true, false);
         this.validateRequest(request);
         return request.params[field];
-    }
+    };
 
     getParamInt = async(request: express.Request, field: string): Promise<number> => {
         await this.validateInt(request, field, Where.Param, false, false);
         this.validateRequest(request);
         var p = request.params[field];
         return parseInt(p);
-    }
+    };
 
     getParamDate = async(request: express.Request, field: string): Promise<Date> => {
         await this.validateDate(request, field, Where.Param, true, false);
         this.validateRequest(request);
         var p = request.params[field];
         return new Date(p);
-    }
+    };
 
     getParamStr = async(
         request: express.Request,
@@ -52,7 +52,7 @@ export class BaseValidator {
         await this.validateString(request, field, Where.Param, true, false, escape, minLength, maxLength);
         this.validateRequest(request);
         return request.params[field];
-    }
+    };
 
     getQueryStr = async(
         request: express.Request,
@@ -63,7 +63,7 @@ export class BaseValidator {
         await this.validateString(request, field, Where.Query, false, false, escape, minLength, maxLength);
         this.validateRequest(request);
         return request.query[field] ? request.query[field] as string : null;
-    }
+    };
 
     getQueryUuid = async(
         request: express.Request,
@@ -71,13 +71,13 @@ export class BaseValidator {
         await this.validateUuid(request, field, Where.Query, false, false);
         this.validateRequest(request);
         return request.query[field] ? request.query[field] as string : null;
-    }
+    };
 
     getQueryInt = async(request: express.Request, field): Promise<number> => {
         await this.validateInt(request, field, Where.Query, false, false);
         this.validateRequest(request);
         return request.query[field] ? parseInt(request.query[field] as string) : null;
-    }
+    };
 
     //#endregion
 
@@ -93,7 +93,7 @@ export class BaseValidator {
         chain = this.checkRequired(required, chain, nullable);
         
         await chain.run(request);
-    }
+    };
 
     validateString = async(
         request: express.Request,
@@ -112,7 +112,7 @@ export class BaseValidator {
         chain = this.checkLength(chain, minLength, maxLength);
 
         await chain.run(request);
-    }
+    };
 
     validateDateString = async(
         request: express.Request,
@@ -127,7 +127,7 @@ export class BaseValidator {
         chain = chain.isDate();
 
         await chain.run(request);
-    }
+    };
 
     validateArray = async(
         request: express.Request,
@@ -144,7 +144,7 @@ export class BaseValidator {
         chain = this.checkLength(chain, minLength, maxLength);
 
         await chain.run(request);
-    }
+    };
 
     validateDate = async(
         request: express.Request,
@@ -166,7 +166,7 @@ export class BaseValidator {
         });
 
         await chain.run(request);
-    }
+    };
 
     validateEmail = async(
         request: express.Request,
@@ -183,7 +183,7 @@ export class BaseValidator {
         chain = chain.normalizeEmail();
 
         await chain.run(request);
-    }
+    };
 
     validatePhone = async(
         request: express.Request,
@@ -200,7 +200,7 @@ export class BaseValidator {
         chain = chain.custom(Helper.validatePhone);
 
         await chain.run(request);
-    }
+    };
 
     validateBoolean = async(
         request: express.Request,
@@ -216,7 +216,7 @@ export class BaseValidator {
         chain = chain.toBoolean();
 
         await chain.run(request);
-    }
+    };
 
     validateInt = async(
         request: express.Request,
@@ -232,7 +232,7 @@ export class BaseValidator {
         chain = chain.toInt();
 
         await chain.run(request);
-    }
+    };
 
     validateDecimal = async(
         request: express.Request,
@@ -248,7 +248,7 @@ export class BaseValidator {
         chain = chain.toFloat();
 
         await chain.run(request);
-    }
+    };
 
     validateBaseSearchFilters = async(request: express.Request) => {
 
@@ -264,14 +264,14 @@ export class BaseValidator {
             request.query.order !== 'ascending') {
             request.query.order = 'descending';
         }
-    }
+    };
 
     validateRequest = (request: express.Request) => {
         const result = validationResult(request);
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-    }
+    };
 
     updateBaseSearchFilters = (request: express.Request, filters: any): any => {
 
@@ -289,7 +289,7 @@ export class BaseValidator {
         filters['ItemsPerPage']    = itemsPerPage;
 
         return filters;
-    }
+    };
 
     //#region Protected
 

@@ -120,7 +120,7 @@ export class MedicationConsumptionService implements IUserActionService {
         };
 
         return creationSummary;
-    }
+    };
     
     getConsumptionStatusForMedication = async (medicationId: string)
         : Promise<MedicationConsumptionStatsDto> => {
@@ -134,7 +134,7 @@ export class MedicationConsumptionService implements IUserActionService {
         };
 
         return creationSummary;
-    }
+    };
 
     markListAsTaken = async (consumptionIds: string[]): Promise<MedicationConsumptionDto[]> => {
 
@@ -403,7 +403,7 @@ export class MedicationConsumptionService implements IUserActionService {
             count++;
         }
         return count;
-    }
+    };
 
     createMedicationTasks = async (upcomingInMinutes: number): Promise<number> => {
         var count = 0;
@@ -417,7 +417,7 @@ export class MedicationConsumptionService implements IUserActionService {
             }
         }
         return count;
-    }
+    };
     
     createMedicationTaskForSchedule = async (consumption: MedicationConsumptionDto): Promise<boolean> => {
 
@@ -443,7 +443,7 @@ export class MedicationConsumptionService implements IUserActionService {
         await this._userTaskRepo.create(domainModel);
         
         return true;
-    }
+    };
 
     completeAction = async (actionId: string, completionTime?: Date, success?: boolean): Promise<boolean> => {
 
@@ -471,12 +471,12 @@ export class MedicationConsumptionService implements IUserActionService {
                 return null;
             }
         }
-    }
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     cancelAction = async(actionId: string, cancellationTime?: Date, cancellationReason?: string): Promise<boolean> => {
         return await this._medicationConsumptionRepo.cancelSchedule(actionId);
-    }
+    };
 
     //#region Privates
 
@@ -538,7 +538,7 @@ export class MedicationConsumptionService implements IUserActionService {
         }
         return durationInHours;
 
-    }
+    };
     
     private getPatientTimeZone = async(patientUserId) => {
         var user = await this._userRepo.getById(patientUserId);
@@ -546,11 +546,11 @@ export class MedicationConsumptionService implements IUserActionService {
             return user.CurrentTimeZone;
         }
         return "+05:30";
-    }
+    };
 
     private getMedicationDetails = (drugName, dose, dosageUnit, schedule) => {
         return drugName + ': ' + dose.toFixed(1).toString() + ' ' + dosageUnit + ', ' + schedule;
-    }
+    };
 
     private getScheduleSlots = (medication) => {
 
@@ -616,7 +616,7 @@ export class MedicationConsumptionService implements IUserActionService {
             }
         }
         return scheduleSlots;
-    }
+    };
 
     private getDurationInDays = (duration, durationUnit, refillsCount) => {
 
@@ -634,7 +634,7 @@ export class MedicationConsumptionService implements IUserActionService {
             return duration * 30 * (refills + 1);
         }
         return 1;
-    }
+    };
 
     private getDayStep = (frequency, frequencyUnit) => {
 
@@ -648,7 +648,7 @@ export class MedicationConsumptionService implements IUserActionService {
             return Math.round(30 / frequency);
         }
         return 1;
-    }
+    };
 
     private getSummary = (medConsumptions: MedicationConsumptionDetailsDto[]) => {
 
@@ -680,7 +680,7 @@ export class MedicationConsumptionService implements IUserActionService {
         }
 
         return summary;
-    }
+    };
 
     private classifyByDrugs = (medConsumptions: MedicationConsumptionDto[])
         : SummarizedScheduleDto[] => {
@@ -701,7 +701,7 @@ export class MedicationConsumptionService implements IUserActionService {
         }
 
         return arrangedByDrugList;
-    }
+    };
 
     private segregateByDrugName = (medConsumptions: MedicationConsumptionDetailsDto[]) => {
 
@@ -716,7 +716,7 @@ export class MedicationConsumptionService implements IUserActionService {
         }
         
         return listByDrugName;
-    }
+    };
 
     sendMedicationReminder = async (medicationSchedule) => {
 
@@ -740,7 +740,7 @@ export class MedicationConsumptionService implements IUserActionService {
             await Loader.notificationService.sendMessageToTopic(device.Token, message);
         }
 
-    }
+    };
 
     //#endregion
     

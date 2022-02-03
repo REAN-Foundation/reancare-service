@@ -82,7 +82,7 @@ export default class SymptomType extends Model {
     ImageResourceId: string;
 
     @BelongsToMany(() => SymptomAssessmentTemplate, () => SymptomTypesInTemplate)
-    Templates: SymptomAssessmentTemplate[]
+    Templates: SymptomAssessmentTemplate[];
     
     @Column
     @CreatedAt

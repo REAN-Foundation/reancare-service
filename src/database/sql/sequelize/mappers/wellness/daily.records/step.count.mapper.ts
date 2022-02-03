@@ -18,6 +18,6 @@ export class StepCountMapper {
             RecordDate    : stepCount.RecordDate,
         };
         return dto;
-    }
+    };
 
 }

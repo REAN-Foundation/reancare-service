@@ -10,7 +10,7 @@ import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserTaskValidator extends BaseValidator{
+export class UserTaskValidator extends BaseValidator {
 
     constructor() {
         super();
@@ -49,129 +49,127 @@ export class UserTaskValidator extends BaseValidator{
         await this.validateDate(request, 'scheduledFrom', Where.Query, false, false);
         await this.validateDate(request, 'scheduledTo', Where.Query, false, false);
         await this.validateString(request, 'status', Where.Query, false, false);
-        
+
         await this.validateBaseSearchFilters(request);
-        
+
         this.validateRequest(request);
 
         return this.getFilter(request);
     };
 
-     update = async (request: express.Request): Promise<UserTaskDomainModel> => {
-         await this.validateUpdateBody(request);
-         var domainModel = this.getDomainModel(request);
-         const id = await this.getParamUuid(request, 'id');
-         domainModel.id = id;
-         return domainModel;
-     };
+    update = async (request: express.Request): Promise<UserTaskDomainModel> => {
+        await this.validateUpdateBody(request);
+        var domainModel = this.getDomainModel(request);
+        const id = await this.getParamUuid(request, 'id');
+        domainModel.id = id;
+        return domainModel;
+    };
 
-     cancelTask = async (request: express.Request): Promise<any> => {
-         const id: string = await this.getParamUuid(request, 'id');
-         await this.validateString(request, 'Reason', Where.Body, false, false);
-         this.validateRequest(request);
-         var reason = request.body.Reason ?? null;
-         return { id, reason };
-     }
+    cancelTask = async (request: express.Request): Promise<any> => {
+        const id: string = await this.getParamUuid(request, 'id');
+        await this.validateString(request, 'Reason', Where.Body, false, false);
+        this.validateRequest(request);
+        var reason = request.body.Reason ?? null;
+        return { id, reason };
+    };
 
-     getTaskSummaryForDay = async (request: express.Request): Promise<any> => {
-         const userId: string = await this.getParamUuid(request, 'userId');
-         await this.validateDateString(request, 'date', Where.Param, false, false);
-         this.validateRequest(request);
-         var dateStr = request.params.date;
-         var todayStr = new Date()
-             .toISOString()
-             .split('T')[0];
-         var date = request.params.date ? dateStr.split('T')[0] : todayStr;
-         return { userId, date };
-     };
+    getTaskSummaryForDay = async (request: express.Request): Promise<any> => {
+        const userId: string = await this.getParamUuid(request, 'userId');
+        await this.validateDateString(request, 'date', Where.Param, false, false);
+        this.validateRequest(request);
+        var dateStr = request.params.date;
+        var todayStr = new Date()
+            .toISOString()
+            .split('T')[0];
+        var date = request.params.date ? dateStr.split('T')[0] : todayStr;
+        return { userId, date };
+    };
 
-     private  async validateCreateBody(request) {
+    private async validateCreateBody(request) {
 
-         await this.validateUuid(request, 'UserId', Where.Body, true, false);
-         await this.validateString(request, 'Task', Where.Body, true, false, true);
-         await this.validateString(request, 'Category', Where.Body, true, false);
-         await this.validateString(request, 'ActionType', Where.Body, false, false);
-         await this.validateUuid(request, 'ActionId', Where.Body, false, true);
-         await this.validateString(request, 'ActionType', Where.Body, false, true);
-         await this.validateDate(request, 'ScheduledStartTime', Where.Body, true, false);
-         await this.validateDate(request, 'ScheduledEndTime', Where.Body, false, false);
-         await this.validateBoolean(request, 'IsRecurrent', Where.Body, false, true);
-         await this.validateUuid(request, 'RecurrenceScheduleId', Where.Body, false, true);
+        await this.validateUuid(request, 'UserId', Where.Body, true, false);
+        await this.validateString(request, 'Task', Where.Body, true, false, true);
+        await this.validateString(request, 'Category', Where.Body, true, false);
+        await this.validateString(request, 'ActionType', Where.Body, false, false);
+        await this.validateUuid(request, 'ActionId', Where.Body, false, true);
+        await this.validateString(request, 'ActionType', Where.Body, false, true);
+        await this.validateDate(request, 'ScheduledStartTime', Where.Body, true, false);
+        await this.validateDate(request, 'ScheduledEndTime', Where.Body, false, false);
+        await this.validateBoolean(request, 'IsRecurrent', Where.Body, false, true);
+        await this.validateUuid(request, 'RecurrenceScheduleId', Where.Body, false, true);
 
-         this.validateRequest(request);
-     }
-     
-     private  async validateUpdateBody(request) {
+        this.validateRequest(request);
+    }
 
-         await this.validateString(request, 'Task', Where.Body, false, false, true);
-         await this.validateString(request, 'Category', Where.Body, false, false);
-         await this.validateString(request, 'ActionType', Where.Body, false, false);
-         await this.validateUuid(request, 'ActionId', Where.Body, false, true);
-         await this.validateString(request, 'ActionType', Where.Body, false, true);
-         await this.validateDate(request, 'ScheduledStartTime', Where.Body, false, false);
-         await this.validateDate(request, 'ScheduledEndTime', Where.Body, false, false);
-         await this.validateBoolean(request, 'IsRecurrent', Where.Body, false, true);
-         await this.validateUuid(request, 'RecurrenceScheduleId', Where.Body, false, true);
+    private async validateUpdateBody(request) {
 
-         this.validateRequest(request);
-     }
+        await this.validateString(request, 'Task', Where.Body, false, false, true);
+        await this.validateString(request, 'Category', Where.Body, false, false);
+        await this.validateString(request, 'ActionType', Where.Body, false, false);
+        await this.validateUuid(request, 'ActionId', Where.Body, false, true);
+        await this.validateString(request, 'ActionType', Where.Body, false, true);
+        await this.validateDate(request, 'ScheduledStartTime', Where.Body, false, false);
+        await this.validateDate(request, 'ScheduledEndTime', Where.Body, false, false);
+        await this.validateBoolean(request, 'IsRecurrent', Where.Body, false, true);
+        await this.validateUuid(request, 'RecurrenceScheduleId', Where.Body, false, true);
 
-     private  async getFilter(request: express.Request): Promise<UserTaskSearchFilters> {
+        this.validateRequest(request);
+    }
 
-         var status: ProgressStatus = null;
+    private async getFilter(request: express.Request): Promise<UserTaskSearchFilters> {
 
-         if (request.query.status) {
-             if (request.query.status === 'inProgress') {
-                 status = ProgressStatus.InProgress;
-             }
-             if (request.query.status === 'pending' || request.query.status === 'upcoming') {
-                 status = ProgressStatus.Pending;
-             }
-             if (request.query.status === 'completed' || request.query.status === 'finished') {
-                 status = ProgressStatus.Completed;
-             }
-             if (request.query.status === 'delayed' || request.query.status === 'overdue') {
-                 status = ProgressStatus.Delayed;
-             }
-             if (request.query.status === 'cancelled') {
-                 status = ProgressStatus.Cancelled;
-             }
-         }
+        var status: ProgressStatus = null;
 
-         var userId = request.currentUser.UserId;
-         if (request.query.userId !== undefined) {
-             userId = request.query.userId as uuid;
-         }
+        if (request.query.status) {
+            if (request.query.status === 'inProgress') {
+                status = ProgressStatus.InProgress;
+            }
+            if (request.query.status === 'pending' || request.query.status === 'upcoming') {
+                status = ProgressStatus.Pending;
+            }
+            if (request.query.status === 'completed' || request.query.status === 'finished') {
+                status = ProgressStatus.Completed;
+            }
+            if (request.query.status === 'delayed' || request.query.status === 'overdue') {
+                status = ProgressStatus.Delayed;
+            }
+            if (request.query.status === 'cancelled') {
+                status = ProgressStatus.Cancelled;
+            }
+        }
 
-         var userService = Loader.container.resolve(UserService);
+        var userId = request.currentUser.UserId;
+        if (request.query.userId !== undefined) {
+            userId = request.query.userId as uuid;
+        }
 
-         var scheduledFrom: Date = null;
-         if (request.query.scheduledFrom)
-         {
-             scheduledFrom = await userService.getDateInUserTimeZone(userId, request.body.scheduledFrom);
-         }
-         var scheduledTo: Date = null;
-         if (request.query.scheduledTo)
-         {
-             scheduledTo = await userService.getDateInUserTimeZone(userId, request.body.scheduledTo);
-             if (scheduledFrom.getTime() === scheduledTo.getTime()) {
-                 scheduledTo = TimeHelper.addDuration(scheduledFrom, 1, DurationType.Day);
-             }
-         }
+        var userService = Loader.container.resolve(UserService);
 
-         var filters: UserTaskSearchFilters = {
-             UserId        : userId,
-             Task          : request.query.Task as string ?? null,
-             Category      : request.query.category as string ?? null,
-             ActionType    : request.query.actionType as string ?? null,
-             ActionId      : request.query.actionId as uuid ?? null,
-             ScheduledFrom : scheduledFrom,
-             ScheduledTo   : scheduledTo,
-             Status        : status,
-         };
-         
-         return this.updateBaseSearchFilters(request, filters);
+        var scheduledFrom: Date = null;
+        if (request.query.scheduledFrom) {
+            scheduledFrom = await userService.getDateInUserTimeZone(userId, request.body.scheduledFrom);
+        }
+        var scheduledTo: Date = null;
+        if (request.query.scheduledTo) {
+            scheduledTo = await userService.getDateInUserTimeZone(userId, request.body.scheduledTo);
+            if (scheduledFrom.getTime() === scheduledTo.getTime()) {
+                scheduledTo = TimeHelper.addDuration(scheduledFrom, 1, DurationType.Day);
+            }
+        }
 
-     }
+        var filters: UserTaskSearchFilters = {
+            UserId        : userId,
+            Task          : request.query.Task as string ?? null,
+            Category      : request.query.category as string ?? null,
+            ActionType    : request.query.actionType as string ?? null,
+            ActionId      : request.query.actionId as uuid ?? null,
+            ScheduledFrom : scheduledFrom,
+            ScheduledTo   : scheduledTo,
+            Status        : status,
+        };
+
+        return this.updateBaseSearchFilters(request, filters);
+
+    }
 
 }

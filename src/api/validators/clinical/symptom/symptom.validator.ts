@@ -78,7 +78,7 @@ export class SymptomValidator extends BaseValidator {
         this.validateRequest(request);
 
         return this.getFilter(request);
-    }
+    };
 
     update = async (request: express.Request): Promise<SymptomDomainModel> => {
 

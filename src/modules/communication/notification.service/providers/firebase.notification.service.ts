@@ -31,7 +31,7 @@ export class FirebaseNotificationService implements INotificationService {
             var errorMessage = `Error sending notification to token: ${deviceToken}.`;
             Logger.instance().error(errorMessage, 500, error.message);
         }
-    }
+    };
     
     sendNotificationToMultipleDevice = async (
         deviceTokens: string[],
@@ -48,7 +48,7 @@ export class FirebaseNotificationService implements INotificationService {
             var errorMessage = `Error sending notification to token: ${deviceTokens}.`;
             Logger.instance().error(errorMessage, 500, error.message);
         }
-    }
+    };
     
     sendMessageToTopic = async (topic: string, message: any): Promise<string> => {
         try {
@@ -62,7 +62,7 @@ export class FirebaseNotificationService implements INotificationService {
             var errorMessage = 'Error sending notification to topic: ' + topic;
             Logger.instance().error(errorMessage, 500, error.message);
         }
-    }
+    };
     
     formatNotificationMessage = (notificationType: string, title: string, body: any): any => {
     
@@ -100,7 +100,7 @@ export class FirebaseNotificationService implements INotificationService {
             }
         };
         return message;
-    }
+    };
     
     formatNotificationMessageWithData = (notificationType: string, title: string, body: any, customData: any): any => {
     
@@ -144,6 +144,6 @@ export class FirebaseNotificationService implements INotificationService {
             }
         };
         return message;
-    }
+    };
        
 }

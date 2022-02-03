@@ -18,6 +18,6 @@ export class BodyHeightMapper {
             Unit          : bodyHeight.Unit
         };
         return dto;
-    }
+    };
 
 }

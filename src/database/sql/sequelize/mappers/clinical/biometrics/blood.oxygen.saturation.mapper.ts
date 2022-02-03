@@ -20,6 +20,6 @@ export class BloodOxygenSaturationMapper {
             RecordedByUserId      : bloodOxygenSaturation.RecordedByUserId
         };
         return dto;
-    }
+    };
 
 }

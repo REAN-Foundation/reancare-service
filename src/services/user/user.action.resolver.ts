@@ -17,7 +17,7 @@ export class UserActionResolver {
         var actionService = this.getActionService(actionType);
         var time = completionTime ?? new Date();
         return await actionService.completeAction(actionId, time, success);
-    }
+    };
 
     cancelAction = async (
         actionType: string,
@@ -26,7 +26,7 @@ export class UserActionResolver {
         cancellationReason?: string): Promise<boolean> => {
         var actionService = this.getActionService(actionType);
         return await actionService.cancelAction(actionId, cancellationTime, cancellationReason);
-    }
+    };
 
     getActionService = (actionType: string): IUserActionService => {
         if (actionType === UserActionType.Medication) {
@@ -38,7 +38,7 @@ export class UserActionResolver {
             return null;
         }
         return null;
-    }
+    };
 
     //#endregion
 

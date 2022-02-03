@@ -37,7 +37,7 @@ export class DocumentMapper {
             UploadedDate              : document.UploadedDate,
         };
         return dto;
-    }
+    };
 
     static toSharedDocumentDto = (sharedDocument: SharedDocumentDetails): SharedDocumentDetailsDto => {
 
@@ -59,6 +59,6 @@ export class DocumentMapper {
         };
 
         return dto;
-    }
+    };
 
 }

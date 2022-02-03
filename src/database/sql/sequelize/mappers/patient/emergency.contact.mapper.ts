@@ -30,6 +30,6 @@ export class EmergencyContactMapper {
             AdditionalPhoneNumbers  : contact.AdditionalPhoneNumbers,
         };
         return dto;
-    }
+    };
 
 }

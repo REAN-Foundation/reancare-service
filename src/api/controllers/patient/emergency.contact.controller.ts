@@ -33,7 +33,7 @@ export class EmergencyContactController extends BaseController {
 
     _userService: UserService = null;
 
-    _addressService: AddressService = null
+    _addressService: AddressService = null;
 
     constructor() {
         super();

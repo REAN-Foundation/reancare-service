@@ -22,6 +22,6 @@ export class ComplaintMapper {
             RecordDate                : complaint.RecordDate
         };
         return dto;
-    }
+    };
 
 }

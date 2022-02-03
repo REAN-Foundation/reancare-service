@@ -24,7 +24,7 @@ export class PersonRoleRepo implements IPersonRoleRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     addPersonRole = async (personId: string, roleId: number): Promise<PersonRoleDto> => {
         try {
@@ -55,7 +55,7 @@ export class PersonRoleRepo implements IPersonRoleRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getPersonCountByRoles = async (): Promise<any> => {
         try {
@@ -74,6 +74,6 @@ export class PersonRoleRepo implements IPersonRoleRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

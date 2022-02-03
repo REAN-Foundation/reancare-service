@@ -47,7 +47,7 @@ export default class FileResourceReference extends Model {
     ResourceId: string;
     
     @BelongsTo(() => FileResource)
-    Resource: FileResource
+    Resource: FileResource;
 
     @IsUUID(4)
     @Column({

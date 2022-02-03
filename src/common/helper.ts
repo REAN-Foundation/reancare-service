@@ -23,7 +23,7 @@ export class Helper {
             request.params.doctorUserId;
         }
         return null;
-    }
+    };
 
     static dumpJson(obj, filename) {
         const txt = JSON.stringify(obj, null, '    ');
@@ -43,7 +43,7 @@ export class Helper {
 
         const obj = JSON.parse(rawdata);
         return obj;
-    }
+    };
 
     static executeCommand = (command: string): Promise<string> => {
         return new Promise(function (resolve, reject) {
@@ -339,7 +339,7 @@ export class Helper {
         let decrypted = decipher.update(encryptedText);
         decrypted = Buffer.concat([decrypted, decipher.final()]);
         return decrypted.toString();
-    }
+    };
 
     public static getPossiblePhoneNumbers = (phone) => {
 
@@ -376,16 +376,16 @@ export class Helper {
             possiblePhoneNumbers.push(phoneTemp);
         }
         return possiblePhoneNumbers;
-    }
+    };
 
     public static getFileExtension = (filename: string) => {
         var ext = /^.+\.([^.]+)$/.exec(filename);
         return ext == null ? "" : ext[1];
-    }
+    };
 
     public static getFilenameFromFilePath = (filepath: string) => {
         return path.basename(filepath);
-    }
+    };
 
     public static generateDisplayId = (prefix = null) => {
         var tmp = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
@@ -395,13 +395,13 @@ export class Helper {
             identifier = prefix + '-' + identifier;
         }
         return identifier;
-    }
+    };
 
     public static convertCamelCaseToPascalCase = (str: string): string => {
         if (str.length > 0) {
             return str.charAt(0).toUpperCase() + str.substring(1);
         }
         return str;
-    }
+    };
     
 }

@@ -62,19 +62,19 @@ export class UserTaskService {
         var dto = await this._userTaskRepo.startTask(id);
         dto = await this.updateDto(dto);
         return dto;
-    }
+    };
 
     finishTask = async (id: string): Promise<UserTaskDto> => {
         var dto = await this._userTaskRepo.finishTask(id);
         dto = await this.updateDto(dto);
         return dto;
-    }
+    };
 
     cancelTask = async (id: string, reason?: string): Promise<UserTaskDto> => {
         var dto = await this._userTaskRepo.cancelTask(id, reason ?? null);
         dto = await this.updateDto(dto);
         return dto;
-    }
+    };
 
     getTaskSummaryForDay = async (userId: string, dateStr: string): Promise<TaskSummaryDto> => {
         var summaryDto = await this._userTaskRepo.getTaskSummaryForDay(userId, dateStr);
@@ -82,7 +82,7 @@ export class UserTaskService {
         summaryDto.InProgressTasks = await this.updateDtos(summaryDto.InProgressTasks);
         summaryDto.PendingTasks = await this.updateDtos(summaryDto.PendingTasks);
         return summaryDto;
-    }
+    };
 
     private updateDtos = async (dtos: UserTaskDto[]): Promise<UserTaskDto[]> => {
         var updatedDtos: UserTaskDto[] = [];
@@ -91,7 +91,7 @@ export class UserTaskService {
             updatedDtos.push(dto);
         }
         return updatedDtos;
-    }
+    };
 
     private updateDto = async (dto: UserTaskDto): Promise<UserTaskDto> => {
 
@@ -107,6 +107,6 @@ export class UserTaskService {
         }
         
         return dto;
-    }
+    };
 
 }

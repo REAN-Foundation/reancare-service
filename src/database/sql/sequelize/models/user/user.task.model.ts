@@ -90,14 +90,14 @@ export default class UserTask extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    ScheduledStartTime: Date
+    ScheduledStartTime: Date;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    ScheduledEndTime: Date
+    ScheduledEndTime: Date;
 
     @Column({
         type         : DataType.BOOLEAN,
@@ -111,7 +111,7 @@ export default class UserTask extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    StartedAt: Date
+    StartedAt: Date;
 
     @Column({
         type         : DataType.BOOLEAN,
@@ -125,7 +125,7 @@ export default class UserTask extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    FinishedAt: Date
+    FinishedAt: Date;
 
     @Column({
         type         : DataType.BOOLEAN,
@@ -139,7 +139,7 @@ export default class UserTask extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    CancelledAt: Date
+    CancelledAt: Date;
 
     @Length({ max: 128 })
     @Column({

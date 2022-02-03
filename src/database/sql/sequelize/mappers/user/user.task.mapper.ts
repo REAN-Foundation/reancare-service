@@ -55,6 +55,6 @@ export class UserTaskMapper {
             RecurrenceScheduleId : task.RecurrenceScheduleId,
         };
         return dto;
-    }
+    };
 
 }

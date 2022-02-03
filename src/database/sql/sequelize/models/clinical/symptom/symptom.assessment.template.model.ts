@@ -61,10 +61,10 @@ export default class SymptomAssessmentTemplate extends Model {
     Tags: string;
 
     @BelongsToMany(() => SymptomType, () => SymptomTypesInTemplate)
-    SymptomTypes: SymptomType[]
+    SymptomTypes: SymptomType[];
     
     @HasMany(() => SymptomAssessment)
-    Assessments: SymptomAssessment[]
+    Assessments: SymptomAssessment[];
     
     @Column
     @CreatedAt

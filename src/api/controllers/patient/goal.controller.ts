@@ -7,8 +7,6 @@ import { PatientService } from '../../../services/patient/patient.service';
 import { Loader } from '../../../startup/loader';
 import { GoalValidator } from '../../validators/patient/goal.validator';
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class GoalController {
@@ -19,7 +17,7 @@ export class GoalController {
 
     _authorizer: Authorizer = null;
 
-    _patientService: PatientService = null
+    _patientService: PatientService = null;
 
     constructor() {
         this._service = Loader.container.resolve(GoalService);

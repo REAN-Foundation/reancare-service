@@ -166,14 +166,14 @@ export default class Medication extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    StartDate: Date
+    StartDate: Date;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    EndDate: Date
+    EndDate: Date;
 
     @Column({
         type         : DataType.BOOLEAN,

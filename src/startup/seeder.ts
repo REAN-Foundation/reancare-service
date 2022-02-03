@@ -280,7 +280,7 @@ export class Seeder {
             Logger.instance().log('Error occurred while seeding internal test users!');
         }
         Logger.instance().log('Seeded internal-test-users successfully!');
-    }
+    };
 
     private createTestPatient = async (phone: string): Promise<boolean> => {
 
@@ -354,7 +354,7 @@ export class Seeder {
 
         return true;
         
-    }
+    };
     
     private seedMedicationStockImages = async () => {
 
@@ -392,7 +392,7 @@ export class Seeder {
                 Logger.instance().log('Error occurred while seeding medication stock images!');
             }
         }
-    }
+    };
 
     public seedSymptomTypes = async () => {
 
@@ -420,7 +420,7 @@ export class Seeder {
             };
             await this._symptomTypeService.create(model);
         }
-    }
+    };
 
     getImageResourceIdForSymptomType = async (fileName) => {
         if (fileName === null) {
@@ -435,7 +435,7 @@ export class Seeder {
             true);
 
         return uploaded.id;
-    }
+    };
 
     public seedSymptomAsseessmentTemplates = async () => {
     
@@ -469,7 +469,7 @@ export class Seeder {
                 }
             }
         }
-    }
+    };
 
     public seedKnowledgeNuggets = async () => {
 
@@ -500,7 +500,7 @@ export class Seeder {
             };
             await this._knowledgeNuggetsService.create(model);
         }
-    }
+    };
 
     public seedDrugs = async () => {
         
@@ -521,6 +521,6 @@ export class Seeder {
             };
             await this._drugService.create(model);
         }
-    }
+    };
 
 }

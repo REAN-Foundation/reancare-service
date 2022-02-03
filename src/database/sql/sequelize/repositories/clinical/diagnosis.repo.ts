@@ -46,7 +46,7 @@ export class DiagnosisRepo implements IDiagnosisRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     update = async (id: string, updateModel: DiagnosisDomainModel): Promise<DiagnosisDto> => {
@@ -95,7 +95,7 @@ export class DiagnosisRepo implements IDiagnosisRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     search = async (filters: DiagnosisSearchFilters): Promise<DiagnosisSearchResults> => {
         try {
@@ -199,7 +199,7 @@ export class DiagnosisRepo implements IDiagnosisRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     delete = async (id: string): Promise<boolean> => {
         try {
@@ -209,6 +209,6 @@ export class DiagnosisRepo implements IDiagnosisRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

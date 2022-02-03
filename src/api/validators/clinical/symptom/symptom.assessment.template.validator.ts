@@ -128,7 +128,7 @@ export class SymptomAssessmentTemplateValidator {
         };
 
         return model;
-    }
+    };
 
     private static async validateBody(request) {
 

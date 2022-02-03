@@ -121,7 +121,7 @@ export default class Order extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    OrderDate: Date
+    OrderDate: Date;
 
     @IsUUID(4)
     @ForeignKey(() => User)

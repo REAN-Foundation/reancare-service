@@ -29,7 +29,7 @@ export class TimeHelper {
 
     static timestamp = (date: Date): string => {
         return date.getTime().toString();
-    }
+    };
 
     static getDateString = (date: Date, format: DateStringFormat): string => {
 
@@ -37,7 +37,7 @@ export class TimeHelper {
             return date.toISOString().split('T')[0];
         }
         return date.toISOString().split('T')[0];
-    }
+    };
 
     static addDuration = (date: Date, durationValue: number, durationType: DurationType, utc = false): Date => {
 
@@ -71,7 +71,7 @@ export class TimeHelper {
 
         var str = newDate_.format();
         return new Date(str);
-    }
+    };
 
     static subtractDuration = (date: Date, durationValue: number, durationType: DurationType, utc = false): Date => {
 
@@ -105,15 +105,15 @@ export class TimeHelper {
 
         var str = newDate_.format();
         return new Date(str);
-    }
+    };
 
     static isBefore = (first: Date, second: Date): boolean => {
         return dayjs(first).isBefore(dayjs(second));
-    }
+    };
 
     static isAfter = (first: Date, second: Date): boolean => {
         return dayjs(first).isAfter(dayjs(second));
-    }
+    };
 
     static durationFromString = (str: string, durationType: DurationType): number => {
 
@@ -171,7 +171,7 @@ export class TimeHelper {
             return durationInHours / (24.0 * 365);
         }
         return durationInHours;
-    }
+    };
 
     static getTimezoneOffsets = (timezoneOffsetStr: string, durationType: DurationType): number => {
 
@@ -235,7 +235,7 @@ export class TimeHelper {
             return offsetMinutes / (24.0 * 60 * 365);
         }
         return offsetMinutes;
-    }
+    };
 
     static strToUtc = (dateStr: string, timeZoneOffsetMinutes?: number): Date => {
 
@@ -250,11 +250,11 @@ export class TimeHelper {
             var corrected = (new Date()).setTime(d);
             return new Date(corrected);
         }
-    }
+    };
 
     static format = (date: Date, formatTemplate: string): string => {
         return dayjs(date).format(formatTemplate);
-    }
+    };
 
     static startOf = (date: Date, durationType: DurationType): Date => {
 
@@ -294,7 +294,7 @@ export class TimeHelper {
                 .toDate();
         }
         return date;
-    }
+    };
 
     static endOf = (date: Date, durationType: DurationType): Date => {
 
@@ -334,10 +334,10 @@ export class TimeHelper {
                 .toDate();
         }
         return date;
-    }
+    };
 
     static daysInMonthContainingDate = (date: Date): number => {
         return dayjs(date).daysInMonth();
-    }
+    };
 
 }

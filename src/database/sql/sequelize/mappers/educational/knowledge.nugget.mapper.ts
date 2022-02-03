@@ -31,6 +31,6 @@ export class KnowledgeNuggetMapper {
             Tags                : tags,
         };
         return dto;
-    }
+    };
 
 }

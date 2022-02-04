@@ -7,7 +7,6 @@ import { TaskSummaryDto, UserTaskDto } from '../../domain.types/user/user.task/u
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../domain.types/user/user.task/user.task.search.types';
 import { ICareplanRepo } from "../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { CareplanHandler } from '../../modules/careplan/careplan.handler';
-import { UserActionType } from "../../domain.types/user/user.task/user.task.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -75,38 +74,7 @@ export class UserTaskService {
 
     getTaskSummaryForDay = async (userId: string, dateStr: string): Promise<TaskSummaryDto> => {
         var summaryDto = await this._userTaskRepo.getTaskSummaryForDay(userId, dateStr);
-        summaryDto.CompletedTasks = await this.updateDtos(summaryDto.CompletedTasks);
-        summaryDto.InProgressTasks = await this.updateDtos(summaryDto.InProgressTasks);
-        summaryDto.PendingTasks = await this.updateDtos(summaryDto.PendingTasks);
         return summaryDto;
-    };
-
-    private updateDtos = async (dtos: UserTaskDto[]): Promise<UserTaskDto[]> => {
-        var updatedDtos: UserTaskDto[] = [];
-        for await (var dto of dtos) {
-            dto = await this.updateDto(dto);
-            updatedDtos.push(dto);
-        }
-        return updatedDtos;
-    };
-
-    private updateDto = async (dto: UserTaskDto): Promise<UserTaskDto> => {
-
-        if (dto == null) {
-            return null;
-        }
-        
-        var actionDto: any = null;
-        if (dto.ActionType === UserActionType.Medication &&
-            dto.ActionId !== null) {
-            actionDto = await this._medicationConsumptionRepo.getById(dto.ActionId);
-            dto.Action = actionDto;
-        }
-        // else if (dto.ActionType === UserActionType.Careplan) {
-
-        // }
-        
-        return dto;
     };
 
 }

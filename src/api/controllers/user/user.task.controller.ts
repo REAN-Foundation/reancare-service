@@ -1,9 +1,10 @@
 import express from 'express';
+import { UserTaskDto } from '../../../domain.types/user/user.task/user.task.dto';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { Logger } from '../../../common/logger';
 import { ResponseHandler } from '../../../common/response.handler';
-import { UserActionTypeList, UserTaskCategoryList } from '../../../domain.types/user/user.task/user.task.types';
+import { UserActionType, UserActionTypeList, UserTaskCategoryList } from '../../../domain.types/user/user.task/user.task.types';
 import { OrganizationService } from '../../../services/organization.service';
 import { PersonService } from '../../../services/person.service';
 import { RoleService } from '../../../services/role.service';
@@ -11,6 +12,8 @@ import { UserActionResolver } from '../../../services/user/user.action.resolver'
 import { UserTaskService } from '../../../services/user/user.task.service';
 import { Loader } from '../../../startup/loader';
 import { UserTaskValidator } from '../../validators/user/user.task.validator';
+import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
+import { CareplanService } from '../../../services/clinical/careplan.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,6 +29,10 @@ export class UserTaskController {
 
     _organizationService: OrganizationService = null;
 
+    _medicationConsumptionService: MedicationConsumptionService = null;
+
+    _careplanService: CareplanService = null;
+
     _authorizer: Authorizer = null;
 
     _validator: UserTaskValidator = new UserTaskValidator();
@@ -35,6 +42,8 @@ export class UserTaskController {
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);
         this._organizationService = Loader.container.resolve(OrganizationService);
+        this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
+        this._careplanService = Loader.container.resolve(CareplanService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -335,7 +344,10 @@ export class UserTaskController {
 
             const { userId, date } = await this._validator.getTaskSummaryForDay(request);
             const summary = await this._service.getTaskSummaryForDay(userId, date);
-                   
+            summary.CompletedTasks = await this.updateDtos(summary.CompletedTasks);
+            summary.InProgressTasks = await this.updateDtos(summary.InProgressTasks);
+            summary.PendingTasks = await this.updateDtos(summary.PendingTasks);
+
             ResponseHandler.success(request, response, 'User task cancelled successfully!', 200, {
                 UserTaskSummaryForDay : summary
             });
@@ -367,6 +379,41 @@ export class UserTaskController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    //#endregion
+
+    //#region Privates
+
+    private updateDtos = async (dtos: UserTaskDto[]): Promise<UserTaskDto[]> => {
+        var updatedDtos: UserTaskDto[] = [];
+        for await (var dto of dtos) {
+            dto = await this.updateDto(dto);
+            updatedDtos.push(dto);
+        }
+        return updatedDtos;
+    };
+
+    private updateDto = async (dto: UserTaskDto): Promise<UserTaskDto> => {
+
+        if (dto == null) {
+            return null;
+        }
+        
+        if (dto.ActionId === null) {
+            return dto;
+        }
+
+        if (dto.ActionType === UserActionType.Medication) {
+            const actionDto = await this._medicationConsumptionService.getById(dto.ActionId);
+            dto.Action = actionDto;
+        }
+        else if (dto.ActionType === UserActionType.Careplan) {
+            const actionDto = await this._careplanService.getAction(dto.ActionId);
+            dto.Action = actionDto;
+        }
+        
+        return dto;
     };
 
     //#endregion

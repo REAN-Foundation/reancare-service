@@ -18,7 +18,7 @@ export class GoalController {
 
     _authorizer: Authorizer = null;
 
-    _patientService: PatientService = null
+    _patientService: PatientService = null;
 
     constructor() {
         this._service = Loader.container.resolve(GoalService);

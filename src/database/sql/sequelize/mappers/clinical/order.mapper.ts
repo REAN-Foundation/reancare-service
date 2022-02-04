@@ -31,6 +31,6 @@ export class OrderMapper {
             AdditionalInformation     : order.AdditionalInformation
         };
         return dto;
-    }
+    };
 
 }

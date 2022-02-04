@@ -46,7 +46,7 @@ export class MedicationConsumptionMapper {
             status = MedicationConsumptionStatus.Upcoming; //'upcoming';
         }
         return status;
-    }
+    };
 
     static toDto = (consumption: MedicationConsumptionModel): MedicationConsumptionDto => {
         
@@ -67,7 +67,7 @@ export class MedicationConsumptionMapper {
         };
         
         return dto;
-    }
+    };
     
     static toDetailsDto = (consumption: MedicationConsumptionModel): MedicationConsumptionDetailsDto => {
         
@@ -98,6 +98,6 @@ export class MedicationConsumptionMapper {
         };
 
         return dto;
-    }
+    };
 
 }

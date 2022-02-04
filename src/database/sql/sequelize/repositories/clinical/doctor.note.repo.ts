@@ -159,6 +159,6 @@ export class DoctorNoteRepo implements IDoctorNoteRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

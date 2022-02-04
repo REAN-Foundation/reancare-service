@@ -172,7 +172,7 @@ export class AllergyRepo implements IAllergyRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     delete = async (id: string): Promise<boolean> => {
         try {

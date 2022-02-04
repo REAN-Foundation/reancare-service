@@ -167,7 +167,7 @@ export class FileResourceValidator extends BaseValidator{
         };
         
         return domainModel;
-    }
+    };
 
     getByVersionName = async (request: express.Request): Promise<FileResourceMetadata> => {
 
@@ -478,7 +478,7 @@ export class FileResourceValidator extends BaseValidator{
             }
         });
         return metadataDetails;
-    }
+    };
 
     moveToTempFolder = (folder, file): FileResourceMetadata => {
 
@@ -517,7 +517,7 @@ export class FileResourceValidator extends BaseValidator{
             StorageKey     : null
         };
         return metadata;
-    }
+    };
     
     //#endregion
 

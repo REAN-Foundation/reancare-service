@@ -70,7 +70,7 @@ export default class Application {
         catch (error){
             Logger.instance().log('An error occurred while starting reancare-api service.' + error.message);
         }
-    }
+    };
 
     private setupMiddlewares = async (): Promise<boolean> => {
 
@@ -97,7 +97,7 @@ export default class Application {
                 reject(error);
             }
         });
-    }
+    };
 
     private listen = () => {
         return new Promise((resolve, reject) => {
@@ -115,6 +115,6 @@ export default class Application {
                 reject(error);
             }
         });
-    }
+    };
 
 }

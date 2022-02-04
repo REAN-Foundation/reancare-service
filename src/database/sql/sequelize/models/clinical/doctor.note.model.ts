@@ -91,7 +91,7 @@ export default class DoctorNote extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    RecordDate: Date
+    RecordDate: Date;
 
     @Column
     @CreatedAt

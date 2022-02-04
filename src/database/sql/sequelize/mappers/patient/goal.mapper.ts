@@ -27,6 +27,6 @@ export class GoalMapper {
             GoalAbandoned        : goal.GoalAbandoned
         };
         return dto;
-    }
+    };
 
 }

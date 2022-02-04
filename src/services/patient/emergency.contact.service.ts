@@ -34,12 +34,12 @@ export class EmergencyContactService {
     checkIfContactPersonExists =  async (patientUserId: string, contactPersonId: string)
         : Promise<boolean> => {
         return await this._contactRepo.checkIfContactPersonExists(patientUserId, contactPersonId);
-    }
+    };
 
     getContactsCountWithRole =  async (patientUserId: string, contactRole: string)
         : Promise<number> => {
         return await this._contactRepo.getContactsCountWithRole(patientUserId, contactRole);
-    }
+    };
 
     search = async (filters: EmergencyContactSearchFilters): Promise<EmergencyContactSearchResults> => {
         var items = [];
@@ -64,28 +64,28 @@ export class EmergencyContactService {
 
     //#region Privates
 
-        private updateDto = async (dto: EmergencyContactDto): Promise<EmergencyContactDto> => {
-            
-            if (dto == null) {
-                return null;
-            }
-            if (dto.ContactPersonId != null && dto.ContactPerson == null) {
-                var contactPerson = await this._personRepo.getById(dto.ContactPersonId);
-                dto.ContactPerson = contactPerson;
-            }
-    
-            if (dto.OrganizationId !== null && dto.Organization === null) {
-                var organization = await this._organizationRepo.getById(dto.OrganizationId);
-                dto.Organization = organization;
-            }
-    
-            if (dto.AddressId !== null && dto.Address === null) {
-                var address = await this._addressRepo.getById(dto.AddressId);
-                dto.Address = address;
-            }
-    
-            return dto;
-        };
+    private updateDto = async (dto: EmergencyContactDto): Promise<EmergencyContactDto> => {
+        
+        if (dto == null) {
+            return null;
+        }
+        if (dto.ContactPersonId != null && dto.ContactPerson == null) {
+            var contactPerson = await this._personRepo.getById(dto.ContactPersonId);
+            dto.ContactPerson = contactPerson;
+        }
+
+        if (dto.OrganizationId !== null && dto.Organization === null) {
+            var organization = await this._organizationRepo.getById(dto.OrganizationId);
+            dto.Organization = organization;
+        }
+
+        if (dto.AddressId !== null && dto.Address === null) {
+            var address = await this._addressRepo.getById(dto.AddressId);
+            dto.Address = address;
+        }
+
+        return dto;
+    };
     
     //#endregion
 

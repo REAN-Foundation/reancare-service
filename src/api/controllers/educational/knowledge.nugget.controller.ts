@@ -45,7 +45,7 @@ export class KnowledgeNuggetController extends BaseController {
         catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

@@ -268,7 +268,7 @@ export class UserTaskRepo implements IUserTaskRepo {
         task = await task.save();
 
         return UserTaskMapper.toDto(task);
-    }
+    };
 
     finishTask = async (id: string): Promise<UserTaskDto> => {
 
@@ -291,7 +291,7 @@ export class UserTaskRepo implements IUserTaskRepo {
 
         return UserTaskMapper.toDto(task);
 
-    }
+    };
     
     cancelTask = async (id: string, reason: string): Promise<UserTaskDto> => {
 
@@ -311,7 +311,7 @@ export class UserTaskRepo implements IUserTaskRepo {
 
         return UserTaskMapper.toDto(task);
 
-    }
+    };
 
     delete = async (id: string): Promise<boolean> => {
         try {
@@ -415,6 +415,6 @@ export class UserTaskRepo implements IUserTaskRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

@@ -107,14 +107,14 @@ export default class Diagnosis extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    OnsetDate: Date
+    OnsetDate: Date;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    EndDate: Date
+    EndDate: Date;
 
     @Column
     @CreatedAt

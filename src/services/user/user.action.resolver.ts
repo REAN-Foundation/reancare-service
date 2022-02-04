@@ -16,14 +16,14 @@ export class UserActionResolver {
         actionId: uuid): Promise<any> => {
         var actionService = this.getActionService(actionType);
         return await actionService?.getAction(actionId);
-    }
+    };
 
     startAction = async (
         actionType: string,
         actionId: uuid): Promise<boolean> => {
         var actionService = this.getActionService(actionType);
         return await actionService?.startAction(actionId);
-    }
+    };
 
     completeAction = async (
         actionType: string,
@@ -33,7 +33,7 @@ export class UserActionResolver {
         var actionService = this.getActionService(actionType);
         var time = completionTime ?? new Date();
         return await actionService?.completeAction(actionId, time, success);
-    }
+    };
 
     updateAction = async (
         actionType: string,
@@ -41,7 +41,7 @@ export class UserActionResolver {
         updates: any): Promise<any> => {
         var actionService = this.getActionService(actionType);
         return await actionService?.updateAction(actionId, updates);
-    }
+    };
 
     cancelAction = async (
         actionType: string,
@@ -50,7 +50,7 @@ export class UserActionResolver {
         cancellationReason?: string): Promise<boolean> => {
         var actionService = this.getActionService(actionType);
         return await actionService?.cancelAction(actionId, cancellationTime, cancellationReason);
-    }
+    };
 
     getActionService = (actionType: string): IUserActionService => {
         if (actionType === UserActionType.Medication) {
@@ -63,7 +63,7 @@ export class UserActionResolver {
             return Loader.container.resolve(CareplanService);
         }
         return null;
-    }
+    };
 
     //#endregion
 

@@ -32,6 +32,6 @@ export class FhirHelper {
             prefix : prefixes
         };
         return nameObj;
-    }
+    };
     
 }

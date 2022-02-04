@@ -34,8 +34,11 @@ export class FirebaseNotificationService implements INotificationService {
             Logger.instance().error(errorMessage, 500, error.message);
         }
     };
-
-    sendNotificationToMultipleDevice = async (deviceTokens: string[], message: any): Promise<any> => {
+    
+    sendNotificationToMultipleDevice = async (
+        deviceTokens: string[],
+        message: any): Promise<any> => {
+    
         try {
             message.tokens = deviceTokens;
             Logger.instance().log(`Sending notification to tokens: ${deviceTokens}.`);
@@ -47,7 +50,7 @@ export class FirebaseNotificationService implements INotificationService {
             Logger.instance().error(errorMessage, 500, error.message);
         }
     };
-
+    
     sendMessageToTopic = async (topic: string, message: any): Promise<string> => {
         try {
             message.topic = topic;
@@ -60,7 +63,7 @@ export class FirebaseNotificationService implements INotificationService {
             Logger.instance().error(errorMessage, 500, error.message);
         }
     };
-
+    
     formatNotificationMessage = (notificationType: string, title: string, body: any): any => {
         var message = {
             data         : { type: notificationType },
@@ -97,7 +100,7 @@ export class FirebaseNotificationService implements INotificationService {
         };
         return message;
     };
-
+    
     formatNotificationMessageWithData = (notificationType: string, title: string, body: any, customData: any): any => {
         var message = {
             data : {
@@ -140,5 +143,5 @@ export class FirebaseNotificationService implements INotificationService {
         };
         return message;
     };
-
+       
 }

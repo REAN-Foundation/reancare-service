@@ -14,32 +14,33 @@ export class AssessmentTemplateService {
         @inject('IAssessmentTemplateRepo') private _assessmentRepo: IAssessmentTemplateRepo,
     ) {}
 
-    // importFromFile = async (fileUploadModel: FileResourceUploadDomainModel): Promise<AssessmentTemplateDto> => {
+    // public importFromFile = async (fileUploadModel: FileResourceUploadDomainModel)
+    //    : Promise<AssessmentTemplateDto> => {
     //     throw new Error();
     // };
 
-    // importFromJson = async (jsonModel: any): Promise<AssessmentTemplateDto> => {
+    // public importFromJson = async (jsonModel: any): Promise<AssessmentTemplateDto> => {
     //     throw new Error();
     // };
 
-    create = async (assessmentDomainModel: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
+    public create = async (assessmentDomainModel: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
         return await this._assessmentRepo.create(assessmentDomainModel);
     };
 
-    getById = async (id: string): Promise<AssessmentTemplateDto> => {
+    public getById = async (id: string): Promise<AssessmentTemplateDto> => {
         return await this._assessmentRepo.getById(id);
     };
 
-    search = async (filters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchResults> => {
+    public search = async (filters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchResults> => {
         return await this._assessmentRepo.search(filters);
     };
 
-    update = async (id: string, assessmentDomainModel: AssessmentTemplateDomainModel):
+    public update = async (id: string, assessmentDomainModel: AssessmentTemplateDomainModel):
         Promise<AssessmentTemplateDto> => {
         return await this._assessmentRepo.update(id, assessmentDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    public delete = async (id: string): Promise<boolean> => {
         return await this._assessmentRepo.delete(id);
     };
 

@@ -22,6 +22,6 @@ export class AssessmentTemplateMapper {
             RootNodeId             : template.RootNodeId,
         };
         return dto;
-    }
+    };
 
 }

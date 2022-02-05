@@ -41,7 +41,9 @@ import {
 
 export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
-    addTemplate = async (t: SAssessmentTemplate): Promise<AssessmentTemplateDto> => {
+    //#region Publics
+
+    public addTemplate = async (t: SAssessmentTemplate): Promise<AssessmentTemplateDto> => {
         try {
             const existing = await AssessmentTemplate.findOne({
                 where : {
@@ -78,7 +80,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
 
-    getNodeById = async (
+    public getNodeById = async (
         nodeId: string
     ): Promise<SAssessmentQuestionNode | SAssessmentListNode | SAssessmentMessageNode> => {
         try {
@@ -224,7 +226,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
     
     public getChildrenConditions = async (conditionId: uuid): Promise<SAssessmentPathCondition[]> => {
         try {
@@ -240,7 +242,11 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
+
+    //#endregion
+
+    //#region Privates
 
     private async populateNodeDetails(
         node: AssessmentNode
@@ -522,4 +528,6 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         return null;
     }
     
+    //#endregion
+
 }

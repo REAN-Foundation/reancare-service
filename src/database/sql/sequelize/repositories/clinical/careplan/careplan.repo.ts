@@ -22,7 +22,7 @@ import { HealthPriorityMapper } from '../../../mappers/health.priority/health.pr
 
 export class CareplanRepo implements ICareplanRepo {
 
-    addPatientWithProvider = async (
+    public addPatientWithProvider = async (
         patientUserId: string,
         provider: string,
         participantId: string
@@ -41,7 +41,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    getPatientRegistrationDetails = async (patientUserId: string, provider: string): Promise<ParticipantDto> => {
+    public getPatientRegistrationDetails = async (patientUserId: string, provider: string): Promise<ParticipantDto> => {
         try {
             var participant = await CareplanParticipant.findOne({
                 where : {
@@ -55,7 +55,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    enrollPatient = async (model: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+    public enrollPatient = async (model: EnrollmentDomainModel): Promise<EnrollmentDto> => {
         try {
             const entity = {
                 PatientUserId : model.PatientUserId,
@@ -76,7 +76,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    getCareplanEnrollment = async (careplanId: uuid): Promise<EnrollmentDto> => {
+    public getCareplanEnrollment = async (careplanId: uuid): Promise<EnrollmentDto> => {
         try {
             const enrollment = await CareplanEnrollment.findOne({
                 where : {
@@ -88,9 +88,9 @@ export class CareplanRepo implements ICareplanRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    getPatientEnrollments = async (patientUserId: string): Promise<EnrollmentDto[]> => {
+    public getPatientEnrollments = async (patientUserId: string): Promise<EnrollmentDto[]> => {
         try {
             const enrollments = await CareplanEnrollment.findAll({
                 where : {
@@ -105,9 +105,9 @@ export class CareplanRepo implements ICareplanRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    getPatientEnrollment = async (
+    public getPatientEnrollment = async (
         patientUserId: string, provider: string, enrollmentId: any): Promise<EnrollmentDto> => {
         try {
             var enrollment = await CareplanEnrollment.findOne({
@@ -121,9 +121,9 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    addActivities = async (
+    public addActivities = async (
         provider: string,
         planName: string,
         planCode: string,
@@ -167,9 +167,9 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    addActivity = async (
+    public addActivity = async (
         provider: string,
         planName: string,
         planCode: string,
@@ -197,9 +197,10 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    getActivities = async (patientUserId: string, startTime: Date, endTime: Date): Promise<CareplanActivityDto[]> => {
+    public getActivities = async (patientUserId: string, startTime: Date, endTime: Date)
+        : Promise<CareplanActivityDto[]> => {
         try {
             const orderByColum = 'ScheduledAt';
             const order = 'ASC';
@@ -224,18 +225,18 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    getActivity = async (activityId: uuid): Promise<CareplanActivityDto> => {
+    public getActivity = async (activityId: uuid): Promise<CareplanActivityDto> => {
         try {
             const record = await CareplanActivity.findByPk(activityId);
             return CareplanActivityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    startActivity = async (activityId: string): Promise<CareplanActivityDto> => {
+    public startActivity = async (activityId: string): Promise<CareplanActivityDto> => {
         try {
             var record = await CareplanActivity.findByPk(activityId);
             if (record !== null) {
@@ -247,9 +248,9 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    completeActivity = async (activityId: string): Promise<CareplanActivityDto> => {
+    public completeActivity = async (activityId: string): Promise<CareplanActivityDto> => {
         try {
             var record = await CareplanActivity.findByPk(activityId);
             if (record !== null) {
@@ -261,9 +262,10 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    updateActivity = async (activityId: uuid, status: string, finishedAt: Date ): Promise<CareplanActivityDto> => {
+    public updateActivity = async (activityId: uuid, status: string, finishedAt: Date )
+        : Promise<CareplanActivityDto> => {
         try {
             var record = await CareplanActivity.findByPk(activityId);
 
@@ -280,9 +282,9 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    updateActivityDetails = async (activityId: uuid, rawContent: any ): Promise<CareplanActivityDto> => {
+    public updateActivityDetails = async (activityId: uuid, rawContent: any ): Promise<CareplanActivityDto> => {
         try {
             var record = await CareplanActivity.findByPk(activityId);
             record.RawContent = JSON.stringify(rawContent);
@@ -291,9 +293,9 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    setUserTaskToActivity = async (activityId: any, userTaskId: string): Promise<boolean> => {
+    public setUserTaskToActivity = async (activityId: any, userTaskId: string): Promise<boolean> => {
         try {
             var record = await CareplanActivity.findByPk(activityId);
             record.UserTaskId = userTaskId;
@@ -302,9 +304,9 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    activityExists = async (
+    public activityExists = async (
         provider: string,
         enrollmentId: string,
         providerActionId: string,
@@ -324,9 +326,9 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    updateAssessmentActivity = async (activityId: uuid, status: string,
+    public updateAssessmentActivity = async (activityId: uuid, status: string,
         finishedAt: Date, items: AssessmentItem [] ): Promise<CareplanActivityDto> => {
         try {
             const record = await CareplanActivity.findByPk(activityId);
@@ -345,15 +347,15 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
-    getPriority = async (id: uuid): Promise<HealthPriorityDto> => {
+    public getPriority = async (id: uuid): Promise<HealthPriorityDto> => {
         try {
             const record = await HealthPriority.findByPk(id);
             return HealthPriorityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }
-    }
+    };
 
 }

@@ -271,6 +271,10 @@ export class AssessmentController extends BaseController{
         }
     };
 
+    //#endregion
+
+    //#region Privates
+
     private async completeAssessmentTask(assessmentId: uuid) {
         
         var assessment = await this._service.completeAssessment(assessmentId);

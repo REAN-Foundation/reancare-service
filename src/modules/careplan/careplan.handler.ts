@@ -15,7 +15,7 @@ import { ActionPlanDto } from "../../domain.types/goal.action.plan/goal.action.p
 
 export class CareplanHandler {
 
-    static _services:Dictionary<ICareplanService> = new Dictionary<ICareplanService>()
+    static _services: Dictionary<ICareplanService> = new Dictionary<ICareplanService>()
 
     public static init = async (): Promise<boolean> => {
 
@@ -28,7 +28,7 @@ export class CareplanHandler {
         return true;
     };
 
-    public getAvailableCarePlans(provider?: string): CareplanConfig[] {
+    public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
         var careplans = ConfigurationManager.careplans();
         var plans: CareplanConfig[] = [];
         if (provider) {
@@ -45,9 +45,9 @@ export class CareplanHandler {
             }
         }
         return plans;
-    }
+    };
 
-    public isPlanAvailable(provider: string, planCode: string): boolean {
+    public isPlanAvailable = (provider: string, planCode: string): boolean => {
         var careplans = ConfigurationManager.careplans();
         var foundProvider = careplans.find(x => {
             return x.Provider === provider;
@@ -62,7 +62,7 @@ export class CareplanHandler {
             }
         }
         return false;
-    }
+    };
 
     public getPlanDetails(provider: string, planCode: string): CareplanConfig {
         var careplans = ConfigurationManager.careplans();
@@ -81,10 +81,10 @@ export class CareplanHandler {
         return null;
     }
 
-    public registerPatientWithProvider = async(patientDetails: ParticipantDomainModel, provider: string) => {
+    public registerPatientWithProvider = async (patientDetails: ParticipantDomainModel, provider: string) => {
         var service = CareplanHandler._services.getItem(provider);
         return await service.registerPatient(patientDetails);
-    }
+    };
 
     public enrollPatientToCarePlan = async (
         enrollmentDetails: EnrollmentDomainModel
@@ -134,12 +134,12 @@ export class CareplanHandler {
         : Promise<SAssessmentTemplate> => {
         var service = CareplanHandler._services.getItem(assessmentActivity.Provider);
         return await service.convertToAssessmentTemplate(assessmentActivity);
-    }
+    };
 
     public updateAssessment = async (assessment: SAssessment): Promise<boolean> => {
         var service = CareplanHandler._services.getItem(assessment.Provider);
         return await service.updateAssessment(assessment);
-    }
+    };
 
     public updateAssessmentActivity = async (
         patientUserId: uuid,

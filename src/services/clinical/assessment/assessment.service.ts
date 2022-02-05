@@ -76,27 +76,27 @@ export class AssessmentService {
         this._conditionProcessor = Loader.container.resolve(ConditionProcessor);
     }
 
-    create = async (assessmentDomainModel: AssessmentDomainModel): Promise<AssessmentDto> => {
+    public create = async (assessmentDomainModel: AssessmentDomainModel): Promise<AssessmentDto> => {
         return await this._assessmentRepo.create(assessmentDomainModel);
     };
 
-    getById = async (id: string): Promise<AssessmentDto> => {
+    public getById = async (id: string): Promise<AssessmentDto> => {
         return await this._assessmentRepo.getById(id);
     };
 
-    search = async (filters: AssessmentSearchFilters): Promise<AssessmentSearchResults> => {
+    public search = async (filters: AssessmentSearchFilters): Promise<AssessmentSearchResults> => {
         return await this._assessmentRepo.search(filters);
     };
 
-    update = async (id: string, assessmentDomainModel: AssessmentDomainModel): Promise<AssessmentDto> => {
+    public update = async (id: string, assessmentDomainModel: AssessmentDomainModel): Promise<AssessmentDto> => {
         return await this._assessmentRepo.update(id, assessmentDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    public delete = async (id: string): Promise<boolean> => {
         return await this._assessmentRepo.delete(id);
     };
 
-    startAssessment = async (id: uuid): Promise<AssessmentQueryDto> => {
+    public startAssessment = async (id: uuid): Promise<AssessmentQueryDto> => {
         var assessment = await this._assessmentRepo.getById(id);
         if (assessment.Status === ProgressStatus.InProgress && assessment.StartedAt !== null) {
             throw new Error('Assessment is already in progress.');
@@ -124,7 +124,8 @@ export class AssessmentService {
         return nextQuestion;
     };
 
-    answerQuestion = async (answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> => {
+    public answerQuestion = async (answerModel: AssessmentAnswerDomainModel)
+        : Promise<AssessmentQuestionResponseDto> => {
 
         const nodeId = answerModel.QuestionNodeId;
         const assessmentId = answerModel.AssessmentId;
@@ -174,7 +175,7 @@ export class AssessmentService {
         return null;
     };
 
-    getQuestionById = async (assessmentId: uuid, questionId: uuid): Promise<AssessmentQueryDto | string> => {
+    public getQuestionById = async (assessmentId: uuid, questionId: uuid): Promise<AssessmentQueryDto | string> => {
         const questionNode = await this._assessmentHelperRepo.getNodeById(questionId);
         if (
             questionNode.NodeType !== AssessmentNodeType.Question &&
@@ -190,20 +191,20 @@ export class AssessmentService {
         }
     };
 
-    getNextQuestion = async (assessmentId: uuid): Promise<AssessmentQueryDto> => {
+    public getNextQuestion = async (assessmentId: uuid): Promise<AssessmentQueryDto> => {
         const assessment = await this._assessmentRepo.getById(assessmentId);
         const currentNodeId = assessment.CurrentNodeId;
         return await this.traverse(assessment, currentNodeId);
     };
 
-    getAssessmentStatus = async (assessmentId: uuid): Promise<ProgressStatus> => {
+    public getAssessmentStatus = async (assessmentId: uuid): Promise<ProgressStatus> => {
         const assessment = await this._assessmentRepo.getById(assessmentId);
         return assessment.Status as ProgressStatus;
     };
 
-    completeAssessment = async (assessmentId: uuid): Promise<AssessmentDto> => {
+    public completeAssessment = async (assessmentId: uuid): Promise<AssessmentDto> => {
         return await this._assessmentRepo.completeAssessment(assessmentId);
-    }
+    };
 
     //#region Privates
 

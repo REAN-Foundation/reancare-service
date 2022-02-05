@@ -14,7 +14,9 @@ import Assessment from '../../../models/clinical/assessment/assessment.model';
 
 export class AssessmentRepo implements IAssessmentRepo {
 
-    create = async (model: AssessmentDomainModel): Promise<AssessmentDto> => {
+    //#region Publics
+
+    public create = async (model: AssessmentDomainModel): Promise<AssessmentDto> => {
         try {
             const entity = {
                 DisplayCode            : model.DisplayCode,
@@ -41,7 +43,7 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     };
 
-    getById = async (id: uuid): Promise<AssessmentDto> => {
+    public getById = async (id: uuid): Promise<AssessmentDto> => {
         try {
             const assessment = await Assessment.findByPk(id);
             return await AssessmentMapper.toDto(assessment);
@@ -52,7 +54,7 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     };
 
-    getForPatient = async (patientUserId: uuid): Promise<AssessmentDto[]> => {
+    public getForPatient = async (patientUserId: uuid): Promise<AssessmentDto[]> => {
         try {
             const search = { where: {} };
 
@@ -73,7 +75,7 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     };
 
-    update = async (id: uuid, updateModel: AssessmentDomainModel): Promise<AssessmentDto> => {
+    public update = async (id: uuid, updateModel: AssessmentDomainModel): Promise<AssessmentDto> => {
         try {
             const assessment = await Assessment.findByPk(id);
 
@@ -103,7 +105,7 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     };
     
-    search = async (filters: AssessmentSearchFilters): Promise<AssessmentSearchResults> => {
+    public search = async (filters: AssessmentSearchFilters): Promise<AssessmentSearchResults> => {
 
         try {
             const search = { where: {} };
@@ -166,9 +168,9 @@ export class AssessmentRepo implements IAssessmentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    delete = async (id: uuid): Promise<boolean> => {
+    public delete = async (id: uuid): Promise<boolean> => {
         try {
             await Assessment.destroy({ where: { id: id } });
             return true;
@@ -178,7 +180,7 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     };
 
-    getByTemplateAndSchedule = async (
+    public getByTemplateAndSchedule = async (
         templateId: string, sequence: number, scheduledDate: string): Promise<AssessmentDto> => {
         try {
             const assessment = await Assessment.findOne({
@@ -193,9 +195,9 @@ export class AssessmentRepo implements IAssessmentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    getByActivityId = async (activityId: uuid): Promise<AssessmentDto> => {
+    public getByActivityId = async (activityId: uuid): Promise<AssessmentDto> => {
         try {
             const assessment = await Assessment.findOne({
                 where : {
@@ -207,9 +209,9 @@ export class AssessmentRepo implements IAssessmentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    getByUserTaskId = async (taskId: uuid): Promise<AssessmentDto> => {
+    public getByUserTaskId = async (taskId: uuid): Promise<AssessmentDto> => {
         try {
             const assessment = await Assessment.findOne({
                 where : {
@@ -221,9 +223,9 @@ export class AssessmentRepo implements IAssessmentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    startAssessment = async (id: uuid): Promise<AssessmentDto> => {
+    public startAssessment = async (id: uuid): Promise<AssessmentDto> => {
         try {
             var assessment = await Assessment.findByPk(id);
             assessment.StartedAt = new Date();
@@ -234,9 +236,9 @@ export class AssessmentRepo implements IAssessmentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    setCurrentNode = async (assessmentId: uuid, nodeId: uuid): Promise<AssessmentDto> => {
+    public setCurrentNode = async (assessmentId: uuid, nodeId: uuid): Promise<AssessmentDto> => {
         try {
             var assessment = await Assessment.findByPk(assessmentId);
             assessment.CurrentNodeId = nodeId;
@@ -246,9 +248,9 @@ export class AssessmentRepo implements IAssessmentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    completeAssessment = async (assessmentId: string): Promise<AssessmentDto> => {
+    public completeAssessment = async (assessmentId: string): Promise<AssessmentDto> => {
         try {
             var assessment = await Assessment.findByPk(assessmentId);
             assessment.FinishedAt = new Date();
@@ -259,6 +261,8 @@ export class AssessmentRepo implements IAssessmentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
+    //#endregion
+    
 }

@@ -34,6 +34,6 @@ export class AssessmentMapper {
         };
         
         return dto;
-    }
+    };
 
 }

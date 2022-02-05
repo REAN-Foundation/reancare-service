@@ -59,7 +59,9 @@ export class AhaCareplanServiceHelper {
         }
 
         return template;
-    }
+    };
+
+    //#region Privates
 
     private createOptionBasedQuestionNode(
         item: any, template: SAssessmentTemplate, items: any): SAssessmentQuestionNode {
@@ -262,5 +264,7 @@ export class AhaCareplanServiceHelper {
         }
         return QueryResponseType.Ok;
     }
+
+    //#endregion
 
 }

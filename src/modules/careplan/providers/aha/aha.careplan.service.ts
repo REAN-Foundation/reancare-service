@@ -36,6 +36,8 @@ export class AhaCareplanService implements ICareplanService {
         return this.ActivityCode;
     }
 
+    //#region Publics
+
     public init = async (): Promise<boolean> => {
 
         var headers = {
@@ -131,7 +133,7 @@ export class AhaCareplanService implements ICareplanService {
         }
 
         return response.body.data.participant.id;
-    }
+    };
 
     public enrollPatientToCarePlan = async (model: EnrollmentDomainModel): Promise<string> => {
 
@@ -215,7 +217,7 @@ export class AhaCareplanService implements ICareplanService {
         });
 
         return activityEntities;
-    }
+    };
 
     public getActivity = async(
         patientUserId: string,
@@ -260,7 +262,7 @@ export class AhaCareplanService implements ICareplanService {
         };
     
         return entity;
-    }
+    };
 
     public updateActivity = async(
         patientUserId: string,
@@ -305,7 +307,7 @@ export class AhaCareplanService implements ICareplanService {
         };
 
         return entity;
-    }
+    };
 
     public updateBiometricsActivity = async(
         patientUserId: string,
@@ -350,19 +352,19 @@ export class AhaCareplanService implements ICareplanService {
         };
 
         return entity;
-    }
+    };
 
     public updateAssessment = async (assessment: SAssessment): Promise<boolean> => {
         Logger.instance().log('Updating assessment - ' + assessment.AssessmentId);
         return false;
-    }
+    };
 
     public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<SAssessmentTemplate> => {
         const ahaServiceHelper = new AhaCareplanServiceHelper();
         return await ahaServiceHelper.convertToAssessmentTemplate(activity);
-    }
+    };
 
-    updateAssessmentActivity = async(
+    public updateAssessmentActivity = async(
         patientUserId: string,
         careplanCode: string,
         enrollmentId: string,
@@ -411,7 +413,7 @@ export class AhaCareplanService implements ICareplanService {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getGoals = async (
         patientUserId: string,
@@ -458,9 +460,9 @@ export class AhaCareplanService implements ICareplanService {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    getActionPlans = async (
+    public getActionPlans = async (
         patientUserId: string,
         enrollmentId: string,
         category: string
@@ -508,7 +510,11 @@ export class AhaCareplanService implements ICareplanService {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
+
+    //#endregion
+
+    //#region Privates
 
     private async getHeaderOptions() {
         const currentTime = new Date();

@@ -13,7 +13,9 @@ import AssessmentTemplate from '../../../models/clinical/assessment/assessment.t
 
 export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
 
-    create = async (model: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
+    //#region Publics
+
+    public create = async (model: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
         try {
             const entity = {
                 DisplayCode            : model.DisplayCode ?? null,
@@ -31,7 +33,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
         }
     };
 
-    getById = async (id: string): Promise<AssessmentTemplateDto> => {
+    public getById = async (id: string): Promise<AssessmentTemplateDto> => {
         try {
             const assessmentTemplate = await AssessmentTemplate.findByPk(id);
             return await AssessmentTemplateMapper.toDto(assessmentTemplate);
@@ -41,7 +43,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
         }
     };
 
-    getByProviderAssessmentCode = async (provider: string, providerAssessmentCode: string)
+    public getByProviderAssessmentCode = async (provider: string, providerAssessmentCode: string)
         : Promise<AssessmentTemplateDto> => {
         try {
             const assessmentTemplate = await AssessmentTemplate.findOne({
@@ -55,9 +57,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
-    search = async (filters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchResults> => {
+    public search = async (filters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchResults> => {
         try {
             const search = { where: {} };
 
@@ -115,7 +117,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
         }
     };
 
-    update = async (id: string, updateModel: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
+    public update = async (id: string, updateModel: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
         try {
             const assessmentTemplate = await AssessmentTemplate.findByPk(id);
 
@@ -143,7 +145,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
         }
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    public delete = async (id: string): Promise<boolean> => {
         try {
             await AssessmentTemplate.destroy({ where: { id: id } });
             return true;
@@ -153,4 +155,6 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
         }
     };
 
+    //#endregion
+    
 }

@@ -1,6 +1,11 @@
-import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
 import { inject, injectable } from "tsyringe";
-import { ConditionOperand, ConditionOperandDataType, ConditionOperatorType, SAssessmentPathCondition } from "../../../domain.types/clinical/assessment/assessment.types";
+import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
+import { ConditionOperand,
+    ConditionOperandDataType,
+    ConditionOperatorType,
+    SAssessmentPathCondition } from "../../../domain.types/clinical/assessment/assessment.types";
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class ConditionProcessor {
@@ -10,7 +15,7 @@ export class ConditionProcessor {
     ) {
     }
 
-    public async processCondition(condition: SAssessmentPathCondition, argument: any): Promise<boolean> {
+    public processCondition = async (condition: SAssessmentPathCondition, argument: any): Promise<boolean> => {
 
         if (!condition || !argument) {
             throw new Error(`Invalid condition to process!`);
@@ -27,8 +32,9 @@ export class ConditionProcessor {
         // }
 
         return false;
+    };
 
-    }
+    //#region Privates
 
     private operate(
         operator: ConditionOperatorType,
@@ -88,7 +94,7 @@ export class ConditionProcessor {
         return resolved;
     }
 
-    isEqualTo(first: ConditionOperand, second: ConditionOperand): boolean {
+    private isEqualTo(first: ConditionOperand, second: ConditionOperand): boolean {
         if (first.DataType !== second.DataType) {
             return false;
         }
@@ -123,41 +129,43 @@ export class ConditionProcessor {
         return false;
     }
 
-    isNotEqualTo(first: ConditionOperand, second: ConditionOperand): boolean {
+    private isNotEqualTo(first: ConditionOperand, second: ConditionOperand): boolean {
         return first.Value !== second.Value;
     }
 
-    in(first: ConditionOperand, second: ConditionOperand): boolean {
+    private in(first: ConditionOperand, second: ConditionOperand): boolean {
         const secondArray: any[] = second.Value as any[];
         return secondArray.includes(first);
     }
 
-    isFalse(first: ConditionOperand): boolean {
+    private isFalse(first: ConditionOperand): boolean {
         return first.Value === false;
     }
 
-    isTrue(first: ConditionOperand): boolean {
+    private isTrue(first: ConditionOperand): boolean {
         return first.Value === true;
     }
 
-    greaterThan(first: ConditionOperand, second: ConditionOperand): boolean {
+    private greaterThan(first: ConditionOperand, second: ConditionOperand): boolean {
         return first.Value > second.Value;
     }
 
-    lessThan(first: ConditionOperand, second: ConditionOperand): boolean {
+    private lessThan(first: ConditionOperand, second: ConditionOperand): boolean {
         return first.Value < second.Value;
     }
 
-    greaterThanEqualTo(first: ConditionOperand, second: ConditionOperand): boolean {
+    private greaterThanEqualTo(first: ConditionOperand, second: ConditionOperand): boolean {
         return first.Value >= second.Value;
     }
 
-    lessThanEqualTo(first: ConditionOperand, second: ConditionOperand): boolean {
+    private lessThanEqualTo(first: ConditionOperand, second: ConditionOperand): boolean {
         return first.Value <= second.Value;
     }
 
-    between(first: ConditionOperand, second: ConditionOperand, third: ConditionOperand): boolean {
+    private between(first: ConditionOperand, second: ConditionOperand, third: ConditionOperand): boolean {
         return first.Value >= second.Value && first.Value <= third.Value;
     }
+
+    //#endregion
 
 }

@@ -61,7 +61,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 Provider               : t.Provider,
                 ProviderAssessmentCode : t.ProviderAssessmentCode,
             };
-            var template = await AssessmentTemplate.create(templateModel);
+            var template = await AssessmentTemplate.create(templateModel as any);
 
             const rootNodeDisplayCode: string = t.RootNodeDisplayCode;
             const sRootNode = t.getNodeByDisplayCode(rootNodeDisplayCode);

@@ -21,7 +21,7 @@ import { DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
 import { IUserActionService } from "../user/user.action.service.interface";
 import { AssessmentTemplateDto } from "../../domain.types/clinical/assessment/assessment.template.dto";
-import { SAssessment, SAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
+import { SAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import { CareplanActivity } from "../../domain.types/clinical/careplan/activity/careplan.activity";
 import { CareplanConfig } from "../../config/configuration.types";
 import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/assessment.domain.model";
@@ -289,19 +289,20 @@ export class CareplanService implements IUserActionService {
         return true;
     }
 
-    public completeAction = async (activityId: uuid, time: Date, success: boolean) => {
+    public completeAction = async (activityId: uuid, time: Date, success: boolean, actionDetails?: any) => {
+
         var activity = await this._careplanRepo.getActivity(activityId);
         activity = await this._careplanRepo.completeActivity(activityId);
+        const taskCategory = activity.Category;
 
-        var updateFields = {
-            completedAt : time,
-            comments    : "",
-            status      : "COMPLETED"
-        };
-        Logger.instance().log(`Action success: ${success}`);
+        if (taskCategory === UserTaskCategory.Assessment) {
+            //Collect assessment related details and send to handler
+            activity['ActionDetails'] = actionDetails as AssessmentDto;
+        }
+
         var updatedActivity = await this._handler.updateActivity(
             activity.PatientUserId, activity.Provider, activity.PlanCode,
-            activity.EnrollmentId, activity.ProviderActionId, updateFields);
+            activity.EnrollmentId, activity.ProviderActionId, activity);
 
         return updatedActivity.CompletedAt ? true : false;
     }
@@ -349,10 +350,6 @@ export class CareplanService implements IUserActionService {
 
         const template = await this._assessmentHelperRepo.addTemplate(assessmentTemplate);
         return template;
-    }
-
-    public updateAssessment = async (assessment: SAssessment): Promise<boolean> => {
-        return await this._handler.updateAssessment(assessment);
     }
 
     private getAssessment = async (

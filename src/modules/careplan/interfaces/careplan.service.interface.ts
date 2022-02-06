@@ -1,4 +1,4 @@
-import { SAssessment, SAssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.types";
+import { SAssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.types";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { CareplanActivity } from "../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { EnrollmentDomainModel } from "../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model";
@@ -41,8 +41,6 @@ export interface ICareplanService {
         ): Promise<CareplanActivity>;
     
     convertToAssessmentTemplate(assessmentActivity: CareplanActivity): Promise<SAssessmentTemplate>;
-
-    updateAssessment(assessment: SAssessment): boolean | PromiseLike<boolean>;
     
     updateAssessmentActivity(
             patientUserId: uuid,

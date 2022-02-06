@@ -145,7 +145,7 @@ export class AssessmentService {
 
         var isAnswered = await this.isAnswered(assessmentId, nodeId);
         if (isAnswered) {
-            throw new ApiError(400, `The question has already been answered!`);
+            return null;
         }
 
         const responseType = answerModel.ResponseType;
@@ -203,8 +203,16 @@ export class AssessmentService {
     };
 
     public completeAssessment = async (assessmentId: uuid): Promise<AssessmentDto> => {
-        return await this._assessmentRepo.completeAssessment(assessmentId);
+        var assessment = await this._assessmentRepo.completeAssessment(assessmentId);
+        var responses = await this._assessmentHelperRepo.getUserResponses(assessmentId);
+        assessment.UserResponses = responses;
+        return assessment;
     };
+
+    public isAnswered = async (assessmentId: uuid, currentNodeId: uuid) => {
+        const response = await this._assessmentHelperRepo.getQueryResponse(assessmentId, currentNodeId);
+        return response !== null;
+    }
 
     //#region Privates
 
@@ -295,11 +303,6 @@ export class AssessmentService {
         //Set as current node if not already
         await this._assessmentRepo.setCurrentNode(assessment.id, currentNode.id);
         return this.questionNodeAsQueryDto(currentNode, assessment);
-    }
-
-    private async isAnswered(assessmentId: uuid, currentNodeId: uuid) {
-        const response = await this._assessmentHelperRepo.getQueryResponse(assessmentId, currentNodeId);
-        return response !== null;
     }
 
     private async handleSingleChoiceSelectionAnswer(

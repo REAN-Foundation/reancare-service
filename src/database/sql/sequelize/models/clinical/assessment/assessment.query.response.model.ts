@@ -1,4 +1,5 @@
 import {
+    BelongsTo,
     Column,
     CreatedAt,
     DataType,
@@ -59,6 +60,9 @@ export default class AssessmentQueryResponse extends Model {
     })
     NodeId: string;
 
+    @BelongsTo(() => AssessmentNode)
+    Node: AssessmentNode;
+
     @Column({
         type         : DataType.ENUM,
         values       : QueryResponseTypeList,
@@ -66,6 +70,12 @@ export default class AssessmentQueryResponse extends Model {
         allowNull    : false,
     })
     Type: string;
+
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    Sequence: number;
 
     @IsInt
     @Column({
@@ -101,6 +111,12 @@ export default class AssessmentQueryResponse extends Model {
     })
     TextValue: string;
     
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Additional: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

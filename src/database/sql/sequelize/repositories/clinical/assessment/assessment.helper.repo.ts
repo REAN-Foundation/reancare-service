@@ -208,6 +208,31 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
 
+    public getUserResponses = async (assessmentId: uuid): Promise<SAssessmentQueryResponse[]> => {
+        try {
+            var results = await AssessmentQueryResponse.findAll({
+                where : {
+                    AssessmentId : assessmentId
+                },
+                include : [
+                    {
+                        model    : AssessmentNode,
+                        required : true,
+                        as       : 'Node'
+                    }
+                ]
+            });
+            var responses = results.map(x => AssessmentHelperMapper.toQueryResponseDto(x));
+            responses = responses.sort((a, b) => {
+                return a.Sequence - b.Sequence;
+            });
+            return responses;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     public createQueryResponse = async (
         answer:
             | SingleChoiceQueryAnswer
@@ -460,8 +485,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const model = {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
+                Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 IntegerValue : a.ChosenSequence,
+                Additional   : JSON.stringify(a.ChosenOption),
             };
             return model;
         }
@@ -470,8 +497,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const model = {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
+                Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 TextValue    : JSON.stringify(a.ChosenSequences),
+                Additional   : JSON.stringify(a.ChosenOptions),
             };
             return model;
         }
@@ -480,6 +509,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const model = {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
+                Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 BooleanValue : a.Achnowledged,
             };
@@ -490,6 +520,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const model = {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
+                Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 TextValue    : a.Text,
             };
@@ -500,6 +531,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const model = {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
+                Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 IntegerValue : a.Value,
             };
@@ -510,6 +542,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const model = {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
+                Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 FloatValue   : a.Value,
             };
@@ -520,6 +553,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const model = {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
+                Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 TextValue    : JSON.stringify(a.Values),
             };

@@ -11,7 +11,8 @@ import { ParticipantDomainModel } from "../../../../domain.types/clinical/carepl
 import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
 import { UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
 import {
-    SAssessment,
+    QueryResponseType,
+    SAssessmentQueryResponse,
     SAssessmentTemplate,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AhaCareplanServiceHelper } from "./aha.careplan.service.helper";
@@ -20,6 +21,8 @@ import { DateStringFormat } from "../../../../domain.types/miscellaneous/time.ty
 import { ActionPlanDto } from "../../../../domain.types/goal.action.plan/goal.action.plan.dto";
 import { HealthPriorityType } from "../../../../domain.types/health.priority.type/health.priority.types";
 import { GoalDto } from "../../../../domain.types/patient/goal/goal.dto";
+import { AssessmentDto } from "../../../../domain.types/clinical/assessment/assessment.dto";
+import { BiometricsType } from "../../../../domain.types/clinical/biometrics/biometrics.types";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -269,22 +272,17 @@ export class AhaCareplanService implements ICareplanService {
         careplanCode: string,
         enrollmentId: string,
         providerActivityId: string,
-        updates: any): Promise<CareplanActivity> => {
+        activityUpdates: any): Promise<CareplanActivity> => {
 
         Logger.instance().log(`Updating activity for patient user id '${patientUserId} associated with carte plan '${careplanCode}'.`);
 
+        const updates = await this.getUpdateModel(activityUpdates);
         const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
 
         var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities/${providerActivityId}`;
 
-        var updateData = {
-            completedAt : Helper.formatDate(updates.completedAt),
-            comments    : updates.comments ?? "",
-            status      : updates.status,
-        };
-
         var headerOptions = await this.getHeaderOptions();
-        var response = await needle("patch", url, updateData, headerOptions);
+        var response = await needle("patch", url, updates, headerOptions);
 
         if (response.statusCode !== 200) {
             Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
@@ -354,11 +352,6 @@ export class AhaCareplanService implements ICareplanService {
         return entity;
     };
 
-    public updateAssessment = async (assessment: SAssessment): Promise<boolean> => {
-        Logger.instance().log('Updating assessment - ' + assessment.AssessmentId);
-        return false;
-    };
-
     public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<SAssessmentTemplate> => {
         const ahaServiceHelper = new AhaCareplanServiceHelper();
         return await ahaServiceHelper.convertToAssessmentTemplate(activity);
@@ -415,7 +408,7 @@ export class AhaCareplanService implements ICareplanService {
         }
     };
 
-    getGoals = async (
+    public getGoals = async (
         patientUserId: string,
         enrollmentId: string,
         category: string
@@ -515,6 +508,131 @@ export class AhaCareplanService implements ICareplanService {
     //#endregion
 
     //#region Privates
+
+    private async getUpdateModel(activity: any): Promise<any> {
+
+        var updates = {
+            completedAt : Helper.formatDate(new Date()),
+            status      : 'COMPLETED',
+        };
+        
+        const taskCategory = activity.Category;
+
+        if (taskCategory === UserTaskCategory.Assessment) {
+            const assessment = activity['ActionDetails'] as AssessmentDto;
+            if (!assessment) {
+                return null;
+            }
+            const userResponses = assessment.UserResponses as SAssessmentQueryResponse[];
+            updates['items'] = [];
+            for (var res of userResponses) {
+                var responseType = res.ResponseType;
+                var node = res.Node;
+                var v = {
+                    id     : node.ProviderGivenId,
+                    values : []
+                };
+                if (responseType === QueryResponseType.SingleChoiceSelection) {
+                    var option = JSON.parse(res.Additional);
+                    v.values.push({
+                        value : option.Text
+                    });
+                    updates['items'].push(v);
+                }
+                else if (responseType === QueryResponseType.MultiChoiceSelection) {
+                    var options = JSON.parse(res.Additional);
+                    for (var opt of options) {
+                        v.values.push({
+                            value : opt.Text
+                        });
+                    }
+                    updates['items'].push(v);
+                }
+                else if (responseType === QueryResponseType.Text) {
+                    v.values.push({
+                        value : res.TextValue
+                    });
+                    updates['items'].push(v);
+                }
+                else if (responseType === QueryResponseType.Integer) {
+                    v.values.push({
+                        value : res.IntegerValue.toString()
+                    });
+                    updates['items'].push(v);
+                }
+                else if (responseType === QueryResponseType.Float) {
+                    v.values.push({
+                        value : res.FloatValue.toString()
+                    });
+                    updates['items'].push(v);
+                }
+                else if (responseType === QueryResponseType.Boolean) {
+                    v.values.push({
+                        value : res.BooleanValue.toString()
+                    });
+                    updates['items'].push(v);
+                }
+                else if (responseType === QueryResponseType.Ok) {
+                    v.values.push({
+                        value : 'Ok'
+                    });
+                    updates['items'].push(v);
+                }
+                else if  (responseType === QueryResponseType.Biometrics) {
+                    var biometrics = JSON.parse(res.TextValue);
+                    for (var b of biometrics) {
+                        var biometricsType = b.BiometricsType as BiometricsType;
+                        if (biometricsType === BiometricsType.BloodGlucose) {
+                            v.values.push({
+                                value : b.BloodGlucose
+                            });
+                        }
+                        if (biometricsType === BiometricsType.BloodOxygenSaturation) {
+                            v.values.push({
+                                value : b.BloodOxygenSaturation
+                            });
+                        }
+                        if (biometricsType === BiometricsType.BloodOxygenSaturation) {
+                            v.values.push({
+                                value : b.BloodOxygenSaturation
+                            });
+                        }
+                        if (biometricsType === BiometricsType.BloodPressure) {
+                            v.values.push({
+                                value : b.Systolic
+                            });
+                            v.values.push({
+                                value : b.Diastolic
+                            });
+                        }
+                        if (biometricsType === BiometricsType.BodyWeight) {
+                            v.values.push({
+                                value : b.BodyWeight
+                            });
+                        }
+                        if (biometricsType === BiometricsType.BodyTemperature) {
+                            v.values.push({
+                                value : b.BodyTemperature
+                            });
+                        }
+                        if (biometricsType === BiometricsType.BodyHeight) {
+                            v.values.push({
+                                value : b.BodyHeight
+                            });
+                        }
+                        if (biometricsType === BiometricsType.Pulse) {
+                            v.values.push({
+                                value : b.Pulse
+                            });
+                        }
+                    }
+                    updates['items'].push(v);
+                }
+            }
+        }
+
+        return updates;
+    }
 
     private async getHeaderOptions() {
         const currentTime = new Date();

@@ -139,6 +139,7 @@ export class AssessmentHelperMapper {
     };
 
     static toQueryResponseDto(response: AssessmentQueryResponse): SAssessmentQueryResponse {
+
         if (response == null) {
             return null;
         }
@@ -150,6 +151,12 @@ export class AssessmentHelperMapper {
         responseDto.NodeId = response.NodeId;
         responseDto.AssessmentId = response.AssessmentId;
         responseDto.ResponseType = responseType;
+        responseDto.Sequence = response.Sequence;
+        responseDto.Additional = response.Additional;
+
+        if (response.Node) {
+            responseDto.Node = this.toNodeDto(response.Node);
+        }
 
         if (responseType === QueryResponseType.Text || responseType === QueryResponseType.Ok) {
             responseDto.TextValue = response.TextValue;
@@ -185,13 +192,14 @@ export class AssessmentHelperMapper {
         option: SAssessmentQueryOption
     ): SingleChoiceQueryAnswer {
         var dto: SingleChoiceQueryAnswer = {
-            AssessmentId    : assessmentId,
-            NodeId          : questionNode.id,
-            NodeDisplayCode : questionNode.DisplayCode,
-            Title           : questionNode.Title,
-            ResponseType    : QueryResponseType.SingleChoiceSelection,
-            ChosenSequence  : answer,
-            ChosenOption    : option,
+            AssessmentId     : assessmentId,
+            NodeId           : questionNode.id,
+            QuestionSequence : questionNode.Sequence,
+            NodeDisplayCode  : questionNode.DisplayCode,
+            Title            : questionNode.Title,
+            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            ChosenSequence   : answer,
+            ChosenOption     : option,
         };
         return dto;
     }
@@ -203,13 +211,14 @@ export class AssessmentHelperMapper {
         options: SAssessmentQueryOption[]
     ): MultipleChoiceQueryAnswer {
         var dto: MultipleChoiceQueryAnswer = {
-            AssessmentId    : assessmentId,
-            NodeId          : questionNode.id,
-            NodeDisplayCode : questionNode.DisplayCode,
-            Title           : questionNode.Title,
-            ResponseType    : QueryResponseType.MultiChoiceSelection,
-            ChosenSequences : answers,
-            ChosenOptions   : options,
+            AssessmentId     : assessmentId,
+            NodeId           : questionNode.id,
+            QuestionSequence : questionNode.Sequence,
+            NodeDisplayCode  : questionNode.DisplayCode,
+            Title            : questionNode.Title,
+            ResponseType     : QueryResponseType.MultiChoiceSelection,
+            ChosenSequences  : answers,
+            ChosenOptions    : options,
         };
         return dto;
     }
@@ -219,12 +228,13 @@ export class AssessmentHelperMapper {
         node: SAssessmentMessageNode,
     ): MessageAnswer {
         var dto: MessageAnswer = {
-            AssessmentId    : assessmentId,
-            NodeId          : node.id,
-            NodeDisplayCode : node.DisplayCode,
-            Title           : node.Title,
-            ResponseType    : QueryResponseType.Ok,
-            Achnowledged    : true,
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : QueryResponseType.Ok,
+            Achnowledged     : true,
         };
         return dto;
     }
@@ -235,12 +245,13 @@ export class AssessmentHelperMapper {
         values: AssessmentBiometrics[]
     ): BiometricQueryAnswer {
         var dto: BiometricQueryAnswer = {
-            AssessmentId    : assessmentId,
-            NodeId          : node.id,
-            NodeDisplayCode : node.DisplayCode,
-            Title           : node.Title,
-            ResponseType    : QueryResponseType.Biometrics,
-            Values          : values,
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : QueryResponseType.Biometrics,
+            Values           : values,
         };
         return dto;
     }
@@ -251,12 +262,13 @@ export class AssessmentHelperMapper {
         text: string,
     ): TextQueryAnswer {
         var dto: TextQueryAnswer = {
-            AssessmentId    : assessmentId,
-            NodeId          : node.id,
-            NodeDisplayCode : node.DisplayCode,
-            Title           : node.Title,
-            ResponseType    : QueryResponseType.Text,
-            Text            : text,
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : QueryResponseType.Text,
+            Text             : text,
         };
         return dto;
     }
@@ -268,13 +280,14 @@ export class AssessmentHelperMapper {
         value: number
     ): IntegerQueryAnswer {
         var dto: IntegerQueryAnswer = {
-            AssessmentId    : assessmentId,
-            NodeId          : node.id,
-            NodeDisplayCode : node.DisplayCode,
-            Title           : node.Title,
-            ResponseType    : QueryResponseType.Text,
-            Field           : field,
-            Value           : value
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : QueryResponseType.Text,
+            Field            : field,
+            Value            : value
         };
         return dto;
     }
@@ -286,13 +299,14 @@ export class AssessmentHelperMapper {
         value: number
     ): FloatQueryAnswer {
         var dto: FloatQueryAnswer = {
-            AssessmentId    : assessmentId,
-            NodeId          : node.id,
-            NodeDisplayCode : node.DisplayCode,
-            Title           : node.Title,
-            ResponseType    : QueryResponseType.Text,
-            Field           : field,
-            Value           : value
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : QueryResponseType.Text,
+            Field            : field,
+            Value            : value
         };
         return dto;
     }

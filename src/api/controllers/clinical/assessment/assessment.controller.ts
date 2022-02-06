@@ -251,10 +251,15 @@ export class AssessmentController extends BaseController{
                 throw new ApiError(404, 'Assessment question not found.');
             }
 
+            const isAnswered = await this._service.isAnswered(assessment.id, questionId);
+            if (isAnswered) {
+                throw new ApiError(400, `The question has already been answered!`);
+            }
+            
             const answerResponse: AssessmentQuestionResponseDto =
                 await this._service.answerQuestion(answerModel);
 
-            if (answerResponse.Next === null) {
+            if (answerResponse.Next === null || answerResponse === null) {
                 //Assessment has no more questions left and is completed successfully!
                 await this.completeAssessmentTask(id);
                 ResponseHandler.success(request, response, 'Assessment has completed successfully!', 200, {
@@ -286,7 +291,7 @@ export class AssessmentController extends BaseController{
                 var userTaskId = activity.UserTaskId;
                 await this._userTaskService.finishTask(userTaskId);
             }
-            await this._careplanService.completeAction(parentActivityId, new Date(), true);
+            await this._careplanService.completeAction(parentActivityId, new Date(), true, assessment);
         }
     }
 

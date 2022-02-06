@@ -329,6 +329,7 @@ export class CareplanRepo implements ICareplanRepo {
     };
 
     public updateAssessmentActivity = async (activityId: uuid, status: string,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         finishedAt: Date, items: AssessmentItem [] ): Promise<CareplanActivityDto> => {
         try {
             const record = await CareplanActivity.findByPk(activityId);

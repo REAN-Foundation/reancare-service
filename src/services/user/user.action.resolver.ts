@@ -29,10 +29,11 @@ export class UserActionResolver {
         actionType: string,
         actionId: uuid,
         success?: boolean,
-        completionTime?: Date): Promise<boolean> => {
+        completionTime?: Date,
+        actionDetails?: any): Promise<boolean> => {
         var actionService = this.getActionService(actionType);
         var time = completionTime ?? new Date();
-        return await actionService?.completeAction(actionId, time, success);
+        return await actionService?.completeAction(actionId, time, success, actionDetails);
     };
 
     updateAction = async (

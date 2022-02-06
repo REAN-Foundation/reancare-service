@@ -28,7 +28,9 @@ export interface IAssessmentHelperRepo {
 
     getNodeById(nodeId: uuid): Promise<SAssessmentNode>;
 
-    getQueryResponse(assessmentId: string, id: string): Promise<SAssessmentQueryResponse>;
+    getQueryResponse(assessmentId: uuid, nodeId: uuid): Promise<SAssessmentQueryResponse>;
+
+    getUserResponses(assessmentId: uuid): Promise<SAssessmentQueryResponse[]>;
 
     getQuestionNodeOptions(nodeType: AssessmentNodeType, nodeId: uuid): Promise<SAssessmentQueryOption[]>;
 

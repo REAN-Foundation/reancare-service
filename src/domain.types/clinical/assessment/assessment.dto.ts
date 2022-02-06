@@ -19,4 +19,5 @@ export interface AssessmentDto {
     StartedAt?             : Date;
     FinishedAt?            : Date;
     CreatedAt              : Date;
+    UserResponses?         : any[];
 }

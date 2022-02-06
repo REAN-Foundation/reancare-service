@@ -7,7 +7,7 @@ import { ParticipantDomainModel } from "../../domain.types/clinical/careplan/par
 import { ProviderResolver } from "./provider.resolver";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { CareplanConfig } from "../../config/configuration.types";
-import { SAssessment, SAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
+import { SAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import { GoalDto } from "../../domain.types/patient/goal/goal.dto";
 import { ActionPlanDto } from "../../domain.types/goal.action.plan/goal.action.plan.dto";
 
@@ -134,11 +134,6 @@ export class CareplanHandler {
         : Promise<SAssessmentTemplate> => {
         var service = CareplanHandler._services.getItem(assessmentActivity.Provider);
         return await service.convertToAssessmentTemplate(assessmentActivity);
-    };
-
-    public updateAssessment = async (assessment: SAssessment): Promise<boolean> => {
-        var service = CareplanHandler._services.getItem(assessment.Provider);
-        return await service.updateAssessment(assessment);
     };
 
     public updateAssessmentActivity = async (

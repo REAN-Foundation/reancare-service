@@ -266,14 +266,17 @@ export class SAssessmentQueryResponse {
 
     id?                  : uuid;
     NodeId?              : uuid;
+    Node?                : SAssessmentMessageNode | SAssessmentQuestionNode | SAssessmentListNode;
     AssessmentId?        : uuid;
     ResponseType         : QueryResponseType;
+    Sequence             : number;
     IntegerValue?        : number;
     FloatValue?          : number;
     TextValue?           : string;
     BooleanValue?        : boolean;
     ArrayValue?          : number[];
     ObjectValue?         : any;
+    Additional?          : string;
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
     CreatedAt            : Date;
@@ -323,6 +326,7 @@ export class SAssessmentPathCondition {
 export interface BaseQueryAnswer {
     AssessmentId    : uuid;
     NodeId?         : uuid;
+    QuestionSequence: number;
     NodeDisplayCode?: string;
     Title?          : string;
     ResponseType    : QueryResponseType;

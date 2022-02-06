@@ -455,7 +455,9 @@ export class MedicationConsumptionService implements IUserActionService {
         return true;
     }
 
-    completeAction = async (actionId: uuid, completionTime?: Date, success?: boolean): Promise<boolean> => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    completeAction = async (actionId: uuid, completionTime?: Date, success?: boolean, actionDetails?: any)
+        : Promise<boolean> => {
 
         if (success === undefined || success === false) {
             var updatedDto = await this._medicationConsumptionRepo.markAsMissed(actionId);

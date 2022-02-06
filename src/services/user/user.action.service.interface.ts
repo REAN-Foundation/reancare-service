@@ -6,7 +6,7 @@ export interface IUserActionService {
 
     startAction(actionId: uuid): Promise<boolean>;
 
-    completeAction(actionId: uuid, completionTime?: Date, success?: boolean): Promise<boolean>;
+    completeAction(actionId: uuid, completionTime?: Date, success?: boolean, actionDetails?: any): Promise<boolean>;
 
     cancelAction(actionId: uuid, cancellationTime?: Date, cancellationReason?: string): Promise<boolean>;
 

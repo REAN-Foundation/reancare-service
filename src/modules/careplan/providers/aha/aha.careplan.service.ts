@@ -15,7 +15,7 @@ import {
     SAssessmentQueryResponse,
     SAssessmentTemplate,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
-import { AhaCareplanServiceHelper } from "./aha.careplan.service.helper";
+import { AhaAssessmentConverter } from "./aha.assessment.converter";
 import { TimeHelper } from "../../../../common/time.helper";
 import { DateStringFormat } from "../../../../domain.types/miscellaneous/time.types";
 import { ActionPlanDto } from "../../../../domain.types/goal.action.plan/goal.action.plan.dto";
@@ -353,7 +353,7 @@ export class AhaCareplanService implements ICareplanService {
     };
 
     public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<SAssessmentTemplate> => {
-        const ahaServiceHelper = new AhaCareplanServiceHelper();
+        const ahaServiceHelper = new AhaAssessmentConverter();
         return await ahaServiceHelper.convertToAssessmentTemplate(activity);
     };
 

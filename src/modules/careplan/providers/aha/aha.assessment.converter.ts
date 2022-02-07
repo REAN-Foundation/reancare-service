@@ -14,13 +14,12 @@ import {
     SAssessmentQuestionNode,
     SAssessmentTemplate,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
-//import { Logger } from '../../../../common/logger';
 import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-export class AhaCareplanServiceHelper {
+export class AhaAssessmentConverter {
 
     public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<SAssessmentTemplate> => {
 

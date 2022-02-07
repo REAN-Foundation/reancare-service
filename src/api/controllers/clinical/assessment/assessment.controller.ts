@@ -158,7 +158,7 @@ export class AssessmentController extends BaseController{
             }
             const next = await this._service.startAssessment(id);
             
-            ResponseHandler.success(request, response, 'Assessment record started successfully!', 200, {
+            ResponseHandler.success(request, response, 'Assessment started successfully!', 200, {
                 Next : next,
             });
         } catch (error) {
@@ -259,7 +259,8 @@ export class AssessmentController extends BaseController{
             const answerResponse: AssessmentQuestionResponseDto =
                 await this._service.answerQuestion(answerModel);
 
-            if (answerResponse.Next === null || answerResponse === null) {
+            const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
+            if ( isAssessmentCompleted) {
                 //Assessment has no more questions left and is completed successfully!
                 await this.completeAssessmentTask(id);
                 ResponseHandler.success(request, response, 'Assessment has completed successfully!', 200, {

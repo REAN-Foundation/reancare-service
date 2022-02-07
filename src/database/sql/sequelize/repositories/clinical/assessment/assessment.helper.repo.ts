@@ -307,6 +307,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             TemplateId        : templateId,
             ParentNodeId      : parentNodeId,
             NodeType          : snode.NodeType,
+            ProviderGivenId   : snode.ProviderGivenId,
             ProviderGivenCode : snode.ProviderGivenCode,
             Title             : snode.Title,
             Description       : snode.Description,
@@ -387,7 +388,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             //Create the next node
             const sNextNode = sTemplate.getNodeByDisplayCode(sPath.NextNodeDisplayCode);
             if (sNextNode) {
-                var nextNode = await this.createNewNode(sTemplate, templateId, thisNode.id, nextNode);
+                var nextNode = await this.createNewNode(sTemplate, templateId, thisNode.id, sNextNode);
                 if (!nextNode) {
                     path.NextNodeId = nextNode.id;
                     path.NextNodeDisplayCode = sPath.NextNodeDisplayCode;

@@ -14,5 +14,6 @@ export interface AssessmentQueryDto {
     Title?              : string;
     Description?        : string;
     Options             : SAssessmentQueryOption[];
-    ProviderGivenCode   : string;
+    ProviderGivenCode?  : string;
+    ProviderGivenId?    : string;
 }

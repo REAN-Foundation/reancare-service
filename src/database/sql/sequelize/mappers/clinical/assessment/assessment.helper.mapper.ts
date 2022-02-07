@@ -103,6 +103,7 @@ export class AssessmentHelperMapper {
             dto.id = node.id;
             dto.DisplayCode = node.DisplayCode;
             dto.ProviderGivenCode = node.ProviderGivenCode;
+            dto.ProviderGivenId = node.ProviderGivenId,
             dto.TemplateId = node.TemplateId;
             dto.NodeType = node.NodeType;
             dto.ParentNodeId = node.ParentNodeId;

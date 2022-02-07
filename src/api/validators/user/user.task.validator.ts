@@ -134,19 +134,20 @@ export class UserTaskValidator extends BaseValidator {
         var status: ProgressStatus = null;
 
         if (request.query.status) {
-            if (request.query.status === 'inProgress') {
+            var statusStr: string = request.query.status.toString().toLowerCase();
+            if (statusStr === 'inProgress') {
                 status = ProgressStatus.InProgress;
             }
-            if (request.query.status === 'pending' || request.query.status === 'upcoming') {
+            if (statusStr === 'pending' || statusStr === 'upcoming') {
                 status = ProgressStatus.Pending;
             }
-            if (request.query.status === 'completed' || request.query.status === 'finished') {
+            if (statusStr === 'completed' || statusStr === 'finished') {
                 status = ProgressStatus.Completed;
             }
-            if (request.query.status === 'delayed' || request.query.status === 'overdue') {
+            if (statusStr === 'delayed' || statusStr === 'overdue') {
                 status = ProgressStatus.Delayed;
             }
-            if (request.query.status === 'cancelled') {
+            if (statusStr === 'cancelled') {
                 status = ProgressStatus.Cancelled;
             }
         }

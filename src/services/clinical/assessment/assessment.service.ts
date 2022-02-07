@@ -148,28 +148,38 @@ export class AssessmentService {
             return null;
         }
 
-        const responseType = answerModel.ResponseType;
+        const incomingResponseType = answerModel.ResponseType;
+        const nodeType = node.NodeType;
 
         //Convert the answer to the format which we can persist
-        if (responseType === QueryResponseType.SingleChoiceSelection) {
+
+        if (nodeType === AssessmentNodeType.Question) {
+
             const questionNode = node as SAssessmentQuestionNode;
-            return await this.handleSingleChoiceSelectionAnswer(assessment, questionNode, answerModel);
+            const expectedResponseType = questionNode.QueryResponseType;
+
+            if (incomingResponseType !== expectedResponseType) {
+                throw new Error(`Provided response type is different than expected response type.`);
+            }
+            
+            if (incomingResponseType === QueryResponseType.SingleChoiceSelection) {
+                return await this.handleSingleChoiceSelectionAnswer(assessment, questionNode, answerModel);
+            }
+            if (incomingResponseType === QueryResponseType.MultiChoiceSelection) {
+                return await this.handleMultipleChoiceSelectionAnswer(assessment, questionNode, answerModel);
+            }
+            if (incomingResponseType === QueryResponseType.Biometrics) {
+                return await this.handleBiometricsAnswer(assessment, questionNode, answerModel);
+            }
+            if (incomingResponseType === QueryResponseType.Text) {
+                return await this.handleTextAnswer(assessment, questionNode, answerModel);
+            }
         }
-        if (responseType === QueryResponseType.MultiChoiceSelection) {
-            const questionNode = node as SAssessmentQuestionNode;
-            return await this.handleMultipleChoiceSelectionAnswer(assessment, questionNode, answerModel);
-        }
-        if (responseType === QueryResponseType.Biometrics) {
-            const questionNode = node as SAssessmentQuestionNode;
-            return await this.handleBiometricsAnswer(assessment, questionNode, answerModel);
-        }
-        if (responseType === QueryResponseType.Ok) {
-            const messageNode = node as SAssessmentMessageNode;
-            return await this.handleAcknowledgement(assessment, messageNode);
-        }
-        if (responseType === QueryResponseType.Text) {
-            const questionNode = node as SAssessmentQuestionNode;
-            return await this.handleTextAnswer(assessment, questionNode, answerModel);
+        else if (nodeType === AssessmentNodeType.Message) {
+            if (incomingResponseType === QueryResponseType.Ok) {
+                const messageNode = node as SAssessmentMessageNode;
+                return await this.handleAcknowledgement(assessment, messageNode);
+            }
         }
 
         return null;

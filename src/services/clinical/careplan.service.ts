@@ -304,6 +304,7 @@ export class CareplanService implements IUserActionService {
             activity.PatientUserId, activity.Provider, activity.PlanCode,
             activity.EnrollmentId, activity.ProviderActionId, activity);
 
+        Logger.instance().log(`CompletedActivity: ${JSON.stringify(updatedActivity, null, 2)}`);
         return updatedActivity.CompletedAt ? true : false;
     }
 

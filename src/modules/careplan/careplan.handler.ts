@@ -127,28 +127,13 @@ export class CareplanHandler {
         updates: any
     ): Promise<CareplanActivity> => {
         var service = CareplanHandler._services.getItem(provider);
-        return await service.updateActivity(patientUserId, careplanCode, enrollmentId, activityId, updates);
+        return await service.completeActivity(patientUserId, careplanCode, enrollmentId, activityId, updates);
     };
 
     public convertToAssessmentTemplate = async (assessmentActivity: CareplanActivity)
         : Promise<SAssessmentTemplate> => {
         var service = CareplanHandler._services.getItem(assessmentActivity.Provider);
         return await service.convertToAssessmentTemplate(assessmentActivity);
-    };
-
-    public updateAssessmentActivity = async (
-        patientUserId: uuid,
-        provider: string,
-        careplanCode: string,
-        enrollmentId: string,
-        activityId: string,
-        scheduledAt: Date,
-        sequence: number,
-        updates: any
-    ): Promise<CareplanActivity> => {
-        var service = CareplanHandler._services.getItem(provider);
-        return await service.updateAssessmentActivity(patientUserId, careplanCode, enrollmentId,
-            activityId, scheduledAt, sequence, updates);
     };
 
     public getGoals = async (

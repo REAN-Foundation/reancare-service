@@ -267,16 +267,15 @@ export class AhaCareplanService implements ICareplanService {
         return entity;
     };
 
-    public updateActivity = async(
-        patientUserId: string,
-        careplanCode: string,
+    public patchActivity = async (
         enrollmentId: string,
-        providerActivityId: string,
-        activityUpdates: any): Promise<CareplanActivity> => {
+        providerActivityId: string) => {
 
-        Logger.instance().log(`Updating activity for patient user id '${patientUserId} associated with carte plan '${careplanCode}'.`);
+        var updates = {
+            completedAt : Helper.formatDate(new Date()),
+            status      : 'COMPLETED',
+        };
 
-        const updates = await this.getUpdateModel(activityUpdates);
         const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
 
         var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities/${providerActivityId}`;
@@ -305,6 +304,61 @@ export class AhaCareplanService implements ICareplanService {
         };
 
         return entity;
+    }
+
+    public patchAssessment = async (
+        enrollmentId: string,
+        providerActivityId: string,
+        activityUpdates: any) => {
+
+        const updates = await this.getAssessmentUpdateModel(activityUpdates);
+
+        const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+        const scheduledAt = activityUpdates.ScheduledAt.toISOString().split('T')[0];
+        const sequence = activityUpdates.Sequence;
+
+        var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/assessments/${providerActivityId}?scheduledAt=${scheduledAt}&sequence=${sequence}`;
+
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle("patch", url, updates, headerOptions);
+
+        if (response.statusCode !== 200) {
+            Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+            throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
+        }
+
+        var assessment = response.body.data.assessment;
+
+        var entity: CareplanActivity = {
+            Provider         : this.providerName(),
+            Type             : assessment.type,
+            ProviderActionId : assessment.code,
+            Title            : assessment.title,
+            ScheduledAt      : activityUpdates.ScheduledAt,
+            Sequence         : activityUpdates.Sequence,
+            Status           : 'Completed',
+            CompletedAt      : activityUpdates.CompletedAt,
+        };
+
+        return entity;
+    }
+
+    public completeActivity = async(
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string,
+        providerActivityId: string,
+        activityUpdates: any): Promise<CareplanActivity> => {
+
+        Logger.instance().log(`Updating activity for patient user id '${patientUserId} associated with carte plan '${careplanCode}'.`);
+
+        const taskCategory = activityUpdates.Category as UserTaskCategory;
+        if (taskCategory === UserTaskCategory.Assessment) {
+            return await this.patchAssessment(enrollmentId, providerActivityId, activityUpdates);
+        }
+        else {
+            return await this.patchActivity(enrollmentId, providerActivityId);
+        }
     };
 
     public updateBiometricsActivity = async(
@@ -509,7 +563,7 @@ export class AhaCareplanService implements ICareplanService {
 
     //#region Privates
 
-    private async getUpdateModel(activity: any): Promise<any> {
+    private async getAssessmentUpdateModel(activity: any): Promise<any> {
 
         var updates = {
             completedAt : Helper.formatDate(new Date()),

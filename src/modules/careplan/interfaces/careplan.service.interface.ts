@@ -32,7 +32,7 @@ export interface ICareplanService {
             scheduledAt?:string
         ): Promise<CareplanActivity>;
 
-    updateActivity(
+    completeActivity(
             patientUserId: uuid,
             careplanCode: string,
             enrollmentId: string,
@@ -41,16 +41,6 @@ export interface ICareplanService {
         ): Promise<CareplanActivity>;
     
     convertToAssessmentTemplate(assessmentActivity: CareplanActivity): Promise<SAssessmentTemplate>;
-    
-    updateAssessmentActivity(
-            patientUserId: uuid,
-            careplanCode: string,
-            enrollmentId: string,
-            activityId: string,
-            scheduledAt: Date,
-            sequence: number,
-            updates: any
-        ): Promise<CareplanActivity>;
 
     getGoals(
             patientUserId: uuid,

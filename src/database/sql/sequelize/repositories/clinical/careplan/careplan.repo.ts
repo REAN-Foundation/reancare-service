@@ -13,7 +13,6 @@ import CareplanActivity from "../../../models/clinical/careplan/careplan.activit
 import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityMapper } from '../../../mappers/clinical/careplan/artifact.mapper';
 import { Op } from 'sequelize';
-import { AssessmentItem } from '../../../../../../domain.types/clinical/careplan/activity/assessment.item';
 import { HealthPriorityDto } from '../../../../../../domain.types/health.priority/health.priority.dto';
 import HealthPriority from '../../../models/health.priority/health.priority.model';
 import { HealthPriorityMapper } from '../../../mappers/health.priority/health.priority.mapper';
@@ -323,28 +322,6 @@ export class CareplanRepo implements ICareplanRepo {
                 }
             });
             return record !== null;
-        } catch (error) {
-            Logger.instance().log(error.message);
-        }
-    };
-
-    public updateAssessmentActivity = async (activityId: uuid, status: string,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        finishedAt: Date, items: AssessmentItem [] ): Promise<CareplanActivityDto> => {
-        try {
-            const record = await CareplanActivity.findByPk(activityId);
-
-            if (status != null) {
-                record.Status = status;
-            }
-
-            if (finishedAt != null) {
-                record.CompletedAt = finishedAt;
-            }
-
-            //record.Items = JSON.stringify(items);
-            
-            return CareplanActivityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }

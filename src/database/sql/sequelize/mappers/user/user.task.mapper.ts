@@ -1,5 +1,5 @@
 import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system.types';
-import { UserActionType, UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task..types';
+import { UserActionType, UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task.types';
 import { UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
 import UserTask from '../../models/user/user.task.model';
 
@@ -55,6 +55,6 @@ export class UserTaskMapper {
             RecurrenceScheduleId : task.RecurrenceScheduleId,
         };
         return dto;
-    }
+    };
 
 }

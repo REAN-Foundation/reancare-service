@@ -20,6 +20,6 @@ export class HowDoYouFeelMapper {
             RecordDate    : howDoYouFeel.RecordDate,
         };
         return dto;
-    }
+    };
 
 }

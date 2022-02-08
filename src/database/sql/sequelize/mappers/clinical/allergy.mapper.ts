@@ -24,6 +24,6 @@ export class AllergyMapper {
             LastOccurrence        : allergy.LastOccurrence,
         };
         return dto;
-    }
+    };
 
 }

@@ -68,15 +68,15 @@ export class MedicationService {
 
     getStockMedicationImages = async(): Promise<MedicationStockImageDto[]> => {
         return await this._medicationStockImageRepo.getAll();
-    }
+    };
 
     getStockMedicationImageById = async(imageId: number): Promise<MedicationStockImageDto> => {
         return await this._medicationStockImageRepo.getById(imageId);
-    }
+    };
 
     getStockMedicationImageByCode = async(code: string): Promise<MedicationStockImageDto> => {
         return await this._medicationStockImageRepo.getByCode(code);
-    }
+    };
 
     //#region Privates
     
@@ -94,7 +94,7 @@ export class MedicationService {
         }
         var stockImage = await this.getStockMedicationImageByCode('02_Generic_tablet');
         return stockImage.ResourceId;
-    }
+    };
     
     calculateStartDate = (startDate: Date, isExistingMedication: boolean, takenForLastNDays: number): Date => {
 
@@ -111,7 +111,7 @@ export class MedicationService {
             }
         }
         return new Date();
-    }
+    };
 
     calculateEndDate = (
         duration: number,
@@ -140,7 +140,7 @@ export class MedicationService {
             }
             return startDate;
         }
-    }
+    };
 
     private checkInputParams(model: MedicationDomainModel) {
 

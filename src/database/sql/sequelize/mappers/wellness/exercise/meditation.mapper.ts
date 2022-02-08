@@ -22,6 +22,6 @@ export class MeditationMapper {
 
         };
         return dto;
-    }
+    };
 
 }

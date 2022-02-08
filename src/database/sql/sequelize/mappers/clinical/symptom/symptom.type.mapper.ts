@@ -22,6 +22,6 @@ export class SymptomTypeMapper {
         };
         
         return dto;
-    }
+    };
 
 }

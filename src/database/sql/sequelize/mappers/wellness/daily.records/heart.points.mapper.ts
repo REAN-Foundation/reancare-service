@@ -20,6 +20,6 @@ export class HeartPointsMapper {
             RecordDate    : heartPoint.RecordDate,
         };
         return dto;
-    }
+    };
 
 }

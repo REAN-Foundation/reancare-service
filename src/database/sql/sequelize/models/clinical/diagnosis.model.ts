@@ -7,6 +7,7 @@ import {
 } from '../../../../../domain.types/miscellaneous/clinical.types';
 import User from '../user/user.model';
 import MedicalCondition from './medical.condition.model';
+import Visit from './visit.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -54,7 +55,7 @@ export default class Diagnosis extends Model {
     MedicalPractitionerUserId: string;
 
     @IsUUID(4)
-    @ForeignKey(() => User)
+    @ForeignKey(() => Visit)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
@@ -106,14 +107,14 @@ export default class Diagnosis extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    OnsetDate: Date
+    OnsetDate: Date;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    EndDate: Date
+    EndDate: Date;
 
     @Column
     @CreatedAt

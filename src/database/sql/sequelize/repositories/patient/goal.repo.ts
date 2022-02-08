@@ -15,17 +15,24 @@ export class GoalRepo implements IGoalRepo {
     create = async (goalModel: GoalDomainModel): Promise<GoalDto> => {
         try {
             const entity = {
-                PatientUserId : goalModel.PatientUserId ?? null,
-                CarePlanId    : goalModel.CarePlanId ?? null,
-                TypeCode      : goalModel.TypeCode ?? null,
-                TypeName      : goalModel.TypeName ?? null,
-                GoalId        : goalModel.GoalId ?? null,
-                GoalAchieved  : goalModel.GoalAchieved ?? null,
-                GoalAbandoned : goalModel.GoalAbandoned ?? null
+                PatientUserId        : goalModel.PatientUserId ?? null,
+                Provider             : goalModel.Provider ?? null,
+                ProviderCareplanCode : goalModel.ProviderCareplanCode ?? null,
+                ProviderCareplanName : goalModel.ProviderCareplanName ?? null,
+                ProviderEnrollmentId : goalModel.ProviderEnrollmentId ?? null,
+                ProviderGoalCode     : goalModel.ProviderGoalCode ?? null,
+                Title                : goalModel.Title ?? null,
+                Sequence             : goalModel.Sequence ?? null,
+                HealthPriorityId     : goalModel.HealthPriorityId ?? null,
+                StartedAt            : goalModel.StartedAt ?? null,
+                ScheduledEndDate     : goalModel.ScheduledEndDate ?? null,
+                GoalAchieved         : goalModel.GoalAchieved ?? null,
+                GoalAbandoned        : goalModel.GoalAbandoned ?? null,
+
             };
+
             const contact = await Goal.create(entity);
-            const dto = await GoalMapper.toDto(contact);
-            return dto;
+            return GoalMapper.toDto(contact);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -35,8 +42,28 @@ export class GoalRepo implements IGoalRepo {
     getById = async (id: string): Promise<GoalDto> => {
         try {
             const contact = await Goal.findByPk(id);
-            const dto = await GoalMapper.toDto(contact);
+            const dto = GoalMapper.toDto(contact);
             return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getSelectedGoals = async (patientUserId: string): Promise<GoalDto[]> => {
+        try {
+
+            Logger.instance().log(`Patient User id: ${JSON.stringify(patientUserId)}`);
+
+            const selectedGoals = await Goal.findAll({ where: { PatientUserId: patientUserId } });
+            
+            const dtos: GoalDto[] = [];
+            for (const selectedGoal of selectedGoals) {
+                const dto = GoalMapper.toDto(selectedGoal);
+                dtos.push(dto);
+            }
+
+            return dtos;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -50,17 +77,8 @@ export class GoalRepo implements IGoalRepo {
             if (filters.PatientUserId != null) {
                 search.where['PatientUserId'] = { [Op.eq]: filters.PatientUserId };
             }
-            if (filters.CarePlanId != null) {
-                search.where['CarePlanId'] = { [Op.eq]: filters.CarePlanId };
-            }
-            if (filters.TypeCode != null) {
-                search.where['TypeCode'] = { [Op.eq]: filters.TypeCode };
-            }
-            if (filters.TypeName != null) {
-                search.where['TypeName'] = { [Op.eq]: filters.TypeName };
-            }
-            if (filters.GoalId != null) {
-                search.where['GoalId'] = { [Op.eq]: filters.GoalId };
+            if (filters.ProviderEnrollmentId != null) {
+                search.where['ProviderEnrollmentId'] = { [Op.eq]: filters.ProviderEnrollmentId };
             }
             if (filters.GoalAchieved != null) {
                 search.where['GoalAchieved'] = { [Op.eq]: filters.GoalAchieved };
@@ -102,7 +120,7 @@ export class GoalRepo implements IGoalRepo {
 
             const dtos: GoalDto[] = [];
             for (const contact of foundResults.rows) {
-                const dto = await GoalMapper.toDto(contact);
+                const dto = GoalMapper.toDto(contact);
                 dtos.push(dto);
             }
 
@@ -130,18 +148,6 @@ export class GoalRepo implements IGoalRepo {
             if (goalModel.PatientUserId != null) {
                 goal.PatientUserId = goalModel.PatientUserId;
             }
-            if (goalModel.CarePlanId != null) {
-                goal.CarePlanId = goalModel.CarePlanId;
-            }
-            if (goalModel.TypeCode != null) {
-                goal.TypeCode = goalModel.TypeCode;
-            }
-            if (goalModel.TypeName != null) {
-                goal.TypeName = goalModel.TypeName;
-            }
-            if (goalModel.GoalId != null) {
-                goal.GoalId = goalModel.GoalId;
-            }
             if (goalModel.GoalAchieved != null) {
                 goal.GoalAchieved = goalModel.GoalAchieved;
             }
@@ -150,7 +156,7 @@ export class GoalRepo implements IGoalRepo {
             }
             await goal.save();
 
-            const dto = await GoalMapper.toDto(goal);
+            const dto = GoalMapper.toDto(goal);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);

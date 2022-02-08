@@ -76,12 +76,12 @@ export class AllergyValidator extends BaseValidator {
 
     private async validateCreateBody(request) {
 
-        await this.validateUuid(request, 'PatientUserId', Where.Query, true, false);
-        await this.validateString(request, 'Allergy', Where.Query, true, false);
-        await this.validateString(request, 'AllergenCategory', Where.Query, false, false);
-        await this.validateString(request, 'AllergenExposureRoute', Where.Query, false, false);
-        await this.validateString(request, 'Severity', Where.Query, true, false);
-        await this.validateString(request, 'Reaction', Where.Query, false, false);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateString(request, 'Allergy', Where.Body, true, false);
+        await this.validateString(request, 'AllergenCategory', Where.Body, false, false);
+        await this.validateString(request, 'AllergenExposureRoute', Where.Body, false, false);
+        await this.validateString(request, 'Severity', Where.Body, true, false);
+        await this.validateString(request, 'Reaction', Where.Body, false, false);
 
         this.validateRequest(request);
 
@@ -89,12 +89,12 @@ export class AllergyValidator extends BaseValidator {
 
     private async validateUpdateBody(request) {
 
-        await this.validateUuid(request, 'PatientUserId', Where.Query, false, false);
-        await this.validateString(request, 'Allergy', Where.Query, false, false);
-        await this.validateString(request, 'AllergenCategory', Where.Query, false, false);
-        await this.validateString(request, 'AllergenExposureRoute', Where.Query, false, false);
-        await this.validateString(request, 'Severity', Where.Query, false, false);
-        await this.validateString(request, 'Reaction', Where.Query, false, false);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateString(request, 'Allergy', Where.Body, false, false);
+        await this.validateString(request, 'AllergenCategory', Where.Body, false, false);
+        await this.validateString(request, 'AllergenExposureRoute', Where.Body, false, false);
+        await this.validateString(request, 'Severity', Where.Body, false, false);
+        await this.validateString(request, 'Reaction', Where.Body, false, false);
 
         this.validateRequest(request);
         

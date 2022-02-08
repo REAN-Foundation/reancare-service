@@ -28,7 +28,7 @@ export class BloodGlucoseController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Biometrics.BloodGlucose.Create', request, response);
+            await this.setContext('Biometrics.BloodGlucose.Create', request, response);
 
             const bloodGlucoseDomainModel = await this._validator.create(request);
 
@@ -47,7 +47,7 @@ export class BloodGlucoseController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Biometrics.BloodGlucose.GetById', request, response);
+            await this.setContext('Biometrics.BloodGlucose.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
@@ -66,7 +66,7 @@ export class BloodGlucoseController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Biometrics.BloodGlucose.Search', request, response);
+            await this.setContext('Biometrics.BloodGlucose.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -89,7 +89,7 @@ export class BloodGlucoseController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Biometrics.BloodGlucose.Update', request, response);
+            await this.setContext('Biometrics.BloodGlucose.Update', request, response);
 
             const domainModel = await this._validator.update(request);
 
@@ -114,7 +114,7 @@ export class BloodGlucoseController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Biometrics.BloodGlucose.Delete', request, response);
+            await this.setContext('Biometrics.BloodGlucose.Delete', request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);

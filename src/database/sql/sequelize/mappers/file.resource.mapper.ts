@@ -33,7 +33,7 @@ export class FileResourceMapper {
                 FileResourceMapper.toFileVersionDto(fileResource.DefaultVersion) : null
         };
         return dto;
-    }
+    };
 
     static toDto = (fileResource: FileResource): FileResourceDto => {
 
@@ -52,7 +52,7 @@ export class FileResourceMapper {
         };
 
         return dto;
-    }
+    };
 
     static toFileReferenceDtos = (references ?:FileResourceReference[]): ResourceReference[] => {
         var dtos = references.map(x => {
@@ -69,7 +69,7 @@ export class FileResourceMapper {
             return ref;
         });
         return dtos;
-    }
+    };
 
     static toFileVersionDtos = (fileVersions ?: FileResourceVersion[], sanitize = false): FileResourceMetadata[] => {
 
@@ -78,7 +78,7 @@ export class FileResourceMapper {
         });
         
         return dtos;
-    }
+    };
 
     static toFileVersionDto = (fileVersion ?: FileResourceVersion, sanitize = false): FileResourceMetadata => {
 
@@ -105,6 +105,6 @@ export class FileResourceMapper {
         }
 
         return v;
-    }
+    };
 
 }

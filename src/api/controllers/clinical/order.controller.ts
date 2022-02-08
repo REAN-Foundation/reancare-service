@@ -20,7 +20,7 @@ export class OrderController {
 
     _personService: PersonService = null;
 
-    _patientService: PatientService = null
+    _patientService: PatientService = null;
 
     constructor() {
         this._service = Loader.container.resolve(OrderService);

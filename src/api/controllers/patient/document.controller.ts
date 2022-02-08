@@ -323,7 +323,7 @@ export class DocumentController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     //#endregion
 
@@ -352,7 +352,7 @@ export class DocumentController {
         
         var link = ConfigurationManager.BaseUrl() + '/api/v1/docs/' + scrambled;
         return { scrambled, link };
-    }
+    };
 
     //#endregion
 

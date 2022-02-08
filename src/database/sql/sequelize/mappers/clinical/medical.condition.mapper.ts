@@ -18,6 +18,6 @@ export class MedicalConditionMapper {
             Language    : medicalCondition.Language,
         };
         return dto;
-    }
+    };
 
 }

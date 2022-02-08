@@ -54,6 +54,12 @@ import { MeditationRepo } from './repositories/wellness/exercise/meditation.repo
 import { PhysicalActivityRepo } from './repositories/wellness/exercise/physical.activity.repo';
 import { FoodConsumptionRepo } from './repositories/wellness/nutrition/food.consumption.repo';
 import { WaterConsumptionRepo } from './repositories/wellness/nutrition/water.consumption.repo';
+import { CareplanRepo } from './repositories/clinical/careplan/careplan.repo';
+import { AssessmentRepo } from './repositories/clinical/assessment/assessment.repo';
+import { AssessmentTemplateRepo } from './repositories/clinical/assessment/assessment.template.repo';
+import { AssessmentHelperRepo } from './repositories/clinical/assessment/assessment.helper.repo';
+import { HealthPriorityRepo } from './repositories/health.priority/health.priority.repo';
+import { ActionPlanRepo } from './repositories/goal.action.plan/goal.action.plan.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -117,7 +123,13 @@ export class SequelizeInjector {
         container.register('IUserTaskRepo', UserTaskRepo);
         container.register('IMedicalConditionRepo', MedicalConditionRepo);
         container.register('IDailyAssessmentRepo', DailyAssessmentRepo);
-
+        container.register('ICareplanRepo', CareplanRepo);
+        container.register('IAssessmentRepo', AssessmentRepo);
+        container.register('IAssessmentTemplateRepo', AssessmentTemplateRepo);
+        container.register('IAssessmentHelperRepo', AssessmentHelperRepo);
+        container.register('IHealthPriorityRepo', HealthPriorityRepo);
+        container.register('IActionPlanRepo', ActionPlanRepo);
+        
     }
 
 }

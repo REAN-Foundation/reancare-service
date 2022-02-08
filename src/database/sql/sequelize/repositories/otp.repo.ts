@@ -14,7 +14,7 @@ export class OtpRepo implements IOtpRepo {
 
     create = async (entity: OtpPersistenceEntity): Promise<OtpDto> => {
         try {
-            const otp = await Otp.create(entity);
+            const otp = await Otp.create(entity as any);
             const dto = await OtpMapper.toDto(otp);
             return dto;
         } catch (error) {

@@ -22,6 +22,6 @@ export class DrugMapper {
             OtherInformation     : drug.OtherInformation
         };
         return dto;
-    }
+    };
 
 }

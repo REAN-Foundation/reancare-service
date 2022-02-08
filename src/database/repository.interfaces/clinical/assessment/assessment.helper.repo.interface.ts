@@ -6,10 +6,6 @@ import {
     SAssessmentQueryOption,
     SAssessmentQueryResponse,
     SAssessmentTemplate,
-} from '../../../../domain.types/clinical/assessment/assessment.types';
-import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
-import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import {
     BiometricQueryAnswer,
     FloatQueryAnswer,
     IntegerQueryAnswer,
@@ -18,6 +14,10 @@ import {
     SingleChoiceQueryAnswer,
     TextQueryAnswer,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export interface IAssessmentHelperRepo {
     getChildrenConditions(id: string): SAssessmentPathCondition[] | PromiseLike<SAssessmentPathCondition[]>;

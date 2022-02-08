@@ -12,7 +12,7 @@ export class ActionPlanValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): ActionPlanDomainModel => {
  
-        const ActionPlanDomainModel: ActionPlanDomainModel = {
+        const model: ActionPlanDomainModel = {
             PatientUserId        : request.body.PatientUserId,
             Provider             : request.body.Provider ?? null,
             ProviderEnrollmentId : request.body.ProviderEnrollmentId,
@@ -24,7 +24,7 @@ export class ActionPlanValidator extends BaseValidator {
             ScheduledEndDate     : request.body.ScheduledEndDate,
         };
  
-        return ActionPlanDomainModel;
+        return model;
     };
  
     create = async (request: express.Request): Promise<ActionPlanDomainModel> => {

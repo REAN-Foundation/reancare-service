@@ -29,48 +29,6 @@ export class AssessmentTemplateController extends BaseController{
 
     //#region Action methods
 
-    // importFromFile = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-            
-    //         await this.setContext('AssessmentTemplate.ImportFromFile', request, response);
-
-    //         const models = await this._fileResourceValidator.getUploadDomainModel(request);
-    //         if (models.length === 0) {
-    //             throw new ApiError(422, 'Cannot find valid file to import!');
-    //         }
-    //         const model = models[0];
-    //         const assessmentTemplate = await this._service.importFromFile(model);
-    //         if (assessmentTemplate == null) {
-    //             throw new ApiError(400, 'Cannot import assessment Template!');
-    //         }
-
-    //         ResponseHandler.success(request, response, 'Assessment template record created successfully!', 201, {
-    //             AssessmentTemplate : assessmentTemplate,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
-
-    // importFromJson = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-            
-    //         await this.setContext('AssessmentTemplate.ImportFromJson', request, response);
-
-    //         const model = request.body;
-    //         const assessmentTemplate = await this._service.importFromJson(model);
-    //         if (assessmentTemplate == null) {
-    //             throw new ApiError(400, 'Cannot find valid file to import!');
-    //         }
-
-    //         ResponseHandler.success(request, response, 'Assessment template record created successfully!', 201, {
-    //             AssessmentTemplate : assessmentTemplate,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
-
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             

@@ -27,7 +27,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
             };
 
             const healthPriority = await HealthPriority.create(entity);
-            return await HealthPriorityMapper.toDto(healthPriority);
+            return HealthPriorityMapper.toDto(healthPriority);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -42,7 +42,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
 
             const dtos: HealthPriorityDto[] = [];
             for (const priority of priorities) {
-                const dto = await HealthPriorityMapper.toDto(priority);
+                const dto = HealthPriorityMapper.toDto(priority);
                 dtos.push(dto);
             }
 
@@ -59,7 +59,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
 
             const dtos: HealthPriorityTypeDto[] = [];
             for (const priorityType of priorityTypes) {
-                const dto = await HealthPriorityMapper.toTypeDto(priorityType);
+                const dto = HealthPriorityMapper.toTypeDto(priorityType);
                 dtos.push(dto);
             }
 
@@ -73,8 +73,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
     getById = async (id: string): Promise<HealthPriorityDto> => {
         try {
             const priority = await HealthPriority.findByPk(id);
-            const dto = await HealthPriorityMapper.toDto(priority);
-            return dto;
+            return HealthPriorityMapper.toDto(priority);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

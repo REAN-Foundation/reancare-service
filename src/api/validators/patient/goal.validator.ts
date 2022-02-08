@@ -1,6 +1,6 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
-
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Helper } from '../../../common/helper';
 import { GoalDomainModel } from '../../../domain.types/patient/goal/goal.domain.model';
 import { GoalSearchFilters } from '../../../domain.types/patient/goal/goal.search.types';
@@ -39,7 +39,7 @@ export class GoalValidator {
         return await GoalValidator.getParamId(request);
     };
 
-    static getSelectedGoals= async (request: express.Request): Promise<string> => {
+    static getSelectedGoals= async (request: express.Request): Promise<uuid> => {
         return await GoalValidator.getParamPatientUserId(request);
     };
 

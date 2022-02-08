@@ -32,8 +32,7 @@ export class GoalRepo implements IGoalRepo {
             };
 
             const contact = await Goal.create(entity);
-            const dto = await GoalMapper.toDto(contact);
-            return dto;
+            return await GoalMapper.toDto(contact);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

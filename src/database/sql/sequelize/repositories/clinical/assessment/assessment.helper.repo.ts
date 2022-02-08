@@ -1,4 +1,3 @@
-//import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { AssessmentTemplateDto } from '../../../../../../domain.types/clinical/assessment/assessment.template.dto';
@@ -16,7 +15,14 @@ import {
     SAssessmentPathCondition,
     ConditionOperandDataType,
     SAssessmentQueryResponse,
-    QueryResponseType
+    QueryResponseType,
+    SingleChoiceQueryAnswer,
+    MultipleChoiceQueryAnswer,
+    MessageAnswer,
+    TextQueryAnswer,
+    IntegerQueryAnswer,
+    FloatQueryAnswer,
+    BiometricQueryAnswer,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -27,15 +33,6 @@ import AssessmentNodePath from '../../../models/clinical/assessment/assessment.n
 import AssessmentPathCondition from '../../../models/clinical/assessment/assessment.path.condition.model';
 import { AssessmentHelperMapper } from '../../../mappers/clinical/assessment/assessment.helper.mapper';
 import AssessmentQueryResponse from '../../../models/clinical/assessment/assessment.query.response.model';
-import {
-    SingleChoiceQueryAnswer,
-    MultipleChoiceQueryAnswer,
-    MessageAnswer,
-    TextQueryAnswer,
-    IntegerQueryAnswer,
-    FloatQueryAnswer,
-    BiometricQueryAnswer,
-} from '../../../../../../domain.types/clinical/assessment/assessment.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -72,8 +69,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             template.RootNodeId = rootNode.id;
             await template.save();
 
-            const templateDto = AssessmentTemplateMapper.toDto(template);
-            return templateDto;
+            return AssessmentTemplateMapper.toDto(template);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -283,8 +280,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         const options = await this.getQuestionNodeOptions(node.NodeType as AssessmentNodeType, nodeId);
         const paths = await this.getQuestionNodePaths(node.NodeType as AssessmentNodeType, nodeId);
         const children = await this.getNodeListChildren(nodeId);
-        var nodeDto = AssessmentHelperMapper.toNodeDto(node, children, paths, options);
-        return nodeDto;
+        return AssessmentHelperMapper.toNodeDto(node, children, paths, options);
     }
 
     private async createNewNode(
@@ -462,10 +458,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         const condition = await AssessmentPathCondition.create(conditionEntity);
 
         for await (var childCondition of sCondition.Children) {
-            const parentConditionId = condition.id;
-
-            var child = await this.createNewPathCondition(childCondition, pathId, currentNodeId, parentConditionId);
-
+            var child = await this.createNewPathCondition(childCondition, currentNodeId, pathId, condition.id);
             Logger.instance().log(`Operator type: ${child.OperatorType}`);
             Logger.instance().log(`Composition type: ${child.CompositionType}`);
         }
@@ -483,7 +476,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         
         if (answer.ResponseType === QueryResponseType.SingleChoiceSelection) {
             const a = answer as SingleChoiceQueryAnswer;
-            const model = {
+            return {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
                 Sequence     : a.QuestionSequence,
@@ -491,11 +484,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 IntegerValue : a.ChosenSequence,
                 Additional   : JSON.stringify(a.ChosenOption),
             };
-            return model;
         }
         if (answer.ResponseType === QueryResponseType.MultiChoiceSelection) {
             const a = answer as MultipleChoiceQueryAnswer;
-            const model = {
+            return {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
                 Sequence     : a.QuestionSequence,
@@ -503,62 +495,56 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 TextValue    : JSON.stringify(a.ChosenSequences),
                 Additional   : JSON.stringify(a.ChosenOptions),
             };
-            return model;
         }
         if (answer.ResponseType === QueryResponseType.Ok) {
             const a = answer as MessageAnswer;
-            const model = {
+            return {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
                 Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 BooleanValue : a.Achnowledged,
             };
-            return model;
         }
         if (answer.ResponseType === QueryResponseType.Text) {
             const a = answer as TextQueryAnswer;
-            const model = {
+            return {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
                 Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 TextValue    : a.Text,
             };
-            return model;
         }
         if (answer.ResponseType === QueryResponseType.Integer) {
             const a = answer as IntegerQueryAnswer;
-            const model = {
+            return {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
                 Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 IntegerValue : a.Value,
             };
-            return model;
         }
         if (answer.ResponseType === QueryResponseType.Float) {
             const a = answer as FloatQueryAnswer;
-            const model = {
+            return {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
                 Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 FloatValue   : a.Value,
             };
-            return model;
         }
         if (answer.ResponseType === QueryResponseType.Biometrics) {
             const a = answer as BiometricQueryAnswer;
-            const model = {
+            return {
                 AssessmentId : a.AssessmentId,
                 NodeId       : a.NodeId,
                 Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 TextValue    : JSON.stringify(a.Values),
             };
-            return model;
         }
         return null;
     }

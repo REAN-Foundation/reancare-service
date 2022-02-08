@@ -60,7 +60,8 @@ export class AssessmentValidator extends BaseValidator {
         };
         
         const responseType = request.body.ResponseType;
-        if (responseType === QueryResponseType.SingleChoiceSelection) {
+        if (responseType === QueryResponseType.SingleChoiceSelection ||
+            responseType === QueryResponseType.Integer) {
             await this.validateInt(request, 'Answer', Where.Body, true, false);
             answerModel['IntegerValue'] = request.body.Answer;
         }
@@ -68,17 +69,10 @@ export class AssessmentValidator extends BaseValidator {
             await this.validateArray(request, 'Answer', Where.Body, true, false);
             answerModel['IntegerValue'] = request.body.Answer;
         }
-        else if (responseType === QueryResponseType.Text) {
+        else if (responseType === QueryResponseType.Text ||
+            responseType === QueryResponseType.Ok) {
             await this.validateString(request, 'Answer', Where.Body, true, false);
             answerModel['TextValue'] = request.body.Answer;
-        }
-        else if (responseType === QueryResponseType.Ok) {
-            await this.validateString(request, 'Answer', Where.Body, true, false);
-            answerModel['TextValue'] = request.body.Answer;
-        }
-        else if (responseType === QueryResponseType.Integer) {
-            await this.validateInt(request, 'Answer', Where.Body, true, false);
-            answerModel['IntegerValue'] = request.body.Answer;
         }
         else if (responseType === QueryResponseType.Float) {
             await this.validateDecimal(request, 'Answer', Where.Body, true, false);

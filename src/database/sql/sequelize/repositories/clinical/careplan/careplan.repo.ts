@@ -32,8 +32,7 @@ export class CareplanRepo implements ICareplanRepo {
                 Provider      : provider,
                 ParticipantId : participantId,
             };
-            const participant = await CareplanParticipant.create(entity);
-            return participant;
+            return await CareplanParticipant.create(entity);
         } catch (error) {
             Logger.instance().log(error.message);
             return null;
@@ -42,13 +41,12 @@ export class CareplanRepo implements ICareplanRepo {
 
     public getPatientRegistrationDetails = async (patientUserId: string, provider: string): Promise<ParticipantDto> => {
         try {
-            var participant = await CareplanParticipant.findOne({
+            return await CareplanParticipant.findOne({
                 where : {
                     PatientUserId : patientUserId,
                     Provider      : provider,
                 },
             });
-            return participant;
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -96,10 +94,9 @@ export class CareplanRepo implements ICareplanRepo {
                     PatientUserId : patientUserId
                 }
             });
-            const enrollmentDtos = enrollments.map(x => {
+            return enrollments.map(x => {
                 return EnrollmentMapper.toDto(x);
             });
-            return enrollmentDtos;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -191,8 +188,7 @@ export class CareplanRepo implements ICareplanRepo {
                 Status           : activity.Status
             };
             const record = await CareplanActivity.create(entity);
-            var dto = await CareplanActivityMapper.toDto(record);
-            return dto;
+            return CareplanActivityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }

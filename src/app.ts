@@ -84,7 +84,7 @@ export default class Application {
 
                 var limiter = RateLimit({
                     windowMs : 1 * 60 * 1000, // 1 minute
-                    max      : 5
+                    max      : 15 // Allow max 15
                 });
                 this._app.use(limiter);
 

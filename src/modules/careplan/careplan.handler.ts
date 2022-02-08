@@ -32,9 +32,9 @@ export class CareplanHandler {
         var careplans = ConfigurationManager.careplans();
         var plans: CareplanConfig[] = [];
         if (provider) {
-            for (var c of careplans) {
-                if (c.Provider === provider) {
-                    return c.Plans;
+            for (var careplan of careplans) {
+                if (careplan.Provider === provider) {
+                    return careplan.Plans;
                 }
             }
         }

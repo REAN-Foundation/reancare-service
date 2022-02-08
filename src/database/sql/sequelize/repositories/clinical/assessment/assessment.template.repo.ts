@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
-import { AssessmentTemplateSearchFilters } from '../../../../../../domain.types/clinical/assessment/assessment.template.search.types';
-import { AssessmentTemplateSearchResults } from '../../../../../../domain.types/clinical/assessment/assessment.template.search.types';
+import { AssessmentTemplateSearchFilters,
+    AssessmentTemplateSearchResults } from '../../../../../../domain.types/clinical/assessment/assessment.template.search.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
@@ -26,7 +26,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                 Provider               : model.Provider ?? null,
             };
             const assessmentTemplate = await AssessmentTemplate.create(entity);
-            return await AssessmentTemplateMapper.toDto(assessmentTemplate);
+            return AssessmentTemplateMapper.toDto(assessmentTemplate);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -36,7 +36,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
     public getById = async (id: string): Promise<AssessmentTemplateDto> => {
         try {
             const assessmentTemplate = await AssessmentTemplate.findByPk(id);
-            return await AssessmentTemplateMapper.toDto(assessmentTemplate);
+            return AssessmentTemplateMapper.toDto(assessmentTemplate);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -52,7 +52,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                     ProviderAssessmentCode : providerAssessmentCode
                 }
             });
-            return await AssessmentTemplateMapper.toDto(assessmentTemplate);
+            return AssessmentTemplateMapper.toDto(assessmentTemplate);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -97,7 +97,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
 
             const dtos: AssessmentTemplateDto[] = [];
             for (const doctorNote of foundResults.rows) {
-                const dto = await AssessmentTemplateMapper.toDto(doctorNote);
+                const dto = AssessmentTemplateMapper.toDto(doctorNote);
                 dtos.push(dto);
             }
 
@@ -111,6 +111,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                 Items          : dtos
             };
             return searchResults;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -138,7 +139,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             }
             await assessmentTemplate.save();
 
-            return await AssessmentTemplateMapper.toDto(assessmentTemplate);
+            return AssessmentTemplateMapper.toDto(assessmentTemplate);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

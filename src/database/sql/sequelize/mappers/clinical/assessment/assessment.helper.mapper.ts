@@ -67,9 +67,9 @@ export class AssessmentHelperMapper {
         var optionDto = new SAssessmentQueryOption();
         optionDto.id = option.id;
         optionDto.NodeId = option.NodeId;
-        (optionDto.DisplayCode = option.DisplayCode),
-        (optionDto.ProviderGivenCode = option.ProviderGivenCode),
-        (optionDto.Text = option.Text);
+        optionDto.DisplayCode = option.DisplayCode;
+        optionDto.ProviderGivenCode = option.ProviderGivenCode;
+        optionDto.Text = option.Text;
         optionDto.ImageUrl = option.ImageUrl;
         optionDto.Sequence = option.Sequence;
         return optionDto;
@@ -89,40 +89,41 @@ export class AssessmentHelperMapper {
         return pathDto;
     }
 
+    static setCommonFields(dto, node) {
+        dto.id = node.id;
+        dto.DisplayCode = node.DisplayCode;
+        dto.ProviderGivenCode = node.ProviderGivenCode;
+        dto.ProviderGivenId = node.ProviderGivenId;
+        dto.TemplateId = node.TemplateId;
+        dto.NodeType = node.NodeType;
+        dto.ParentNodeId = node.ParentNodeId;
+        dto.Title = node.Title;
+        dto.Description = node.Description;
+        dto.Sequence = node.Sequence;
+        dto.Score = node.Score;
+    }
+
     static toNodeDto = (
         node: AssessmentNode,
         children?: SAssessmentNode[],
         paths?: SAssessmentNodePath[],
         options?: SAssessmentQueryOption[]
     ): SAssessmentMessageNode | SAssessmentQuestionNode | SAssessmentListNode => {
+
         if (node == null) {
             return null;
         }
 
-        function setCommonFields(dto, node) {
-            dto.id = node.id;
-            dto.DisplayCode = node.DisplayCode;
-            dto.ProviderGivenCode = node.ProviderGivenCode;
-            dto.ProviderGivenId = node.ProviderGivenId,
-            dto.TemplateId = node.TemplateId;
-            dto.NodeType = node.NodeType;
-            dto.ParentNodeId = node.ParentNodeId;
-            dto.Title = node.Title;
-            dto.Description = node.Description;
-            dto.Sequence = node.Sequence;
-            dto.Score = node.Score;
-        }
-
         if (node.NodeType === AssessmentNodeType.Message) {
             var messageNodeDto = new SAssessmentMessageNode();
-            setCommonFields(messageNodeDto, node);
+            AssessmentHelperMapper.setCommonFields(messageNodeDto, node);
             messageNodeDto.Message = node.Message;
             messageNodeDto.Acknowledged = node.Acknowledged;
             return messageNodeDto;
         }
         if (node.NodeType === AssessmentNodeType.Question) {
             var questionNodeDto = new SAssessmentQuestionNode();
-            setCommonFields(questionNodeDto, node);
+            AssessmentHelperMapper.setCommonFields(questionNodeDto, node);
             questionNodeDto.QueryResponseType = node.QueryResponseType as QueryResponseType;
             questionNodeDto.Options = options;
             questionNodeDto.Paths = paths;
@@ -130,7 +131,7 @@ export class AssessmentHelperMapper {
         }
         if (node.NodeType === AssessmentNodeType.NodeList) {
             var listNodeDto = new SAssessmentListNode();
-            setCommonFields(listNodeDto, node);
+            AssessmentHelperMapper.setCommonFields(listNodeDto, node);
             listNodeDto.ChildrenNodeIds = children?.map((x) => x.id);
             listNodeDto.ChildrenNodeDisplayCodes = children?.map((x) => x.DisplayCode);
             listNodeDto.Children = children;

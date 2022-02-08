@@ -178,6 +178,7 @@ export class UserTaskController {
         try {
             request.context = 'UserTask.StartTask';
             await this._authorizer.authorize(request, response);
+            var actionResolver = new UserActionResolver();
 
             const id: string = await this._validator.getParamUuid(request, 'id');
 
@@ -187,7 +188,7 @@ export class UserTaskController {
             }
 
             if (existing.ActionId != null && existing.ActionType !== null) {
-                var actionResolver = new UserActionResolver();
+
                 const result = await actionResolver.startAction(
                     existing.ActionType, existing.ActionId);
                 Logger.instance().log(`Starting ${existing.ActionType} - Action result : ${result.toString()}`);
@@ -199,7 +200,6 @@ export class UserTaskController {
             }
 
             if (updated.ActionId != null && updated.ActionType !== null) {
-                var actionResolver = new UserActionResolver();
                 const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
                 if (action) {
                     updated['Action'] = action;
@@ -218,6 +218,7 @@ export class UserTaskController {
         try {
             request.context = 'UserTask.FinishTask';
             await this._authorizer.authorize(request, response);
+            var actionResolver = new UserActionResolver();
 
             const { id, finishedAt, comments } = await this._validator.finishTask(request);
             Logger.instance().log(`Task comments: ${comments}`);
@@ -228,7 +229,6 @@ export class UserTaskController {
             }
 
             if (existing.ActionId != null && existing.ActionType !== null) {
-                var actionResolver = new UserActionResolver();
                 const result = await actionResolver.completeAction(
                     existing.ActionType, existing.ActionId, true, finishedAt);
                 Logger.instance().log(`${existing.ActionType} - Action result : ${result.toString()}`);
@@ -240,7 +240,6 @@ export class UserTaskController {
             }
 
             if (updated.ActionId != null && updated.ActionType !== null) {
-                var actionResolver = new UserActionResolver();
                 const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
                 if (action) {
                     updated['Action'] = action;
@@ -260,6 +259,7 @@ export class UserTaskController {
         try {
             request.context = 'UserTask.Update';
             await this._authorizer.authorize(request, response);
+            var actionResolver = new UserActionResolver();
 
             const updateModel = await this._validator.update(request);
             const id: string = await this._validator.getParamUuid(request, 'id');
@@ -270,7 +270,6 @@ export class UserTaskController {
             }
 
             if (userTask.ActionId != null && userTask.ActionType !== null) {
-                var actionResolver = new UserActionResolver();
                 const updates = updateModel;
                 await actionResolver.updateAction(userTask.ActionType, userTask.ActionId, updates);
             }
@@ -281,7 +280,6 @@ export class UserTaskController {
             }
 
             if (updated.ActionId != null && updated.ActionType !== null) {
-                var actionResolver = new UserActionResolver();
                 const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
                 if (action) {
                     updated['Action'] = action;
@@ -301,6 +299,7 @@ export class UserTaskController {
         try {
             request.context = 'UserTask.CancelTask';
             await this._authorizer.authorize(request, response);
+            var actionResolver = new UserActionResolver();
 
             const { id, reason } = await this._validator.cancelTask(request);
             
@@ -310,7 +309,6 @@ export class UserTaskController {
             }
 
             if (existing.ActionId != null && existing.ActionType !== null) {
-                var actionResolver = new UserActionResolver();
                 const result = await actionResolver.cancelAction(existing.ActionType, existing.ActionId);
                 Logger.instance().log(`${existing.ActionType} - Action result : ${result.toString()}`);
             }
@@ -321,7 +319,6 @@ export class UserTaskController {
             }
 
             if (updated.ActionId != null && updated.ActionType !== null) {
-                var actionResolver = new UserActionResolver();
                 const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
                 if (action) {
                     updated['Action'] = action;
@@ -388,8 +385,8 @@ export class UserTaskController {
     private updateDtos = async (dtos: UserTaskDto[]): Promise<UserTaskDto[]> => {
         var updatedDtos: UserTaskDto[] = [];
         for await (var dto of dtos) {
-            dto = await this.updateDto(dto);
-            updatedDtos.push(dto);
+            const updated = await this.updateDto(dto);
+            updatedDtos.push(updated);
         }
         return updatedDtos;
     };

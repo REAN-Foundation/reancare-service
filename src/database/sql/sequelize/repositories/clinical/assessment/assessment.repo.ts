@@ -35,7 +35,7 @@ export class AssessmentRepo implements IAssessmentRepo {
                 CurrentNodeId          : model.CurrentNodeId,
             };
             const assessment = await Assessment.create(entity);
-            return await AssessmentMapper.toDto(assessment);
+            return AssessmentMapper.toDto(assessment);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -46,7 +46,7 @@ export class AssessmentRepo implements IAssessmentRepo {
     public getById = async (id: uuid): Promise<AssessmentDto> => {
         try {
             const assessment = await Assessment.findByPk(id);
-            return await AssessmentMapper.toDto(assessment);
+            return AssessmentMapper.toDto(assessment);
             
         } catch (error) {
             Logger.instance().log(error.message);
@@ -57,17 +57,13 @@ export class AssessmentRepo implements IAssessmentRepo {
     public getForPatient = async (patientUserId: uuid): Promise<AssessmentDto[]> => {
         try {
             const search = { where: {} };
-
             search.where['PatientUserId'] = { [Op.eq]: patientUserId };
-
             const foundResults = await Assessment.findAll(search);
-
             const dtos: AssessmentDto[] = [];
             for (const assessment of foundResults) {
-                const dto = await AssessmentMapper.toDto(assessment);
+                const dto = AssessmentMapper.toDto(assessment);
                 dtos.push(dto);
             }
-
             return dtos;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -97,7 +93,7 @@ export class AssessmentRepo implements IAssessmentRepo {
 
             await assessment.save();
 
-            return await AssessmentMapper.toDto(assessment);
+            return AssessmentMapper.toDto(assessment);
             
         } catch (error) {
             Logger.instance().log(error.message);
@@ -150,7 +146,7 @@ export class AssessmentRepo implements IAssessmentRepo {
 
             const dtos: AssessmentDto[] = [];
             for (const doctorNote of foundResults.rows) {
-                const dto = await AssessmentMapper.toDto(doctorNote);
+                const dto = AssessmentMapper.toDto(doctorNote);
                 dtos.push(dto);
             }
 
@@ -164,6 +160,7 @@ export class AssessmentRepo implements IAssessmentRepo {
                 Items          : dtos
             };
             return searchResults;
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

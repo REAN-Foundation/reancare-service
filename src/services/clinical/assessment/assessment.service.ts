@@ -3,14 +3,6 @@ import { ApiError } from '../../../common/api.error';
 import { IAssessmentHelperRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface';
 import { IAssessmentRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface';
 import { IAssessmentTemplateRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface';
-import { IBloodGlucoseRepo } from '../../../database/repository.interfaces/clinical/biometrics/blood.glucose.repo.interface';
-import { IBloodOxygenSaturationRepo } from '../../../database/repository.interfaces/clinical/biometrics/blood.oxygen.saturation.repo.interface';
-import { IBloodPressureRepo } from '../../../database/repository.interfaces/clinical/biometrics/blood.pressure.repo.interface';
-import { IBodyHeightRepo } from '../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface';
-import { IBodyTemperatureRepo } from '../../../database/repository.interfaces/clinical/biometrics/body.temperature.repo.interface';
-import { IBodyWeightRepo } from '../../../database/repository.interfaces/clinical/biometrics/body.weight.repo.interface';
-import { IPulseRepo } from '../../../database/repository.interfaces/clinical/biometrics/pulse.repo.interface ';
-import { ICareplanRepo } from '../../../database/repository.interfaces/clinical/careplan.repo.interface';
 import { AssessmentHelperMapper } from '../../../database/sql/sequelize/mappers/clinical/assessment/assessment.helper.mapper';
 import { AssessmentAnswerDomainModel } from '../../../domain.types/clinical/assessment/assessment.answer.domain.model';
 import { AssessmentDomainModel } from '../../../domain.types/clinical/assessment/assessment.domain.model';
@@ -22,7 +14,6 @@ import {
     AssessmentSearchResults
 } from '../../../domain.types/clinical/assessment/assessment.search.types';
 import {
-    AssessmentBiometrics,
     AssessmentNodeType, BiometricQueryAnswer,
     FloatQueryAnswer,
     IntegerQueryAnswer,
@@ -34,23 +25,9 @@ import {
     SAssessmentQueryOption,
     SAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer
 } from '../../../domain.types/clinical/assessment/assessment.types';
-import { BiometricsType } from '../../../domain.types/clinical/biometrics/biometrics.types';
-import { BloodGlucoseDomainModel } from '../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model';
-import { BloodGlucoseDto } from '../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto';
-import { BloodOxygenSaturationDomainModel } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
-import { BloodOxygenSaturationDto } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto';
-import { BloodPressureDomainModel } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
-import { BloodPressureDto } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto';
-import { BodyHeightDomainModel } from '../../../domain.types/clinical/biometrics/body.height/body.height.domain.model';
-import { BodyHeightDto } from '../../../domain.types/clinical/biometrics/body.height/body.height.dto';
-import { BodyTemperatureDomainModel } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
-import { BodyTemperatureDto } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.dto';
-import { BodyWeightDomainModel } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
-import { BodyWeightDto } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.dto';
-import { PulseDomainModel } from '../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
-import { PulseDto } from '../../../domain.types/clinical/biometrics/pulse/pulse.dto';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Loader } from '../../../startup/loader';
+import { AssessmentBiometricsHelper } from './assessment.biometrics.helper';
 import { ConditionProcessor } from './condition.processor';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,14 +41,6 @@ export class AssessmentService {
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
-        @inject('IBloodGlucoseRepo') private _bloodGlucoseRepo: IBloodGlucoseRepo,
-        @inject('IBloodOxygenSaturationRepo') private _bloodOxygenSaturationRepo: IBloodOxygenSaturationRepo,
-        @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
-        @inject('IBodyWeightRepo') private _bodyWeightRepo: IBodyWeightRepo,
-        @inject('IBodyHeightRepo') private _bodyHeightRepo: IBodyHeightRepo,
-        @inject('IBodyTemperatureRepo') private _bodyTemperatureRepo: IBodyTemperatureRepo,
-        @inject('IPulseRepo') private _pulseRepo: IPulseRepo,
-        @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {
         this._conditionProcessor = Loader.container.resolve(ConditionProcessor);
     }
@@ -154,32 +123,11 @@ export class AssessmentService {
         //Convert the answer to the format which we can persist
 
         if (nodeType === AssessmentNodeType.Question) {
-
-            const questionNode = node as SAssessmentQuestionNode;
-            const expectedResponseType = questionNode.QueryResponseType;
-
-            if (incomingResponseType !== expectedResponseType) {
-                throw new Error(`Provided response type is different than expected response type.`);
-            }
-            
-            if (incomingResponseType === QueryResponseType.SingleChoiceSelection) {
-                return await this.handleSingleChoiceSelectionAnswer(assessment, questionNode, answerModel);
-            }
-            if (incomingResponseType === QueryResponseType.MultiChoiceSelection) {
-                return await this.handleMultipleChoiceSelectionAnswer(assessment, questionNode, answerModel);
-            }
-            if (incomingResponseType === QueryResponseType.Biometrics) {
-                return await this.handleBiometricsAnswer(assessment, questionNode, answerModel);
-            }
-            if (incomingResponseType === QueryResponseType.Text) {
-                return await this.handleTextAnswer(assessment, questionNode, answerModel);
-            }
+            return await this.handleAnswersToQuestion(answerModel, assessment, node, incomingResponseType);
         }
-        else if (nodeType === AssessmentNodeType.Message) {
-            if (incomingResponseType === QueryResponseType.Ok) {
-                const messageNode = node as SAssessmentMessageNode;
-                return await this.handleAcknowledgement(assessment, messageNode);
-            }
+        else if (nodeType === AssessmentNodeType.Message && incomingResponseType === QueryResponseType.Ok) {
+            const messageNode = node as SAssessmentMessageNode;
+            return await this.handleAcknowledgement(assessment, messageNode);
         }
 
         return null;
@@ -448,7 +396,8 @@ export class AssessmentService {
 
         await this._assessmentHelperRepo.createQueryResponse(answerDto);
         if (answerDto.ResponseType === QueryResponseType.Biometrics) {
-            await this.persistBiometrics(assessment.PatientUserId, answerDto);
+            const biometricsHelper = Loader.container.resolve(AssessmentBiometricsHelper);
+            await biometricsHelper.persistBiometrics(assessment.PatientUserId, answerDto);
         }
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
@@ -569,113 +518,32 @@ export class AssessmentService {
         return query;
     }
 
-    private async persistBiometrics(patientUserId: uuid, answer: BiometricQueryAnswer) {
+    private handleAnswersToQuestion = async (
+        answerModel: AssessmentAnswerDomainModel,
+        assessment: AssessmentDto,
+        node: SAssessmentNode,
+        incomingResponseType: QueryResponseType) : Promise<AssessmentQuestionResponseDto>=> {
+
+        const questionNode = node as SAssessmentQuestionNode;
+        const expectedResponseType = questionNode.QueryResponseType;
+
+        if (incomingResponseType !== expectedResponseType) {
+            throw new Error(`Provided response type is different than expected response type.`);
+        }
         
-        if (answer.Values.length === 0) {
-            throw new Error(`Invalid biometrics values!`);
+        if (incomingResponseType === QueryResponseType.SingleChoiceSelection) {
+            return await this.handleSingleChoiceSelectionAnswer(assessment, questionNode, answerModel);
         }
-        for await (var v of answer.Values) {
-            const type = v.BiometricsType;
-            if (type === BiometricsType.BloodGlucose) {
-                await this.addBloodGlucose(v, patientUserId);
-            }
-            if (type === BiometricsType.BloodOxygenSaturation) {
-                await this.addBloodOxygenSaturation(v, patientUserId);
-            }
-            if (type === BiometricsType.BloodPressure) {
-                await this.addBloodPressure(v, patientUserId);
-            }
-            if (type === BiometricsType.BodyHeight) {
-                await this.addBodyHeight(v, patientUserId);
-            }
-            if (type === BiometricsType.BodyWeight) {
-                await this.addBodyWeight(v, patientUserId);
-            }
-            if (type === BiometricsType.BodyTemperature) {
-                await this.addBodyTemperature(v, patientUserId);
-            }
-            if (type === BiometricsType.Pulse) {
-                await this.addPulse(v, patientUserId);
-            }
+        if (incomingResponseType === QueryResponseType.MultiChoiceSelection) {
+            return await this.handleMultipleChoiceSelectionAnswer(assessment, questionNode, answerModel);
         }
-    }
-
-    private async addBloodGlucose(v: AssessmentBiometrics, patientUserId: string) {
-        const b = v.Value as BloodGlucoseDto;
-        const model: BloodGlucoseDomainModel = {
-            PatientUserId : patientUserId,
-            BloodGlucose  : b.BloodGlucose,
-            Unit          : b.Unit,
-            RecordDate    : b.RecordDate ?? new Date()
-        };
-        await this._bloodGlucoseRepo.create(model);
-    }
-
-    private async addBloodOxygenSaturation(v: AssessmentBiometrics, patientUserId: string) {
-        const b = v.Value as BloodOxygenSaturationDto;
-        const model: BloodOxygenSaturationDomainModel = {
-            PatientUserId         : patientUserId,
-            BloodOxygenSaturation : b.BloodOxygenSaturation,
-            Unit                  : b.Unit,
-            RecordDate            : b.RecordDate ?? new Date()
-        };
-        await this._bloodOxygenSaturationRepo.create(model);
-    }
-
-    private async addBloodPressure(v: AssessmentBiometrics, patientUserId: string) {
-        const b = v.Value as BloodPressureDto;
-        const model: BloodPressureDomainModel = {
-            PatientUserId : patientUserId,
-            Diastolic     : b.Diastolic,
-            Systolic      : b.Systolic,
-            Unit          : b.Unit,
-            RecordDate    : b.RecordDate ?? new Date()
-        };
-        await this._bloodPressureRepo.create(model);
-    }
-
-    private async addBodyHeight(v: AssessmentBiometrics, patientUserId: string) {
-        const b = v.Value as BodyHeightDto;
-        const model: BodyHeightDomainModel = {
-            PatientUserId : patientUserId,
-            BodyHeight    : b.BodyHeight,
-            Unit          : b.Unit,
-            RecordDate    : b.RecordDate ?? new Date()
-        };
-        await this._bodyHeightRepo.create(model);
-    }
-
-    private async addBodyWeight(v: AssessmentBiometrics, patientUserId: string) {
-        const b = v.Value as BodyWeightDto;
-        const model: BodyWeightDomainModel = {
-            PatientUserId : patientUserId,
-            BodyWeight    : b.BodyWeight,
-            Unit          : b.Unit,
-            RecordDate    : b.RecordDate ?? new Date()
-        };
-        await this._bodyWeightRepo.create(model);
-    }
-
-    private async addBodyTemperature(v: AssessmentBiometrics, patientUserId: string) {
-        const b = v.Value as BodyTemperatureDto;
-        const model: BodyTemperatureDomainModel = {
-            PatientUserId   : patientUserId,
-            BodyTemperature : b.BodyTemperature,
-            Unit            : b.Unit,
-            RecordDate      : b.RecordDate ?? new Date()
-        };
-        await this._bodyTemperatureRepo.create(model);
-    }
-
-    private async addPulse(v: AssessmentBiometrics, patientUserId: string) {
-        const b = v.Value as PulseDto;
-        const model: PulseDomainModel = {
-            PatientUserId : patientUserId,
-            Pulse         : b.Pulse,
-            Unit          : b.Unit,
-            RecordDate    : b.RecordDate ?? new Date()
-        };
-        await this._pulseRepo.create(model);
+        if (incomingResponseType === QueryResponseType.Biometrics) {
+            return await this.handleBiometricsAnswer(assessment, questionNode, answerModel);
+        }
+        if (incomingResponseType === QueryResponseType.Text) {
+            return await this.handleTextAnswer(assessment, questionNode, answerModel);
+        }
+        return null;
     }
 
     //#endregion

@@ -25,7 +25,7 @@ export class ActionPlanRepo implements IActionPlanRepo {
             };
 
             const actionPlan = await GoalAction.create(entity);
-            return await ActionPlanMapper.toDto(actionPlan);
+            return ActionPlanMapper.toDto(actionPlan);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -40,7 +40,7 @@ export class ActionPlanRepo implements IActionPlanRepo {
 
             const dtos: ActionPlanDto[] = [];
             for (const actionPlan of actionPlans) {
-                const dto = await ActionPlanMapper.toDto(actionPlan);
+                const dto = ActionPlanMapper.toDto(actionPlan);
                 dtos.push(dto);
             }
 

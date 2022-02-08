@@ -194,7 +194,8 @@ export class AhaCareplanService implements ICareplanService {
 
         activities.forEach(activity => {
 
-            const title = activity.name ? activity.name : (activity.title ? activity.title : '');
+            const tmp = activity.title ? activity.title : '';
+            const title = activity.name ? activity.name : tmp;
             const category: UserTaskCategory = this.getUserTaskCategory(activity.type);
             const status = this.getActivityStatus(activity.status);
             const description = this.getActivityDescription(activity.text, activity.description);
@@ -242,7 +243,8 @@ export class AhaCareplanService implements ICareplanService {
         }
     
         var activity = response.body.data.activity;
-        const title = activity.name ? activity.name : (activity.title ? activity.title : '');
+        const tmp = activity.title ? activity.title : '';
+        const title = activity.name ? activity.name : tmp;
         const category: UserTaskCategory = this.getUserTaskCategory(activity.type);
         const status = this.getActivityStatus(activity.status);
         const description = this.getActivityDescription(activity.text, activity.description);
@@ -364,17 +366,15 @@ export class AhaCareplanService implements ICareplanService {
         return await ahaServiceHelper.convertToAssessmentTemplate(activity);
     };
 
-    public getGoals = async (
-        patientUserId: string,
-        enrollmentId: string,
-        category: string
-    ): Promise<GoalDto[]> => {
+    public getGoals = async (patientUserId: string, enrollmentId: string, category: string): Promise<GoalDto[]> => {
         try {
         
+            var categoryCode = null;
+
             var activityCode = this.getActivityCode();
             for (const key in HealthPriorityType) {
                 if (HealthPriorityType[key] === category) {
-                    var categoryCode = key;
+                    categoryCode = key;
                 }
             }
 
@@ -421,10 +421,11 @@ export class AhaCareplanService implements ICareplanService {
             var activityCode = this.getActivityCode();
 
             Logger.instance().log(`Category :: ${JSON.stringify(category)}`);
-
+            var categoryCode = null;
+            
             for (const key in HealthPriorityType) {
                 if (HealthPriorityType[key] === category) {
-                    var categoryCode = key;
+                    categoryCode = key;
                 }
             }
 
@@ -538,49 +539,7 @@ export class AhaCareplanService implements ICareplanService {
                     var biometrics = JSON.parse(res.TextValue);
                     for (var b of biometrics) {
                         var biometricsType = b.BiometricsType as BiometricsType;
-                        if (biometricsType === BiometricsType.BloodGlucose) {
-                            v.values.push({
-                                value : b.BloodGlucose
-                            });
-                        }
-                        if (biometricsType === BiometricsType.BloodOxygenSaturation) {
-                            v.values.push({
-                                value : b.BloodOxygenSaturation
-                            });
-                        }
-                        if (biometricsType === BiometricsType.BloodOxygenSaturation) {
-                            v.values.push({
-                                value : b.BloodOxygenSaturation
-                            });
-                        }
-                        if (biometricsType === BiometricsType.BloodPressure) {
-                            v.values.push({
-                                value : b.Systolic
-                            });
-                            v.values.push({
-                                value : b.Diastolic
-                            });
-                        }
-                        if (biometricsType === BiometricsType.BodyWeight) {
-                            v.values.push({
-                                value : b.BodyWeight
-                            });
-                        }
-                        if (biometricsType === BiometricsType.BodyTemperature) {
-                            v.values.push({
-                                value : b.BodyTemperature
-                            });
-                        }
-                        if (biometricsType === BiometricsType.BodyHeight) {
-                            v.values.push({
-                                value : b.BodyHeight
-                            });
-                        }
-                        if (biometricsType === BiometricsType.Pulse) {
-                            v.values.push({
-                                value : b.Pulse
-                            });
-                        }
+                        this.populateBiometricValues(biometricsType, v, b);
                     }
                     updates['items'].push(v);
                 }
@@ -588,6 +547,61 @@ export class AhaCareplanService implements ICareplanService {
         }
 
         return updates;
+    }
+
+    private populateBiometricValues(biometricsType: BiometricsType, v: { id: string; values: any[]; }, b: any) {
+
+        switch (biometricsType) {
+            case BiometricsType.BloodGlucose: {
+                v.values.push({
+                    value : b.BloodGlucose
+                });
+                break;
+            }
+            case BiometricsType.BloodOxygenSaturation: {
+                v.values.push({
+                    value : b.BloodOxygenSaturation
+                });
+                break;
+            }
+            case BiometricsType.BloodPressure: {
+                v.values.push({
+                    value : b.Systolic
+                });
+                v.values.push({
+                    value : b.Diastolic
+                });
+                break;
+            }
+            case BiometricsType.BodyWeight: {
+                v.values.push({
+                    value : b.BodyWeight
+                });
+                break;
+            }
+            case BiometricsType.BodyTemperature: {
+                v.values.push({
+                    value : b.BodyTemperature
+                });
+                break;
+            }
+            case BiometricsType.BodyHeight: {
+                v.values.push({
+                    value : b.BodyHeight
+                });
+                break;
+            }
+            case BiometricsType.Pulse: {
+                v.values.push({
+                    value : b.Pulse
+                });
+                break;
+            }
+            default: {
+                // Don't send anything else
+            }
+        }
+
     }
 
     private async getHeaderOptions() {
@@ -605,11 +619,9 @@ export class AhaCareplanService implements ICareplanService {
             Authorization  : `Bearer ${token}`,
         };
 
-        var options = {
+        return {
             headers : headers,
         };
-
-        return options;
     }
 
     private getActivityStatus(status: string) {

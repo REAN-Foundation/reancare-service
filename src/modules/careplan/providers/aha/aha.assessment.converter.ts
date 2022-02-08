@@ -45,13 +45,11 @@ export class AhaAssessmentConverter {
 
         for (var item of activity.RawContent.items) {
 
-            //var str = JSON.stringify(item, null, 2);
-            //Logger.instance().log(str);
-
             if (item.type === 'choice' || item.type === 'boolean') { //This is question node
                 const node = this.createOptionBasedQuestionNode(item, template, items);
                 rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
-            } else if (item.type === 'text') {
+            }
+            else if (item.type === 'text') {
                 const node = this.createQueryBasedQuestionNode(item, template);
                 rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
             }
@@ -108,8 +106,6 @@ export class AhaAssessmentConverter {
 
         for (var act of item.actions) {
 
-            //Logger.instance().log(JSON.stringify(act));
-
             const actionType = act.action;
             pathIndex++;
             var path = new SAssessmentNodePath();
@@ -118,14 +114,12 @@ export class AhaAssessmentConverter {
 
             if (actionType === 'TriggerQuestion') {
                 const nextProviderQuestionId = act.questionId;
-                var nextNodeDisplayCode = this.createNextTriggerQuestionNode(
+                path.NextNodeDisplayCode = this.createNextTriggerQuestionNode(
                     template, items, nextProviderQuestionId);
-                path.NextNodeDisplayCode = nextNodeDisplayCode;
             }
             else if (actionType === 'MessagePatient') {
                 const message = act.message;
-                var nextNodeDisplayCode = this.createNextMessageNode(template, message);
-                path.NextNodeDisplayCode = nextNodeDisplayCode;
+                path.NextNodeDisplayCode = this.createNextMessageNode(template, message);
             }
             node.Paths.push(path);
         }

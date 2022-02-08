@@ -48,7 +48,7 @@ export class CareplanService implements IUserActionService {
 
     public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
         return this._handler.getAvailableCarePlans(provider);
-    }
+    };
 
     public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 
@@ -163,7 +163,7 @@ export class CareplanService implements IUserActionService {
 
     getPatientEnrollments = async (patientUserId: string) => {
         return await this._careplanRepo.getPatientEnrollments(patientUserId);
-    }
+    };
     
     fetchTasks = async (careplanId: uuid): Promise<boolean> => {
 
@@ -223,7 +223,7 @@ export class CareplanService implements IUserActionService {
         await this.createScheduledUserTasks(careplanActivities);
     
         return true;
-    }
+    };
 
     public getAction = async (activityId: uuid): Promise<any> => {
 
@@ -251,7 +251,7 @@ export class CareplanService implements IUserActionService {
             activity['Assessment'] = assessment;
         }
         return activity;
-    }
+    };
 
     public updateAction = async (activityId: uuid, updates: any): Promise<any> => {
         
@@ -274,14 +274,14 @@ export class CareplanService implements IUserActionService {
         activity['Details'] = details;
 
         return activity;
-    }
+    };
 
     public startAction = async (activityId: uuid): Promise<boolean> => {
         await this._careplanRepo.getActivity(activityId);
         var activity = await this._careplanRepo.startActivity(activityId);
         Logger.instance().log(`Successfully started activity - ${activity.id}`);
         return true;
-    }
+    };
 
     public completeAction = async (activityId: uuid, time: Date, success: boolean, actionDetails?: any) => {
 
@@ -300,7 +300,7 @@ export class CareplanService implements IUserActionService {
 
         Logger.instance().log(`CompletedActivity: ${JSON.stringify(updatedActivity, null, 2)}`);
         return updatedActivity.CompletedAt ? true : false;
-    }
+    };
 
     public cancelAction = async (
         actionId: uuid,
@@ -314,7 +314,7 @@ export class CareplanService implements IUserActionService {
         Logger.instance().log(`Cancellation reason: ${cancellationReason}`);
 
         return true;
-    }
+    };
 
     public getAssessmentTemplate = async (model: CareplanActivity): Promise<AssessmentTemplateDto> => {
 
@@ -345,7 +345,7 @@ export class CareplanService implements IUserActionService {
 
         const template = await this._assessmentHelperRepo.addTemplate(assessmentTemplate);
         return template;
-    }
+    };
 
     private getAssessment = async (
         activity: CareplanActivityDto,
@@ -381,7 +381,7 @@ export class CareplanService implements IUserActionService {
 
         const assessment = await this._assessmentRepo.create(assessmentModel);
         return assessment;
-    }
+    };
 
     //#region Privates
 

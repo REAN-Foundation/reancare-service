@@ -25,6 +25,6 @@ export class ActionPlanMapper {
         };
         
         return dto;
-    }
+    };
 
 }

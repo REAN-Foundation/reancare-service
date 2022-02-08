@@ -76,7 +76,7 @@ export class AddressController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
@@ -96,7 +96,7 @@ export class AddressController extends BaseController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

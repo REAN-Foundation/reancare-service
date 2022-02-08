@@ -36,6 +36,6 @@ export class CareplanActivityMapper {
             RawContent       : activity.RawContent,
         };
         return dto;
-    }
+    };
 
 }

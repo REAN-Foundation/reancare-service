@@ -88,7 +88,7 @@ export class AssessmentValidator extends BaseValidator {
         }
 
         return answerModel;
-    }
+    };
 
     private getFilter(request): AssessmentSearchFilters {
 

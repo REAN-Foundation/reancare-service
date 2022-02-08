@@ -547,7 +547,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             };
         }
         return null;
-    }
+    };
     
     //#endregion
 

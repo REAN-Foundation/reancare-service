@@ -406,7 +406,7 @@ export class Helper {
             symbols   : false,
         });
         return prefix ? prefix + '#' + code : code;
-    }
+    };
 
     public static convertCamelCaseToPascalCase = (str: string): string => {
         if (str.length > 0) {

@@ -170,7 +170,7 @@ export class AssessmentService {
     public isAnswered = async (assessmentId: uuid, currentNodeId: uuid) => {
         const response = await this._assessmentHelperRepo.getQueryResponse(assessmentId, currentNodeId);
         return response !== null;
-    }
+    };
 
     //#region Privates
 
@@ -556,7 +556,7 @@ export class AssessmentService {
             return await this.handleTextAnswer(assessment, questionNode, answerModel);
         }
         return null;
-    }
+    };
 
     //#endregion
 

@@ -550,6 +550,6 @@ export class Seeder {
             };
             await this._healthPriorityService.createType(model);
         }
-    }
+    };
 
 }

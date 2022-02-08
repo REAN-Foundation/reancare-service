@@ -19,6 +19,6 @@ export class ParticipantMapper {
             IsActive      : participant.IsActive,
         };
         return dto;
-    }
+    };
 
 }

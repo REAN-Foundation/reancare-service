@@ -453,7 +453,7 @@ export class MedicationConsumptionService implements IUserActionService {
             return false;
         }
         return true;
-    }
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     completeAction = async (actionId: uuid, completionTime?: Date, success?: boolean, actionDetails?: any)
@@ -492,12 +492,12 @@ export class MedicationConsumptionService implements IUserActionService {
 
     getAction = async(actionId: string): Promise<any> => {
         return await this.getById(actionId);
-    }
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     updateAction = async(actionId: string, updates: any): Promise<any> => {
         return await this.getById(actionId);
-    }
+    };
 
     //#region Privates
 

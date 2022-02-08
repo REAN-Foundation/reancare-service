@@ -15,7 +15,7 @@ import { ActionPlanDto } from "../../domain.types/goal.action.plan/goal.action.p
 
 export class CareplanHandler {
 
-    static _services: Dictionary<ICareplanService> = new Dictionary<ICareplanService>()
+    static _services: Dictionary<ICareplanService> = new Dictionary<ICareplanService>();
 
     public static init = async (): Promise<boolean> => {
 

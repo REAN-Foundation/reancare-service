@@ -24,6 +24,6 @@ export class EnrollmentMapper {
             IsActive      : enrollment.IsActive,
         };
         return dto;
-    }
+    };
 
 }

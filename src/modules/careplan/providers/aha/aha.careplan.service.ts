@@ -304,7 +304,7 @@ export class AhaCareplanService implements ICareplanService {
         };
 
         return entity;
-    }
+    };
 
     public patchAssessment = async (
         enrollmentId: string,
@@ -341,7 +341,7 @@ export class AhaCareplanService implements ICareplanService {
         };
 
         return entity;
-    }
+    };
 
     public completeActivity = async(
         patientUserId: string,
@@ -483,7 +483,7 @@ export class AhaCareplanService implements ICareplanService {
         if (!assessment) {
             return null;
         }
-        
+
         const userResponses = assessment.UserResponses as SAssessmentQueryResponse[];
         updates['items'] = [];
 

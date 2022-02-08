@@ -29,7 +29,7 @@ export class HealthPriorityMapper {
         };
         
         return dto;
-    }
+    };
 
     static toTypeDto = (healthPriorityType: HealthPriorityTypeModel): HealthPriorityTypeDto => {
 
@@ -44,6 +44,6 @@ export class HealthPriorityMapper {
         };
         
         return typeDto;
-    }
+    };
 
 }

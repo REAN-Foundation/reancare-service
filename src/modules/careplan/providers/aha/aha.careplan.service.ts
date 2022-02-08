@@ -475,28 +475,37 @@ export class AhaCareplanService implements ICareplanService {
         
         const taskCategory = activity.Category;
 
-        if (taskCategory === UserTaskCategory.Assessment) {
-            const assessment = activity['ActionDetails'] as AssessmentDto;
-            if (!assessment) {
-                return null;
-            }
-            const userResponses = assessment.UserResponses as SAssessmentQueryResponse[];
-            updates['items'] = [];
-            for (var res of userResponses) {
-                var responseType = res.ResponseType;
-                var node = res.Node;
-                var v = {
-                    id     : node.ProviderGivenId,
-                    values : []
-                };
-                if (responseType === QueryResponseType.SingleChoiceSelection) {
+        if (taskCategory !== UserTaskCategory.Assessment) {
+            return updates;
+        }
+
+        const assessment = activity['ActionDetails'] as AssessmentDto;
+        if (!assessment) {
+            return null;
+        }
+        
+        const userResponses = assessment.UserResponses as SAssessmentQueryResponse[];
+        updates['items'] = [];
+
+        for (var res of userResponses) {
+
+            var responseType = res.ResponseType;
+            var node = res.Node;
+            var v = {
+                id     : node.ProviderGivenId,
+                values : []
+            };
+
+            switch (responseType) {
+                case QueryResponseType.SingleChoiceSelection: {
                     var option = JSON.parse(res.Additional);
                     v.values.push({
                         value : option.Text
                     });
                     updates['items'].push(v);
+                    break;
                 }
-                else if (responseType === QueryResponseType.MultiChoiceSelection) {
+                case QueryResponseType.MultiChoiceSelection: {
                     var options = JSON.parse(res.Additional);
                     for (var opt of options) {
                         v.values.push({
@@ -504,44 +513,51 @@ export class AhaCareplanService implements ICareplanService {
                         });
                     }
                     updates['items'].push(v);
+                    break;
                 }
-                else if (responseType === QueryResponseType.Text) {
+                case QueryResponseType.Text: {
                     v.values.push({
                         value : res.TextValue
                     });
                     updates['items'].push(v);
+                    break;
                 }
-                else if (responseType === QueryResponseType.Integer) {
+                case QueryResponseType.Integer: {
                     v.values.push({
                         value : res.IntegerValue.toString()
                     });
                     updates['items'].push(v);
+                    break;
                 }
-                else if (responseType === QueryResponseType.Float) {
+                case QueryResponseType.Float: {
                     v.values.push({
                         value : res.FloatValue.toString()
                     });
                     updates['items'].push(v);
+                    break;
                 }
-                else if (responseType === QueryResponseType.Boolean) {
+                case QueryResponseType.Boolean: {
                     v.values.push({
                         value : res.BooleanValue.toString()
                     });
                     updates['items'].push(v);
+                    break;
                 }
-                else if (responseType === QueryResponseType.Ok) {
+                case QueryResponseType.Ok: {
                     v.values.push({
                         value : 'Ok'
                     });
                     updates['items'].push(v);
+                    break;
                 }
-                else if  (responseType === QueryResponseType.Biometrics) {
+                case QueryResponseType.Biometrics: {
                     var biometrics = JSON.parse(res.TextValue);
                     for (var b of biometrics) {
                         var biometricsType = b.BiometricsType as BiometricsType;
                         this.populateBiometricValues(biometricsType, v, b);
                     }
                     updates['items'].push(v);
+                    break;
                 }
             }
         }

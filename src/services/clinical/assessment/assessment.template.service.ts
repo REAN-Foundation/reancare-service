@@ -1,4 +1,3 @@
-// import { FileResourceUploadDomainModel } from "../../../domain.types/file.resource/file.resource.domain.model";
 import { inject, injectable } from "tsyringe";
 import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
 import { AssessmentTemplateDomainModel } from '../../../domain.types/clinical/assessment/assessment.template.domain.model';

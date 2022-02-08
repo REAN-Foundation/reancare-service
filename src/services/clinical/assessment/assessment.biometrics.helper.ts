@@ -46,27 +46,38 @@ export class AssessmentBiometricsHelper {
             throw new Error(`Invalid biometrics values!`);
         }
         for await (var v of answer.Values) {
+            
             const type = v.BiometricsType;
-            if (type === BiometricsType.BloodGlucose) {
-                await this.addBloodGlucose(v, patientUserId);
-            }
-            if (type === BiometricsType.BloodOxygenSaturation) {
-                await this.addBloodOxygenSaturation(v, patientUserId);
-            }
-            if (type === BiometricsType.BloodPressure) {
-                await this.addBloodPressure(v, patientUserId);
-            }
-            if (type === BiometricsType.BodyHeight) {
-                await this.addBodyHeight(v, patientUserId);
-            }
-            if (type === BiometricsType.BodyWeight) {
-                await this.addBodyWeight(v, patientUserId);
-            }
-            if (type === BiometricsType.BodyTemperature) {
-                await this.addBodyTemperature(v, patientUserId);
-            }
-            if (type === BiometricsType.Pulse) {
-                await this.addPulse(v, patientUserId);
+
+            switch (type) {
+                case BiometricsType.BloodGlucose: {
+                    await this.addBloodGlucose(v, patientUserId);
+                    break;
+                }
+                case BiometricsType.BloodOxygenSaturation: {
+                    await this.addBloodOxygenSaturation(v, patientUserId);
+                    break;
+                }
+                case BiometricsType.BloodPressure: {
+                    await this.addBloodPressure(v, patientUserId);
+                    break;
+                }
+                case BiometricsType.BodyHeight: {
+                    await this.addBodyHeight(v, patientUserId);
+                    break;
+                }
+                case BiometricsType.BodyWeight: {
+                    await this.addBodyWeight(v, patientUserId);
+                    break;
+                }
+                case BiometricsType.BodyTemperature: {
+                    await this.addBodyTemperature(v, patientUserId);
+                    break;
+                }
+                case BiometricsType.Pulse: {
+                    await this.addPulse(v, patientUserId);
+                    break;
+                }
             }
         }
     };

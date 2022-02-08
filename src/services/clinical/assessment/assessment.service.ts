@@ -214,6 +214,36 @@ export class AssessmentService {
         return null;
     }
 
+    private async traverseQuestionNode(assessment: AssessmentDto, currentNode: SAssessmentNode)
+        : Promise<AssessmentQueryDto> {
+        var isAnswered = await this.isAnswered(assessment.id, currentNode.id);
+        if (!isAnswered) {
+            return await this.returnAsCurrentQuestionNode(assessment, currentNode as SAssessmentQuestionNode);
+        } else {
+            const nextSiblingNode = await this.traverseUpstream(currentNode);
+            if (nextSiblingNode === null) {
+                //Assessment has finished
+                return null;
+            }
+            return await this.traverse(assessment, nextSiblingNode.id);
+        }
+    }
+
+    private async traverseMessageNode(assessment: AssessmentDto, currentNode: SAssessmentNode)
+        : Promise<AssessmentQueryDto> {
+        var isAnswered = await this.isAnswered(assessment.id, currentNode.id);
+        if (!isAnswered) {
+            return await this.returnAsCurrentMessageNode(assessment, currentNode as SAssessmentMessageNode);
+        } else {
+            const nextSiblingNode = await this.traverseUpstream(currentNode);
+            if (nextSiblingNode === null) {
+            //Assessment has finished
+                return null;
+            }
+            return await this.traverse(assessment, nextSiblingNode.id);
+        }
+    }
+
     private async traverse(assessment: AssessmentDto, currentNodeId: uuid): Promise<AssessmentQueryDto> {
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
         if (!currentNode) {
@@ -224,34 +254,13 @@ export class AssessmentService {
             return await this.iterateListNodeChildren(assessment, currentNodeId);
         }
         else {
-            var isAnswered = await this.isAnswered(assessment.id, currentNodeId);
-
             if (currentNode.NodeType === AssessmentNodeType.Question) {
-                if (!isAnswered) {
-                    return await this.returnAsCurrentQuestionNode(assessment, currentNode as SAssessmentQuestionNode);
-                } else {
-                    const nextSiblingNode = await this.traverseUpstream(currentNode);
-                    if (nextSiblingNode === null) {
-                    //Assessment has finished
-                        return null;
-                    }
-                    return await this.traverse(assessment, nextSiblingNode.id);
-                }
-            } else if (currentNode.NodeType === AssessmentNodeType.Message) {
-                if (!isAnswered) {
-                    return await this.returnAsCurrentMessageNode(assessment, currentNode as SAssessmentMessageNode);
-                } else {
-                    const nextSiblingNode = await this.traverseUpstream(currentNode);
-                    if (nextSiblingNode === null) {
-                    //Assessment has finished
-                        return null;
-                    }
-                    return await this.traverse(assessment, nextSiblingNode.id);
-                }
+                return await this.traverseQuestionNode(assessment, currentNode);
+            }
+            else if (currentNode.NodeType === AssessmentNodeType.Message) {
+                return await this.traverseMessageNode(assessment, currentNode);
             }
         }
-
-        return null;
     }
 
     private async returnAsCurrentMessageNode(
@@ -272,11 +281,57 @@ export class AssessmentService {
         return this.questionNodeAsQueryDto(currentNode, assessment);
     }
 
+    private async processPathConditions(
+        assessment: AssessmentDto,
+        nodeId: uuid,
+        currentQueryDto: AssessmentQueryDto,
+        paths: SAssessmentNodePath[],
+        answerDto: | SingleChoiceQueryAnswer
+        | MultipleChoiceQueryAnswer
+        | MessageAnswer
+        | TextQueryAnswer
+        | IntegerQueryAnswer
+        | FloatQueryAnswer
+        | BiometricQueryAnswer,
+        chosenOptions: any) {
+
+        //Persist the answer
+        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+
+        if (paths.length === 0) {
+            //In case there are no paths...
+            //This question node is a leaf node and should use traverseUp to find the next stop...
+            return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
+        }
+        else {
+            var chosenPath: SAssessmentNodePath = null;
+            for await (var path of paths) {
+                const pathId = path.id;
+                const conditionId = path.ConditionId;
+                const condition = await this._assessmentHelperRepo.getPathCondition(conditionId, nodeId, pathId);
+                if (!condition) {
+                    continue;
+                }
+                const resolved = await this._conditionProcessor.processCondition(condition, chosenOptions);
+                if (resolved === true) {
+                    chosenPath = path;
+                    break;
+                }
+            }
+            if (chosenPath !== null) {
+                return await this.respondToUserAnswer(assessment, chosenPath.NextNodeId, currentQueryDto, answerDto);
+            } else {
+                return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
+            }
+        }
+    }
+
     private async handleSingleChoiceSelectionAnswer(
         assessment: AssessmentDto,
         questionNode: SAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel
     ): Promise<AssessmentQuestionResponseDto> {
+
         const { minSequenceValue, maxSequenceValue, options, paths, nodeId } = await this.getChoiceSelectionParams(
             questionNode
         );
@@ -299,34 +354,9 @@ export class AssessmentService {
             answer
         );
 
-        //Persist the answer
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        return await this.processPathConditions(
+            assessment, nodeId, currentQueryDto, paths, answerDto, chosenOptionSequence);
 
-        if (paths.length === 0) {
-            //In case there are no paths...
-            //This question node is a leaf node and should use traverseUp to find the next stop...
-            return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
-        } else {
-            var chosenPath: SAssessmentNodePath = null;
-            for await (var path of paths) {
-                const pathId = path.id;
-                const conditionId = path.ConditionId;
-                const condition = await this._assessmentHelperRepo.getPathCondition(conditionId, nodeId, pathId);
-                if (!condition) {
-                    continue;
-                }
-                const resolved = await this._conditionProcessor.processCondition(condition, chosenOptionSequence);
-                if (resolved === true) {
-                    chosenPath = path;
-                    break;
-                }
-            }
-            if (chosenPath !== null) {
-                return await this.respondToUserAnswer(assessment, chosenPath.NextNodeId, currentQueryDto, answerDto);
-            } else {
-                return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
-            }
-        }
     }
 
     private async handleMultipleChoiceSelectionAnswer(
@@ -358,33 +388,9 @@ export class AssessmentService {
             selectedOptions
         );
 
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        return await this.processPathConditions(
+            assessment, nodeId, currentQueryDto, paths, answerDto, chosenOptionSequences);
 
-        if (paths.length === 0) {
-            //In case there are no paths...
-            //This question node is a leaf node and should use traverseUp to find the next stop...
-            return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
-        } else {
-            var chosenPath: SAssessmentNodePath = null;
-            for await (var path of paths) {
-                const pathId = path.id;
-                const conditionId = path.ConditionId;
-                const condition = await this._assessmentHelperRepo.getPathCondition(conditionId, nodeId, pathId);
-                if (!condition) {
-                    continue;
-                }
-                const resolved = await this._conditionProcessor.processCondition(condition, chosenOptionSequences);
-                if (resolved === true) {
-                    chosenPath = path;
-                    break;
-                }
-            }
-            if (chosenPath !== null) {
-                return await this.respondToUserAnswer(assessment, chosenPath.NextNodeId, currentQueryDto, answerDto);
-            } else {
-                return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
-            }
-        }
     }
 
     private async handleBiometricsAnswer(

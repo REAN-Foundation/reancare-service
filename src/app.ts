@@ -7,6 +7,7 @@ import { Router } from './api/routes/router';
 import { Logger } from './common/logger';
 import { ConfigurationManager } from "./config/configuration.manager";
 import { Loader } from './startup/loader';
+import RateLimit from 'express-rate-limit';
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -80,6 +81,12 @@ export default class Application {
                 this._app.use(express.json());
                 this._app.use(helmet());
                 this._app.use(cors());
+
+                var limiter = RateLimit({
+                    windowMs : 1 * 60 * 1000, // 1 minute
+                    max      : 5
+                });
+                this._app.use(limiter);
 
                 const MAX_UPLOAD_FILE_SIZE = ConfigurationManager.MaxUploadFileSize();
             

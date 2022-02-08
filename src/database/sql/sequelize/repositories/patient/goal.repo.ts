@@ -32,7 +32,7 @@ export class GoalRepo implements IGoalRepo {
             };
 
             const contact = await Goal.create(entity);
-            return await GoalMapper.toDto(contact);
+            return GoalMapper.toDto(contact);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -42,7 +42,7 @@ export class GoalRepo implements IGoalRepo {
     getById = async (id: string): Promise<GoalDto> => {
         try {
             const contact = await Goal.findByPk(id);
-            const dto = await GoalMapper.toDto(contact);
+            const dto = GoalMapper.toDto(contact);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -59,7 +59,7 @@ export class GoalRepo implements IGoalRepo {
             
             const dtos: GoalDto[] = [];
             for (const selectedGoal of selectedGoals) {
-                const dto = await GoalMapper.toDto(selectedGoal);
+                const dto = GoalMapper.toDto(selectedGoal);
                 dtos.push(dto);
             }
 
@@ -120,7 +120,7 @@ export class GoalRepo implements IGoalRepo {
 
             const dtos: GoalDto[] = [];
             for (const contact of foundResults.rows) {
-                const dto = await GoalMapper.toDto(contact);
+                const dto = GoalMapper.toDto(contact);
                 dtos.push(dto);
             }
 
@@ -156,7 +156,7 @@ export class GoalRepo implements IGoalRepo {
             }
             await goal.save();
 
-            const dto = await GoalMapper.toDto(goal);
+            const dto = GoalMapper.toDto(goal);
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);

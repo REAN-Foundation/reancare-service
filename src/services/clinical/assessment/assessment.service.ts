@@ -196,6 +196,24 @@ export class AssessmentService {
         return this.traverseUpstream(parentNode);
     }
 
+    private async iterateListNodeChildren(assessment: AssessmentDto, currentNodeId: uuid)
+        : Promise<AssessmentQueryDto> {
+        var childrenNodes = await this._assessmentHelperRepo.getNodeListChildren(currentNodeId);
+        for await (var childNode of childrenNodes) {
+            if ((childNode.NodeType as AssessmentNodeType) === AssessmentNodeType.NodeList) {
+                const nextNode = await this.traverse(assessment, childNode.id);
+                if (nextNode != null) {
+                    return nextNode;
+                } else {
+                    continue;
+                }
+            } else {
+                return await this.traverse(assessment, childNode.id);
+            }
+        }
+        return null;
+    }
+
     private async traverse(assessment: AssessmentDto, currentNodeId: uuid): Promise<AssessmentQueryDto> {
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
         if (!currentNode) {
@@ -203,42 +221,33 @@ export class AssessmentService {
         }
 
         if (currentNode.NodeType === AssessmentNodeType.NodeList) {
-            var childrenNodes = await this._assessmentHelperRepo.getNodeListChildren(currentNodeId);
-            for await (var childNode of childrenNodes) {
-                if ((childNode.NodeType as AssessmentNodeType) === AssessmentNodeType.NodeList) {
-                    const nextNode = await this.traverse(assessment, childNode.id);
-                    if (nextNode != null) {
-                        return nextNode;
-                    } else {
-                        continue;
-                    }
+            return await this.iterateListNodeChildren(assessment, currentNodeId);
+        }
+        else {
+            var isAnswered = await this.isAnswered(assessment.id, currentNodeId);
+
+            if (currentNode.NodeType === AssessmentNodeType.Question) {
+                if (!isAnswered) {
+                    return await this.returnAsCurrentQuestionNode(assessment, currentNode as SAssessmentQuestionNode);
                 } else {
-                    return await this.traverse(assessment, childNode.id);
-                }
-            }
-        } else if (currentNode.NodeType === AssessmentNodeType.Question) {
-            var isAnswered = await this.isAnswered(assessment.id, currentNodeId);
-            if (!isAnswered) {
-                return await this.returnAsCurrentQuestionNode(assessment, currentNode as SAssessmentQuestionNode);
-            } else {
-                const nextSiblingNode = await this.traverseUpstream(currentNode);
-                if (nextSiblingNode === null) {
+                    const nextSiblingNode = await this.traverseUpstream(currentNode);
+                    if (nextSiblingNode === null) {
                     //Assessment has finished
-                    return null;
+                        return null;
+                    }
+                    return await this.traverse(assessment, nextSiblingNode.id);
                 }
-                return await this.traverse(assessment, nextSiblingNode.id);
-            }
-        } else if (currentNode.NodeType === AssessmentNodeType.Message) {
-            var isAnswered = await this.isAnswered(assessment.id, currentNodeId);
-            if (!isAnswered) {
-                return await this.returnAsCurrentMessageNode(assessment, currentNode as SAssessmentMessageNode);
-            } else {
-                const nextSiblingNode = await this.traverseUpstream(currentNode);
-                if (nextSiblingNode === null) {
+            } else if (currentNode.NodeType === AssessmentNodeType.Message) {
+                if (!isAnswered) {
+                    return await this.returnAsCurrentMessageNode(assessment, currentNode as SAssessmentMessageNode);
+                } else {
+                    const nextSiblingNode = await this.traverseUpstream(currentNode);
+                    if (nextSiblingNode === null) {
                     //Assessment has finished
-                    return null;
+                        return null;
+                    }
+                    return await this.traverse(assessment, nextSiblingNode.id);
                 }
-                return await this.traverse(assessment, nextSiblingNode.id);
             }
         }
 
@@ -292,9 +301,6 @@ export class AssessmentService {
 
         //Persist the answer
         await this._assessmentHelperRepo.createQueryResponse(answerDto);
-        // if (answerDto.ResponseType === QueryResponseType.Biometrics) {
-        //     await this.persistBiometrics(answerDto);
-        // }
 
         if (paths.length === 0) {
             //In case there are no paths...

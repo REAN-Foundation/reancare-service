@@ -27,7 +27,6 @@ import { CareplanConfig } from "../../config/configuration.types";
 import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/assessment.domain.model";
 import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
-import { IHealthPriorityRepo } from "../../database/repository.interfaces/health.priority/health.priority.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,8 +44,6 @@ export class CareplanService implements IUserActionService {
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
-        @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
-
     ) {}
 
     public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
@@ -174,9 +171,6 @@ export class CareplanService implements IUserActionService {
 
         const enrollmentId = enrollment.EnrollmentId.toString();
 
-        // const start = enrollment.StartAt.toISOString().split('T')[0];
-        // const end = enrollment.EndAt.toISOString().split('T')[0];
-
         var activities = await this._handler.fetchActivities(
             enrollment.PatientUserId, enrollment.Provider, enrollment.PlanCode, enrollmentId,
             enrollment.StartAt, enrollment.EndAt);
@@ -283,16 +277,16 @@ export class CareplanService implements IUserActionService {
     }
 
     public startAction = async (activityId: uuid): Promise<boolean> => {
-        var activity = await this._careplanRepo.getActivity(activityId);
-        activity = await this._careplanRepo.startActivity(activityId);
+        await this._careplanRepo.getActivity(activityId);
+        var activity = await this._careplanRepo.startActivity(activityId);
         Logger.instance().log(`Successfully started activity - ${activity.id}`);
         return true;
     }
 
     public completeAction = async (activityId: uuid, time: Date, success: boolean, actionDetails?: any) => {
 
-        var activity = await this._careplanRepo.getActivity(activityId);
-        activity = await this._careplanRepo.completeActivity(activityId);
+        await this._careplanRepo.getActivity(activityId);
+        var activity = await this._careplanRepo.completeActivity(activityId);
         const taskCategory = activity.Category;
 
         if (taskCategory === UserTaskCategory.Assessment) {
@@ -358,9 +352,6 @@ export class CareplanService implements IUserActionService {
         template: AssessmentTemplateDto,
         scheduledAt: string): Promise<AssessmentDto> => {
 
-        // var existingAssessment = await this._assessmentRepo.getByTemplateAndSchedule(
-        //     template.id, activity.Sequence, scheduledAt);
-
         var existingAssessment = await this._assessmentRepo.getByActivityId(activity.id);
     
         if (existingAssessment) {
@@ -421,10 +412,11 @@ export class CareplanService implements IUserActionService {
             activitiesGroupedByDate[scheduledDate].push(activity);
         }
 
-        for (const scheduledDate in activitiesGroupedByDate) {
-            var activities = activitiesGroupedByDate[scheduledDate];
+        for (const scheduledDateKey in activitiesGroupedByDate) {
 
-            Logger.instance().log(`Creating user tasks for: ${scheduledDate}, total tasks: ${activities.length}`);
+            var activities = activitiesGroupedByDate[scheduledDateKey];
+
+            Logger.instance().log(`Creating user tasks for: ${scheduledDateKey}, total tasks: ${activities.length}`);
 
             activities.sort((a, b) => {
                 return a.Sequence - b.Sequence;

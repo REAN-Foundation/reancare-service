@@ -45,53 +45,69 @@ export class ConditionProcessor {
         var resolved = false;
 
         switch (operator) {
-        case ConditionOperatorType.EqualTo: {
-            resolved = this.isEqualTo(first, second);
-            break;
-        }
-        case ConditionOperatorType.NotEqualTo: {
-            resolved = this.isNotEqualTo(first, second);
-            break;
-        }
-        case ConditionOperatorType.In: {
-            resolved = this.in(first, second);
-            break;
-        }
-        case ConditionOperatorType.IsFalse: {
-            resolved = this.isFalse(first);
-            break;
-        }
-        case ConditionOperatorType.IsTrue: {
-            resolved = this.isTrue(first);
-            break;
-        }
-        case ConditionOperatorType.GreaterThan: {
-            resolved = this.greaterThan(first, second);
-            break;
-        }
-        case ConditionOperatorType.LessThan: {
-            resolved = this.lessThan(first, second);
-            break;
-        }
-        case ConditionOperatorType.GreaterThanEqualTo: {
-            resolved = this.greaterThanEqualTo(first, second);
-            break;
-        }
-        case ConditionOperatorType.LessThanEqualTo: {
-            resolved = this.lessThanEqualTo(first, second);
-            break;
-        }
-        case ConditionOperatorType.Between: {
-            resolved = this.between(first, second, third);
-            break;
-        }
-        default: {
-            resolved = false;
-            break;
-        }
+            case ConditionOperatorType.EqualTo: {
+                resolved = this.isEqualTo(first, second);
+                break;
+            }
+            case ConditionOperatorType.NotEqualTo: {
+                resolved = this.isNotEqualTo(first, second);
+                break;
+            }
+            case ConditionOperatorType.In: {
+                resolved = this.in(first, second);
+                break;
+            }
+            case ConditionOperatorType.IsFalse: {
+                resolved = this.isFalse(first);
+                break;
+            }
+            case ConditionOperatorType.IsTrue: {
+                resolved = this.isTrue(first);
+                break;
+            }
+            case ConditionOperatorType.GreaterThan: {
+                resolved = this.greaterThan(first, second);
+                break;
+            }
+            case ConditionOperatorType.LessThan: {
+                resolved = this.lessThan(first, second);
+                break;
+            }
+            case ConditionOperatorType.GreaterThanEqualTo: {
+                resolved = this.greaterThanEqualTo(first, second);
+                break;
+            }
+            case ConditionOperatorType.LessThanEqualTo: {
+                resolved = this.lessThanEqualTo(first, second);
+                break;
+            }
+            case ConditionOperatorType.Between: {
+                resolved = this.between(first, second, third);
+                break;
+            }
+            default: {
+                break;
+            }
         }
 
         return resolved;
+    }
+
+    private compareArray(first: ConditionOperand, second: ConditionOperand): boolean {
+        const firstArray: any[] = first.Value as any[];
+        const secondArray: any[] = second.Value as any[];
+        if (firstArray.length === 0 || secondArray.length === 0) {
+            return false;
+        }
+        if (firstArray.length !== secondArray.length) {
+            return false;
+        }
+        for (var i = 0; i < firstArray.length; i++) {
+            if (secondArray[i] !== firstArray[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private isEqualTo(first: ConditionOperand, second: ConditionOperand): boolean {
@@ -104,20 +120,7 @@ export class ConditionProcessor {
             return first.Value === second.Value;
         }
         if (first.DataType === ConditionOperandDataType.Array) {
-            const firstArray: any[] = first.Value as any[];
-            const secondArray: any[] = second.Value as any[];
-            if (firstArray.length === 0 || secondArray.length === 0) {
-                return false;
-            }
-            if (firstArray.length !== secondArray.length) {
-                return false;
-            }
-            for (var i = 0; i < firstArray.length; i++) {
-                if (secondArray[i] !== firstArray[i]) {
-                    return false;
-                }
-            }
-            return true;
+            return this.compareArray(first, second);
         }
         if (first.DataType === ConditionOperandDataType.Text) {
             const firstValue = first.Value.toString().toLowerCase();

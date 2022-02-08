@@ -32,13 +32,8 @@ export class GoalService {
     };
 
     getGoals = async (priorityId: string): Promise<GoalDto[]> => {
+        
         var priority =  await this._healthPriorityRepo.getById(priorityId);
-
-        const filters: GoalSearchFilters = {
-            PatientUserId        : priority.PatientUserId,
-            ProviderEnrollmentId : priority.ProviderEnrollmentId,
-            CategoryCode         : priority.HealthPriorityType,
-        };
 
         var goals =  await this._careplanHandler.getGoals(priority.PatientUserId, priority.ProviderEnrollmentId,
             priority.Provider,priority.HealthPriorityType);

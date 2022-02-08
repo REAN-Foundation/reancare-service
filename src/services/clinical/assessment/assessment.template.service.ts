@@ -14,15 +14,6 @@ export class AssessmentTemplateService {
         @inject('IAssessmentTemplateRepo') private _assessmentRepo: IAssessmentTemplateRepo,
     ) {}
 
-    // public importFromFile = async (fileUploadModel: FileResourceUploadDomainModel)
-    //    : Promise<AssessmentTemplateDto> => {
-    //     throw new Error();
-    // };
-
-    // public importFromJson = async (jsonModel: any): Promise<AssessmentTemplateDto> => {
-    //     throw new Error();
-    // };
-
     public create = async (assessmentDomainModel: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
         return await this._assessmentRepo.create(assessmentDomainModel);
     };

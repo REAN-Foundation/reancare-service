@@ -26,6 +26,9 @@ jobs:
         uses: github/super-linter@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
+          ACTIONS_RUNNER_DEBUG: true
+          DEFAULT_BRANCH: develop
           LINTER_RULES_PATH: /
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
           VALIDATE_TYPESCRIPT_ES: true

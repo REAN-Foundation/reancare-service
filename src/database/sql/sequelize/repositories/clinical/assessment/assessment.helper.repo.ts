@@ -4,17 +4,17 @@ import { AssessmentTemplateDto } from '../../../../../../domain.types/clinical/a
 import { IAssessmentHelperRepo } from '../../../../../repository.interfaces/clinical/assessment/assessment.helper.repo.interface';
 import { AssessmentTemplateMapper } from '../../../mappers/clinical/assessment/assessment.template.mapper';
 import {
-    SAssessmentTemplate,
-    SAssessmentNode,
+    CAssessmentTemplate,
+    CAssessmentNode,
     AssessmentNodeType,
-    SAssessmentListNode,
-    SAssessmentMessageNode,
-    SAssessmentQuestionNode,
-    SAssessmentQueryOption,
-    SAssessmentNodePath,
-    SAssessmentPathCondition,
+    CAssessmentListNode,
+    CAssessmentMessageNode,
+    CAssessmentQuestionNode,
+    CAssessmentQueryOption,
+    CAssessmentNodePath,
+    CAssessmentPathCondition,
     ConditionOperandDataType,
-    SAssessmentQueryResponse,
+    CAssessmentQueryResponse,
     QueryResponseType,
     SingleChoiceQueryAnswer,
     MultipleChoiceQueryAnswer,
@@ -40,7 +40,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
     //#region Publics
 
-    public addTemplate = async (t: SAssessmentTemplate): Promise<AssessmentTemplateDto> => {
+    public addTemplate = async (t: CAssessmentTemplate): Promise<AssessmentTemplateDto> => {
         try {
             const existing = await AssessmentTemplate.findOne({
                 where : {
@@ -66,7 +66,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
             const rootNodeDisplayCode: string = t.RootNodeDisplayCode;
             const sRootNode = t.getNodeByDisplayCode(rootNodeDisplayCode);
-
+ 
             const rootNode = await this.createNewNode(t, template.id, null, sRootNode);
             template.RootNodeId = rootNode.id;
             await template.save();
@@ -81,7 +81,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
     public getNodeById = async (
         nodeId: string
-    ): Promise<SAssessmentQuestionNode | SAssessmentListNode | SAssessmentMessageNode> => {
+    ): Promise<CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode> => {
         try {
             const node = await AssessmentNode.findByPk(nodeId);
             return await this.populateNodeDetails(node);
@@ -94,7 +94,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
     public getQuestionNodeOptions = async (
         nodeType: AssessmentNodeType,
         nodeId: uuid
-    ): Promise<SAssessmentQueryOption[]> => {
+    ): Promise<CAssessmentQueryOption[]> => {
         if (nodeType === AssessmentNodeType.Question) {
             const options = await AssessmentQueryOption.findAll({
                 where : {
@@ -114,14 +114,14 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
     public getQuestionNodePaths = async (
         nodeType: AssessmentNodeType,
         nodeId: uuid
-    ): Promise<SAssessmentNodePath[]> => {
+    ): Promise<CAssessmentNodePath[]> => {
         if (nodeType === AssessmentNodeType.Question) {
             var paths = await AssessmentNodePath.findAll({
                 where : {
                     ParentNodeId : nodeId,
                 },
             });
-            var pathDtos: SAssessmentNodePath[] = [];
+            var pathDtos: CAssessmentNodePath[] = [];
             for await (var path of paths) {
                 const conditionId = path.ConditionId;
                 const pathId = path.id;
@@ -135,7 +135,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         return [];
     };
 
-    public getNodeListChildren = async (nodeId: uuid): Promise<SAssessmentNode[]> => {
+    public getNodeListChildren = async (nodeId: uuid): Promise<CAssessmentNode[]> => {
         try {
             const node = await AssessmentNode.findByPk(nodeId);
             if (node.NodeType !== AssessmentNodeType.NodeList) {
@@ -146,7 +146,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                     ParentNodeId : nodeId,
                 },
             });
-            var childrenDtos: SAssessmentNode[] = [];
+            var childrenDtos: CAssessmentNode[] = [];
             for await (var child of children) {
                 var childDto = await this.populateNodeDetails(child);
                 childrenDtos.push(childDto);
@@ -166,7 +166,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         conditionId: string,
         nodeId: string,
         pathId: string
-    ): Promise<SAssessmentPathCondition> => {
+    ): Promise<CAssessmentPathCondition> => {
         var condition = await AssessmentPathCondition.findByPk(conditionId);
         if (condition == null) {
             return null;
@@ -179,7 +179,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                     ParentConditionId : conditionId,
                 },
             });
-            var childrenDtos: SAssessmentPathCondition[] = [];
+            var childrenDtos: CAssessmentPathCondition[] = [];
             for await (var child of children) {
                 var childDto = await this.getPathCondition(child.id, nodeId, pathId);
                 childrenDtos.push(childDto);
@@ -192,7 +192,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
 
-    public getQueryResponse = async (assessmentId: uuid, nodeId: uuid): Promise<SAssessmentQueryResponse> => {
+    public getQueryResponse = async (assessmentId: uuid, nodeId: uuid): Promise<CAssessmentQueryResponse> => {
         try {
             var response = await AssessmentQueryResponse.findOne({
                 where : {
@@ -207,7 +207,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
 
-    public getUserResponses = async (assessmentId: uuid): Promise<SAssessmentQueryResponse[]> => {
+    public getUserResponses = async (assessmentId: uuid): Promise<CAssessmentQueryResponse[]> => {
         try {
             var results = await AssessmentQueryResponse.findAll({
                 where : {
@@ -241,7 +241,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             | IntegerQueryAnswer
             | FloatQueryAnswer
             | BiometricQueryAnswer
-    ): Promise<SAssessmentQueryResponse> => {
+    ): Promise<CAssessmentQueryResponse> => {
         try {
             const model = this.generateQueryAnswerModel(answer);
             var response = await AssessmentQueryResponse.create(model);
@@ -252,7 +252,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
     
-    public getChildrenConditions = async (conditionId: uuid): Promise<SAssessmentPathCondition[]> => {
+    public getChildrenConditions = async (conditionId: uuid): Promise<CAssessmentPathCondition[]> => {
         try {
             var conditions = await AssessmentPathCondition.findAll({
                 where : {
@@ -274,7 +274,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
     private async populateNodeDetails(
         node: AssessmentNode
-    ): Promise<SAssessmentQuestionNode | SAssessmentListNode | SAssessmentMessageNode> {
+    ): Promise<CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode> {
         if (node == null) {
             return null;
         }
@@ -286,14 +286,14 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
     }
 
     private async createNewNode(
-        sTemplate: SAssessmentTemplate,
+        templateObj: CAssessmentTemplate,
         templateId: uuid,
         parentNodeId: uuid,
-        snode: SAssessmentNode
+        nodeObj: CAssessmentNode
     ): Promise<AssessmentNode> {
         const existingNode = await AssessmentNode.findOne({
             where : {
-                DisplayCode : snode.DisplayCode,
+                DisplayCode : nodeObj.DisplayCode,
             },
         });
         if (existingNode) {
@@ -301,58 +301,58 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
 
         const nodeEntity = {
-            DisplayCode       : snode.DisplayCode,
+            DisplayCode       : nodeObj.DisplayCode,
             TemplateId        : templateId,
             ParentNodeId      : parentNodeId,
-            NodeType          : snode.NodeType,
-            ProviderGivenId   : snode.ProviderGivenId,
-            ProviderGivenCode : snode.ProviderGivenCode,
-            Title             : snode.Title,
-            Description       : snode.Description,
-            Sequence          : snode.Sequence,
-            Score             : snode.Score,
+            NodeType          : nodeObj.NodeType,
+            ProviderGivenId   : nodeObj.ProviderGivenId,
+            ProviderGivenCode : nodeObj.ProviderGivenCode,
+            Title             : nodeObj.Title,
+            Description       : nodeObj.Description,
+            Sequence          : nodeObj.Sequence,
+            Score             : nodeObj.Score,
         };
 
         var thisNode = await AssessmentNode.create(nodeEntity);
         const currentNodeId = thisNode.id;
 
-        if (snode.NodeType === AssessmentNodeType.NodeList) {
-            var listNode: SAssessmentListNode = snode as SAssessmentListNode;
+        if (nodeObj.NodeType === AssessmentNodeType.NodeList) {
+            var listNode: CAssessmentListNode = nodeObj as CAssessmentListNode;
             var childrenDisplayCodes = listNode.ChildrenNodeDisplayCodes;
 
             for await (var childDisplayCode of childrenDisplayCodes) {
-                const child = sTemplate.getNodeByDisplayCode(childDisplayCode);
+                const child = templateObj.getNodeByDisplayCode(childDisplayCode);
                 if (child) {
-                    var childNode = await this.createNewNode(sTemplate, templateId, currentNodeId, child);
+                    var childNode = await this.createNewNode(templateObj, templateId, currentNodeId, child);
                     if (childNode) {
                         Logger.instance().log(childNode.DisplayCode);
                     }
                 }
             }
-        } else if (snode.NodeType === AssessmentNodeType.Message) {
-            const messageNode = snode as SAssessmentMessageNode;
+        } else if (nodeObj.NodeType === AssessmentNodeType.Message) {
+            const messageNode = nodeObj as CAssessmentMessageNode;
             thisNode.Message = messageNode.Message;
             thisNode.Acknowledged = false;
             await thisNode.save();
         } else {
             //thisNode.NodeType === AssessmentNodeType.Question
-            const questionNode = snode as SAssessmentQuestionNode;
+            const questionNode = nodeObj as CAssessmentQuestionNode;
             thisNode.QueryResponseType = questionNode.QueryResponseType;
             await thisNode.save();
 
-            await this.updateQuestionNode(sTemplate, questionNode, thisNode, templateId);
+            await this.updateQuestionNode(templateObj, questionNode, thisNode, templateId);
         }
         return thisNode;
     }
 
     private async updateQuestionNode(
-        sTemplate: SAssessmentTemplate,
-        questionNode: SAssessmentQuestionNode,
+        sTemplate: CAssessmentTemplate,
+        questionNode: CAssessmentQuestionNode,
         thisNode: AssessmentNode,
         templateId: string
     ) {
         //Create question answer options...
-        const options: SAssessmentQueryOption[] = questionNode.Options;
+        const options: CAssessmentQueryOption[] = questionNode.Options;
 
         for await (var option of options) {
             const optEntity = {
@@ -368,7 +368,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
 
         //Create paths conditions
-        const paths: SAssessmentNodePath[] = questionNode.Paths;
+        const paths: CAssessmentNodePath[] = questionNode.Paths;
 
         for await (var sPath of paths) {
             const pathEntity = {
@@ -420,7 +420,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
     }
 
     private async createNewPathCondition(
-        sCondition: SAssessmentPathCondition,
+        sCondition: CAssessmentPathCondition,
         currentNodeId: string,
         pathId: string,
         parentConditionId: any

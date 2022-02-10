@@ -1,18 +1,16 @@
 import {
     AssessmentType,
-    //ConditionCompositionType,
     ConditionOperandDataType,
     ConditionOperatorType,
     QueryResponseType,
-    //SAssessment,
-    SAssessmentListNode,
-    SAssessmentMessageNode,
-    SAssessmentNode,
-    SAssessmentNodePath,
-    SAssessmentPathCondition,
-    SAssessmentQueryOption,
-    SAssessmentQuestionNode,
-    SAssessmentTemplate,
+    CAssessmentListNode,
+    CAssessmentMessageNode,
+    CAssessmentNode,
+    CAssessmentNodePath,
+    CAssessmentPathCondition,
+    CAssessmentQueryOption,
+    CAssessmentQuestionNode,
+    CAssessmentTemplate,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
@@ -21,9 +19,9 @@ import { CareplanActivity } from "../../../../domain.types/clinical/careplan/act
 
 export class AhaAssessmentConverter {
 
-    public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<SAssessmentTemplate> => {
+    public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<CAssessmentTemplate> => {
 
-        var template: SAssessmentTemplate = new SAssessmentTemplate();
+        var template: CAssessmentTemplate = new CAssessmentTemplate();
         template.Type = AssessmentType.Careplan;
         template.ProviderAssessmentCode = activity.ProviderActionId;
         template.Title = activity.Title;
@@ -34,7 +32,7 @@ export class AhaAssessmentConverter {
         //Root node
         const rootNodeDisplayCode = Helper.generateDisplayCode('RNode');
         template.RootNodeDisplayCode = rootNodeDisplayCode;
-        const rootNode = new SAssessmentListNode();
+        const rootNode = new CAssessmentListNode();
         rootNode.DisplayCode = rootNodeDisplayCode;
         rootNode.Title = 'Assessment root node';
         rootNode.ProviderGivenCode = null;
@@ -61,10 +59,10 @@ export class AhaAssessmentConverter {
     //#region Privates
 
     private createOptionBasedQuestionNode(
-        item: any, template: SAssessmentTemplate, items: any): SAssessmentQuestionNode {
+        item: any, template: CAssessmentTemplate, items: any): CAssessmentQuestionNode {
         //Option based question node has options associated and
         //may have multiple paths connected based on those options
-        var node = new SAssessmentQuestionNode();
+        var node = new CAssessmentQuestionNode();
         node.Description = item.description;
         node.ProviderGivenId = item.id;
         node.ProviderGivenCode = item.code;
@@ -81,10 +79,10 @@ export class AhaAssessmentConverter {
     }
 
     private createQueryBasedQuestionNode(
-        item: any, template: SAssessmentTemplate): SAssessmentQuestionNode {
+        item: any, template: CAssessmentTemplate): CAssessmentQuestionNode {
         //Query based question node has no paths and simple text answer is expected
         //and will not have further paths associated.
-        var node = new SAssessmentQuestionNode();
+        var node = new CAssessmentQuestionNode();
         node.Description = item.description;
         node.ProviderGivenId = item.id;
         node.ProviderGivenCode = item.code;
@@ -96,7 +94,7 @@ export class AhaAssessmentConverter {
         return node;
     }
 
-    private addPathsToNode(item: any, node: SAssessmentQuestionNode, template: SAssessmentTemplate, items: any) {
+    private addPathsToNode(item: any, node: CAssessmentQuestionNode, template: CAssessmentTemplate, items: any) {
 
         if (!item.actions) {
             return;
@@ -108,7 +106,7 @@ export class AhaAssessmentConverter {
 
             const actionType = act.action;
             pathIndex++;
-            var path = new SAssessmentNodePath();
+            var path = new CAssessmentNodePath();
             path.DisplayCode = node.DisplayCode + ':Path#' + pathIndex.toString();
             this.constructConditionFromRules(act.Rules, path, node);
 
@@ -125,8 +123,8 @@ export class AhaAssessmentConverter {
         }
     }
 
-    private createNextMessageNode(template: SAssessmentTemplate, message: string): string {
-        const messageNode = new SAssessmentMessageNode();
+    private createNextMessageNode(template: CAssessmentTemplate, message: string): string {
+        const messageNode = new CAssessmentMessageNode();
         messageNode.Message = message;
         messageNode.ProviderGivenCode = null;
         messageNode.ProviderGivenId = null;
@@ -135,9 +133,9 @@ export class AhaAssessmentConverter {
         return messageNode.DisplayCode;
     }
 
-    private addOptionsToQuestionNode(item: any, node: SAssessmentQuestionNode) {
+    private addOptionsToQuestionNode(item: any, node: CAssessmentQuestionNode) {
         for (var opt of item.options) {
-            var option = new SAssessmentQueryOption();
+            var option = new CAssessmentQueryOption();
             option.DisplayCode = node.DisplayCode + ':Option#' + opt.sequence.toString();
             option.ProviderGivenCode = opt.code;
             option.Text = opt.display;
@@ -147,12 +145,12 @@ export class AhaAssessmentConverter {
         return node;
     }
 
-    private constructConditionFromRules(rules: any[], path: SAssessmentNodePath, node: SAssessmentQuestionNode) {
+    private constructConditionFromRules(rules: any[], path: CAssessmentNodePath, node: CAssessmentQuestionNode) {
 
         if (rules.length === 0) {
 
             var rule = rules[0];
-            var condition = new SAssessmentPathCondition();
+            var condition = new CAssessmentPathCondition();
             condition.IsCompositeCondition = false;
             condition.DisplayCode = path.DisplayCode + ':Condition';
 
@@ -187,7 +185,7 @@ export class AhaAssessmentConverter {
     }
 
     private createNextTriggerQuestionNode(
-        template: SAssessmentTemplate,
+        template: CAssessmentTemplate,
         items: any[],
         nextQuestionItemId: string): string {
 
@@ -212,7 +210,7 @@ export class AhaAssessmentConverter {
         return node.DisplayCode;
     }
 
-    private getNodeByProviderItemId(nodes: SAssessmentNode[], providerItemId): SAssessmentNode {
+    private getNodeByProviderItemId(nodes: CAssessmentNode[], providerItemId): CAssessmentNode {
         for (var node of nodes) {
             if (node.ProviderGivenId === providerItemId) {
                 return node;
@@ -221,7 +219,7 @@ export class AhaAssessmentConverter {
         return null;
     }
 
-    private getOptionSequenceForAnswer(options: SAssessmentQueryOption[], value: any): number {
+    private getOptionSequenceForAnswer(options: CAssessmentQueryOption[], value: any): number {
         for (var option of options) {
             if (option.Text === value) {
                 return option.Sequence;
@@ -230,7 +228,7 @@ export class AhaAssessmentConverter {
         return -1;
     }
 
-    private getOptionSequenceArrayForAnswer(options: SAssessmentQueryOption[], valueArray: []): any[] {
+    private getOptionSequenceArrayForAnswer(options: CAssessmentQueryOption[], valueArray: []): any[] {
         var selectionArray: any[]  = [];
         for (var option of options) {
             for (var val of valueArray) {

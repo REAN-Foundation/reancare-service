@@ -10,14 +10,14 @@ import {
     MessageAnswer,
     MultipleChoiceQueryAnswer,
     QueryResponseType,
-    SAssessmentListNode,
-    SAssessmentMessageNode,
-    SAssessmentNode,
-    SAssessmentNodePath,
-    SAssessmentPathCondition,
-    SAssessmentQueryOption,
-    SAssessmentQueryResponse,
-    SAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer
+    CAssessmentListNode,
+    CAssessmentMessageNode,
+    CAssessmentNode,
+    CAssessmentNodePath,
+    CAssessmentPathCondition,
+    CAssessmentQueryOption,
+    CAssessmentQueryResponse,
+    CAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import AssessmentNode from '../../../models/clinical/assessment/assessment.node.model';
@@ -30,11 +30,11 @@ import AssessmentQueryResponse from '../../../models/clinical/assessment/assessm
 
 export class AssessmentHelperMapper {
 
-    static toConditionDto(condition: AssessmentPathCondition): SAssessmentPathCondition {
+    static toConditionDto(condition: AssessmentPathCondition): CAssessmentPathCondition {
         if (condition == null) {
             return null;
         }
-        var conditionDto = new SAssessmentPathCondition();
+        var conditionDto = new CAssessmentPathCondition();
         conditionDto.id = condition.id;
         conditionDto.NodeId = condition.NodeId;
         conditionDto.DisplayCode = condition.DisplayCode;
@@ -60,11 +60,11 @@ export class AssessmentHelperMapper {
         return conditionDto;
     }
 
-    static toOptionDto(option: AssessmentQueryOption): SAssessmentQueryOption {
+    static toOptionDto(option: AssessmentQueryOption): CAssessmentQueryOption {
         if (option == null) {
             return null;
         }
-        var optionDto = new SAssessmentQueryOption();
+        var optionDto = new CAssessmentQueryOption();
         optionDto.id = option.id;
         optionDto.NodeId = option.NodeId;
         optionDto.DisplayCode = option.DisplayCode;
@@ -75,11 +75,11 @@ export class AssessmentHelperMapper {
         return optionDto;
     }
 
-    static toPathDto(path: AssessmentNodePath): SAssessmentNodePath {
+    static toPathDto(path: AssessmentNodePath): CAssessmentNodePath {
         if (path == null) {
             return null;
         }
-        var pathDto = new SAssessmentNodePath();
+        var pathDto = new CAssessmentNodePath();
         pathDto.id = path.id;
         pathDto.ParentNodeId = path.ParentNodeId;
         pathDto.DisplayCode = path.DisplayCode;
@@ -105,24 +105,24 @@ export class AssessmentHelperMapper {
 
     static toNodeDto = (
         node: AssessmentNode,
-        children?: SAssessmentNode[],
-        paths?: SAssessmentNodePath[],
-        options?: SAssessmentQueryOption[]
-    ): SAssessmentMessageNode | SAssessmentQuestionNode | SAssessmentListNode => {
+        children?: CAssessmentNode[],
+        paths?: CAssessmentNodePath[],
+        options?: CAssessmentQueryOption[]
+    ): CAssessmentMessageNode | CAssessmentQuestionNode | CAssessmentListNode => {
 
         if (node == null) {
             return null;
         }
 
         if (node.NodeType === AssessmentNodeType.Message) {
-            var messageNodeDto = new SAssessmentMessageNode();
+            var messageNodeDto = new CAssessmentMessageNode();
             AssessmentHelperMapper.setCommonFields(messageNodeDto, node);
             messageNodeDto.Message = node.Message;
             messageNodeDto.Acknowledged = node.Acknowledged;
             return messageNodeDto;
         }
         if (node.NodeType === AssessmentNodeType.Question) {
-            var questionNodeDto = new SAssessmentQuestionNode();
+            var questionNodeDto = new CAssessmentQuestionNode();
             AssessmentHelperMapper.setCommonFields(questionNodeDto, node);
             questionNodeDto.QueryResponseType = node.QueryResponseType as QueryResponseType;
             questionNodeDto.Options = options;
@@ -130,7 +130,7 @@ export class AssessmentHelperMapper {
             return questionNodeDto;
         }
         if (node.NodeType === AssessmentNodeType.NodeList) {
-            var listNodeDto = new SAssessmentListNode();
+            var listNodeDto = new CAssessmentListNode();
             AssessmentHelperMapper.setCommonFields(listNodeDto, node);
             listNodeDto.ChildrenNodeIds = children?.map((x) => x.id);
             listNodeDto.ChildrenNodeDisplayCodes = children?.map((x) => x.DisplayCode);
@@ -140,7 +140,7 @@ export class AssessmentHelperMapper {
         return null;
     };
 
-    static toQueryResponseDto(response: AssessmentQueryResponse): SAssessmentQueryResponse {
+    static toQueryResponseDto(response: AssessmentQueryResponse): CAssessmentQueryResponse {
 
         if (response == null) {
             return null;
@@ -148,7 +148,7 @@ export class AssessmentHelperMapper {
 
         const responseType = response.Type as QueryResponseType;
 
-        var responseDto = new SAssessmentQueryResponse();
+        var responseDto = new CAssessmentQueryResponse();
         responseDto.id = response.id;
         responseDto.NodeId = response.NodeId;
         responseDto.AssessmentId = response.AssessmentId;
@@ -189,9 +189,9 @@ export class AssessmentHelperMapper {
 
     static toSingleChoiceAnswerDto(
         assessmentId: uuid,
-        questionNode: SAssessmentQuestionNode,
+        questionNode: CAssessmentQuestionNode,
         answer: number,
-        option: SAssessmentQueryOption
+        option: CAssessmentQueryOption
     ): SingleChoiceQueryAnswer {
         var dto: SingleChoiceQueryAnswer = {
             AssessmentId     : assessmentId,
@@ -208,9 +208,9 @@ export class AssessmentHelperMapper {
 
     static toMultiChoiceAnswerDto(
         assessmentId: uuid,
-        questionNode: SAssessmentQuestionNode,
+        questionNode: CAssessmentQuestionNode,
         answers: number[],
-        options: SAssessmentQueryOption[]
+        options: CAssessmentQueryOption[]
     ): MultipleChoiceQueryAnswer {
         var dto: MultipleChoiceQueryAnswer = {
             AssessmentId     : assessmentId,
@@ -227,7 +227,7 @@ export class AssessmentHelperMapper {
 
     static toMessageAnswerDto(
         assessmentId: uuid,
-        node: SAssessmentMessageNode,
+        node: CAssessmentMessageNode,
     ): MessageAnswer {
         var dto: MessageAnswer = {
             AssessmentId     : assessmentId,
@@ -243,7 +243,7 @@ export class AssessmentHelperMapper {
 
     static toBiometricsAnswerDto(
         assessmentId: uuid,
-        node: SAssessmentQuestionNode,
+        node: CAssessmentQuestionNode,
         values: AssessmentBiometrics[]
     ): BiometricQueryAnswer {
         var dto: BiometricQueryAnswer = {
@@ -260,7 +260,7 @@ export class AssessmentHelperMapper {
 
     static toTextAnswerDto(
         assessmentId: uuid,
-        node: SAssessmentQuestionNode,
+        node: CAssessmentQuestionNode,
         text: string,
     ): TextQueryAnswer {
         var dto: TextQueryAnswer = {
@@ -277,7 +277,7 @@ export class AssessmentHelperMapper {
 
     static toIntegerAnswerDto(
         assessmentId: uuid,
-        node: SAssessmentQuestionNode,
+        node: CAssessmentQuestionNode,
         field: string,
         value: number
     ): IntegerQueryAnswer {
@@ -296,7 +296,7 @@ export class AssessmentHelperMapper {
 
     static toFloatAnswerDto(
         assessmentId: uuid,
-        node: SAssessmentQuestionNode,
+        node: CAssessmentQuestionNode,
         field: string,
         value: number
     ): FloatQueryAnswer {

@@ -3,7 +3,7 @@ import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/c
 import { ConditionOperand,
     ConditionOperandDataType,
     ConditionOperatorType,
-    SAssessmentPathCondition } from "../../../domain.types/clinical/assessment/assessment.types";
+    CAssessmentPathCondition } from "../../../domain.types/clinical/assessment/assessment.types";
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,7 +15,7 @@ export class ConditionProcessor {
     ) {
     }
 
-    public processCondition = async (condition: SAssessmentPathCondition, argument: any): Promise<boolean> => {
+    public processCondition = async (condition: CAssessmentPathCondition, argument: any): Promise<boolean> => {
 
         if (!condition || !argument) {
             throw new Error(`Invalid condition to process!`);

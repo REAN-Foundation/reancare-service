@@ -4,7 +4,7 @@ import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces
 import { AssessmentTemplateDomainModel } from '../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateDto } from '../../../domain.types/clinical/assessment/assessment.template.dto';
 import { AssessmentTemplateSearchFilters, AssessmentTemplateSearchResults } from "../../../domain.types/clinical/assessment/assessment.template.search.types";
-import { FileResourceUploadDomainModel } from "src/domain.types/file.resource/file.resource.domain.model";
+import { Logger } from "../../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,7 +45,7 @@ export class AssessmentTemplateService {
 
     public import = async (model: any): Promise<uuid> => {
 
-        //Exports the template to file and stores the file as resource
+        Logger.instance().log(JSON.stringify(model, null, 2));
         
         return null;
     };

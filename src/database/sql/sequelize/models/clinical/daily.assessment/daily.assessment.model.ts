@@ -68,7 +68,7 @@ export default class HowDoYouFeel extends Model {
         type         : DataType.STRING(128),
         allowNull    : true,
         values       : DailyAssessmentEnergyLevelList,
-        defaultValue : DailyAssessmentEnergyLevels.UnSpecified
+        defaultValue : `["${DailyAssessmentEnergyLevels.UnSpecified}"]`
     })
     EnergyLevels: string;
     

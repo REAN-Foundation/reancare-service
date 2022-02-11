@@ -4,7 +4,7 @@ import { body, param, query, validationResult } from 'express-validator';
 import * as _ from 'lodash';
 import mime from 'mime';
 import path from 'path';
-import { ValidationError } from 'sequelize';
+import { InputValidationError } from '../../common/input.validation.error';
 import { Helper } from "../../common/helper";
 import { TimeHelper } from '../../common/time.helper';
 import { ConfigurationManager } from '../../config/configuration.manager';
@@ -51,7 +51,7 @@ export class FileResourceValidator extends BaseValidator{
 
     upload = async (request: express.Request): Promise<FileResourceUploadDomainModel[]> => {
         if (!request.files) {
-            throw new ValidationError('No file uploaded!!');
+            Helper.handleValidationError('No file uploaded!!');
         }
         await this.validateBody(request);
         return this.getUploadDomainModel(request);
@@ -107,7 +107,7 @@ export class FileResourceValidator extends BaseValidator{
     uploadVersion = async (request: express.Request): Promise<FileResourceMetadata> => {
 
         if (!request.files) {
-            throw new ValidationError('No file uploaded!!');
+            throw new InputValidationError(['No file uploaded!!']);
         }
 
         await param('id').exists()
@@ -132,7 +132,7 @@ export class FileResourceValidator extends BaseValidator{
 
         var metadataList = this.getFileMetadataList(request);
         if (metadataList.length === 0) {
-            throw new ValidationError('Missing file metadata!');
+            throw new InputValidationError(['Missing file metadata!']);
         }
 
         var metadata = metadataList[0];
@@ -167,7 +167,7 @@ export class FileResourceValidator extends BaseValidator{
         };
         
         return domainModel;
-    }
+    };
 
     getByVersionName = async (request: express.Request): Promise<FileResourceMetadata> => {
 
@@ -478,7 +478,7 @@ export class FileResourceValidator extends BaseValidator{
             }
         });
         return metadataDetails;
-    }
+    };
 
     moveToTempFolder = (folder, file): FileResourceMetadata => {
 
@@ -517,7 +517,7 @@ export class FileResourceValidator extends BaseValidator{
             StorageKey     : null
         };
         return metadata;
-    }
+    };
     
     //#endregion
 

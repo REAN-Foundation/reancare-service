@@ -14,7 +14,6 @@ export class OrderController extends BaseController{
     //#region member variables and constructors
 
     _service: OrderService = null;
-
     _validator: OrderValidator = new OrderValidator();
 
     constructor() {

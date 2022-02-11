@@ -2,7 +2,7 @@ import path from 'path';
 import * as configuration from '../../reancare.config.json';
 import {
     AuthenticationType,
-    AuthorizationType, Configurations, DatabaseFlavour, DatabaseORM, DatabaseType, EHRProvider,
+    AuthorizationType, CareplanConfig, Configurations, DatabaseFlavour, DatabaseORM, DatabaseType, EHRProvider,
     EHRSpecification, EmailServiceProvider, FileStorageProvider, InAppNotificationServiceProvider, SMSServiceProvider
 } from './configuration.types';
 
@@ -39,6 +39,7 @@ export class ConfigurationManager {
                 // eslint-disable-next-line max-len
                 InAppNotificationProvider : configuration.Communication.InAppNotifications.Provider as InAppNotificationServiceProvider,
             },
+            Careplans        : configuration.Careplans,
             TemporaryFolders : {
                 Upload                     : configuration.TemporaryFolders.Upload as string,
                 Download                   : configuration.TemporaryFolders.Download as string,
@@ -118,6 +119,10 @@ export class ConfigurationManager {
     
     public static InAppNotificationServiceProvider = (): InAppNotificationServiceProvider => {
         return ConfigurationManager._config.Communication.InAppNotificationProvider;
+    };
+
+    public static careplans = (): { Provider: string; Service: string; Plans: CareplanConfig[] } [] => {
+        return ConfigurationManager._config.Careplans;
     };
 
     private static checkConfigSanity() {

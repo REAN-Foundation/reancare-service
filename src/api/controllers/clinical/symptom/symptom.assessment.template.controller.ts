@@ -6,8 +6,6 @@ import { SymptomAssessmentTemplateService } from '../../../../services/clinical/
 import { Loader } from '../../../../startup/loader';
 import { SymptomAssessmentTemplateValidator } from '../../../validators/clinical/symptom/symptom.assessment.template.validator';
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class SymptomAssessmentTemplateController {

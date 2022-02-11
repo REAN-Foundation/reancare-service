@@ -70,7 +70,7 @@ export default class SymptomAssessment extends Model {
         type      : DataType.DATE,
         allowNull : false,
     })
-    AssessmentDate: Date
+    AssessmentDate: Date;
     
     @Length({ max: 32 })
     @Column({

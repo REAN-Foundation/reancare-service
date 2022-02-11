@@ -14,6 +14,6 @@ export class MessagingService {
 
     sendSMS = async (toPhone: string, message: string): Promise<boolean> => {
         return await this._service.sendSMS(toPhone, message);
-    }
+    };
     
 }

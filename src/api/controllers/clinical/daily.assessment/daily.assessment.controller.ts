@@ -1,5 +1,4 @@
 import express from 'express';
-import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { DailyAssessmentService } from '../../../../services/clinical/daily.assessment/daily.assessment.service';
@@ -28,12 +27,10 @@ export class DailyAssessmentController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('DailyAssessment.Create', request, response);
+            await this.setContext('DailyAssessment.Create', request, response);
 
             const model = await this._validator.create(request);
-            Logger.instance().log(`After validation: $JSON.stringify(model)`);
             const dailyAssessment = await this._service.create(model);
-            Logger.instance().log(`After service: $JSON.stringify(dailyAssessment)`);
 
             if (dailyAssessment == null) {
                 throw new ApiError(400, 'Cannot create record for daily assessment!');
@@ -50,7 +47,7 @@ export class DailyAssessmentController extends BaseController{
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            this.setContext('DailyAssessment.Search', request, response);
+            await this.setContext('DailyAssessment.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);

@@ -90,14 +90,14 @@ export default class Visit extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    StartDate: Date
+    StartDate: Date;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    EndDate: Date
+    EndDate: Date;
 
     // @IsUUID(4)
     // @ForeignKey(() => Appointment)

@@ -34,7 +34,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     markAsTaken = async(id: string, takenAt: Date): Promise<MedicationConsumptionDetailsDto> => {
         try {
@@ -58,7 +58,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     markAsMissed = async(id: string): Promise<MedicationConsumptionDetailsDto> => {
         try {
@@ -82,7 +82,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     deleteFutureMedicationSchedules = async(medicationId: string): Promise<number> => {
         try {
@@ -113,7 +113,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getSchedulesForMedication = async(medicationId: string): Promise<MedicationConsumptionDto[]> => {
         try {
@@ -133,7 +133,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     // updateTimeZoneForFutureMedicationSchedules = async(
     //     medicationId: string,
@@ -256,7 +256,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getSchedulesForPatientForDuration = async (patientUserId: string, from: Date, to: Date)
     : Promise<MedicationConsumptionDto[]> => {
@@ -334,7 +334,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             throw new ApiError(500, error.message);
         }
 
-    }
+    };
 
     getTotalConsumptionCountForMedication = async (medicationId: string): Promise<number> => {
 
@@ -354,7 +354,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             throw new ApiError(500, error.message);
         }
 
-    }
+    };
 
     cancelSchedule = async (id: string): Promise<boolean> => {
         
@@ -375,6 +375,6 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             throw new ApiError(500, error.message);
         }
 
-    }
+    };
 
 }

@@ -17,6 +17,6 @@ export class PersonRoleMapper {
             RoleName : personRole.RoleName
         };
         return dto;
-    }
+    };
 
 }

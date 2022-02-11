@@ -62,7 +62,7 @@ export class Authenticator {
             throw new ApiError(401, 'Unauthorized access');
         }
         return true;
-    }
+    };
 
 }
 

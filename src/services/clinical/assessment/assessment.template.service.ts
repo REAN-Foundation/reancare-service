@@ -36,13 +36,6 @@ export class AssessmentTemplateService {
         return await this._assessmentRepo.delete(id);
     };
 
-    public storeAsFile = async (): Promise<uuid> => {
-
-        //Exports the template to file and stores the file as resource
-        
-        return null;
-    };
-
     public import = async (model: any): Promise<uuid> => {
 
         Logger.instance().log(JSON.stringify(model, null, 2));

@@ -1,5 +1,11 @@
+import fs from 'fs';
+import path from "path";
+import { Loader } from '../../../startup/loader';
 import { ApiError } from '../../../common/api.error';
+import { Helper } from "../../../common/helper";
 import { Logger } from '../../../common/logger';
+import { TimeHelper } from '../../../common/time.helper';
+import { ConfigurationManager } from "../../../config/configuration.manager";
 import {
     AssessmentNodeType,
     CAssessmentListNode,
@@ -13,7 +19,11 @@ import {
     ConditionCompositionType,
     ConditionOperand,
     ConditionOperandDataType,
-    ConditionOperatorType } from '../../../domain.types/clinical/assessment/assessment.types';
+    ConditionOperatorType
+} from '../../../domain.types/clinical/assessment/assessment.types';
+import { FileResourceDto } from '../../../domain.types/file.resource/file.resource.dto';
+import { DateStringFormat } from '../../../domain.types/miscellaneous/time.types';
+import { FileResourceService } from '../../../services/file.resource.service';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -21,7 +31,29 @@ export class AssessmentTemplateFileConverter {
 
     //#region Publics
 
-    public static convertToJson = async (templateObj: CAssessmentTemplate): Promise<any> => {
+    public static storeAssessmentTemplate = async (templateObj: CAssessmentTemplate): Promise<FileResourceDto> => {
+
+        const title = templateObj.Title;
+        const filename = Helper.strToFilename(title, 'json', '-');
+        const tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
+        const timestamp = TimeHelper.timestamp(new Date());
+        const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
+        const sourceLocation = path.join(tempDownloadFolder, dateFolder, timestamp);
+        const sourceFile = path.join(sourceLocation, filename);
+        const storageKey = `resources/${dateFolder}/${filename}`;
+
+        await fs.promises.mkdir(sourceLocation, { recursive: true });
+
+        const jsonObj = AssessmentTemplateFileConverter.convertToJson(templateObj);
+        const jsonStr = JSON.stringify(jsonObj, null, 2);
+        fs.writeFileSync(sourceFile, jsonStr);
+
+        const fileResourceServie = Loader.container.resolve(FileResourceService);
+        const dto = await fileResourceServie.uploadLocal(sourceFile, storageKey, false);
+        return dto;
+    }
+
+    public static convertToJson = (templateObj: CAssessmentTemplate):any => {
         try {
 
             var tmpl = {
@@ -37,8 +69,8 @@ export class AssessmentTemplateFileConverter {
 
             };
 
-            for await (var nodeObj of templateObj.Nodes) {
-                const node = await AssessmentTemplateFileConverter.nodeToJson(nodeObj);
+            for (var nodeObj of templateObj.Nodes) {
+                const node = AssessmentTemplateFileConverter.nodeToJson(nodeObj);
                 tmpl.Nodes.push(node);
             }
 
@@ -50,7 +82,7 @@ export class AssessmentTemplateFileConverter {
         }
     };
 
-    public static convertFromJson = async (templateObj: any): Promise<CAssessmentTemplate> => {
+    public static convertFromJson = (templateObj: any): CAssessmentTemplate => {
         try {
 
             var tmpl: CAssessmentTemplate = new CAssessmentTemplate();
@@ -64,8 +96,8 @@ export class AssessmentTemplateFileConverter {
             tmpl.RootNodeDisplayCode    = templateObj.RootNodeDisplayCode;
             tmpl.Nodes                  = [];
 
-            for await (var nodeObj of templateObj.Nodes) {
-                const node = await AssessmentTemplateFileConverter.nodeFromJson(nodeObj);
+            for (var nodeObj of templateObj.Nodes) {
+                const node = AssessmentTemplateFileConverter.nodeFromJson(nodeObj);
                 tmpl.Nodes.push(node);
             }
 

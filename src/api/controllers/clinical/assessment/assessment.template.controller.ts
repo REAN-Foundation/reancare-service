@@ -1,6 +1,5 @@
 import express from 'express';
 import fs from 'fs';
-import mime from 'mime';
 import path from 'path';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
@@ -163,7 +162,7 @@ export class AssessmentTemplateController extends BaseController{
             }
 
             var filename = path.basename(localDestination);
-            var mimeType = mime.lookup(localDestination);
+            var mimeType = Helper.getMimeType(localDestination);
             response.setHeader('Content-type', mimeType);
             response.setHeader('Content-disposition', 'attachment; filename=' + filename);
     

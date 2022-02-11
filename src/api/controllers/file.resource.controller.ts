@@ -1,6 +1,5 @@
 import express from 'express';
 import fs from 'fs';
-import mime from 'mime';
 import path from 'path';
 import { Authenticator } from '../../auth/authenticator';
 import { Authorizer } from '../../auth/authorizer';
@@ -16,6 +15,7 @@ import { RoleService } from '../../services/role.service';
 import { Loader } from '../../startup/loader';
 import { FileResourceValidator } from '../validators/file.resource.validator';
 import AdmZip = require ('adm-zip');
+import { Helper } from '../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -411,7 +411,10 @@ export class FileResourceController {
         }
 
         var filename = path.basename(localDestination);
-        var mimetype = metadata.MimeType ?? mime.lookup(localDestination);
+        var mimetype = metadata.MimeType ?? Helper.getMimeType(localDestination);
+        if (!mimetype) {
+            mimetype = 'text/plain';
+        }
 
         this.setDownloadResponseHeaders(response, metadata.Disposition, mimetype, filename);
 

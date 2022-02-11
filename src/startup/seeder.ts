@@ -107,6 +107,7 @@ export class Seeder {
 
     public init = async (): Promise<void> => {
         try {
+            await this.createTempFolders();
             await this.seedDefaultRoles();
             await this.seedRolePrivileges();
             await this.seedInternalClients();
@@ -123,6 +124,11 @@ export class Seeder {
             Logger.instance().log(error.message);
         }
     };
+
+    private createTempFolders = async () => {
+        await Helper.createTempDownloadFolder();
+        await Helper.createTempUploadFolder();
+    }
 
     private seedRolePrivileges = async () => {
         const rolePrivileges = await this._rolePrivilegeRepo.search();

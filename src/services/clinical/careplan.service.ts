@@ -27,6 +27,7 @@ import { CareplanConfig } from "../../config/configuration.types";
 import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/assessment.domain.model";
 import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
+import { AssessmentTemplateFileConverter } from "./assessment/assessment.template.file.converter";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -342,6 +343,9 @@ export class CareplanService implements IUserActionService {
         
         var assessmentTemplate: CAssessmentTemplate =
             await this._handler.convertToAssessmentTemplate(assessmentActivity);
+
+        const fileResourceDto = await AssessmentTemplateFileConverter.storeAssessmentTemplate(assessmentTemplate);
+        assessmentTemplate.FileResourceId = fileResourceDto.id;
 
         const template = await this._assessmentHelperRepo.addTemplate(assessmentTemplate);
         return template;

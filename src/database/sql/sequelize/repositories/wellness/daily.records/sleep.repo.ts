@@ -12,17 +12,17 @@ import Sleep from '../../../models/wellness/daily.records/sleep.model';
 
 export class SleepRepo implements ISleepRepo {
 
-    create = async (sleepDomainModel: SleepDomainModel): Promise<SleepDto> => {
+    create = async (createModel: SleepDomainModel): Promise<SleepDto> => {
         try {
             const entity = {
-                PatientUserId : sleepDomainModel.PatientUserId ?? null,
-                SleepDuration : sleepDomainModel.SleepDuration ?? 0,
-                RecordDate    : sleepDomainModel.RecordDate ?? null,
-                Unit          : sleepDomainModel.Unit ?? 'hrs',
+                PatientUserId : createModel.PatientUserId,
+                SleepDuration : createModel.SleepDuration,
+                Unit          : createModel.Unit,
+                RecordDate    : createModel.RecordDate,
             };
             const sleep = await Sleep.create(entity);
-            const dto = await SleepMapper.toDto(sleep);
-            return dto;
+            return await SleepMapper.toDto(sleep);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -32,8 +32,8 @@ export class SleepRepo implements ISleepRepo {
     getById = async (id: string): Promise<SleepDto> => {
         try {
             const sleep = await Sleep.findByPk(id);
-            const dto = await SleepMapper.toDto(sleep);
-            return dto;
+            return await SleepMapper.toDto(sleep);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -45,12 +45,20 @@ export class SleepRepo implements ISleepRepo {
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
-                search.where['PatientUserId'] = { [Op.eq]: filters.PatientUserId };
+                search.where['PatientUserId'] = filters.PatientUserId;
             }
             if (filters.MinValue != null && filters.MaxValue != null) {
                 search.where['SleepDuration'] = {
                     [Op.gte] : filters.MinValue,
                     [Op.lte] : filters.MaxValue,
+                };
+            } else if (filters.MinValue === null && filters.MaxValue !== null) {
+                search.where['SleepDuration'] = {
+                    [Op.lte] : filters.MaxValue,
+                };
+            } else if (filters.MinValue !== null && filters.MaxValue === null) {
+                search.where['SleepDuration'] = {
+                    [Op.gte] : filters.MinValue,
                 };
             }
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
@@ -68,7 +76,7 @@ export class SleepRepo implements ISleepRepo {
                 };
             }
 
-            let orderByColum = 'RecordDate';
+            let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }
@@ -116,27 +124,26 @@ export class SleepRepo implements ISleepRepo {
         }
     };
 
-    update = async (id: string, sleepDomainModel: SleepDomainModel): Promise<SleepDto> => {
+    update = async (id: string, updateModel: SleepDomainModel): Promise<SleepDto> => {
         try {
             const sleep = await Sleep.findByPk(id);
 
-            if (sleepDomainModel.PatientUserId != null) {
-                sleep.PatientUserId = sleepDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                sleep.PatientUserId = updateModel.PatientUserId;
             }
-            if (sleepDomainModel.SleepDuration != null) {
-                sleep.SleepDuration = sleepDomainModel.SleepDuration;
+            if (updateModel.SleepDuration != null) {
+                sleep.SleepDuration = updateModel.SleepDuration;
             }
-            if (sleepDomainModel.Unit != null) {
-                sleep.Unit = sleepDomainModel.Unit;
+            if (updateModel.Unit != null) {
+                sleep.Unit = updateModel.Unit;
             }
-            if (sleepDomainModel.RecordDate != null) {
-                sleep.RecordDate = sleepDomainModel.RecordDate;
+            if (updateModel.RecordDate != null) {
+                sleep.RecordDate = updateModel.RecordDate;
             }
 
             await sleep.save();
+            return await SleepMapper.toDto(sleep);
 
-            const dto = await SleepMapper.toDto(sleep);
-            return dto;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -145,8 +152,8 @@ export class SleepRepo implements ISleepRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            await Sleep.destroy({ where: { id: id } });
-            return true;
+            const result = await Sleep.destroy({ where: { id: id } });
+            return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

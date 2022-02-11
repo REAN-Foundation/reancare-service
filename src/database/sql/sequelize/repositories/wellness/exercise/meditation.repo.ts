@@ -11,21 +11,21 @@ import MeditationModel from '../../../models/wellness/exercise/meditation.model'
 
 export class MeditationRepo implements IMeditationRepo {
 
-    create = async (meditationDomainModel: MeditationDomainModel):
+    create = async (createModel: MeditationDomainModel):
     Promise<MeditationDto> => {
         try {
             const entity = {
-                PatientUserId : meditationDomainModel.PatientUserId,
-                Meditation    : meditationDomainModel.Meditation,
-                Description   : meditationDomainModel.Description,
-                Category      : meditationDomainModel.Category,
-                StartTime     : meditationDomainModel.StartTime,
-                EndTime       : meditationDomainModel.EndTime
+                PatientUserId : createModel.PatientUserId,
+                Meditation    : createModel.Meditation,
+                Description   : createModel.Description,
+                Category      : createModel.Category,
+                StartTime     : createModel.StartTime,
+                EndTime       : createModel.EndTime
             };
 
             const meditation = await MeditationModel.create(entity);
-            const dto = await MeditationMapper.toDto(meditation);
-            return dto;
+            return await MeditationMapper.toDto(meditation);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -35,8 +35,8 @@ export class MeditationRepo implements IMeditationRepo {
     getById = async (id: string): Promise<MeditationDto> => {
         try {
             const meditation = await MeditationModel.findByPk(id);
-            const dto = await MeditationMapper.toDto(meditation);
-            return dto;
+            return await MeditationMapper.toDto(meditation);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -101,34 +101,34 @@ export class MeditationRepo implements IMeditationRepo {
         }
     };
 
-    update = async (id: string, meditationDomainModel: MeditationDomainModel):
+    update = async (id: string, updateModel: MeditationDomainModel):
     Promise<MeditationDto> => {
         try {
             const meditation = await MeditationModel.findByPk(id);
 
-            if (meditationDomainModel.PatientUserId != null) {
-                meditation.PatientUserId = meditationDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                meditation.PatientUserId = updateModel.PatientUserId;
             }
-            if (meditationDomainModel.Meditation != null) {
-                meditation.Meditation = meditationDomainModel.Meditation;
+            if (updateModel.Meditation != null) {
+                meditation.Meditation = updateModel.Meditation;
             }
-            if (meditationDomainModel.Description != null) {
-                meditation.Description = meditationDomainModel.Description;
+            if (updateModel.Description != null) {
+                meditation.Description = updateModel.Description;
             }
-            if (meditationDomainModel.Category != null) {
-                meditation.Category = meditationDomainModel.Category;
+            if (updateModel.Category != null) {
+                meditation.Category = updateModel.Category;
             }
-            if (meditationDomainModel.StartTime != null) {
-                meditation.StartTime = meditationDomainModel.StartTime;
+            if (updateModel.StartTime != null) {
+                meditation.StartTime = updateModel.StartTime;
             }
-            if (meditationDomainModel.EndTime != null) {
-                meditation.EndTime = meditationDomainModel.EndTime;
+            if (updateModel.EndTime != null) {
+                meditation.EndTime = updateModel.EndTime;
             }
     
             await meditation.save();
 
-            const dto = await MeditationMapper.toDto(meditation);
-            return dto;
+            return await MeditationMapper.toDto(meditation);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -137,7 +137,6 @@ export class MeditationRepo implements IMeditationRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            Logger.instance().log(id);
 
             const result = await MeditationModel.destroy({ where: { id: id } });
             return result === 1;

@@ -100,7 +100,7 @@ export default class Allergy extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    LastOccurrence: Date
+    LastOccurrence: Date;
 
     @Column
     @CreatedAt

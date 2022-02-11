@@ -34,7 +34,7 @@ export class MedicationRepo implements IMedicationRepo {
                 RefillNeeded              : model.RefillNeeded,
                 RefillCount               : model.RefillCount,
                 Instructions              : model.Instructions,
-                ImageResourceId           : model.ImageResourceId,
+                ImageResourceId           : model.ImageResourceId ?? null,
                 IsExistingMedication      : model.IsExistingMedication,
                 TakenForLastNDays         : model.TakenForLastNDays,
                 ToBeTakenForNextNDays     : model.ToBeTakenForNextNDays,

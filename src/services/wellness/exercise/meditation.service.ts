@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IMeditationRepo } from "../../../database/repository.interfaces/wellness/exercise/meditation.repo.interface";
 import { MeditationDomainModel } from '../../../domain.types/wellness/exercise/meditation/meditation.domain.model';
@@ -18,7 +19,7 @@ export class MeditationService {
         return await this._meditationRepo.create(meditationDomainModel);
     };
 
-    getById = async (id: string): Promise<MeditationDto> => {
+    getById = async (id: uuid): Promise<MeditationDto> => {
         return await this._meditationRepo.getById(id);
     };
 
@@ -26,12 +27,12 @@ export class MeditationService {
         return await this._meditationRepo.search(filters);
     };
 
-    update = async (id: string, meditationDomainModel: MeditationDomainModel):
+    update = async (id: uuid, meditationDomainModel: MeditationDomainModel):
     Promise<MeditationDto> => {
         return await this._meditationRepo.update(id, meditationDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._meditationRepo.delete(id);
     };
 

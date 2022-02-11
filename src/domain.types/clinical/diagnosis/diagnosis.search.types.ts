@@ -1,32 +1,24 @@
 import { DiagnosisDto } from "./diagnosis.dto";
 import { ClinicalInterpretation, ClinicalValidationStatus } from "../../miscellaneous/clinical.types";
+import { BaseSearchFilters, BaseSearchResults } from "../../../domain.types/miscellaneous/base.search.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 //////////////////////////////////////////////////////////////////////
 
-export interface DiagnosisSearchFilters {
-    Type?: string;
-    PatientUserId?: string;
-    MedicalPractitionerUserId?: string;
-    VisitId?: string;
-    MedicalConditionId?: string;
-    IsClinicallyActive?: boolean;
-    FulfilledByOrganizationId?: string;
-    ValidationStatus?: ClinicalValidationStatus;
-    Interpretation?: ClinicalInterpretation;
-    OnsetDateFrom?: Date;
-    OnsetDateTo?: Date;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+export interface DiagnosisSearchFilters extends BaseSearchFilters{
+    Type?                     : string;
+    PatientUserId?            : uuid;
+    MedicalPractitionerUserId?: uuid;
+    VisitId?                  : uuid;
+    MedicalConditionId?       : uuid;
+    IsClinicallyActive?       : boolean;
+    FulfilledByOrganizationId?: uuid;
+    ValidationStatus?         : ClinicalValidationStatus;
+    Interpretation?           : ClinicalInterpretation;
+    OnsetDateFrom?            : Date;
+    OnsetDateTo?              : Date;
 }
 
-export interface DiagnosisSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface DiagnosisSearchResults extends BaseSearchResults{
     Items: DiagnosisDto[];
 }

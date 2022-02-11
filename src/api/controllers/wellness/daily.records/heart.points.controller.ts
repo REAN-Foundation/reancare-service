@@ -1,36 +1,25 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
-import { OrganizationService } from '../../../../services/organization.service';
-import { PersonService } from '../../../../services/person.service';
-import { RoleService } from '../../../../services/role.service';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { HeartPointsService } from '../../../../services/wellness/daily.records/heart.points.service';
 import { Loader } from '../../../../startup/loader';
 import { HeartPointValidator } from '../../../validators/wellness/daily.records/heart.points.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class HeartPointController {
+export class HeartPointController extends BaseController{
 
     //#region member variables and constructors
 
     _service: HeartPointsService = null;
 
-    _roleService: RoleService = null;
-
-    _personService: PersonService = null;
-
-    _organizationService: OrganizationService = null;
-
-    _authorizer: Authorizer = null;
+    _validator: HeartPointValidator = new HeartPointValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(HeartPointsService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -39,24 +28,16 @@ export class HeartPointController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'HeartPoints.Create';
-            await this._authorizer.authorize(request, response);
             
-            const domainModel = await HeartPointValidator.create(request);
+            await this.setContext('DailyRecords.HeartPoints.Create', request, response);
 
-            if (domainModel.PersonId != null) {
-                const person = await this._personService.getById(domainModel.PersonId);
-                if (person == null) {
-                    throw new ApiError(404, `Person with an id ${domainModel.PersonId} cannot be found.`);
-                }
-            }
-
-            const heartPoint = await this._service.create(domainModel);
+            const model = await this._validator.create(request);
+            const heartPoint = await this._service.create(model);
             if (heartPoint == null) {
-                throw new ApiError(400, 'Cannot create heartPoint!');
+                throw new ApiError(400, 'Cannot create record for heart Points!');
             }
 
-            ResponseHandler.success(request, response, 'HeartPoints created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Heart points record created successfully!', 201, {
                 HeartPoints : heartPoint,
             });
         } catch (error) {
@@ -66,18 +47,16 @@ export class HeartPointController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'HeartPoints.GetById';
             
-            await this._authorizer.authorize(request, response);
+            await this.setContext('DailyRecords.HeartPoints.GetById', request, response);
 
-            const id: string = await HeartPointValidator.getById(request);
-
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const heartPoint = await this._service.getById(id);
             if (heartPoint == null) {
-                throw new ApiError(404, 'HeartPoints not found.');
+                throw new ApiError(404, 'Heart points record not found.');
             }
 
-            ResponseHandler.success(request, response, 'HeartPoints retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Heart points record retrieved successfully!', 200, {
                 HeartPoints : heartPoint,
             });
         } catch (error) {
@@ -87,20 +66,18 @@ export class HeartPointController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'HeartPoints.Search';
-            await this._authorizer.authorize(request, response);
+            
+            await this.setContext('DailyRecords.HeartPoints.Search', request, response);
 
-            const filters = await HeartPointValidator.search(request);
-
+            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
-
             const count = searchResults.Items.length;
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} heartPoint records retrieved successfully!`;
+                    : `Total ${count} heart points records retrieved successfully!`;
                     
-            ResponseHandler.success(request, response, message, 200, { HeartPoints: searchResults });
+            ResponseHandler.success(request, response, message, 200, { HeartPointsRecords: searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -109,23 +86,22 @@ export class HeartPointController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'HeartPoints.Update';
-            await this._authorizer.authorize(request, response);
+            
+            await this.setContext('DailyRecords.HeartPoints.Update', request, response);
 
-            const domainModel = await HeartPointValidator.update(request);
-
-            const id: string = await HeartPointValidator.getById(request);
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
-                throw new ApiError(404, 'HeartPoints not found.');
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Heart points record not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update heartPoint record!');
+                throw new ApiError(400, 'Unable to update heart points record!');
             }
 
-            ResponseHandler.success(request, response, 'HeartPoints record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Heart points record updated successfully!', 200, {
                 HeartPoints : updated,
             });
         } catch (error) {
@@ -135,21 +111,21 @@ export class HeartPointController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'HeartPoints.Delete';
-            await this._authorizer.authorize(request, response);
+            
+            await this.setContext('DailyRecords.HeartPoints.Delete', request, response);
 
-            const id: string = await HeartPointValidator.getById(request);
-            const existingAddress = await this._service.getById(id);
-            if (existingAddress == null) {
-                throw new ApiError(404, 'HeartPoints not found.');
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Heart points record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'HeartPoints cannot be deleted.');
+                throw new ApiError(400, 'Heart points record cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'HeartPoints record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Heart points record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

@@ -39,7 +39,7 @@ export class DoctorMapper {
             Organizations          : []
         };
         return dto;
-    }
+    };
 
     static toDto = async (doctor: Doctor): Promise<DoctorDto> => {
 
@@ -62,6 +62,6 @@ export class DoctorMapper {
             Age                  : null,
         };
         return dto;
-    }
+    };
 
 }

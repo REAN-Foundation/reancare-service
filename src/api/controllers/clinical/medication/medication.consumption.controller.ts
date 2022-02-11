@@ -45,7 +45,6 @@ export class MedicationConsumptionController {
         try {
             request.context = 'MedicationConsumption.MarkListAsTaken';
             await this._authorizer.authorize(request, response);
-            
 
             const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
             if (consumptionIds.length === 0) {
@@ -68,7 +67,6 @@ export class MedicationConsumptionController {
         try {
             request.context = 'MedicationConsumption.MarkListAsMissed';
             await this._authorizer.authorize(request, response);
-            
 
             const consumptionIds = await MedicationConsumptionValidator.checkConsumptionIds(request);
             if (consumptionIds.length === 0) {
@@ -91,7 +89,6 @@ export class MedicationConsumptionController {
         try {
             request.context = 'MedicationConsumption.MarkAsTaken';
             await this._authorizer.authorize(request, response);
-            
 
             const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsTaken(consumptionId);
@@ -111,7 +108,6 @@ export class MedicationConsumptionController {
         try {
             request.context = 'MedicationConsumption.MarkAsMissed';
             await this._authorizer.authorize(request, response);
-            
 
             const consumptionId = await MedicationConsumptionValidator.getParam(request, 'id');
             const dto = await this._service.markAsMissed(consumptionId);
@@ -131,7 +127,6 @@ export class MedicationConsumptionController {
         try {
             request.context = 'MedicationConsumption.DeleteFutureMedicationSchedules';
             await this._authorizer.authorize(request, response);
-            
 
             const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
             const deletedCount = await this._service.deleteFutureMedicationSchedules(medicationId);
@@ -150,7 +145,7 @@ export class MedicationConsumptionController {
     //     try {
     //         request.context = 'MedicationConsumption.UpdateFutureMedicationSchedulesForTimeZone';
     //         await this._authorizer.authorize(request, response);
-    //         
+    //
 
     //         const medicationId = await MedicationConsumptionValidator.getParam(request, 'medicationId');
     //         const newTimeZone = await MedicationConsumptionValidator.getParam(request, 'newTimeZone');

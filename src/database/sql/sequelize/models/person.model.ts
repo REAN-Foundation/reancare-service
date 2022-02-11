@@ -111,7 +111,7 @@ export default class Person extends Model {
     NationalIdType: string;
 
     @HasMany(() => Address)
-    Addresses: Address[]
+    Addresses: Address[];
 
     @HasMany(() => User)
     Users: User[];

@@ -174,14 +174,14 @@ export default class Document extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    RecordDate: Date
+    RecordDate: Date;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    UploadedDate: Date
+    UploadedDate: Date;
 
     @Column
     @CreatedAt

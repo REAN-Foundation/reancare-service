@@ -58,7 +58,7 @@ export class DoctorRepo implements IDoctorRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     updateByUserId = async (userId: string, model: DoctorDomainModel): Promise<DoctorDetailsDto> => {
@@ -111,7 +111,7 @@ export class DoctorRepo implements IDoctorRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     search = async (filters: DoctorSearchFilters): Promise<DoctorSearchResults> => {
         try {
@@ -246,9 +246,12 @@ export class DoctorRepo implements IDoctorRepo {
                 const dto = await DoctorMapper.toDto(doctor);
                 dtos.push(dto);
             }
+            
+            const count = foundResults.count;
+            const totalCount = typeof count === "number" ? count : count[0];
 
             const searchResults: DoctorSearchResults = {
-                TotalCount     : foundResults.count,
+                TotalCount     : totalCount,
                 RetrievedCount : dtos.length,
                 PageIndex      : pageIndex,
                 ItemsPerPage   : limit,
@@ -263,6 +266,6 @@ export class DoctorRepo implements IDoctorRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
     
 }

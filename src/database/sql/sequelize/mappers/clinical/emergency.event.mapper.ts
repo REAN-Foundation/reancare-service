@@ -18,6 +18,6 @@ export class EmergencyEventMapper {
             EmergencyDate : emergencyEvent.EmergencyDate
         };
         return dto;
-    }
+    };
 
 }

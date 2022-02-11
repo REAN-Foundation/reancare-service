@@ -26,8 +26,7 @@ export class EmergencyContactRepo implements IEmergencyContactRepo {
                 AdditionalPhoneNumbers  : contactDomainModel.AdditionalPhoneNumbers ?? null,
             };
             const contact = await EmergencyContact.create(entity);
-            const dto = await EmergencyContactMapper.toDto(contact);
-            return dto;
+            return await EmergencyContactMapper.toDto(contact);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -36,11 +35,7 @@ export class EmergencyContactRepo implements IEmergencyContactRepo {
 
     getById = async (id: string): Promise<EmergencyContactDto> => {
         try {
-            const contact = await EmergencyContact.findOne({
-                where : {
-                    id : id
-                }
-            });
+            const contact = await EmergencyContact.findByPk(id);
             const dto = await EmergencyContactMapper.toDto(contact);
             return dto;
         } catch (error) {
@@ -96,7 +91,6 @@ export class EmergencyContactRepo implements IEmergencyContactRepo {
             if (filters.ContactRelation != null) {
                 search.where['ContactRelation'] = { [Op.like]: '%' + filters.ContactRelation + '%' };
             }
-
             let orderByColum = 'IsAvailableForEmergency';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
@@ -145,41 +139,40 @@ export class EmergencyContactRepo implements IEmergencyContactRepo {
         }
     };
 
-    update = async (id: string, contactDomainModel: EmergencyContactDomainModel): Promise<EmergencyContactDto> => {
+    update = async (id: string, updateModel: EmergencyContactDomainModel): Promise<EmergencyContactDto> => {
         try {
             const contact = await EmergencyContact.findByPk(id);
 
-            if (contactDomainModel.PatientUserId != null) {
-                contact.PatientUserId = contactDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                contact.PatientUserId = updateModel.PatientUserId;
             }
-            if (contactDomainModel.ContactPersonId != null) {
-                contact.ContactPersonId = contactDomainModel.ContactPersonId;
+            if (updateModel.ContactPersonId != null) {
+                contact.ContactPersonId = updateModel.ContactPersonId;
             }
-            if (contactDomainModel.ContactRelation != null) {
-                contact.ContactRelation = contactDomainModel.ContactRelation;
+            if (updateModel.ContactRelation != null) {
+                contact.ContactRelation = updateModel.ContactRelation;
             }
-            if (contactDomainModel.AddressId != null) {
-                contact.AddressId = contactDomainModel.AddressId;
+            if (updateModel.AddressId != null) {
+                contact.AddressId = updateModel.AddressId;
             }
-            if (contactDomainModel.OrganizationId != null) {
-                contact.OrganizationId = contactDomainModel.OrganizationId;
+            if (updateModel.OrganizationId != null) {
+                contact.OrganizationId = updateModel.OrganizationId;
             }
-            if (contactDomainModel.IsAvailableForEmergency != null) {
-                contact.IsAvailableForEmergency = contactDomainModel.IsAvailableForEmergency;
+            if (updateModel.IsAvailableForEmergency != null) {
+                contact.IsAvailableForEmergency = updateModel.IsAvailableForEmergency;
             }
-            if (contactDomainModel.TimeOfAvailability != null) {
-                contact.TimeOfAvailability = contactDomainModel.TimeOfAvailability;
+            if (updateModel.TimeOfAvailability != null) {
+                contact.TimeOfAvailability = updateModel.TimeOfAvailability;
             }
-            if (contactDomainModel.Description != null) {
-                contact.Description = contactDomainModel.Description;
+            if (updateModel.Description != null) {
+                contact.Description = updateModel.Description;
             }
-            if (contactDomainModel.AdditionalPhoneNumbers != null) {
-                contact.AdditionalPhoneNumbers = contactDomainModel.AdditionalPhoneNumbers;
+            if (updateModel.AdditionalPhoneNumbers != null) {
+                contact.AdditionalPhoneNumbers = updateModel.AdditionalPhoneNumbers;
             }
             await contact.save();
 
-            const dto = await EmergencyContactMapper.toDto(contact);
-            return dto;
+            return await EmergencyContactMapper.toDto(contact);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

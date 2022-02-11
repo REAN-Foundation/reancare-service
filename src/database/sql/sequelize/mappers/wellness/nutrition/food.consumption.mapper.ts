@@ -25,7 +25,7 @@ export class FoodConsumptionMapper {
 
         };
         return dto;
-    }
+    };
 
     static toEventDto = (
         foodConsumptionEvent: FoodConsumptionEventDto): FoodConsumptionEventDto => {
@@ -43,7 +43,7 @@ export class FoodConsumptionMapper {
 
         };
         return event;
-    }
+    };
 
     static toConsumptionForDayDto = (
         foodConsumptionEvent: FoodConsumptionForDayDto): FoodConsumptionForDayDto => {
@@ -61,6 +61,6 @@ export class FoodConsumptionMapper {
 
         };
         return eventsForDay;
-    }
+    };
 
 }

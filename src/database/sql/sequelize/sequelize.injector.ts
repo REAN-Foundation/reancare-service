@@ -12,9 +12,11 @@ import { BodyTemperatureRepo } from './repositories/clinical/biometrics/body.tem
 import { BodyWeightRepo } from './repositories/clinical/biometrics/body.weight.repo';
 import { PulseRepo } from './repositories/clinical/biometrics/pulse.repo';
 import { ComplaintRepo } from './repositories/clinical/complaint.repo';
+import { DailyAssessmentRepo } from './repositories/clinical/daily.assessment/daily.assessment.repo';
 import { DiagnosisRepo } from './repositories/clinical/diagnosis.repo';
 import { DoctorNoteRepo } from './repositories/clinical/doctor.note.repo';
 import { EmergencyEventRepo } from './repositories/clinical/emergency.event.repo';
+import { MedicalConditionRepo } from './repositories/clinical/medical.condition.repo';
 import { DrugRepo } from './repositories/clinical/medication/drug.repo';
 import { MedicationConsumptionRepo } from './repositories/clinical/medication/medication.consumption.repo';
 import { MedicationRepo } from './repositories/clinical/medication/medication.repo';
@@ -52,6 +54,12 @@ import { MeditationRepo } from './repositories/wellness/exercise/meditation.repo
 import { PhysicalActivityRepo } from './repositories/wellness/exercise/physical.activity.repo';
 import { FoodConsumptionRepo } from './repositories/wellness/nutrition/food.consumption.repo';
 import { WaterConsumptionRepo } from './repositories/wellness/nutrition/water.consumption.repo';
+import { CareplanRepo } from './repositories/clinical/careplan/careplan.repo';
+import { AssessmentRepo } from './repositories/clinical/assessment/assessment.repo';
+import { AssessmentTemplateRepo } from './repositories/clinical/assessment/assessment.template.repo';
+import { AssessmentHelperRepo } from './repositories/clinical/assessment/assessment.helper.repo';
+import { HealthPriorityRepo } from './repositories/health.priority/health.priority.repo';
+import { ActionPlanRepo } from './repositories/goal.action.plan/goal.action.plan.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -113,6 +121,15 @@ export class SequelizeInjector {
         container.register('IMedicationRepo', MedicationRepo);
         container.register('IMedicationConsumptionRepo', MedicationConsumptionRepo);
         container.register('IUserTaskRepo', UserTaskRepo);
+        container.register('IMedicalConditionRepo', MedicalConditionRepo);
+        container.register('IDailyAssessmentRepo', DailyAssessmentRepo);
+        container.register('ICareplanRepo', CareplanRepo);
+        container.register('IAssessmentRepo', AssessmentRepo);
+        container.register('IAssessmentTemplateRepo', AssessmentTemplateRepo);
+        container.register('IAssessmentHelperRepo', AssessmentHelperRepo);
+        container.register('IHealthPriorityRepo', HealthPriorityRepo);
+        container.register('IActionPlanRepo', ActionPlanRepo);
+        
     }
 
 }

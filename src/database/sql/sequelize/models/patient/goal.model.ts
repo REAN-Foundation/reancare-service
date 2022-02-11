@@ -8,12 +8,12 @@ import {
     DeletedAt,
     IsUUID,
     PrimaryKey,
-    Length,
     ForeignKey,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import User from '../user/user.model';
+import HealthPriority from '../health.priority/health.priority.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -46,44 +46,81 @@ export default class Goal extends Model {
     PatientUserId: string;
 
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
+        type      : DataType.STRING(64),
+        allowNull : false,
     })
-    CarePlanId: number;
+    ProviderEnrollmentId: string;
 
     @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
+        type      : DataType.STRING,
+        allowNull : false,
     })
-    TypeCode: number;
+    Provider: string;
 
-    @Length({ max: 512 })
     @Column({
-        type      : DataType.STRING(512),
-        allowNull : true,
+        type      : DataType.STRING(32),
+        allowNull : false,
     })
-    TypeName: string;
+    ProviderCareplanName: string;
+
+    @Column({
+        type      : DataType.STRING(32),
+        allowNull : false,
+    })
+    ProviderCareplanCode: string;
 
     @IsUUID(4)
+    @Column({
+        type      : DataType.STRING(64),
+        allowNull : true,
+    })
+    ProviderGoalCode: string;
+
+    @Column({
+        type      : DataType.STRING(64),
+        allowNull : false,
+    })
+    Title: string;
+
+    @Column({
+        type      : DataType.STRING(64),
+        allowNull : true,
+    })
+    Sequence: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => HealthPriority)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
-    GoalId: string;
+    HealthPriorityId: string;
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
-        defaultValue : false,
+        allowNull    : true,
+        defaultValue : false ,
     })
     GoalAchieved: boolean;
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
+        allowNull    : true,
         defaultValue : false ,
     })
     GoalAbandoned: boolean;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    StartedAt: Date;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    ScheduledEndDate: Date;
 
     @Column
     @CreatedAt

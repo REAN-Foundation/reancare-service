@@ -20,6 +20,6 @@ export class MedicationStockImageMapper {
         };
 
         return dto;
-    }
+    };
 
 }

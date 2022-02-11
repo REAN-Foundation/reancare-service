@@ -133,7 +133,7 @@ export class FileResourceService {
         //await this._storageService.rename(resource.DefaultVersion.StorageKey, newFileName);
         
         return await this._fileResourceRepo.rename(id, newFileName);
-    }
+    };
 
     update = async (id: string, updateModel: FileResourceUpdateModel): Promise<FileResourceDto> => {
 
@@ -142,7 +142,7 @@ export class FileResourceService {
             throw new ApiError(404, "File resource not found!");
         }
         return resource;
-    }
+    };
 
     searchAndDownload = async (filters: FileResourceSearchFilters)
         : Promise<string> => {
@@ -262,7 +262,7 @@ export class FileResourceService {
         var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
         this.cleanupDirectories(tempDownloadFolder);
         this.cleanupDirectories(tempUploadFolder);
-    }
+    };
 
     //#endregion
 
@@ -278,7 +278,7 @@ export class FileResourceService {
         await fs.promises.mkdir(downloadFolderPath, { recursive: true });
 
         return downloadFolderPath;
-    }
+    };
 
     private async uploadDefaultVersion(domainModel: FileResourceUploadDomainModel) {
 
@@ -353,7 +353,7 @@ export class FileResourceService {
             return true;
         }
         return false;
-    }
+    };
 
     private generateNewVersionIdentifier = async (ResourceId: string): Promise<string> => {
 
@@ -365,7 +365,7 @@ export class FileResourceService {
             versionName = count.toString();
         }
         return versionName;
-    }
+    };
 
     private generateImageVersions = async (domainModel: FileResourceUploadDomainModel)
         : Promise<FileResourceMetadata[]> => {
@@ -427,7 +427,7 @@ export class FileResourceService {
         metadataList.push(previewMetadata);
 
         return metadataList;
-    }
+    };
 
     //#endregion
 

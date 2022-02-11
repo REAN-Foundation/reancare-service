@@ -1,22 +1,14 @@
+import { BaseSearchFilters, BaseSearchResults } from "../../../domain.types/miscellaneous/base.search.types";
 import { KnowledgeNuggetDto } from "./knowledge.nugget.dto";
 
 //////////////////////////////////////////////////////////////////////
 
-export interface KnowledgeNuggetSearchFilters {
+export interface KnowledgeNuggetSearchFilters extends BaseSearchFilters{
     TopicName?: string;
-    Tag?: string;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+    Tag?      : string;
+
 }
 
-export interface KnowledgeNuggetSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface KnowledgeNuggetSearchResults extends BaseSearchResults{
     Items: KnowledgeNuggetDto[];
 }

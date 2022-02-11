@@ -33,6 +33,6 @@ export class SymptomMapper {
         };
         
         return dto;
-    }
+    };
 
 }

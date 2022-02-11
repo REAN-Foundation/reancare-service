@@ -64,7 +64,7 @@ export default class WaterConsumption extends Model {
         type      : DataType.DATE,
         allowNull : false,
     })
-    Time: Date
+    Time: Date;
 
     @Column
     @CreatedAt

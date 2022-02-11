@@ -19,6 +19,6 @@ export class OtpMapper {
             Utilized  : otp.Utilized,
         };
         return dto;
-    }
+    };
 
 }

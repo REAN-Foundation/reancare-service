@@ -24,7 +24,7 @@ export class UserMapper {
             Role            : null
         };
         return dto;
-    }
+    };
 
     toDto = (user: User, personDto: PersonDto) => {
 
@@ -39,6 +39,6 @@ export class UserMapper {
             DefaultTimeZone : user.DefaultTimeZone
         };
         return dto;
-    }
+    };
 
 }

@@ -22,7 +22,7 @@ export class BloodGlucoseController extends BaseController {
 
     }
 
-    //#endregion
+    //#endregion.
 
     //#region Action methods
 
@@ -73,12 +73,12 @@ export class BloodGlucoseController extends BaseController {
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
-            
+
             const message =
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} blood glucose records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
                 BloodGlucoseRecords : searchResults });
 
@@ -117,10 +117,18 @@ export class BloodGlucoseController extends BaseController {
             await this.setContext('Biometrics.BloodGlucose.Delete', request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
+
+
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Blood glucose record not found.');
             }
+
+
+
+
+
+
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
@@ -128,9 +136,19 @@ export class BloodGlucoseController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Blood glucose record deleted successfully!', 200, {
+
                 Deleted : true,
             });
+
+
+
+
         } catch (error) {
+
+
+
+
+
             ResponseHandler.handleError(request, response, error);
         }
     };

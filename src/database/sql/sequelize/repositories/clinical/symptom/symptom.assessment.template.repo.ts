@@ -23,7 +23,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
                 Tags        : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
             };
             const template = await SymptomAssessmentTemplate.create(entity);
-            return await SymptomAssessmentTemplateMapper.toDto(template);
+            return SymptomAssessmentTemplateMapper.toDto(template);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -44,7 +44,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
                 ]
             });
 
-            return await SymptomAssessmentTemplateMapper.toDto(template);
+            return SymptomAssessmentTemplateMapper.toDto(template);
 
         } catch (error) {
             Logger.instance().log(error.message);

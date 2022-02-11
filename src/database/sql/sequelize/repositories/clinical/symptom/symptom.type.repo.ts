@@ -22,7 +22,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
                 ImageResourceId : model.ImageResourceId ?? null,
             };
             const symptom = await SymptomType.create(entity);
-            return await SymptomTypeMapper.toDto(symptom);
+            return SymptomTypeMapper.toDto(symptom);
             
         } catch (error) {
             Logger.instance().log(error.message);
@@ -33,7 +33,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
     getById = async (id: string): Promise<SymptomTypeDto> => {
         try {
             const symptomType = await SymptomType.findByPk(id);
-            return await SymptomTypeMapper.toDto(symptomType);
+            return SymptomTypeMapper.toDto(symptomType);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -47,7 +47,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
                     Symptom : { [Op.like]: '%' + name + '%' }
                 }
             });
-            return await SymptomTypeMapper.toDto(symptomType);
+            return SymptomTypeMapper.toDto(symptomType);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -135,7 +135,7 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
             }
 
             await symptomType.save();
-            return await SymptomTypeMapper.toDto(symptomType);
+            return SymptomTypeMapper.toDto(symptomType);
 
         } catch (error) {
             Logger.instance().log(error.message);

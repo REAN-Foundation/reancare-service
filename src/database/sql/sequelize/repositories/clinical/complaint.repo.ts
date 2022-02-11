@@ -23,8 +23,7 @@ export class ComplaintRepo implements IComplaintRepo {
                 RecordDate                : complaintDomainModel.RecordDate ?? null
             };
             const complaint = await Complaint.create(entity);
-            const dto = await ComplaintMapper.toDto(complaint);
-            return dto;
+            return await ComplaintMapper.toDto(complaint);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -34,8 +33,7 @@ export class ComplaintRepo implements IComplaintRepo {
     getById = async (id: string): Promise<ComplaintDto> => {
         try {
             const complaint = await Complaint.findByPk(id);
-            const dto = await ComplaintMapper.toDto(complaint);
-            return dto;
+            return await ComplaintMapper.toDto(complaint);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -65,35 +63,34 @@ export class ComplaintRepo implements IComplaintRepo {
         }
     };
 
-    update = async (id: string, complaintDomainModel: ComplaintDomainModel): Promise<ComplaintDto> => {
+    update = async (id: string, updateModel: ComplaintDomainModel): Promise<ComplaintDto> => {
         try {
             const complaint = await Complaint.findByPk(id);
 
-            if (complaintDomainModel.PatientUserId != null) {
-                complaint.PatientUserId = complaintDomainModel.PatientUserId;
+            if (updateModel.PatientUserId != null) {
+                complaint.PatientUserId = updateModel.PatientUserId;
             }
-            if (complaintDomainModel.MedicalPractitionerUserId != null) {
-                complaint.MedicalPractitionerUserId = complaintDomainModel.MedicalPractitionerUserId;
+            if (updateModel.MedicalPractitionerUserId != null) {
+                complaint.MedicalPractitionerUserId = updateModel.MedicalPractitionerUserId;
             }
-            if (complaintDomainModel.VisitId != null) {
-                complaint.VisitId = complaintDomainModel.VisitId;
+            if (updateModel.VisitId != null) {
+                complaint.VisitId = updateModel.VisitId;
             }
-            if (complaintDomainModel.EhrId != null) {
-                complaint.EhrId = complaintDomainModel.EhrId;
+            if (updateModel.EhrId != null) {
+                complaint.EhrId = updateModel.EhrId;
             }
-            if (complaintDomainModel.Complaint != null) {
-                complaint.Complaint = complaintDomainModel.Complaint;
+            if (updateModel.Complaint != null) {
+                complaint.Complaint = updateModel.Complaint;
             }
-            if (complaintDomainModel.Severity != null) {
-                complaint.Severity = complaintDomainModel.Severity;
+            if (updateModel.Severity != null) {
+                complaint.Severity = updateModel.Severity;
             }
-            if (complaintDomainModel.RecordDate != null) {
-                complaint.RecordDate = complaintDomainModel.RecordDate;
+            if (updateModel.RecordDate != null) {
+                complaint.RecordDate = updateModel.RecordDate;
             }
             await complaint.save();
 
-            const dto = await ComplaintMapper.toDto(complaint);
-            return dto;
+            return await ComplaintMapper.toDto(complaint);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

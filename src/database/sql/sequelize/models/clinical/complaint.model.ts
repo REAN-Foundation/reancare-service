@@ -91,7 +91,7 @@ export default class Complaint extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    RecordDate: Date
+    RecordDate: Date;
 
     @Column
     @CreatedAt

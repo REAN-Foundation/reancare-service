@@ -273,7 +273,7 @@ export class OrganizationRepo implements IOrganizationRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
     
     removeAddress = async (id: string, addressId: string): Promise<boolean> => {
         try {
@@ -288,7 +288,7 @@ export class OrganizationRepo implements IOrganizationRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getAddresses = async (id: string): Promise<AddressDto[]> => {
 

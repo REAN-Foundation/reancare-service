@@ -14,6 +14,6 @@ export class RoleMapper {
             RoleName : role.RoleName
         };
         return dto;
-    }
+    };
 
 }

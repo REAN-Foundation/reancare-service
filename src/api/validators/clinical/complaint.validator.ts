@@ -1,13 +1,16 @@
 import express from 'express';
-import { body, param, validationResult } from 'express-validator';
-import { Helper } from '../../../common/helper';
 import { ComplaintDomainModel } from '../../../domain.types/clinical/complaint/complaint.domain.model';
+import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ComplaintValidator {
+export class ComplaintValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): ComplaintDomainModel => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = (request: express.Request): ComplaintDomainModel => {
 
         const complaintModel: ComplaintDomainModel = {
             PatientUserId             : request.body.PatientUserId ?? null,
@@ -22,91 +25,48 @@ export class ComplaintValidator {
         return complaintModel;
     };
 
-    static create = async (request: express.Request): Promise<ComplaintDomainModel> => {
-        await ComplaintValidator.validateBody(request);
-        return ComplaintValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<ComplaintDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await ComplaintValidator.getParamId(request);
+    search = async (request: express.Request): Promise<string> => {
+        return await this.getParamUuid(request, 'id');
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await ComplaintValidator.getParamId(request);
-    };
+    update = async (request: express.Request): Promise<ComplaintDomainModel> => {
 
-    static search = async (request: express.Request): Promise<string> => {
-        return await ComplaintValidator.getParamId(request);
-    };
-
-    static update = async (request: express.Request): Promise<ComplaintDomainModel> => {
-
-        const id = await ComplaintValidator.getParamId(request);
-        await ComplaintValidator.validateBody(request);
-
-        const domainModel = ComplaintValidator.getDomainModel(request);
-        domainModel.id = id;
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
 
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private async validateCreateBody(request) {
 
-        await body('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateUuid(request, 'MedicalPractitionerUserId', Where.Body, true, false);
+        await this.validateUuid(request, 'VisitId', Where.Body, true, false);
+        await this.validateUuid(request, 'EhrId', Where.Body, true, false);
+        await this.validateString(request, 'Complaint', Where.Body, true, false);
+        await this.validateString(request, 'Severity', Where.Body, true, false);
+        await this.validateDate(request, 'RecordDate', Where.Body, false, false);
 
-        await body('MedicalPractitionerUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('VisitId').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('EhrId').exists()
-            .trim()
-            .run(request);
-
-        await body('Complaint').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Severity').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('RecordDate').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
     }
 
-    private static async getParamId(request) {
+    private async validateUpdateBody(request) {
 
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'MedicalPractitionerUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'VisitId', Where.Body, false, false);
+        await this.validateUuid(request, 'EhrId', Where.Body, false, false);
+        await this.validateString(request, 'Complaint', Where.Body, false, false);
+        await this.validateString(request, 'Severity', Where.Body, false, false);
+        await this.validateDate(request, 'RecordDate', Where.Body, false, false);
 
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+        this.validateRequest(request);
     }
 
 }

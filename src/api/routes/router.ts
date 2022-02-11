@@ -11,9 +11,11 @@ import { register as registerBodyTemperatureRoutes } from './clinical/biometrics
 import { register as registerBodyWeightRoutes } from './clinical/biometrics/body.weight.routes';
 import { register as registerBiometricsPulse } from './clinical/biometrics/pulse.routes';
 import { register as registerComplaintRoutes } from './clinical/complaint.routes';
+import { register as registerDailyAssessmentRoutes } from './clinical/daily.assessment/daily.assessment.routes';
 import { register as registerDiagnosisRoutes } from './clinical/diagnosis.routes';
 import { register as registerDoctorNoteRoutes } from './clinical/doctor.note.routes';
 import { register as registerEmergencyEventRoutes } from './clinical/emergency.event.routes';
+import { register as registerMedicalConditionRoutes } from './clinical/medical.condition.routes';
 import { register as registerDrugRoutes } from './clinical/medication/drug.routes';
 import { register as registerMedicationConsumptionRoutes } from './clinical/medication/medication.consumption.routes';
 import { register as registerMedicationRoutes } from './clinical/medication/medication.routes';
@@ -46,6 +48,11 @@ import { register as registerMeditationtRoutes } from './wellness/exercise/medit
 import { register as registerPhysicalActivityRoutes } from './wellness/exercise/physical.activity.routes';
 import { register as registerNutritionFoodConsumptionRoutes } from './wellness/nutrition/food.consumption.routes';
 import { register as registerWaterConsumptionRoutes } from './wellness/nutrition/water.consumption.routes';
+import { register as registerCareplanRoutes } from './clinical/careplan/careplan.routes';
+import { register as registerAssessmentRoutes } from './clinical/assessment/assessment.routes';
+import { register as registerAssessmentTemplateRoutes } from './clinical/assessment/assessment.template.routes';
+import { register as registerHealthPriorityRoutes } from './health.priority/health.priority.routes';
+import { register as registerActionPlanRoutes } from './goal.action.plan/goal.action.plan.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -116,6 +123,13 @@ export class Router {
                 registerMedicationRoutes(this._app);
                 registerMedicationConsumptionRoutes(this._app);
                 registerUserTaskRoutes(this._app);
+                registerMedicalConditionRoutes(this._app);
+                registerDailyAssessmentRoutes(this._app);
+                registerCareplanRoutes(this._app);
+                registerAssessmentRoutes(this._app);
+                registerAssessmentTemplateRoutes(this._app);
+                registerHealthPriorityRoutes(this._app);
+                registerActionPlanRoutes(this._app);
 
                 resolve(true);
 

@@ -8,10 +8,12 @@ export interface IGoalRepo {
 
     getById(id: string): Promise<GoalDto>;
 
+    getSelectedGoals(patientUserId: string): Promise<GoalDto[]>;
+
     search(filters: GoalSearchFilters): Promise<GoalSearchResults>;
 
     update(id: string, contactDomainModel: GoalDomainModel): Promise<GoalDto>;
 
     delete(id: string): Promise<boolean>;
-
+    
 }

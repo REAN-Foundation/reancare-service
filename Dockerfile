@@ -1,4 +1,4 @@
-FROM node:14.17-alpine AS builder
+FROM node:14.17-alpine3.13 AS builder
 ADD . /app
 RUN apk add bash
 RUN apk add --no-cache \
@@ -19,7 +19,7 @@ RUN npm run build
 
 # RUN npm run build
 
-FROM node:14.17-alpine
+FROM node:14.17-alpine3.13
 RUN apk add bash
 RUN apk add --no-cache \
         python3 \
@@ -29,6 +29,8 @@ RUN apk add --no-cache \
         awscli \
     && rm -rf /var/cache/apk/*
 RUN apk add --update alpine-sdk
+RUN apk update
+RUN apk upgrade
 ADD . /app
 WORKDIR /app
 

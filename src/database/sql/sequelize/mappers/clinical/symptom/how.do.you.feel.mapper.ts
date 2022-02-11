@@ -17,9 +17,9 @@ export class HowDoYouFeelMapper {
             PatientUserId : howDoYouFeel.PatientUserId,
             Feeling       : howDoYouFeel.Feeling as SymptomsProgress,
             Comments      : howDoYouFeel.Comments,
-            RecordDate    : new Date(howDoYouFeel.RecordDate),
+            RecordDate    : howDoYouFeel.RecordDate,
         };
         return dto;
-    }
+    };
 
 }

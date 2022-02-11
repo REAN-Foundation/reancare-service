@@ -103,7 +103,7 @@ export default class SharedDocumentDetails extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    SharedDate: Date
+    SharedDate: Date;
 
     @Column
     @CreatedAt

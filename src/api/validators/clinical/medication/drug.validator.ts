@@ -1,14 +1,17 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../../common/helper';
 import { DrugDomainModel } from '../../../../domain.types/clinical/medication/drug/drug.domain.model';
 import { DrugSearchFilters } from '../../../../domain.types/clinical/medication/drug/drug.search.types';
+import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DrugValidator {
+export class DrugValidator extends BaseValidator{
 
-    static getDomainModel = (request: express.Request): DrugDomainModel => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = (request: express.Request): DrugDomainModel => {
 
         const DrugModel: DrugDomainModel = {
             DrugName             : request.body.DrugName,
@@ -24,139 +27,63 @@ export class DrugValidator {
         return DrugModel;
     };
 
-    static create = async (request: express.Request): Promise<DrugDomainModel> => {
-        await DrugValidator.validateBody(request);
-        return DrugValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<DrugDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await DrugValidator.getParamId(request);
+    search = async (request: express.Request): Promise<DrugSearchFilters> => {
+
+        await this.validateString(request, 'name', Where.Query, false, false);
+
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+
+        return this.getFilter(request);
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await DrugValidator.getParamId(request);
-    };
+    update = async (request: express.Request): Promise<DrugDomainModel> => {
 
-    static search = async (request: express.Request): Promise<DrugSearchFilters> => {
-
-        await query('name').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return DrugValidator.getFilter(request);
-    };
-
-    static update = async (request: express.Request): Promise<DrugDomainModel> => {
-
-        const id = await DrugValidator.getParamId(request);
-        await DrugValidator.validateBody(request);
-
-        const domainModel = DrugValidator.getDomainModel(request);
-        domainModel.id = id;
-
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private  async validateCreateBody(request) {
 
-        await body('DrugName').optional()
-            .trim()
-            .escape()
-            .run(request);
+        await this.validateString(request, 'DrugName', Where.Body, true, true);
+        await this.validateString(request, 'GenericName', Where.Body, true, false);
+        await this.validateString(request, 'Ingredients', Where.Body, true, false);
+        await this.validateString(request, 'Strength', Where.Body, true, false);
+        await this.validateString(request, 'OtherCommercialNames', Where.Body, true, true);
+        await this.validateString(request, 'Manufacturer', Where.Body, true, false);
+        await this.validateString(request, 'OtherInformation', Where.Body, true, false);
 
-        await body('GenericName').optional()
-            .trim()
-            .escape()
-            .run(request);
+        this.validateRequest(request);
+    }
+    
+    private  async validateUpdateBody(request) {
 
-        await body('Ingredients').optional()
-            .trim()
-            .escape()
-            .run(request);
+        await this.validateString(request, 'DrugName', Where.Body, false, false);
+        await this.validateString(request, 'GenericName', Where.Body, false, false);
+        await this.validateString(request, 'Ingredients', Where.Body, false, false);
+        await this.validateString(request, 'Strength', Where.Body, false, false);
+        await this.validateString(request, 'OtherCommercialNames', Where.Body, false, true);
+        await this.validateString(request, 'Manufacturer', Where.Body, false, false);
+        await this.validateString(request, 'OtherInformation', Where.Body, false, false);
 
-        await body('Strength').optional()
-            .trim()
-            .escape()
-            .run(request);
+        this.validateRequest(request);
+    }
 
-        await body('OtherCommercialNames').optional()
-            .trim()
-            .escape()
-            .run(request);
+    private getFilter(request): DrugSearchFilters {
         
-        await body('Manufacturer').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('OtherInformation').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-    }
-
-    private static getFilter(request): DrugSearchFilters {
-        const pageIndex = request.query.PageIndex !== 'undefined' ? parseInt(request.query.PageIndex as string, 10) : 0;
-
-        const itemsPerPage =
-            request.query.ItemsPerPage !== 'undefined' ? parseInt(request.query.ItemsPerPage as string, 10) : 25;
-
-        const filters: DrugSearchFilters = {
-            Name         : request.query.name ?? null,
-            OrderBy      : request.query.orderBy ?? 'CreatedAt',
-            Order        : request.query.order ?? 'descending',
-            PageIndex    : pageIndex,
-            ItemsPerPage : itemsPerPage,
+        var filters: DrugSearchFilters = {
+            Name : request.query.name ?? null,
         };
-        return filters;
-    }
 
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

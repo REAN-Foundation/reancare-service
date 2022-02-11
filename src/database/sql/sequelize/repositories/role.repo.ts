@@ -45,7 +45,7 @@ export class RoleRepo implements IRoleRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     delete = async (id: number): Promise<boolean> => {
         try {

@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IHowDoYouFeelRepo } from "../../../database/repository.interfaces/clinical/symptom/how.do.you.feel.repo.interface";
 import { HowDoYouFeelDomainModel } from '../../../domain.types/clinical/symptom/how.do.you.feel/how.do.you.feel.domain.model';
@@ -17,7 +18,7 @@ export class HowDoYouFeelService {
         return await this._howDoYouFeelRepo.create(howDoYouFeelDomainModel);
     };
 
-    getById = async (id: string): Promise<HowDoYouFeelDto> => {
+    getById = async (id: uuid): Promise<HowDoYouFeelDto> => {
         return await this._howDoYouFeelRepo.getById(id);
     };
 
@@ -25,11 +26,11 @@ export class HowDoYouFeelService {
         return await this._howDoYouFeelRepo.search(filters);
     };
 
-    update = async (id: string, howDoYouFeelDomainModel: HowDoYouFeelDomainModel): Promise<HowDoYouFeelDto> => {
+    update = async (id: uuid, howDoYouFeelDomainModel: HowDoYouFeelDomainModel): Promise<HowDoYouFeelDto> => {
         return await this._howDoYouFeelRepo.update(id, howDoYouFeelDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._howDoYouFeelRepo.delete(id);
     };
 

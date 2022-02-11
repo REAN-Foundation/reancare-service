@@ -1,14 +1,17 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../common/helper';
 import { KnowledgeNuggetDomainModel } from '../../../domain.types/educational/knowledge.nugget/knowledge.nugget.domain.model';
 import { KnowledgeNuggetSearchFilters } from '../../../domain.types/educational/knowledge.nugget/knowledge.nugget.search.types';
+import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class KnowledgeNuggetValidator {
+export class KnowledgeNuggetValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): KnowledgeNuggetDomainModel => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = (request: express.Request): KnowledgeNuggetDomainModel => {
 
         const KnowledgeNuggetModel: KnowledgeNuggetDomainModel = {
             TopicName           : request.body.TopicName ?? null,
@@ -21,145 +24,62 @@ export class KnowledgeNuggetValidator {
         return KnowledgeNuggetModel;
     };
 
-    static create = async (request: express.Request): Promise<KnowledgeNuggetDomainModel> => {
-        await KnowledgeNuggetValidator.validateBody(request);
-        return KnowledgeNuggetValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<KnowledgeNuggetDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await KnowledgeNuggetValidator.getParamId(request);
+    search = async (request: express.Request): Promise<KnowledgeNuggetSearchFilters> => {
+
+        await this.validateString(request, 'topicName', Where.Query, false, false, true);
+        await this.validateString(request, 'tag', Where.Query, false, false, true);
+        
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+
+        return this.getFilter(request);
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await KnowledgeNuggetValidator.getParamId(request);
-    };
+    update = async (request: express.Request): Promise<KnowledgeNuggetDomainModel> => {
 
-    static search = async (request: express.Request): Promise<KnowledgeNuggetSearchFilters> => {
-
-        await query('TopicName').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('Tag').optional()
-            .trim()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return KnowledgeNuggetValidator.getFilter(request);
-    };
-
-    static update = async (request: express.Request): Promise<KnowledgeNuggetDomainModel> => {
-
-        const id = await KnowledgeNuggetValidator.getParamId(request);
-        await KnowledgeNuggetValidator.validateBody(request);
-
-        const domainModel = KnowledgeNuggetValidator.getDomainModel(request);
-        domainModel.id = id;
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
 
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private async validateCreateBody(request) {
 
-        await body('TopicName').optional()
-            .trim()
-            .escape()
-            .run(request);
+        await this.validateString(request, 'TopicName', Where.Body, false, false);
+        await this.validateString(request, 'BriefInformation', Where.Body, false, false);
+        await this.validateString(request, 'DetailedInformation', Where.Body, false, false);
+        await this.validateString(request, 'AdditionalResources', Where.Body, false, false);
+        await this.validateString(request, 'Tags', Where.Body, false, false);
 
-        await body('BriefInformation').optional()
-            .trim()
-            .run(request);
-
-        await body('DetailedInformation').optional()
-            .trim()
-            .run(request);
-
-        await body('AdditionalResources').optional()
-            .isArray()
-            .run(request);
-
-        await body('Tags').optional()
-            .isArray()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
     }
 
-    private static getFilter(request): KnowledgeNuggetSearchFilters {
-        const pageIndex = request.query.PageIndex !== 'undefined' ? parseInt(request.query.PageIndex as string, 10) : 0;
+    private async validateUpdateBody(request) {
 
-        const itemsPerPage =
-            request.query.ItemsPerPage !== 'undefined' ? parseInt(request.query.ItemsPerPage as string, 10) : 25;
+        await this.validateString(request, 'TopicName', Where.Body, false, false);
+        await this.validateString(request, 'BriefInformation', Where.Body, false, false);
+        await this.validateString(request, 'DetailedInformation', Where.Body, false, false);
+        await this.validateString(request, 'AdditionalResources', Where.Body, false, false);
+        await this.validateString(request, 'Tags', Where.Body, false, false);
 
-        const filters: KnowledgeNuggetSearchFilters = {
-            TopicName    : request.query.topicName ?? null,
-            Tag          : request.query.tag ?? null,
-            OrderBy      : request.query.orderBy ?? 'CreatedAt',
-            Order        : request.query.order ?? 'descending',
-            PageIndex    : pageIndex,
-            ItemsPerPage : itemsPerPage,
+        this.validateRequest(request);
+    }
+
+    private getFilter(request): KnowledgeNuggetSearchFilters {
+
+        var filters: KnowledgeNuggetSearchFilters = {
+            TopicName : request.query.topicName ?? null,
+            Tag       : request.query.tag ?? null,
+
         };
-        return filters;
-    }
-
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
-    }
-
-    static async getPatientUserId(request) {
-
-        await param('patientUserId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.patientUserId;
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

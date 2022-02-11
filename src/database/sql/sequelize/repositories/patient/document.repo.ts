@@ -44,7 +44,7 @@ export class DocumentRepo implements IDocumentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getById = async (id: string): Promise<DocumentDto> => {
         try {
@@ -123,7 +123,7 @@ export class DocumentRepo implements IDocumentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getSharedDocument = async (key: string): Promise<SharedDocumentDetailsDto> => {
         try {
@@ -133,7 +133,7 @@ export class DocumentRepo implements IDocumentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     share = async (model: SharedDocumentDetailsDomainModel): Promise<SharedDocumentDetailsDto> => {
         try {
@@ -157,7 +157,7 @@ export class DocumentRepo implements IDocumentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     rename = async (id: string, newName: string): Promise<DocumentDto> => {
         try {
@@ -169,7 +169,7 @@ export class DocumentRepo implements IDocumentRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     search = async (filters: DocumentSearchFilters): Promise<DocumentSearchResults> => {
         try {

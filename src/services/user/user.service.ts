@@ -214,7 +214,7 @@ export class UserService {
             exists = await this._userRepo.userExistsWithUsername(userName);
         }
         return userName;
-    }
+    };
     
     public generateUserDisplayId = async (role:Roles, phone, phoneCount = 0) => {
 
@@ -260,7 +260,7 @@ export class UserService {
     
         const displayId = prefix + str;
         return displayId;
-    }
+    };
 
     getDateInUserTimeZone = async(userId, dateStr: string, useCurrent = true) => {
 
@@ -280,7 +280,7 @@ export class UserService {
 
         var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
         return TimeHelper.strToUtc(str, offsetMinutes);
-    }
+    };
 
     //#endregion
 

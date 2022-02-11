@@ -20,6 +20,6 @@ export class PulseMapper {
             RecordedByUserId : pulse.RecordedByUserId
         };
         return dto;
-    }
+    };
 
 }

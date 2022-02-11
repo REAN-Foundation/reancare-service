@@ -10,15 +10,16 @@ export class HeartPointsMapper {
             return null;
         }
 
+        var points = typeof heartPoint.HeartPoints === 'string' ? parseInt(heartPoint.HeartPoints) : heartPoint.HeartPoints;
+
         const dto: HeartPointsDto = {
             id            : heartPoint.id,
-            PersonId      : heartPoint.PersonId,
             PatientUserId : heartPoint.PatientUserId,
-            HeartPoints   : heartPoint.HeartPoints,
+            HeartPoints   : points,
             Unit          : heartPoint.Unit,
-            Person        : null
+            RecordDate    : heartPoint.RecordDate,
         };
         return dto;
-    }
+    };
 
 }

@@ -1,146 +1,87 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../../common/helper';
 import { SleepDomainModel } from '../../../../domain.types/wellness/daily.records/sleep/sleep.domain.model';
 import { SleepSearchFilters } from '../../../../domain.types/wellness/daily.records/sleep/sleep.search.types';
+import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SleepValidator {
+export class SleepValidator extends BaseValidator{
 
-    static getDomainModel = (request: express.Request): SleepDomainModel => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = (request: express.Request): SleepDomainModel => {
 
         const sleepModel: SleepDomainModel = {
             PatientUserId : request.body.PatientUserId ?? null,
-            SleepDuration : request.body.SleepDuration ?? 0,
-            RecordDate    : request.body.RecordDate ?? null,
-            Unit          : request.body.Unit ?? 'hrs',
+            SleepDuration : request.body.SleepDuration ?? null,
+            RecordDate    : request.body.RecordDate ?? new Date(),
+            Unit          : request.body.Unit,
         };
 
         return sleepModel;
     };
 
-    static create = async (request: express.Request): Promise<SleepDomainModel> => {
-        await SleepValidator.validateBody(request);
-        return SleepValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<SleepDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await SleepValidator.getParamId(request);
+    search = async (request: express.Request): Promise<SleepSearchFilters> => {
+
+        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
+        await this.validateInt(request, 'minValue', Where.Query, false, false);
+        await this.validateInt(request, 'maxValue', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
+
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+
+        return this.getFilter(request);
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await SleepValidator.getParamId(request);
-    };
+    update = async (request: express.Request): Promise<SleepDomainModel> => {
 
-    static search = async (request: express.Request): Promise<SleepSearchFilters> => {
-
-        await query('patientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('sleepDuration').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
-
-        await query('recordDate').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        await query('unit').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return SleepValidator.getFilter(request);
-    };
-
-    static update = async (request: express.Request): Promise<SleepDomainModel> => {
-
-        const id = await SleepValidator.getParamId(request);
-        await SleepValidator.validateBody(request);
-
-        const domainModel = SleepValidator.getDomainModel(request);
-        domainModel.id = id;
-
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private  async validateCreateBody(request) {
 
-        await body('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateInt(request, 'SleepDuration', Where.Body, true, false);
+        await this.validateString(request, 'Unit', Where.Body, false, true);
+        await this.validateDate(request, 'RecordDate', Where.Body, false, true);
 
-        await body('SleepDuration').optional()
-            .trim()
-            .escape()
-            .isDecimal()
-            .run(request);
+        this.validateRequest(request);
+    }
+    
+    private  async validateUpdateBody(request) {
 
-        await body('RecordDate').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        await body('Unit').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateInt(request, 'SleepDuration', Where.Body, false, false);
+        await this.validateString(request, 'Unit', Where.Body, false, false);
+        await this.validateDate(request, 'RecordDate', Where.Body, false, false);
+    
+        this.validateRequest(request);
     }
 
-    private static getFilter(request): SleepSearchFilters {
-        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
-
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
-
-        const filters: SleepSearchFilters = {
+    private getFilter(request): SleepSearchFilters {
+        
+        var filters: SleepSearchFilters = {
             PatientUserId   : request.query.patientUserId ?? null,
             MinValue        : request.query.minValue ?? null,
             MaxValue        : request.query.maxValue ?? null,
             CreatedDateFrom : request.query.createdDateFrom ?? null,
             CreatedDateTo   : request.query.createdDateTo ?? null,
-            OrderBy         : request.query.orderBy ?? 'CreatedAt',
-            Order           : request.query.order ?? 'descending',
-            PageIndex       : pageIndex,
-            ItemsPerPage    : itemsPerPage,
         };
-        return filters;
-    }
 
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

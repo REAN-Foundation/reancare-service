@@ -184,8 +184,16 @@ export class MedicationValidator {
             .trim()
             .run(request);
 
+        if (
+            request.body.ImageResourceId === "" ||
+            request.body.ImageResourceId === null ||
+            request.body.ImageResourceId === undefined
+        ) {
+            delete request.body.ImageResourceId;
+        }
         await body('ImageResourceId').optional()
             .trim()
+            .escape()
             .isUUID()
             .run(request);
 

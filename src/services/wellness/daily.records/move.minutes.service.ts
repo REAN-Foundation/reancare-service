@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IMoveMinutesRepo } from "../../../database/repository.interfaces/wellness/daily.records/move.minutes.repo.interface";
 import { MoveMinutesDomainModel } from '../../../domain.types/wellness/daily.records/move.minutes/move.minutes.domain.model';
@@ -18,7 +19,7 @@ export class MoveMinutesService {
         return await this._moveMinutesRepo.create(moveMinutesDomainModel);
     };
 
-    getById = async (id: string): Promise<MoveMinutesDto> => {
+    getById = async (id: uuid): Promise<MoveMinutesDto> => {
         return await this._moveMinutesRepo.getById(id);
     };
 
@@ -26,12 +27,12 @@ export class MoveMinutesService {
         return await this._moveMinutesRepo.search(filters);
     };
 
-    update = async (id: string, moveMinutesDomainModel: MoveMinutesDomainModel):
+    update = async (id: uuid, moveMinutesDomainModel: MoveMinutesDomainModel):
     Promise<MoveMinutesDto> => {
         return await this._moveMinutesRepo.update(id, moveMinutesDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._moveMinutesRepo.delete(id);
     };
 

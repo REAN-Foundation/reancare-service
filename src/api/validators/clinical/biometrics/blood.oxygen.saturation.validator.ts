@@ -60,7 +60,7 @@ export class BloodOxygenSaturationValidator extends BaseValidator {
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
         await this.validateInt(request, 'BloodOxygenSaturation', Where.Body, true, true);
         await this.validateString(request, 'Unit', Where.Body, false, true);
-        await this.validateDate(request, 'RecordDate', Where.Body, true, false);
+        await this.validateDate(request, 'RecordDate', Where.Body, false, false);
         await this.validateUuid(request, 'RecordedByUserId', Where.Body, false, true);
         
         this.validateRequest(request);

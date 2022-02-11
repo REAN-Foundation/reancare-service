@@ -47,7 +47,7 @@ export class SymptomAssessmentTemplateMapper {
         };
 
         return dto;
-    }
+    };
 
     static toTemplateSymptomTypesDtos =
         (symptomTypes: SymptomTypesInTemplate[]): TemplateSymptomTypesDto[] => {
@@ -61,6 +61,6 @@ export class SymptomAssessmentTemplateMapper {
                 };
                 return d;
             });
-        }
+        };
 
 }

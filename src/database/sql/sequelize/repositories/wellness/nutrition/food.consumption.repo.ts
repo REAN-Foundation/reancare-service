@@ -279,7 +279,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         });
 
         return totalCalories;
-    }
+    };
 
     private static calculateEventStartTime = async (foods: FoodConsumptionDomainModel[]): Promise<Date> => {
         let startTime = foods[0] ? foods[0].StartTime : null;
@@ -290,7 +290,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         });
 
         return startTime;
-    }
+    };
 
     private static calculateEventEndTime = async (foods: FoodConsumptionDomainModel[]): Promise<Date> => {
         let endTime = foods[0] ? foods[0].EndTime : null;
@@ -301,7 +301,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         });
 
         return endTime;
-    }
+    };
 
     private static calculateEventDuration = async (foods: FoodConsumptionDomainModel[]): Promise<number> => {
 
@@ -314,7 +314,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
 
         return duration;
-    }
+    };
 
     private static calculateTotalCaloriesForDay = async (events: FoodConsumptionEventDto[]): Promise<number> => {
         let totalCalories = 0;
@@ -323,7 +323,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         });
 
         return totalCalories;
-    }
+    };
 
     private static calculateStartTimeForDay = async (events: FoodConsumptionEventDto[]): Promise<Date> => {
         let startTime = events[0] ? events[0].StartTime : null;
@@ -334,7 +334,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         });
 
         return startTime;
-    }
+    };
 
     private static calculateEndTimeForDay = async (events: FoodConsumptionEventDto[]): Promise<Date> => {
         let endTime = events[0] ? events[0].EndTime : null;
@@ -345,7 +345,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         });
 
         return endTime;
-    }
+    };
 
     private static calculateDurationForDay = async (events: FoodConsumptionEventDto[]): Promise<number> => {
         const startTime = await FoodConsumptionRepo.calculateStartTimeForDay(events);
@@ -357,6 +357,6 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
 
         return duration;
-    }
+    };
 
 }

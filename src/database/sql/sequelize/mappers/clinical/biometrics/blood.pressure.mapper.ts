@@ -21,6 +21,6 @@ export class BloodPressureMapper {
             RecordedByUserId : bloodPressure.RecordedByUserId
         };
         return dto;
-    }
+    };
 
 }

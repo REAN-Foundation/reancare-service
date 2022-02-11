@@ -76,7 +76,7 @@ export class OrganizationService {
 
     getAddresses = async (id: string): Promise<AddressDto[]> => {
         return await this._organizationRepo.getAddresses(id);
-    }
+    };
 
     addPerson = async (id: string, personId: string): Promise<boolean> => {
         return await this._organizationRepo.addPerson(id, personId);
@@ -88,7 +88,7 @@ export class OrganizationService {
 
     getPersons = async (id: string): Promise<PersonDto[]> => {
         return await this._organizationRepo.getPersons(id);
-    }
+    };
 
     //#endregion
 

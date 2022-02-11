@@ -69,23 +69,23 @@ export class PersonService {
 
     getOrganizations = async (id: string): Promise<OrganizationDto[]> => {
         return await this._personRepo.getOrganizations(id);
-    }
+    };
 
     addAddress = async (id: string, addressId: string): Promise<boolean> => {
         return await this._personRepo.addAddress(id, addressId);
-    }
+    };
     
     removeAddress = async (id: string, addressId: string): Promise<boolean> => {
         return await this._personRepo.removeAddress(id, addressId);
-    }
+    };
 
     getAddresses = async (id: string): Promise<AddressDto[]> => {
         return await this._personRepo.getAddresses(id);
-    }
+    };
 
     getAllPersonsWithPhoneAndRole = async (phone: string, roleId: number): Promise<PersonDetailsDto[]> => {
         return await this._personRepo.getAllPersonsWithPhoneAndRole(phone, roleId);
-    }
+    };
 
     //#endregion
 

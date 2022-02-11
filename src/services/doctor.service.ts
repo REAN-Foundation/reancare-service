@@ -112,7 +112,7 @@ export class DoctorService {
         dto.Addresses = addresses;
         dto.Organizations = organizations;
         return dto;
-    }
+    };
 
     private updateDto = async (dto: DoctorDto): Promise<DoctorDto> => {
         if (dto == null) {
@@ -130,7 +130,7 @@ export class DoctorService {
         dto.BirthDate = user.Person.BirthDate;
         dto.Age = user.Person.Age;
         return dto;
-    }
+    };
 
     //#endregion
 

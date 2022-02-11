@@ -10,15 +10,17 @@ export class MoveMinutesMapper {
         if (moveMinutes == null) {
             return null;
         }
+        var minutes = typeof moveMinutes.MoveMinutes === 'string' ? parseInt(moveMinutes.MoveMinutes) : moveMinutes.MoveMinutes;
+
         const dto: MoveMinutesDto = {
             id            : moveMinutes.id,
             PatientUserId : moveMinutes.PatientUserId,
-            MoveMinutes   : moveMinutes.MoveMinutes,
+            MoveMinutes   : minutes,
             Unit          : moveMinutes.Unit,
             RecordDate    : moveMinutes.RecordDate
         };
         return dto;
         
-    }
+    };
 
 }

@@ -32,7 +32,7 @@ export class SymptomRepo implements ISymptomRepo {
                 RecordDate                : model.RecordDate ?? null,
             };
             const symptom = await Symptom.create(entity);
-            return SymptomMapper.toDto(symptom);
+            return await SymptomMapper.toDto(symptom);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -42,7 +42,7 @@ export class SymptomRepo implements ISymptomRepo {
     getById = async (id: string): Promise<SymptomDto> => {
         try {
             const symptom = await Symptom.findByPk(id);
-            return SymptomMapper.toDto(symptom);
+            return await SymptomMapper.toDto(symptom);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -130,23 +130,24 @@ export class SymptomRepo implements ISymptomRepo {
         }
     };
 
-    update = async (id: string, model: SymptomDomainModel): Promise<SymptomDto> => {
+    update = async (id: string, updateModel: SymptomDomainModel): Promise<SymptomDto> => {
         try {
             const symptom = await Symptom.findByPk(id);
 
-            symptom.MedicalPractitionerUserId = model.MedicalPractitionerUserId ?? symptom.MedicalPractitionerUserId,
-            symptom.VisitId                   = model.VisitId ?? symptom.VisitId,
-            symptom.AssessmentId              = model.AssessmentId ?? symptom.AssessmentId,
-            symptom.AssessmentTemplateId      = model.AssessmentTemplateId ?? symptom.AssessmentTemplateId,
-            symptom.Symptom                   = model.Symptom ?? symptom.Symptom,
-            symptom.Severity                  = model.Severity ?? symptom.Severity,
-            symptom.ValidationStatus          = model.ValidationStatus ?? symptom.ValidationStatus,
-            symptom.Interpretation            = model.Interpretation ?? symptom.Interpretation,
-            symptom.Comments                  = model.Comments ?? symptom.Comments,
-            symptom.RecordDate                = model.RecordDate ?? symptom.RecordDate,
+            // eslint-disable-next-line max-len
+            symptom.MedicalPractitionerUserId = updateModel.MedicalPractitionerUserId ?? symptom.MedicalPractitionerUserId,
+            symptom.VisitId                   = updateModel.VisitId ?? symptom.VisitId,
+            symptom.AssessmentId              = updateModel.AssessmentId ?? symptom.AssessmentId,
+            symptom.AssessmentTemplateId      = updateModel.AssessmentTemplateId ?? symptom.AssessmentTemplateId,
+            symptom.Symptom                   = updateModel.Symptom ?? symptom.Symptom,
+            symptom.Severity                  = updateModel.Severity ?? symptom.Severity,
+            symptom.ValidationStatus          = updateModel.ValidationStatus ?? symptom.ValidationStatus,
+            symptom.Interpretation            = updateModel.Interpretation ?? symptom.Interpretation,
+            symptom.Comments                  = updateModel.Comments ?? symptom.Comments,
+            symptom.RecordDate                = updateModel.RecordDate ?? symptom.RecordDate,
 
             await symptom.save();
-            return SymptomMapper.toDto(symptom);
+            return await SymptomMapper.toDto(symptom);
 
         } catch (error) {
             Logger.instance().log(error.message);

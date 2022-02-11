@@ -35,6 +35,6 @@ export class BaseController {
         if (authorize) {
             await Loader.authorizer.authorize(request, response);
         }
-    }
+    };
 
 }

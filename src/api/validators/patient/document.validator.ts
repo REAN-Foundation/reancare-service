@@ -1,5 +1,5 @@
 import express from 'express';
-import { ValidationError } from 'sequelize';
+import { InputValidationError } from '../../../common/input.validation.error';
 import { DocumentDomainModel } from '../../../domain.types/patient/document/document.domain.model';
 import { DocumentSearchFilters } from '../../../domain.types/patient/document/document.search.types';
 import { Roles } from '../../../domain.types/role/role.types';
@@ -24,7 +24,7 @@ export class DocumentValidator  extends BaseValidator {
         var fileResourceValidator = new FileResourceValidator();
         var fileMetadataList = fileResourceValidator.getFileMetadataList(request);
         if (fileMetadataList.length === 0) {
-            throw new ValidationError(`File metadata cannot be retrieved.`);
+            throw new InputValidationError([`File metadata cannot be retrieved.`]);
         }
         var metadata = fileMetadataList[0];
 

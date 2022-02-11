@@ -57,7 +57,7 @@ export class ApiClientRepo implements IApiClientRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getClientHashedPassword = async(id: string): Promise<string> => {
         try {
@@ -67,7 +67,7 @@ export class ApiClientRepo implements IApiClientRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getApiKey = async(id: string): Promise<ClientApiKeyDto> => {
         try {
@@ -78,7 +78,7 @@ export class ApiClientRepo implements IApiClientRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
     
     setApiKey = async(id: string, apiKey: string, validFrom: Date, validTill: Date): Promise<ClientApiKeyDto> => {
         try {
@@ -93,7 +93,7 @@ export class ApiClientRepo implements IApiClientRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
     
     isApiKeyValid = async (apiKey: string): Promise<CurrentClient> => {
         try {
@@ -116,7 +116,7 @@ export class ApiClientRepo implements IApiClientRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
     
     update = async (id: string, clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         try {
@@ -148,7 +148,7 @@ export class ApiClientRepo implements IApiClientRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     delete = async (id: string): Promise<boolean> => {
         try {

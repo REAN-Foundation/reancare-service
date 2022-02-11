@@ -1,5 +1,5 @@
 import express from 'express';
-import { ValidationError } from 'sequelize';
+import { InputValidationError } from '../../../common/input.validation.error';
 import {
     BloodGroup,
     BloodGroupList,
@@ -79,25 +79,25 @@ export class HealthProfileValidator extends BaseValidator {
         if (this.isTruthy(request.body.BloodGroup) &&
             !BloodGroupList.includes(request.body.BloodGroup as BloodGroup)) {
             var bloodGroups = BloodGroupList.join(',');
-            throw new ValidationError(`Blood group should be either of ${bloodGroups}.`);
+            throw new InputValidationError([`Blood group should be either of ${bloodGroups}.`]);
         }
 
         if (this.isTruthy(request.body.MaritalStatus) &&
             !MaritalStatusList.includes(request.body.MaritalStatus as MaritalStatus)) {
             var maritalStatuses = MaritalStatusList.join(',');
-            throw new ValidationError(`Marital status should be either of ${maritalStatuses}.`);
+            throw new InputValidationError([`Marital status should be either of ${maritalStatuses}.`]);
         }
 
         const severities = SeverityList.join(',');
         
         if (this.isTruthy(request.body.SmokingSeverity) &&
             !SeverityList.includes(request.body.SmokingSeverity as Severity)) {
-            throw new ValidationError(`Smoking severity should be either of ${severities}.`);
+            throw new InputValidationError([`Smoking severity should be either of ${severities}.`]);
         }
         
         if (this.isTruthy(request.body.DrinkingSeverity) &&
             !SeverityList.includes(request.body.DrinkingSeverity as Severity)) {
-            throw new ValidationError(`Drinking severity should be either of ${severities}.`);
+            throw new InputValidationError([`Drinking severity should be either of ${severities}.`]);
         }
         
     }

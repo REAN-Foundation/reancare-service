@@ -76,7 +76,7 @@ export class SymptomAssessmentTemplateValidator extends BaseValidator {
         };
 
         return model;
-    }
+    };
 
     private async validateCreateBody(request) {
 

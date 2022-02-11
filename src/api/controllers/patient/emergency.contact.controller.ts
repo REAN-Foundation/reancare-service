@@ -1,7 +1,7 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { AddressDomainModel } from '../../../domain.types/address/address.domain.model';
 import { EmergencyContactRoleList } from '../../../domain.types/patient/emergency.contact/emergency.contact.types';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
@@ -13,10 +13,11 @@ import { RoleService } from '../../../services/role.service';
 import { UserService } from '../../../services/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { EmergencyContactValidator } from '../../validators/patient/emergency.contact.validator';
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class EmergencyContactController {
+export class EmergencyContactController extends BaseController {
 
     //#region member variables and constructors
 
@@ -24,17 +25,18 @@ export class EmergencyContactController {
 
     _roleService: RoleService = null;
 
+    _validator: EmergencyContactValidator = new EmergencyContactValidator();
+
     _orgService: OrganizationService = null;
 
     _personService: PersonService = null;
 
     _userService: UserService = null;
 
-    _authorizer: Authorizer = null;
-
-    _addressService: AddressService = null
+    _addressService: AddressService = null;
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(EmergencyContactService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);
@@ -61,10 +63,9 @@ export class EmergencyContactController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Emergency.Contact.Create';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Emergency.Contact.Create', request, response);
             
-            const domainModel = await EmergencyContactValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             const existingContactRoles = await this._service.getContactsCountWithRole(
                 domainModel.PatientUserId, domainModel.ContactRelation);
@@ -84,7 +85,7 @@ export class EmergencyContactController {
             if (domainModel.ContactPersonId != null) {
                 const person = await this._personService.getById(domainModel.ContactPersonId);
                 if (person == null) {
-                    throw new ApiError(404, `User with an id ${domainModel.ContactPersonId} cannot be found.`);
+                    throw new ApiError(404, `Person with an id ${domainModel.ContactPersonId} cannot be found.`);
                 }
                 var alreadyExists = await this._service.checkIfContactPersonExists(
                     domainModel.PatientUserId,
@@ -98,7 +99,8 @@ export class EmergencyContactController {
                     Prefix    : domainModel.ContactPerson.Prefix ?? null,
                     FirstName : domainModel.ContactPerson.FirstName ?? null,
                     LastName  : domainModel.ContactPerson.LastName ?? null,
-                    Phone     : domainModel.ContactPerson.Phone
+                    Phone     : domainModel.ContactPerson.Phone,
+                    Email     : domainModel.ContactPerson.Email ?? null
                 };
                 
                 var existingPerson = await this._personService.getPersonWithPhone(domainModel.ContactPerson.Phone);
@@ -166,7 +168,7 @@ export class EmergencyContactController {
             
             await this._authorizer.authorize(request, response);
 
-            const id: string = await EmergencyContactValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const patientEmergencyContact = await this._service.getById(id);
             if (patientEmergencyContact == null) {
@@ -183,10 +185,9 @@ export class EmergencyContactController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Emergency.Contact.Search';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Emergency.Contact.Search', request, response);
 
-            const filters = await EmergencyContactValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -205,12 +206,11 @@ export class EmergencyContactController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Emergency.Contact.Update';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Emergency.Contact.Update', request, response);
 
-            const domainModel = await EmergencyContactValidator.update(request);
+            const domainModel = await this._validator.update(request);
 
-            const id: string = await EmergencyContactValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingEmergencyContact = await this._service.getById(id);
             if (existingEmergencyContact == null) {
                 throw new ApiError(404, 'Emergency contact not found.');
@@ -231,10 +231,10 @@ export class EmergencyContactController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Emergency.Contact.Delete';
-            await this._authorizer.authorize(request, response);
 
-            const id: string = await EmergencyContactValidator.getById(request);
+            await this.setContext('Emergency.Contact.Delete', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingEmergencyContact = await this._service.getById(id);
             if (existingEmergencyContact == null) {
                 throw new ApiError(404, 'Emergency contact not found.');

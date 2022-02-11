@@ -26,6 +26,6 @@ export class DiagnosisMapper {
             EndDate                   : diagnosis.EndDate,
         };
         return dto;
-    }
+    };
 
 }

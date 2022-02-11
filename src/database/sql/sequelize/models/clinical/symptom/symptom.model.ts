@@ -76,7 +76,7 @@ export default class Symptom extends Model {
     AssessmentId: string;
 
     @BelongsTo(() => SymptomAssessment)
-    Assessment: SymptomAssessment
+    Assessment: SymptomAssessment;
     
     @IsUUID(4)
     @ForeignKey(() => SymptomAssessmentTemplate)
@@ -147,7 +147,7 @@ export default class Symptom extends Model {
         type      : DataType.DATE,
         allowNull : false,
     })
-    RecordDate: Date
+    RecordDate: Date;
 
     @Column
     @CreatedAt

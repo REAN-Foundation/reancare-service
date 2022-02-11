@@ -63,6 +63,6 @@ export class HealthProfileService {
         };
 
         return model;
-    }
+    };
 
 }

@@ -1,22 +1,13 @@
+import { BaseSearchFilters, BaseSearchResults } from "../../../../domain.types/miscellaneous/base.search.types";
 import { SymptomTypeDto } from "./symptom.type.dto";
 
 //////////////////////////////////////////////////////////////////////
 
-export interface SymptomTypeSearchFilters {
-    Symptom?     : string;
-    Tag?         : string;
-    OrderBy?     : string;
-    Order?       : string;
-    PageIndex?   : number;
-    ItemsPerPage?: number;
+export interface SymptomTypeSearchFilters extends BaseSearchFilters{
+    Symptom?: string;
+    Tag?    : string;
 }
 
-export interface SymptomTypeSearchResults {
-    TotalCount    : number;
-    RetrievedCount: number;
-    PageIndex     : number;
-    ItemsPerPage  : number;
-    Order         : string;
-    OrderedBy     : string;
+export interface SymptomTypeSearchResults extends BaseSearchResults{
     Items         : SymptomTypeDto[];
 }

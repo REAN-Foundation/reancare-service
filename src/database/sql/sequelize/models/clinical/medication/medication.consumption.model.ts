@@ -84,14 +84,14 @@ export default class MedicationConsumption extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    TimeScheduleStart: Date
+    TimeScheduleStart: Date;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    TimeScheduleEnd: Date
+    TimeScheduleEnd: Date;
 
     @IsDate
     @Column({
@@ -99,7 +99,7 @@ export default class MedicationConsumption extends Model {
         allowNull    : true,
         defaultValue : null
     })
-    TakenAt: Date
+    TakenAt: Date;
 
     @Column({
         type         : DataType.BOOLEAN,
@@ -128,7 +128,7 @@ export default class MedicationConsumption extends Model {
         allowNull    : true,
         defaultValue : null
     })
-    CancelledOn: Date
+    CancelledOn: Date;
 
     @Length({ max: 256 })
     @Column({

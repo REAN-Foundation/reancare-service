@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { CareplanHandler } from '../modules/careplan/careplan.handler';
 import { container, DependencyContainer } from 'tsyringe';
 import { Authenticator } from '../auth/authenticator';
 import { Authorizer } from '../auth/authorizer';
@@ -88,6 +89,8 @@ export class Loader {
 
             Loader._messagingService = container.resolve(MessagingService);
             Loader._messagingService.init();
+
+            await CareplanHandler.init();
 
             return true;
 

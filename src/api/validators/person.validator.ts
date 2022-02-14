@@ -73,6 +73,6 @@ export class PersonValidator {
         const roleId = parseInt(request.params.roleId);
 
         return { phone, roleId };
-    }
+    };
 
 }

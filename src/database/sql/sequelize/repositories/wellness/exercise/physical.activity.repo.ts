@@ -157,6 +157,6 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

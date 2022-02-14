@@ -49,7 +49,7 @@ export class UserRepo implements IUserRepo {
         });
 
         return await UserMapper.toDetailsDto(user);
-    }
+    };
 
     getByPhoneAndRole = async (phone: string, roleId: number) => {
         
@@ -72,7 +72,7 @@ export class UserRepo implements IUserRepo {
             });
 
         return await UserMapper.toDetailsDto(user);
-    }
+    };
 
     userExistsWithUsername = async (userName: string): Promise<boolean> => {
         if (userName != null && typeof userName !== 'undefined') {

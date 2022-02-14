@@ -73,7 +73,7 @@ export class FileResourceRepo implements IFileResourceRepo {
         dto.Versions = FileResourceMapper.toFileVersionDtos(versions);
         
         return dto;
-    }
+    };
 
     update = async (id: string, model: FileResourceUpdateModel): Promise<FileResourceDetailsDto> => {
 
@@ -120,7 +120,7 @@ export class FileResourceRepo implements IFileResourceRepo {
         dto.Versions = FileResourceMapper.toFileVersionDtos(versions, true);
         
         return dto;
-    }
+    };
 
     addVersion = async (metadata: FileResourceMetadata, makeDefaultVersion: boolean): Promise<FileResourceMetadata> => {
         
@@ -149,7 +149,7 @@ export class FileResourceRepo implements IFileResourceRepo {
         }
 
         return FileResourceMapper.toFileVersionDto(version);
-    }
+    };
 
     searchForDownload = async (filters: FileResourceSearchFilters): Promise<FileResourceDto[]> => {
         try {
@@ -169,7 +169,7 @@ export class FileResourceRepo implements IFileResourceRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getVersionByVersionName = async (id: string, versionName: string): Promise<FileResourceMetadata> => {
 
@@ -182,7 +182,7 @@ export class FileResourceRepo implements IFileResourceRepo {
 
         return FileResourceMapper.toFileVersionDto(fileResourceVersion);
 
-    }
+    };
 
     getVersionByVersionId = async (id: string, versionId: string): Promise<FileResourceMetadata> => {
 
@@ -195,7 +195,7 @@ export class FileResourceRepo implements IFileResourceRepo {
 
         return FileResourceMapper.toFileVersionDto(fileResourceVersion);
 
-    }
+    };
 
     getLatestVersion = async (id: string): Promise<FileResourceMetadata> => {
 
@@ -208,7 +208,7 @@ export class FileResourceRepo implements IFileResourceRepo {
 
         return FileResourceMapper.toFileVersionDto(fileResourceVersion);
 
-    }
+    };
 
     getVersions = async (id: string) => {
 
@@ -219,7 +219,7 @@ export class FileResourceRepo implements IFileResourceRepo {
         });
 
         return FileResourceMapper.toFileVersionDtos(fileResourceVersions);
-    }
+    };
 
     getVersionNames = async (id: string): Promise<string[]> => {
 
@@ -230,7 +230,7 @@ export class FileResourceRepo implements IFileResourceRepo {
         });
 
         return versions.map(x => x.Version);
-    }
+    };
 
     search = async (filters: FileResourceSearchFilters): Promise<FileResourceSearchResults> => {
         try {
@@ -282,7 +282,7 @@ export class FileResourceRepo implements IFileResourceRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     rename = async (id: string, newFileName: string): Promise<boolean> => {
 
@@ -295,7 +295,7 @@ export class FileResourceRepo implements IFileResourceRepo {
         await resource.save();
 
         return true;
-    }
+    };
 
     delete = async (id: string): Promise<boolean> => {
 
@@ -318,7 +318,7 @@ export class FileResourceRepo implements IFileResourceRepo {
         });
 
         return result > 0;
-    }
+    };
 
     deleteVersionByVersionId = async (id: any, versionId: any): Promise<boolean> => {
         
@@ -329,7 +329,7 @@ export class FileResourceRepo implements IFileResourceRepo {
             }
         });
         return result > 1;
-    }
+    };
 
     //#region Privates
 

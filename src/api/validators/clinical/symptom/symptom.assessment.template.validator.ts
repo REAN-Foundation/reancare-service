@@ -1,14 +1,19 @@
 import express from 'express';
-import { body, param, validationResult, query } from 'express-validator';
+import { body, param, validationResult } from 'express-validator';
 import { Helper } from '../../../../common/helper';
 import { SymptomAssessmentTemplateDomainModel } from '../../../../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.domain.model';
 import { SymptomAssessmentTemplateSearchFilters } from '../../../../domain.types/clinical/symptom/symptom.assessment.template/symptom.assessment.template.search.types';
+import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SymptomAssessmentTemplateValidator {
+export class SymptomAssessmentTemplateValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): SymptomAssessmentTemplateDomainModel => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = (request: express.Request): SymptomAssessmentTemplateDomainModel => {
 
         const model: SymptomAssessmentTemplateDomainModel = {
             id          : request.params.id ?? null,
@@ -20,94 +25,37 @@ export class SymptomAssessmentTemplateValidator {
         return model;
     };
 
-    static create = async (request: express.Request): Promise<SymptomAssessmentTemplateDomainModel> => {
+    create = async (request: express.Request): Promise<SymptomAssessmentTemplateDomainModel> => {
 
-        await body('Title').exists()
-            .trim()
-            .escape()
-            .run(request);
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
 
-        await SymptomAssessmentTemplateValidator.validateBody(request);
-        return SymptomAssessmentTemplateValidator.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await SymptomAssessmentTemplateValidator.getParamId(request);
-    };
-    
-    static delete = async (request: express.Request): Promise<string> => {
-        return await SymptomAssessmentTemplateValidator.getParamId(request);
-    };
+    search = async (request: express.Request): Promise<SymptomAssessmentTemplateSearchFilters> => {
 
-    static search = async (request: express.Request): Promise<SymptomAssessmentTemplateSearchFilters> => {
+        await this.validateUuid(request, 'symptomTypeId', Where.Query, false, false);
+        await this.validateString(request, 'title', Where.Query, false, false, true);
+        await this.validateString(request, 'tag', Where.Query, false, false, true);
+        await this.validateString(request, 'symptomName', Where.Query, false, false, true);
+        
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
 
-        await query('title').optional()
-            .trim()
-            .escape()
-            .run(request);
+        return this.getFilter(request);
 
-        await query('tag').optional()
-            .trim()
-            .run(request);
-
-        await query('symptomName').optional()
-            .trim()
-            .run(request);
-
-        await query('symptomTypeId').optional()
-            .isUUID()
-            .trim()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return SymptomAssessmentTemplateValidator.getFilter(request);
     };
 
-    static update = async (request: express.Request): Promise<SymptomAssessmentTemplateDomainModel> => {
+    update = async (request: express.Request): Promise<SymptomAssessmentTemplateDomainModel> => {
 
-        const id = await SymptomAssessmentTemplateValidator.getParamId(request);
-
-        await body('Title').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await SymptomAssessmentTemplateValidator.validateBody(request);
-
-        const domainModel = SymptomAssessmentTemplateValidator.getDomainModel(request);
-        domainModel.id = id;
-
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
         return domainModel;
     };
 
-    static addRemoveSymptomTypes = async (request: express.Request): Promise<any> => {
+    addRemoveSymptomTypes = async (request: express.Request): Promise<any> => {
 
         await param('id').exists()
             .isUUID()
@@ -121,66 +69,46 @@ export class SymptomAssessmentTemplateValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        
+
         var model = {
             id             : request.params.id,
             SymptomTypeIds : request.body.SymptomTypeIds
         };
 
         return model;
+    };
+
+    private async validateCreateBody(request) {
+
+        await this.validateString(request, 'Tags', Where.Body, true, false);
+        await this.validateString(request, 'Description', Where.Body, true, false);
+        await this.validateString(request, 'Title', Where.Body, true, false);
+
+        this.validateRequest(request);
+
     }
 
-    private static async validateBody(request) {
+    private async validateUpdateBody(request) {
 
-        await body('Tags').optional()
-            .isArray()
-            .run(request);
+        await this.validateString(request, 'Tags', Where.Body, false, false);
+        await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateString(request, 'Title', Where.Body, false, false);
 
-        await body('Description').optional()
-            .trim()
-            .escape()
-            .run(request);
+        this.validateRequest(request);
 
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
     }
 
-    private static getFilter(request): SymptomAssessmentTemplateSearchFilters {
-        
-        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
-
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
+    private getFilter(request): SymptomAssessmentTemplateSearchFilters {
 
         const filters: SymptomAssessmentTemplateSearchFilters = {
             Title         : request.query.title ?? null,
             Tag           : request.query.tag ?? null,
             SymptomName   : request.query.symptomName ?? null,
             SymptomTypeId : request.query.symptomTypeId ?? null,
-            OrderBy       : request.query.orderBy ?? 'CreatedAt',
-            Order         : request.query.order ?? 'descending',
-            PageIndex     : pageIndex,
-            ItemsPerPage  : itemsPerPage,
         };
-        return filters;
-    }
 
-    private static async getParamId(request) {
+        return this.updateBaseSearchFilters(request, filters);
 
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
     }
 
 }

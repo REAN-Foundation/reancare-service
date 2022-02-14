@@ -20,6 +20,6 @@ export class BodyTemperatureMapper {
             RecordedByUserId : bodyTemperature.RecordedByUserId
         };
         return dto;
-    }
+    };
 
 }

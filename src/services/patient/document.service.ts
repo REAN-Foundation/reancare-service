@@ -35,27 +35,27 @@ export class DocumentService {
     Promise<DocumentDto> => {
         model.DisplayId = this.getDocumentDisplayId(model.DocumentType);
         return await this._documentRepo.upload(model);
-    }
+    };
 
     search = async (filters: DocumentSearchFilters): Promise<DocumentSearchResults> => {
         return await this._documentRepo.search(filters);
-    }
+    };
 
     rename = async (id: string, newName: string): Promise<DocumentDto> => {
         return await this._documentRepo.rename(id, newName);
-    }
+    };
 
     share = async (model: SharedDocumentDetailsDomainModel): Promise<SharedDocumentDetailsDto> => {
         return await this._documentRepo.share(model);
-    }
+    };
 
     getSharedDocument = async (key: string): Promise<SharedDocumentDetailsDto> => {
         return await this._documentRepo.getSharedDocument(key);
-    }
+    };
 
     sharedKeyExists = async (key: string): Promise<boolean> => {
         return await this._documentRepo.sharedKeyExists(key);
-    }
+    };
 
     //#region Privates
 
@@ -80,7 +80,7 @@ export class DocumentService {
         }
 
         return Helper.generateDisplayId(prefix);
-    }
+    };
 
     //#endregion
 

@@ -25,6 +25,6 @@ export class SymptomAssessmentMapper {
             SymptomsRecorded     : symptoms && symptoms.length > 0 ? symptoms.map( x=> SymptomMapper.toDto(x)) : []
         };
         return dto;
-    }
+    };
 
 }

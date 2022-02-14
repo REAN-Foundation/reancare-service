@@ -1,6 +1,6 @@
 import express from 'express';
 import { body, param, validationResult, query } from 'express-validator';
-
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Helper } from '../../../common/helper';
 import { GoalDomainModel } from '../../../domain.types/patient/goal/goal.domain.model';
 import { GoalSearchFilters } from '../../../domain.types/patient/goal/goal.search.types';
@@ -11,17 +11,23 @@ export class GoalValidator {
 
     static getDomainModel = (request: express.Request): GoalDomainModel => {
 
-        const patientAllergyModel: GoalDomainModel = {
-            PatientUserId : request.body.PatientUserId ?? null,
-            CarePlanId    : request.body.CarePlanId ?? null,
-            TypeCode      : request.body.TypeCode ?? null,
-            TypeName      : request.body.TypeName ?? null,
-            GoalId        : request.body.GoalId ?? null,
-            GoalAchieved  : request.body.GoalAchieved ?? null,
-            GoalAbandoned : request.body.GoalAbandoned ?? null
+        const goalModel: GoalDomainModel = {
+            PatientUserId        : request.body.PatientUserId,
+            Provider             : request.body.Provider ?? null,
+            ProviderCareplanCode : request.body.ProviderCareplanCode ?? null,
+            ProviderCareplanName : request.body.ProviderCareplanName ?? null,
+            ProviderEnrollmentId : request.body.ProviderEnrollmentId ?? null,
+            ProviderGoalCode     : request.body.ProviderGoalCode ?? null,
+            Title                : request.body.Title ?? null,
+            Sequence             : request.body.Sequence ?? null,
+            HealthPriorityId     : request.body.HealthPriorityId ?? null,
+            GoalAchieved         : request.body.GoalAchieved ?? null,
+            GoalAbandoned        : request.body.GoalAbandoned ?? null,
+            StartedAt            : request.body.StartedAt ?? new Date(),
+            ScheduledEndDate     : request.body.ScheduledEndDate,
         };
 
-        return patientAllergyModel;
+        return goalModel;
     };
 
     static create = async (request: express.Request): Promise<GoalDomainModel> => {
@@ -31,6 +37,14 @@ export class GoalValidator {
 
     static getById = async (request: express.Request): Promise<string> => {
         return await GoalValidator.getParamId(request);
+    };
+
+    static getSelectedGoals= async (request: express.Request): Promise<uuid> => {
+        return await GoalValidator.getParamPatientUserId(request);
+    };
+
+    static getGoals= async (request: express.Request): Promise<string> => {
+        return await GoalValidator.getParamPriorityId(request);
     };
 
     static delete = async (request: express.Request): Promise<string> => {
@@ -44,23 +58,13 @@ export class GoalValidator {
             .isUUID()
             .run(request);
 
-        await query('CarePlanId').optional()
+        await query('GoalId').optional()
             .trim()
             .escape()
             .isUUID()
             .run(request);
 
-        await query('TypeCode').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('TypeName').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('GoalId').optional()
+        await query('ActionId').optional()
             .trim()
             .escape()
             .isUUID()
@@ -124,10 +128,6 @@ export class GoalValidator {
 
         const filters: GoalSearchFilters = {
             PatientUserId   : request.query.PatientUserId ?? null,
-            CarePlanId      : request.query.CarePlanId ?? null,
-            TypeCode        : request.query.TypeCode ?? null,
-            TypeName        : request.query.TypeName ?? null,
-            GoalId          : request.query.GoalId ?? null,
             GoalAchieved    : request.query.GoalAchieved ?? null,
             GoalAbandoned   : request.query.GoalAbandoned ?? null,
             CreatedDateFrom : request.query.CreatedDateFrom ?? null,
@@ -159,26 +159,47 @@ export class GoalValidator {
             .isUUID()
             .run(request);
 
-        await body('CarePlanId').exists()
+        await body('Provider').optional()
             .trim()
             .escape()
             .run(request);
 
-        await body('TypeCode').optional()
+        await body('ProviderCareplanCode').optional()
             .trim()
             .escape()
             .run(request);
 
-        await body('TypeName').optional()
+        await body('ProviderCareplanName').optional()
+            .trim()
+            .escape()
+            .run(request);
+        
+        await body('ProviderEnrollmentId').optional()
             .trim()
             .escape()
             .run(request);
 
-        await body('GoalId').optional()
+        await body('ProviderGoalCode').optional()
             .trim()
             .escape()
             .run(request);
 
+        await body('Title').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('Sequence').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('HealthPriorityId').optional()
+            .trim()
+            .escape()
+            .isUUID()
+            .run(request);
+        
         await body('GoalAchieved').optional()
             .trim()
             .escape()
@@ -189,6 +210,18 @@ export class GoalValidator {
             .trim()
             .escape()
             .isBoolean()
+            .run(request);
+
+        await body('StartedAt').optional()
+            .trim()
+            .escape()
+            .isDate()
+            .run(request);
+
+        await body('ScheduledEndDate').optional()
+            .trim()
+            .escape()
+            .isDate()
             .run(request);
 
         const result = validationResult(request);
@@ -210,6 +243,36 @@ export class GoalValidator {
             Helper.handleValidationError(result);
         }
         return request.params.id;
+    }
+
+    private static async getParamPriorityId(request) {
+
+        await param('priorityId').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+        return request.params.priorityId;
+    }
+
+    private static async getParamPatientUserId(request) {
+
+        await param('patientUserId').trim()
+            .escape()
+            .isUUID()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+        return request.params.patientUserId;
     }
 
 }

@@ -1,26 +1,25 @@
 import express from 'express';
-import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { SymptomAssessmentTemplateService } from '../../../../services/clinical/symptom/symptom.assessment.template.service';
 import { Loader } from '../../../../startup/loader';
 import { SymptomAssessmentTemplateValidator } from '../../../validators/clinical/symptom/symptom.assessment.template.validator';
-
-
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SymptomAssessmentTemplateController {
+export class SymptomAssessmentTemplateController extends BaseController {
 
     //#region member variables and constructors
 
     _service: SymptomAssessmentTemplateService = null;
 
-    _authorizer: Authorizer = null;
+    _validator: SymptomAssessmentTemplateValidator = new SymptomAssessmentTemplateValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(SymptomAssessmentTemplateService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
@@ -29,10 +28,9 @@ export class SymptomAssessmentTemplateController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessmentTemplate.Create';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomAssessmentTemplate.Create', request, response);
             
-            const domainModel = await SymptomAssessmentTemplateValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             const template = await this._service.create(domainModel);
             if (template == null) {
@@ -49,11 +47,10 @@ export class SymptomAssessmentTemplateController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessmentTemplate.GetById';
-            
-            await this._authorizer.authorize(request, response);
 
-            const id: string = await SymptomAssessmentTemplateValidator.getById(request);
+            this.setContext('SymptomAssessmentTemplate.GetById', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const template = await this._service.getById(id);
             if (template == null) {
@@ -70,10 +67,9 @@ export class SymptomAssessmentTemplateController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessmentTemplate.Search';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomAssessmentTemplate.Search', request, response);
 
-            const filters = await SymptomAssessmentTemplateValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -92,11 +88,11 @@ export class SymptomAssessmentTemplateController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessmentTemplate.Update';
-            await this._authorizer.authorize(request, response);
 
-            const domainModel = await SymptomAssessmentTemplateValidator.update(request);
-            const id: string = await SymptomAssessmentTemplateValidator.getById(request);
+            this.setContext('SymptomAssessmentTemplate.Update', request, response);
+
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const exists = await this._service.exists(id);
             if (!exists) {
@@ -118,10 +114,9 @@ export class SymptomAssessmentTemplateController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessmentTemplate.Delete';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomAssessmentTemplate.Delete', request, response);
 
-            const id: string = await SymptomAssessmentTemplateValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const exists = await this._service.exists(id);
             if (!exists) {
@@ -143,10 +138,9 @@ export class SymptomAssessmentTemplateController {
 
     addSymptomTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessmentTemplate.AddSymptomTypes';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomAssessmentTemplate.AddSymptomTypes', request, response);
 
-            const x = await SymptomAssessmentTemplateValidator.addRemoveSymptomTypes(request);
+            const x = await this._validator.addRemoveSymptomTypes(request);
 
             const exists = await this._service.exists(x.id);
             if (!exists) {
@@ -168,10 +162,9 @@ export class SymptomAssessmentTemplateController {
 
     removeSymptomTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomAssessmentTemplate.RemoveSymptomTypes';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomAssessmentTemplate.RemoveSymptomTypes', request, response);
 
-            const x = await SymptomAssessmentTemplateValidator.addRemoveSymptomTypes(request);
+            const x = await this._validator.addRemoveSymptomTypes(request);
 
             const exists = await this._service.exists(x.id);
             if (!exists) {

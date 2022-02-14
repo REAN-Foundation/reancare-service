@@ -9,9 +9,15 @@ export class TwilioMessagingService implements IMessagingService {
     private _client: Twilio = null;
 
     init(): boolean {
-        const account_sid = process.env.TWILIO_ACCOUNT_SID;
-        const auth_token = process.env.TWILIO_AUTH_TOKEN;
-        this._client = new Twilio(account_sid, auth_token);
+        try {
+            const account_sid = process.env.TWILIO_ACCOUNT_SID;
+            const auth_token = process.env.TWILIO_AUTH_TOKEN;
+            this._client = new Twilio(account_sid, auth_token);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            return false;
+        }
         return true;
     }
 

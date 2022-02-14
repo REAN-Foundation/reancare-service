@@ -16,10 +16,11 @@ import { MedicationDto } from "../../../domain.types/clinical/medication/medicat
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
 import { MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from "../../../domain.types/clinical/medication/medication/medication.types";
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
-import { UserActionType, UserTaskCategory } from "../../../domain.types/user/user.task/user.task..types";
+import { UserActionType, UserTaskCategory } from "../../../domain.types/user/user.task/user.task.types";
 import { UserTaskDomainModel } from "../../../domain.types/user/user.task/user.task.domain.model";
 import { IUserActionService } from "../../../services/user/user.action.service.interface";
 import { Loader } from "../../../startup/loader";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -120,7 +121,7 @@ export class MedicationConsumptionService implements IUserActionService {
         };
 
         return creationSummary;
-    }
+    };
     
     getConsumptionStatusForMedication = async (medicationId: string)
         : Promise<MedicationConsumptionStatsDto> => {
@@ -134,7 +135,7 @@ export class MedicationConsumptionService implements IUserActionService {
         };
 
         return creationSummary;
-    }
+    };
 
     markListAsTaken = async (consumptionIds: string[]): Promise<MedicationConsumptionDto[]> => {
 
@@ -403,7 +404,7 @@ export class MedicationConsumptionService implements IUserActionService {
             count++;
         }
         return count;
-    }
+    };
 
     createMedicationTasks = async (upcomingInMinutes: number): Promise<number> => {
         var count = 0;
@@ -417,7 +418,7 @@ export class MedicationConsumptionService implements IUserActionService {
             }
         }
         return count;
-    }
+    };
     
     createMedicationTaskForSchedule = async (consumption: MedicationConsumptionDto): Promise<boolean> => {
 
@@ -443,9 +444,20 @@ export class MedicationConsumptionService implements IUserActionService {
         await this._userTaskRepo.create(domainModel);
         
         return true;
-    }
+    };
 
-    completeAction = async (actionId: string, completionTime?: Date, success?: boolean): Promise<boolean> => {
+    startAction = async (actionId: uuid): Promise<boolean> => {
+        var medConsumption = await this._medicationConsumptionRepo.getById(actionId);
+        if (medConsumption === null) {
+            Logger.instance().log('Medication consumption instance with given id cannot be found.');
+            return false;
+        }
+        return true;
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    completeAction = async (actionId: uuid, completionTime?: Date, success?: boolean, actionDetails?: any)
+        : Promise<boolean> => {
 
         if (success === undefined || success === false) {
             var updatedDto = await this._medicationConsumptionRepo.markAsMissed(actionId);
@@ -471,12 +483,21 @@ export class MedicationConsumptionService implements IUserActionService {
                 return null;
             }
         }
-    }
+    };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     cancelAction = async(actionId: string, cancellationTime?: Date, cancellationReason?: string): Promise<boolean> => {
         return await this._medicationConsumptionRepo.cancelSchedule(actionId);
-    }
+    };
+
+    getAction = async(actionId: string): Promise<any> => {
+        return await this.getById(actionId);
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    updateAction = async(actionId: string, updates: any): Promise<any> => {
+        return await this.getById(actionId);
+    };
 
     //#region Privates
 
@@ -538,7 +559,7 @@ export class MedicationConsumptionService implements IUserActionService {
         }
         return durationInHours;
 
-    }
+    };
     
     private getPatientTimeZone = async(patientUserId) => {
         var user = await this._userRepo.getById(patientUserId);
@@ -546,11 +567,11 @@ export class MedicationConsumptionService implements IUserActionService {
             return user.CurrentTimeZone;
         }
         return "+05:30";
-    }
+    };
 
     private getMedicationDetails = (drugName, dose, dosageUnit, schedule) => {
         return drugName + ': ' + dose.toFixed(1).toString() + ' ' + dosageUnit + ', ' + schedule;
-    }
+    };
 
     private getScheduleSlots = (medication) => {
 
@@ -616,7 +637,7 @@ export class MedicationConsumptionService implements IUserActionService {
             }
         }
         return scheduleSlots;
-    }
+    };
 
     private getDurationInDays = (duration, durationUnit, refillsCount) => {
 
@@ -634,7 +655,7 @@ export class MedicationConsumptionService implements IUserActionService {
             return duration * 30 * (refills + 1);
         }
         return 1;
-    }
+    };
 
     private getDayStep = (frequency, frequencyUnit) => {
 
@@ -648,7 +669,7 @@ export class MedicationConsumptionService implements IUserActionService {
             return Math.round(30 / frequency);
         }
         return 1;
-    }
+    };
 
     private getSummary = (medConsumptions: MedicationConsumptionDetailsDto[]) => {
 
@@ -680,7 +701,7 @@ export class MedicationConsumptionService implements IUserActionService {
         }
 
         return summary;
-    }
+    };
 
     private classifyByDrugs = (medConsumptions: MedicationConsumptionDto[])
         : SummarizedScheduleDto[] => {
@@ -701,7 +722,7 @@ export class MedicationConsumptionService implements IUserActionService {
         }
 
         return arrangedByDrugList;
-    }
+    };
 
     private segregateByDrugName = (medConsumptions: MedicationConsumptionDetailsDto[]) => {
 
@@ -716,7 +737,7 @@ export class MedicationConsumptionService implements IUserActionService {
         }
         
         return listByDrugName;
-    }
+    };
 
     sendMedicationReminder = async (medicationSchedule) => {
 
@@ -740,7 +761,7 @@ export class MedicationConsumptionService implements IUserActionService {
             await Loader.notificationService.sendMessageToTopic(device.Token, message);
         }
 
-    }
+    };
 
     //#endregion
     

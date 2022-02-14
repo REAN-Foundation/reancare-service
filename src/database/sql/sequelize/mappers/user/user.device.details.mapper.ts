@@ -21,6 +21,6 @@ export class UserDeviceDetailsMapper {
             AppVersion : userDeviceDetails.AppVersion
         };
         return dto;
-    }
+    };
 
 }

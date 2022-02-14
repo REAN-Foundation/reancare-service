@@ -22,7 +22,7 @@ export class PatientMapper {
             EmergencyContacts : [], // PatientEmergencyContactDto[];
         };
         return dto;
-    }
+    };
 
     static toDto = async (patient: Patient): Promise<PatientDto> => {
 
@@ -44,6 +44,6 @@ export class PatientMapper {
             Age         : null,
         };
         return dto;
-    }
+    };
 
 }

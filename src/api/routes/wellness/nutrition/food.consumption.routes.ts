@@ -10,7 +10,7 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new FoodConsumptionController();
 
-    router.post('/', authenticator.authenticateClient, controller.create);
+    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:patientUserId/consumed-as/:consumedAs', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByEvent);
     router.get('/:patientUserId/for-day/:date', authenticator.authenticateClient, authenticator.authenticateUser, controller.getForDay);

@@ -110,27 +110,28 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
         }
     };
 
-    update = async (id: string, model: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
+    update = async (id: string, updateModel: SymptomTypeDomainModel): Promise<SymptomTypeDto> => {
         try {
             const symptomType = await SymptomType.findByPk(id);
 
-            if (model.Symptom != null) {
-                symptomType.Symptom = model.Symptom;
+            if (updateModel.Symptom != null) {
+                symptomType.Symptom = updateModel.Symptom;
             }
-            if (model.Tags != null) {
-                var existingTags = symptomType.Tags ? JSON.parse(symptomType.Tags) as Array<string> : [];
-                existingTags.push(...model.Tags);
+            if (updateModel.Tags != null) {
+
+                var existingTags = [JSON.parse(symptomType.Tags) as Array<string>];
+                existingTags.push(updateModel.Tags);
                 existingTags = [...new Set(existingTags)];
                 symptomType.Tags = JSON.stringify(existingTags);
             }
-            if (model.Description != null) {
-                symptomType.Description = model.Description;
+            if (updateModel.Description != null) {
+                symptomType.Description = updateModel.Description;
             }
-            if (model.Language != null) {
-                symptomType.Language = model.Language;
+            if (updateModel.Language != null) {
+                symptomType.Language = updateModel.Language;
             }
-            if (model.ImageResourceId != null) {
-                symptomType.ImageResourceId = model.ImageResourceId;
+            if (updateModel.ImageResourceId != null) {
+                symptomType.ImageResourceId = updateModel.ImageResourceId;
             }
 
             await symptomType.save();

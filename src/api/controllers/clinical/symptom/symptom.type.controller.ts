@@ -3,22 +3,26 @@ import express from 'express';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { Loader } from '../../../../startup/loader';
 import { Authorizer } from '../../../../auth/authorizer';
-
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { SymptomTypeValidator } from '../../../validators/clinical/symptom/symptom.type.validator';
 import { SymptomTypeService } from '../../../../services/clinical/symptom/symptom.type.service';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class SymptomTypeController {
+export class SymptomTypeController extends BaseController {
 
     //#region member variables and constructors
 
     _service: SymptomTypeService = null;
 
+    _validator: SymptomTypeValidator = new SymptomTypeValidator();
+
     _authorizer: Authorizer = null;
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(SymptomTypeService);
         this._authorizer = Loader.authorizer;
     }
@@ -29,10 +33,9 @@ export class SymptomTypeController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomType.Create';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomType.Create', request, response);
             
-            const domainModel = await SymptomTypeValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             const symptomType = await this._service.create(domainModel);
             if (symptomType == null) {
@@ -49,10 +52,9 @@ export class SymptomTypeController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomType.GetById';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomType.GetById', request, response);
 
-            const id: string = await SymptomTypeValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const symptomType = await this._service.getById(id);
             if (symptomType == null) {
@@ -69,10 +71,9 @@ export class SymptomTypeController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomType.Search';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomType.Search', request, response);
 
-            const filters = await SymptomTypeValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -91,12 +92,11 @@ export class SymptomTypeController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomType.Update';
-            await this._authorizer.authorize(request, response);
+            this.setContext('SymptomType.Update', request, response);
 
-            const domainModel = await SymptomTypeValidator.update(request);
+            const domainModel = await this._validator.update(request);
 
-            const id: string = await SymptomTypeValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptomType = await this._service.getById(id);
             if (existingSymptomType == null) {
                 throw new ApiError(404, 'Symptom type not found.');
@@ -117,10 +117,9 @@ export class SymptomTypeController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'SymptomType.Delete';
-            await this._authorizer.authorize(request, response);
-
-            const id: string = await SymptomTypeValidator.getById(request);
+            this.setContext('SymptomType.Delete', request, response);
+            
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingSymptomType = await this._service.getById(id);
             if (existingSymptomType == null) {
                 throw new ApiError(404, 'Symptom type not found.');

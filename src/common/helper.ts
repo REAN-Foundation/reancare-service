@@ -7,6 +7,7 @@ import { generate } from 'generate-password';
 import path from 'path';
 import { Gender } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
+import mime = require('mime-types');
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -414,5 +415,13 @@ export class Helper {
         }
         return str;
     };
+
+    public static getMimeType = (pathOrExtension: string) => {
+        var mimeType = mime.lookup(pathOrExtension);
+        if (!mimeType) {
+            mimeType = 'text/plain';
+        }
+        return mimeType;
+    }
     
 }

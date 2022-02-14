@@ -2,7 +2,6 @@ import express from 'express';
 import * as expressFileupload from 'express-fileupload';
 import { body, param, query, validationResult } from 'express-validator';
 import * as _ from 'lodash';
-import mime from 'mime';
 import path from 'path';
 import { InputValidationError } from '../../common/input.validation.error';
 import { Helper } from "../../common/helper";
@@ -512,7 +511,7 @@ export class FileResourceValidator extends BaseValidator{
             FileName       : filename,
             OriginalName   : file.name,
             SourceFilePath : tempFilename,
-            MimeType       : mime.lookup(tempFilename),
+            MimeType       : Helper.getMimeType(tempFilename),
             Size           : file.size,
             StorageKey     : null
         };

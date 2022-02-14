@@ -35,7 +35,6 @@ ADD . /app
 WORKDIR /app
 
 COPY package*.json /app/
-# RUN npm install --production
 RUN npm install pm2 -g
 RUN npm install sharp
 COPY --from=builder ./app/dist/ .

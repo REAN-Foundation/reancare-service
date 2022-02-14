@@ -422,6 +422,6 @@ export class Helper {
             mimeType = 'text/plain';
         }
         return mimeType;
-    }
-    
+    };
+
 }

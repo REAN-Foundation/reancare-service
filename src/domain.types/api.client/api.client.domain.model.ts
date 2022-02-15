@@ -3,6 +3,7 @@ export interface ApiClientDomainModel {
     id?: string;
     ClientName: string;
     ClientCode?: string;
+    IsPrivileged?: boolean;
     Password?: string;
     Phone?: string;
     Email?: string;

@@ -1,14 +1,17 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../common/helper';
 import { MedicalConditionDomainModel } from '../../../domain.types/clinical/medical.condition/medical.condition.domain.model';
 import { MedicalConditionSearchFilters } from '../../../domain.types/clinical/medical.condition/medical.condition.search.types';
+import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicalConditionValidator {
+export class MedicalConditionValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): MedicalConditionDomainModel => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = (request: express.Request): MedicalConditionDomainModel => {
 
         const MedicalConditionModel: MedicalConditionDomainModel = {
             Condition   : request.body.Condition,
@@ -19,119 +22,55 @@ export class MedicalConditionValidator {
         return MedicalConditionModel;
     };
 
-    static create = async (request: express.Request): Promise<MedicalConditionDomainModel> => {
-        await MedicalConditionValidator.validateBody(request);
-        return MedicalConditionValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<MedicalConditionDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await MedicalConditionValidator.getParamId(request);
+    search = async (request: express.Request): Promise<MedicalConditionSearchFilters> => {
+
+        await this.validateUuid(request, 'condition', Where.Query, false, false);
+        await this.validateBaseSearchFilters(request);
+        this.validateRequest(request);
+        
+        return this.getFilter(request);
+
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await MedicalConditionValidator.getParamId(request);
-    };
+    update = async (request: express.Request): Promise<MedicalConditionDomainModel> => {
 
-    static search = async (request: express.Request): Promise<MedicalConditionSearchFilters> => {
-
-        await query('condition').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return MedicalConditionValidator.getFilter(request);
-    };
-
-    static update = async (request: express.Request): Promise<MedicalConditionDomainModel> => {
-
-        const id = await MedicalConditionValidator.getParamId(request);
-        await MedicalConditionValidator.validateBody(request);
-
-        const domainModel = MedicalConditionValidator.getDomainModel(request);
-        domainModel.id = id;
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
 
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private async validateCreateBody(request) {
 
-        await body('Condition').optional()
-            .trim()
-            .escape()
-            .run(request);
+        await this.validateString(request, 'Condition', Where.Body, true, false);
+        await this.validateString(request, 'Description', Where.Body, true, false);
+        await this.validateString(request, 'Language', Where.Body, true, true);
 
-        await body('Description').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Language').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
     }
 
-    private static getFilter(request): MedicalConditionSearchFilters {
-        const pageIndex = request.query.PageIndex !== 'undefined' ? parseInt(request.query.PageIndex as string, 10) : 0;
+    private async validateUpdateBody(request) {
 
-        const itemsPerPage =
-            request.query.ItemsPerPage !== 'undefined' ? parseInt(request.query.ItemsPerPage as string, 10) : 25;
+        await this.validateString(request, 'Condition', Where.Body, false, false);
+        await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateString(request, 'Language', Where.Body, false, false);
 
-        const filters: MedicalConditionSearchFilters = {
-            Condition    : request.query.Condition ?? null,
-            OrderBy      : request.query.orderBy ?? 'CreatedAt',
-            Order        : request.query.order ?? 'descending',
-            PageIndex    : pageIndex,
-            ItemsPerPage : itemsPerPage,
+        this.validateRequest(request);
+    }
+
+    private getFilter(request): MedicalConditionSearchFilters {
+
+        var filters: MedicalConditionSearchFilters = {
+            Condition : request.query.condition ?? null,
+            
         };
-        return filters;
-    }
-
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

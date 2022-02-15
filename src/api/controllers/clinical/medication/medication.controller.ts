@@ -1,6 +1,6 @@
 import express from 'express';
 import fs from 'fs';
-import mime from 'mime';
+import { Helper } from '../../../../common/helper';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
@@ -346,7 +346,7 @@ export class MedicationController {
                 throw new ApiError(404, 'File resource not found.');
             }
     
-            var mimeType = mime.lookup(localDestination);
+            var mimeType = Helper.getMimeType(localDestination);
             response.setHeader('Content-type', mimeType);
             response.setHeader('Content-disposition', 'inline');
             var filestream = fs.createReadStream(localDestination);

@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { MedicalConditionDomainModel } from "../../../../../domain.types/clinical/medical.condition/medical.condition.domain.model";
@@ -22,8 +23,8 @@ export class MedicalConditionRepo implements IMedicalConditionRepo {
             };
 
             const medicalCondition = await MedicalConditionModel.create(entity);
-            const dto = await MedicalConditionMapper.toDto(medicalCondition);
-            return dto;
+            return MedicalConditionMapper.toDto(medicalCondition);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -33,8 +34,8 @@ export class MedicalConditionRepo implements IMedicalConditionRepo {
     getById = async (id: string): Promise<MedicalConditionDto> => {
         try {
             const medicalCondition = await MedicalConditionModel.findByPk(id);
-            const dto = await MedicalConditionMapper.toDto(medicalCondition);
-            return dto;
+            return MedicalConditionMapper.toDto(medicalCondition);
+            
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -46,7 +47,7 @@ export class MedicalConditionRepo implements IMedicalConditionRepo {
             const search = { where: {} };
 
             if (filters.Condition != null) {
-                search.where['Condition'] = filters.Condition;
+                search.where['Condition'] = { [Op.like]: '%' + filters.Condition + '%' };
             }
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
@@ -75,7 +76,7 @@ export class MedicalConditionRepo implements IMedicalConditionRepo {
 
             const dtos: MedicalConditionDto[] = [];
             for (const medicalCondition of foundResults.rows) {
-                const dto = await MedicalConditionMapper.toDto(medicalCondition);
+                const dto = MedicalConditionMapper.toDto(medicalCondition);
                 dtos.push(dto);
             }
 
@@ -112,8 +113,8 @@ export class MedicalConditionRepo implements IMedicalConditionRepo {
             }
             await medicalCondition.save();
 
-            const dto = await MedicalConditionMapper.toDto(medicalCondition);
-            return dto;
+            return MedicalConditionMapper.toDto(medicalCondition);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -122,10 +123,8 @@ export class MedicalConditionRepo implements IMedicalConditionRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            Logger.instance().log(id);
-
-            const result = await MedicalConditionModel.destroy({ where: { id: id } });
-            return result === 1;
+            await MedicalConditionModel.destroy({ where: { id: id } });
+            return true;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

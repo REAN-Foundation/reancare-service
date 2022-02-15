@@ -31,6 +31,11 @@ export class CustomAuthenticator implements IAuthenticator {
             const token = authHeader && authHeader.split(' ')[1];
 
             if (token == null) {
+                var IsPrivileged = request.currentClient.IsPrivileged as boolean;
+                if (IsPrivileged) {
+                    return res;
+                }
+                
                 res = {
                     Result        : false,
                     Message       : 'Unauthorized user access',

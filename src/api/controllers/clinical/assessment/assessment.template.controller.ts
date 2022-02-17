@@ -183,6 +183,7 @@ export class AssessmentTemplateController extends BaseController{
             if (uploadModels.length === 0) {
                 throw new ApiError(422, 'Cannot find valid file to import!');
             }
+
             const uploadModel = uploadModels[0];
             const metadata = uploadModel.FileMetadata;
             const sourceFilePath = metadata.SourceFilePath;
@@ -194,14 +195,15 @@ export class AssessmentTemplateController extends BaseController{
             }
             const templateModel =  JSON.parse(fileContent);
 
-            const assessmentTemplate = await this._service.import(templateModel);
+            var assessmentTemplate = await this._service.import(templateModel);
             if (assessmentTemplate == null) {
                 throw new ApiError(400, 'Cannot import assessment Template!');
             }
 
-            ResponseHandler.success(request, response, 'Assessment template record created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Assessment template imported successfully!', 201, {
                 AssessmentTemplate : assessmentTemplate,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -213,14 +215,16 @@ export class AssessmentTemplateController extends BaseController{
             await this.setContext('AssessmentTemplate.ImportFromJson', request, response);
 
             const templateModel = JSON.parse(request.body);
-            const assessmentTemplate = await this._service.import(templateModel);
+
+            var assessmentTemplate = await this._service.import(templateModel);
             if (assessmentTemplate == null) {
-                throw new ApiError(400, 'Cannot find valid file to import!');
+                throw new ApiError(400, 'Cannot import assessment Template!');
             }
 
-            ResponseHandler.success(request, response, 'Assessment template record created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Assessment template imported successfully!', 201, {
                 AssessmentTemplate : assessmentTemplate,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

@@ -48,8 +48,8 @@ export class AssessmentTemplateFileConverter {
         const jsonStr = JSON.stringify(jsonObj, null, 2);
         fs.writeFileSync(sourceFile, jsonStr);
 
-        const fileResourceServie = Loader.container.resolve(FileResourceService);
-        const dto = await fileResourceServie.uploadLocal(sourceFile, storageKey, false);
+        const fileResourceService = Loader.container.resolve(FileResourceService);
+        const dto = await fileResourceService.uploadLocal(sourceFile, storageKey, false);
         return dto;
     }
 
@@ -128,7 +128,7 @@ export class AssessmentTemplateFileConverter {
 
         if (nodeObj.NodeType === AssessmentNodeType.NodeList) {
             var listNode: CAssessmentListNode = nodeObj as CAssessmentListNode;
-            node['Children'] = listNode.ChildrenNodeDisplayCodes;
+            node['ChildrenNodeDisplayCodes'] = listNode.ChildrenNodeDisplayCodes;
         }
         else if (nodeObj.NodeType === AssessmentNodeType.Message) {
             const messageNode = nodeObj as CAssessmentMessageNode;
@@ -229,14 +229,14 @@ export class AssessmentTemplateFileConverter {
 
             var listNode: CAssessmentListNode = new CAssessmentListNode();
 
-            listNode.DisplayCode       = nodeObj.DisplayCode;
-            listNode.NodeType          = nodeObj.NodeType;
-            listNode.ProviderGivenId   = nodeObj.ProviderGivenId;
-            listNode.ProviderGivenCode = nodeObj.ProviderGivenCode;
-            listNode.Title             = nodeObj.Title;
-            listNode.Description       = nodeObj.Description;
-            listNode.Sequence          = nodeObj.Sequence;
-            listNode.Score             = nodeObj.Score;
+            listNode.DisplayCode              = nodeObj.DisplayCode;
+            listNode.NodeType                 = nodeObj.NodeType;
+            listNode.ProviderGivenId          = nodeObj.ProviderGivenId;
+            listNode.ProviderGivenCode        = nodeObj.ProviderGivenCode;
+            listNode.Title                    = nodeObj.Title;
+            listNode.Description              = nodeObj.Description;
+            listNode.Sequence                 = nodeObj.Sequence;
+            listNode.Score                    = nodeObj.Score;
             listNode.ChildrenNodeDisplayCodes = nodeObj.ChildrenNodeDisplayCodes;
 
             return listNode;

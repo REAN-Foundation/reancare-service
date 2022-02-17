@@ -1,10 +1,13 @@
 import { Op } from 'sequelize';
-import { AssessmentTemplateSearchFilters,
-    AssessmentTemplateSearchResults } from '../../../../../../domain.types/clinical/assessment/assessment.template.search.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateDto } from '../../../../../../domain.types/clinical/assessment/assessment.template.dto';
+import {
+    AssessmentTemplateSearchFilters,
+    AssessmentTemplateSearchResults
+} from '../../../../../../domain.types/clinical/assessment/assessment.template.search.types';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { IAssessmentTemplateRepo } from '../../../../../repository.interfaces/clinical/assessment/assessment.template.repo.interface';
 import { AssessmentTemplateMapper } from '../../../mappers/clinical/assessment/assessment.template.mapper';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -33,7 +36,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
         }
     };
 
-    public getById = async (id: string): Promise<AssessmentTemplateDto> => {
+    public getById = async (id: uuid): Promise<AssessmentTemplateDto> => {
         try {
             const assessmentTemplate = await AssessmentTemplate.findByPk(id);
             return AssessmentTemplateMapper.toDto(assessmentTemplate);
@@ -118,9 +121,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
         }
     };
 
-    public update = async (id: string, updateModel: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
+    public update = async (id: uuid, updateModel: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
         try {
-            const assessmentTemplate = await AssessmentTemplate.findByPk(id);
+            var assessmentTemplate = await AssessmentTemplate.findByPk(id);
 
             if (updateModel.Type != null) {
                 assessmentTemplate.Type = updateModel.Type;
@@ -146,7 +149,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
         }
     };
 
-    public delete = async (id: string): Promise<boolean> => {
+    public delete = async (id: uuid): Promise<boolean> => {
         try {
             await AssessmentTemplate.destroy({ where: { id: id } });
             return true;
@@ -155,6 +158,18 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    public updateFileResource = async (id: uuid, fileResourceId: uuid): Promise<AssessmentTemplateDto> => {
+        try {
+            var assessmentTemplate = await AssessmentTemplate.findByPk(id);
+            assessmentTemplate.FileResourceId = fileResourceId;
+            await assessmentTemplate.save();
+            return AssessmentTemplateMapper.toDto(assessmentTemplate);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
     //#endregion
     

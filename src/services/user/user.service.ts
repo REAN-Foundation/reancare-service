@@ -237,9 +237,6 @@ export class UserService {
             const tokens = phoneTemp.split('+');
             let s = tokens.length > 1 ? tokens[1] : phoneTemp;
 
-            if (s.startsWith('91')){
-                s = s.slice(2);
-            }
             s = s.trim();
             s = s.replace('+', '');
             s = s.replace(' ', '');
@@ -254,9 +251,9 @@ export class UserService {
         }
         else {
             const tmp = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
-            str = tmp.substr(-10);
+            str = tmp.substring(-10);
         }
-        str = str.substr(0, 20);
+        str = str.substring(0, 20);
     
         const displayId = prefix + str;
         return displayId;

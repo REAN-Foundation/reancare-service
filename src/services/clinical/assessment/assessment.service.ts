@@ -61,7 +61,8 @@ export class AssessmentService {
         model.ProviderAssessmentCode = template.ProviderAssessmentCode;
         model.Title = model.Title ?? template.Title;
         model.Type = template.Type;
-        model.ScheduledDateString = model.ScheduledDateString ?? new Date().toISOString().split('T')[0];
+        model.ScheduledDateString = model.ScheduledDateString ?? new Date().toISOString()
+            .split('T')[0];
 
         return await this._assessmentRepo.create(model);
     };

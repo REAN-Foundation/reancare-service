@@ -97,7 +97,7 @@ export class AssessmentTemplateFileConverter {
             tmpl.Nodes                  = [];
 
             for (var nodeObj of templateObj.Nodes) {
-                const node = AssessmentTemplateFileConverter.nodeFromJson(nodeObj);
+                const node = AssessmentTemplateFileConverter.nodeFromJson(tmpl.Nodes, nodeObj);
                 tmpl.Nodes.push(node);
             }
 
@@ -140,7 +140,7 @@ export class AssessmentTemplateFileConverter {
             node['QueryResponseType'] = questionNode.QueryResponseType;
 
             //Add options
-            if (questionNode.Options.length > 0) {
+            if (questionNode.Options && questionNode.Options.length > 0) {
                 const optionObjects: CAssessmentQueryOption[] = questionNode.Options;
                 var options = [];
                 for (var optionObj of optionObjects) {
@@ -157,9 +157,9 @@ export class AssessmentTemplateFileConverter {
             }
 
             //Add paths
-            const pathObjects: CAssessmentNodePath[] = questionNode.Paths;
-
-            if (pathObjects.length > 0) {
+            
+            if (questionNode.Paths && questionNode.Paths.length > 0) {
+                const pathObjects: CAssessmentNodePath[] = questionNode.Paths;
                 var paths = [];
                 for (var pathObj of pathObjects) {
                     const path = {
@@ -223,7 +223,7 @@ export class AssessmentTemplateFileConverter {
         return condition;
     }
 
-    private static nodeFromJson(nodeObj: any): CAssessmentNode {
+    private static nodeFromJson(nodes: any[], nodeObj: any): CAssessmentNode {
 
         if (nodeObj.NodeType === AssessmentNodeType.NodeList) {
 
@@ -255,7 +255,7 @@ export class AssessmentTemplateFileConverter {
 
             //Add options
 
-            if (nodeObj.Options.length > 0) {
+            if (nodeObj.Options && nodeObj.Options.length > 0) {
                 var options: CAssessmentQueryOption[] = [];
                 for (var optionObj of nodeObj.Options) {
                     var option = new CAssessmentQueryOption();
@@ -271,7 +271,7 @@ export class AssessmentTemplateFileConverter {
 
             //Add paths
 
-            if (nodeObj.Paths.length > 0) {
+            if (nodeObj.Paths && nodeObj.Paths.length > 0) {
                 var paths: CAssessmentNodePath[] = [];
                 for (var pathObj of nodeObj.Paths) {
                     var path = new CAssessmentNodePath();

@@ -45,8 +45,25 @@ export class AssessmentService {
         this._conditionProcessor = Loader.container.resolve(ConditionProcessor);
     }
 
-    public create = async (assessmentDomainModel: AssessmentDomainModel): Promise<AssessmentDto> => {
-        return await this._assessmentRepo.create(assessmentDomainModel);
+    public create = async (model: AssessmentDomainModel): Promise<AssessmentDto> => {
+        if (model.AssessmentTemplateId == null) {
+            throw new Error('Invalid template id');
+        }
+        const template = await this._assessmentTemplateRepo.getById(model.AssessmentTemplateId);
+
+        var code = template.DisplayCode ? template.DisplayCode.split('#')[1] : '';
+        var datestr = (new Date()).toISOString()
+            .split('T')[0];
+        const displayCode = 'Assessment#' + code + ':' + datestr;
+        model.DisplayCode = displayCode;
+        model.Description = template.Description;
+        model.Provider = template.Provider;
+        model.ProviderAssessmentCode = template.ProviderAssessmentCode;
+        model.Title = model.Title ?? template.Title;
+        model.Type = template.Type;
+        model.ScheduledDateString = model.ScheduledDateString ?? new Date().toISOString().split('T')[0];
+
+        return await this._assessmentRepo.create(model);
     };
 
     public getById = async (id: string): Promise<AssessmentDto> => {

@@ -158,8 +158,8 @@ export class CAssessmentTemplate {
         this.Nodes = [];
     }
 
-    getNodeByDisplayCode(displayCode:string): CAssessmentNode {
-        return this.Nodes.find(x => x.DisplayCode === displayCode);
+    public static getNodeByDisplayCode(nodes: CAssessmentNode[], displayCode:string): CAssessmentNode {
+        return nodes.find(x => x.DisplayCode === displayCode);
     }
 
 }

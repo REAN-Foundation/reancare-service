@@ -65,7 +65,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             var template = await AssessmentTemplate.create(templateModel as any);
 
             const rootNodeDisplayCode: string = t.RootNodeDisplayCode;
-            const sRootNode = t.getNodeByDisplayCode(rootNodeDisplayCode);
+            const sRootNode = CAssessmentTemplate.getNodeByDisplayCode(t.Nodes, rootNodeDisplayCode);
  
             const rootNode = await this.createNewNode(t, template.id, null, sRootNode);
             template.RootNodeId = rootNode.id;
@@ -321,7 +321,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             var childrenDisplayCodes = listNode.ChildrenNodeDisplayCodes;
 
             for await (var childDisplayCode of childrenDisplayCodes) {
-                const child = templateObj.getNodeByDisplayCode(childDisplayCode);
+                const child = CAssessmentTemplate.getNodeByDisplayCode(templateObj.Nodes, childDisplayCode);
                 if (child) {
                     var childNode = await this.createNewNode(templateObj, templateId, currentNodeId, child);
                     if (childNode) {
@@ -384,7 +384,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             path.ConditionId = condition.id;
 
             //Create the next node
-            const sNextNode = sTemplate.getNodeByDisplayCode(sPath.NextNodeDisplayCode);
+            const sNextNode = CAssessmentTemplate.getNodeByDisplayCode(sTemplate.Nodes, sPath.NextNodeDisplayCode);
             if (sNextNode) {
                 var nextNode = await this.createNewNode(sTemplate, templateId, thisNode.id, sNextNode);
                 if (!nextNode) {

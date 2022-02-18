@@ -58,11 +58,11 @@ export class FoodConsumptionValidator extends BaseValidator {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
         await this.validateString(request, 'Food', Where.Body, true, false);
-        await this.validateString(request, 'Description', Where.Body, true, false);
+        await this.validateString(request, 'Description', Where.Body, false, true);
         await this.validateString(request, 'ConsumedAs', Where.Body, true, false);
-        await this.validateDecimal(request, 'Calories', Where.Body, true, true);
+        await this.validateDecimal(request, 'Calories', Where.Body, false, true);
         await this.validateDate(request, 'StartTime', Where.Body, true, false);
-        await this.validateDate(request, 'EndTime', Where.Body, true, false);
+        await this.validateDate(request, 'EndTime', Where.Body, false, true);
 
         this.validateRequest(request);
     }

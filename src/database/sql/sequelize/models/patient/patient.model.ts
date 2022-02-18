@@ -55,9 +55,9 @@ export default class Patient extends Model {
     })
     PersonId: string;
 
-    @Length({ min: 4, max: 16 })
+    @Length({ min: 4, max: 24 })
     @Column({
-        type      : DataType.STRING(16),
+        type      : DataType.STRING(24),
         allowNull : false,
     })
     DisplayId: string;

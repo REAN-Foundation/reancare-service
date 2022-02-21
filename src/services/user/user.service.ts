@@ -48,7 +48,12 @@ export class UserService {
 
     public getById = async (id: string): Promise<UserDetailsDto> => {
         var dto = await this._userRepo.getById(id);
+        Logger.instance().log(`DTO from user repo: ${JSON.stringify(dto)}`);
+
         dto = await this.updateDetailsDto(dto);
+
+        Logger.instance().log(`Update details DTO: ${JSON.stringify(dto)}`);
+
         return dto;
     };
 

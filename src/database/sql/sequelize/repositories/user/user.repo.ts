@@ -136,6 +136,9 @@ export class UserRepo implements IUserRepo {
         try {
             const user = await User.findByPk(id);
             const dto = await UserMapper.toDetailsDto(user);
+
+            Logger.instance().log(`User mapper DTO: ${JSON.stringify(dto)}`);
+
             return dto;
         } catch (error) {
             Logger.instance().log(error.message);

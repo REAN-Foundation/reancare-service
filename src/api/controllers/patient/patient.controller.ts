@@ -1,4 +1,5 @@
 import express from 'express';
+import { Logger } from '../../../common/logger';
 import { ApiError } from '../../../common/api.error';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
@@ -144,6 +145,9 @@ export class PatientController extends BaseUserController{
             }
 
             const patient = await this._service.getByUserId(userId);
+
+            Logger.instance().log(`Patient: ${JSON.stringify(patient)}`);
+
             if (patient == null) {
                 throw new ApiError(404, 'Patient not found.');
             }

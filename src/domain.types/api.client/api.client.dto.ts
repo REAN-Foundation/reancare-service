@@ -3,6 +3,7 @@ export interface ApiClientDto {
     id: string;
     ClientName: string;
     ClientCode: string;
+    IsPrivileged: boolean;
     Phone: string;
     Email: string;
     IsActive: boolean;

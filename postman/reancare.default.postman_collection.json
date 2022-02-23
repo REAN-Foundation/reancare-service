@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6c85daee-81c6-4afe-9153-759c64e695ed",
+		"_postman_id": "d9fad6f3-cdd9-4532-b913-56d34b9aa1d3",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -27649,6 +27649,352 @@
 											"key": "patientUserId",
 											"value": "430e4586-14f1-4021-9da9-7bc67c99b26a"
 										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Medication condition",
+					"item": [
+						{
+							"name": "Add medical condition",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"MEDICAL_CONDITION_ID\", jsonRes.Data.MedicalCondition.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"A New medical condition is created\", function () {\r",
+											"\r",
+											"    var expectedValidationStatus = \"English\";\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('MedicalCondition');\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Condition');\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Description');\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Language');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.MedicalCondition.Language).equals(expectedValidationStatus);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Condition\": \"medium\",\r\n    \"Description\": \"bad throat\",\r\n    \"Language\": \"English\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/static-types/medical-condition",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"static-types",
+										"medical-condition"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get medical condition by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Medical condition record is returned\", function () {\r",
+											"\r",
+											"    var expectedValidationStatus = \"English\";\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('MedicalCondition');\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Condition');\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Description');\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Language');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.MedicalCondition.Language).equals(expectedValidationStatus);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/static-types/medical-condition/{{MEDICAL_CONDITION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"static-types",
+										"medical-condition",
+										"{{MEDICAL_CONDITION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update medical condition",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Medical condition record is returned\", function () {\r",
+											"\r",
+											"    var expectedValidationStatus = \"English\";\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('MedicalCondition');\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Condition');\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Description');\r",
+											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Language');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.MedicalCondition.Language).equals(expectedValidationStatus);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Condition\": \"worse\",\r\n    \"Description\": \"Upset stomach\",\r\n    \"Language\": \"English\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/static-types/medical-condition/{{MEDICAL_CONDITION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"static-types",
+										"medical-condition",
+										"{{MEDICAL_CONDITION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search medical condition",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of Medical condition is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('MedicalConditionRecords');\r",
+											"    pm.expect(jsonRes.Data.MedicalConditionRecords.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/static-types/medical-condition/search",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"static-types",
+										"medical-condition",
+										"search"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete medical condition",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Medical condition record is deleted\", function () {\r",
+											"\r",
+											"    var expectedValue = true;\r",
+											"    var jsonRes = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/static-types/medical-condition/{{MEDICAL_CONDITION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"static-types",
+										"medical-condition",
+										"{{MEDICAL_CONDITION_ID}}"
 									]
 								}
 							},

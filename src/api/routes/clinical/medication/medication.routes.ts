@@ -26,7 +26,6 @@ export const register = (app: express.Application): void => {
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
-    router.get('/current/intetnal/:patientUserId', authenticator.authenticateUser, controller.getCurrentMedications);
-
+    
     app.use('/api/v1/clinical/medications', router);
 };

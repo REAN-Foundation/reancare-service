@@ -56,6 +56,7 @@ export interface CareplanConfig {
 
 export interface Configurations {
     SystemIdentifier: string;
+    DefaultSessionDurationDays: number;
     BaseUrl: string;
     Auth: AuthConfig;
     Database: DatabaseConfig;

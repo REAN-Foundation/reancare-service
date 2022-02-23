@@ -15,9 +15,10 @@ export class ConfigurationManager {
     public static loadConfigurations = (): void => {
 
         ConfigurationManager._config = {
-            SystemIdentifier : configuration.SystemIdentifier,
-            BaseUrl          : process.env.BASE_URL,
-            Auth             : {
+            SystemIdentifier           : configuration.SystemIdentifier,
+            DefaultSessionDurationDays : configuration.DefaultSessionDurationDays,
+            BaseUrl                    : process.env.BASE_URL,
+            Auth                       : {
                 Authentication : configuration.Auth.Authentication as AuthenticationType,
                 Authorization  : configuration.Auth.Authorization as AuthorizationType,
             },
@@ -57,6 +58,10 @@ export class ConfigurationManager {
 
     public static SystemIdentifier = (): string => {
         return ConfigurationManager._config.SystemIdentifier;
+    };
+
+    public static DefaultSessionDurationDays = (): number => {
+        return ConfigurationManager._config.DefaultSessionDurationDays;
     };
 
     public static Authentication = (): AuthenticationType => {

@@ -1,34 +1,24 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { OrderService } from '../../../services/clinical/order.service';
-import { PatientService } from '../../../services/patient/patient.service';
-import { PersonService } from '../../../services/person.service';
 import { Loader } from '../../../startup/loader';
 import { OrderValidator } from '../../validators/clinical/order.validator';
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class OrderController {
+export class OrderController extends BaseController{
 
     //#region member variables and constructors
 
     _service: OrderService = null;
-
-    _authorizer: Authorizer = null;
-
-    _personService: PersonService = null;
-
-    _patientService: PatientService = null;
+    _validator: OrderValidator = new OrderValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(OrderService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._patientService = Loader.container.resolve(PatientService);
-
-        this._authorizer = Loader.authorizer;
-
     }
 
     //#endregion
@@ -37,17 +27,17 @@ export class OrderController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Order.Create';
+            
+            this.setContext('Order.Create', request, response);
 
-            const orderDomainModel = await OrderValidator.create(request);
-
-            const Order = await this._service.create(orderDomainModel);
-            if (Order == null) {
+            const model = await this._validator.create(request);
+            const order = await this._service.create(model);
+            if (order == null) {
                 throw new ApiError(400, 'Cannot create record for order!');
             }
 
             ResponseHandler.success(request, response, 'Order record created successfully!', 201, {
-                Order : Order,
+                Order : order,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -56,19 +46,17 @@ export class OrderController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Order.GetById';
             
-            await this._authorizer.authorize(request, response);
+            this.setContext('Order.GetById', request, response);
 
-            const id: string = await OrderValidator.getById(request);
-
-            const Order = await this._service.getById(id);
-            if (Order == null) {
-                throw new ApiError(404, ' Order record not found.');
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const order = await this._service.getById(id);
+            if (order == null) {
+                throw new ApiError(404, 'Order record not found.');
             }
 
             ResponseHandler.success(request, response, 'Order record retrieved successfully!', 200, {
-                Order : Order,
+                Order : order,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -77,13 +65,11 @@ export class OrderController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Order.Search';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Order.Search', request, response);
 
-            const filters = await OrderValidator.search(request);
-
+            const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
-
             const count = searchResults.Items.length;
 
             const message =
@@ -101,13 +87,11 @@ export class OrderController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Order.Update';
+            
+            this.setContext('Order.Update', request, response);
 
-            await this._authorizer.authorize(request, response);
-
-            const domainModel = await OrderValidator.update(request);
-
-            const id: string = await OrderValidator.getById(request);
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Order record not found.');
@@ -128,10 +112,10 @@ export class OrderController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Order.Delete';
-            await this._authorizer.authorize(request, response);
+            
+            this.setContext('Order.Delete', request, response);
 
-            const id: string = await OrderValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Order record not found.');

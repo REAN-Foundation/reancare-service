@@ -1,3 +1,4 @@
+import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { IOrderRepo } from "../../database/repository.interfaces/clinical/order.repo.interface";
 import { OrderDomainModel } from '../../domain.types/clinical/order/order.domain.model';
@@ -18,7 +19,7 @@ export class OrderService {
         return await this._orderRepo.create(orderDomainModel);
     };
 
-    getById = async (id: string): Promise<OrderDto> => {
+    getById = async (id: uuid): Promise<OrderDto> => {
         return await this._orderRepo.getById(id);
     };
 
@@ -26,12 +27,12 @@ export class OrderService {
         return await this._orderRepo.search(filters);
     };
 
-    update = async (id: string, orderDomainModel: OrderDomainModel):
+    update = async (id: uuid, orderDomainModel: OrderDomainModel):
     Promise<OrderDto> => {
         return await this._orderRepo.update(id, orderDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: uuid): Promise<boolean> => {
         return await this._orderRepo.delete(id);
     };
 

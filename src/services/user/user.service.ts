@@ -183,7 +183,7 @@ export class UserService {
         if (!isInternalTestUser) {
             const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
             if (!storedOtp) {
-                throw new ApiError(404, 'Active Otp record not found!');
+                throw new ApiError(404, 'Active OTP record not found!');
             }
             const date = new Date();
             if (storedOtp.ValidTill <= date) {

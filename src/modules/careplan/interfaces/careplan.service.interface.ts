@@ -1,4 +1,4 @@
-import { SAssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.types";
+import { CAssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.types";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { CareplanActivity } from "../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { EnrollmentDomainModel } from "../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model";
@@ -40,7 +40,7 @@ export interface ICareplanService {
             updates: any
         ): Promise<CareplanActivity>;
     
-    convertToAssessmentTemplate(assessmentActivity: CareplanActivity): Promise<SAssessmentTemplate>;
+    convertToAssessmentTemplate(assessmentActivity: CareplanActivity): Promise<CAssessmentTemplate>;
 
     getGoals(
             patientUserId: uuid,

@@ -7,4 +7,5 @@ export interface AssessmentTemplateDomainModel {
     Description?           : string;
     ProviderAssessmentCode?: string;
     Provider?              : string;
+    FileResourceId?        : uuid;
 }

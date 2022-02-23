@@ -412,6 +412,9 @@ export class FileResourceController {
 
         var filename = path.basename(localDestination);
         var mimetype = metadata.MimeType ?? Helper.getMimeType(localDestination);
+        if (!mimetype) {
+            mimetype = 'text/plain';
+        }
 
         this.setDownloadResponseHeaders(response, metadata.Disposition, mimetype, filename);
 

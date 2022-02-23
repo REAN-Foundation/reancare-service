@@ -4,11 +4,13 @@ import * as crypto from 'crypto';
 import express from 'express';
 import * as fs from 'fs';
 import { generate } from 'generate-password';
+import mime = require('mime-types');
 import path from 'path';
+import { ConfigurationManager } from '../config/configuration.manager';
 import { Gender } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
-import mime = require('mime-types');
 import Countries from './misc/countries';
+import { TimeHelper } from './time.helper';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -443,6 +445,42 @@ export class Helper {
         return str;
     };
 
+    public static generateDownloadFolderPath = async() => {
+
+        var timestamp = TimeHelper.timestamp(new Date());
+        var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
+        var downloadFolderPath = path.join(tempDownloadFolder, timestamp);
+
+        await fs.promises.mkdir(downloadFolderPath, { recursive: true });
+
+        return downloadFolderPath;
+    };
+    
+    public static createTempDownloadFolder = async() => {
+        var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
+        if (fs.existsSync(tempDownloadFolder)) {
+            return;
+        }
+        await fs.promises.mkdir(tempDownloadFolder, { recursive: true });
+        return tempDownloadFolder;
+    };
+    
+    public static createTempUploadFolder = async() => {
+        var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
+        if (fs.existsSync(tempUploadFolder)) {
+            return;
+        }
+        await fs.promises.mkdir(tempUploadFolder, { recursive: true });
+        return tempUploadFolder;
+    };
+
+    public static strToFilename = (str: string, extension: string, delimiter: string, limitTo = 32): string => {
+        var tmp = str.replace(' ', delimiter);
+        tmp = tmp.substring(0, limitTo);
+        var ext = extension.startsWith('.') ? extension : '.' + extension;
+        return tmp + ext;
+    }
+    
     public static getMimeType = (pathOrExtension: string) => {
         var mimeType = mime.lookup(pathOrExtension);
         if (!mimeType) {
@@ -450,5 +488,5 @@ export class Helper {
         }
         return mimeType;
     };
-
+    
 }

@@ -19,11 +19,11 @@ import {
     IntegerQueryAnswer,
     MessageAnswer,
     MultipleChoiceQueryAnswer, QueryResponseType,
-    SAssessmentMessageNode,
-    SAssessmentNode,
-    SAssessmentNodePath,
-    SAssessmentQueryOption,
-    SAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer
+    CAssessmentMessageNode,
+    CAssessmentNode,
+    CAssessmentNodePath,
+    CAssessmentQueryOption,
+    CAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Loader } from '../../../startup/loader';
@@ -45,8 +45,26 @@ export class AssessmentService {
         this._conditionProcessor = Loader.container.resolve(ConditionProcessor);
     }
 
-    public create = async (assessmentDomainModel: AssessmentDomainModel): Promise<AssessmentDto> => {
-        return await this._assessmentRepo.create(assessmentDomainModel);
+    public create = async (model: AssessmentDomainModel): Promise<AssessmentDto> => {
+        if (model.AssessmentTemplateId == null) {
+            throw new Error('Invalid template id');
+        }
+        const template = await this._assessmentTemplateRepo.getById(model.AssessmentTemplateId);
+
+        var code = template.DisplayCode ? template.DisplayCode.split('#')[1] : '';
+        var datestr = (new Date()).toISOString()
+            .split('T')[0];
+        const displayCode = 'Assessment#' + code + ':' + datestr;
+        model.DisplayCode = displayCode;
+        model.Description = template.Description;
+        model.Provider = template.Provider;
+        model.ProviderAssessmentCode = template.ProviderAssessmentCode;
+        model.Title = model.Title ?? template.Title;
+        model.Type = template.Type;
+        model.ScheduledDateString = model.ScheduledDateString ?? new Date().toISOString()
+            .split('T')[0];
+
+        return await this._assessmentRepo.create(model);
     };
 
     public getById = async (id: string): Promise<AssessmentDto> => {
@@ -126,7 +144,7 @@ export class AssessmentService {
             return await this.handleAnswersToQuestion(answerModel, assessment, node, incomingResponseType);
         }
         else if (nodeType === AssessmentNodeType.Message && incomingResponseType === QueryResponseType.Ok) {
-            const messageNode = node as SAssessmentMessageNode;
+            const messageNode = node as CAssessmentMessageNode;
             return await this.handleAcknowledgement(assessment, messageNode);
         }
 
@@ -174,7 +192,7 @@ export class AssessmentService {
 
     //#region Privates
 
-    private async traverseUpstream(currentNode: SAssessmentNode): Promise<SAssessmentNode> {
+    private async traverseUpstream(currentNode: CAssessmentNode): Promise<CAssessmentNode> {
         const parentNode = await this._assessmentHelperRepo.getNodeById(currentNode.ParentNodeId);
         if (parentNode === null) {
             //We have reached the root node of the assessment
@@ -214,11 +232,11 @@ export class AssessmentService {
         return null;
     }
 
-    private async traverseQuestionNode(assessment: AssessmentDto, currentNode: SAssessmentNode)
+    private async traverseQuestionNode(assessment: AssessmentDto, currentNode: CAssessmentNode)
         : Promise<AssessmentQueryDto> {
         var isAnswered = await this.isAnswered(assessment.id, currentNode.id);
         if (!isAnswered) {
-            return await this.returnAsCurrentQuestionNode(assessment, currentNode as SAssessmentQuestionNode);
+            return await this.returnAsCurrentQuestionNode(assessment, currentNode as CAssessmentQuestionNode);
         } else {
             const nextSiblingNode = await this.traverseUpstream(currentNode);
             if (nextSiblingNode === null) {
@@ -229,11 +247,11 @@ export class AssessmentService {
         }
     }
 
-    private async traverseMessageNode(assessment: AssessmentDto, currentNode: SAssessmentNode)
+    private async traverseMessageNode(assessment: AssessmentDto, currentNode: CAssessmentNode)
         : Promise<AssessmentQueryDto> {
         var isAnswered = await this.isAnswered(assessment.id, currentNode.id);
         if (!isAnswered) {
-            return await this.returnAsCurrentMessageNode(assessment, currentNode as SAssessmentMessageNode);
+            return await this.returnAsCurrentMessageNode(assessment, currentNode as CAssessmentMessageNode);
         } else {
             const nextSiblingNode = await this.traverseUpstream(currentNode);
             if (nextSiblingNode === null) {
@@ -265,7 +283,7 @@ export class AssessmentService {
 
     private async returnAsCurrentMessageNode(
         assessment: AssessmentDto,
-        currentNode: SAssessmentMessageNode
+        currentNode: CAssessmentMessageNode
     ): Promise<AssessmentQueryDto> {
         //Set as current node if not already
         await this._assessmentRepo.setCurrentNode(assessment.id, currentNode.id);
@@ -274,7 +292,7 @@ export class AssessmentService {
 
     private async returnAsCurrentQuestionNode(
         assessment: AssessmentDto,
-        currentNode: SAssessmentQuestionNode
+        currentNode: CAssessmentQuestionNode
     ): Promise<AssessmentQueryDto> {
         //Set as current node if not already
         await this._assessmentRepo.setCurrentNode(assessment.id, currentNode.id);
@@ -285,7 +303,7 @@ export class AssessmentService {
         assessment: AssessmentDto,
         nodeId: uuid,
         currentQueryDto: AssessmentQueryDto,
-        paths: SAssessmentNodePath[],
+        paths: CAssessmentNodePath[],
         answerDto: | SingleChoiceQueryAnswer
         | MultipleChoiceQueryAnswer
         | MessageAnswer
@@ -304,7 +322,7 @@ export class AssessmentService {
             return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
         }
         else {
-            var chosenPath: SAssessmentNodePath = null;
+            var chosenPath: CAssessmentNodePath = null;
             for await (var path of paths) {
                 const pathId = path.id;
                 const conditionId = path.ConditionId;
@@ -328,7 +346,7 @@ export class AssessmentService {
 
     private async handleSingleChoiceSelectionAnswer(
         assessment: AssessmentDto,
-        questionNode: SAssessmentQuestionNode,
+        questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel
     ): Promise<AssessmentQuestionResponseDto> {
 
@@ -361,7 +379,7 @@ export class AssessmentService {
 
     private async handleMultipleChoiceSelectionAnswer(
         assessment: AssessmentDto,
-        questionNode: SAssessmentQuestionNode,
+        questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel
     ): Promise<AssessmentQuestionResponseDto> {
 
@@ -372,7 +390,7 @@ export class AssessmentService {
         const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
 
         const chosenOptionSequences = answerModel.IntegerArray;
-        const selectedOptions: SAssessmentQueryOption[] = [];
+        const selectedOptions: CAssessmentQueryOption[] = [];
         for (var choice of chosenOptionSequences) {
             if (!choice || choice < minSequenceValue || choice > maxSequenceValue) {
                 throw new Error(`Invalid option index! Cannot process the condition!`);
@@ -395,7 +413,7 @@ export class AssessmentService {
 
     private async handleBiometricsAnswer(
         assessment: AssessmentDto,
-        questionNode: SAssessmentQuestionNode,
+        questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel
     ): Promise<AssessmentQuestionResponseDto> {
 
@@ -416,7 +434,7 @@ export class AssessmentService {
 
     private async handleTextAnswer(
         assessment: AssessmentDto,
-        questionNode: SAssessmentQuestionNode,
+        questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel
     ): Promise<AssessmentQuestionResponseDto> {
         
@@ -433,7 +451,7 @@ export class AssessmentService {
 
     private async handleAcknowledgement(
         assessment: AssessmentDto,
-        messageNode: SAssessmentMessageNode
+        messageNode: CAssessmentMessageNode
     ): Promise<AssessmentQuestionResponseDto> {
 
         const currentQueryDto = this.questionNodeAsQueryDto(messageNode, assessment);
@@ -473,11 +491,11 @@ export class AssessmentService {
         return response;
     }
 
-    private async getChoiceSelectionParams(questionNode: SAssessmentNode) {
+    private async getChoiceSelectionParams(questionNode: CAssessmentNode) {
         const nodeId = questionNode.id;
         const nodeType = questionNode.NodeType as AssessmentNodeType;
-        const paths: SAssessmentNodePath[] = await this._assessmentHelperRepo.getQuestionNodePaths(nodeType, nodeId);
-        const options: SAssessmentQueryOption[] = await this._assessmentHelperRepo.getQuestionNodeOptions(
+        const paths: CAssessmentNodePath[] = await this._assessmentHelperRepo.getQuestionNodePaths(nodeType, nodeId);
+        const options: CAssessmentQueryOption[] = await this._assessmentHelperRepo.getQuestionNodeOptions(
             nodeType,
             nodeId
         );
@@ -490,8 +508,8 @@ export class AssessmentService {
         return { minSequenceValue, maxSequenceValue, options, paths, nodeId };
     }
 
-    private questionNodeAsQueryDto(node: SAssessmentNode, assessment: AssessmentDto) {
-        const questionNode = node as SAssessmentQuestionNode;
+    private questionNodeAsQueryDto(node: CAssessmentNode, assessment: AssessmentDto) {
+        const questionNode = node as CAssessmentQuestionNode;
         const query: AssessmentQueryDto = {
             id                   : questionNode.id,
             DisplayCode          : questionNode.DisplayCode,
@@ -510,8 +528,8 @@ export class AssessmentService {
         return query;
     }
 
-    private messageNodeAsQueryDto(node: SAssessmentNode, assessment: AssessmentDto) {
-        const messageNode = node as SAssessmentMessageNode;
+    private messageNodeAsQueryDto(node: CAssessmentNode, assessment: AssessmentDto) {
+        const messageNode = node as CAssessmentMessageNode;
         const query: AssessmentQueryDto = {
             id                   : messageNode.id,
             DisplayCode          : messageNode.DisplayCode,
@@ -533,10 +551,10 @@ export class AssessmentService {
     private handleAnswersToQuestion = async (
         answerModel: AssessmentAnswerDomainModel,
         assessment: AssessmentDto,
-        node: SAssessmentNode,
+        node: CAssessmentNode,
         incomingResponseType: QueryResponseType) : Promise<AssessmentQuestionResponseDto>=> {
 
-        const questionNode = node as SAssessmentQuestionNode;
+        const questionNode = node as CAssessmentQuestionNode;
         const expectedResponseType = questionNode.QueryResponseType;
 
         if (incomingResponseType !== expectedResponseType) {

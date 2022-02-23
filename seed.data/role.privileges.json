@@ -46,8 +46,15 @@
             "Goal.getSelcetedGoals",
             "ActionPlan.getActionPlans",
             "ActionPlan.Create",
-            "ActionPlan.getSelectedActionPlans"
-    
+            "ActionPlan.getSelectedActionPlans",
+            "AssessmentTemplate.Create",
+            "AssessmentTemplate.GetById",
+            "AssessmentTemplate.Search",
+            "AssessmentTemplate.Update",
+            "AssessmentTemplate.Delete",
+            "AssessmentTemplate.Export",
+            "AssessmentTemplate.ImportFromFile",
+            "AssessmentTemplate.ImportFromJson"
         ]
     },
     {
@@ -323,6 +330,9 @@
             "AssessmentTemplate.Search",
             "AssessmentTemplate.Update",
             "AssessmentTemplate.Delete",
+            "AssessmentTemplate.Export",
+            "AssessmentTemplate.ImportFromFile",
+            "AssessmentTemplate.ImportFromJson",
             "HealthPriority.getPriorities",
             "HealthPriority.getPrioritiesTypes",
             "HealthPriority.Create",

@@ -333,7 +333,7 @@ export class FileResourceService {
                 var isBefore = TimeHelper.isBefore(createdAt, cleanupBefore);
                 if (isBefore) {
                     var dPath = path.join(parentFolder, d);
-                    fs.rmdirSync(dPath, { recursive: true });
+                    fs.rmSync(dPath, { recursive: true });
                 }
             }
         }

@@ -12,14 +12,15 @@ export class ApiClientValidator {
         let clientModel: ApiClientDomainModel = null;
 
         clientModel = {
-            ClientName : body.ClientName ?? null,
-            ClientCode : null,
-            ApiKey     : null,
-            Phone      : body.Phone ?? null,
-            Email      : body.Email ?? null,
-            Password   : body.Password ?? null,
-            ValidFrom  : body.ValidFrom ?? null,
-            ValidTill  : body.ValidTill ?? null,
+            ClientName   : body.ClientName ?? null,
+            ClientCode   : null,
+            IsPrivileged : body.IsPrivileged ?? false,
+            ApiKey       : null,
+            Phone        : body.Phone ?? null,
+            Email        : body.Email ?? null,
+            Password     : body.Password ?? null,
+            ValidFrom    : body.ValidFrom ?? null,
+            ValidTill    : body.ValidTill ?? null,
         };
         return clientModel;
     };

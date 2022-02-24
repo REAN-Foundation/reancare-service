@@ -14,12 +14,13 @@ export class ClientMapper {
             active = true;
         }
         const dto: ApiClientDto = {
-            id         : client.id,
-            ClientName : client.ClientName,
-            ClientCode : client.ClientCode,
-            Phone      : client.Phone,
-            Email      : client.Email,
-            IsActive   : active
+            id           : client.id,
+            ClientName   : client.ClientName,
+            ClientCode   : client.ClientCode,
+            IsPrivileged : client.IsPrivileged,
+            Phone        : client.Phone,
+            Email        : client.Email,
+            IsActive     : active
         };
         return dto;
     }

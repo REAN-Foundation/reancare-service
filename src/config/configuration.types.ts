@@ -54,6 +54,11 @@ export interface CareplanConfig {
     DefaultDurationDays?: number;
 }
 
+export interface FormServiceProvider {
+    ProviderName: string;
+    ProviderCode: string;
+}
+
 export interface Configurations {
     SystemIdentifier: string;
     BaseUrl: string;
@@ -65,4 +70,5 @@ export interface Configurations {
     TemporaryFolders: TemporaryFoldersConfig;
     Careplans: { Provider: string; Service: string; Plans: CareplanConfig[] } [];
     MaxUploadFileSize: number;
+    FormServiceProviders: FormServiceProvider[];
 }

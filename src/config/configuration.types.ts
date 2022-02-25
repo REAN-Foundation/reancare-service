@@ -17,18 +17,18 @@ export type AuthenticationType = 'Custom'; //TBD: Other options need to be suppo
 
 export interface AuthConfig {
     Authentication: AuthenticationType;
-    Authorization: AuthorizationType;
+    Authorization : AuthorizationType;
 }
 
 export interface DatabaseConfig {
-    Type: DatabaseType;
-    ORM: DatabaseORM;
+    Type   : DatabaseType;
+    ORM    : DatabaseORM;
     Flavour: DatabaseFlavour;
 }
 
 export interface EHRConfig {
     Specification: EHRSpecification;
-    Provider: EHRProvider;
+    Provider     : EHRProvider;
 }
 
 export interface FileStorageConfig {
@@ -36,39 +36,39 @@ export interface FileStorageConfig {
 }
 
 export interface CommunicationConfig {
-    SMSProvider: SMSServiceProvider,
-    EmailProvider: EmailServiceProvider,
+    SMSProvider              : SMSServiceProvider,
+    EmailProvider            : EmailServiceProvider,
     InAppNotificationProvider: InAppNotificationServiceProvider
 }
 
 export interface TemporaryFoldersConfig {
-    Upload: string,
-    Download: string,
+    Upload                    : string,
+    Download                  : string,
     CleanupFolderBeforeMinutes: number
 }
 
 export interface CareplanConfig {
-    ProviderName: string;
-    ProviderCode: string;
-    DisplayName: string;
+    ProviderName        : string;
+    ProviderCode        : string;
+    DisplayName         : string;
     DefaultDurationDays?: number;
 }
 
 export interface FormServiceProvider {
-    ProviderName: string;
-    ProviderCode: string;
+    Provider: string;
+    Code    : string;
 }
 
 export interface Configurations {
-    SystemIdentifier: string;
-    BaseUrl: string;
-    Auth: AuthConfig;
-    Database: DatabaseConfig;
-    Ehr: EHRConfig;
-    FileStorage: FileStorageConfig;
-    Communication: CommunicationConfig;
-    TemporaryFolders: TemporaryFoldersConfig;
-    Careplans: { Provider: string; Service: string; Plans: CareplanConfig[] } [];
-    MaxUploadFileSize: number;
+    SystemIdentifier    : string;
+    BaseUrl             : string;
+    Auth                : AuthConfig;
+    Database            : DatabaseConfig;
+    Ehr                 : EHRConfig;
+    FileStorage         : FileStorageConfig;
+    Communication       : CommunicationConfig;
+    TemporaryFolders    : TemporaryFoldersConfig;
+    Careplans           : { Provider: string; Service: string; Plans: CareplanConfig[] } [];
+    MaxUploadFileSize   : number;
     FormServiceProviders: FormServiceProvider[];
 }

@@ -45,7 +45,8 @@ export class ConfigurationManager {
                 Download                   : configuration.TemporaryFolders.Download as string,
                 CleanupFolderBeforeMinutes : configuration.TemporaryFolders.CleanupFolderBeforeMinutes as number,
             },
-            MaxUploadFileSize : configuration.MaxUploadFileSize,
+            FormServiceProviders : configuration.FormServiceProviders,
+            MaxUploadFileSize    : configuration.MaxUploadFileSize,
         };
 
         ConfigurationManager.checkConfigSanity();
@@ -123,6 +124,10 @@ export class ConfigurationManager {
 
     public static careplans = (): { Provider: string; Service: string; Plans: CareplanConfig[] } [] => {
         return ConfigurationManager._config.Careplans;
+    };
+    
+    public static formServiceProviders = (): { Provider: string; Code: string; } [] => {
+        return ConfigurationManager._config.FormServiceProviders;
     };
 
     private static checkConfigSanity() {

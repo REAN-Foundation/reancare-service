@@ -52,5 +52,15 @@
             ]
         }
     ],
+    "FormServiceProviders" : [
+        { 
+            "Provider": "KoboToolbox",
+            "Code": "KoboToolbox"
+        },
+        { 
+            "Provider": "GoogleForms",
+            "Code": "GoogleForms"
+        }
+    ],
     "MaxUploadFileSize": 104857600
 }

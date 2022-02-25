@@ -2,9 +2,14 @@ import { inject, injectable } from "tsyringe";
 import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
 import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
 import { IAssessmentRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
-import { AssessmentTemplateDomainModel } from '../../../domain.types/clinical/assessment/assessment.template.domain.model';
-import { AssessmentTemplateDto } from '../../../domain.types/clinical/assessment/assessment.template.dto';
-import { AssessmentTemplateSearchFilters, AssessmentTemplateSearchResults } from "../../../domain.types/clinical/assessment/assessment.template.search.types";
+import { ThirdpartyApiCredentials } from "../../../domain.types/miscellaneous/thirdparty.api.credentials";
+
+// import { AssessmentTemplateDomainModel } from '../../../domain.types/clinical/assessment/assessment.template.domain.model';
+// import { AssessmentTemplateDto } from '../../../domain.types/clinical/assessment/assessment.template.dto';
+// import {
+//     AssessmentTemplateSearchFilters,
+//     AssessmentTemplateSearchResults
+// } from "../../../domain.types/clinical/assessment/assessment.template.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,12 +20,15 @@ export class FormsService {
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
-        @inject('IFormsRepo') private _formsRepo: IFormsRepo,
+        //@inject('IFormsRepo') private _formsRepo: IFormsRepo,
     ) {}
 
-    // public create = async (assessmentDomainModel: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
-    //     return await this._assessmentRepo.create(assessmentDomainModel);
-    // };
+    public connectFormsProviderApi = async (connectionModel: ThirdpartyApiCredentials): Promise<boolean> => {
+        
+        return false;
+
+        //return await this._assessmentRepo.create(assessmentDomainModel);
+    };
 
     // public getById = async (id: string): Promise<AssessmentTemplateDto> => {
     //     return await this._assessmentRepo.getById(id);

@@ -15,21 +15,21 @@ export const register = (app: express.Application): void => {
     router.post('/provider/:providerCode/connect', authenticator.authenticateClient, authenticator.authenticateUser, controller.connect);
 
     //Export assessment template as a form (Either as XLS form or custom format of the form provider)
-    router.get('/provider/:providerCode/export-template-as-form/:assessmentTemplateId',
-        authenticator.authenticateClient, authenticator.authenticateUser, controller.exportAssessmentTemplateAsForm);
+    // router.get('/provider/:providerCode/export-template-as-form/:assessmentTemplateId',
+    //     authenticator.authenticateClient, authenticator.authenticateUser, controller.exportAssessmentTemplateAsForm);
 
     //Add assessment template to the forms provider
-    router.post('/provider/:providerCode/add-template-as-form/:assessmentTemplateId',
-        authenticator.authenticateClient, authenticator.authenticateUser, controller.addAssessmentTemplateAsForm);
+    // router.post('/provider/:providerCode/add-template-as-form/:assessmentTemplateId',
+    //     authenticator.authenticateClient, authenticator.authenticateUser, controller.addAssessmentTemplateAsForm);
 
     //Import form as assessment template
     //If the forms has already imported but with previous version, a new assessment template is created with new version
-    router.post('/provider/:providerCode/import-form-as-template',
-        authenticator.authenticateClient, authenticator.authenticateUser, controller.importFormAsAssessmentTemplate);
+    // router.post('/provider/:providerCode/import-form-as-template',
+    //     authenticator.authenticateClient, authenticator.authenticateUser, controller.importFormAsAssessmentTemplate);
 
     //Import form submissions
-    router.post('/provider/:providerCode/import-form-submissions',
-        authenticator.authenticateClient, authenticator.authenticateUser, controller.importFormSubmissions);
+    // router.post('/provider/:providerCode/import-form-submissions',
+    //     authenticator.authenticateClient, authenticator.authenticateUser, controller.importFormSubmissions);
    
     app.use('/api/v1/clinical/forms', router);
 };

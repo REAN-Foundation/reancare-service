@@ -12,12 +12,42 @@ export class ThirdpartyApiRepo implements IThirdpartyApiRepo {
 
     addThirdpartyCredentials = async (userId: string, connectionModel: ThirdpartyApiCredentialsDomainModel)
         : Promise<ThirdpartyApiCredentialsDto> => {
-        throw new Error('Method not implemented.');
+        try {
+            const entity = {
+                UserId    : userId,
+                Provider  : connectionModel.Provider ?? null,
+                BaseUrl   : connectionModel.BaseUrl ?? null,
+                Token     : connectionModel.Token ?? null,
+                ValidTill : connectionModel.ValidTill ?? null,
+            };
+            const creds = await ThirdpartyApiCredentials.create(entity);
+            const dto = ThirdpartyApiCredentialsMapper.toDto(creds);
+            return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
     getThirdpartyCredentials = async (userId: string, provider: string, baseUrl: string)
         : Promise<ThirdpartyApiCredentialsDto> => {
-        throw new Error('Method not implemented.');
+        try {
+            const creds = await ThirdpartyApiCredentials.findOne({
+                where : {
+                    UserId    : userId,
+                    Provider  : provider,
+                    BaseUrl   : baseUrl,
+                    ValidTill : {
+                        [Op.gte] : new Date(),
+                    }
+                }
+            });
+            const dto = ThirdpartyApiCredentialsMapper.toDto(creds);
+            return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     }
 
 }

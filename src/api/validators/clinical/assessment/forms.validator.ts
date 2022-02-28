@@ -1,6 +1,6 @@
 import express from 'express';
 import { BaseValidator, Where } from '../../base.validator';
-import { ThirdpartyApiCredentials } from '../../../../domain.types/miscellaneous/thirdparty.api.credentials';
+import { ThirdpartyApiCredentialsDomainModel } from '../../../../domain.types/thirdparty/thirdparty.api.credentials';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -10,7 +10,7 @@ export class FormsValidator extends BaseValidator {
         super();
     }
     
-    connect = async (request: express.Request): Promise<ThirdpartyApiCredentials> => {
+    connect = async (request: express.Request): Promise<ThirdpartyApiCredentialsDomainModel> => {
 
         await this.validateString(request, 'providerCode', Where.Param, true, false);
         await this.validateString(request, 'BaseUrl', Where.Body, false, false);
@@ -19,7 +19,7 @@ export class FormsValidator extends BaseValidator {
 
         this.validateRequest(request);
 
-        const connectionModel: ThirdpartyApiCredentials = {
+        const connectionModel: ThirdpartyApiCredentialsDomainModel = {
             Provider  : request.params.providerCode,
             BaseUrl   : request.body.BaseUrl ?? null,
             Token     : request.body.Token ?? null,

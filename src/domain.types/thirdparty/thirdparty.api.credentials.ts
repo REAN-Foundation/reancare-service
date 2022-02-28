@@ -1,17 +1,18 @@
-import { uuid } from "./system.types";
+import { uuid } from "../miscellaneous/system.types";
 
-export interface ThirdpartyApiCredentials {
+export interface ThirdpartyApiCredentialsDomainModel {
     Provider  : string;
     BaseUrl   : string;
     Token?    : string;
-    ValidTill?: string;
+    ValidTill?: Date;
 }
 
 export interface ThirdpartyApiCredentialsDto {
+    id        : uuid;
     UserId    : uuid;
     Provider  : string;
     BaseUrl   : string;
     Token?    : string;
-    ValidTill?: string;
+    ValidTill?: Date;
 }
 

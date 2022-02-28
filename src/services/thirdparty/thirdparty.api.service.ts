@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import { IThirdpartyApiRepo } from "../../database/repository.interfaces/thirdparty.api.repo.interface";
-import { ThirdpartyApiCredentials, ThirdpartyApiCredentialsDto } from '../../domain.types/miscellaneous/thirdparty.api.credentials';
+import { IThirdpartyApiRepo } from "../../database/repository.interfaces/thirdparty/thirdparty.api.repo.interface";
+import { ThirdpartyApiCredentialsDomainModel, ThirdpartyApiCredentialsDto } from '../../domain.types/thirdparty/thirdparty.api.credentials';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@ export class ThirdpartyApiService {
         return await this._thirdpartyApiRepo.getThirdpartyCredentials(userId, provider, baseUrl);
     };
 
-    addThirdpartyCredentials = async (userId: uuid, connectionModel: ThirdpartyApiCredentials)
+    addThirdpartyCredentials = async (userId: uuid, connectionModel: ThirdpartyApiCredentialsDomainModel)
         : Promise<ThirdpartyApiCredentialsDto> => {
         return await this._thirdpartyApiRepo.addThirdpartyCredentials(userId, connectionModel);
     };

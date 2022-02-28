@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
 import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
 import { IAssessmentRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
-import { ThirdpartyApiCredentials } from "../../../domain.types/miscellaneous/thirdparty.api.credentials";
+import { ThirdpartyApiCredentialsDomainModel } from "../../../domain.types/thirdparty/thirdparty.api.credentials";
 import { FormsHandler } from "../../../modules/forms/forms.handler";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ export class FormsService {
         //@inject('IFormsRepo') private _formsRepo: IFormsRepo,
     ) {}
 
-    public connectFormsProviderApi = async (connectionModel: ThirdpartyApiCredentials): Promise<boolean> => {
+    public connectFormsProviderApi = async (connectionModel: ThirdpartyApiCredentialsDomainModel): Promise<boolean> => {
         return await FormsHandler.connect(connectionModel);
     };
  

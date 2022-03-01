@@ -227,9 +227,8 @@ export class CareplanService implements IUserActionService {
     };
 
     public getActivity = async (activityId: uuid): Promise<CareplanActivityDto> => {
-        
         return await this._careplanRepo.getActivity(activityId);
-    }
+    };
 
     public getAction = async (activityId: uuid): Promise<any> => {
 

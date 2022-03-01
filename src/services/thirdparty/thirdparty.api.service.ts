@@ -9,7 +9,7 @@ import { uuid } from "../../domain.types/miscellaneous/system.types";
 export class ThirdpartyApiService {
 
     constructor(
-        @inject('IThirdpartyApiepo') private _thirdpartyApiRepo: IThirdpartyApiRepo,
+        @inject('IThirdpartyApiRepo') private _thirdpartyApiRepo: IThirdpartyApiRepo,
     ) {}
 
     getThirdpartyCredentials = async (userId: uuid, provider: string, baseUrl: string)

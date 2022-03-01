@@ -144,7 +144,7 @@ export class UserTaskRepo implements IUserTaskRepo {
                 };
             }
 
-            let orderByColum = 'UserTaskLine';
+            let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }

@@ -50,7 +50,7 @@ export class AssessmentTemplateFileConverter {
 
         const fileResourceService = Loader.container.resolve(FileResourceService);
         return await fileResourceService.uploadLocal(sourceFile, storageKey, false);
-    }
+    };
 
     public static convertToJson = (templateObj: CAssessmentTemplate):any => {
         try {

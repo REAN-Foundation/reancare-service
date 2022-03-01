@@ -4,6 +4,11 @@
         "Authentication": "Custom",
         "Authorization": "Custom"
     },
+    "DefaultSessionDurationDays": {
+        "DEV":30,
+        "UAT":60,
+        "PROD":90
+    },
     "Database" : {
         "Type": "SQL",
         "ORM": "Sequelize",

@@ -12,6 +12,7 @@ export type InAppNotificationServiceProvider = 'Firebase';
 export type EHRProvider = FHIRProvider | OpenEHRProvider;
 export type AuthorizationType = 'Custom'; //TBD: Other options need to be supported
 export type AuthenticationType = 'Custom'; //TBD: Other options need to be supported
+export type Environments = 'DEVELOPMENT' | 'UAT' | 'PRODUCTION';
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,4 +67,8 @@ export interface Configurations {
     TemporaryFolders: TemporaryFoldersConfig;
     Careplans: { Provider: string; Service: string; Plans: CareplanConfig[] } [];
     MaxUploadFileSize: number;
+}
+
+export interface EnvironmentType {
+    Environment: Environments;
 }

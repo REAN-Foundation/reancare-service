@@ -3,7 +3,7 @@ import * as configuration from '../../reancare.config.json';
 import {
     AuthenticationType,
     AuthorizationType, CareplanConfig, Configurations, DatabaseFlavour, DatabaseORM, DatabaseType, EHRProvider,
-    EHRSpecification, EmailServiceProvider, FileStorageProvider, InAppNotificationServiceProvider, SMSServiceProvider
+    EHRSpecification, EmailServiceProvider, EnvironmentType, FileStorageProvider, InAppNotificationServiceProvider, SMSServiceProvider
 } from './configuration.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -15,12 +15,17 @@ export class ConfigurationManager {
     public static loadConfigurations = (): void => {
 
         ConfigurationManager._config = {
-            SystemIdentifier           : configuration.SystemIdentifier,
-            DefaultSessionDurationDays : configuration.DefaultSessionDurationDays,
-            BaseUrl                    : process.env.BASE_URL,
-            Auth                       : {
+            SystemIdentifier : configuration.SystemIdentifier,
+            BaseUrl          : process.env.BASE_URL,
+            Auth             : {
                 Authentication : configuration.Auth.Authentication as AuthenticationType,
                 Authorization  : configuration.Auth.Authorization as AuthorizationType,
+            },
+            DefaultSessionDurationDays : {
+                DEV  : configuration.DefaultSessionDurationDays.DEV as EnvironmentType,
+                UAT  : configuration.DefaultSessionDurationDays.UAT as EnvironmentType,
+                PROD : configuration.DefaultSessionDurationDays.PROD as EnvironmentType,
+
             },
             Database : {
                 Type    : configuration.Database.Type as DatabaseType,
@@ -60,8 +65,9 @@ export class ConfigurationManager {
         return ConfigurationManager._config.SystemIdentifier;
     };
 
-    public static DefaultSessionDurationDays = (): number => {
-        return ConfigurationManager._config.DefaultSessionDurationDays;
+    public static DefaultSessionDurationDays = (environment): number => {
+        var duration = ConfigurationManager._config.DefaultSessionDurationDays[environment];
+        return duration ?? 90;
     };
 
     public static Authentication = (): AuthenticationType => {

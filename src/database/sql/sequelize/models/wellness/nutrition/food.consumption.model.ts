@@ -81,9 +81,8 @@ export default class FoodConsumption extends Model {
 
     @IsDecimal
     @Column({
-        type         : DataType.FLOAT,
-        allowNull    : false,
-        defaultValue : 0
+        type      : DataType.FLOAT,
+        allowNull : true,
     })
     Calories: number;
 

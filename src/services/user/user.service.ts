@@ -48,7 +48,12 @@ export class UserService {
 
     public getById = async (id: string): Promise<UserDetailsDto> => {
         var dto = await this._userRepo.getById(id);
+        Logger.instance().log(`DTO from user repo: ${JSON.stringify(dto)}`);
+
         dto = await this.updateDetailsDto(dto);
+
+        Logger.instance().log(`Update details DTO: ${JSON.stringify(dto)}`);
+
         return dto;
     };
 
@@ -178,7 +183,7 @@ export class UserService {
         if (!isInternalTestUser) {
             const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
             if (!storedOtp) {
-                throw new ApiError(404, 'Active Otp record not found!');
+                throw new ApiError(404, 'Active OTP record not found!');
             }
             const date = new Date();
             if (storedOtp.ValidTill <= date) {
@@ -237,9 +242,6 @@ export class UserService {
             const tokens = phoneTemp.split('+');
             let s = tokens.length > 1 ? tokens[1] : phoneTemp;
 
-            if (s.startsWith('91')){
-                s = s.slice(2);
-            }
             s = s.trim();
             s = s.replace('+', '');
             s = s.replace(' ', '');
@@ -254,9 +256,9 @@ export class UserService {
         }
         else {
             const tmp = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
-            str = tmp.substr(-10);
+            str = tmp.substring(-10);
         }
-        str = str.substr(0, 20);
+        str = str.substring(0, 20);
     
         const displayId = prefix + str;
         return displayId;

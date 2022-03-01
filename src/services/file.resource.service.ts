@@ -1,7 +1,7 @@
 import fs from 'fs';
-import { Helper } from '../common/helper';
 import path from 'path';
 import sharp from 'sharp';
+import { Helper } from '../common/helper';
 import { inject, injectable } from "tsyringe";
 import { ApiError } from "../common/api.error";
 import { Logger } from "../common/logger";

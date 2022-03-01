@@ -10,6 +10,7 @@ import { ConfigurationManager } from '../config/configuration.manager';
 import { Gender } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
 import { TimeHelper } from './time.helper';
+import Countries from './misc/countries';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -217,6 +218,9 @@ export class Helper {
 
     static getDigitsOnly = (str: string): string => {
         let temp = '';
+        if (!str) {
+            return temp;
+        }
         for (let x = 0; x < str.length; x++) {
             const c = str.charAt(x);
             if (Helper.isDigit(c)) {
@@ -266,12 +270,29 @@ export class Helper {
     }
 
     static sanitizePhone(phone: string) {
-        const tokens = phone.split('-');
-        let countryCode = tokens[0];
-        let phoneNumber = tokens.length > 2 ? tokens.slice(1, ).join() : tokens[1];
-        countryCode = '+' + Helper.getDigitsOnly(countryCode);
-        phoneNumber = Helper.getDigitsOnly(phoneNumber);
-        return countryCode + '-' + phoneNumber;
+        if (!phone) {
+            return phone;
+        }
+        if (phone.includes('-')) {
+            const tokens = phone.split('-');
+            let countryCode = tokens[0];
+            let phoneNumber = tokens.length > 2 ? tokens.slice(1, ).join() : tokens[1];
+            countryCode = '+' + Helper.getDigitsOnly(countryCode);
+            phoneNumber = Helper.getDigitsOnly(phoneNumber);
+            return countryCode + '-' + phoneNumber;
+        }
+        else if (phone.startsWith('+')) {
+            var countryCodes = Countries.map(x => x.PhoneCode);
+            var countryCodesSorted = countryCodes.sort((a,b) => b.length - a.length);
+            for (var cc of countryCodesSorted) {
+                if (phone.startsWith(cc)) {
+                    var phoneNumber = phone.substring(cc.length);
+                    phoneNumber = Helper.getDigitsOnly(phoneNumber);
+                    return cc + '-' + phoneNumber;
+                }
+            }
+        }
+        return phone;
     }
 
     static validatePhone(phone: string) {
@@ -352,7 +373,8 @@ export class Helper {
         
         let phoneTemp = phone;
         phoneTemp = phoneTemp.trim();
-        const searchFors = ['+91', '+1'];
+        const countryCodes = Countries.map(x => x.PhoneCode);
+        const searchFors = countryCodes;
         const possiblePhoneNumbers = [phone];
 
         let phonePrefix = "";
@@ -371,11 +393,16 @@ export class Helper {
             possiblePhoneNumbers.push(phoneTemp);
     
         } else {
-            possiblePhoneNumbers.push("+91" + phoneTemp);
-            possiblePhoneNumbers.push("+91-" + phoneTemp);
-    
-            possiblePhoneNumbers.push("+1" + phoneTemp);
-            possiblePhoneNumbers.push("+1-" + phoneTemp);
+
+            var possibles = Countries.map(x => {
+                return x.PhoneCode + phoneTemp;
+            });
+            possiblePhoneNumbers.push(...possibles);
+            possibles = Countries.map(x => {
+                return x.PhoneCode + "-" + phoneTemp;
+            });
+            possiblePhoneNumbers.push(...possibles);
+
             possiblePhoneNumbers.push(phoneTemp);
         }
         return possiblePhoneNumbers;
@@ -452,7 +479,7 @@ export class Helper {
         tmp = tmp.substring(0, limitTo);
         var ext = extension.startsWith('.') ? extension : '.' + extension;
         return tmp + ext;
-    }
+    };
     
     public static getMimeType = (pathOrExtension: string) => {
         var mimeType = mime.lookup(pathOrExtension);
@@ -460,6 +487,6 @@ export class Helper {
             mimeType = 'text/plain';
         }
         return mimeType;
-    }
-    
+    };
+
 }

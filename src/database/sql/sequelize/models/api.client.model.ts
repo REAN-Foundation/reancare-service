@@ -61,6 +61,13 @@ export default class ApiClient extends Model {
     })
     ClientCode: string;
 
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : true,
+        defaultValue : false,
+    })
+    IsPrivileged: boolean;
+
     @Length({ min: 6, max: 256 })
     @Column({
         type      : DataType.STRING(256),

@@ -207,13 +207,14 @@ export class Seeder {
             let client = await this._apiClientService.getByClientCode(c.ClientCode);
             if (client == null) {
                 const model: ApiClientDomainModel = {
-                    ClientName : c['ClientName'],
-                    ClientCode : c['ClientCode'],
-                    Email      : c['Email'],
-                    Password   : c['Password'],
-                    ValidFrom  : new Date(),
-                    ValidTill  : new Date(2030, 12, 31),
-                    ApiKey     : c['ApiKey'],
+                    ClientName   : c['ClientName'],
+                    ClientCode   : c['ClientCode'],
+                    IsPrivileged : c['IsPrivileged'],
+                    Email        : c['Email'],
+                    Password     : c['Password'],
+                    ValidFrom    : new Date(),
+                    ValidTill    : new Date(2030, 12, 31),
+                    ApiKey       : c['ApiKey'],
                 };
                 client = await this._apiClientService.create(model);
                 var str = JSON.stringify(client, null, '  ');

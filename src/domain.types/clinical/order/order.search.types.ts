@@ -1,31 +1,23 @@
+import { BaseSearchResults, BaseSearchFilters } from "../../../domain.types/miscellaneous/base.search.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { OrderDto } from "./order.dto";
 import { OrderStates } from "./order.types";
 
 //////////////////////////////////////////////////////////////////////
 
-export interface OrderSearchFilters {
-    Type?: string;
-    PatientUserId?: string;
-    MedicalPractitionerUserId?: string;
-    VisitId?: string;
-    ReferenceOrderId?: string;
-    FulfilledByUserId?: string;
-    FulfilledByOrganizationId?: string;
-    CurrentState?: OrderStates;
-    OrderDateFrom: Date;
-    OrderDateTo: Date;
-    OrderBy: string;
-    Order: string;
-    PageIndex: number;
-    ItemsPerPage: number;
+export interface OrderSearchFilters extends BaseSearchFilters{
+    Type?                     : string;
+    PatientUserId?            : uuid;
+    MedicalPractitionerUserId?: uuid;
+    VisitId?                  : uuid;
+    ReferenceOrderId?         : uuid;
+    FulfilledByUserId?        : uuid;
+    FulfilledByOrganizationId?: uuid;
+    CurrentState?             : OrderStates;
+    OrderDateFrom             : Date;
+    OrderDateTo               : Date;
 }
 
-export interface OrderSearchResults {
-    TotalCount: number;
-    RetrievedCount: number;
-    PageIndex: number;
-    ItemsPerPage: number;
-    Order: string;
-    OrderedBy: string;
+export interface OrderSearchResults extends BaseSearchResults{
     Items: OrderDto[];
 }

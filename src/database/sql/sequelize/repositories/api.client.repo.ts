@@ -15,14 +15,15 @@ export class ApiClientRepo implements IApiClientRepo {
     create = async (clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         try {
             const entity = {
-                ClientName : clientDomainModel.ClientName,
-                ClientCode : clientDomainModel.ClientCode,
-                Phone      : clientDomainModel.Phone,
-                Email      : clientDomainModel.Email,
-                Password   : clientDomainModel.Password ?? null,
-                ApiKey     : clientDomainModel.ApiKey ?? null,
-                ValidFrom  : clientDomainModel.ValidFrom ?? null,
-                ValidTill  : clientDomainModel.ValidTill ?? null,
+                ClientName   : clientDomainModel.ClientName,
+                ClientCode   : clientDomainModel.ClientCode,
+                IsPrivileged : clientDomainModel.IsPrivileged,
+                Phone        : clientDomainModel.Phone,
+                Email        : clientDomainModel.Email,
+                Password     : clientDomainModel.Password ?? null,
+                ApiKey       : clientDomainModel.ApiKey ?? null,
+                ValidFrom    : clientDomainModel.ValidFrom ?? null,
+                ValidTill    : clientDomainModel.ValidTill ?? null,
             };
             const client = await ApiClient.create(entity);
             const dto = await ClientMapper.toDto(client);
@@ -108,8 +109,9 @@ export class ApiClientRepo implements IApiClientRepo {
                 return null;
             }
             const currentClient: CurrentClient = {
-                ClientName : client.ClientName,
-                ClientCode : client.ClientCode
+                ClientName   : client.ClientName,
+                ClientCode   : client.ClientCode,
+                IsPrivileged : client.IsPrivileged
             };
             return currentClient;
         } catch (error) {

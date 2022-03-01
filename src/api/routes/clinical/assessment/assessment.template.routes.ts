@@ -16,5 +16,9 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
     
+    router.get('/:id/export', authenticator.authenticateClient, authenticator.authenticateUser, controller.export);
+    router.post('/import-file', authenticator.authenticateClient, authenticator.authenticateUser, controller.importFromFile);
+    router.post('/import-json', authenticator.authenticateClient, authenticator.authenticateUser, controller.importFromJson);
+
     app.use('/api/v1/clinical/assessment-templates/', router);
 };

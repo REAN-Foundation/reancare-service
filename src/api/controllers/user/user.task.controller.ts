@@ -160,7 +160,7 @@ export class UserTaskController {
             const filters = await this._validator.search(request);
 
             var searchResults = await this._service.search(filters);
-            searchResults.Items = await this.updateDtos(searchResults.Items);
+            searchResults.Items = await this.updateDtos(searchResults.Items, false);
             const count = searchResults.Items.length;
             const message =
                 count === 0
@@ -382,16 +382,16 @@ export class UserTaskController {
 
     //#region Privates
 
-    private updateDtos = async (dtos: UserTaskDto[]): Promise<UserTaskDto[]> => {
+    private updateDtos = async (dtos: UserTaskDto[], fullDetails = true): Promise<UserTaskDto[]> => {
         var updatedDtos: UserTaskDto[] = [];
         for await (var dto of dtos) {
-            const updated = await this.updateDto(dto);
+            const updated = await this.updateDto(dto, fullDetails);
             updatedDtos.push(updated);
         }
         return updatedDtos;
     };
 
-    private updateDto = async (dto: UserTaskDto): Promise<UserTaskDto> => {
+    private updateDto = async (dto: UserTaskDto, fullDetails = true): Promise<UserTaskDto> => {
 
         if (dto == null) {
             return null;
@@ -406,8 +406,13 @@ export class UserTaskController {
             dto.Action = actionDto;
         }
         else if (dto.ActionType === UserActionType.Careplan) {
-            const actionDto = await this._careplanService.getAction(dto.ActionId);
-            dto.Action = actionDto;
+            if (fullDetails) {
+                dto.Action = await this._careplanService.getAction(dto.ActionId);
+            }
+            else {
+                dto.Action = await this._careplanService.getActivity(dto.ActionId);
+            }
+            
         }
         
         return dto;

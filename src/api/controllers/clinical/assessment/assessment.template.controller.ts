@@ -1,4 +1,6 @@
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
@@ -7,6 +9,8 @@ import { AssessmentTemplateValidator } from '../../../validators/clinical/assess
 import { Loader } from '../../../../startup/loader';
 import { BaseController } from '../../base.controller';
 import { FileResourceValidator } from '../../../validators/file.resource.validator';
+import { FileResourceService } from '../../../../services/file.resource.service';
+import { Helper } from '../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +20,8 @@ export class AssessmentTemplateController extends BaseController{
 
     _service: AssessmentTemplateService = null;
 
+    _fileResourceService: FileResourceService = null;
+
     _validator: AssessmentTemplateValidator = new AssessmentTemplateValidator();
 
     _fileResourceValidator: FileResourceValidator = new FileResourceValidator();
@@ -23,6 +29,7 @@ export class AssessmentTemplateController extends BaseController{
     constructor() {
         super();
         this._service = Loader.container.resolve(AssessmentTemplateService);
+        this._fileResourceService = Loader.container.resolve(FileResourceService);
     }
 
     //#endregion
@@ -134,6 +141,90 @@ export class AssessmentTemplateController extends BaseController{
             ResponseHandler.success(request, response, 'Assessment template record deleted successfully!', 200, {
                 Deleted : true,
             });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    export = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('AssessmentTemplate.Export', request, response);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+
+            const assessmentTemplate = await this._service.getById(id);
+            if (assessmentTemplate == null) {
+                throw new ApiError(404, 'Cannot find assessment Template!');
+            }
+            const localDestination = await this._fileResourceService.downloadById(assessmentTemplate.FileResourceId);
+            if (localDestination == null) {
+                throw new ApiError(404, 'File resource not found.');
+            }
+
+            var filename = path.basename(localDestination);
+            var mimeType = Helper.getMimeType(localDestination);
+            response.setHeader('Content-type', mimeType);
+            response.setHeader('Content-disposition', 'attachment; filename=' + filename);
+    
+            var filestream = fs.createReadStream(localDestination);
+            filestream.pipe(response);
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    importFromFile = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('AssessmentTemplate.ImportFromFile', request, response);
+
+            const uploadModels = this._fileResourceValidator.getUploadDomainModel(request);
+            if (uploadModels.length === 0) {
+                throw new ApiError(422, 'Cannot find valid file to import!');
+            }
+
+            const uploadModel = uploadModels[0];
+            const metadata = uploadModel.FileMetadata;
+            const sourceFilePath = metadata.SourceFilePath;
+            const originalFileName = metadata.OriginalName;
+            const fileContent = fs.readFileSync(sourceFilePath, 'utf8');
+            const extension = Helper.getFileExtension(originalFileName);
+            if (extension.toLowerCase() !== 'json') {
+                throw new Error(`Expected .json file extension!`);
+            }
+            const templateModel =  JSON.parse(fileContent);
+
+            var assessmentTemplate = await this._service.import(templateModel);
+            if (assessmentTemplate == null) {
+                throw new ApiError(400, 'Cannot import assessment Template!');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment template imported successfully!', 201, {
+                AssessmentTemplate : assessmentTemplate,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    importFromJson = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('AssessmentTemplate.ImportFromJson', request, response);
+
+            const templateModel = JSON.parse(request.body);
+
+            var assessmentTemplate = await this._service.import(templateModel);
+            if (assessmentTemplate == null) {
+                throw new ApiError(400, 'Cannot import assessment Template!');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment template imported successfully!', 201, {
+                AssessmentTemplate : assessmentTemplate,
+            });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

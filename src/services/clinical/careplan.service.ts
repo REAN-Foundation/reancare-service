@@ -21,12 +21,13 @@ import { DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
 import { IUserActionService } from "../user/user.action.service.interface";
 import { AssessmentTemplateDto } from "../../domain.types/clinical/assessment/assessment.template.dto";
-import { SAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
+import { CAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import { CareplanActivity } from "../../domain.types/clinical/careplan/activity/careplan.activity";
 import { CareplanConfig } from "../../config/configuration.types";
 import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/assessment.domain.model";
 import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
+import { AssessmentTemplateFileConverter } from "./assessment/assessment.template.file.converter";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -225,6 +226,10 @@ export class CareplanService implements IUserActionService {
         return true;
     };
 
+    public getActivity = async (activityId: uuid): Promise<CareplanActivityDto> => {
+        return await this._careplanRepo.getActivity(activityId);
+    };
+
     public getAction = async (activityId: uuid): Promise<any> => {
 
         var activity = await this._careplanRepo.getActivity(activityId);
@@ -340,8 +345,11 @@ export class CareplanService implements IUserActionService {
             return existingTemplate;
         }
         
-        var assessmentTemplate: SAssessmentTemplate =
+        var assessmentTemplate: CAssessmentTemplate =
             await this._handler.convertToAssessmentTemplate(assessmentActivity);
+
+        const fileResourceDto = await AssessmentTemplateFileConverter.storeAssessmentTemplate(assessmentTemplate);
+        assessmentTemplate.FileResourceId = fileResourceDto.id;
 
         const template = await this._assessmentHelperRepo.addTemplate(assessmentTemplate);
         return template;

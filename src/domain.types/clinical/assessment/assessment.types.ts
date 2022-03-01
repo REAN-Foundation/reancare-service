@@ -140,7 +140,7 @@ export const ConditionOperandDataTypeList: ConditionOperandDataType[] = [
 
 //#region Interfaces
 
-export class SAssessmentTemplate {
+export class CAssessmentTemplate {
 
     TemplateId?            : uuid;
     DisplayCode?           : string;
@@ -152,19 +152,19 @@ export class SAssessmentTemplate {
     Provider?              : string;
     FileResourceId?        : uuid; //Assessment template storage file
     RootNodeDisplayCode?   : string;
-    Nodes                  : SAssessmentNode[];
+    Nodes                  : CAssessmentNode[];
 
     constructor() {
         this.Nodes = [];
     }
 
-    getNodeByDisplayCode(displayCode:string): SAssessmentNode {
-        return this.Nodes.find(x => x.DisplayCode === displayCode);
+    public static getNodeByDisplayCode(nodes: CAssessmentNode[], displayCode:string): CAssessmentNode {
+        return nodes.find(x => x.DisplayCode === displayCode);
     }
 
 }
 
-export class SAssessment extends SAssessmentTemplate {
+export class CAssessment extends CAssessmentTemplate {
 
     AssessmentId?          : uuid;
     PatientUserId          : uuid;
@@ -172,31 +172,31 @@ export class SAssessment extends SAssessmentTemplate {
     Status?                : ProgressStatus;
     StartedAt?             : Date;
     FinishedAt?            : Date;
-    CurrentNode?           : SAssessmentNode;
+    CurrentNode?           : CAssessmentNode;
 
 }
 
-export class SAssessmentNode {
+export class CAssessmentNode {
 
-    id?                 : uuid;
-    DisplayCode?        : string;
-    ProviderGivenId?    : string;
-    ProviderGivenCode?  : string;
-    TemplateId          : uuid;
-    NodeType            : AssessmentNodeType;
-    ParentNodeId?       : uuid;
-    Title               : string;
-    Description?        : string;
-    Sequence?           : number;
-    Score               : number;
+    id?                     : uuid;
+    DisplayCode?            : string;
+    ProviderGivenId?        : string;
+    ProviderGivenCode?      : string;
+    TemplateId              : uuid;
+    NodeType                : AssessmentNodeType;
+    ParentNodeId?           : uuid;
+    Title                   : string;
+    Description?            : string;
+    Sequence?               : number;
+    Score                   : number;
 
 }
 
-export class SAssessmentListNode extends SAssessmentNode {
+export class CAssessmentListNode extends CAssessmentNode {
 
     ChildrenNodeDisplayCodes: string[];
     ChildrenNodeIds         : uuid[];
-    Children?               : SAssessmentNode[];
+    Children?               : CAssessmentNode[];
 
     constructor() {
         super();
@@ -208,13 +208,13 @@ export class SAssessmentListNode extends SAssessmentNode {
 
 }
 
-export class SAssessmentQuestionNode extends SAssessmentNode {
+export class CAssessmentQuestionNode extends CAssessmentNode {
 
     QueryResponseType: QueryResponseType;
     DefaultPathId    : uuid;
-    Paths?           : SAssessmentNodePath[];
-    Options?         : SAssessmentQueryOption[];
-    UserResponse?    : SAssessmentQueryResponse;
+    Paths?           : CAssessmentNodePath[];
+    Options?         : CAssessmentQueryOption[];
+    UserResponse?    : CAssessmentQueryResponse;
 
     constructor() {
         super();
@@ -226,7 +226,7 @@ export class SAssessmentQuestionNode extends SAssessmentNode {
 
 }
 
-export class SAssessmentMessageNode extends SAssessmentNode {
+export class CAssessmentMessageNode extends CAssessmentNode {
 
     Message     : string;
     Acknowledged: boolean;
@@ -238,19 +238,20 @@ export class SAssessmentMessageNode extends SAssessmentNode {
 
 }
 
-export class SAssessmentNodePath {
+export class CAssessmentNodePath {
 
     id?                : uuid;
     DisplayCode        : string;
     ParentNodeId       : string;
+    ParentNodeDisplayCode?       : string;
     NextNodeId         : string;
     NextNodeDisplayCode: string;
     ConditionId        : string;
-    Condition          : SAssessmentPathCondition;
+    Condition          : CAssessmentPathCondition;
 
 }
 
-export class SAssessmentQueryOption {
+export class CAssessmentQueryOption {
 
     id?               : uuid;
     DisplayCode       : string;
@@ -262,11 +263,11 @@ export class SAssessmentQueryOption {
 
 }
 
-export class SAssessmentQueryResponse {
+export class CAssessmentQueryResponse {
 
     id?                  : uuid;
     NodeId?              : uuid;
-    Node?                : SAssessmentMessageNode | SAssessmentQuestionNode | SAssessmentListNode;
+    Node?                : CAssessmentMessageNode | CAssessmentQuestionNode | CAssessmentListNode;
     AssessmentId?        : uuid;
     ResponseType         : QueryResponseType;
     Sequence             : number;
@@ -292,13 +293,24 @@ export class SAssessmentQueryResponse {
 
 }
 
-export interface ConditionOperand {
+export class ConditionOperand {
+
     DataType: ConditionOperandDataType;
     Name    : string;
     Value   : string | number | boolean | any[] | null;
+
+    constructor(
+        dataType: ConditionOperandDataType,
+        name: string,
+        value: string | number | boolean | any[] | null) {
+        this.DataType = dataType;
+        this.Name = name;
+        this.Value = value;
+    }
+    
 }
 
-export class SAssessmentPathCondition {
+export class CAssessmentPathCondition {
 
     id?        : uuid;
     DisplayCode: string;
@@ -315,7 +327,7 @@ export class SAssessmentPathCondition {
     SecondOperand?: ConditionOperand;
     ThirdOperand?: ConditionOperand;
 
-    Children: SAssessmentPathCondition[];
+    Children: CAssessmentPathCondition[];
 
     constructor() {
         this.Children = [];
@@ -334,12 +346,12 @@ export interface BaseQueryAnswer {
 
 export interface SingleChoiceQueryAnswer extends BaseQueryAnswer {
     ChosenSequence         : number;
-    ChosenOption?          : SAssessmentQueryOption;
+    ChosenOption?          : CAssessmentQueryOption;
 }
 
 export interface MultipleChoiceQueryAnswer extends BaseQueryAnswer {
     ChosenSequences         : number[];
-    ChosenOptions?          : SAssessmentQueryOption[];
+    ChosenOptions?          : CAssessmentQueryOption[];
 }
 
 export interface MessageAnswer extends BaseQueryAnswer {

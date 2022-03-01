@@ -12,8 +12,8 @@ import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.ty
 import { UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
 import {
     QueryResponseType,
-    SAssessmentQueryResponse,
-    SAssessmentTemplate,
+    CAssessmentQueryResponse,
+    CAssessmentTemplate,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AhaAssessmentConverter } from "./aha.assessment.converter";
 import { ActionPlanDto } from "../../../../domain.types/goal.action.plan/goal.action.plan.dto";
@@ -361,7 +361,7 @@ export class AhaCareplanService implements ICareplanService {
         }
     };
 
-    public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<SAssessmentTemplate> => {
+    public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<CAssessmentTemplate> => {
         const ahaServiceHelper = new AhaAssessmentConverter();
         return await ahaServiceHelper.convertToAssessmentTemplate(activity);
     };
@@ -484,7 +484,7 @@ export class AhaCareplanService implements ICareplanService {
             return null;
         }
 
-        const userResponses = assessment.UserResponses as SAssessmentQueryResponse[];
+        const userResponses = assessment.UserResponses as CAssessmentQueryResponse[];
         updates['items'] = [];
 
         for (var res of userResponses) {

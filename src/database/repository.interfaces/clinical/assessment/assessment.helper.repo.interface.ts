@@ -1,11 +1,11 @@
 import {
     AssessmentNodeType,
-    SAssessmentNode,
-    SAssessmentNodePath,
-    SAssessmentPathCondition,
-    SAssessmentQueryOption,
-    SAssessmentQueryResponse,
-    SAssessmentTemplate,
+    CAssessmentNode,
+    CAssessmentNodePath,
+    CAssessmentPathCondition,
+    CAssessmentQueryOption,
+    CAssessmentQueryResponse,
+    CAssessmentTemplate,
     BiometricQueryAnswer,
     FloatQueryAnswer,
     IntegerQueryAnswer,
@@ -20,23 +20,23 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export interface IAssessmentHelperRepo {
-    getChildrenConditions(id: string): SAssessmentPathCondition[] | PromiseLike<SAssessmentPathCondition[]>;
+    getChildrenConditions(id: string): CAssessmentPathCondition[] | PromiseLike<CAssessmentPathCondition[]>;
     
-    getNodeListChildren(nodeId: string): Promise<SAssessmentNode[]>;
+    getNodeListChildren(nodeId: string): Promise<CAssessmentNode[]>;
 
-    addTemplate(template: SAssessmentTemplate): Promise<AssessmentTemplateDto>;
+    addTemplate(template: CAssessmentTemplate): Promise<AssessmentTemplateDto>;
 
-    getNodeById(nodeId: uuid): Promise<SAssessmentNode>;
+    getNodeById(nodeId: uuid): Promise<CAssessmentNode>;
 
-    getQueryResponse(assessmentId: uuid, nodeId: uuid): Promise<SAssessmentQueryResponse>;
+    getQueryResponse(assessmentId: uuid, nodeId: uuid): Promise<CAssessmentQueryResponse>;
 
-    getUserResponses(assessmentId: uuid): Promise<SAssessmentQueryResponse[]>;
+    getUserResponses(assessmentId: uuid): Promise<CAssessmentQueryResponse[]>;
 
-    getQuestionNodeOptions(nodeType: AssessmentNodeType, nodeId: uuid): Promise<SAssessmentQueryOption[]>;
+    getQuestionNodeOptions(nodeType: AssessmentNodeType, nodeId: uuid): Promise<CAssessmentQueryOption[]>;
 
-    getQuestionNodePaths(nodeType: AssessmentNodeType, nodeId: uuid): Promise<SAssessmentNodePath[]>;
+    getQuestionNodePaths(nodeType: AssessmentNodeType, nodeId: uuid): Promise<CAssessmentNodePath[]>;
 
-    getPathCondition(conditionId: string, nodeId: string, pathId: string): Promise<SAssessmentPathCondition>;
+    getPathCondition(conditionId: string, nodeId: string, pathId: string): Promise<CAssessmentPathCondition>;
 
     createQueryResponse(answer: | SingleChoiceQueryAnswer
         | MultipleChoiceQueryAnswer
@@ -44,6 +44,6 @@ export interface IAssessmentHelperRepo {
         | TextQueryAnswer
         | IntegerQueryAnswer
         | FloatQueryAnswer
-        | BiometricQueryAnswer): Promise<SAssessmentQueryResponse>;
+        | BiometricQueryAnswer): Promise<CAssessmentQueryResponse>;
 
 }

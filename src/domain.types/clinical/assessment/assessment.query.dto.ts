@@ -1,5 +1,5 @@
 import { uuid } from "../../miscellaneous/system.types";
-import { AssessmentNodeType, QueryResponseType, SAssessmentQueryOption } from "./assessment.types";
+import { AssessmentNodeType, QueryResponseType, CAssessmentQueryOption } from "./assessment.types";
 
 export interface AssessmentQueryDto {
     id                  : uuid;
@@ -13,7 +13,7 @@ export interface AssessmentQueryDto {
     Sequence?           : number;
     Title?              : string;
     Description?        : string;
-    Options             : SAssessmentQueryOption[];
+    Options             : CAssessmentQueryOption[];
     ProviderGivenCode?  : string;
     ProviderGivenId?    : string;
 }

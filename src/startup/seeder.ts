@@ -107,6 +107,7 @@ export class Seeder {
 
     public init = async (): Promise<void> => {
         try {
+            await this.createTempFolders();
             await this.seedDefaultRoles();
             await this.seedRolePrivileges();
             await this.seedInternalClients();
@@ -124,11 +125,12 @@ export class Seeder {
         }
     };
 
+    private createTempFolders = async () => {
+        await Helper.createTempDownloadFolder();
+        await Helper.createTempUploadFolder();
+    };
+
     private seedRolePrivileges = async () => {
-        const rolePrivileges = await this._rolePrivilegeRepo.search();
-        if (rolePrivileges.length > 0) {
-            return;
-        }
         try {
             const arr = RolePrivilegesList['default'];
             for (let i = 0; i < arr.length; i++) {
@@ -140,11 +142,14 @@ export class Seeder {
                 if (role == null) {
                     continue;
                 }
-                for (const p of privileges) {
-                    await this._rolePrivilegeRepo.create({
-                        RoleId    : role.id,
-                        Privilege : p,
-                    });
+                for (const privilege of privileges) {
+                    const exists = await this._rolePrivilegeRepo.hasPrivilegeForRole(role.id, privilege);
+                    if (!exists) {
+                        await this._rolePrivilegeRepo.create({
+                            RoleId    : role.id,
+                            Privilege : privilege,
+                        });
+                    }
                 }
             }
         } catch (error) {

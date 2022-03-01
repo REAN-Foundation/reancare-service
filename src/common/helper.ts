@@ -9,8 +9,8 @@ import path from 'path';
 import { ConfigurationManager } from '../config/configuration.manager';
 import { Gender } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
-import Countries from './misc/countries';
 import { TimeHelper } from './time.helper';
+import Countries from './misc/countries';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -479,7 +479,7 @@ export class Helper {
         tmp = tmp.substring(0, limitTo);
         var ext = extension.startsWith('.') ? extension : '.' + extension;
         return tmp + ext;
-    }
+    };
     
     public static getMimeType = (pathOrExtension: string) => {
         var mimeType = mime.lookup(pathOrExtension);

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d9fad6f3-cdd9-4532-b913-56d34b9aa1d3",
+		"_postman_id": "6c85daee-81c6-4afe-9153-759c64e695ed",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -1033,6 +1033,71 @@
 							"response": []
 						},
 						{
+							"name": "Register patient- with only a phone Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+											"    pm.environment.set(\"PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+											"    pm.environment.set(\"PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+											"    pm.environment.set(\"PERSON_ID_1\", jsonRes.Data.Patient.User.Person.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+											"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+											"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text",
+										"description": "API key for client app authentication"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Phone\": \"+44-7464296323\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients"
+									]
+								},
+								"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+							},
+							"response": []
+						},
+						{
 							"name": "Patient log-in with otp",
 							"event": [
 								{
@@ -1121,7 +1186,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"+44-7464296323\",\r\n    \"Otp\": \"531583\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
+									"raw": "{\r\n    \"Phone\": \"+44-7464296323\",\r\n    \"Otp\": \"698901\",\r\n    \"LoginRoleId\": {{ROLE_PATIENT}}\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/users/login-with-otp",
@@ -1179,7 +1244,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"+91-7798074981\",\r\n    \"Purpose\": \"Login\",\r\n    \"RoleId\": 2\r\n}\r\n"
+									"raw": "{\r\n    \"Phone\": \"+44-7464296323\",\r\n    \"Purpose\": \"Login\",\r\n    \"RoleId\": 2\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/users/generate-otp",
@@ -1833,6 +1898,117 @@
 				},
 				{
 					"name": "Update patient details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"PATIENT_FIRST_NAME\", jsonRes.Data.Patient.User.Person.FirstName);\r",
+									"    pm.environment.set(\"PATIENT_PHONE\", jsonRes.Data.Patient.User.Person.Phone);\r",
+									"    pm.environment.set(\"PATIENT_GENDER\", jsonRes.Data.Patient.User.Person.Gender);\r",
+									"    pm.environment.set(\"PATIENT_EMAIL\", jsonRes.Data.Patient.User.Person.Email);\r",
+									"\r",
+									"    var phone = jsonRes.Data.Patient.User.Person.Phone;\r",
+									"    var tokens = phone.split('-');\r",
+									"    var phoneNumber = tokens[1];\r",
+									"\r",
+									"    pm.environment.set(\"PATIENT_PHONE_NUMBER\", phoneNumber);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Patient is created\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Patient');\r",
+									"    pm.expect(jsonRes.Data.Patient).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Patient).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Patient).to.have.property('User');\r",
+									"    pm.expect(jsonRes.Data.Patient.User).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Patient.User).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Patient.User.Person).to.have.property('id');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Randomly generated user details\r",
+									"\r",
+									"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
+									"\r",
+									"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
+									"\r",
+									"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
+									"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
+									"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+									"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
+									"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
+									"var password = \"Test@123\";\r",
+									"\r",
+									"pm.environment.set(\"FIRST_NAME\", first);\r",
+									"pm.environment.set(\"LAST_NAME\", last);\r",
+									"pm.environment.set(\"EMAIL\", email);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"{{FIRST_NAME}}\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"{{LAST_NAME}}\",\r\n    \"Email\": \"{{EMAIL}}\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\",\r\n    \"Address\": {\r\n        \"Type\": \"Official\",\r\n        \"AddressLine\": \"99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli\",\r\n        \"City\": \"Mumbai\",\r\n        \"Country\": \"India\"\r\n    },\r\n    \"DefaultTimeZone\": \"+05:30\",\r\n    \"CurrentTimeZone\": \"+05:30\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/patients/{{PATIENT_USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"patients",
+								"{{PATIENT_USER_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update patient details Copy",
 					"event": [
 						{
 							"listen": "test",
@@ -8253,7 +8429,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-02-18\"\r\n}"
+											"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-03-01\"\r\n}"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/care-plans/patients/{{PATIENT_USER_ID}}/enroll",
@@ -8439,7 +8615,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/user-tasks/search?status=pending&userId={{PATIENT_USER_ID}}&category=Assessment&itemsPerPage=175",
+											"raw": "{{BASE_URL}}/user-tasks/search?userId={{PATIENT_USER_ID}}&category=Assessment&itemsPerPage=175",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -8450,7 +8626,7 @@
 											"query": [
 												{
 													"key": "task",
-													"value": "",
+													"value": "life",
 													"disabled": true
 												},
 												{
@@ -8461,7 +8637,8 @@
 												{
 													"key": "status",
 													"value": "pending",
-													"description": "The other possible options are - \n1) inProgress : Tasks which are currently in progress\n2) pending / upcoming- Upcoming tasks\n3) completed- Finished tasks\n4) delayed / overdue- Tasks which are delayed beyond their scheduled duration\n5) cancelled- Tasks which have been cancelled\n"
+													"description": "The other possible options are - \n1) inProgress : Tasks which are currently in progress\n2) pending / upcoming- Upcoming tasks\n3) completed- Finished tasks\n4) delayed / overdue- Tasks which are delayed beyond their scheduled duration\n5) cancelled- Tasks which have been cancelled\n",
+													"disabled": true
 												},
 												{
 													"key": "actionId",
@@ -15746,7 +15923,7 @@
 												{
 													"key": "Name",
 													"type": "file",
-													"src": "/D:/downloads/Status-check.json"
+													"src": "/D:/current_projects/rean/code/Status-check.json"
 												},
 												{
 													"key": "IsPublicResource",
@@ -16848,6 +17025,117 @@
 												"{{ASSESSMENT_ID}}"
 											]
 										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "KoboToolbox integration",
+							"item": [
+								{
+									"name": "Connect to kobo-toolbox api",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.environment.set(\"KOBO_TOOLBOX_BASE_URL\", \"https://kc.kobotoolbox.org/api/\");\r",
+													"pm.environment.set(\"KOBO_TOOLBOX_TOKEN\", \"058f77bc58acfc6874b3bca738b438f0f45d9c31\");\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonRes = pm.response.json();\r",
+													"\r",
+													"try {\r",
+													"    pm.environment.set(\"EMERGENCY_EVENT_ID\", jsonRes.Data.EmergencyEvent.id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(201);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"New PATIENT EMERGENCY Event record is created\", function () {\r",
+													"\r",
+													"    let expectedEhrId = pm.environment.get(\"EMERGENCY_EHRID\");\r",
+													"    let expectedPatientUserId = pm.environment.get(\"EMERGENCY_PATIENTUSERID\");\r",
+													"    let expectedDetails = pm.environment.get(\"EMERGENCY_DETAILS\");\r",
+													"    let expectedEmergencyDate = pm.environment.get(\"EMERGENCY_EMERGENCYDATE\");\r",
+													"\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('EmergencyEvent');\r",
+													"    pm.expect(jsonRes.Data.EmergencyEvent).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('EhrId');\r",
+													"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('PatientUserId');\r",
+													"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('Details');\r",
+													"    pm.expect(jsonRes.Data.EmergencyEvent).to.have.property('EmergencyDate');\r",
+													"\r",
+													"    pm.expect(jsonRes.Data.EmergencyEvent.Details).equals(expectedDetails);\r",
+													"    pm.expect(jsonRes.Data.EmergencyEvent.EmergencyDate).equals(expectedEmergencyDate);\r",
+													"});\r",
+													"\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"description": "API key for client authentication",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"BaseUrl\":\"{{KOBO_TOOLBOX_BASE_URL}}\",\r\n    \"Token\":\"{{KOBO_TOOLBOX_TOKEN}}\"\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/forms/provider/:KoboToolbox/connect",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"forms",
+												"provider",
+												":KoboToolbox",
+												"connect"
+											],
+											"variable": [
+												{
+													"key": "KoboToolbox",
+													"value": null
+												}
+											]
+										},
+										"description": "Add an emergency event."
 									},
 									"response": []
 								}
@@ -28467,352 +28755,6 @@
 							"response": []
 						}
 					]
-				},
-				{
-					"name": "Medication condition",
-					"item": [
-						{
-							"name": "Add medical condition",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var jsonRes = pm.response.json();\r",
-											"\r",
-											"try {\r",
-											"    pm.environment.set(\"MEDICAL_CONDITION_ID\", jsonRes.Data.MedicalCondition.id);\r",
-											"}\r",
-											"catch (error) {\r",
-											"    console.log(error.message);\r",
-											"}\r",
-											"\r",
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(201);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"A New medical condition is created\", function () {\r",
-											"\r",
-											"    var expectedValidationStatus = \"English\";\r",
-											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
-											"\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('MedicalCondition');\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Condition');\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Description');\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Language');\r",
-											"    \r",
-											"    pm.expect(jsonRes.Data.MedicalCondition.Language).equals(expectedValidationStatus);\r",
-											"\r",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"Condition\": \"medium\",\r\n    \"Description\": \"bad throat\",\r\n    \"Language\": \"English\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/static-types/medical-condition",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"static-types",
-										"medical-condition"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get medical condition by id",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Medical condition record is returned\", function () {\r",
-											"\r",
-											"    var expectedValidationStatus = \"English\";\r",
-											"\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('MedicalCondition');\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Condition');\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Description');\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Language');\r",
-											"    \r",
-											"    pm.expect(jsonRes.Data.MedicalCondition.Language).equals(expectedValidationStatus);\r",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/static-types/medical-condition/{{MEDICAL_CONDITION_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"static-types",
-										"medical-condition",
-										"{{MEDICAL_CONDITION_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update medical condition",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Medical condition record is returned\", function () {\r",
-											"\r",
-											"    var expectedValidationStatus = \"English\";\r",
-											"\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('MedicalCondition');\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.not.be.empty;\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Condition');\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Description');\r",
-											"    pm.expect(jsonRes.Data.MedicalCondition).to.have.property('Language');\r",
-											"    \r",
-											"    pm.expect(jsonRes.Data.MedicalCondition.Language).equals(expectedValidationStatus);\r",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"Condition\": \"worse\",\r\n    \"Description\": \"Upset stomach\",\r\n    \"Language\": \"English\"\r\n}"
-								},
-								"url": {
-									"raw": "{{BASE_URL}}/static-types/medical-condition/{{MEDICAL_CONDITION_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"static-types",
-										"medical-condition",
-										"{{MEDICAL_CONDITION_ID}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Search medical condition",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"List of Medical condition is returned\", function () {\r",
-											"\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Data).to.have.property('MedicalConditionRecords');\r",
-											"    pm.expect(jsonRes.Data.MedicalConditionRecords.Items.length).to.be.greaterThan(0);\r",
-											"\r",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/static-types/medical-condition/search",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"static-types",
-										"medical-condition",
-										"search"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete medical condition",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successfull\", function () {\r",
-											"    pm.response.to.have.status(200);\r",
-											"    var jsonRes = pm.response.json();\r",
-											"    pm.expect(jsonRes.Status).to.eql('success');\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Medical condition record is deleted\", function () {\r",
-											"\r",
-											"    var expectedValue = true;\r",
-											"    var jsonRes = pm.response.json();\r",
-											"\r",
-											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
-											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
-										"type": "text"
-									},
-									{
-										"key": "x-api-key",
-										"value": "{{API_CLIENT_INTERNAL_KEY}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{BASE_URL}}/static-types/medical-condition/{{MEDICAL_CONDITION_ID}}",
-									"host": [
-										"{{BASE_URL}}"
-									],
-									"path": [
-										"static-types",
-										"medical-condition",
-										"{{MEDICAL_CONDITION_ID}}"
-									]
-								}
-							},
-							"response": []
-						}
-					]
 				}
 			]
 		},
@@ -30721,29 +30663,6 @@
 				}
 			],
 			"description": "The set of requests in this folder are mean to test the authorization logic such as ownership authorization and consent authorization.\n\nWe will be testing following scenarios.\n\n1. One patient account should not be able to access the biometrics data of another patient's account.\n\n1. Without consent authorization, a doctor cannot access the patient data."
-		},
-		{
-			"name": "New Request",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://reancare-api-aha-prod.services.reanfoundation.org:7575/api/v1",
-					"protocol": "https",
-					"host": [
-						"reancare-api-aha-prod",
-						"services",
-						"reanfoundation",
-						"org"
-					],
-					"port": "7575",
-					"path": [
-						"api",
-						"v1"
-					]
-				}
-			},
-			"response": []
 		}
 	]
 }

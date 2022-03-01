@@ -128,7 +128,7 @@ export class Seeder {
     private createTempFolders = async () => {
         await Helper.createTempDownloadFolder();
         await Helper.createTempUploadFolder();
-    }
+    };
 
     private seedRolePrivileges = async () => {
         try {

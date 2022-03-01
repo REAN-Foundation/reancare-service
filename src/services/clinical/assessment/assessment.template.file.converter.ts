@@ -49,8 +49,7 @@ export class AssessmentTemplateFileConverter {
         fs.writeFileSync(sourceFile, jsonStr);
 
         const fileResourceService = Loader.container.resolve(FileResourceService);
-        const dto = await fileResourceService.uploadLocal(sourceFile, storageKey, false);
-        return dto;
+        return await fileResourceService.uploadLocal(sourceFile, storageKey, false);
     }
 
     public static convertToJson = (templateObj: CAssessmentTemplate):any => {
@@ -162,13 +161,13 @@ export class AssessmentTemplateFileConverter {
                 const pathObjects: CAssessmentNodePath[] = questionNode.Paths;
                 var paths = [];
                 for (var pathObj of pathObjects) {
-                    const path = {
+                    const nodePath = {
                         DisplayCode           : pathObj.DisplayCode,
                         ParentNodeDisplayCode : nodeObj.DisplayCode,
                         NextNodeDisplayCode   : pathObj.NextNodeDisplayCode,
                         Condition             : AssessmentTemplateFileConverter.conditionToJson(pathObj.Condition)
                     };
-                    paths.push(path);
+                    paths.push(nodePath);
                 }
                 node['Paths'] = paths;
             }
@@ -196,28 +195,28 @@ export class AssessmentTemplateFileConverter {
         else {
             condition['OperatorType'] = conditionObj.OperatorType;
             if (conditionObj.FirstOperand) {
-                var operand = {
+                var firstOperand = {
                     DataType : conditionObj.FirstOperand.DataType,
                     Name     : conditionObj.FirstOperand.Name,
                     Value    : conditionObj.FirstOperand.Value
                 };
-                condition['FirstOperand'] = operand;
+                condition['FirstOperand'] = firstOperand;
             }
             if (conditionObj.SecondOperand) {
-                var operand = {
+                var secondOperand = {
                     DataType : conditionObj.SecondOperand.DataType,
                     Name     : conditionObj.SecondOperand.Name,
                     Value    : conditionObj.SecondOperand.Value
                 };
-                condition['SecondOperand'] = operand;
+                condition['SecondOperand'] = secondOperand;
             }
             if (conditionObj.ThirdOperand) {
-                var operand = {
+                var thirdOperand = {
                     DataType : conditionObj.ThirdOperand.DataType,
                     Name     : conditionObj.ThirdOperand.Name,
                     Value    : conditionObj.ThirdOperand.Value
                 };
-                condition['ThirdOperand'] = operand;
+                condition['ThirdOperand'] = thirdOperand;
             }
         }
         return condition;
@@ -274,12 +273,12 @@ export class AssessmentTemplateFileConverter {
             if (nodeObj.Paths && nodeObj.Paths.length > 0) {
                 var paths: CAssessmentNodePath[] = [];
                 for (var pathObj of nodeObj.Paths) {
-                    var path = new CAssessmentNodePath();
-                    path.DisplayCode           = pathObj.DisplayCode;
-                    path.ParentNodeDisplayCode = nodeObj.DisplayCode;
-                    path.NextNodeDisplayCode   = pathObj.NextNodeDisplayCode;
-                    path.Condition             = AssessmentTemplateFileConverter.conditionFromJson(pathObj.Condition);
-                    paths.push(path);
+                    var nodePath = new CAssessmentNodePath();
+                    nodePath.DisplayCode = pathObj.DisplayCode;
+                    nodePath.ParentNodeDisplayCode = nodeObj.DisplayCode;
+                    nodePath.NextNodeDisplayCode = pathObj.NextNodeDisplayCode;
+                    nodePath.Condition = AssessmentTemplateFileConverter.conditionFromJson(pathObj.Condition);
+                    paths.push(nodePath);
                 }
                 questionNode.Paths = paths;
             }

@@ -40,6 +40,11 @@ export class AssessmentTemplateService {
         return await this._assessmentTemplateRepo.delete(id);
     };
 
+    public getByProviderAssessmentCode = async (provider: string, providerId: string) => {
+        return await this._assessmentTemplateRepo.getByProviderAssessmentCode(
+            provider, providerId);
+    }
+
     public import = async (model: any): Promise<AssessmentTemplateDto> => {
 
         Logger.instance().log(JSON.stringify(model, null, 2));

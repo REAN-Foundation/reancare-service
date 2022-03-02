@@ -59,7 +59,8 @@
             "Forms.ExportAssessmentTemplateAsForm",
             "Forms.AddAssessmentTemplateAsForm",
             "Forms.ImportFormAsAssessmentTemplate",
-            "Forms.ImportFormSubmissions"
+            "Forms.ImportFormSubmissions",
+            "Forms.GetFormsList"
         ]
     },
     {
@@ -350,7 +351,8 @@
             "Forms.ExportAssessmentTemplateAsForm",
             "Forms.AddAssessmentTemplateAsForm",
             "Forms.ImportFormAsAssessmentTemplate",
-            "Forms.ImportFormSubmissions"
+            "Forms.ImportFormSubmissions",
+            "Forms.GetFormsList"
         ]
     },
     {
@@ -617,7 +619,21 @@
             "Goal.getSelcetedGoals",
             "ActionPlan.getActionPlans",
             "ActionPlan.Create",
-            "ActionPlan.getSelectedActionPlans"
+            "ActionPlan.getSelectedActionPlans",
+            "HealthPriority.getPriorities",
+            "HealthPriority.getPrioritiesTypes",
+            "HealthPriority.Create",
+            "Goal.getGoals",
+            "Goal.getSelcetedGoals",
+            "ActionPlan.getActionPlans",
+            "ActionPlan.Create",
+            "ActionPlan.getSelectedActionPlans",
+            "Forms.Connect",
+            "Forms.ExportAssessmentTemplateAsForm",
+            "Forms.AddAssessmentTemplateAsForm",
+            "Forms.ImportFormAsAssessmentTemplate",
+            "Forms.ImportFormSubmissions",
+            "Forms.GetFormsList"
         ]
     },
     {

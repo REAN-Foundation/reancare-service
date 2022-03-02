@@ -1,15 +1,17 @@
 import express from 'express';
-import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
-import { FormsService } from '../../../../services/clinical/assessment/forms.service';
-import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
+import { FormDto } from '../../../../domain.types/clinical/assessment/form.types';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { ThirdpartyApiCredentialsDto } from '../../../../domain.types/thirdparty/thirdparty.api.credentials';
 import { AssessmentService } from '../../../../services/clinical/assessment/assessment.service';
+import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
+import { FormsService } from '../../../../services/clinical/assessment/forms.service';
 import { ThirdpartyApiService } from '../../../../services/thirdparty/thirdparty.api.service';
-import { FormsValidator } from '../../../validators/clinical/assessment/forms.validator';
 import { Loader } from '../../../../startup/loader';
-import { BaseController } from '../../base.controller';
+import { FormsValidator } from '../../../validators/clinical/assessment/forms.validator';
 import { FileResourceValidator } from '../../../validators/file.resource.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -121,6 +123,47 @@ export class FormsController extends BaseController{
     //         ResponseHandler.handleError(request, response, error);
     //     }
     // };
+
+    getFormsList = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('Forms.GetFormsList', request, response);
+
+            const userId: uuid = request.currentUser.UserId;
+            const provider = request.params.providerCode;
+
+            var existingCredsList = await this._thirdpartyApiService.getThirdpartyCredentialsForUser(
+                request.currentUser.UserId, provider);
+            
+            var validCreds: ThirdpartyApiCredentialsDto = existingCredsList.find(x => {
+                return x.ValidTill === null || x.ValidTill > new Date();
+            });
+            if (!validCreds) {
+                throw new ApiError(403, `This user does not have valid credentials to fetch data from provider ${provider}!`);
+            }
+
+            const formsList = await this._service.getFormsList(validCreds);
+            var forms: FormDto[] = [];
+            for await (var f of formsList) {
+                const providerFormId = f.ProviderId;
+                var assessmentTemplate =
+                    await this._assessmentTemplateService.getByProviderAssessmentCode(provider, providerFormId);
+                f['AssessmentTemplate'] = assessmentTemplate;
+                forms.push(f);
+            }
+            const message = forms.length === 0
+                ? 'No records found!'
+                : `Total ${forms.length} form/s retrieved successfully!`;
+                    
+            ResponseHandler.success(request, response, message, 200, {
+                UserId   : userId,
+                Provider : provider,
+                Forms    : forms });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
     // importFormAsAssessmentTemplate = async (request: express.Request, response: express.Response): Promise<void> => {
     //     try {

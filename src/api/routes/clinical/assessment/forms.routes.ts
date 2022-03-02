@@ -14,6 +14,8 @@ export const register = (app: express.Application): void => {
     //If the credentials are not provided, credentials are taken up from the database if they exists for the user
     router.post('/provider/:providerCode/connect', authenticator.authenticateClient, authenticator.authenticateUser, controller.connect);
 
+    router.get('/provider/:providerCode/forms', authenticator.authenticateClient, authenticator.authenticateUser, controller.getFormsList);
+
     //Export assessment template as a form (Either as XLS form or custom format of the form provider)
     // router.get('/provider/:providerCode/export-template-as-form/:assessmentTemplateId',
     //     authenticator.authenticateClient, authenticator.authenticateUser, controller.exportAssessmentTemplateAsForm);

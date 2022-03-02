@@ -47,4 +47,20 @@ export class ThirdpartyApiRepo implements IThirdpartyApiRepo {
         }
     }
 
+    getThirdpartyCredentialsForUser = async (userId: string, provider: string)
+        : Promise<ThirdpartyApiCredentialsDto[]> => {
+        try {
+            const credsList = await ThirdpartyApiCredentials.findAll({
+                where : {
+                    UserId   : userId,
+                    Provider : provider
+                }
+            });
+            return credsList.map(x => ThirdpartyApiCredentialsMapper.toDto(x));
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
 }

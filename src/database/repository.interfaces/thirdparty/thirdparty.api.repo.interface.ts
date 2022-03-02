@@ -7,4 +7,6 @@ export interface IThirdpartyApiRepo {
 
     getThirdpartyCredentials(userId: string, provider: string, baseUrl: string): Promise<ThirdpartyApiCredentialsDto>;
 
+    getThirdpartyCredentialsForUser(userId: string, provider: string): Promise<ThirdpartyApiCredentialsDto[]>;
+
 }

@@ -12,6 +12,11 @@ export class ThirdpartyApiService {
         @inject('IThirdpartyApiRepo') private _thirdpartyApiRepo: IThirdpartyApiRepo,
     ) {}
 
+    getThirdpartyCredentialsForUser = async (userId: uuid, provider: string)
+        : Promise<ThirdpartyApiCredentialsDto[]> => {
+        return await this._thirdpartyApiRepo.getThirdpartyCredentialsForUser(userId, provider);
+    };
+
     getThirdpartyCredentials = async (userId: uuid, provider: string, baseUrl: string)
         : Promise<ThirdpartyApiCredentialsDto> => {
         return await this._thirdpartyApiRepo.getThirdpartyCredentials(userId, provider, baseUrl);

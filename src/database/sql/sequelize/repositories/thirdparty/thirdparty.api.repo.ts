@@ -4,7 +4,7 @@ import { Logger } from '../../../../../common/logger';
 import { ThirdpartyApiCredentialsDomainModel, ThirdpartyApiCredentialsDto } from '../../../../../domain.types/thirdparty/thirdparty.api.credentials';
 import { ThirdpartyApiCredentialsMapper } from './../../mappers/thirdparty/thirdparty.api.credentials.mapper';
 import ThirdpartyApiCredentials from './../../models/thirdparty/thirdparty.api.credentials.model';
-import { Op } from 'sequelize';
+//import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -14,11 +14,12 @@ export class ThirdpartyApiRepo implements IThirdpartyApiRepo {
         : Promise<ThirdpartyApiCredentialsDto> => {
         try {
             const entity = {
-                UserId    : userId,
-                Provider  : connectionModel.Provider ?? null,
-                BaseUrl   : connectionModel.BaseUrl ?? null,
-                Token     : connectionModel.Token ?? null,
-                ValidTill : connectionModel.ValidTill ?? null,
+                UserId       : userId,
+                Provider     : connectionModel.Provider ?? null,
+                BaseUrl      : connectionModel.BaseUrl ?? null,
+                SecondaryUrl : connectionModel.SecondaryUrl ?? null,
+                Token        : connectionModel.Token ?? null,
+                ValidTill    : connectionModel.ValidTill ?? null,
             };
             const creds = await ThirdpartyApiCredentials.create(entity);
             const dto = ThirdpartyApiCredentialsMapper.toDto(creds);
@@ -34,16 +35,12 @@ export class ThirdpartyApiRepo implements IThirdpartyApiRepo {
         try {
             const creds = await ThirdpartyApiCredentials.findOne({
                 where : {
-                    UserId    : userId,
-                    Provider  : provider,
-                    BaseUrl   : baseUrl,
-                    ValidTill : {
-                        [Op.gte] : new Date(),
-                    }
+                    UserId   : userId,
+                    Provider : provider,
+                    BaseUrl  : baseUrl,
                 }
             });
-            const dto = ThirdpartyApiCredentialsMapper.toDto(creds);
-            return dto;
+            return ThirdpartyApiCredentialsMapper.toDto(creds);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

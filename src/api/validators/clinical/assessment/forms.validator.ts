@@ -14,16 +14,18 @@ export class FormsValidator extends BaseValidator {
 
         await this.validateString(request, 'providerCode', Where.Param, true, false);
         await this.validateString(request, 'BaseUrl', Where.Body, false, false);
-        await this.validateString(request, 'Token', Where.Body, false, false, false, 4);
-        await this.validateDateString(request, 'Token', Where.Body, false, false);
+        await this.validateString(request, 'SecondaryUrl', Where.Body, false, false);
+        await this.validateString(request, 'Token', Where.Body, false, false, false, 3);
+        await this.validateDateString(request, 'ValidTill', Where.Body, false, false);
 
         this.validateRequest(request);
 
         const connectionModel: ThirdpartyApiCredentialsDomainModel = {
-            Provider  : request.params.providerCode,
-            BaseUrl   : request.body.BaseUrl ?? null,
-            Token     : request.body.Token ?? null,
-            ValidTill : request.body.ValidTill ?? null
+            Provider     : request.params.providerCode,
+            BaseUrl      : request.body.BaseUrl ?? null,
+            SecondaryUrl : request.body.SecondaryUrl ?? null,
+            Token        : request.body.Token ?? null,
+            ValidTill    : request.body.ValidTill ?? null
         };
 
         return connectionModel;

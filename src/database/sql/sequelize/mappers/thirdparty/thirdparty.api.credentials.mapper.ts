@@ -11,12 +11,13 @@ export class ThirdpartyApiCredentialsMapper {
         }
 
         const dto: ThirdpartyApiCredentialsDto = {
-            id        : creds.id,
-            UserId    : creds.UserId,
-            Provider  : creds.Provider,
-            BaseUrl   : creds.BaseUrl,
-            Token     : creds.Token,
-            ValidTill : creds.ValidTill,
+            id           : creds.id,
+            UserId       : creds.UserId,
+            Provider     : creds.Provider,
+            BaseUrl      : creds.BaseUrl,
+            SecondaryUrl : creds.SecondaryUrl,
+            Token        : creds.Token,
+            ValidTill    : creds.ValidTill,
         };
         return dto;
     };

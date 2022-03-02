@@ -60,7 +60,8 @@
     "tsyringe": "^4.6.0",
     "twilio": "^3.67.2",
     "uuid": "^8.3.2",
-    "uuid-apikey": "^1.5.3"
+    "uuid-apikey": "^1.5.3",
+    "xlsx": "^0.18.2"
   },
   "devDependencies": {
     "@jest/types": "^27.0.6",

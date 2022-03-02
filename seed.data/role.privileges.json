@@ -54,7 +54,12 @@
             "AssessmentTemplate.Delete",
             "AssessmentTemplate.Export",
             "AssessmentTemplate.ImportFromFile",
-            "AssessmentTemplate.ImportFromJson"
+            "AssessmentTemplate.ImportFromJson",
+            "Forms.Connect",
+            "Forms.ExportAssessmentTemplateAsForm",
+            "Forms.AddAssessmentTemplateAsForm",
+            "Forms.ImportFormAsAssessmentTemplate",
+            "Forms.ImportFormSubmissions"
         ]
     },
     {
@@ -340,7 +345,12 @@
             "Goal.getSelcetedGoals",
             "ActionPlan.getActionPlans",
             "ActionPlan.Create",
-            "ActionPlan.getSelectedActionPlans"
+            "ActionPlan.getSelectedActionPlans",
+            "Forms.Connect",
+            "Forms.ExportAssessmentTemplateAsForm",
+            "Forms.AddAssessmentTemplateAsForm",
+            "Forms.ImportFormAsAssessmentTemplate",
+            "Forms.ImportFormSubmissions"
         ]
     },
     {

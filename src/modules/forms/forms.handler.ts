@@ -13,13 +13,11 @@ export class FormsHandler {
     public static connect = async (connectionModel: ThirdpartyApiCredentialsDomainModel): Promise<boolean> => {
 
         const provider = connectionModel.Provider;
-        const baseUrl = connectionModel.BaseUrl;
-        const token = connectionModel.Token;
 
         FormsHandler._services = ProviderResolver.resolve();
 
         var service = FormsHandler._services.getItem(provider);
-        return await service.connect(baseUrl, token);
+        return await service.connect(connectionModel);
 
     };
 

@@ -52,6 +52,13 @@ export default class ThirdpartyApiCredentailsx extends Model {
     })
     BaseUrl: string;
 
+    @Length({ max: 512 })
+    @Column({
+        type      : DataType.STRING(512),
+        allowNull : true,
+    })
+    SecondaryUrl: string;
+
     @Length({ max: 2048 })
     @Column({
         type      : DataType.STRING(2048),

@@ -52,26 +52,20 @@ export class FormsController extends BaseController{
             var existingCreds = await this._thirdpartyApiService.getThirdpartyCredentials(
                 request.currentUser.UserId, connectionModel.Provider, connectionModel.BaseUrl);
             const existing = existingCreds != null;
-            var expired  = true;
-            if (existingCreds) {
+            var expired  = false;
+            if (existingCreds && existingCreds.ValidTill) {
                 expired = new Date(existingCreds.ValidTill) < new Date();
             }
-
             if (!incoming && !existing) {
                 throw new ApiError(403, `Cannot find provider access credentials for ${provider}!`);
             }
-            
-            if ( (incoming && existing) || (incoming && expired)) {
-                await this._thirdpartyApiService.addThirdpartyCredentials(
-                    request.currentUser.UserId, connectionModel);
-            }
             if (!incoming) {
                 connectionModel.BaseUrl = existingCreds.BaseUrl;
+                connectionModel.SecondaryUrl = existingCreds.SecondaryUrl;
                 connectionModel.Token = existingCreds.Token;
                 connectionModel.ValidTill = existingCreds.ValidTill;
             }
-            else if (connectionModel.BaseUrl && !existingCreds) {
-                //If the creds are not present
+            else if ( incoming && (expired || !existingCreds)) {
                 await this._thirdpartyApiService.addThirdpartyCredentials(
                     request.currentUser.UserId, connectionModel);
             }

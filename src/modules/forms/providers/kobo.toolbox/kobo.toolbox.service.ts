@@ -13,6 +13,8 @@ import { IFormsService } from "../../interfaces/forms.service.interface";
 import needle = require('needle');
 import fs from 'fs';
 import path from 'path';
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+import { KoboFileConverter } from "./kobo.file.converter";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -112,11 +114,10 @@ export class KoboToolboxService  implements IFormsService {
 
     };
 
-    public importFormFileAsAssessmentTemplate =
-        async (connectionModel: ThirdpartyApiCredentialsDto, downloadedFilepath: string)
+    public importFormFileAsAssessmentTemplate = async (userId: uuid, downloadedFilepath: string)
             : Promise<AssessmentTemplateDto> => {
-            throw new Error("Method not implemented.");
-        };
+        return await KoboFileConverter.readKoboXlsAsTemplate(userId, downloadedFilepath);
+    };
 
     //#endregion
 

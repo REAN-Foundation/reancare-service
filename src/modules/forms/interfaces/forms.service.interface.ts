@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { AssessmentTemplateDto } from "../../../domain.types/clinical/assessment/assessment.template.dto";
 import { FormDto } from "../../../domain.types/clinical/assessment/form.types";
 import {
@@ -11,7 +12,7 @@ export interface IFormsService {
 
     downloadForm(connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<string>;
 
-    importFormFileAsAssessmentTemplate(connectionModel: ThirdpartyApiCredentialsDto, downloadedFilepath: string)
+    importFormFileAsAssessmentTemplate(userId: uuid, downloadedFilepath: string)
         : Promise<AssessmentTemplateDto>;
 
     formExists(connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<boolean>;

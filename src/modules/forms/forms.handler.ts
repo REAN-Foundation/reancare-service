@@ -31,7 +31,8 @@ export class FormsHandler {
         async (connectionModel: ThirdpartyApiCredentialsDto, downloadedFilepath: string)
             : Promise<AssessmentTemplateDto> => {
             var service = FormsHandler.getService(connectionModel);
-            return await service.importFormFileAsAssessmentTemplate(connectionModel, downloadedFilepath);
+            return await service.importFormFileAsAssessmentTemplate(
+                connectionModel.UserId, downloadedFilepath);
         };
 
     public static downloadForm = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string)

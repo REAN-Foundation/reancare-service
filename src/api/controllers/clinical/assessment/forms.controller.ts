@@ -84,7 +84,77 @@ export class FormsController extends BaseController{
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
+
+    getFormsList = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('Forms.GetFormsList', request, response);
+
+            const userId: uuid = request.currentUser.UserId;
+            const provider = request.params.providerCode;
+
+            var validCreds: ThirdpartyApiCredentialsDto = await this.getValidCreds(userId, provider);
+            if (!validCreds) {
+                throw new ApiError(403, `This user does not have valid credentials to fetch data from provider ${provider}!`);
+            }
+
+            const formsList = await this._service.getFormsList(validCreds);
+            var forms: FormDto[] = [];
+            for await (var f of formsList) {
+                const providerFormId = f.ProviderId;
+                var assessmentTemplate =
+                    await this._assessmentTemplateService.getByProviderAssessmentCode(provider, providerFormId);
+                f['AssessmentTemplate'] = assessmentTemplate;
+                forms.push(f);
+            }
+            const message = forms.length === 0
+                ? 'No records found!'
+                : `Total ${forms.length} form/s retrieved successfully!`;
+                    
+            ResponseHandler.success(request, response, message, 200, {
+                UserId   : userId,
+                Provider : provider,
+                Forms    : forms });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
+    importFormAsAssessmentTemplate = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('Forms.ImportFormAsAssessmentTemplate', request, response);
+
+            const userId: uuid = request.currentUser.UserId;
+            const provider = request.params.providerCode;
+            const providerFormId = request.params.providerFormId;
+
+            var validCreds: ThirdpartyApiCredentialsDto = await this.getValidCreds(userId, provider);
+            if (!validCreds) {
+                throw new ApiError(403, `This user does not have valid credentials to fetch data from provider ${provider}!`);
+            }
+
+            const formExists = await this._service.formExists(validCreds, providerFormId);
+            if (!formExists) {
+                throw new ApiError(404, `The form with id ${providerFormId} cannot be found!`);
+            }
+
+            const assessmentTemplate = await this._service.importFormAsAssessmentTemplate(validCreds, providerFormId);
+            if (!assessmentTemplate) {
+                throw new ApiError(404, `An error has occurred while importing form with id ${providerFormId}!`);
+            }
+
+            const message = `The form with id ${providerFormId} is successfully converted to the assessment template successfully!`;
+                    
+            ResponseHandler.success(request, response, message, 200, {
+                AssessmentTemplate : assessmentTemplate });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
     // exportAssessmentTemplateAsForm = async (request: express.Request, response: express.Response): Promise<void> => {
     //     try {
@@ -124,69 +194,7 @@ export class FormsController extends BaseController{
     //     }
     // };
 
-    getFormsList = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            
-            await this.setContext('Forms.GetFormsList', request, response);
 
-            const userId: uuid = request.currentUser.UserId;
-            const provider = request.params.providerCode;
-
-            var existingCredsList = await this._thirdpartyApiService.getThirdpartyCredentialsForUser(
-                request.currentUser.UserId, provider);
-            
-            var validCreds: ThirdpartyApiCredentialsDto = existingCredsList.find(x => {
-                return x.ValidTill === null || x.ValidTill > new Date();
-            });
-            if (!validCreds) {
-                throw new ApiError(403, `This user does not have valid credentials to fetch data from provider ${provider}!`);
-            }
-
-            const formsList = await this._service.getFormsList(validCreds);
-            var forms: FormDto[] = [];
-            for await (var f of formsList) {
-                const providerFormId = f.ProviderId;
-                var assessmentTemplate =
-                    await this._assessmentTemplateService.getByProviderAssessmentCode(provider, providerFormId);
-                f['AssessmentTemplate'] = assessmentTemplate;
-                forms.push(f);
-            }
-            const message = forms.length === 0
-                ? 'No records found!'
-                : `Total ${forms.length} form/s retrieved successfully!`;
-                    
-            ResponseHandler.success(request, response, message, 200, {
-                UserId   : userId,
-                Provider : provider,
-                Forms    : forms });
-
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    // importFormAsAssessmentTemplate = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-            
-    //         await this.setContext('Forms.ImportFormAsAssessmentTemplate', request, response);
-
-    //         const filters = await this._validator.search(request);
-    //         const searchResults = await this._service.search(filters);
-
-    //         const count = searchResults.Items.length;
-
-    //         const message =
-    //             count === 0
-    //                 ? 'No records found!'
-    //                 : `Total ${count} assessmentTemplate records retrieved successfully!`;
-                    
-    //         ResponseHandler.success(request, response, message, 200, {
-    //             AssessmentTemplateRecords : searchResults });
-
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
 
     // importFormSubmissions = async (request: express.Request, response: express.Response): Promise<void> => {
     //     try {
@@ -214,5 +222,15 @@ export class FormsController extends BaseController{
     // };
 
     //#endregion
+
+    private async getValidCreds(userId: string, provider: string) {
+        var existingCredsList = await this._thirdpartyApiService.getThirdpartyCredentialsForUser(
+            userId, provider);
+
+        var validCreds: ThirdpartyApiCredentialsDto = existingCredsList.find(x => {
+            return x.ValidTill === null || x.ValidTill > new Date();
+        });
+        return validCreds;
+    }
 
 }

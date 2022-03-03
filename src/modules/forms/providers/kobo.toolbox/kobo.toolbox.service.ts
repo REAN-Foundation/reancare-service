@@ -1,5 +1,6 @@
 import { ApiError } from "../../../../common/api.error";
 import { Logger } from "../../../../common/logger";
+import { AssessmentTemplateDto } from "../../../../domain.types/clinical/assessment/assessment.template.dto";
 import { FormDto } from "../../../../domain.types/clinical/assessment/form.types";
 import { ThirdpartyApiCredentialsDomainModel, ThirdpartyApiCredentialsDto } from "../../../../domain.types/thirdparty/thirdparty.api.credentials";
 import { IFormsService } from "../../interfaces/forms.service.interface";
@@ -15,7 +16,7 @@ export class KoboToolboxService  implements IFormsService {
         return "KoboToolbox";
     };
 
-    connect = async (connectionModel: ThirdpartyApiCredentialsDomainModel) => {
+    public connect = async (connectionModel: ThirdpartyApiCredentialsDomainModel) => {
 
         var headers = {
             'Content-Type'    : 'application/json',
@@ -46,7 +47,7 @@ export class KoboToolboxService  implements IFormsService {
 
     };
 
-    getFormsList = async (connectionModel: ThirdpartyApiCredentialsDto): Promise<FormDto[]> => {
+    public getFormsList = async (connectionModel: ThirdpartyApiCredentialsDto): Promise<FormDto[]> => {
         var headers = {
             'Content-Type'    : 'application/json',
             Accept            : '*/*',
@@ -77,7 +78,22 @@ export class KoboToolboxService  implements IFormsService {
         }
     };
 
-    toFormDto = (metadata: any) => {
+    public formExists = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<boolean> => {
+        throw new Error("Method not implemented.");
+    };
+
+    public downloadForm = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<string> => {
+        throw new Error("Method not implemented.");
+    };
+
+    public importFormFileAsAssessmentTemplate =
+        async (connectionModel: ThirdpartyApiCredentialsDto, downloadedFilepath: string): Promise<AssessmentTemplateDto> => {
+        throw new Error("Method not implemented.");
+    };
+
+    //#endregion
+
+    private toFormDto = (metadata: any) => {
         if (!metadata) {
             return null;
         }
@@ -95,7 +111,5 @@ export class KoboToolboxService  implements IFormsService {
         };
         return form;
     };
-
-    //#endregion
 
 }

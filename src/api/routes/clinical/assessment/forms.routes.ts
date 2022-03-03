@@ -14,7 +14,13 @@ export const register = (app: express.Application): void => {
     //If the credentials are not provided, credentials are taken up from the database if they exists for the user
     router.post('/provider/:providerCode/connect', authenticator.authenticateClient, authenticator.authenticateUser, controller.connect);
 
+    //Get list of forms for the user with an account with given provider
     router.get('/provider/:providerCode/forms', authenticator.authenticateClient, authenticator.authenticateUser, controller.getFormsList);
+
+    //Import form as assessment template
+    //If the forms has already imported but with previous version, a new assessment template is created with new version
+    router.post('/provider/:providerCode/import-form/:providerFormId',
+        authenticator.authenticateClient, authenticator.authenticateUser, controller.importFormAsAssessmentTemplate);
 
     //Export assessment template as a form (Either as XLS form or custom format of the form provider)
     // router.get('/provider/:providerCode/export-template-as-form/:assessmentTemplateId',
@@ -23,11 +29,6 @@ export const register = (app: express.Application): void => {
     //Add assessment template to the forms provider
     // router.post('/provider/:providerCode/add-template-as-form/:assessmentTemplateId',
     //     authenticator.authenticateClient, authenticator.authenticateUser, controller.addAssessmentTemplateAsForm);
-
-    //Import form as assessment template
-    //If the forms has already imported but with previous version, a new assessment template is created with new version
-    // router.post('/provider/:providerCode/import-form-as-template',
-    //     authenticator.authenticateClient, authenticator.authenticateUser, controller.importFormAsAssessmentTemplate);
 
     //Import form submissions
     // router.post('/provider/:providerCode/import-form-submissions',

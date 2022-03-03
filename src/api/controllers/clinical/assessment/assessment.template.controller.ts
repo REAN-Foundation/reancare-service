@@ -179,7 +179,7 @@ export class AssessmentTemplateController extends BaseController{
             
             await this.setContext('AssessmentTemplate.ImportFromFile', request, response);
 
-            const uploadModels = await this._fileResourceValidator.getUploadDomainModel(request);
+            const uploadModels = this._fileResourceValidator.getUploadDomainModel(request);
             if (uploadModels.length === 0) {
                 throw new ApiError(422, 'Cannot find valid file to import!');
             }

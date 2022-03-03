@@ -160,7 +160,7 @@ export class UserTaskController {
             const filters = await this._validator.search(request);
 
             var searchResults = await this._service.search(filters);
-            searchResults.Items = await this.updateDtos(searchResults.Items);
+            searchResults.Items = await this.updateDtos(searchResults.Items, false);
             const count = searchResults.Items.length;
             const message =
                 count === 0

@@ -169,7 +169,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     //#endregion
     

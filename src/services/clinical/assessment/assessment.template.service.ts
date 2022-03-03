@@ -52,9 +52,7 @@ export class AssessmentTemplateService {
         var tmpl: CAssessmentTemplate = model as CAssessmentTemplate;
         const resource = await AssessmentTemplateFileConverter.storeAssessmentTemplate(tmpl);
         tmpl.FileResourceId = resource.id;
-        const assessmentTemplate = await this._assessmentHelperRepo.addTemplate(tmpl);
-
-        return assessmentTemplate;
+        return await this._assessmentHelperRepo.addTemplate(tmpl);
     };
 
 }

@@ -10,7 +10,6 @@ import { ConfigurationManager } from '../config/configuration.manager';
 import { Gender } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
 import { TimeHelper } from './time.helper';
-import mime = require('mime-types');
 import Countries from './misc/countries';
 
 ////////////////////////////////////////////////////////////////////////

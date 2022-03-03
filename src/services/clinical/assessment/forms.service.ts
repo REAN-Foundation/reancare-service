@@ -29,14 +29,16 @@ export class FormsService {
         return await FormsHandler.getFormsList(connectionModel);
     };
     
-    public importFormAsAssessmentTemplate = 
-        async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<AssessmentTemplateDto> => {
+    public importFormAsAssessmentTemplate = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string)
+            : Promise<AssessmentTemplateDto> => {
         var downloadedFilepath = await FormsHandler.downloadForm(connectionModel, providerFormId);
-        var assessmentTemplate = await FormsHandler.importFormFileAsAssessmentTemplate(connectionModel, downloadedFilepath);
+        var assessmentTemplate = await FormsHandler.importFormFileAsAssessmentTemplate(
+            connectionModel, downloadedFilepath);
         return assessmentTemplate;
     };
 
-    public formExists = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<boolean> => {
+    public formExists = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string)
+        : Promise<boolean> => {
         return await FormsHandler.formExists(connectionModel, providerFormId);
     };
 

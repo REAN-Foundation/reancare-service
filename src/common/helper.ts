@@ -459,7 +459,7 @@ export class Helper {
     public static createTempDownloadFolder = async() => {
         var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
         if (fs.existsSync(tempDownloadFolder)) {
-            return;
+            return tempDownloadFolder;
         }
         await fs.promises.mkdir(tempDownloadFolder, { recursive: true });
         return tempDownloadFolder;
@@ -468,7 +468,7 @@ export class Helper {
     public static createTempUploadFolder = async() => {
         var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
         if (fs.existsSync(tempUploadFolder)) {
-            return;
+            return tempUploadFolder;
         }
         await fs.promises.mkdir(tempUploadFolder, { recursive: true });
         return tempUploadFolder;

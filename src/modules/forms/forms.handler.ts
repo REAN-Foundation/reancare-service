@@ -21,19 +21,21 @@ export class FormsHandler {
         return await service.getFormsList(connectionModel);
     };
 
-    public static formExists = 
+    public static formExists =
         async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<boolean> => {
-        var service = FormsHandler.getService(connectionModel);
-        return await service.formExists(connectionModel, providerFormId);
-    };
+            var service = FormsHandler.getService(connectionModel);
+            return await service.formExists(connectionModel, providerFormId);
+        };
 
-    public static importFormFileAsAssessmentTemplate = 
-        async (connectionModel: ThirdpartyApiCredentialsDto, downloadedFilepath: string): Promise<AssessmentTemplateDto> => {
-        var service = FormsHandler.getService(connectionModel);
-        return await service.importFormFileAsAssessmentTemplate(connectionModel, downloadedFilepath);
-    };
+    public static importFormFileAsAssessmentTemplate =
+        async (connectionModel: ThirdpartyApiCredentialsDto, downloadedFilepath: string)
+            : Promise<AssessmentTemplateDto> => {
+            var service = FormsHandler.getService(connectionModel);
+            return await service.importFormFileAsAssessmentTemplate(connectionModel, downloadedFilepath);
+        };
 
-    public static downloadForm = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<string> => {
+    public static downloadForm = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string)
+        : Promise<string> => {
         var service = FormsHandler.getService(connectionModel);
         return await service.downloadForm(connectionModel, providerFormId);
     };

@@ -13,6 +13,7 @@ on:
   workflow_dispatch:
 
 jobs:
+
   CodeScan-ESLint:
     runs-on: ubuntu-latest
     steps:
@@ -123,5 +124,5 @@ jobs:
         with:
           url: 'https://reanfoundation.duplocloud.net/subscriptions/${{ secrets.DUPLO_ID }}/UpdateEcsService'
           method: 'POST'
-          data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1}'
+          data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1, "HealthCheckGracePeriodSeconds": 1200}'
           bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}

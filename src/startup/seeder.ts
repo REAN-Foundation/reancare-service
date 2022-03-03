@@ -14,6 +14,7 @@ import { IMedicationStockImageRepo } from "../database/repository.interfaces/cli
 import { ISymptomAssessmentTemplateRepo } from "../database/repository.interfaces/clinical/symptom/symptom.assessment.template.repo.interface";
 import { ISymptomTypeRepo } from "../database/repository.interfaces/clinical/symptom/symptom.type.repo.interface";
 import { IKnowledgeNuggetRepo } from "../database/repository.interfaces/educational/knowledge.nugget.repo.interface";
+import { IHealthPriorityRepo } from "../database/repository.interfaces/health.priority/health.priority.repo.interface";
 import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
 import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
 import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
@@ -27,6 +28,8 @@ import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/s
 import { SymptomTypeDomainModel } from "../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model";
 import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/symptom.type/symptom.type.search.types";
 import { KnowledgeNuggetDomainModel } from "../domain.types/educational/knowledge.nugget/knowledge.nugget.domain.model";
+import { HealthPriorityTypeDomainModel } from "../domain.types/health.priority.type/health.priority.type.domain.model";
+import { HealthPriorityTypeList } from "../domain.types/health.priority.type/health.priority.types";
 import { PatientDomainModel } from "../domain.types/patient/patient/patient.domain.model";
 import { Roles } from "../domain.types/role/role.types";
 import { UserDomainModel } from "../domain.types/user/user/user.domain.model";
@@ -36,6 +39,7 @@ import { SymptomAssessmentTemplateService } from "../services/clinical/symptom/s
 import { SymptomTypeService } from "../services/clinical/symptom/symptom.type.service";
 import { KnowledgeNuggetService } from "../services/educational/knowledge.nugget.service";
 import { FileResourceService } from "../services/file.resource.service";
+import { HealthPriorityService } from "../services/health.priority/health.priority.service";
 import { HealthProfileService } from "../services/patient/health.profile.service";
 import { PatientService } from "../services/patient/patient.service";
 import { PersonService } from "../services/person.service";
@@ -70,6 +74,8 @@ export class Seeder {
 
     _drugService: DrugService = null;
 
+    _healthPriorityService: HealthPriorityService = null;
+
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IApiClientRepo') private _apiClientRepo: IApiClientRepo,
@@ -83,6 +89,7 @@ export class Seeder {
         @inject('ISymptomAssessmentTemplateRepo') private _symptomAssessmentTemplateRepo: ISymptomAssessmentTemplateRepo,
         @inject('IKnowledgeNuggetRepo') private _knowledgeNuggetRepo: IKnowledgeNuggetRepo,
         @inject('IDrugRepo') private _drugRepo: IDrugRepo,
+        @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -95,10 +102,12 @@ export class Seeder {
         this._symptomAssessmentTemplateService = Loader.container.resolve(SymptomAssessmentTemplateService);
         this._knowledgeNuggetsService = Loader.container.resolve(KnowledgeNuggetService);
         this._drugService = Loader.container.resolve(DrugService);
+        this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
     }
 
     public init = async (): Promise<void> => {
         try {
+            await this.createTempFolders();
             await this.seedDefaultRoles();
             await this.seedRolePrivileges();
             await this.seedInternalClients();
@@ -109,16 +118,19 @@ export class Seeder {
             await this.seedSymptomAsseessmentTemplates();
             await this.seedKnowledgeNuggets();
             await this.seedDrugs();
+            await this.seedHealthPriorityTypes();
+
         } catch (error) {
             Logger.instance().log(error.message);
         }
     };
 
+    private createTempFolders = async () => {
+        await Helper.createTempDownloadFolder();
+        await Helper.createTempUploadFolder();
+    };
+
     private seedRolePrivileges = async () => {
-        const rolePrivileges = await this._rolePrivilegeRepo.search();
-        if (rolePrivileges.length > 0) {
-            return;
-        }
         try {
             const arr = RolePrivilegesList['default'];
             for (let i = 0; i < arr.length; i++) {
@@ -130,11 +142,14 @@ export class Seeder {
                 if (role == null) {
                     continue;
                 }
-                for (const p of privileges) {
-                    await this._rolePrivilegeRepo.create({
-                        RoleId    : role.id,
-                        Privilege : p,
-                    });
+                for (const privilege of privileges) {
+                    const exists = await this._rolePrivilegeRepo.hasPrivilegeForRole(role.id, privilege);
+                    if (!exists) {
+                        await this._rolePrivilegeRepo.create({
+                            RoleId    : role.id,
+                            Privilege : privilege,
+                        });
+                    }
                 }
             }
         } catch (error) {
@@ -281,7 +296,7 @@ export class Seeder {
             Logger.instance().log('Error occurred while seeding internal test users!');
         }
         Logger.instance().log('Seeded internal-test-users successfully!');
-    }
+    };
 
     private createTestPatient = async (phone: string): Promise<boolean> => {
 
@@ -355,7 +370,7 @@ export class Seeder {
 
         return true;
         
-    }
+    };
     
     private seedMedicationStockImages = async () => {
 
@@ -393,7 +408,7 @@ export class Seeder {
                 Logger.instance().log('Error occurred while seeding medication stock images!');
             }
         }
-    }
+    };
 
     public seedSymptomTypes = async () => {
 
@@ -421,7 +436,7 @@ export class Seeder {
             };
             await this._symptomTypeService.create(model);
         }
-    }
+    };
 
     getImageResourceIdForSymptomType = async (fileName) => {
         if (fileName === null) {
@@ -436,7 +451,7 @@ export class Seeder {
             true);
 
         return uploaded.id;
-    }
+    };
 
     public seedSymptomAsseessmentTemplates = async () => {
     
@@ -470,7 +485,7 @@ export class Seeder {
                 }
             }
         }
-    }
+    };
 
     public seedKnowledgeNuggets = async () => {
 
@@ -501,7 +516,7 @@ export class Seeder {
             };
             await this._knowledgeNuggetsService.create(model);
         }
-    }
+    };
 
     public seedDrugs = async () => {
         
@@ -522,6 +537,25 @@ export class Seeder {
             };
             await this._drugService.create(model);
         }
-    }
+    };
+
+    public seedHealthPriorityTypes = async () => {
+        
+        const count = await this._healthPriorityRepo.totalTypesCount();
+        if (count > 0) {
+            Logger.instance().log("Health priority types have already been seeded!");
+            return;
+        }
+
+        Logger.instance().log('Seeding health priority types...');
+
+        for (const priorityTYpe in HealthPriorityTypeList) {
+            const model: HealthPriorityTypeDomainModel = {
+                Type : priorityTYpe,
+                Tags : ["HeartFailure"]
+            };
+            await this._healthPriorityService.createType(model);
+        }
+    };
 
 }

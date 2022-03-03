@@ -26,7 +26,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
             Logger.instance().log(JSON.stringify(error, null, 2));
             return null;
         }
-    }
+    };
     
     upload = async (storageKey: string, localFilePath?: string): Promise<string> => {
 
@@ -87,7 +87,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
                 })
                 .pipe(file);
         });
-    }
+    };
 
     rename = async (storageKey: string, newFileName: string): Promise<boolean> => {
 
@@ -118,7 +118,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         }).promise();
 
         return true;
-    }
+    };
 
     delete = async (storageKey: string): Promise<boolean> => {
 
@@ -133,7 +133,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
             return false;
         }
         return true;
-    }
+    };
     
     getShareableLink(storageKey: string, durationInMinutes: number): string {
 
@@ -162,7 +162,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
             accessKeyId     : process.env.RESOURCES_S3_BUCKET_ACCESS_KEY_ID,
             secretAccessKey : process.env.RESOURCES_S3_BUCKET_ACCESS_KEY_SECRET
         });
-    }
+    };
 
     //#endregion
 

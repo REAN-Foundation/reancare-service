@@ -48,6 +48,6 @@ export class DoctorMapper {
         };
 
         return model;
-    }
+    };
 
 }

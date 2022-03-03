@@ -4,7 +4,7 @@ import {
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import { UserTaskCategory, UserTaskCategoryList } from '../../../../../domain.types/user/user.task/user.task..types';
+import { UserTaskCategory, UserTaskCategoryList } from '../../../../../domain.types/user/user.task/user.task.types';
 import User from './user.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -90,14 +90,14 @@ export default class UserTask extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    ScheduledStartTime: Date
+    ScheduledStartTime: Date;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    ScheduledEndTime: Date
+    ScheduledEndTime: Date;
 
     @Column({
         type         : DataType.BOOLEAN,
@@ -111,7 +111,7 @@ export default class UserTask extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    StartedAt: Date
+    StartedAt: Date;
 
     @Column({
         type         : DataType.BOOLEAN,
@@ -125,7 +125,7 @@ export default class UserTask extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    FinishedAt: Date
+    FinishedAt: Date;
 
     @Column({
         type         : DataType.BOOLEAN,
@@ -139,7 +139,7 @@ export default class UserTask extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    CancelledAt: Date
+    CancelledAt: Date;
 
     @Length({ max: 128 })
     @Column({

@@ -65,7 +65,7 @@ export default class EmergencyEvent extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    EmergencyDate: Date
+    EmergencyDate: Date;
 
     @Column
     @CreatedAt

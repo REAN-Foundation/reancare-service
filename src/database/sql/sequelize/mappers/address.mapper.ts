@@ -25,6 +25,6 @@ export class AddressMapper {
             Lattitude   : lattitude ? parseFloat(lattitude) : null,
         };
         return dto;
-    }
+    };
 
 }

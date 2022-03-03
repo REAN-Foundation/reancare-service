@@ -1,9 +1,10 @@
 import express from 'express';
+import { UserTaskDto } from '../../../domain.types/user/user.task/user.task.dto';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { Logger } from '../../../common/logger';
 import { ResponseHandler } from '../../../common/response.handler';
-import { UserActionTypeList, UserTaskCategoryList } from '../../../domain.types/user/user.task/user.task..types';
+import { UserActionType, UserActionTypeList, UserTaskCategoryList } from '../../../domain.types/user/user.task/user.task.types';
 import { OrganizationService } from '../../../services/organization.service';
 import { PersonService } from '../../../services/person.service';
 import { RoleService } from '../../../services/role.service';
@@ -11,6 +12,8 @@ import { UserActionResolver } from '../../../services/user/user.action.resolver'
 import { UserTaskService } from '../../../services/user/user.task.service';
 import { Loader } from '../../../startup/loader';
 import { UserTaskValidator } from '../../validators/user/user.task.validator';
+import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
+import { CareplanService } from '../../../services/clinical/careplan.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,6 +29,10 @@ export class UserTaskController {
 
     _organizationService: OrganizationService = null;
 
+    _medicationConsumptionService: MedicationConsumptionService = null;
+
+    _careplanService: CareplanService = null;
+
     _authorizer: Authorizer = null;
 
     _validator: UserTaskValidator = new UserTaskValidator();
@@ -35,6 +42,8 @@ export class UserTaskController {
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);
         this._organizationService = Loader.container.resolve(OrganizationService);
+        this._medicationConsumptionService = Loader.container.resolve(MedicationConsumptionService);
+        this._careplanService = Loader.container.resolve(CareplanService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -96,6 +105,14 @@ export class UserTaskController {
                 throw new ApiError(404, 'User task not found.');
             }
 
+            if (userTask.ActionId != null && userTask.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const action = await actionResolver.getAction(userTask.ActionType, userTask.ActionId);
+                if (action) {
+                    userTask['Action'] = action;
+                }
+            }
+
             ResponseHandler.success(request, response, 'User task retrieved successfully!', 200, {
                 UserTask : userTask,
             });
@@ -118,6 +135,14 @@ export class UserTaskController {
                 throw new ApiError(404, 'User task not found.');
             }
 
+            if (userTask.ActionId != null && userTask.ActionType !== null) {
+                var actionResolver = new UserActionResolver();
+                const action = await actionResolver.getAction(userTask.ActionType, userTask.ActionId);
+                if (action) {
+                    userTask['Action'] = action;
+                }
+            }
+
             ResponseHandler.success(request, response, 'User task retrieved successfully!', 200, {
                 UserTask : userTask,
             });
@@ -134,8 +159,8 @@ export class UserTaskController {
 
             const filters = await this._validator.search(request);
 
-            const searchResults = await this._service.search(filters);
-
+            var searchResults = await this._service.search(filters);
+            searchResults.Items = await this.updateDtos(searchResults.Items, false);
             const count = searchResults.Items.length;
             const message =
                 count === 0
@@ -153,6 +178,7 @@ export class UserTaskController {
         try {
             request.context = 'UserTask.StartTask';
             await this._authorizer.authorize(request, response);
+            var actionResolver = new UserActionResolver();
 
             const id: string = await this._validator.getParamUuid(request, 'id');
 
@@ -161,9 +187,23 @@ export class UserTaskController {
                 throw new ApiError(404, 'User task not found.');
             }
 
+            if (existing.ActionId != null && existing.ActionType !== null) {
+
+                const result = await actionResolver.startAction(
+                    existing.ActionType, existing.ActionId);
+                Logger.instance().log(`Starting ${existing.ActionType} - Action result : ${result.toString()}`);
+            }
+
             const updated = await this._service.startTask(id);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update user task record!');
+            }
+
+            if (updated.ActionId != null && updated.ActionType !== null) {
+                const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
+                if (action) {
+                    updated['Action'] = action;
+                }
             }
 
             ResponseHandler.success(request, response, 'User task started successfully!', 200, {
@@ -178,12 +218,20 @@ export class UserTaskController {
         try {
             request.context = 'UserTask.FinishTask';
             await this._authorizer.authorize(request, response);
+            var actionResolver = new UserActionResolver();
 
-            const id: string = await this._validator.getParamUuid(request, 'id');
+            const { id, finishedAt, comments } = await this._validator.finishTask(request);
+            Logger.instance().log(`Task comments: ${comments}`);
 
             const existing = await this._service.getById(id);
             if (existing == null) {
                 throw new ApiError(404, 'User task not found.');
+            }
+
+            if (existing.ActionId != null && existing.ActionType !== null) {
+                const result = await actionResolver.completeAction(
+                    existing.ActionType, existing.ActionId, true, finishedAt);
+                Logger.instance().log(`${existing.ActionType} - Action result : ${result.toString()}`);
             }
 
             const updated = await this._service.finishTask(id);
@@ -192,12 +240,53 @@ export class UserTaskController {
             }
 
             if (updated.ActionId != null && updated.ActionType !== null) {
-                var actionResolver = new UserActionResolver();
-                const result = await actionResolver.completeAction(updated.ActionType, updated.ActionId);
-                Logger.instance().log(`${updated.ActionType} - Action result : ${result.toString()}`);
+                const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
+                if (action) {
+                    updated['Action'] = action;
+                }
             }
-            
+
             ResponseHandler.success(request, response, 'User task finished successfully!', 200, {
+                UserTask : updated,
+            });
+            
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    update = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'UserTask.Update';
+            await this._authorizer.authorize(request, response);
+            var actionResolver = new UserActionResolver();
+
+            const updateModel = await this._validator.update(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
+            
+            const userTask = await this._service.getById(id);
+            if (userTask == null) {
+                throw new ApiError(404, 'User task not found.');
+            }
+
+            if (userTask.ActionId != null && userTask.ActionType !== null) {
+                const updates = updateModel;
+                await actionResolver.updateAction(userTask.ActionType, userTask.ActionId, updates);
+            }
+
+            const updated = await this._service.update(id, updateModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update userTask record!');
+            }
+
+            if (updated.ActionId != null && updated.ActionType !== null) {
+                const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
+                if (action) {
+                    updated['Action'] = action;
+                }
+            }
+
+            ResponseHandler.success(request, response, 'User task record updated successfully!', 200, {
                 UserTask : updated,
             });
             
@@ -210,6 +299,7 @@ export class UserTaskController {
         try {
             request.context = 'UserTask.CancelTask';
             await this._authorizer.authorize(request, response);
+            var actionResolver = new UserActionResolver();
 
             const { id, reason } = await this._validator.cancelTask(request);
             
@@ -218,15 +308,21 @@ export class UserTaskController {
                 throw new ApiError(404, 'User task not found.');
             }
 
+            if (existing.ActionId != null && existing.ActionType !== null) {
+                const result = await actionResolver.cancelAction(existing.ActionType, existing.ActionId);
+                Logger.instance().log(`${existing.ActionType} - Action result : ${result.toString()}`);
+            }
+
             const updated = await this._service.cancelTask(id, reason);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update user task record!');
             }
 
             if (updated.ActionId != null && updated.ActionType !== null) {
-                var actionResolver = new UserActionResolver();
-                const result = await actionResolver.cancelAction(updated.ActionType, updated.ActionId);
-                Logger.instance().log(`${updated.ActionType} - Action result : ${result.toString()}`);
+                const action = await actionResolver.getAction(updated.ActionType, updated.ActionId);
+                if (action) {
+                    updated['Action'] = action;
+                }
             }
 
             ResponseHandler.success(request, response, 'User task cancelled successfully!', 200, {
@@ -245,38 +341,14 @@ export class UserTaskController {
 
             const { userId, date } = await this._validator.getTaskSummaryForDay(request);
             const summary = await this._service.getTaskSummaryForDay(userId, date);
-                   
+            summary.CompletedTasks = await this.updateDtos(summary.CompletedTasks);
+            summary.InProgressTasks = await this.updateDtos(summary.InProgressTasks);
+            summary.PendingTasks = await this.updateDtos(summary.PendingTasks);
+
             ResponseHandler.success(request, response, 'User task cancelled successfully!', 200, {
                 UserTaskSummaryForDay : summary
             });
 
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    update = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            request.context = 'UserTask.Update';
-            await this._authorizer.authorize(request, response);
-
-            const domainModel = await this._validator.update(request);
-            const id: string = await this._validator.getParamUuid(request, 'id');
-            
-            const existingUserTask = await this._service.getById(id);
-            if (existingUserTask == null) {
-                throw new ApiError(404, 'User task not found.');
-            }
-
-            const updated = await this._service.update(id, domainModel);
-            if (updated == null) {
-                throw new ApiError(400, 'Unable to update userTask record!');
-            }
-
-            ResponseHandler.success(request, response, 'User task record updated successfully!', 200, {
-                UserTask : updated,
-            });
-            
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -304,6 +376,46 @@ export class UserTaskController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    //#endregion
+
+    //#region Privates
+
+    private updateDtos = async (dtos: UserTaskDto[], fullDetails = true): Promise<UserTaskDto[]> => {
+        var updatedDtos: UserTaskDto[] = [];
+        for await (var dto of dtos) {
+            const updated = await this.updateDto(dto, fullDetails);
+            updatedDtos.push(updated);
+        }
+        return updatedDtos;
+    };
+
+    private updateDto = async (dto: UserTaskDto, fullDetails = true): Promise<UserTaskDto> => {
+
+        if (dto == null) {
+            return null;
+        }
+        
+        if (dto.ActionId === null) {
+            return dto;
+        }
+
+        if (dto.ActionType === UserActionType.Medication) {
+            const actionDto = await this._medicationConsumptionService.getById(dto.ActionId);
+            dto.Action = actionDto;
+        }
+        else if (dto.ActionType === UserActionType.Careplan) {
+            if (fullDetails) {
+                dto.Action = await this._careplanService.getAction(dto.ActionId);
+            }
+            else {
+                dto.Action = await this._careplanService.getActivity(dto.ActionId);
+            }
+            
+        }
+        
+        return dto;
     };
 
     //#endregion

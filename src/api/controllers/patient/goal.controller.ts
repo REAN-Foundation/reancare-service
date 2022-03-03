@@ -1,4 +1,5 @@
 import express from 'express';
+import { Logger } from '../../../common/logger';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
@@ -6,8 +7,6 @@ import { GoalService } from '../../../services/patient/goal.service';
 import { PatientService } from '../../../services/patient/patient.service';
 import { Loader } from '../../../startup/loader';
 import { GoalValidator } from '../../validators/patient/goal.validator';
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +18,7 @@ export class GoalController {
 
     _authorizer: Authorizer = null;
 
-    _patientService: PatientService = null
+    _patientService: PatientService = null;
 
     constructor() {
         this._service = Loader.container.resolve(GoalService);
@@ -38,13 +37,6 @@ export class GoalController {
             
             const domainModel = await GoalValidator.create(request);
 
-            if (domainModel.PatientUserId != null) {
-                const person = await this._patientService.getByUserId(domainModel.PatientUserId);
-                if (person == null) {
-                    throw new ApiError(404, `User with an id ${domainModel.PatientUserId} cannot be found.`);
-                }
-            }
-
             const patientGoal = await this._service.create(domainModel);
             if (patientGoal == null) {
                 throw new ApiError(400, 'Cannot create patientGoal!');
@@ -53,6 +45,30 @@ export class GoalController {
             ResponseHandler.success(request, response, 'Goal created successfully!', 201, {
                 Goal : patientGoal,
             });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getSelectedGoals = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Goal.getSelcetedGoals';
+            
+            await this._authorizer.authorize(request, response);
+
+            const id: string = await GoalValidator.getSelectedGoals(request);
+
+            Logger.instance().log(`Patient User id: ${JSON.stringify(id)}`);
+
+            const goals = await this._service.getSelectedGoals(id);
+            if (goals == null) {
+                throw new ApiError(400, 'Cannot fetch goals for given patient!');
+            }
+
+            ResponseHandler.success(request, response, 'Fetching goals for given patient done successfully!', 200, {
+                Goals : goals,
+            });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -92,10 +108,32 @@ export class GoalController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} patientGoal records retrieved successfully!`;
+                    : `Total ${count} patient goal records retrieved successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, { Goals: searchResults });
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getGoals = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Goal.getGoals';
+            
+            await this._authorizer.authorize(request, response);
+
+            const priorityId: string = await GoalValidator.getGoals(request);
+            Logger.instance().log(`Get goals by priority Id: ${priorityId}`);
+
+            const patientGoals = await this._service.getGoals(priorityId);
+            if (patientGoals == null || patientGoals.length === 0) {
+                throw new ApiError(404, 'Goals not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Goal retrieved successfully!', 200, {
+                Goals : patientGoals,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

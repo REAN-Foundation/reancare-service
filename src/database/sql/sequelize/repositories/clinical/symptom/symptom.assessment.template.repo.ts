@@ -138,21 +138,22 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
         }
     };
 
-    update = async (id: string, model: SymptomAssessmentTemplateDomainModel): Promise<SymptomAssessmentTemplateDto> => {
+    // eslint-disable-next-line max-len
+    update = async (id: string, updateModel: SymptomAssessmentTemplateDomainModel): Promise<SymptomAssessmentTemplateDto> => {
         try {
             const template = await SymptomAssessmentTemplate.findByPk(id);
 
-            if (model.Title != null) {
-                template.Title = model.Title;
+            if (updateModel.Title != null) {
+                template.Title = updateModel.Title;
             }
-            if (model.Tags != null) {
-                var existingTags = template.Tags ? JSON.parse(template.Tags) as Array<string> : [];
-                existingTags.push(...model.Tags);
+            if (updateModel.Tags != null) {
+                var existingTags = [JSON.parse(template.Tags) as Array<string>];
+                existingTags.push(updateModel.Tags);
                 existingTags = [...new Set(existingTags)];
                 template.Tags = JSON.stringify(existingTags);
             }
-            if (model.Description != null) {
-                template.Description = model.Description;
+            if (updateModel.Description != null) {
+                template.Description = updateModel.Description;
             }
 
             await template.save();
@@ -224,7 +225,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
         }
 
         return await this.getById(id);
-    }
+    };
 
     removeSymptomTypes = async (id: string, symptomTypeIds: string[]):
         Promise<SymptomAssessmentTemplateDto> => {
@@ -264,7 +265,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
         
         await this.recalculateSymptomIndices(id);
         return await this.getById(id);
-    }
+    };
 
     private recalculateSymptomIndices = async (templateId) => {
 
@@ -275,7 +276,7 @@ export class SymptomAssessmentTemplateRepo implements ISymptomAssessmentTemplate
             await s.save();
             index++;
         }
-    }
+    };
 
     totalCount = async (): Promise<number> => {
         try {

@@ -39,7 +39,7 @@ export class PersonMapper {
             Addresses       : []
         };
         return dto;
-    }
+    };
 
     static toDto = (person: Person) => {
 
@@ -62,6 +62,6 @@ export class PersonMapper {
             Email       : person.Email,
         };
         return dto;
-    }
+    };
 
 }

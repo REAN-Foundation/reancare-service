@@ -20,6 +20,6 @@ export class CalorieBalanceMapper {
             RecordDate       : calorieBalance.RecordDate
         };
         return dto;
-    }
+    };
 
 }

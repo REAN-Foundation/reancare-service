@@ -37,6 +37,6 @@ export class HealthProfileMapper {
         };
 
         return dto;
-    }
+    };
 
 }

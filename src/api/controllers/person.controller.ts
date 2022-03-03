@@ -72,7 +72,7 @@ export class PersonController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    }
+    };
     
     getOrganizations = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

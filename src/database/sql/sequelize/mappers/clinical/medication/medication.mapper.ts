@@ -45,6 +45,6 @@ export class MedicationMapper {
             IsCancelled               : medication.IsCancelled,
         };
         return dto;
-    }
+    };
 
 }

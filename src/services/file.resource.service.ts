@@ -1,7 +1,7 @@
 import fs from 'fs';
-import mime from 'mime';
 import path from 'path';
 import sharp from 'sharp';
+import { Helper } from '../common/helper';
 import { inject, injectable } from "tsyringe";
 import { ApiError } from "../common/api.error";
 import { Logger } from "../common/logger";
@@ -85,7 +85,7 @@ export class FileResourceService {
             OriginalName   : filename,
             FileName       : filename,
             SourceFilePath : null,
-            MimeType       : mime.lookup(sourceLocation),
+            MimeType       : Helper.getMimeType(sourceLocation),
             Size           : stats['size'] / 1024,
             StorageKey     : storageKey
         };
@@ -93,7 +93,7 @@ export class FileResourceService {
         var domainModel: FileResourceUploadDomainModel = {
             FileMetadata           : metadata,
             IsMultiResolutionImage : false,
-            MimeType               : mime.lookup(sourceLocation),
+            MimeType               : Helper.getMimeType(sourceLocation),
             IsPublicResource       : isPublicResource,
         };
         
@@ -133,7 +133,7 @@ export class FileResourceService {
         //await this._storageService.rename(resource.DefaultVersion.StorageKey, newFileName);
         
         return await this._fileResourceRepo.rename(id, newFileName);
-    }
+    };
 
     update = async (id: string, updateModel: FileResourceUpdateModel): Promise<FileResourceDto> => {
 
@@ -142,7 +142,7 @@ export class FileResourceService {
             throw new ApiError(404, "File resource not found!");
         }
         return resource;
-    }
+    };
 
     searchAndDownload = async (filters: FileResourceSearchFilters)
         : Promise<string> => {
@@ -262,7 +262,7 @@ export class FileResourceService {
         var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
         this.cleanupDirectories(tempDownloadFolder);
         this.cleanupDirectories(tempUploadFolder);
-    }
+    };
 
     //#endregion
 
@@ -278,7 +278,7 @@ export class FileResourceService {
         await fs.promises.mkdir(downloadFolderPath, { recursive: true });
 
         return downloadFolderPath;
-    }
+    };
 
     private async uploadDefaultVersion(domainModel: FileResourceUploadDomainModel) {
 
@@ -333,7 +333,7 @@ export class FileResourceService {
                 var isBefore = TimeHelper.isBefore(createdAt, cleanupBefore);
                 if (isBefore) {
                     var dPath = path.join(parentFolder, d);
-                    fs.rmdirSync(dPath, { recursive: true });
+                    fs.rmSync(dPath, { recursive: true });
                 }
             }
         }
@@ -353,7 +353,7 @@ export class FileResourceService {
             return true;
         }
         return false;
-    }
+    };
 
     private generateNewVersionIdentifier = async (ResourceId: string): Promise<string> => {
 
@@ -365,7 +365,7 @@ export class FileResourceService {
             versionName = count.toString();
         }
         return versionName;
-    }
+    };
 
     private generateImageVersions = async (domainModel: FileResourceUploadDomainModel)
         : Promise<FileResourceMetadata[]> => {
@@ -399,7 +399,7 @@ export class FileResourceService {
             FileName       : path.basename(thumbnailFilename),
             OriginalName   : path.basename(sourceFilePath),
             SourceFilePath : thumbnailFilename,
-            MimeType       : mime.lookup(thumbnailFilename),
+            MimeType       : Helper.getMimeType(thumbnailFilename),
             Size           : thumbnailStats['size'] / 1024,
             StorageKey     : null
         };
@@ -420,14 +420,14 @@ export class FileResourceService {
             FileName       : path.basename(previewFilename),
             OriginalName   : path.basename(sourceFilePath),
             SourceFilePath : previewFilename,
-            MimeType       : mime.lookup(previewFilename),
+            MimeType       : Helper.getMimeType(previewFilename),
             Size           : previewStats['size'] / 1024,
             StorageKey     : null
         };
         metadataList.push(previewMetadata);
 
         return metadataList;
-    }
+    };
 
     //#endregion
 

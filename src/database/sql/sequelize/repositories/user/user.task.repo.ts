@@ -5,7 +5,7 @@ import { Logger } from '../../../../../common/logger';
 import { TimeHelper } from '../../../../../common/time.helper';
 import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system.types';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
-import { UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task..types';
+import { UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task.types';
 import { UserTaskDomainModel } from '../../../../../domain.types/user/user.task/user.task.domain.model';
 import { TaskSummaryDto, UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../../../../domain.types/user/user.task/user.task.search.types';
@@ -144,7 +144,7 @@ export class UserTaskRepo implements IUserTaskRepo {
                 };
             }
 
-            let orderByColum = 'UserTaskLine';
+            let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
             }
@@ -268,7 +268,7 @@ export class UserTaskRepo implements IUserTaskRepo {
         task = await task.save();
 
         return UserTaskMapper.toDto(task);
-    }
+    };
 
     finishTask = async (id: string): Promise<UserTaskDto> => {
 
@@ -291,7 +291,7 @@ export class UserTaskRepo implements IUserTaskRepo {
 
         return UserTaskMapper.toDto(task);
 
-    }
+    };
     
     cancelTask = async (id: string, reason: string): Promise<UserTaskDto> => {
 
@@ -311,7 +311,7 @@ export class UserTaskRepo implements IUserTaskRepo {
 
         return UserTaskMapper.toDto(task);
 
-    }
+    };
 
     delete = async (id: string): Promise<boolean> => {
         try {
@@ -415,6 +415,6 @@ export class UserTaskRepo implements IUserTaskRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
 }

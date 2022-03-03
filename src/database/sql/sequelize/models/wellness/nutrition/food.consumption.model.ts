@@ -81,9 +81,8 @@ export default class FoodConsumption extends Model {
 
     @IsDecimal
     @Column({
-        type         : DataType.FLOAT,
-        allowNull    : false,
-        defaultValue : 0
+        type      : DataType.FLOAT,
+        allowNull : true,
     })
     Calories: number;
 
@@ -100,14 +99,14 @@ export default class FoodConsumption extends Model {
         type      : DataType.DATE,
         allowNull : false,
     })
-    StartTime: Date
+    StartTime: Date;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    EndTime: Date
+    EndTime: Date;
 
     @Column
     @CreatedAt

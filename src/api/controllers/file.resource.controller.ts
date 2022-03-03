@@ -1,6 +1,5 @@
 import express from 'express';
 import fs from 'fs';
-import mime from 'mime';
 import path from 'path';
 import { Authenticator } from '../../auth/authenticator';
 import { Authorizer } from '../../auth/authorizer';
@@ -16,6 +15,7 @@ import { RoleService } from '../../services/role.service';
 import { Loader } from '../../startup/loader';
 import { FileResourceValidator } from '../validators/file.resource.validator';
 import AdmZip = require ('adm-zip');
+import { Helper } from '../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -165,8 +165,6 @@ export class FileResourceController {
     downloadByVersionName = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'FileResource.DownloadByVersionName';
-            
-
             const metadata: FileResourceMetadata = await this._validator.getByVersionName(request);
             var resource = await this._service.getById(metadata.ResourceId);
 
@@ -194,8 +192,6 @@ export class FileResourceController {
     downloadByVersionId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'FileResource.DownloadByVersionId';
-            
-
             const metadata: FileResourceMetadata = await this._validator.getByVersionId(request);
             var resource = await this._service.getById(metadata.ResourceId);
 
@@ -223,8 +219,6 @@ export class FileResourceController {
     downloadById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'FileResource.DownloadById';
-            
-
             const metadata = await this._validator.downloadById(request);
             var resource = await this._service.getById(metadata.ResourceId);
 
@@ -417,7 +411,10 @@ export class FileResourceController {
         }
 
         var filename = path.basename(localDestination);
-        var mimetype = metadata.MimeType ?? mime.lookup(localDestination);
+        var mimetype = metadata.MimeType ?? Helper.getMimeType(localDestination);
+        if (!mimetype) {
+            mimetype = 'text/plain';
+        }
 
         this.setDownloadResponseHeaders(response, metadata.Disposition, mimetype, filename);
 

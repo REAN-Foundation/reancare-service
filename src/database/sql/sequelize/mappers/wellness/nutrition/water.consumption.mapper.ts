@@ -18,6 +18,6 @@ export class WaterConsumptionMapper {
             Time          : waterConsumption.Time,
         };
         return dto;
-    }
+    };
 
 }

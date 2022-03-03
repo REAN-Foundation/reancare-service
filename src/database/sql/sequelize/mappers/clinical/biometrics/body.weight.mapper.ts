@@ -19,6 +19,6 @@ export class BodyWeightMapper {
             RecordedByUserId : bodyWeight.RecordedByUserId
         };
         return dto;
-    }
+    };
 
 }

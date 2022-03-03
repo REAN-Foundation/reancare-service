@@ -37,7 +37,7 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
                 ]
             });
         return KnowledgeNuggetMapper.toDto(topic);
-    }
+    };
 
     create = async (model: KnowledgeNuggetDomainModel):
     Promise<KnowledgeNuggetDto> => {

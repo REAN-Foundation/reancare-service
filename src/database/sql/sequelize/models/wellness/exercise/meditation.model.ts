@@ -80,14 +80,14 @@ export default class Meditation extends Model {
         type      : DataType.DATE,
         allowNull : false,
     })
-    StartTime: Date
+    StartTime: Date;
 
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    EndTime: Date
+    EndTime: Date;
 
     @Column
     @CreatedAt

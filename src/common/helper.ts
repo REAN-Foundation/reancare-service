@@ -4,10 +4,12 @@ import * as crypto from 'crypto';
 import express from 'express';
 import * as fs from 'fs';
 import { generate } from 'generate-password';
+import mime = require('mime-types');
 import path from 'path';
+import { ConfigurationManager } from '../config/configuration.manager';
 import { Gender } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
-import mime = require('mime-types');
+import { TimeHelper } from './time.helper';
 import Countries from './misc/countries';
 
 ////////////////////////////////////////////////////////////////////////
@@ -25,7 +27,7 @@ export class Helper {
             request.params.doctorUserId;
         }
         return null;
-    }
+    };
 
     static dumpJson(obj, filename) {
         const txt = JSON.stringify(obj, null, '    ');
@@ -45,7 +47,7 @@ export class Helper {
 
         const obj = JSON.parse(rawdata);
         return obj;
-    }
+    };
 
     static executeCommand = (command: string): Promise<string> => {
         return new Promise(function (resolve, reject) {
@@ -361,7 +363,7 @@ export class Helper {
         let decrypted = decipher.update(encryptedText);
         decrypted = Buffer.concat([decrypted, decipher.final()]);
         return decrypted.toString();
-    }
+    };
 
     public static getPossiblePhoneNumbers = (phone) => {
 
@@ -404,16 +406,16 @@ export class Helper {
             possiblePhoneNumbers.push(phoneTemp);
         }
         return possiblePhoneNumbers;
-    }
+    };
 
     public static getFileExtension = (filename: string) => {
         var ext = /^.+\.([^.]+)$/.exec(filename);
         return ext == null ? "" : ext[1];
-    }
+    };
 
     public static getFilenameFromFilePath = (filepath: string) => {
         return path.basename(filepath);
-    }
+    };
 
     public static generateDisplayId = (prefix = null) => {
         var tmp = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
@@ -423,13 +425,68 @@ export class Helper {
             identifier = prefix + '-' + identifier;
         }
         return identifier;
-    }
+    };
+
+    public static generateDisplayCode = (prefix = null) => {
+        const code = generate({
+            length    : 24,
+            numbers   : true,
+            lowercase : true,
+            uppercase : false,
+            symbols   : false,
+        });
+        return prefix ? prefix + '#' + code : code;
+    };
 
     public static convertCamelCaseToPascalCase = (str: string): string => {
         if (str.length > 0) {
             return str.charAt(0).toUpperCase() + str.substring(1);
         }
         return str;
-    }
+    };
+
+    public static generateDownloadFolderPath = async() => {
+
+        var timestamp = TimeHelper.timestamp(new Date());
+        var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
+        var downloadFolderPath = path.join(tempDownloadFolder, timestamp);
+
+        await fs.promises.mkdir(downloadFolderPath, { recursive: true });
+
+        return downloadFolderPath;
+    };
     
+    public static createTempDownloadFolder = async() => {
+        var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
+        if (fs.existsSync(tempDownloadFolder)) {
+            return;
+        }
+        await fs.promises.mkdir(tempDownloadFolder, { recursive: true });
+        return tempDownloadFolder;
+    };
+    
+    public static createTempUploadFolder = async() => {
+        var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
+        if (fs.existsSync(tempUploadFolder)) {
+            return;
+        }
+        await fs.promises.mkdir(tempUploadFolder, { recursive: true });
+        return tempUploadFolder;
+    };
+
+    public static strToFilename = (str: string, extension: string, delimiter: string, limitTo = 32): string => {
+        var tmp = str.replace(' ', delimiter);
+        tmp = tmp.substring(0, limitTo);
+        var ext = extension.startsWith('.') ? extension : '.' + extension;
+        return tmp + ext;
+    };
+    
+    public static getMimeType = (pathOrExtension: string) => {
+        var mimeType = mime.lookup(pathOrExtension);
+        if (!mimeType) {
+            mimeType = 'text/plain';
+        }
+        return mimeType;
+    };
+
 }

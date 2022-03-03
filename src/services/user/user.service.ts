@@ -48,7 +48,12 @@ export class UserService {
 
     public getById = async (id: string): Promise<UserDetailsDto> => {
         var dto = await this._userRepo.getById(id);
+        Logger.instance().log(`DTO from user repo: ${JSON.stringify(dto)}`);
+
         dto = await this.updateDetailsDto(dto);
+
+        Logger.instance().log(`Update details DTO: ${JSON.stringify(dto)}`);
+
         return dto;
     };
 
@@ -178,7 +183,7 @@ export class UserService {
         if (!isInternalTestUser) {
             const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
             if (!storedOtp) {
-                throw new ApiError(404, 'Active Otp record not found!');
+                throw new ApiError(404, 'Active OTP record not found!');
             }
             const date = new Date();
             if (storedOtp.ValidTill <= date) {
@@ -214,7 +219,7 @@ export class UserService {
             exists = await this._userRepo.userExistsWithUsername(userName);
         }
         return userName;
-    }
+    };
     
     public generateUserDisplayId = async (role:Roles, phone, phoneCount = 0) => {
 
@@ -257,7 +262,7 @@ export class UserService {
     
         const displayId = prefix + str;
         return displayId;
-    }
+    };
 
     getDateInUserTimeZone = async(userId, dateStr: string, useCurrent = true) => {
 
@@ -277,7 +282,7 @@ export class UserService {
 
         var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
         return TimeHelper.strToUtc(str, offsetMinutes);
-    }
+    };
 
     //#endregion
 

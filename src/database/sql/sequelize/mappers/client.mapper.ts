@@ -23,7 +23,7 @@ export class ClientMapper {
             IsActive     : active
         };
         return dto;
-    }
+    };
 
     static toClientSecretsDto = (client: ApiClient): ClientApiKeyDto => {
         if (client == null){
@@ -38,6 +38,6 @@ export class ClientMapper {
             ValidTill  : client.ValidTill,
         };
         return dto;
-    }
+    };
 
 }

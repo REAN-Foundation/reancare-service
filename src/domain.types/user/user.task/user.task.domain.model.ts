@@ -1,4 +1,4 @@
-import { UserActionType, UserTaskCategory } from "./user.task..types";
+import { UserActionType, UserTaskCategory } from "./user.task.types";
 
 export interface UserTaskDomainModel {
     id?                  : string;

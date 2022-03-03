@@ -26,6 +26,6 @@ export class DailyAssessmentMapper {
             RecordDate    : dailyAssessment.RecordDate,
         };
         return dto;
-    }
+    };
 
 }

@@ -25,7 +25,7 @@ export class TypesController extends BaseController {
 
     getPersonRoleTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Types.GetPersonRoleTypes', request, response, false);
+            await this.setContext('Types.GetPersonRoleTypes', request, response, false);
 
             const types = await this._service.getPersonRoleTypes();
             if (types === null || types.length === 0) {
@@ -43,7 +43,7 @@ export class TypesController extends BaseController {
 
     getOrganizationTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.setContext('Types.GetOrganizationTypes', request, response, false);
+            await this.setContext('Types.GetOrganizationTypes', request, response, false);
 
             const types = await this._service.getOrganizationTypes();
             if (types === null || types.length === 0) {
@@ -62,7 +62,7 @@ export class TypesController extends BaseController {
     getGenderTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            this.setContext('Types.GetGenderTypes', request, response, false);
+            await this.setContext('Types.GetGenderTypes', request, response, false);
 
             const types = await this._service.getGenderTypes();
             if (types === null || types.length === 0) {
@@ -81,7 +81,7 @@ export class TypesController extends BaseController {
     getBloodGroups = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            this.setContext('Types.GetBloodGroups', request, response, false);
+            await this.setContext('Types.GetBloodGroups', request, response, false);
 
             ResponseHandler.success(request, response, 'Blood group types retrieved successfully!', 200, {
                 BloodGroups : BloodGroupList,
@@ -94,7 +94,7 @@ export class TypesController extends BaseController {
     getMaritalStatuses = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            this.setContext('Types.GetMaritalStatuses', request, response, false);
+            await this.setContext('Types.GetMaritalStatuses', request, response, false);
 
             ResponseHandler.success(request, response, 'Marital status types retrieved successfully!', 200, {
                 MaritalStatuses : MaritalStatusList,
@@ -108,7 +108,7 @@ export class TypesController extends BaseController {
     getSeverities = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            this.setContext('Types.GetSeverities', request, response, false);
+            await this.setContext('Types.GetSeverities', request, response, false);
 
             ResponseHandler.success(request, response, 'Severity types retrieved successfully!', 200, {
                 Severities : SeverityList,

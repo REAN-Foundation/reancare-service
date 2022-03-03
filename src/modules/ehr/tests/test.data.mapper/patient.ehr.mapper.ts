@@ -47,7 +47,7 @@ export class PatientMapper {
         };
 
         return model;
-    }
+    };
 
     // static toDetailsDto = async (patient: Patient): Promise<PatientDetailsDto> => {
 

@@ -1,5 +1,5 @@
+import { CAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import Dictionary from "../../common/dictionary";
-import { AssessmentTemplateDto } from "../../domain.types/clinical/assessment/assessment.template.dto";
 import { FormDto } from "../../domain.types/clinical/assessment/form.types";
 import { ThirdpartyApiCredentialsDomainModel, ThirdpartyApiCredentialsDto } from "../../domain.types/thirdparty/thirdparty.api.credentials";
 import { IFormsService } from "./interfaces/forms.service.interface";
@@ -28,11 +28,11 @@ export class FormsHandler {
         };
 
     public static importFormFileAsAssessmentTemplate =
-        async (connectionModel: ThirdpartyApiCredentialsDto, downloadedFilepath: string)
-            : Promise<AssessmentTemplateDto> => {
+        async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string, downloadedFilepath: string)
+            : Promise<CAssessmentTemplate> => {
             var service = FormsHandler.getService(connectionModel);
             return await service.importFormFileAsAssessmentTemplate(
-                connectionModel.UserId, downloadedFilepath);
+                connectionModel.UserId, providerFormId, downloadedFilepath);
         };
 
     public static downloadForm = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string)

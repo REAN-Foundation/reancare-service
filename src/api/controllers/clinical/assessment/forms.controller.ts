@@ -146,10 +146,12 @@ export class FormsController extends BaseController{
                 throw new ApiError(404, `An error has occurred while importing form with id ${providerFormId}!`);
             }
 
+            const template = await this._assessmentTemplateService.addTemplate(assessmentTemplate);
+
             const message = `The form with id ${providerFormId} is successfully converted to the assessment template successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, {
-                AssessmentTemplate : assessmentTemplate });
+                AssessmentTemplate : template });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

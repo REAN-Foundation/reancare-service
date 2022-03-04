@@ -1,8 +1,8 @@
+import { CAssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.types";
 import { inject, injectable } from "tsyringe";
 import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
 import { IAssessmentRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
 import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
-import { AssessmentTemplateDto } from "../../../domain.types/clinical/assessment/assessment.template.dto";
 import { FormDto } from "../../../domain.types/clinical/assessment/form.types";
 import { ThirdpartyApiCredentialsDomainModel, ThirdpartyApiCredentialsDto } from "../../../domain.types/thirdparty/thirdparty.api.credentials";
 import { FormsHandler } from "../../../modules/forms/forms.handler";
@@ -30,10 +30,10 @@ export class FormsService {
     };
     
     public importFormAsAssessmentTemplate = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string)
-            : Promise<AssessmentTemplateDto> => {
+            : Promise<CAssessmentTemplate> => {
         var downloadedFilepath = await FormsHandler.downloadForm(connectionModel, providerFormId);
         var assessmentTemplate = await FormsHandler.importFormFileAsAssessmentTemplate(
-            connectionModel, downloadedFilepath);
+            connectionModel, providerFormId, downloadedFilepath);
         return assessmentTemplate;
     };
 

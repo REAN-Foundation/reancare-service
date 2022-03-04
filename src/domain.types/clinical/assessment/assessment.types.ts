@@ -153,6 +153,8 @@ export class CAssessmentTemplate {
     FileResourceId?        : uuid; //Assessment template storage file
     RootNodeDisplayCode?   : string;
     Nodes                  : CAssessmentNode[];
+    CreatedAt?             : Date;
+    UpdatedAt?             : Date;
 
     constructor() {
         this.Nodes = [];
@@ -187,6 +189,7 @@ export class CAssessmentNode {
     ParentNodeId?           : uuid;
     Title                   : string;
     Description?            : string;
+    Hint?                   : string;
     Sequence?               : number;
     Score                   : number;
 
@@ -211,14 +214,17 @@ export class CAssessmentListNode extends CAssessmentNode {
 export class CAssessmentQuestionNode extends CAssessmentNode {
 
     QueryResponseType: QueryResponseType;
+    Required         : boolean;
     DefaultPathId    : uuid;
     Paths?           : CAssessmentNodePath[];
     Options?         : CAssessmentQueryOption[];
     UserResponse?    : CAssessmentQueryResponse;
+    SkipCondition?   : CAssessmentPathCondition;
 
     constructor() {
         super();
         this.NodeType = AssessmentNodeType.Question;
+        this.Required = true;
         this.QueryResponseType = QueryResponseType.SingleChoiceSelection;
         this.Paths = [];
         this.Options = [];

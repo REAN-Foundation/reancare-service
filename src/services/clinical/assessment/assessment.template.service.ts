@@ -55,4 +55,10 @@ export class AssessmentTemplateService {
         return await this._assessmentHelperRepo.addTemplate(tmpl);
     };
 
+    public addTemplate = async (template: CAssessmentTemplate): Promise<AssessmentTemplateDto> => {
+        const resource = await AssessmentTemplateFileConverter.storeAssessmentTemplate(template);
+        template.FileResourceId = resource.id;
+        return await this._assessmentHelperRepo.addTemplate(template);
+    };
+
 }

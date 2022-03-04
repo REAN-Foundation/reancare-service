@@ -1,20 +1,20 @@
+import fs from 'fs';
 import _ from "lodash";
+import path from 'path';
 import { ApiError } from "../../../../common/api.error";
 import { Helper } from '../../../../common/helper';
 import { Logger } from "../../../../common/logger";
 import { TimeHelper } from "../../../../common/time.helper";
-import { AssessmentTemplateDto } from "../../../../domain.types/clinical/assessment/assessment.template.dto";
+import { CAssessmentTemplate } from "../../../../domain.types/clinical/assessment/assessment.types";
 import { FormDto } from "../../../../domain.types/clinical/assessment/form.types";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 import {
     ThirdpartyApiCredentialsDomainModel,
     ThirdpartyApiCredentialsDto
 } from "../../../../domain.types/thirdparty/thirdparty.api.credentials";
 import { IFormsService } from "../../interfaces/forms.service.interface";
-import needle = require('needle');
-import fs from 'fs';
-import path from 'path';
-import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 import { KoboFileConverter } from "./kobo.file.converter";
+import needle = require('needle');
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -100,23 +100,30 @@ export class KoboToolboxService  implements IFormsService {
         await fs.promises.mkdir(downloadFolderPath, { recursive: true });
         var filename = `${providerFormCode}.xls`;
         var filepath = path.join(downloadFolderPath, filename);
+        
+        // const buffer = await needle.get(url, options);
+        // fs.writeFileSync(filepath, buffer);
+        // return filepath;
 
         return new Promise((resolve, reject) => {
+            var ws = fs.createWriteStream(filepath);
             needle.get(url, options)
-                .pipe(fs.createWriteStream(filepath))
+                .pipe(ws)
                 .on('done', (err) => {
                     if (err) {
                         reject(`Error dowmloading form! : ${err.message}`);
                     }
+                    ws.end();
                     resolve(filepath);
                 });
         });
 
     };
 
-    public importFormFileAsAssessmentTemplate = async (userId: uuid, downloadedFilepath: string)
-            : Promise<AssessmentTemplateDto> => {
-        return await KoboFileConverter.readKoboXlsAsTemplate(userId, downloadedFilepath);
+    public importFormFileAsAssessmentTemplate = async (userId: uuid, providerFormId: string, downloadedFilepath: string)
+            : Promise<CAssessmentTemplate> => {
+        const converter = new KoboFileConverter();
+        return await converter.readKoboXlsAsTemplate(userId, providerFormId, downloadedFilepath);
     };
 
     //#endregion

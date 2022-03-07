@@ -12,7 +12,7 @@ import { ConfigurationManager } from '../../../config/configuration.manager';
 // import { BloodPressureStore } from '../services/blood.pressure.store';
 // import { BiometricsWeightStore } from '../services/biometrics.weight.store';
 // import { BloodSugarStore } from '../services/blood.sugar.store';
-// import { BiometricsHeightStore } from '../services/biometrics.height.store';
+import { BiometricsHeightStore } from '../services/biometrics.height.store';
 
 import { EhrInjector } from '../ehr.injector';
 
@@ -41,7 +41,7 @@ export class TestLoader {
     // private static _bloodPressureStore: BloodPressureStore = container.resolve(BloodPressureStore);
     // private static _biometricsWeightStore: BiometricsWeightStore = container.resolve(BiometricsWeightStore);
     // private static _bloodSugarStore: BloodSugarStore = container.resolve(BloodSugarStore);
-    // private static _biometricsHeightStore: BiometricsHeightStore = container.resolve(BiometricsHeightStore);
+    private static _biometricsHeightStore: BiometricsHeightStore = container.resolve(BiometricsHeightStore);
 
     private static _container: DependencyContainer = container;
 
@@ -81,9 +81,9 @@ export class TestLoader {
     //     return TestLoader._bloodSugarStore;
     // }
 
-    // public static get BiometricsHeightStore() {
-    //     return TestLoader._biometricsHeightStore;
-    // }
+    public static get BiometricsHeightStore() {
+         return TestLoader._biometricsHeightStore;
+    }
 
     // public static get ClinicOrganizationStore() {
     //     return TestLoader._clinicOrganizationStore;
@@ -103,7 +103,7 @@ export class TestLoader {
             // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
             // TestLoader._bloodPressureStore = container.resolve(BloodPressureStore);
             // TestLoader._bloodSugarStore = container.resolve(BloodSugarStore);
-            // TestLoader._biometricsHeightStore = container.resolve(BiometricsHeightStore);
+            TestLoader._biometricsHeightStore = container.resolve(BiometricsHeightStore);
             // TestLoader._pharmacistStore = container.resolve(PharmacistStore);
             // TestLoader._biometricsWeightStore = container.resolve(BiometricsWeightStore);
 

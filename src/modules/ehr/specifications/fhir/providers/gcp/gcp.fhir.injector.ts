@@ -11,7 +11,7 @@ import { GcpDoctorStore } from './doctor.store';
 // import { GcpBloodPressureStore } from "./blood.pressure.store";
 // import { GcpBiometricsWeightStore } from "./biometrics.weight.store";
 // import { GcpBloodSugarStore } from "./blood.sugar.store";
-// import { GcpBiometricsHeightStore } from "./biometrics.height.store";
+import { GcpBiometricsHeightStore } from "./biometrics.height.store";
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +29,7 @@ export class GcpFhirInjector {
         // container.register('IBloodPressureStore', GcpBloodPressureStore);
         // container.register('IBiometricsWeightStore', GcpBiometricsWeightStore);
         // container.register('IBloodSugarStore', GcpBloodSugarStore);
-        // container.register('IBiometricsHeightStore', GcpBiometricsHeightStore);
+        container.register('IBiometricsHeightStore', GcpBiometricsHeightStore);
 
     }
 

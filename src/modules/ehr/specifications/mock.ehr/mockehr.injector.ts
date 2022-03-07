@@ -10,7 +10,7 @@ import { MockPatientStore } from "./patient.store";
 // import { MockBloodPressureStore } from "./blood.pressure.store";
 // import { MockBiometricsWeightStore } from "./biometrics.weight.store";
 // import { MockBloodSugarStore } from "./blood.sugar.store";
-// import { MockBiometricsHeightStore } from "./biometrics.height.store";
+import { MockBiometricsHeightStore } from "./biometrics.height.store";
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +28,7 @@ export class MockEhrInjector {
         // container.register('IBloodPressureStore', MockBloodPressureStore);
         // container.register('IBiometricsWeightStore', MockBiometricsWeightStore);
         // container.register('IBloodSugarStore', MockBloodSugarStore);
-        // container.register('IBiometricsHeightStore', MockBiometricsHeightStore);
+         container.register('IBiometricsHeightStore', MockBiometricsHeightStore);
 
     }
 

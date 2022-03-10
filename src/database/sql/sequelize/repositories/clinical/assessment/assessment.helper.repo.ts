@@ -65,8 +65,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             var template = await AssessmentTemplate.create(templateModel as any);
 
             const rootNodeDisplayCode: string = t.RootNodeDisplayCode;
-            const sRootNode = CAssessmentTemplate.getNodeByDisplayCode(t.Nodes, rootNodeDisplayCode);
- 
+            var sRootNode = CAssessmentTemplate.getNodeByDisplayCode(t.Nodes, rootNodeDisplayCode);
+            sRootNode.Sequence = 0;
+            sRootNode.Score = 0;
             const rootNode = await this.createNewNode(t, template.id, null, sRootNode);
             template.RootNodeId = rootNode.id;
             await template.save();
@@ -321,7 +322,6 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (nodeObj.NodeType === AssessmentNodeType.NodeList) {
                 var listNode: CAssessmentListNode = nodeObj as CAssessmentListNode;
                 var childrenDisplayCodes = listNode.ChildrenNodeDisplayCodes;
-
                 for await (var childDisplayCode of childrenDisplayCodes) {
                     const child = CAssessmentTemplate.getNodeByDisplayCode(templateObj.Nodes, childDisplayCode);
                     if (child) {

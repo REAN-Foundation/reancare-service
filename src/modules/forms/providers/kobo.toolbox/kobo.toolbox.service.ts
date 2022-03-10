@@ -100,22 +100,24 @@ export class KoboToolboxService  implements IFormsService {
         await fs.promises.mkdir(downloadFolderPath, { recursive: true });
         var filename = `${providerFormCode}.xls`;
         var filepath = path.join(downloadFolderPath, filename);
-        
+        var writer = fs.createWriteStream(filepath);
+
         // const buffer = await needle.get(url, options);
         // fs.writeFileSync(filepath, buffer);
         // return filepath;
-
+        
+        var ws = fs.createWriteStream(filepath);
+        const buffer = await needle.get(url, options);
         return new Promise((resolve, reject) => {
-            var ws = fs.createWriteStream(filepath);
-            needle.get(url, options)
-                .pipe(ws)
-                .on('done', (err) => {
-                    if (err) {
-                        reject(`Error dowmloading form! : ${err.message}`);
-                    }
-                    ws.end();
-                    resolve(filepath);
-                });
+            buffer.pipe(writer);
+            writer.on('error', reject);
+            writer.on('finish', (err) => {
+                if (err) {
+                    reject(`Error dowmloading form! : ${err.message}`);
+                }
+                ws.end();
+                resolve(filepath);
+            });
         });
 
     };

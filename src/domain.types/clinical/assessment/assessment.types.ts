@@ -30,6 +30,7 @@ export enum QueryResponseType {
     Integer               = 'Integer',
     Boolean               = 'Boolean',
     Object                = 'Object',
+    TextArray             = 'Text Array',
     FloatArray            = 'Float Array',
     IntegerArray          = 'Integer Array',
     BooleanArray          = 'Boolean Array',
@@ -42,6 +43,7 @@ export enum QueryResponseType {
     DateTime              = 'DateTime',
     Rating                = 'Rating',
     Location              = 'Location',
+    Range                 = 'Range',
     Ok                    = 'Ok', //Acknowledgement
     None                  = 'None', //Not expecting response
 }
@@ -50,15 +52,22 @@ export const QueryResponseTypeList: QueryResponseType[] = [
     QueryResponseType.Text,
     QueryResponseType.Float,
     QueryResponseType.Integer,
+    QueryResponseType.Boolean,
     QueryResponseType.Object,
-    QueryResponseType.SingleChoiceSelection,
-    QueryResponseType.MultiChoiceSelection,
+    QueryResponseType.TextArray,
     QueryResponseType.FloatArray,
     QueryResponseType.IntegerArray,
     QueryResponseType.BooleanArray,
     QueryResponseType.ObjectArray,
     QueryResponseType.Biometrics,
-    QueryResponseType.Boolean,
+    QueryResponseType.SingleChoiceSelection,
+    QueryResponseType.MultiChoiceSelection,
+    QueryResponseType.File,
+    QueryResponseType.Date,
+    QueryResponseType.DateTime,
+    QueryResponseType.Rating,
+    QueryResponseType.Location,
+    QueryResponseType.Range,
     QueryResponseType.Ok,
     QueryResponseType.None,
 ];
@@ -182,6 +191,7 @@ export class CAssessmentNode {
 
     id?                     : uuid;
     DisplayCode?            : string;
+    Required                : boolean;
     ProviderGivenId?        : string;
     ProviderGivenCode?      : string;
     TemplateId              : uuid;
@@ -214,7 +224,6 @@ export class CAssessmentListNode extends CAssessmentNode {
 export class CAssessmentQuestionNode extends CAssessmentNode {
 
     QueryResponseType: QueryResponseType;
-    Required         : boolean;
     DefaultPathId    : uuid;
     Paths?           : CAssessmentNodePath[];
     Options?         : CAssessmentQueryOption[];

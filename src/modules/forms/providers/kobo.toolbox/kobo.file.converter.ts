@@ -7,7 +7,8 @@ import {
     CAssessmentQuestionNode,
     CAssessmentTemplate,
     QueryResponseType,
-    CAssessmentQueryOption
+    CAssessmentQueryOption,
+    CAssessmentMessageNode
 } from "../../../../domain.types/clinical/assessment/assessment.types";
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 
@@ -76,6 +77,7 @@ export class KoboFileConverter {
         const rootNode = template.Nodes
             .find(x => x.DisplayCode === template.RootNodeDisplayCode) as CAssessmentListNode;
 
+        var count = 0;
         for (var i = questionRowStart; i < questionRowEnd; i++) {
 
             var row = survey[i];
@@ -92,10 +94,16 @@ export class KoboFileConverter {
                 type.startsWith('date') ||
                 type.startsWith('decimal') ||
                 type.startsWith('integer') ||
+                type.startsWith('geopoint') ||
+                type.startsWith('dateTime') ||
+                type.startsWith('audio') ||
+                type.startsWith('video') ||
+                type.startsWith('barcode') ||
+                type.startsWith('file') ||
                 type.startsWith('image')) {
 
                 const node = this.createQueryBasedQuestionNode(
-                    template, i, type, name, label, hint, required, relevant);
+                    template, count, type, name, label, hint, required, relevant);
 
                 rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
 
@@ -108,15 +116,22 @@ export class KoboFileConverter {
                 const optionChoices = choices[choicesKey];
 
                 const node = this.createOptionBasedQuestionNode(
-                    template, optionChoices, i, type, name, label, hint, required, relevant);
+                    template, optionChoices, count, type, name, label, hint, required, relevant);
 
                 rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
 
                 Logger.instance().log(`node - ${JSON.stringify(node, null, 2)}`);
             }
+            else if (type.startsWith('acknowledge')) {
+                const node = this.createMessageNode(template, count, type, name, label, hint, required);
+                rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
+                Logger.instance().log(`node - ${JSON.stringify(node, null, 2)}`);
+
+            }
             else {
                 Logger.instance().log(`KoboToolbox field of type ${type} is not supported!`);
             }
+            count++;
         }
     }
 
@@ -224,11 +239,32 @@ export class KoboFileConverter {
         return node;
     }
 
+    private createMessageNode(
+        template: CAssessmentTemplate,
+        index: number,
+        type: string,
+        name: string,
+        label: string,
+        hint: string,
+        required: boolean): CAssessmentMessageNode {
+        const node = new CAssessmentMessageNode();
+        node.Title = label;
+        node.Message = label;
+        node.Description = hint ?? null;
+        node.Required = required;
+        node.ProviderGivenCode = name;
+        node.ProviderGivenId = name;
+        node.Sequence = index + 1;
+        node.DisplayCode = Helper.generateDisplayCode('MNode');
+        template.Nodes.push(node);
+        return node;
+    }
+
     private getQueryResponseType(type: string) : QueryResponseType {
         if (type.startsWith('text')) {
             return QueryResponseType.Text;
         }
-        else if (type.startsWith('date')) {
+        else if (type.startsWith('date') || type.startsWith('dateTime')) {
             return QueryResponseType.Date;
         }
         else if (type.startsWith('select_one')) {
@@ -243,10 +279,21 @@ export class KoboFileConverter {
         else if (type.startsWith('integer')) {
             return QueryResponseType.Integer;
         }
-        else if (type.startsWith('image')) {
+        else if (
+            type.startsWith('audio') ||
+            type.startsWith('video') ||
+            type.startsWith('barcode') ||
+            type.startsWith('file') ||
+            type.startsWith('image')) {
             return QueryResponseType.File;
         }
-        return QueryResponseType.Ok;
+        else if (type.startsWith('geopoint')) {
+            return QueryResponseType.Location;
+        }
+        else if (type.startsWith('acknowledge')) {
+            return QueryResponseType.Ok;
+        }
+        return QueryResponseType.None;
     }
 
 }

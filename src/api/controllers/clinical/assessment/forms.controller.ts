@@ -1,5 +1,5 @@
 import express from 'express';
-import { AssessmentDto } from 'src/domain.types/clinical/assessment/assessment.dto';
+import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { FormDto } from '../../../../domain.types/clinical/assessment/form.types';
@@ -201,7 +201,6 @@ export class FormsController extends BaseController{
         try {
             
             await this.setContext('Forms.ImportFormSubmissions', request, response);
-
 
             const userId: uuid = request.currentUser.UserId;
             const provider = request.params.providerCode;

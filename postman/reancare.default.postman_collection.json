@@ -8429,7 +8429,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-03-01\"\r\n}"
+											"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-03-10\"\r\n}"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/care-plans/patients/{{PATIENT_USER_ID}}/enroll",
@@ -8484,53 +8484,6 @@
 												"patients",
 												"{{PATIENT_USER_ID}}",
 												"enrollments"
-											]
-										}
-									},
-									"response": []
-								}
-							]
-						},
-						{
-							"name": "Care plans tasks as user tasks",
-							"item": [
-								{
-									"name": "Fetch careplan tasks",
-									"protocolProfileBehavior": {
-										"disableBodyPruning": true
-									},
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{PATIENT_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-01-11\"\r\n}"
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/care-plans/{{CAREPLAN_ID}}/fetch-tasks",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"care-plans",
-												"{{CAREPLAN_ID}}",
-												"fetch-tasks"
 											]
 										}
 									},
@@ -8615,7 +8568,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{BASE_URL}}/user-tasks/search?userId={{PATIENT_USER_ID}}&category=Assessment&itemsPerPage=175",
+											"raw": "{{BASE_URL}}/user-tasks/search?status=pending&userId={{PATIENT_USER_ID}}&category=Assessment&itemsPerPage=175",
 											"host": [
 												"{{BASE_URL}}"
 											],
@@ -8637,8 +8590,7 @@
 												{
 													"key": "status",
 													"value": "pending",
-													"description": "The other possible options are - \n1) inProgress : Tasks which are currently in progress\n2) pending / upcoming- Upcoming tasks\n3) completed- Finished tasks\n4) delayed / overdue- Tasks which are delayed beyond their scheduled duration\n5) cancelled- Tasks which have been cancelled\n",
-													"disabled": true
+													"description": "The other possible options are - \n1) inProgress : Tasks which are currently in progress\n2) pending / upcoming- Upcoming tasks\n3) completed- Finished tasks\n4) delayed / overdue- Tasks which are delayed beyond their scheduled duration\n5) cancelled- Tasks which have been cancelled\n"
 												},
 												{
 													"key": "actionId",
@@ -9321,7 +9273,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"ResponseType\": \"Single Choice Selection\",\r\n    \"Answer\": 1\r\n}"
+											"raw": "{\r\n    \"ResponseType\": \"Single Choice Selection\",\r\n    \"Answer\": 2\r\n}"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}/questions/{{ASSESSMENT_NEXT_QUESTION_ID}}/answer",
@@ -9408,6 +9360,53 @@
 												"questions",
 												"{{ASSESSMENT_NEXT_QUESTION_ID}}",
 												"answer"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Care plans tasks as user tasks",
+							"item": [
+								{
+									"name": "Fetch careplan tasks",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-01-11\"\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/care-plans/{{CAREPLAN_ID}}/fetch-tasks",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"care-plans",
+												"{{CAREPLAN_ID}}",
+												"fetch-tasks"
 											]
 										}
 									},
@@ -15783,76 +15782,6 @@
 									"response": []
 								},
 								{
-									"name": "Export template Copy",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"pm.test(\"Request is successfull\", function () {",
-													"    pm.response.to.have.status(200);",
-													"    var jsonRes = pm.response.json();",
-													"    pm.expect(jsonRes.Status).to.eql('success');",
-													"});",
-													"",
-													"pm.test(\"Assessment template is returned\", function () {",
-													"",
-													"    var jsonRes = pm.response.json();",
-													"",
-													"    pm.expect(jsonRes.Data).to.have.property('AssessmentTemplate');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.not.be.empty;",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('id');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Title');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Description');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Type');",
-													"    ",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate.Title).equals(\"A new assessment template\");",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate.Description).equals(\"Description of template\");",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate.Type).equals(\"Careplan\");",
-													"",
-													"});",
-													"",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{PATIENT_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"url": {
-											"raw": "{{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/export",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"clinical",
-												"assessment-templates",
-												"{{ASSESSMENT_TEMPLATE_ID}}",
-												"export"
-											]
-										}
-									},
-									"response": []
-								},
-								{
 									"name": "Import template",
 									"event": [
 										{
@@ -15952,7 +15881,7 @@
 							"name": "assessment",
 							"item": [
 								{
-									"name": "Create an assessment instance from template",
+									"name": "Schedule a new assessment instance from template",
 									"event": [
 										{
 											"listen": "test",
@@ -16028,7 +15957,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Title\": \"A new assessment\",\n    \"AssessmentTemplateId\": \"{{ASSESSMENT_TEMPLATE_ID}}\"\n}",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"Title\": \"A new assessment\",\n    \"AssessmentTemplateId\": \"{{ASSESSMENT_TEMPLATE_ID}}\",\n    \"ScheduledDate\": \"2022-03-10\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -16181,7 +16110,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"Title\": \"An updated assessment\"\n}",
+											"raw": "{\n    \"Title\": \"An updated assessment\",\n    \"ScheduledDate\": \"2022-03-10\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -17235,6 +17164,267 @@
 											]
 										},
 										"description": "Add an emergency event."
+									},
+									"response": []
+								},
+								{
+									"name": "import form as assmt template",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.environment.set(\"KOBO_TOOLBOX_BASE_URL\", \"https://kc.kobotoolbox.org/api/\");\r",
+													"pm.environment.set(\"KOBO_TOOLBOX_SECONDARY_URL\", \"https://kf.kobotoolbox.org/api/\");\r",
+													"pm.environment.set(\"KOBO_TOOLBOX_TOKEN\", \"058f77bc58acfc6874b3bca738b438f0f45d9c31\");\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonRes = pm.response.json();\r",
+													"\r",
+													"try {\r",
+													"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"description": "API key for client authentication",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"BaseUrl\":\"{{KOBO_TOOLBOX_BASE_URL}}\",\r\n    \"SecondaryUrl\":\"{{KOBO_TOOLBOX_SECONDARY_URL}}\",\r\n    \"Token\":\"{{KOBO_TOOLBOX_TOKEN}}\"\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/forms/provider/KoboToolbox/import-form/911036",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"forms",
+												"provider",
+												"KoboToolbox",
+												"import-form",
+												"911036"
+											]
+										},
+										"description": "Add an emergency event."
+									},
+									"response": []
+								},
+								{
+									"name": "import submitted form data as assessment",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.environment.set(\"KOBO_TOOLBOX_BASE_URL\", \"https://kc.kobotoolbox.org/api/\");\r",
+													"pm.environment.set(\"KOBO_TOOLBOX_SECONDARY_URL\", \"https://kf.kobotoolbox.org/api/\");\r",
+													"pm.environment.set(\"KOBO_TOOLBOX_TOKEN\", \"058f77bc58acfc6874b3bca738b438f0f45d9c31\");\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonRes = pm.response.json();\r",
+													"\r",
+													"try {\r",
+													"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.id);\r",
+													"}\r",
+													"catch (error) {\r",
+													"    console.log(error.message);\r",
+													"}\r",
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"description": "API key for client authentication",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"BaseUrl\":\"{{KOBO_TOOLBOX_BASE_URL}}\",\r\n    \"SecondaryUrl\":\"{{KOBO_TOOLBOX_SECONDARY_URL}}\",\r\n    \"Token\":\"{{KOBO_TOOLBOX_TOKEN}}\"\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/forms/provider/KoboToolbox/import-form/911036",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"forms",
+												"provider",
+												"KoboToolbox",
+												"import-form",
+												"911036"
+											]
+										},
+										"description": "Add an emergency event."
+									},
+									"response": []
+								},
+								{
+									"name": "Schedule assessment with generated template",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonRes = pm.response.json();",
+													"",
+													"try {",
+													"    pm.environment.set(\"ASSESSMENT_ID\", jsonRes.Data.Assessment.id);",
+													"}",
+													"catch (error) {",
+													"    console.log(error.message);",
+													"}",
+													"",
+													"pm.test(\"Request is successfull\", function () {",
+													"    pm.response.to.have.status(201);",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Status).to.eql('success');",
+													"});",
+													"",
+													"pm.test(\"New assessment is created\", function () {",
+													"   ",
+													"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");",
+													"    var expectedTemplateId = pm.environment.get(\"ASSESSMENT_TEMPLATE_ID\");",
+													"",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Data).to.have.property('Assessment');",
+													"    pm.expect(jsonRes.Data.Assessment).to.not.be.empty;",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property('id');",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property('Title');",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property('PatientUserId');",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property('AssessmentTemplateId');",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property('Type');",
+													"    ",
+													"    pm.expect(jsonRes.Data.Assessment.Title).equals(\"A new assessment\");",
+													"    pm.expect(jsonRes.Data.Assessment.PatientUserId).equals(expectedPatientUserId);",
+													"    pm.expect(jsonRes.Data.Assessment.AssessmentTemplateId).equals(expectedTemplateId);",
+													"    ",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\n    \"AssessmentTemplateId\": \"{{ASSESSMENT_TEMPLATE_ID}}\",\n    \"ScheduledDate\": \"2022-03-10\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/assessments",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"assessments"
+											]
+										}
 									},
 									"response": []
 								}

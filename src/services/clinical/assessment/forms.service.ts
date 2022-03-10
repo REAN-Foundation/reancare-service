@@ -6,6 +6,8 @@ import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces
 import { FormDto } from "../../../domain.types/clinical/assessment/form.types";
 import { ThirdpartyApiCredentialsDomainModel, ThirdpartyApiCredentialsDto } from "../../../domain.types/thirdparty/thirdparty.api.credentials";
 import { FormsHandler } from "../../../modules/forms/forms.handler";
+import { AssessmentTemplateDto } from "../../../domain.types/clinical/assessment/assessment.template.dto";
+import { AssessmentDto } from "../../../domain.types/clinical/assessment/assessment.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,6 +43,21 @@ export class FormsService {
         : Promise<boolean> => {
         return await FormsHandler.formExists(connectionModel, providerFormId);
     };
+
+    public importFormSubmissions = async (validCreds: ThirdpartyApiCredentialsDto, providerFormId: string)
+        : Promise<any[]> => {
+        throw new Error('Method not implemented.');
+    }
+
+    public getTemplateForForm = async (validCreds: ThirdpartyApiCredentialsDto, providerFormId: string)
+        : Promise<AssessmentTemplateDto> => {
+        throw new Error('Method not implemented.');
+    }
+
+    public addAssessment = async (templateId: string, providerFormId: string, submission: any)
+        : Promise<AssessmentDto> => {
+        throw new Error('Method not implemented.');
+    }
 
     // public getById = async (id: string): Promise<AssessmentTemplateDto> => {
     //     return await this._assessmentRepo.getById(id);

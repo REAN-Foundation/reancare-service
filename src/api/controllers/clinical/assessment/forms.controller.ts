@@ -1,4 +1,5 @@
 import express from 'express';
+import { AssessmentDto } from 'src/domain.types/clinical/assessment/assessment.dto';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { FormDto } from '../../../../domain.types/clinical/assessment/form.types';
@@ -149,7 +150,7 @@ export class FormsController extends BaseController{
             const template = await this._assessmentTemplateService.addTemplate(assessmentTemplate);
 
             const message = `The form with id ${providerFormId} is successfully converted to the assessment template successfully!`;
-                    
+            
             ResponseHandler.success(request, response, message, 200, {
                 AssessmentTemplate : template });
 
@@ -196,30 +197,60 @@ export class FormsController extends BaseController{
     //     }
     // };
 
-    // importFormSubmissions = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
+    importFormSubmissions = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
             
-    //         await this.setContext('Forms.ImportFormSubmissions', request, response);
+            await this.setContext('Forms.ImportFormSubmissions', request, response);
 
-    //         const domainModel = await this._validator.update(request);
-    //         const id: uuid = await this._validator.getParamUuid(request, 'id');
-    //         const existingRecord = await this._service.getById(id);
-    //         if (existingRecord == null) {
-    //             throw new ApiError(404, 'Assessment template record not found.');
-    //         }
 
-    //         const updated = await this._service.update(domainModel.id, domainModel);
-    //         if (updated == null) {
-    //             throw new ApiError(400, 'Unable to update assessmentTemplate record!');
-    //         }
+            const userId: uuid = request.currentUser.UserId;
+            const provider = request.params.providerCode;
+            const providerFormId = request.params.providerFormId;
 
-    //         ResponseHandler.success(request, response, 'Assessment template record updated successfully!', 200, {
-    //             AssessmentTemplate : updated,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
+            var validCreds: ThirdpartyApiCredentialsDto = await this.getValidCreds(userId, provider);
+            if (!validCreds) {
+                throw new ApiError(403, `This user does not have valid credentials to fetch data from provider ${provider}!`);
+            }
+
+            const formExists = await this._service.formExists(validCreds, providerFormId);
+            if (!formExists) {
+                throw new ApiError(404, `The form with id ${providerFormId} cannot be found!`);
+            }
+
+            var template = await this._service.getTemplateForForm(validCreds, providerFormId);
+            if (!template) {
+                const assessmentTemplate =
+                    await this._service.importFormAsAssessmentTemplate(validCreds, providerFormId);
+                if (!assessmentTemplate) {
+                    throw new ApiError(500, `An error has occurred while importing form with id ${providerFormId}!`);
+                }
+                template = await this._assessmentTemplateService.addTemplate(assessmentTemplate);
+                if (!template) {
+                    throw new ApiError(500, `An error has occurred while adding template for form with id ${providerFormId}!`);
+                }
+            }
+            const templateId = template.id;
+            const formSubmissions = await this._service.importFormSubmissions(validCreds, providerFormId);
+            if (!formSubmissions || formSubmissions.length === 0) {
+                throw new ApiError(404, `Cannot locate form submissions for the form with id ${providerFormId}!`);
+            }
+
+            const assessments: AssessmentDto[] = [];
+
+            for await (var submission of formSubmissions) {
+                const assessment: AssessmentDto =
+                    await this._service.addAssessment(templateId, providerFormId, submission);
+                assessments.push(assessment);
+            }
+
+            const message = `The submissions for form with id ${providerFormId} are imported as completed assessments successfully!`;
+            
+            ResponseHandler.success(request, response, message, 200, {
+                Assessments : assessments });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
     //#endregion
 

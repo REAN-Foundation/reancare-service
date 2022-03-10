@@ -31,8 +31,8 @@ export const register = (app: express.Application): void => {
     //     authenticator.authenticateClient, authenticator.authenticateUser, controller.addAssessmentTemplateAsForm);
 
     //Import form submissions
-    // router.post('/provider/:providerCode/import-form-submissions',
-    //     authenticator.authenticateClient, authenticator.authenticateUser, controller.importFormSubmissions);
+    router.post('/provider/:providerCode/import-form-submissions/:providerFormId',
+        authenticator.authenticateClient, authenticator.authenticateUser, controller.importFormSubmissions);
    
     app.use('/api/v1/clinical/forms', router);
 };

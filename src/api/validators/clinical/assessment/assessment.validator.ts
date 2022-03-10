@@ -14,6 +14,9 @@ export class AssessmentValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): AssessmentDomainModel => {
 
+        var dateStr = request.body.ScheduledDate ? new Date(request.body.ScheduledDate).toISOString()
+            .split('T')[0] : null;
+            
         const patientAssessmentModel: AssessmentDomainModel = {
             PatientUserId          : request.body.PatientUserId ?? null,
             Title                  : request.body.Title ?? null,
@@ -23,6 +26,7 @@ export class AssessmentValidator extends BaseValidator {
             ProviderAssessmentCode : request.body.ProviderAssessmentCode ?? null,
             Provider               : request.body.Provider ?? null,
             Status                 : request.body.Status ?? null,
+            ScheduledDateString    : dateStr
         };
 
         return patientAssessmentModel;
@@ -119,6 +123,7 @@ export class AssessmentValidator extends BaseValidator {
         await this.validateString(request, 'ProviderEnrollmentId', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateString(request, 'Provider', Where.Body, false, false);
+        await this.validateDate(request, 'ScheduledDate', Where.Body, false, false);
 
         this.validateRequest(request);
 
@@ -133,6 +138,7 @@ export class AssessmentValidator extends BaseValidator {
         await this.validateString(request, 'ProviderEnrollmentId', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateString(request, 'Provider', Where.Body, false, false);
+        await this.validateDate(request, 'ScheduledDate', Where.Body, false, false);
 
         this.validateRequest(request);
         

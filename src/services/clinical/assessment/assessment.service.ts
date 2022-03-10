@@ -34,7 +34,7 @@ import { ConditionProcessor } from './condition.processor';
 
 @injectable()
 export class AssessmentService {
-    
+
     _conditionProcessor: ConditionProcessor = null;
 
     constructor(

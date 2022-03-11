@@ -13,6 +13,9 @@ import {
     MultipleChoiceQueryAnswer,
     SingleChoiceQueryAnswer,
     TextQueryAnswer,
+    CAssessmentQuestionNode,
+    CAssessmentListNode,
+    CAssessmentMessageNode,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -46,4 +49,7 @@ export interface IAssessmentHelperRepo {
         | FloatQueryAnswer
         | BiometricQueryAnswer): Promise<CAssessmentQueryResponse>;
 
+    getTemplateChildrenNodes(templateId: uuid)
+        : Promise<(CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode)[]>;
+ 
 }

@@ -489,4 +489,15 @@ export class Helper {
         return mimeType;
     };
     
+    public static getValueForEitherKeys = (obj: any, keys: string[]): string => {
+        const existingKeys = Object.keys(obj);
+        for (var key of keys) {
+            var found = existingKeys.includes(key);
+            if (found) {
+                return obj[key];
+            }
+        }
+        return null;
+    };
+
 }

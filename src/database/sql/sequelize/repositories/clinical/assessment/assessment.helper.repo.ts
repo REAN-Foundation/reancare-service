@@ -92,6 +92,22 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
 
+    public getTemplateChildrenNodes = async (templateId: uuid)
+        : Promise<(CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode)[]> => {
+        try {
+            const nodes = await AssessmentNode.findAll({
+                where : {
+                    TemplateId : templateId
+                }
+            });
+            var dtos = nodes.map((x) => AssessmentHelperMapper.toNodeDto(x, null, null, null));
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
     public getQuestionNodeOptions = async (
         nodeType: AssessmentNodeType,
         nodeId: uuid

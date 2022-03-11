@@ -24,6 +24,7 @@ export class AssessmentMapper {
             Provider               : assessment.Provider,
             ProviderEnrollmentId   : assessment.ProviderEnrollmentId,
             ProviderAssessmentCode : assessment.ProviderAssessmentCode,
+            ProviderAssessmentId   : assessment.ProviderAssessmentId,
             Status                 : assessment.Status as ProgressStatus,
             CreatedAt              : assessment.CreatedAt,
             StartedAt              : assessment.StartedAt,

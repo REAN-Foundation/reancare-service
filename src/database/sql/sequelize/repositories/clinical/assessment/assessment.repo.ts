@@ -27,6 +27,7 @@ export class AssessmentRepo implements IAssessmentRepo {
                 AssessmentTemplateId   : model.AssessmentTemplateId ?? null,
                 Provider               : model.Provider ?? null,
                 ProviderAssessmentCode : model.ProviderAssessmentCode ?? null,
+                ProviderAssessmentId   : model.ProviderAssessmentId ?? null,
                 ProviderEnrollmentId   : model.ProviderEnrollmentId ?? null,
                 Status                 : model.Status ?? ProgressStatus.Pending,
                 ParentActivityId       : model.ParentActivityId ?? null,

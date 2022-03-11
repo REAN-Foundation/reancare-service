@@ -11,6 +11,7 @@ export interface AssessmentDto {
     AssessmentTemplateId   : uuid;
     ProviderEnrollmentId?  : string;
     ProviderAssessmentCode?: string;
+    ProviderAssessmentId?  : string;
     Provider?              : string;
     Status                 : ProgressStatus;
     ParentActivityId?      : uuid;

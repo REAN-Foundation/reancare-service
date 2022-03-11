@@ -19,7 +19,7 @@ import needle = require('needle');
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class KoboToolboxService  implements IFormsService {
-
+        
     //#region Publics
 
     providerName = (): string => {
@@ -126,6 +126,23 @@ export class KoboToolboxService  implements IFormsService {
             : Promise<CAssessmentTemplate> => {
         const converter = new KoboFileConverter();
         return await converter.readKoboXlsAsTemplate(userId, providerFormId, downloadedFilepath);
+    };
+
+    public importFormSubmissions = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string)
+        : Promise<any[]> => {
+
+        var options = this.getRequestOptions(connectionModel.Token);
+        var url = connectionModel.BaseUrl + `v1/data/${providerFormId}?format=json`;
+        var response = await needle('get', url, options);
+        if (response.statusCode === 200) {
+            Logger.instance().log('Successfully retrieved form submission list!');
+            var submissions = response.body;
+            return submissions;
+        }
+        else {
+            Logger.instance().error('Unable to retrieve KoboToolbox form submissions for the account!', response.statusCode, null);
+            throw new ApiError(response.statusCode, 'Unable to retrieve KoboToolbox forms for the account!');
+        }
     };
 
     //#endregion

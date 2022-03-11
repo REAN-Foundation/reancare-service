@@ -10,6 +10,10 @@ import { CAssessmentTemplate } from "../../../domain.types/clinical/assessment/a
 
 export interface IFormsService {
 
+    providerName(): string;
+
+    connect(connectionModel: ThirdpartyApiCredentialsDomainModel): Promise<boolean>;
+        
     downloadForm(connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<string>;
 
     importFormFileAsAssessmentTemplate(userId: uuid, providerFormId: string, downloadedFilepath: string)
@@ -19,8 +23,6 @@ export interface IFormsService {
 
     getFormsList(connectionModel: ThirdpartyApiCredentialsDto): Promise<FormDto[]>;
 
-    providerName(): string;
-
-    connect(connectionModel: ThirdpartyApiCredentialsDomainModel): Promise<boolean>;
+    importFormSubmissions(connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<any[]>;
 
 }

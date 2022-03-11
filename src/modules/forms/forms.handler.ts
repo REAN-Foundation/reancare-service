@@ -8,7 +8,7 @@ import { ProviderResolver } from "./provider.resolver";
 ////////////////////////////////////////////////////////////////////////
 
 export class FormsHandler {
-    
+
     static _services: Dictionary<IFormsService> = new Dictionary<IFormsService>();
 
     public static connect = async (connectionModel: ThirdpartyApiCredentialsDomainModel): Promise<boolean> => {
@@ -41,6 +41,12 @@ export class FormsHandler {
         return await service.downloadForm(connectionModel, providerFormId);
     };
 
+    public static importFormSubmissions = async (
+        connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<any[]> => {
+        var service = FormsHandler.getService(connectionModel);
+        return await service.importFormSubmissions(connectionModel, providerFormId);
+    }
+    
     // public convertFormToAssessmentTemplate = async (assessmentActivity: CareplanActivity)
     //     : Promise<SAssessmentTemplate> => {
     //     var service = FormsHandler._services.getItem(assessmentActivity.Provider);

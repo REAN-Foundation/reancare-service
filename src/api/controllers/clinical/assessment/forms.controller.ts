@@ -13,6 +13,7 @@ import { Loader } from '../../../../startup/loader';
 import { FormsValidator } from '../../../validators/clinical/assessment/forms.validator';
 import { FileResourceValidator } from '../../../validators/file.resource.validator';
 import { BaseController } from '../../base.controller';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -216,7 +217,7 @@ export class FormsController extends BaseController{
                 throw new ApiError(404, `The form with id ${providerFormId} cannot be found!`);
             }
 
-            var template = await this._service.getTemplateForForm(validCreds, providerFormId);
+            var template = await this._service.getTemplateForForm(provider, providerFormId);
             if (!template) {
                 const assessmentTemplate =
                     await this._service.importFormAsAssessmentTemplate(validCreds, providerFormId);
@@ -237,8 +238,13 @@ export class FormsController extends BaseController{
             const assessments: AssessmentDto[] = [];
 
             for await (var submission of formSubmissions) {
+                const patient = await this._service.IdentifyUserDetailsFromSubmission(submission);
+                if (!patient) {
+                    Logger.instance().log(`Cannot import form submisison as an assessment for the form with id ${providerFormId} as patient info cannot be determined.`);
+                    continue;
+                }
                 const assessment: AssessmentDto =
-                    await this._service.addAssessment(templateId, providerFormId, submission);
+                    await this._service.addAssessment(patient.UserId, templateId, providerFormId, submission);
                 assessments.push(assessment);
             }
 

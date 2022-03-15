@@ -1,4 +1,4 @@
-import { AssessmentNodeType, BiometricQueryAnswer, CAssessmentListNode, CAssessmentMessageNode, CAssessmentQueryOption, CAssessmentQuestionNode, CAssessmentTemplate, FloatQueryAnswer, IntegerQueryAnswer, MessageAnswer, MultipleChoiceQueryAnswer, QueryResponseType, SingleChoiceQueryAnswer, TextQueryAnswer } from "../../../domain.types/clinical/assessment/assessment.types";
+import { AssessmentNodeType, BiometricQueryAnswer, BooleanQueryAnswer, CAssessmentListNode, CAssessmentMessageNode, CAssessmentQueryOption, CAssessmentQuestionNode, CAssessmentTemplate, FileQueryAnswer, FloatQueryAnswer, IntegerQueryAnswer, MessageAnswer, MultipleChoiceQueryAnswer, QueryResponseType, SingleChoiceQueryAnswer, TextQueryAnswer } from "../../../domain.types/clinical/assessment/assessment.types";
 import { inject, injectable } from "tsyringe";
 import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
 import { IAssessmentRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
@@ -18,7 +18,6 @@ import { IUserRepo } from "../../../database/repository.interfaces/user/user.rep
 import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
 import { Roles } from "../../../domain.types/role/role.types";
 import { AssessmentDomainModel } from "../../../domain.types/clinical/assessment/assessment.domain.model";
-import { AssessmentValidator } from "src/api/validators/clinical/assessment/assessment.validator";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -168,7 +167,7 @@ export class FormsService {
             if (node === null) {
                 continue;
             }
-            const answer = this.getQueryResponse(template, assessment.id, node, value);
+            const answer = await this.getQueryResponse(template, assessment.id, node, value);
             var response = await this._assessmentHelperRepo.createQueryResponse(answer);
         }
 
@@ -201,6 +200,8 @@ export class FormsService {
         | TextQueryAnswer
         | IntegerQueryAnswer
         | FloatQueryAnswer
+        | BooleanQueryAnswer
+        | FileQueryAnswer
         | BiometricQueryAnswer> => {
             
         if (node.NodeType === AssessmentNodeType.Question) {
@@ -208,12 +209,31 @@ export class FormsService {
             if (nd.QueryResponseType === QueryResponseType.SingleChoiceSelection) {
                 return await this.getSingleChoiceQueryResponse(value, nd, assessmentId, node);
             }
+            else if (nd.QueryResponseType === QueryResponseType.MultiChoiceSelection) {
+                return await this.getMultiChoiceQueryResponse(value, nd, assessmentId, node);
+            }
+            else if (nd.QueryResponseType === QueryResponseType.Text) {
+                return await this.getTextQueryResponse(value, nd, assessmentId, node);
+            }
+            else if (nd.QueryResponseType === QueryResponseType.Boolean) {
+                return await this.getBooleanQueryResponse(value, nd, assessmentId, node);
+            }
+            else if (nd.QueryResponseType === QueryResponseType.Integer) {
+                return await this.getIntegerQueryResponse(value, nd, assessmentId, node);
+            }
+            else if (nd.QueryResponseType === QueryResponseType.Float) {
+                return await this.getFloatQueryResponse(value, nd, assessmentId, node);
+            }
+            else if (nd.QueryResponseType === QueryResponseType.File) {
+                return await this.getFileQueryResponse(value, nd, assessmentId, node);
+            }
         }
     };
 
     private async getSingleChoiceQueryResponse(
         value: any, nd: CAssessmentQuestionNode,
         assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
+
         const v = value as string;
         const options = await this._assessmentHelperRepo.getQuestionNodeOptions(nd.NodeType, nd.id);
         const option = options.find(x => x.Text === v);
@@ -223,6 +243,109 @@ export class FormsService {
             QuestionSequence : node.Sequence,
             ResponseType     : QueryResponseType.SingleChoiceSelection,
             ChosenOption     : option,
+            NodeDisplayCode  : nd.DisplayCode,
+            NodeId           : nd.id,
+            Title            : node.Title
+        };
+        return answer;
+    }
+
+    private async getMultiChoiceQueryResponse(
+        value: any, nd: CAssessmentQuestionNode,
+        assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
+
+        const v = value as string[];
+        const options = await this._assessmentHelperRepo.getQuestionNodeOptions(nd.NodeType, nd.id);
+        var selectedOptionSequences:number[] = [];
+        var selectedOptions:CAssessmentQueryOption[] = [];
+        for (var o of options) {
+            const searchFor = o.Text;
+            if (v.includes(searchFor)) {
+                selectedOptionSequences.push(o.Sequence);
+                selectedOptions.push(o);
+            }
+        }
+        const answer: MultipleChoiceQueryAnswer = {
+            AssessmentId     : assessmentId,
+            ChosenSequences  : selectedOptionSequences,
+            QuestionSequence : node.Sequence,
+            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            ChosenOptions    : selectedOptions,
+            NodeDisplayCode  : nd.DisplayCode,
+            NodeId           : nd.id,
+            Title            : node.Title
+        };
+        return answer;
+    }
+    
+    private async getTextQueryResponse(
+        value: any, nd: CAssessmentQuestionNode,
+        assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
+        const answer: TextQueryAnswer = {
+            AssessmentId     : assessmentId,
+            Text             : value as string,
+            QuestionSequence : node.Sequence,
+            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            NodeDisplayCode  : nd.DisplayCode,
+            NodeId           : nd.id,
+            Title            : node.Title
+        };
+        return answer;
+    }
+
+    private async getBooleanQueryResponse(
+        value: any, nd: CAssessmentQuestionNode,
+        assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
+        const answer: BooleanQueryAnswer = {
+            AssessmentId     : assessmentId,
+            Value            : value as boolean,
+            QuestionSequence : node.Sequence,
+            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            NodeDisplayCode  : nd.DisplayCode,
+            NodeId           : nd.id,
+            Title            : node.Title
+        };
+        return answer;
+    }
+
+    private async getIntegerQueryResponse(
+        value: any, nd: CAssessmentQuestionNode,
+        assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
+        const answer: IntegerQueryAnswer = {
+            AssessmentId     : assessmentId,
+            Value            : value as number,
+            QuestionSequence : node.Sequence,
+            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            NodeDisplayCode  : nd.DisplayCode,
+            NodeId           : nd.id,
+            Title            : node.Title
+        };
+        return answer;
+    }
+
+    private async getFloatQueryResponse(
+        value: any, nd: CAssessmentQuestionNode,
+        assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
+        const answer: FloatQueryAnswer = {
+            AssessmentId     : assessmentId,
+            Value            : value as number,
+            QuestionSequence : node.Sequence,
+            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            NodeDisplayCode  : nd.DisplayCode,
+            NodeId           : nd.id,
+            Title            : node.Title
+        };
+        return answer;
+    }
+
+    private async getFileQueryResponse(
+        value: any, nd: CAssessmentQuestionNode,
+        assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
+        const answer: FileQueryAnswer = {
+            AssessmentId     : assessmentId,
+            Url              : value as string,
+            QuestionSequence : node.Sequence,
+            ResponseType     : QueryResponseType.SingleChoiceSelection,
             NodeDisplayCode  : nd.DisplayCode,
             NodeId           : nd.id,
             Title            : node.Title

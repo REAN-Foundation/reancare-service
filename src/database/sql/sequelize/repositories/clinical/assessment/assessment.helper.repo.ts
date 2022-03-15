@@ -23,6 +23,8 @@ import {
     IntegerQueryAnswer,
     FloatQueryAnswer,
     BiometricQueryAnswer,
+    BooleanQueryAnswer,
+    FileQueryAnswer,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -257,6 +259,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             | TextQueryAnswer
             | IntegerQueryAnswer
             | FloatQueryAnswer
+            | BooleanQueryAnswer
+            | FileQueryAnswer
             | BiometricQueryAnswer
     ): Promise<CAssessmentQueryResponse> => {
         try {
@@ -501,6 +505,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         TextQueryAnswer |
         IntegerQueryAnswer |
         FloatQueryAnswer |
+        BooleanQueryAnswer |
+        FileQueryAnswer |
         BiometricQueryAnswer) => {
         
         if (answer.ResponseType === QueryResponseType.SingleChoiceSelection) {

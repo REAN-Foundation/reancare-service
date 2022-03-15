@@ -382,9 +382,21 @@ export interface IntegerQueryAnswer extends BaseQueryAnswer {
     Value  : number;
 }
 
+export interface BooleanQueryAnswer extends BaseQueryAnswer {
+    Field? : string;
+    Value  : boolean;
+}
+
 export interface FloatQueryAnswer extends BaseQueryAnswer {
     Field? : string;
     Value  : number;
+}
+
+export interface FileQueryAnswer extends BaseQueryAnswer {
+    Field?     : string;
+    Filepath?  : string;
+    Url?       : string;
+    ResourceId?: uuid;
 }
 
 export interface AssessmentBiometrics {

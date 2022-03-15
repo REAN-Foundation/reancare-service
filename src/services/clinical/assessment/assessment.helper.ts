@@ -1,26 +1,12 @@
-import { ApiError } from '../../../common/api.error';
-import { IAssessmentHelperRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface';
-import { IAssessmentRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface';
-import { IAssessmentTemplateRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface';
-import { AssessmentHelperMapper } from '../../../database/sql/sequelize/mappers/clinical/assessment/assessment.helper.mapper';
-import { AssessmentAnswerDomainModel } from '../../../domain.types/clinical/assessment/assessment.answer.domain.model';
-import { AssessmentDomainModel } from '../../../domain.types/clinical/assessment/assessment.domain.model';
 import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
 import { AssessmentQueryDto } from '../../../domain.types/clinical/assessment/assessment.query.dto';
-import { AssessmentQuestionResponseDto } from '../../../domain.types/clinical/assessment/assessment.question.response.dto';
 import {
-    AssessmentNodeType, BiometricQueryAnswer,
-    FloatQueryAnswer,
-    IntegerQueryAnswer,
-    MessageAnswer,
-    MultipleChoiceQueryAnswer, QueryResponseType,
+    AssessmentNodeType, QueryResponseType,
     CAssessmentMessageNode,
     CAssessmentNode,
-    CAssessmentNodePath,
-    CAssessmentQueryOption,
-    CAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer
-} from '../../../domain.types/clinical/assessment/assessment.types';
+    CAssessmentQuestionNode } from '../../../domain.types/clinical/assessment/assessment.types';
 
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 export class AssessmentHelperService {
 

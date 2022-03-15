@@ -16,6 +16,8 @@ import {
     CAssessmentQuestionNode,
     CAssessmentListNode,
     CAssessmentMessageNode,
+    FileQueryAnswer,
+    BooleanQueryAnswer,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -47,6 +49,8 @@ export interface IAssessmentHelperRepo {
         | TextQueryAnswer
         | IntegerQueryAnswer
         | FloatQueryAnswer
+        | BooleanQueryAnswer
+        | FileQueryAnswer
         | BiometricQueryAnswer): Promise<CAssessmentQueryResponse>;
 
     getTemplateChildrenNodes(templateId: uuid)

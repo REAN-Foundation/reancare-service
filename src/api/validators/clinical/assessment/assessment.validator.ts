@@ -73,7 +73,7 @@ export class AssessmentValidator extends BaseValidator {
         }
         else if (responseType === QueryResponseType.MultiChoiceSelection) {
             await this.validateArray(request, 'Answer', Where.Body, true, false);
-            answerModel['IntegerValue'] = request.body.Answer;
+            answerModel['IntegerArray'] = request.body.Answer;
         }
         else if (responseType === QueryResponseType.Text ||
             responseType === QueryResponseType.Ok) {

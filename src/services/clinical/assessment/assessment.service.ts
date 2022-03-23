@@ -68,7 +68,10 @@ export class AssessmentService {
     };
 
     public getById = async (id: string): Promise<AssessmentDto> => {
-        return await this._assessmentRepo.getById(id);
+        var assessment = await this._assessmentRepo.getById(id);
+        var responses = await this._assessmentHelperRepo.getUserResponses(id);
+        assessment.UserResponses = responses;
+        return assessment;
     };
 
     public search = async (filters: AssessmentSearchFilters): Promise<AssessmentSearchResults> => {

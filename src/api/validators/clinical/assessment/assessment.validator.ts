@@ -3,6 +3,7 @@ import { QueryResponseType } from '../../../../domain.types/clinical/assessment/
 import { AssessmentDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
 import { AssessmentSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.search.types';
 import { BaseValidator, Where } from '../../base.validator';
+import { AssessmentAnswerDomainModel } from '../../../../domain.types/clinical/assessment/assessment.answer.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -57,13 +58,14 @@ export class AssessmentValidator extends BaseValidator {
 
         await this.validateString(request, 'ResponseType', Where.Body, true, false, false);
 
-        var answerModel = {
+        var answerModel: AssessmentAnswerDomainModel = {
             AssessmentId   : request.params.id,
             QuestionNodeId : request.params.questionId,
             ResponseType   : request.body.ResponseType,
         };
         
         const responseType = request.body.ResponseType;
+
         if (responseType === QueryResponseType.SingleChoiceSelection ||
             responseType === QueryResponseType.Integer) {
             await this.validateInt(request, 'Answer', Where.Body, true, false);
@@ -77,6 +79,15 @@ export class AssessmentValidator extends BaseValidator {
             responseType === QueryResponseType.Ok) {
             await this.validateString(request, 'Answer', Where.Body, true, false);
             answerModel['TextValue'] = request.body.Answer;
+        }
+        else if (responseType === QueryResponseType.Date) {
+            await this.validateDateString(request, 'Answer', Where.Body, true, false);
+            answerModel['DateValue'] = new Date(request.body.Answer);
+        }
+        else if (responseType === QueryResponseType.File) {
+            answerModel['FieldName'] = request.body.Answer.FileName ?? null;
+            answerModel['Url'] = request.body.Answer.Url ?? null;
+            answerModel['ResourceId'] = request.body.Answer.ResourceId ?? null;
         }
         else if (responseType === QueryResponseType.Float) {
             await this.validateDecimal(request, 'Answer', Where.Body, true, false);

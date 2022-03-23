@@ -25,6 +25,7 @@ import {
     BiometricQueryAnswer,
     BooleanQueryAnswer,
     FileQueryAnswer,
+    DateQueryAnswer,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -503,6 +504,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         MultipleChoiceQueryAnswer |
         MessageAnswer |
         TextQueryAnswer |
+        DateQueryAnswer |
         IntegerQueryAnswer |
         FloatQueryAnswer |
         BooleanQueryAnswer |
@@ -551,6 +553,17 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 TextValue    : a.Text,
             };
         }
+        if (answer.ResponseType === QueryResponseType.Date ||
+            answer.ResponseType === QueryResponseType.DateTime) {
+            const a = answer as DateQueryAnswer;
+            return {
+                AssessmentId : a.AssessmentId,
+                NodeId       : a.NodeId,
+                Sequence     : a.QuestionSequence,
+                Type         : a.ResponseType,
+                DateValue    : a.Date,
+            };
+        }
         if (answer.ResponseType === QueryResponseType.Integer) {
             const a = answer as IntegerQueryAnswer;
             return {
@@ -579,6 +592,18 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 Sequence     : a.QuestionSequence,
                 Type         : a.ResponseType,
                 TextValue    : JSON.stringify(a.Values),
+            };
+        }
+        if (answer.ResponseType === QueryResponseType.File) {
+            const a = answer as FileQueryAnswer;
+            return {
+                AssessmentId : a.AssessmentId,
+                NodeId       : a.NodeId,
+                Sequence     : a.QuestionSequence,
+                Type         : a.ResponseType,
+                TextValue    : a.Field,
+                Url          : a.Url,
+                ResourceId   : a.ResourceId
             };
         }
         return null;

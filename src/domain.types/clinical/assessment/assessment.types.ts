@@ -290,6 +290,9 @@ export class CAssessmentQueryResponse {
     FloatValue?          : number;
     TextValue?           : string;
     BooleanValue?        : boolean;
+    DateValue?           : Date;
+    Url?                 : string;
+    ResourceId?          : uuid;
     ArrayValue?          : number[];
     ObjectValue?         : any;
     Additional?          : string;
@@ -304,6 +307,9 @@ export class CAssessmentQueryResponse {
         this.BooleanValue = false;
         this.ArrayValue = [];
         this.ObjectValue = null;
+        this.DateValue = null;
+        this.Url = null;
+        this.ResourceId = null;
     }
 
 }
@@ -375,6 +381,9 @@ export interface MessageAnswer extends BaseQueryAnswer {
 
 export interface TextQueryAnswer extends BaseQueryAnswer {
     Text : string;
+}
+export interface DateQueryAnswer extends BaseQueryAnswer {
+    Date : Date;
 }
 
 export interface IntegerQueryAnswer extends BaseQueryAnswer {

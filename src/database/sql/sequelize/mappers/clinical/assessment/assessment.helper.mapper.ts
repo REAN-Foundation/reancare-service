@@ -17,7 +17,7 @@ import {
     CAssessmentPathCondition,
     CAssessmentQueryOption,
     CAssessmentQueryResponse,
-    CAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer
+    CAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer, DateQueryAnswer, FileQueryAnswer
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import AssessmentNode from '../../../models/clinical/assessment/assessment.node.model';
@@ -170,6 +170,9 @@ export class AssessmentHelperMapper {
             responseDto.BooleanValue = response.BooleanValue;
         } else if (responseType === QueryResponseType.SingleChoiceSelection) {
             responseDto.IntegerValue = response.IntegerValue;
+        } else if (responseType === QueryResponseType.Date ||
+            responseType === QueryResponseType.DateTime) {
+            responseDto.DateValue = response.DateValue;
         } else if (
             responseType === QueryResponseType.MultiChoiceSelection ||
             responseType === QueryResponseType.FloatArray ||
@@ -179,7 +182,9 @@ export class AssessmentHelperMapper {
         ) {
             responseDto.ArrayValue = JSON.parse(response.TextValue);
         } else if (responseType === QueryResponseType.File) {
-            responseDto.TextValue = response.TextValue; //This is file resource uuid
+            responseDto.TextValue = response.TextValue;
+            responseDto.Url = response.Url;
+            responseDto.ResourceId = response.ResourceId; //This is file resource uuid
         } else if (responseType === QueryResponseType.Object || responseType === QueryResponseType.Biometrics) {
             responseDto.ObjectValue = JSON.parse(response.TextValue);
         }
@@ -275,6 +280,23 @@ export class AssessmentHelperMapper {
         return dto;
     }
 
+    static toDateAnswerDto(
+        assessmentId: uuid,
+        node: CAssessmentQuestionNode,
+        date: Date,
+    ): DateQueryAnswer {
+        var dto: DateQueryAnswer = {
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : QueryResponseType.Date,
+            Date             : date,
+        };
+        return dto;
+    }
+
     static toIntegerAnswerDto(
         assessmentId: uuid,
         node: CAssessmentQuestionNode,
@@ -309,6 +331,28 @@ export class AssessmentHelperMapper {
             ResponseType     : QueryResponseType.Text,
             Field            : field,
             Value            : value
+        };
+        return dto;
+    }
+
+    static toFileAnswerDto(
+        assessmentId: uuid,
+        node: CAssessmentQuestionNode,
+        fileName: string,
+        url: string,
+        resourceId: uuid
+    ): FileQueryAnswer {
+        var dto: FileQueryAnswer = {
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : QueryResponseType.File,
+            Field            : fileName,
+            Filepath         : url,
+            Url              : url,
+            ResourceId       : resourceId
         };
         return dto;
     }

@@ -18,6 +18,7 @@ import {
     CAssessmentMessageNode,
     FileQueryAnswer,
     BooleanQueryAnswer,
+    DateQueryAnswer,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -47,6 +48,7 @@ export interface IAssessmentHelperRepo {
         | MultipleChoiceQueryAnswer
         | MessageAnswer
         | TextQueryAnswer
+        | DateQueryAnswer
         | IntegerQueryAnswer
         | FloatQueryAnswer
         | BooleanQueryAnswer

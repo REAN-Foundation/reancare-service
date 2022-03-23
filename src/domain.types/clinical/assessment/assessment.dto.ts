@@ -17,6 +17,7 @@ export interface AssessmentDto {
     ParentActivityId?      : uuid;
     UserTaskId?            : uuid;
     CurrentNodeId?         : uuid;
+    ScheduledAt?           : Date;
     StartedAt?             : Date;
     FinishedAt?            : Date;
     CreatedAt              : Date;

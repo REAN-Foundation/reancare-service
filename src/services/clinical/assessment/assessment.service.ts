@@ -23,7 +23,7 @@ import {
     CAssessmentNode,
     CAssessmentNodePath,
     CAssessmentQueryOption,
-    CAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer
+    CAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer, DateQueryAnswer, FileQueryAnswer
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Loader } from '../../../startup/loader';
@@ -465,6 +465,74 @@ export class AssessmentService {
         return await this.respondToUserAnswer(assessment, messageNode.id, currentQueryDto, answerDto);
     }
 
+    private async handleDateAnswer(
+        assessment: AssessmentDto,
+        questionNode: CAssessmentQuestionNode,
+        answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
+        
+        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
+        const answerDto = AssessmentHelperMapper.toDateAnswerDto(
+            assessment.id,
+            questionNode,
+            answerModel.DateValue
+        );
+    
+        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
+    }
+
+    private async handleIntegerAnswer(
+        assessment: AssessmentDto,
+        questionNode: CAssessmentQuestionNode,
+        answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
+        
+        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
+        const answerDto = AssessmentHelperMapper.toIntegerAnswerDto(
+            assessment.id,
+            questionNode,
+            answerModel.FieldName,
+            answerModel.IntegerValue
+        );
+        
+        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
+    }
+
+    private async handleFloatAnswer(
+        assessment: AssessmentDto,
+        questionNode: CAssessmentQuestionNode,
+        answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
+        
+        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
+        const answerDto = AssessmentHelperMapper.toFloatAnswerDto(
+            assessment.id,
+            questionNode,
+            answerModel.FieldName,
+            answerModel.FloatValue
+        );
+            
+        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
+    }
+
+    private async handleFileAnswer(
+        assessment: AssessmentDto,
+        questionNode: CAssessmentQuestionNode,
+        answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
+        
+        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
+        const answerDto = AssessmentHelperMapper.toFileAnswerDto(
+            assessment.id,
+            questionNode,
+            answerModel.FieldName,
+            answerModel.Url,
+            answerModel.ResourceId
+        );
+        
+        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
+    }
+
     private async respondToUserAnswer(
         assessment: AssessmentDto,
         nextNodeId: string,
@@ -474,8 +542,10 @@ export class AssessmentService {
             | MultipleChoiceQueryAnswer
             | MessageAnswer
             | TextQueryAnswer
+            | DateQueryAnswer
             | IntegerQueryAnswer
             | FloatQueryAnswer
+            | FileQueryAnswer
             | BiometricQueryAnswer
     ) {
         const next = await this.traverse(assessment, nextNodeId);
@@ -572,6 +642,18 @@ export class AssessmentService {
         }
         if (incomingResponseType === QueryResponseType.Text) {
             return await this.handleTextAnswer(assessment, questionNode, answerModel);
+        }
+        if (incomingResponseType === QueryResponseType.Date) {
+            return await this.handleDateAnswer(assessment, questionNode, answerModel);
+        }
+        if (incomingResponseType === QueryResponseType.Integer) {
+            return await this.handleIntegerAnswer(assessment, questionNode, answerModel);
+        }
+        if (incomingResponseType === QueryResponseType.Float) {
+            return await this.handleFloatAnswer(assessment, questionNode, answerModel);
+        }
+        if (incomingResponseType === QueryResponseType.File) {
+            return await this.handleFileAnswer(assessment, questionNode, answerModel);
         }
         return null;
     };

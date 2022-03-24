@@ -18,6 +18,7 @@ import { IUserRepo } from "../../../database/repository.interfaces/user/user.rep
 import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
 import { Roles } from "../../../domain.types/role/role.types";
 import { AssessmentDomainModel } from "../../../domain.types/clinical/assessment/assessment.domain.model";
+import { Logger } from "src/common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -74,8 +75,8 @@ export class FormsService {
             const role = await this._roleRepo.getByName(Roles.Patient);
             const keysPhone = ['Phone', 'phone', 'Phone_Number', 'PhoneNumber', 'Phone_number', 'Mobile'];
             var phone = Helper.getValueForEitherKeys(submission, keysPhone);
-            phone = phone.trim();
             if (phone !== null) {
+                phone = phone.trim();
                 const person = await this._personRepo.getPersonWithPhone(phone);
                 if (person) {
                     var user = await this._userRepo.getByPhoneAndRole(phone, role.id);
@@ -87,8 +88,8 @@ export class FormsService {
             if (!userId) {
                 const keysEmail = ['Email', 'email', 'Email_Address', 'EmailAddress', 'email_address', 'email_id'];
                 var email = Helper.getValueForEitherKeys(submission, keysEmail);
-                email = email.trim();
                 if (email !== null) {
+                    email = email.trim();
                     const person = await this._personRepo.getPersonWithEmail(email);
                     if (person) {
                         var user = await this._userRepo.getByEmailAndRole(email, role.id);
@@ -128,6 +129,13 @@ export class FormsService {
         var datestr = start.toISOString().split('T')[0];
         const displayCode = 'Assessment#' + code + ':' + datestr;
 
+        const exists = await this._assessmentRepo.existsWithProviderSubmissionId(
+            template.Provider, providerSubmissionId);
+        if (exists) {
+            Logger.log(`Form submission with provider ${template.Provider} and submission id ${providerSubmissionId} has already been imported.`);
+            return null;
+        }
+
         const assessmentCreateModel: AssessmentDomainModel = {
             AssessmentTemplateId   : template.id,
             PatientUserId          : patientUserId,
@@ -144,7 +152,7 @@ export class FormsService {
         };
 
         const assessment = await this._assessmentRepo.create(assessmentCreateModel);
-        if (assessment) {
+        if (!assessment) {
             return null;
         }
 

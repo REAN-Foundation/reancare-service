@@ -10,6 +10,9 @@ import { UserService } from '../../services/user/user.service';
 import { Loader } from '../../startup/loader';
 import { PatientDomainModel } from '../../domain.types/patient/patient/patient.domain.model';
 import { PatientDetailsDto } from '../../domain.types/patient/patient/patient.dto';
+import { UserDetailsDto } from '../../domain.types/user/user/user.dto';
+import { PersonDetailsDto } from '../../domain.types/person/person.dto';
+import { RoleDto } from '../../domain.types/role/role.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,90 +41,119 @@ export class UserHelper {
 
     createPatient = async(createModel: PatientDomainModel): Promise<PatientDetailsDto> => {
 
-        //Throw an error if patient with same name and phone number exists
-        const existingPatientCountSharingPhone = await this._patientService.checkforDuplicatePatients(
-            createModel
-        );
+        var person: PersonDetailsDto = null;
+        var user: UserDetailsDto = null;
+        var patient: PatientDetailsDto = null;
+
+        const role: RoleDto = await this._roleService.getByName(Roles.Patient);
+        if (role == null) {
+            throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');
+        }
+
+        person = await this._patientService.checkforExistingPersonWithRole(createModel, role.id);
         
         //NOTE: Currently we are not allowing multiple patients to share same phone number,
         // but in future, we will be. For example, family members sharing the same phone number.
-        // But for now, throw the error!
         
-        if (existingPatientCountSharingPhone > 0) {
-            const msg = `Patient already exists with this phone number. Please verify with OTP to gain access to the patient account.`;
-            throw new ApiError(409, msg);
+        if (person) {
+            //Person with a patient role exists
+            patient = await this._patientService.getByPersonId(person.id);
+            if (patient != null) {
+                throw new ApiError(409, 'Patient already exists with this phone number!');
+            }
+            //Person exists but patient does not exist, check if the user exists or not!
+            user = await this._userService.getByPhoneAndRole(createModel.User.Person.Phone, role.id);
+            if (!user) {
+                //User with patient role does not exist for this person, create one
+                user = await this.createUser(person, createModel, role.id);
+                createModel.User.id = user.id;
+                createModel.UserId = user.id;
+            }
         }
-                    
-        const userName = await this._userService.generateUserName(
-            createModel.User.Person.FirstName,
-            createModel.User.Person.LastName
-        );
-        
-        const displayId = await this._userService.generateUserDisplayId(
-            Roles.Patient,
-            createModel.User.Person.Phone,
-            existingPatientCountSharingPhone
-        );
-        
-        const displayName = Helper.constructPersonDisplayName(
-            createModel.User.Person.Prefix,
-            createModel.User.Person.FirstName,
-            createModel.User.Person.LastName
-        );
-        
-        createModel.User.Person.DisplayName = displayName;
-        createModel.User.UserName = userName;
-        createModel.DisplayId = displayId;
-        
-        const userDomainModel = createModel.User;
-        const personDomainModel = userDomainModel.Person;
-        
-        //Create a person first
-        
-        let person = await this._personService.getPersonWithPhone(createModel.User.Person.Phone);
-        if (person == null) {
-            person = await this._personService.create(personDomainModel);
+        else {
+            person = await this._personService.create(createModel.User.Person);
             if (person == null) {
                 throw new ApiError(400, 'Cannot create person!');
             }
+            user = await this.createUser(person, createModel, role.id);
+            createModel.User.id = user.id;
+            createModel.UserId = user.id;
         }
-        
-        const role = await this._roleService.getByName(Roles.Patient);
-        createModel.PersonId = person.id;
-        userDomainModel.Person.id = person.id;
-        userDomainModel.RoleId = role.id;
-        
-        const user = await this._userService.create(userDomainModel);
-        if (user == null) {
-            throw new ApiError(400, 'Cannot create user!');
+        patient = await this.createPatientWithHealthProfile(createModel, user, person, role.id);
+        if (!patient) {
+            throw new ApiError(500, `An error has occurred while creating patient!`);
         }
-        createModel.UserId = user.id;
-        
-        //KK: Note - Please add user to appointment service here...
-        // var appointmentCustomerModel = PatientMapper.ToAppointmentCustomerDomainModel(userDomainModel);
-        // var customer = await this._appointmentService.createCustomer(appointmentCustomerModel);
-        
-        createModel.DisplayId = displayId;
-        const patient = await this._patientService.create(createModel);
+        return patient;
+    }
+
+    private createPatientWithHealthProfile = async (
+        createModel: PatientDomainModel,
+        user: UserDetailsDto,
+        person: PersonDetailsDto,
+        roleId: number) => {
+
+        var patient = await this._patientService.create(createModel);
         if (patient == null) {
             throw new ApiError(400, 'Cannot create patient!');
         }
-        
+
         const healthProfile = await this._patientHealthProfileService.createDefault(user.id);
         patient.HealthProfile = healthProfile;
-        
+
         if (person.Phone !== null) {
             var otpDetails = {
                 Phone   : person.Phone,
                 Email   : null,
                 UserId  : null,
                 Purpose : 'Login',
-                RoleId  : role.id
+                RoleId  : roleId
             };
             await this._userService.generateOtp(otpDetails);
         }
-        
         return patient;
+    }
+
+    private async createUser(
+        person: PersonDetailsDto,
+        createModel: PatientDomainModel,
+        roleId: number) {
+
+        createModel.User.Person.id = person.id;
+        createModel.PersonId = person.id;
+        createModel.User.RoleId = roleId;
+        createModel = await this.updateUserDomainModel(createModel);
+
+        var user = await this._userService.create(createModel.User);
+        if (!user) {
+            throw new ApiError(500, 'Error creating missing user definition!');
+        }
+        return user;
+    }
+
+    private async updateUserDomainModel(createModel: PatientDomainModel): Promise<PatientDomainModel> {
+
+        const userName = await this._userService.generateUserName(
+            createModel.User.Person.FirstName,
+            createModel.User.Person.LastName
+        );
+
+        const displayId = await this._userService.generateUserDisplayId(
+            Roles.Patient,
+            createModel.User.Person.Phone,
+            1 //For now, just allow only one patient with same phone number
+        );
+
+        const displayName = Helper.constructPersonDisplayName(
+            createModel.User.Person.Prefix,
+            createModel.User.Person.FirstName,
+            createModel.User.Person.LastName
+        );
+
+        createModel.User.Person.DisplayName = displayName;
+        createModel.User.UserName = userName;
+        createModel.DisplayId = displayId;
+
+        return createModel;
     }
 
 }

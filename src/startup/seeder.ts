@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { UserHelper } from "../api/helpers/user.helper";
 import { inject, injectable } from "tsyringe";
 import * as SeededDrugs from '../../seed.data/drugs.seed.json';
 import * as SeededKnowledgeNuggets from '../../seed.data/knowledge.nuggets.seed.json';
@@ -75,6 +76,8 @@ export class Seeder {
     _drugService: DrugService = null;
 
     _healthPriorityService: HealthPriorityService = null;
+
+    _userHelper = new UserHelper();
 
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
@@ -299,8 +302,7 @@ export class Seeder {
     };
 
     private createTestPatient = async (phone: string): Promise<boolean> => {
-
-        var patientDomainModel: PatientDomainModel = {
+        var createModel: PatientDomainModel = {
             User : {
                 Person : {
                     Phone : phone
@@ -308,68 +310,8 @@ export class Seeder {
             },
             Address : null
         };
-
-        //Throw an error if patient with same name and phone number exists
-        const existingPatientCountSharingPhone = await this._patientService.checkforDuplicatePatients(
-            patientDomainModel
-        );
-        
-        const userName = await this._userService.generateUserName(
-            patientDomainModel.User.Person.FirstName,
-            patientDomainModel.User.Person.LastName
-        );
-        
-        const displayId = await this._userService.generateUserDisplayId(
-            Roles.Patient,
-            patientDomainModel.User.Person.Phone,
-            existingPatientCountSharingPhone
-        );
-        
-        const displayName = Helper.constructPersonDisplayName(
-            patientDomainModel.User.Person.Prefix,
-            patientDomainModel.User.Person.FirstName,
-            patientDomainModel.User.Person.LastName
-        );
-        
-        patientDomainModel.User.Person.DisplayName = displayName;
-        patientDomainModel.User.UserName = userName;
-        patientDomainModel.DisplayId = displayId;
-        
-        const userDomainModel = patientDomainModel.User;
-        const personDomainModel = userDomainModel.Person;
-        
-        //Create a person first
-        
-        let person = await this._personService.getPersonWithPhone(patientDomainModel.User.Person.Phone);
-        if (person == null) {
-            person = await this._personService.create(personDomainModel);
-            if (person == null) {
-                return false;
-            }
-        }
-        
-        const role = await this._roleService.getByName(Roles.Patient);
-        patientDomainModel.PersonId = person.id;
-        userDomainModel.Person.id = person.id;
-        userDomainModel.RoleId = role.id;
-        
-        const user = await this._userService.create(userDomainModel);
-        if (user == null) {
-            return false;
-        }
-        patientDomainModel.UserId = user.id;
-        
-        patientDomainModel.DisplayId = displayId;
-        const patient = await this._patientService.create(patientDomainModel);
-        if (patient == null) {
-            return false;
-        }
-        
-        const healthProfile = await this._patientHealthProfileService.createDefault(user.id);
-        patient.HealthProfile = healthProfile;
-
-        return true;
-        
+        var patient = this._userHelper.createPatient(createModel);
+        return patient != null;
     };
     
     private seedMedicationStockImages = async () => {

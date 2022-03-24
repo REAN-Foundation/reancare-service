@@ -1,4 +1,20 @@
-import { AssessmentNodeType, BiometricQueryAnswer, BooleanQueryAnswer, CAssessmentListNode, CAssessmentMessageNode, CAssessmentQueryOption, CAssessmentQuestionNode, CAssessmentTemplate, FileQueryAnswer, FloatQueryAnswer, IntegerQueryAnswer, MessageAnswer, MultipleChoiceQueryAnswer, QueryResponseType, SingleChoiceQueryAnswer, TextQueryAnswer } from "../../../domain.types/clinical/assessment/assessment.types";
+import { AssessmentNodeType,
+    BiometricQueryAnswer,
+    BooleanQueryAnswer,
+    CAssessmentListNode,
+    CAssessmentMessageNode,
+    CAssessmentQueryOption,
+    CAssessmentQuestionNode,
+    CAssessmentTemplate,
+    DateQueryAnswer,
+    FileQueryAnswer,
+    FloatQueryAnswer,
+    IntegerQueryAnswer,
+    MessageAnswer,
+    MultipleChoiceQueryAnswer,
+    QueryResponseType,
+    SingleChoiceQueryAnswer,
+    TextQueryAnswer } from "../../../domain.types/clinical/assessment/assessment.types";
 import { inject, injectable } from "tsyringe";
 import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
 import { IAssessmentRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
@@ -242,6 +258,10 @@ export class FormsService {
             else if (nd.QueryResponseType === QueryResponseType.Boolean) {
                 return await this.getBooleanQueryResponse(value, nd, assessmentId, node);
             }
+            else if (nd.QueryResponseType === QueryResponseType.Date ||
+                nd.QueryResponseType === QueryResponseType.DateTime) {
+                return await this.getDateQueryResponse(value, nd, assessmentId, node);
+            }
             else if (nd.QueryResponseType === QueryResponseType.Integer) {
                 return await this.getIntegerQueryResponse(value, nd, assessmentId, node);
             }
@@ -323,6 +343,21 @@ export class FormsService {
         const answer: BooleanQueryAnswer = {
             AssessmentId     : assessmentId,
             Value            : value as boolean,
+            QuestionSequence : node.Sequence,
+            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            NodeDisplayCode  : nd.DisplayCode,
+            NodeId           : nd.id,
+            Title            : node.Title
+        };
+        return answer;
+    }
+
+    private async getDateQueryResponse(
+        value: any, nd: CAssessmentQuestionNode,
+        assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
+        const answer: DateQueryAnswer = {
+            AssessmentId     : assessmentId,
+            Date             : new Date(value.toString()),
             QuestionSequence : node.Sequence,
             ResponseType     : QueryResponseType.SingleChoiceSelection,
             NodeDisplayCode  : nd.DisplayCode,

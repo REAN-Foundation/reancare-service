@@ -14,6 +14,11 @@ import { FormsValidator } from '../../../validators/clinical/assessment/forms.va
 import { FileResourceValidator } from '../../../validators/file.resource.validator';
 import { BaseController } from '../../base.controller';
 import { Logger } from '../../../../common/logger';
+import { PatientDetailsDto } from '../../../../domain.types/patient/patient/patient.dto';
+import { PatientDomainModel } from '../../../../domain.types/patient/patient/patient.domain.model';
+import { UserService } from '../../../../services/user/user.service';
+import { PersonService } from '../../../../services/person.service';
+import { UserHelper } from '../../../helpers/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,9 +34,15 @@ export class FormsController extends BaseController{
 
     _thirdpartyApiService: ThirdpartyApiService = null;
 
+    _userService: UserService = null;
+
+    _personService: PersonService = null;
+
     _validator: FormsValidator = new FormsValidator();
 
     _fileResourceValidator: FileResourceValidator = new FileResourceValidator();
+
+    _userHelper: UserHelper = new UserHelper();
 
     constructor() {
         super();
@@ -39,6 +50,8 @@ export class FormsController extends BaseController{
         this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
         this._assessmentService = Loader.container.resolve(AssessmentService);
         this._thirdpartyApiService = Loader.container.resolve(ThirdpartyApiService);
+        this._userService = Loader.container.resolve(UserService);
+        this._personService = Loader.container.resolve(PersonService);
     }
 
     //#endregion
@@ -206,6 +219,7 @@ export class FormsController extends BaseController{
             const userId: uuid = request.currentUser.UserId;
             const provider = request.params.providerCode;
             const providerFormId = request.params.providerFormId;
+            const addUserIfNeeded = request.body.AddUserIfNeeded;
 
             var validCreds: ThirdpartyApiCredentialsDto = await this.getValidCreds(userId, provider);
             if (!validCreds) {
@@ -238,10 +252,20 @@ export class FormsController extends BaseController{
             const assessments: AssessmentDto[] = [];
 
             for await (var submission of formSubmissions) {
-                const patient = await this._service.IdentifyUserDetailsFromSubmission(submission);
+
+                var { patient, phone, email, firstName, lastName } =
+                    await this._service.identifyUserDetailsFromSubmission(submission);
+
                 if (!patient) {
-                    Logger.instance().log(`Cannot import form submisison as an assessment for the form with id ${providerFormId} as patient info cannot be determined.`);
-                    continue;
+                    if (!addUserIfNeeded) {
+                        Logger.instance().log(`Cannot import form submisison as an assessment for the form with id ${providerFormId} as patient info cannot be determined.`);
+                        continue;
+                    }
+                    patient = await this.createPatient(phone, email, firstName, lastName);
+                    if (!patient) {
+                        Logger.instance().log(`Cannot import form submisison as an assessment for the form with id ${providerFormId} as patient info cannot be determined.`);
+                        continue;
+                    }
                 }
                 const assessment: AssessmentDto =
                     await this._service.addAssessment(patient.UserId, templateId, providerFormId, submission);
@@ -260,6 +284,7 @@ export class FormsController extends BaseController{
     //#endregion
 
     private async getValidCreds(userId: string, provider: string) {
+        
         var existingCredsList = await this._thirdpartyApiService.getThirdpartyCredentialsForUser(
             userId, provider);
 
@@ -267,6 +292,25 @@ export class FormsController extends BaseController{
             return x.ValidTill === null || x.ValidTill > new Date();
         });
         return validCreds;
+    }
+
+    private createPatient = async (phone: string, email: string, firstName: string, lastName: string)
+        : Promise<PatientDetailsDto> => {
+            
+        const createModel: PatientDomainModel = {
+            User : {
+                Person : {
+                    FirstName : firstName ?? null,
+                    LastName  : lastName ?? null,
+                    Phone     : phone ?? null,
+                    Email     : email ?? null,
+                },
+                DefaultTimeZone : null,
+                CurrentTimeZone : null,
+            },
+        };
+
+        return await this._userHelper.createPatient(createModel);
     }
 
 }

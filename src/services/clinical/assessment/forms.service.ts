@@ -18,7 +18,7 @@ import { IUserRepo } from "../../../database/repository.interfaces/user/user.rep
 import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
 import { Roles } from "../../../domain.types/role/role.types";
 import { AssessmentDomainModel } from "../../../domain.types/clinical/assessment/assessment.domain.model";
-import { Logger } from "src/common/logger";
+import { Logger } from "../../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,19 +62,38 @@ export class FormsService {
     public importFormSubmissions = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string)
         : Promise<any[]> => {
         return await FormsHandler.importFormSubmissions(connectionModel, providerFormId);
-    }
+    };
 
     public getTemplateForForm = async (provider: string, providerFormId: string)
         : Promise<AssessmentTemplateDto> => {
         return await this._assessmentTemplateRepo.getByProviderAssessmentCode(provider, providerFormId);
+    };
+
+    public extractKeysForIdentification = (submission: any) => {
+
+        const keysPhone = ['Phone', 'phone', 'Phone_Number', 'PhoneNumber', 'Phone_number', 'Mobile'];
+        var phone = Helper.getValueForEitherKeys(submission, keysPhone);
+
+        const keysEmail = ['Email', 'email', 'Email_Address', 'EmailAddress', 'email_address', 'email_id'];
+        var email = Helper.getValueForEitherKeys(submission, keysEmail);
+
+        const keysFirstName = ['FirstName', 'firstName', 'First_Name', 'first_name'];
+        var firstName = Helper.getValueForEitherKeys(submission, keysFirstName);
+
+        const keysLastName = ['LastName', 'lastName', 'Last_Name', 'last_name'];
+        var lastName = Helper.getValueForEitherKeys(submission, keysLastName);
+                
+        return { phone, email, firstName, lastName };
     }
 
-    public IdentifyUserDetailsFromSubmission = async (submission: any): Promise<PatientDetailsDto> => {
+    public identifyUserDetailsFromSubmission = async (submission: any) => {
         try {
             var userId = null;
+            var patient: PatientDetailsDto = null;
+
             const role = await this._roleRepo.getByName(Roles.Patient);
-            const keysPhone = ['Phone', 'phone', 'Phone_Number', 'PhoneNumber', 'Phone_number', 'Mobile'];
-            var phone = Helper.getValueForEitherKeys(submission, keysPhone);
+
+            var { phone, email, firstName, lastName } = this.extractKeysForIdentification(submission);
             if (phone !== null) {
                 phone = phone.trim();
                 const person = await this._personRepo.getPersonWithPhone(phone);
@@ -86,8 +105,6 @@ export class FormsService {
                 }
             }
             if (!userId) {
-                const keysEmail = ['Email', 'email', 'Email_Address', 'EmailAddress', 'email_address', 'email_id'];
-                var email = Helper.getValueForEitherKeys(submission, keysEmail);
                 if (email !== null) {
                     email = email.trim();
                     const person = await this._personRepo.getPersonWithEmail(email);
@@ -100,14 +117,14 @@ export class FormsService {
                 }
             }
             if (userId != null) {
-                return await this._patientRepo.getByUserId(userId);
+                patient = await this._patientRepo.getByUserId(userId);
             }
-            return null;
+            return { patient, phone, email, firstName, lastName };
         }
         catch (error){
             throw new ApiError(500, `Error occurred processing submitted data: ${error.message}`);
         }
-    }
+    };
 
     public addAssessment = async (patientUserId: uuid, templateId: uuid, providerFormId: string, submission: any)
         : Promise<AssessmentDto> => {
@@ -132,7 +149,7 @@ export class FormsService {
         const exists = await this._assessmentRepo.existsWithProviderSubmissionId(
             template.Provider, providerSubmissionId);
         if (exists) {
-            Logger.log(`Form submission with provider ${template.Provider} and submission id ${providerSubmissionId} has already been imported.`);
+            Logger.instance().log(`Form submission with provider ${template.Provider} and submission id ${providerSubmissionId} has already been imported.`);
             return null;
         }
 
@@ -178,8 +195,7 @@ export class FormsService {
             const answer = await this.getQueryResponse(template, assessment.id, node, value);
             var response = await this._assessmentHelperRepo.createQueryResponse(answer);
         }
-
-    }
+    };
 
     // public getById = async (id: string): Promise<AssessmentTemplateDto> => {
     //     return await this._assessmentRepo.getById(id);

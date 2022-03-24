@@ -553,6 +553,16 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 TextValue    : a.Text,
             };
         }
+        if (answer.ResponseType === QueryResponseType.Boolean) {
+            const a = answer as BooleanQueryAnswer;
+            return {
+                AssessmentId : a.AssessmentId,
+                NodeId       : a.NodeId,
+                Sequence     : a.QuestionSequence,
+                Type         : a.ResponseType,
+                BooleanValue : a.Value,
+            };
+        }
         if (answer.ResponseType === QueryResponseType.Date ||
             answer.ResponseType === QueryResponseType.DateTime) {
             const a = answer as DateQueryAnswer;

@@ -140,7 +140,7 @@ export class UserHelper {
         const displayId = await this._userService.generateUserDisplayId(
             Roles.Patient,
             createModel.User.Person.Phone,
-            1 //For now, just allow only one patient with same phone number
+            0 //For now, just allow only one patient with same phone number
         );
 
         const displayName = Helper.constructPersonDisplayName(

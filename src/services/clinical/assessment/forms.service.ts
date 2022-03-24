@@ -280,7 +280,7 @@ export class FormsService {
 
         const v = value as string;
         const options = await this._assessmentHelperRepo.getQuestionNodeOptions(nd.NodeType, nd.id);
-        const option = options.find(x => x.Text === v);
+        const option = options.find(x => x.Text.toLowerCase() === v.toLowerCase());
         const answer: SingleChoiceQueryAnswer = {
             AssessmentId     : assessmentId,
             ChosenSequence   : option.Sequence,
@@ -298,12 +298,13 @@ export class FormsService {
         value: any, nd: CAssessmentQuestionNode,
         assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
 
-        const v = value as string[];
+        var v = value as string[];
+        v = v.map(x => x.toLowerCase());
         const options = await this._assessmentHelperRepo.getQuestionNodeOptions(nd.NodeType, nd.id);
         var selectedOptionSequences:number[] = [];
         var selectedOptions:CAssessmentQueryOption[] = [];
         for (var o of options) {
-            const searchFor = o.Text;
+            const searchFor = o.Text.toLowerCase();
             if (v.includes(searchFor)) {
                 selectedOptionSequences.push(o.Sequence);
                 selectedOptions.push(o);
@@ -313,7 +314,7 @@ export class FormsService {
             AssessmentId     : assessmentId,
             ChosenSequences  : selectedOptionSequences,
             QuestionSequence : node.Sequence,
-            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            ResponseType     : QueryResponseType.MultiChoiceSelection,
             ChosenOptions    : selectedOptions,
             NodeDisplayCode  : nd.DisplayCode,
             NodeId           : nd.id,
@@ -329,7 +330,7 @@ export class FormsService {
             AssessmentId     : assessmentId,
             Text             : value as string,
             QuestionSequence : node.Sequence,
-            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            ResponseType     : QueryResponseType.Text,
             NodeDisplayCode  : nd.DisplayCode,
             NodeId           : nd.id,
             Title            : node.Title
@@ -344,7 +345,7 @@ export class FormsService {
             AssessmentId     : assessmentId,
             Value            : value as boolean,
             QuestionSequence : node.Sequence,
-            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            ResponseType     : QueryResponseType.Boolean,
             NodeDisplayCode  : nd.DisplayCode,
             NodeId           : nd.id,
             Title            : node.Title
@@ -359,7 +360,7 @@ export class FormsService {
             AssessmentId     : assessmentId,
             Date             : new Date(value.toString()),
             QuestionSequence : node.Sequence,
-            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            ResponseType     : QueryResponseType.Date,
             NodeDisplayCode  : nd.DisplayCode,
             NodeId           : nd.id,
             Title            : node.Title
@@ -374,7 +375,7 @@ export class FormsService {
             AssessmentId     : assessmentId,
             Value            : value as number,
             QuestionSequence : node.Sequence,
-            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            ResponseType     : QueryResponseType.Integer,
             NodeDisplayCode  : nd.DisplayCode,
             NodeId           : nd.id,
             Title            : node.Title
@@ -389,7 +390,7 @@ export class FormsService {
             AssessmentId     : assessmentId,
             Value            : value as number,
             QuestionSequence : node.Sequence,
-            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            ResponseType     : QueryResponseType.Float,
             NodeDisplayCode  : nd.DisplayCode,
             NodeId           : nd.id,
             Title            : node.Title
@@ -404,7 +405,7 @@ export class FormsService {
             AssessmentId     : assessmentId,
             Url              : value as string,
             QuestionSequence : node.Sequence,
-            ResponseType     : QueryResponseType.SingleChoiceSelection,
+            ResponseType     : QueryResponseType.File,
             NodeDisplayCode  : nd.DisplayCode,
             NodeId           : nd.id,
             Title            : node.Title

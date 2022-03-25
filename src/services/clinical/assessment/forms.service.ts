@@ -1,4 +1,3 @@
-import fs from 'fs';
 import path from "path";
 import { inject, injectable } from "tsyringe";
 import { ApiError } from "../../../common/api.error";

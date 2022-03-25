@@ -59,7 +59,7 @@ export class UserHelper {
             //Person with a patient role exists
             patient = await this._patientService.getByPersonId(person.id);
             if (patient != null) {
-                throw new ApiError(409, 'Patient already exists with this phone number!');
+                return patient;
             }
             //Person exists but patient does not exist, check if the user exists or not!
             user = await this._userService.getByPhoneAndRole(createModel.User.Person.Phone, role.id);

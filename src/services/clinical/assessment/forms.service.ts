@@ -41,8 +41,6 @@ import { Logger } from "../../../common/logger";
 @injectable()
 export class FormsService {
 
-    _handler: FormsHandler = new FormsHandler();
-
     constructor(
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
@@ -50,8 +48,7 @@ export class FormsService {
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
-        @inject('IPatientRepo') private _patientRepo: IPatientRepo,
-        //@inject('IFormsRepo') private _formsRepo: IFormsRepo,
+        @inject('IPatientRepo') private _patientRepo: IPatientRepo
     ) {}
 
     public connectFormsProviderApi = async (connectionModel: ThirdpartyApiCredentialsDomainModel): Promise<boolean> => {
@@ -100,7 +97,7 @@ export class FormsService {
         var lastName = Helper.getValueForEitherKeys(submission, keysLastName);
                 
         return { phone, email, firstName, lastName };
-    }
+    };
 
     public identifyUserDetailsFromSubmission = async (submission: any) => {
         try {
@@ -211,24 +208,8 @@ export class FormsService {
             const answer = await this.getQueryResponse(template, assessment.id, node, value);
             var response = await this._assessmentHelperRepo.createQueryResponse(answer);
         }
+        return assessment;
     };
-
-    // public getById = async (id: string): Promise<AssessmentTemplateDto> => {
-    //     return await this._assessmentRepo.getById(id);
-    // };
-
-    // public search = async (filters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchResults> => {
-    //     return await this._assessmentRepo.search(filters);
-    // };
-
-    // public update = async (id: string, assessmentDomainModel: AssessmentTemplateDomainModel):
-    //     Promise<AssessmentTemplateDto> => {
-    //     return await this._assessmentRepo.update(id, assessmentDomainModel);
-    // };
-
-    // public delete = async (id: string): Promise<boolean> => {
-    //     return await this._assessmentRepo.delete(id);
-    // };
 
     private getQueryResponse = async (
         template: AssessmentTemplateDto,
@@ -250,7 +231,10 @@ export class FormsService {
                 return await this.getSingleChoiceQueryResponse(value, nd, assessmentId, node);
             }
             else if (nd.QueryResponseType === QueryResponseType.MultiChoiceSelection) {
-                return await this.getMultiChoiceQueryResponse(value, nd, assessmentId, node);
+                const provider = template.Provider;
+                var v = FormsHandler.processQueryResponse(provider, QueryResponseType.MultiChoiceSelection, value);
+                const multiChoiceValues: string[] = v as string[];
+                return await this.getMultiChoiceQueryResponse(multiChoiceValues, nd, assessmentId, node);
             }
             else if (nd.QueryResponseType === QueryResponseType.Text) {
                 return await this.getTextQueryResponse(value, nd, assessmentId, node);
@@ -295,11 +279,10 @@ export class FormsService {
     }
 
     private async getMultiChoiceQueryResponse(
-        value: any, nd: CAssessmentQuestionNode,
+        value: string[], nd: CAssessmentQuestionNode,
         assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
 
-        var v = value as string[];
-        v = v.map(x => x.toLowerCase());
+        var v = value.map(x => x.toLowerCase());
         const options = await this._assessmentHelperRepo.getQuestionNodeOptions(nd.NodeType, nd.id);
         var selectedOptionSequences:number[] = [];
         var selectedOptions:CAssessmentQueryOption[] = [];

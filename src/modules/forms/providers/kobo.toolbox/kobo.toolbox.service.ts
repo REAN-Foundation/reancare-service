@@ -5,7 +5,7 @@ import { ApiError } from "../../../../common/api.error";
 import { Helper } from '../../../../common/helper';
 import { Logger } from "../../../../common/logger";
 import { TimeHelper } from "../../../../common/time.helper";
-import { CAssessmentTemplate } from "../../../../domain.types/clinical/assessment/assessment.types";
+import { CAssessmentTemplate, QueryResponseType } from "../../../../domain.types/clinical/assessment/assessment.types";
 import { FormDto } from "../../../../domain.types/clinical/assessment/form.types";
 import { uuid } from "../../../../domain.types/miscellaneous/system.types";
 import {
@@ -19,7 +19,7 @@ import needle = require('needle');
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export class KoboToolboxService  implements IFormsService {
-        
+
     //#region Publics
 
     providerName = (): string => {
@@ -145,6 +145,15 @@ export class KoboToolboxService  implements IFormsService {
         }
     };
 
+    processQueryResponse(responseType: QueryResponseType, value: any) {
+        if (responseType === QueryResponseType.MultiChoiceSelection) {
+            var tokens = (value as string).split(' ');
+            tokens = tokens.map(x => x.trim());
+            return tokens;
+        }
+        return value;
+    }
+    
     //#endregion
 
     private toFormDto = (metadata: any) => {

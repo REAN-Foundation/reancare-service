@@ -1,4 +1,22 @@
-import { AssessmentNodeType,
+import fs from 'fs';
+import path from "path";
+import { inject, injectable } from "tsyringe";
+import { ApiError } from "../../../common/api.error";
+import { Helper } from "../../../common/helper";
+import { Logger } from "../../../common/logger";
+import { TimeHelper } from "../../../common/time.helper";
+import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
+import { IAssessmentRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
+import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
+import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
+import { IPersonRepo } from "../../../database/repository.interfaces/person.repo.interface";
+import { IRoleRepo } from "../../../database/repository.interfaces/role.repo.interface";
+import { IUserRepo } from "../../../database/repository.interfaces/user/user.repo.interface";
+import { AssessmentDomainModel } from "../../../domain.types/clinical/assessment/assessment.domain.model";
+import { AssessmentDto } from "../../../domain.types/clinical/assessment/assessment.dto";
+import { AssessmentTemplateDto } from "../../../domain.types/clinical/assessment/assessment.template.dto";
+import {
+    AssessmentNodeType,
     BiometricQueryAnswer,
     BooleanQueryAnswer,
     CAssessmentListNode,
@@ -14,27 +32,18 @@ import { AssessmentNodeType,
     MultipleChoiceQueryAnswer,
     QueryResponseType,
     SingleChoiceQueryAnswer,
-    TextQueryAnswer } from "../../../domain.types/clinical/assessment/assessment.types";
-import { inject, injectable } from "tsyringe";
-import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
-import { IAssessmentRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
-import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
+    TextQueryAnswer
+} from "../../../domain.types/clinical/assessment/assessment.types";
 import { FormDto } from "../../../domain.types/clinical/assessment/form.types";
+import { FileResourceDto } from "../../../domain.types/file.resource/file.resource.dto";
+import { ProgressStatus, uuid } from "../../../domain.types/miscellaneous/system.types";
+import { DateStringFormat } from "../../../domain.types/miscellaneous/time.types";
+import { PatientDetailsDto } from "../../../domain.types/patient/patient/patient.dto";
+import { Roles } from "../../../domain.types/role/role.types";
 import { ThirdpartyApiCredentialsDomainModel, ThirdpartyApiCredentialsDto } from "../../../domain.types/thirdparty/thirdparty.api.credentials";
 import { FormsHandler } from "../../../modules/forms/forms.handler";
-import { AssessmentTemplateDto } from "../../../domain.types/clinical/assessment/assessment.template.dto";
-import { AssessmentDto } from "../../../domain.types/clinical/assessment/assessment.dto";
-import { ProgressStatus, uuid } from "../../../domain.types/miscellaneous/system.types";
-import { PatientDetailsDto } from "../../../domain.types/patient/patient/patient.dto";
-import { ApiError } from "../../../common/api.error";
-import { Helper } from "../../../common/helper";
-import { IPersonRepo } from "../../../database/repository.interfaces/person.repo.interface";
-import { IRoleRepo } from "../../../database/repository.interfaces/role.repo.interface";
-import { IUserRepo } from "../../../database/repository.interfaces/user/user.repo.interface";
-import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
-import { Roles } from "../../../domain.types/role/role.types";
-import { AssessmentDomainModel } from "../../../domain.types/clinical/assessment/assessment.domain.model";
-import { Logger } from "../../../common/logger";
+import { FileResourceService } from '../../../services/file.resource.service';
+import { Loader } from '../../../startup/loader';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -139,7 +148,12 @@ export class FormsService {
         }
     };
 
-    public addAssessment = async (patientUserId: uuid, templateId: uuid, providerFormId: string, submission: any)
+    public addFormSubmissionAsAssessment = async (
+        connectionModel: ThirdpartyApiCredentialsDto,
+        patientUserId: uuid,
+        templateId: uuid,
+        providerFormId: string,
+        submission: any)
         : Promise<AssessmentDto> => {
         
         const submissionKeys = Object.keys(submission);
@@ -193,6 +207,8 @@ export class FormsService {
         });
         var nodeProviderCodes = nodes.map(x => x.ProviderGivenCode);
 
+        var queryResponses = [];
+
         for await (var key of submissionKeys) {
             if (key === 'start' || key === 'end') {
                 continue;
@@ -205,17 +221,23 @@ export class FormsService {
             if (node === null) {
                 continue;
             }
-            const answer = await this.getQueryResponse(template, assessment.id, node, value);
+            const answer = await this.getQueryResponse(
+                connectionModel, template, assessment.id, node, value, submission);
             var response = await this._assessmentHelperRepo.createQueryResponse(answer);
+            queryResponses.push(response);
         }
+        assessment.UserResponses = queryResponses;
+
         return assessment;
     };
 
     private getQueryResponse = async (
+        connectionModel: ThirdpartyApiCredentialsDto,
         template: AssessmentTemplateDto,
         assessmentId: uuid,
         node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode,
-        value: any): Promise<SingleChoiceQueryAnswer
+        value: any,
+        submission: any): Promise<SingleChoiceQueryAnswer
         | MultipleChoiceQueryAnswer
         | MessageAnswer
         | TextQueryAnswer
@@ -253,11 +275,34 @@ export class FormsService {
                 return await this.getFloatQueryResponse(value, nd, assessmentId, node);
             }
             else if (nd.QueryResponseType === QueryResponseType.File) {
-                return await this.getFileQueryResponse(value, nd, assessmentId, node);
+                var filename = value as string;
+                var fileValue = {
+                    FileName   : filename,
+                    ResourceId : null,
+                    Url        : null
+                };
+                var attachment = submission._attachments.find(x => x.filename.includes(filename));
+                if (attachment) {
+                    fileValue.Url = attachment.download_url;
+                    var downloadedFilepath = await FormsHandler.downloadFile(connectionModel, fileValue.Url);
+                    if (downloadedFilepath) {
+                        var fileDto = await this.uploadFile(downloadedFilepath);
+                        fileValue.ResourceId = fileDto.id;
+                    }
+                }
+                return await this.getFileQueryResponse(fileValue, nd, assessmentId, node);
             }
         }
     };
 
+    private uploadFile = async (sourceLocation: string): Promise<FileResourceDto> => {
+        const filename = path.basename(sourceLocation);
+        const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
+        const storageKey = `resources/${dateFolder}/${filename}`;
+        const fileResourceService = Loader.container.resolve(FileResourceService);
+        return await fileResourceService.uploadLocal(sourceLocation, storageKey, false);
+    };
+    
     private async getSingleChoiceQueryResponse(
         value: any, nd: CAssessmentQuestionNode,
         assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
@@ -384,14 +429,18 @@ export class FormsService {
     private async getFileQueryResponse(
         value: any, nd: CAssessmentQuestionNode,
         assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
+
         const answer: FileQueryAnswer = {
             AssessmentId     : assessmentId,
-            Url              : value as string,
+            Url              : value.Url,
+            ResourceId       : value.ResourceId,
+            Field            : value.FileName,
+            Filepath         : value.FileName,
             QuestionSequence : node.Sequence,
             ResponseType     : QueryResponseType.File,
             NodeDisplayCode  : nd.DisplayCode,
             NodeId           : nd.id,
-            Title            : node.Title
+            Title            : node.Title,
         };
         return answer;
     }

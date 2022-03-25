@@ -16,6 +16,8 @@ export interface IFormsService {
         
     downloadForm(connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<string>;
 
+    downloadFile(connectionModel: ThirdpartyApiCredentialsDto, fileUrl: string): Promise<string>;
+
     importFormFileAsAssessmentTemplate(userId: uuid, providerFormId: string, downloadedFilepath: string)
         : Promise<CAssessmentTemplate>;
 

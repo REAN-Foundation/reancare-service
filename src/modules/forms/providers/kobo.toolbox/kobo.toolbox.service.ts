@@ -15,6 +15,7 @@ import {
 import { IFormsService } from "../../interfaces/forms.service.interface";
 import { KoboFileConverter } from "./kobo.file.converter";
 import needle = require('needle');
+import { URL } from 'url';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -114,6 +115,36 @@ export class KoboToolboxService  implements IFormsService {
             writer.on('finish', (err) => {
                 if (err) {
                     reject(`Error dowmloading form! : ${err.message}`);
+                }
+                ws.end();
+                resolve(filepath);
+            });
+        });
+
+    };
+
+    public downloadFile = async (connectionModel: ThirdpartyApiCredentialsDto, fileUrl: string)
+        : Promise<string> => {
+
+        var u = new URL(fileUrl);
+        var urlFilePath = u.searchParams.get('media_file');
+        var filename = path.basename(urlFilePath);
+
+        var options = this.getRequestOptions(connectionModel.Token);
+        var folder = await Helper.createTempDownloadFolder();
+        const downloadFolderPath = path.join(folder, TimeHelper.timestamp(new Date()));
+        await fs.promises.mkdir(downloadFolderPath, { recursive: true });
+        var filepath = path.join(downloadFolderPath, filename);
+        var writer = fs.createWriteStream(filepath);
+       
+        var ws = fs.createWriteStream(filepath);
+        const buffer = await needle.get(fileUrl, options);
+        return new Promise((resolve, reject) => {
+            buffer.pipe(writer);
+            writer.on('error', reject);
+            writer.on('finish', (err) => {
+                if (err) {
+                    reject(`Error dowmloading file! : ${err.message}`);
                 }
                 ws.end();
                 resolve(filepath);

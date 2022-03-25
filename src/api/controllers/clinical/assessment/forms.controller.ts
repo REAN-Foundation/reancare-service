@@ -268,7 +268,8 @@ export class FormsController extends BaseController{
                     }
                 }
                 const assessment: AssessmentDto =
-                    await this._service.addAssessment(patient.UserId, templateId, providerFormId, submission);
+                    await this._service.addFormSubmissionAsAssessment(
+                        validCreds, patient.UserId, templateId, providerFormId, submission);
                 assessments.push(assessment);
             }
 

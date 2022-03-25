@@ -29,7 +29,7 @@ export class FormsHandler {
 
     public static importFormFileAsAssessmentTemplate =
         async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string, downloadedFilepath: string)
-            : Promise<CAssessmentTemplate> => {
+        : Promise<CAssessmentTemplate> => {
             var service = FormsHandler.getService(connectionModel);
             return await service.importFormFileAsAssessmentTemplate(
                 connectionModel.UserId, providerFormId, downloadedFilepath);
@@ -39,6 +39,12 @@ export class FormsHandler {
         : Promise<string> => {
         var service = FormsHandler.getService(connectionModel);
         return await service.downloadForm(connectionModel, providerFormId);
+    };
+
+    public static downloadFile = async (connectionModel: ThirdpartyApiCredentialsDto, fileUrl: string)
+        : Promise<string> => {
+        var service = FormsHandler.getService(connectionModel);
+        return await service.downloadFile(connectionModel, fileUrl);
     };
 
     public static importFormSubmissions = async (

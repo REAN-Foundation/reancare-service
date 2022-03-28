@@ -12,13 +12,15 @@
     ],
     "name": [
         {
-            "use": "official",
-            "given": ["pharmacist_first_name", "pharmacist_middle_name"],
-            "family": "Robinson",
-            "prefix": ["pharmacist_prefix"]
-            
+          "family": "Practitioner_LastName",
+          "given": [
+            "Practitioner_FirstName"
+          ],
+          "prefix": [
+            "Miss."
+          ]
         }
-    ],
+      ],
     "gender": "female",
     "birthDate": "1234-12-12",
     "telecom": [

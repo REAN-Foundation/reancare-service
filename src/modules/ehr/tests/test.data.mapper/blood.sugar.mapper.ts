@@ -17,8 +17,8 @@ export class BloodSugarMapper {
             //VisitId: bloodSugarObj.VisitId,
             //VisitEhrId: bloodSugarObj.VisitEhrId,
             Unit             : bloodSugarObj.Unit,
-            //RecordedBy: bloodSugarObj.RecordedBy,
             RecordedByUserId : bloodSugarObj.RecordedByUserId,
+            RecordedByEhrId  : bloodSugarObj.RecordedByEhrId,
             RecordDate       : bloodSugarObj.RecordDate,
             BloodGlucose     : bloodSugarObj.BloodGlucose
             

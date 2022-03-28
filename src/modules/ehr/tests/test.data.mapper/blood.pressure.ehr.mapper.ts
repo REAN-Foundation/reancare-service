@@ -24,7 +24,7 @@ export class BloodPressureMapper {
             // VisitEhrId: bloodPressureObj.VisitEhrId,
             Unit             : bloodPressureObj.Unit,
             RecordedByUserId : bloodPressureObj.RecordedByUserId,
-            // RecordedByEhrId: bloodPressureObj.RecordedByEhrId,
+            RecordedByEhrId  : bloodPressureObj.RecordedByEhrId,
             RecordDate       : bloodPressureObj.RecordDate,
             Systolic         : bloodPressureObj.Systolic,
             Diastolic        : bloodPressureObj.Diastolic,

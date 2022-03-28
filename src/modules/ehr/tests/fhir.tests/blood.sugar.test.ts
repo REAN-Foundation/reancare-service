@@ -41,4 +41,50 @@ describe('Observation resource: Storage, retrieval', () => {
         expect(extractedVisitId).toBeTruthy();
 
     });
+
+    it('Update blood sugar resource, then updated patient details are returned.', async () => {
+
+        var model = BloodSugarMapper.convertJsonObjectToDomainModel();
+        var bloodSugarEhirId = await TestLoader.BloodSugarStore.add(model);
+
+        var expectedRecordDate = '2022-03-28';
+        model.RecordDate = new Date(expectedRecordDate);
+        model.BloodGlucose = 126;
+        model.Unit = "mg/dL";
+
+        var updatedResource = await TestLoader.BloodSugarStore.update(bloodSugarEhirId, model);
+
+        //Assertions
+        var extractedUnit = updatedResource.component[0].valueQuantity.unit;
+        expect(extractedUnit).toEqual(model.Unit);
+
+        var extractedRecordDate = updatedResource.effectiveDateTime;
+        expect(extractedRecordDate).toEqual(expectedRecordDate);
+
+        var extractedRecordedByEhrId = updatedResource.performer[0].reference.split('/')[1];
+        expect(extractedRecordedByEhrId).toEqual(model.RecordedByUserId);
+
+        var extractedBiometricsWeight = updatedResource.component[0].valueQuantity.value;
+        expect(extractedBiometricsWeight).toEqual(model.BloodGlucose);
+    });
+
+    it('Delete blood sugar resource, then empty resource is returned for next query.', async () => {
+
+        var model = BloodSugarMapper.convertJsonObjectToDomainModel();
+        var bloodSugarEhirId = await TestLoader.BloodSugarStore.add(model);
+        var bloodSugarFhirResource = await TestLoader.BloodSugarStore.getById(bloodSugarEhirId);
+
+        //Before deletetion
+        expect(bloodSugarFhirResource).toBeTruthy();
+
+        //Delete
+        await TestLoader.BloodSugarStore.delete(bloodSugarEhirId);
+
+        //Query after deletion
+        var deletedbloodSugarFhirResource = await TestLoader.BloodSugarStore.getById(bloodSugarEhirId);
+
+        //Assertions
+        expect(deletedbloodSugarFhirResource).toBeFalsy();
+
+    });
 });

@@ -16,7 +16,7 @@ export class BiometricsWeightMapper {
             EhrId            : biometricsWeightObj.EhrId,
             Unit             : biometricsWeightObj.Unit,
             RecordedByUserId : biometricsWeightObj.RecordedByUserId,
-            //RecordedByEhrId: biometricsWeightObj.RecordedByEhrId,
+            RecordedByEhrId  : biometricsWeightObj.RecordedByEhrId,
             RecordDate       : biometricsWeightObj.RecordDate,
             BodyWeight       : biometricsWeightObj.BodyWeight,
         };

@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { DependencyContainer } from 'tsyringe';
 import { MockStorageService } from "./storage.service";
 import { MockPatientStore } from "./patient.store";
+import { MockFamilyHistoryStore } from "./family.history.store";
 
 // import { MockClinicOrganizationStore } from "./clinic.organization.store";
 // import { MockDiagnosticLabUserStore } from "./diagnostic.lab.user.store";
@@ -20,6 +21,7 @@ export class MockEhrInjector {
 
         container.register('IStorageService', MockStorageService);
         container.register('IPatientStore', MockPatientStore);
+        container.register('IFamilyHistoryStore', MockFamilyHistoryStore);
 
         // container.register('IClinicOrganizationStore', MockClinicOrganizationStore);
         // container.register('IDiagnosticLabUserStore', MockDiagnosticLabUserStore);

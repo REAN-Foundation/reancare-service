@@ -5,6 +5,7 @@ import { PatientStore } from '../services/patient.store';
 import { DoctorStore } from '../services/doctor.store';
 import { Logger } from '../../../common/logger';
 import { ConfigurationManager } from '../../../config/configuration.manager';
+import { FamilyHistoryStore } from '../services/family.history.store';
 
 // import { ClinicOrganizationStore } from '../services/clinic.organization.store';
 // import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
@@ -35,6 +36,8 @@ export class TestLoader {
 
     private static _doctorStore: DoctorStore = container.resolve(DoctorStore);
 
+    private static _familyHistoryStore: FamilyHistoryStore = container.resolve(FamilyHistoryStore);
+
     // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
     // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
     // private static _pharmacistStore: PharmacistStore = container.resolve(PharmacistStore);
@@ -59,6 +62,10 @@ export class TestLoader {
 
     public static get DoctorStore() {
         return TestLoader._doctorStore;
+    }
+
+    public static get FamilyHistoryStore() {
+        return TestLoader._familyHistoryStore;
     }
 
     // public static get DiagnosticLabUserStore() {
@@ -98,6 +105,7 @@ export class TestLoader {
 
             TestLoader._patientStore = container.resolve(PatientStore);
             TestLoader._doctorStore = container.resolve(DoctorStore);
+            TestLoader._familyHistoryStore = container.resolve(FamilyHistoryStore);
 
             // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
             // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);

@@ -79,15 +79,21 @@ export class GcpPharmacistStore implements IPharmacistStore {
     };
 
     delete = async (resourceId: string): Promise<any> => {
-        var g = await GcpHelper.getGcpClient();
-        const c = GcpHelper.getGcpFhirConfig();
-        const resourceType = 'Patient';
+        try {
+            var g = await GcpHelper.getGcpClient();
+            const c = GcpHelper.getGcpFhirConfig();
+            const resourceType = 'Practitioner';
 
-        //Get the existing resource
-        const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
-        await g.projects.locations.datasets.fhirStores.fhir.delete(
-            { name: parent }
-        );
+            //Get the existing resource
+            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
+            await g.projects.locations.datasets.fhirStores.fhir.delete(
+                { name: parent }
+            );
+        }
+        catch (error) {
+            await Logger.instance().log(JSON.stringify(error.message, null, 2));
+            throw error;
+        }
     };
 
     //#region Private methods

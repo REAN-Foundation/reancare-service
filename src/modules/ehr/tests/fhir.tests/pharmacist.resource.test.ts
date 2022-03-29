@@ -74,7 +74,7 @@ describe('Pharmacist resource: Storage, retrieval', () => {
         expect(pharmacistFhirResource).toBeTruthy();
 
         //Delete
-        await TestLoader.PatientStore.delete(pharmacistFhirId);
+        await TestLoader.PharmacistStore.delete(pharmacistFhirId);
 
         //Query after deletion
         var deletedPharmacistFhirResource = await TestLoader.PatientStore.getById(pharmacistFhirId);

@@ -9,6 +9,7 @@ import { ConfigurationManager } from '../../../config/configuration.manager';
 // import { ClinicOrganizationStore } from '../services/clinic.organization.store';
 // import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
 import { PharmacistStore } from '../services/pharmacist.store';
+import { PharmacyStore } from '../services/pharmacy.organization.store';
 // import { BloodPressureStore } from '../services/blood.pressure.store';
 // import { BiometricsWeightStore } from '../services/biometrics.weight.store';
 // import { BloodSugarStore } from '../services/blood.sugar.store';
@@ -37,6 +38,8 @@ export class TestLoader {
     // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
     // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
     private static _pharmacistStore: PharmacistStore = container.resolve(PharmacistStore);
+
+    private static _pharmacyStore: PharmacyStore = container.resolve(PharmacyStore);
     // private static _bloodPressureStore: BloodPressureStore = container.resolve(BloodPressureStore);
     // private static _biometricsWeightStore: BiometricsWeightStore = container.resolve(BiometricsWeightStore);
     // private static _bloodSugarStore: BloodSugarStore = container.resolve(BloodSugarStore);
@@ -66,6 +69,10 @@ export class TestLoader {
 
     public static get PharmacistStore() {
         return TestLoader._pharmacistStore;
+    }
+
+    public static get PharmacyStore() {
+        return TestLoader._pharmacyStore;
     }
 
     // public static get BloodPressureStore() {
@@ -104,6 +111,7 @@ export class TestLoader {
             // TestLoader._bloodSugarStore = container.resolve(BloodSugarStore);
             // TestLoader._biometricsHeightStore = container.resolve(BiometricsHeightStore);
             TestLoader._pharmacistStore = container.resolve(PharmacistStore);
+            TestLoader._pharmacyStore = container.resolve(PharmacyStore);
             // TestLoader._biometricsWeightStore = container.resolve(BiometricsWeightStore);
 
             //Finally intitialize Fhir storage provider

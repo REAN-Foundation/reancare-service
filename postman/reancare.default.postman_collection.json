@@ -7533,7 +7533,7 @@
 										{
 											"key": "Name",
 											"type": "file",
-											"src": "test.data/documents/lab_order_x.pdf"
+											"src": "documents/lab_order_x.pdf"
 										},
 										{
 											"key": "PatientUserId",
@@ -8281,6 +8281,17 @@
 												],
 												"type": "text/javascript"
 											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var today = (new Date()).toISOString().split('T')[0];\r",
+													"pm.environment.set(\"CAREPLAN_START_DATE\", today);\r",
+													""
+												],
+												"type": "text/javascript"
+											}
 										}
 									],
 									"request": {
@@ -8304,7 +8315,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"2022-03-10\"\r\n}"
+											"raw": "{\r\n    \"Provider\": \"AHA\",\r\n    \"PlanCode\": \"HeartFailure\",\r\n    \"StartDate\": \"{{CAREPLAN_START_DATE}}\"\r\n}"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/care-plans/patients/{{PATIENT_USER_ID}}/enroll",
@@ -8323,6 +8334,30 @@
 								},
 								{
 									"name": "Get all careplan enrollments for patient",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"\r",
+													"pm.test(\"Request is successfull\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Status).to.eql('success');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Patient is enrolled to careplan\", function () {\r",
+													"    var jsonRes = pm.response.json();\r",
+													"    pm.expect(jsonRes.Data).to.have.property('PatientEnrollments');\r",
+													"    pm.expect(jsonRes.Data.PatientEnrollments).to.not.be.empty;\r",
+													"    pm.expect(jsonRes.Data.PatientEnrollments.length).to.be.greaterThan(0);\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
 									"protocolProfileBehavior": {
 										"disableBodyPruning": true
 									},
@@ -8566,8 +8601,6 @@
 													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
 													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
 													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
-													"",
-													"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take a dog for walk\");",
 													"});",
 													""
 												],
@@ -8635,20 +8668,20 @@
 													"pm.test(\"User Task is created\", function () {",
 													"",
 													"    var jsonRes = pm.response.json();",
-													"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
-													"    pm.expect(jsonRes.Data.UserTask).to.not.be.empty;",
-													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"id\");",
-													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"DisplayId\");",
-													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"UserId\");",
-													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Task\");",
-													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionType\");",
-													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ActionId\");",
-													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledStartTime\");",
-													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"ScheduledEndTime\");",
-													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"Status\");",
-													"    pm.expect(jsonRes.Data.UserTask).to.have.property(\"IsRecurrent\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.not.be.empty;",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"id\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"DisplayCode\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"Type\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"Title\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"PatientUserId\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"AssessmentTemplateId\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"Provider\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"ProviderEnrollmentId\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"ProviderAssessmentCode\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"Status\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"ScheduledAt\");",
+													"    pm.expect(jsonRes.Data.Assessment).to.have.property(\"UserTaskId\");",
 													"",
-													"    pm.expect(jsonRes.Data.UserTask.Task).eqls(\"Take a dog for walk\");",
 													"});",
 													""
 												],

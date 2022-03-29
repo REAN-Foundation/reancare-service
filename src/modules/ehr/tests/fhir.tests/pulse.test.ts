@@ -41,4 +41,50 @@ describe('Observation resource: Storage, retrieval', () => {
         expect(extractedVisitId).toBeTruthy();
 
     });
+
+    it('Update biometrics pulse resource, then updated patient details are returned.', async () => {
+
+        var model = PulseMapper.convertJsonObjectToDomainModel();
+        var biometricsPulseEhirId = await TestLoader.PulseStore.add(model);
+
+        var expectedRecordDate = '2022-03-03';
+        model.RecordDate = new Date(expectedRecordDate);
+        model.Pulse = 84;
+        model.Unit = "bpm";
+
+        var updatedResource = await TestLoader.PulseStore.update(biometricsPulseEhirId, model);
+
+        //Assertions
+        var extractedUnit = updatedResource.component[0].valueQuantity.unit;
+        expect(extractedUnit).toEqual(model.Unit);
+
+        var extractedRecordDate = updatedResource.effectiveDateTime;
+        expect(extractedRecordDate).toEqual(expectedRecordDate);
+
+        var extractedRecordedByEhrId = updatedResource.performer[0].reference.split('/')[1];
+        expect(extractedRecordedByEhrId).toEqual(model.RecordedByUserId);
+
+        var extractedBiometricsPulse = updatedResource.component[0].valueQuantity.value;
+        expect(extractedBiometricsPulse).toEqual(model.Pulse);
+    });
+
+    it('Delete biometrics pulse resource, then empty resource is returned for next query.', async () => {
+
+        var model = PulseMapper.convertJsonObjectToDomainModel();
+        var biometricsPulseEhirId = await TestLoader.PulseStore.add(model);
+        var pulseFhirResource = await TestLoader.PulseStore.getById(biometricsPulseEhirId);
+
+        //Before deletetion
+        expect(pulseFhirResource).toBeTruthy();
+
+        //Delete
+        await TestLoader.PulseStore.delete(biometricsPulseEhirId);
+
+        //Query after deletion
+        var deletedWeightFhirResource = await TestLoader.PulseStore.getById(biometricsPulseEhirId);
+
+        //Assertions
+        expect(deletedWeightFhirResource).toBeFalsy();
+
+    });
 });

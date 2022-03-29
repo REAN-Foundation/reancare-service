@@ -4,7 +4,7 @@
     "VisitId": "1234",
     "VisitEhrId": "",
     "Unit": "°F",
-    "RecordedBy": "ff81568a-6933-4031-a776-4316156fe03c",
+    "RecordedByUserId": "ff81568a-6933-4031-a776-4316156fe03c",
     "RecordedByEhrId": "ff81568a-6933-4031-a776-4316156fe03c",
     "RecordDate": "2021-01-05",
     "BodyTemperature": 99

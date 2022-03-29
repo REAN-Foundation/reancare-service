@@ -41,4 +41,50 @@ describe('Observation resource: Storage, retrieval', () => {
         expect(extractedVisitId).toBeTruthy();
 
     });
+
+    it('Update biometrics temperature resource, then updated patient details are returned.', async () => {
+
+        var model = TemperatureMapper.convertJsonObjectToDomainModel();
+        var temperatureEhirId = await TestLoader.TemperatureStore.add(model);
+
+        var expectedRecordDate = '2022-03-03';
+        model.RecordDate = new Date(expectedRecordDate);
+        model.BodyTemperature = 99;
+        model.Unit = "°F";
+
+        var updatedResource = await TestLoader.TemperatureStore.update(temperatureEhirId, model);
+
+        //Assertions
+        var extractedUnit = updatedResource.component[0].valueQuantity.unit;
+        expect(extractedUnit).toEqual(model.Unit);
+
+        var extractedRecordDate = updatedResource.effectiveDateTime;
+        expect(extractedRecordDate).toEqual(expectedRecordDate);
+
+        var extractedRecordedByEhrId = updatedResource.performer[0].reference.split('/')[1];
+        expect(extractedRecordedByEhrId).toEqual(model.RecordedByUserId);
+
+        var extractedBiometricsWeight = updatedResource.component[0].valueQuantity.value;
+        expect(extractedBiometricsWeight).toEqual(model.BodyTemperature);
+    });
+
+    it('Delete biometrics temperature resource, then empty resource is returned for next query.', async () => {
+
+        var model = TemperatureMapper.convertJsonObjectToDomainModel();
+        var temperatureEhirId = await TestLoader.TemperatureStore.add(model);
+        var temperatureFhirResource = await TestLoader.TemperatureStore.getById(temperatureEhirId);
+
+        //Before deletetion
+        expect(temperatureFhirResource).toBeTruthy();
+
+        //Delete
+        await TestLoader.TemperatureStore.delete(temperatureEhirId);
+
+        //Query after deletion
+        var deletedtemperatureFhirResource = await TestLoader.TemperatureStore.getById(temperatureEhirId);
+
+        //Assertions
+        expect(deletedtemperatureFhirResource).toBeFalsy();
+
+    });
 });

@@ -41,11 +41,15 @@ export class PatientController extends BaseUserController {
             await this.setContext('Patient.Create', request, response, false);
 
             const createModel = await this._validator.create(request);
-            const patient = await this._userHelper.createPatient(createModel);
+            const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
 
-            ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
-                Patient : patient,
-            });
+            if (createdNew) {
+                ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
+                    Patient : patient,
+                });
+                return;
+            }
+            ResponseHandler.failure(request, response, `Patient account already exists!`, 409);
         } catch (error) {
 
             //KK: Todo: Add rollback in case of mid-way exception

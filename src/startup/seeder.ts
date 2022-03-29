@@ -310,7 +310,11 @@ export class Seeder {
             },
             Address : null
         };
-        var patient = this._userHelper.createPatient(createModel);
+        var [patient, createdNew ] = await this._userHelper.createPatient(createModel);
+
+        const message = createdNew ? `Created new test patient with phone ${phone}!` : `Test patient with phone ${phone} already exists!`;
+        Logger.instance().log(message);
+
         return patient != null;
     };
     

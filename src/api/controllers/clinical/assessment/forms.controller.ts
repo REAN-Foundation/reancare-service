@@ -306,12 +306,17 @@ export class FormsController extends BaseController{
                     Phone     : phone ?? null,
                     Email     : email ?? null,
                 },
-                DefaultTimeZone : null,
-                CurrentTimeZone : null,
             },
         };
 
-        return await this._userHelper.createPatient(createModel);
+        const [patient, createdNew] = await this._userHelper.createPatient(createModel);
+
+        if (!createdNew) {
+            const str = JSON.stringify(createModel, null, 2);
+            Logger.instance().log(`Patient account already exists with following details - ${str}!`);
+        }
+        
+        return patient;
     }
 
 }

@@ -39,7 +39,7 @@ export class UserHelper {
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
     }
 
-    createPatient = async(createModel: PatientDomainModel): Promise<PatientDetailsDto> => {
+    createPatient = async(createModel: PatientDomainModel): Promise<[PatientDetailsDto, boolean]> => {
 
         var person: PersonDetailsDto = null;
         var user: UserDetailsDto = null;
@@ -59,7 +59,7 @@ export class UserHelper {
             //Person with a patient role exists
             patient = await this._patientService.getByPersonId(person.id);
             if (patient != null) {
-                return patient;
+                return [ patient, false ];
             }
             //Person exists but patient does not exist, check if the user exists or not!
             user = await this._userService.getByPhoneAndRole(createModel.User.Person.Phone, role.id);
@@ -83,7 +83,7 @@ export class UserHelper {
         if (!patient) {
             throw new ApiError(500, `An error has occurred while creating patient!`);
         }
-        return patient;
+        return [ patient, true ];
     }
 
     private createPatientWithHealthProfile = async (

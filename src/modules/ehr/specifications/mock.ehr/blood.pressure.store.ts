@@ -3,10 +3,7 @@ import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biom
 
 ///////////////////////////////////////////////////////////////////
 
-
 export class MockBloodPressureStore implements IBloodPressureStore {
-
- 
 
     add = async (model: BloodPressureDomainModel): Promise<any> => {
         return null;
@@ -27,6 +24,6 @@ export class MockBloodPressureStore implements IBloodPressureStore {
     delete = async (id: string): Promise<any> => {
         return true;
     };
-}
 
+}
 

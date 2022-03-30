@@ -1,13 +1,13 @@
 import { Helper } from '../../../../../../common/helper';
 import { BloodGlucoseDomainModel } from '../../../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model';
-import { IBloodSugarStore } from '../../../../interfaces/blood.sugar.store.interface';
+import { IBloodGlucoseStore } from '../../../../interfaces/blood.glucose.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { Logger } from '../../../../../../common/logger';
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export class GcpBloodSugarStore implements IBloodSugarStore {
+export class GcpBloodGlucoseStore implements IBloodGlucoseStore {
 
     add = async (model: BloodGlucoseDomainModel): Promise<any> => {
         try {

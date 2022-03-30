@@ -1,13 +1,9 @@
-import { IBiometricsWeightStore } from '../../interfaces/biometrics.weight.store.interface';
+import { IBodyWeightStore } from '../../interfaces/body.weight.store.interface';
 import { BodyWeightDomainModel } from '../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
-
 
 ///////////////////////////////////////////////////////////////////
 
-
-export class MockBiometricsWeightStore implements IBiometricsWeightStore {
-
-    
+export class MockBodyWeightStore implements IBodyWeightStore {
 
     add = async (model: BodyWeightDomainModel): Promise<any> => {
         return null;

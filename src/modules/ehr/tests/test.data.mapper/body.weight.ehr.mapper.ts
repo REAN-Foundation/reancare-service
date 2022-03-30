@@ -4,7 +4,7 @@ import { BodyWeightDomainModel } from "../../../../domain.types/clinical/biometr
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-export class BiometricsWeightMapper {
+export class BodyWeightMapper {
 
     public static convertJsonObjectToDomainModel = () => {
         const cwd = process.cwd();

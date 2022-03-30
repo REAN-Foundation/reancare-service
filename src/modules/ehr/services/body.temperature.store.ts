@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ITemperatureStore } from '../interfaces/temperature.store.interface';
+import { ITemperatureStore } from '../interfaces/body.temperature.store.interface';
 import { injectable, inject } from "tsyringe";
 import { BodyTemperatureDomainModel } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
 

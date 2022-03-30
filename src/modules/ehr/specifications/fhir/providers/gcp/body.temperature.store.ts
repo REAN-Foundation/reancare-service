@@ -1,7 +1,7 @@
 import { Helper } from '../../../../../../common/helper';
 import { Logger } from '../../../../../../common/logger';
 import { BodyTemperatureDomainModel } from '../../../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
-import { ITemperatureStore } from '../../../../interfaces/temperature.store.interface';
+import { ITemperatureStore } from '../../../../interfaces/body.temperature.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 

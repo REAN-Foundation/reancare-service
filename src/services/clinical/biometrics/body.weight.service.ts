@@ -4,18 +4,28 @@ import { IBodyWeightRepo } from "../../../database/repository.interfaces/clinica
 import { BodyWeightDomainModel } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
 import { BodyWeightDto } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.dto';
 import { BodyWeightSearchFilters, BodyWeightSearchResults } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.search.types';
+import { BodyWeightStore } from "../../../modules/ehr/services/body.weight.store";
+import { Loader } from "../../../startup/loader";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class BodyWeightService {
 
+    _ehrBodyWeightStore: BodyWeightStore = null;
+
     constructor(
         @inject('IBodyWeightRepo') private _bodyWeightRepo: IBodyWeightRepo,
-    ) {}
+    ) {
+        this._ehrBodyWeightStore = Loader.container.resolve(BodyWeightStore);
+    }
 
     create = async (bodyWeightDomainModel: BodyWeightDomainModel): Promise<BodyWeightDto> => {
-        return await this._bodyWeightRepo.create(bodyWeightDomainModel);
+
+        const ehrId = await this._ehrBodyWeightStore.add(bodyWeightDomainModel);
+        bodyWeightDomainModel.EhrId = ehrId;
+        var dto = await this._bodyWeightRepo.create(bodyWeightDomainModel);
+        return dto;
     };
 
     getById = async (id: uuid): Promise<BodyWeightDto> => {

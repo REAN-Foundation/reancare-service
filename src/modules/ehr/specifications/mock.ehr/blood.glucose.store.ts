@@ -1,12 +1,9 @@
-import { IBloodSugarStore } from '../../interfaces/blood.sugar.store.interface';
+import { IBloodGlucoseStore } from '../../interfaces/blood.glucose.store.interface';
 import { BloodGlucoseDomainModel }  from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model';
 
 ///////////////////////////////////////////////////////////////////
 
-
-export class MockBloodSugarStore implements IBloodSugarStore{
-
-    
+export class MockBloodGlucoseStore implements IBloodGlucoseStore{
 
     add = async (model: BloodGlucoseDomainModel): Promise<any> => {
         return null;

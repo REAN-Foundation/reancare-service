@@ -9,14 +9,14 @@ import { ConfigurationManager } from '../../../config/configuration.manager';
 // import { ClinicOrganizationStore } from '../services/clinic.organization.store';
 // import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
 import { BloodPressureStore } from '../services/blood.pressure.store';
-import { BiometricsWeightStore } from '../services/biometrics.weight.store';
+import { BodyWeightStore } from '../services/body.weight.store';
 // import { BloodSugarStore } from '../services/blood.sugar.store';
 // import { BiometricsHeightStore } from '../services/biometrics.height.store';
 
 import { EhrInjector } from '../ehr.injector';
 import { PulseStore } from '../services/pulse.store';
-import { TemperatureStore } from '../services/temperature.store';
-import { BloodSugarStore } from '../services/blood.sugar.store';
+import { TemperatureStore } from '../services/body.temperature.store';
+import { BloodGlucoseStore } from '../services/blood.glucose.store';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,9 +42,9 @@ export class TestLoader {
 
     private static _bloodPressureStore: BloodPressureStore = container.resolve(BloodPressureStore);
 
-    private static _biometricsWeightStore: BiometricsWeightStore = container.resolve(BiometricsWeightStore);
+    private static _bodyWeightStore: BodyWeightStore = container.resolve(BodyWeightStore);
 
-    private static _bloodSugarStore: BloodSugarStore = container.resolve(BloodSugarStore);
+    private static _bloodGlucoseStore: BloodGlucoseStore = container.resolve(BloodGlucoseStore);
 
     // private static _biometricsHeightStore: BiometricsHeightStore = container.resolve(BiometricsHeightStore);
     private static _pulseStore: PulseStore = container.resolve(PulseStore)
@@ -75,12 +75,12 @@ export class TestLoader {
         return TestLoader._bloodPressureStore;
     }
 
-    public static get BiometricsWeightStore() {
-        return TestLoader._biometricsWeightStore;
+    public static get BodyWeightStore() {
+        return TestLoader._bodyWeightStore;
     }
   
-    public static get BloodSugarStore() {
-        return TestLoader._bloodSugarStore;
+    public static get BloodGlucoseStore() {
+        return TestLoader._bloodGlucoseStore;
     }
 
     // public static get BiometricsHeightStore() {
@@ -111,9 +111,9 @@ export class TestLoader {
             // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
             // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
             TestLoader._bloodPressureStore = container.resolve(BloodPressureStore);
-            TestLoader._bloodSugarStore = container.resolve(BloodSugarStore);
+            TestLoader._bloodGlucoseStore = container.resolve(BloodGlucoseStore);
             // TestLoader._biometricsHeightStore = container.resolve(BiometricsHeightStore);
-            TestLoader._biometricsWeightStore = container.resolve(BiometricsWeightStore);
+            TestLoader._bodyWeightStore = container.resolve(BodyWeightStore);
             TestLoader._pulseStore = container.resolve(PulseStore);
             TestLoader._temperatureStore = container.resolve(TemperatureStore);
             

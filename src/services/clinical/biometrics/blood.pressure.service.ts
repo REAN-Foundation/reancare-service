@@ -4,19 +4,31 @@ import { IBloodPressureRepo } from "../../../database/repository.interfaces/clin
 import { BloodPressureDomainModel } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
 import { BloodPressureDto } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto';
 import { BloodPressureSearchFilters, BloodPressureSearchResults } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.search.types';
+import { BloodPressureStore } from "../../../modules/ehr/services/blood.pressure.store";
+import { Loader } from "../../../startup/loader";
+import { Logger } from "../../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class BloodPressureService {
 
+    _ehrBloodPressureStore: BloodPressureStore = null;
+
     constructor(
         @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
-    ) { }
+    ) {
+        this._ehrBloodPressureStore = Loader.container.resolve(BloodPressureStore);
+    }
 
     create = async (bloodPressureDomainModel: BloodPressureDomainModel):
     Promise<BloodPressureDto> => {
-        return await this._bloodPressureRepo.create(bloodPressureDomainModel);
+
+        const ehrId = await this._ehrBloodPressureStore.add(bloodPressureDomainModel);
+        bloodPressureDomainModel.EhrId = ehrId;
+        Logger.instance().log(`EHR Id for blood pressure model: ${JSON.stringify(bloodPressureDomainModel.EhrId)}`);
+        var dto = await this._bloodPressureRepo.create(bloodPressureDomainModel);
+        return dto;
     };
 
     getById = async (id: uuid): Promise<BloodPressureDto> => {

@@ -4,7 +4,7 @@ import { BodyTemperatureDomainModel } from "../../../../domain.types/clinical/bi
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-export class TemperatureMapper {
+export class BodyTemperatureMapper {
 
     public static convertJsonObjectToDomainModel = () => {
         const cwd = process.cwd();

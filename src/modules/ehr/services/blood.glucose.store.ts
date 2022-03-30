@@ -1,16 +1,16 @@
 import 'reflect-metadata';
-import { IBiometricsWeightStore } from '../interfaces/biometrics.weight.store.interface';
+import { IBloodGlucoseStore } from '../interfaces/blood.glucose.store.interface';
 import { injectable, inject } from "tsyringe";
-import { BodyWeightDomainModel } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
+import { BloodGlucoseDomainModel }  from '../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model';
 
 ///////////////////////////////////////////////////////////////////
 
 @injectable()
-export class BiometricsWeightStore {
+export class BloodGlucoseStore {
 
-    constructor(@inject('IBiometricsWeightStore') private _service: IBiometricsWeightStore) {}
+    constructor(@inject('IBloodGlucoseStore') private _service: IBloodGlucoseStore) {}
 
-    add = async (model: BodyWeightDomainModel): Promise<any> => {
+    add = async (model: BloodGlucoseDomainModel): Promise<any> => {
         return await this._service.add(model);
     }
 
@@ -18,7 +18,7 @@ export class BiometricsWeightStore {
         return await this._service.getById(id);
     }
 
-    update = async (id: string, updates: BodyWeightDomainModel): Promise<any> => {
+    update = async (id: string, updates: BloodGlucoseDomainModel): Promise<any> => {
         return await this._service.update(id, updates);
     }
 

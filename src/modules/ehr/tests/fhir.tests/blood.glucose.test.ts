@@ -1,5 +1,5 @@
 import { TestLoader } from "../test.loader";
-import { BloodSugarMapper } from "../test.data.mapper/blood.sugar.mapper";
+import { BloodGlucoseMapper } from "../test.data.mapper/blood.glucose.mapper";
 import { PatientMapper } from "../test.data.mapper/patient.ehr.mapper";
 import { DoctorMapper } from "../test.data.mapper/doctor.ehr.mapper";
 
@@ -12,12 +12,12 @@ describe('Observation resource: Storage, retrieval', () => {
         var doctorModel = DoctorMapper.convertJsonObjectToDomainModel();
         var doctorEhrId = await TestLoader.DoctorStore.create(doctorModel);
         
-        var model = BloodSugarMapper.convertJsonObjectToDomainModel();
+        var model = BloodGlucoseMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
         model.RecordedByUserId = doctorEhrId;
 
-        var bloodSugarEhirId = await TestLoader.BloodSugarStore.add(model);
-        var bloodSugarFhirResource = await TestLoader.BloodSugarStore.getById(bloodSugarEhirId);
+        var bloodSugarEhirId = await TestLoader.BloodGlucoseStore.add(model);
+        var bloodSugarFhirResource = await TestLoader.BloodGlucoseStore.getById(bloodSugarEhirId);
 
         //Assertions
 
@@ -44,15 +44,15 @@ describe('Observation resource: Storage, retrieval', () => {
 
     it('Update blood sugar resource, then updated patient details are returned.', async () => {
 
-        var model = BloodSugarMapper.convertJsonObjectToDomainModel();
-        var bloodSugarEhirId = await TestLoader.BloodSugarStore.add(model);
+        var model = BloodGlucoseMapper.convertJsonObjectToDomainModel();
+        var bloodSugarEhirId = await TestLoader.BloodGlucoseStore.add(model);
 
         var expectedRecordDate = '2022-03-28';
         model.RecordDate = new Date(expectedRecordDate);
         model.BloodGlucose = 126;
         model.Unit = "mg/dL";
 
-        var updatedResource = await TestLoader.BloodSugarStore.update(bloodSugarEhirId, model);
+        var updatedResource = await TestLoader.BloodGlucoseStore.update(bloodSugarEhirId, model);
 
         //Assertions
         var extractedUnit = updatedResource.component[0].valueQuantity.unit;
@@ -70,18 +70,18 @@ describe('Observation resource: Storage, retrieval', () => {
 
     it('Delete blood sugar resource, then empty resource is returned for next query.', async () => {
 
-        var model = BloodSugarMapper.convertJsonObjectToDomainModel();
-        var bloodSugarEhirId = await TestLoader.BloodSugarStore.add(model);
-        var bloodSugarFhirResource = await TestLoader.BloodSugarStore.getById(bloodSugarEhirId);
+        var model = BloodGlucoseMapper.convertJsonObjectToDomainModel();
+        var bloodSugarEhirId = await TestLoader.BloodGlucoseStore.add(model);
+        var bloodSugarFhirResource = await TestLoader.BloodGlucoseStore.getById(bloodSugarEhirId);
 
         //Before deletetion
         expect(bloodSugarFhirResource).toBeTruthy();
 
         //Delete
-        await TestLoader.BloodSugarStore.delete(bloodSugarEhirId);
+        await TestLoader.BloodGlucoseStore.delete(bloodSugarEhirId);
 
         //Query after deletion
-        var deletedbloodSugarFhirResource = await TestLoader.BloodSugarStore.getById(bloodSugarEhirId);
+        var deletedbloodSugarFhirResource = await TestLoader.BloodGlucoseStore.getById(bloodSugarEhirId);
 
         //Assertions
         expect(deletedbloodSugarFhirResource).toBeFalsy();

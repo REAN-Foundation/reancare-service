@@ -1,13 +1,13 @@
 import { Helper } from '../../../../../../common/helper';
 import { BodyWeightDomainModel } from '../../../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
-import { IBiometricsWeightStore } from '../../../../interfaces/biometrics.weight.store.interface';
+import { IBodyWeightStore } from '../../../../interfaces/body.weight.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { Logger } from '../../../../../../common/logger';
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export class GcpBiometricsWeightStore implements IBiometricsWeightStore {
+export class GcpBodyWeightStore implements IBodyWeightStore {
 
     add = async (model: BodyWeightDomainModel): Promise<any> => {
         try {

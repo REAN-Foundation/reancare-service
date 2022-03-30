@@ -4,7 +4,7 @@ import { BloodGlucoseDomainModel } from "../../../../domain.types/clinical/biome
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-export class BloodSugarMapper {
+export class BloodGlucoseMapper {
 
     public static convertJsonObjectToDomainModel = () => {
         const cwd = process.cwd();

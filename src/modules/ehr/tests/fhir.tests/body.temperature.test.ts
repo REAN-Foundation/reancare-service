@@ -1,5 +1,5 @@
 import { TestLoader } from "../test.loader";
-import { TemperatureMapper } from "../test.data.mapper/temperature.mapper";
+import { BodyTemperatureMapper } from "../test.data.mapper/body.temperature.mapper";
 import { PatientMapper } from "../test.data.mapper/patient.ehr.mapper";
 import { DoctorMapper } from "../test.data.mapper/doctor.ehr.mapper";
 
@@ -12,7 +12,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var doctorModel = DoctorMapper.convertJsonObjectToDomainModel();
         var doctorEhrId = await TestLoader.DoctorStore.create(doctorModel);
         
-        var model = TemperatureMapper.convertJsonObjectToDomainModel();
+        var model = BodyTemperatureMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
         model.RecordedByUserId = doctorEhrId;
 

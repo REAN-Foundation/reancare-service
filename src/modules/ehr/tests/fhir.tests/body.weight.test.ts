@@ -1,5 +1,5 @@
 import { TestLoader } from "../test.loader";
-import { BiometricsWeightMapper } from "../test.data.mapper/biometrics.weight.ehr.mapper";
+import { BodyWeightMapper } from "../test.data.mapper/body.weight.ehr.mapper";
 import { PatientMapper } from "../test.data.mapper/patient.ehr.mapper";
 import { DoctorMapper } from "../test.data.mapper/doctor.ehr.mapper";
 
@@ -12,12 +12,12 @@ describe('Observation resource: Storage, retrieval', () => {
         var doctorModel = DoctorMapper.convertJsonObjectToDomainModel();
         var doctorEhrId = await TestLoader.DoctorStore.create(doctorModel);
     
-        var model = BiometricsWeightMapper.convertJsonObjectToDomainModel();
+        var model = BodyWeightMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
         model.RecordedByUserId = doctorEhrId;
 
-        var biometricsWeightEhirId = await TestLoader.BiometricsWeightStore.add(model);
-        var biometricsWeightFhirResource = await TestLoader.BiometricsWeightStore.getById(biometricsWeightEhirId);
+        var biometricsWeightEhirId = await TestLoader.BodyWeightStore.add(model);
+        var biometricsWeightFhirResource = await TestLoader.BodyWeightStore.getById(biometricsWeightEhirId);
 
         //Assertions
 
@@ -44,15 +44,15 @@ describe('Observation resource: Storage, retrieval', () => {
 
     it('Update biometrics weight resource, then updated patient details are returned.', async () => {
 
-        var model = BiometricsWeightMapper.convertJsonObjectToDomainModel();
-        var biometricsWeightEhirId = await TestLoader.BiometricsWeightStore.add(model);
+        var model = BodyWeightMapper.convertJsonObjectToDomainModel();
+        var biometricsWeightEhirId = await TestLoader.BodyWeightStore.add(model);
 
         var expectedRecordDate = '2022-03-03';
         model.RecordDate = new Date(expectedRecordDate);
         model.BodyWeight = 74;
         model.Unit = "Kg";
 
-        var updatedResource = await TestLoader.BiometricsWeightStore.update(biometricsWeightEhirId, model);
+        var updatedResource = await TestLoader.BodyWeightStore.update(biometricsWeightEhirId, model);
 
         //Assertions
         var extractedUnit = updatedResource.component[0].valueQuantity.unit;
@@ -70,18 +70,18 @@ describe('Observation resource: Storage, retrieval', () => {
 
     it('Delete biometrics weight resource, then empty resource is returned for next query.', async () => {
 
-        var model = BiometricsWeightMapper.convertJsonObjectToDomainModel();
-        var biometricsWeightEhirId = await TestLoader.BiometricsWeightStore.add(model);
-        var weightFhirResource = await TestLoader.BiometricsWeightStore.getById(biometricsWeightEhirId);
+        var model = BodyWeightMapper.convertJsonObjectToDomainModel();
+        var biometricsWeightEhirId = await TestLoader.BodyWeightStore.add(model);
+        var weightFhirResource = await TestLoader.BodyWeightStore.getById(biometricsWeightEhirId);
 
         //Before deletetion
         expect(weightFhirResource).toBeTruthy();
 
         //Delete
-        await TestLoader.BiometricsWeightStore.delete(biometricsWeightEhirId);
+        await TestLoader.BodyWeightStore.delete(biometricsWeightEhirId);
 
         //Query after deletion
-        var deletedWeightFhirResource = await TestLoader.BiometricsWeightStore.getById(biometricsWeightEhirId);
+        var deletedWeightFhirResource = await TestLoader.BodyWeightStore.getById(biometricsWeightEhirId);
 
         //Assertions
         expect(deletedWeightFhirResource).toBeFalsy();

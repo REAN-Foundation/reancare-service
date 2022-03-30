@@ -8,11 +8,11 @@ import { GcpDoctorStore } from './doctor.store';
 // import { GcpClinicOrganizationStore } from "./clinic.organization.store";
 // import { GcpDiagnosticLabUserStore } from "./diagnostic.lab.user.store";
 import { GcpBloodPressureStore } from "./blood.pressure.store";
-import { GcpBiometricsWeightStore } from "./biometrics.weight.store";
-import { GcpBloodSugarStore } from "./blood.sugar.store";
+import { GcpBodyWeightStore } from "./body.weight.store";
+import { GcpBloodGlucoseStore } from "./blood.glucose.store";
 // import { GcpBiometricsHeightStore } from "./biometrics.height.store";
 import { GcpPulseStore } from './pulse.store';
-import { GcpTemperatureStore } from './temperature.store';
+import { GcpTemperatureStore } from './body.temperature.store';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -27,8 +27,8 @@ export class GcpFhirInjector {
         // container.register('IClinicOrganizationStore', GcpClinicOrganizationStore);
         // container.register('IDiagnosticLabUserStore', GcpDiagnosticLabUserStore);
         container.register('IBloodPressureStore', GcpBloodPressureStore);
-        container.register('IBiometricsWeightStore', GcpBiometricsWeightStore);
-        container.register('IBloodSugarStore', GcpBloodSugarStore);
+        container.register('IBodyWeightStore', GcpBodyWeightStore);
+        container.register('IBloodGlucoseStore', GcpBloodGlucoseStore);
         // container.register('IBiometricsHeightStore', GcpBiometricsHeightStore);
         container.register('IPulseStore',GcpPulseStore);
         container.register('ITemperatureStore',GcpTemperatureStore);

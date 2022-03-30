@@ -1,8 +1,8 @@
-import { ITemperatureStore } from '../../interfaces/temperature.store.interface';
+import { ITemperatureStore } from '../../interfaces/body.temperature.store.interface';
 import { BodyTemperatureDomainModel } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
 ///////////////////////////////////////////////////////////////////
 
-export class MockTemperatureStore implements ITemperatureStore {
+export class MockBodyTemperatureStore implements ITemperatureStore {
 
     add = async (model: BodyTemperatureDomainModel): Promise<any> => {
         return null;

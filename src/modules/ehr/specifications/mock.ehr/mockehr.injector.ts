@@ -8,11 +8,11 @@ import { MockPatientStore } from "./patient.store";
 // import { MockDoctorStore } from './doctor.store';
 // import { MockPharmacistStore } from './pharmacist.store';
 import { MockBloodPressureStore } from "./blood.pressure.store";
-import { MockBiometricsWeightStore } from "./biometrics.weight.store";
-import { MockBloodSugarStore } from "./blood.sugar.store";
+import { MockBodyWeightStore } from "./body.weight.store";
+import { MockBloodGlucoseStore } from "./blood.glucose.store";
 // import { MockBiometricsHeightStore } from "./biometrics.height.store";
 import { MockPulse } from "./pulse.store";
-import { MockTemperatureStore } from "./temperature.store";
+import { MockBodyTemperatureStore } from "./body.temperature.store";
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -28,11 +28,11 @@ export class MockEhrInjector {
         // container.register('IDoctorStore', MockDoctorStore);
         // container.register('IPharmacistStore', MockPharmacistStore);
         container.register('IBloodPressureStore', MockBloodPressureStore);
-        container.register('IBiometricsWeightStore', MockBiometricsWeightStore);
-        container.register('IBloodSugarStore', MockBloodSugarStore);
+        container.register('IBodyWeightStore', MockBodyWeightStore);
+        container.register('IBloodGlucoseStore', MockBloodGlucoseStore);
         // container.register('IBiometricsHeightStore', MockBiometricsHeightStore);
         container.register('IPulseStore',MockPulse);
-        container.register('ITemperature',MockTemperatureStore);
+        container.register('IBodyTemperature',MockBodyTemperatureStore);
 
     }
 

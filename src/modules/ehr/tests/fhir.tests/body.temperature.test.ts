@@ -44,7 +44,7 @@ describe('Observation resource: Storage, retrieval', () => {
 
     it('Update biometrics temperature resource, then updated patient details are returned.', async () => {
 
-        var model = TemperatureMapper.convertJsonObjectToDomainModel();
+        var model = BodyTemperatureMapper.convertJsonObjectToDomainModel();
         var temperatureEhirId = await TestLoader.TemperatureStore.add(model);
 
         var expectedRecordDate = '2022-03-03';
@@ -70,7 +70,7 @@ describe('Observation resource: Storage, retrieval', () => {
 
     it('Delete biometrics temperature resource, then empty resource is returned for next query.', async () => {
 
-        var model = TemperatureMapper.convertJsonObjectToDomainModel();
+        var model = BodyTemperatureMapper.convertJsonObjectToDomainModel();
         var temperatureEhirId = await TestLoader.TemperatureStore.add(model);
         var temperatureFhirResource = await TestLoader.TemperatureStore.getById(temperatureEhirId);
 

@@ -56,27 +56,34 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
     };
 
     update = async (resourceId: string, updates: DoctorVisitDomainModel): Promise<any> => {
+        try {
 
-        var g = await GcpHelper.getGcpClient();
-        const c = GcpHelper.getGcpFhirConfig();
-        const resourceType = 'Encounter';
+            var g = await GcpHelper.getGcpClient();
+            const c = GcpHelper.getGcpFhirConfig();
+            const resourceType = 'Encounter';
 
-        //Get the existing resource
-        const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
-        var existingResource = await g.projects.locations.datasets.fhirStores.fhir.read(
-            { name: parent }
-        );
-        var data: any = existingResource.data;
+            //Get the existing resource
+            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
+            var existingResource = await g.projects.locations.datasets.fhirStores.fhir.read(
+                { name: parent }
+            );
+            var data: any = existingResource.data;
 
-        //Construct updated body
-        const body: healthcare_v1.Schema$HttpBody = this.updateDoctorVisitFhirResource(updates, data);
-        const updatedResource = await g.projects.locations.datasets.fhirStores.fhir.update({
-            name        : parent,
-            requestBody : body,
-        });
-        var data: any = updatedResource.data;
-        Logger.instance().log(`Updated ${resourceType} resource:\n ${updatedResource.data}`);
-        return data;
+            //Construct updated body
+            const body: healthcare_v1.Schema$HttpBody = this.updateDoctorVisitFhirResource(updates, data);
+            const updatedResource = await g.projects.locations.datasets.fhirStores.fhir.update({
+                name        : parent,
+                requestBody : body,
+            });
+            var data: any = updatedResource.data;
+            Logger.instance().log(`Updated ${resourceType} resource:\n ${updatedResource.data}`);
+            return data;
+
+        }  catch (error) {
+            Logger.instance().log(`Error:: ${JSON.stringify(error, null, 2)}`);
+            throw error;
+        }
+
     };
 
     delete = async (resourceId: string): Promise<any> => {
@@ -92,7 +99,7 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
             );
         }
         catch (error) {
-            Logger.instance().log(error.message);
+            Logger.instance().log(`Error:: ${JSON.stringify(error, null, 2)}`);
             throw error;
         }
     };
@@ -111,10 +118,16 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
                 display : "ambulatory"
             },
             period : {
-                start : "",
-                end   : ""
+                start : "2022-03-28",
+                end   : "2022-03-30"
             },
-            participant : [],
+            participant : [
+                {
+                    "individual" : {
+                        "reference" : "Practitioner/f201"
+                    }
+                }
+            ],
         };
 
         if (model.EhrId != null) {
@@ -156,22 +169,14 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
             };
         }
 
-        /*if (updates.VisitEhirId != null) {
-            existingResource['VisitId'] = updates.VisitEhrId
-        }*/
+        if (updates.StartDate != null) {
+            existingResource['period.start'] = Helper.formatDate(updates.StartDate);
+        }
 
-        // if (updates.RecordDate != null) {
-        //     existingResource['effectiveDateTime'] = Helper.formatDate(updates.RecordDate)
-        // }
-
-        // if (updates.RecordedByEhrId != null) {
-        //     existingResource['performer'] = [
-        //         {
-        //             reference: `Practitioner/${updates.RecordedByEhrId}`
-        //         }
-        //     ]
-        // }
-
+        if (updates.EndDate != null) {
+            existingResource['period.end'] = Helper.formatDate(updates.EndDate);
+        }
+ 
         return existingResource;
     }
 

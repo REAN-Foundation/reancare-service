@@ -24,7 +24,7 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
             //console.log(`Created FHIR resource ${resourceStr}`);
             return data.id;
         } catch (error) {
-            Logger.instance().log(`Error:: ${JSON.stringify(error)}`);
+            Logger.instance().log(`Error:: ${JSON.stringify(error.message)}`);
             throw error;
         }
     };
@@ -55,27 +55,34 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
     };
     
     update = async (resourceId:string, updates: ImagingStudyDomainModel): Promise<any> => {
+        try {
 
-        var g = await GcpHelper.getGcpClient();
-        const c = GcpHelper.getGcpFhirConfig();
-        const resourceType = 'ImagingStudy';
+            var g = await GcpHelper.getGcpClient();
+            const c = GcpHelper.getGcpFhirConfig();
+            const resourceType = 'ImagingStudy';
 
-        //Get the existing resource
-        const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
-        var existingResource = await g.projects.locations.datasets.fhirStores.fhir.read(
-            { name: parent }
-        );
-        var data:any = existingResource.data;
+            //Get the existing resource
+            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
+            var existingResource = await g.projects.locations.datasets.fhirStores.fhir.read(
+                { name: parent }
+            );
+            var data:any = existingResource.data;
 
-        //Construct updated body
-        const body: healthcare_v1.Schema$HttpBody = this.updateImagingStudyFhirResource(updates, data);
-        const updatedResource = await g.projects.locations.datasets.fhirStores.fhir.update({
-            name        : parent,
-            requestBody : body,
-        });
-        var data: any = updatedResource.data;
-        Logger.instance().log(`Updated ${resourceType} resource:\n ${updatedResource.data}`);
-        return data;
+            //Construct updated body
+            const body: healthcare_v1.Schema$HttpBody = this.updateImagingStudyFhirResource(updates, data);
+            const updatedResource = await g.projects.locations.datasets.fhirStores.fhir.update({
+                name        : parent,
+                requestBody : body,
+            });
+            var data: any = updatedResource.data;
+            Logger.instance().log(`Updated ${resourceType} resource:\n ${updatedResource.data}`);
+            return data;
+      
+        } catch (error) {
+            Logger.instance().log(`Error:: ${JSON.stringify(error, null, 2)}`);
+            throw error;
+        }
+    
     };
 
     delete = async (resourceId: string): Promise<any> => {
@@ -89,8 +96,8 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
             await g.projects.locations.datasets.fhirStores.fhir.delete(
                 { name: parent }
             );
-        } catch (error) {
-            Logger.instance().log(error.message);
+        }  catch (error) {
+            Logger.instance().log(`Error:: ${JSON.stringify(error, null, 2)}`);
             throw error;
         }
     };
@@ -113,6 +120,8 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
                     },
                     description       : "CT Surview 180",
                     numberOfInstances : 1,
+                    numberOfSeries    : 1,
+                    started           : "2022-03-30T11:01:20+03:00",
                     bodySite          : {
                         system  : "http://snomed.info/sct",
                         code    : "67734004",
@@ -178,7 +187,19 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
         if (updates.StudyDate != null) {
             existingResource['started'] = Helper.formatDate(updates.StudyDate);
         }
-        
+
+        if (updates.BodySite != null) {
+            existingResource['bodySite'] = Helper.formatDate(updates.BodySite);
+        }
+
+        if (updates.SeriesCount != null) {
+            existingResource['numberOfSeries'] = Helper.formatDate(updates.SeriesCount);
+        }
+
+        if (updates.InstanceCount != null) {
+            existingResource['numberOfInstances'] = Helper.formatDate(updates.InstanceCount);
+        }
+         
         return existingResource;
     }
 

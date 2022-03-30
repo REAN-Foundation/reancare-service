@@ -17,7 +17,7 @@ export class BodyTemperatureMapper {
             //VisitId: temperatureObj.VisitId,
             //VisitEhrId: temperatureObj.VisitEhrId,
             Unit             : temperatureObj.Unit,
-            //RecordedBy: temperatureObj.RecordedBy,
+            RecordedByEhrId  : temperatureObj.RecordedByEhrId,
             RecordedByUserId : temperatureObj.RecordedByUserId,
             RecordDate       : temperatureObj.RecordDate,
             BodyTemperature  : temperatureObj.BodyTemperature,

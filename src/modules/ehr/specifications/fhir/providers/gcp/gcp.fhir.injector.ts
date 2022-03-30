@@ -4,6 +4,7 @@ import { DependencyContainer } from 'tsyringe';
 import { GcpStorageService } from "./storage.service";
 import { GcpPatientStore } from "./patient.store";
 import { GcpDoctorStore } from './doctor.store';
+import { GcpLabVisitStore } from './lab.visit.store';
 
 // import { GcpClinicOrganizationStore } from "./clinic.organization.store";
 // import { GcpDiagnosticLabUserStore } from "./diagnostic.lab.user.store";
@@ -22,6 +23,7 @@ export class GcpFhirInjector {
         container.register('IStorageService', GcpStorageService);
         container.register('IPatientStore', GcpPatientStore);
         container.register('IDoctorStore', GcpDoctorStore);
+        container.register('ILabVisitStore', GcpLabVisitStore);
 
         // container.register('IClinicOrganizationStore', GcpClinicOrganizationStore);
         // container.register('IDiagnosticLabUserStore', GcpDiagnosticLabUserStore);

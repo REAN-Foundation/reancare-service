@@ -6,7 +6,7 @@ import { DoctorStore } from '../services/doctor.store';
 import { Logger } from '../../../common/logger';
 import { ConfigurationManager } from '../../../config/configuration.manager';
 
-// import { ClinicOrganizationStore } from '../services/clinic.organization.store';
+import { LabVisitStore } from '../services/lab.visit.store';
 // import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
 // import { PharmacistStore } from '../services/pharmacist.store';
 // import { BloodPressureStore } from '../services/blood.pressure.store';
@@ -35,7 +35,7 @@ export class TestLoader {
 
     private static _doctorStore: DoctorStore = container.resolve(DoctorStore);
 
-    // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
+    private static _labVisitStore: LabVisitStore = container.resolve(LabVisitStore);
     // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
     // private static _pharmacistStore: PharmacistStore = container.resolve(PharmacistStore);
     // private static _bloodPressureStore: BloodPressureStore = container.resolve(BloodPressureStore);
@@ -85,9 +85,9 @@ export class TestLoader {
     //     return TestLoader._biometricsHeightStore;
     // }
 
-    // public static get ClinicOrganizationStore() {
-    //     return TestLoader._clinicOrganizationStore;
-    // }
+    public static get LabVisitStore() {
+        return TestLoader._labVisitStore;
+    }
 
     //#endregion
 
@@ -99,7 +99,7 @@ export class TestLoader {
             TestLoader._patientStore = container.resolve(PatientStore);
             TestLoader._doctorStore = container.resolve(DoctorStore);
 
-            // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
+            TestLoader._labVisitStore = container.resolve(LabVisitStore);
             // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
             // TestLoader._bloodPressureStore = container.resolve(BloodPressureStore);
             // TestLoader._bloodSugarStore = container.resolve(BloodSugarStore);

@@ -38,14 +38,16 @@
             "Service": "AhaCarePlanService",
             "Plans": [
                 {
-                    "ProviderName": "Core",
-                    "ProviderCode": "Core",
+                    "Provider" : "AHA",
+                    "Name": "Core",
+                    "Code": "Core",
                     "DisplayName": "AHA-Core",
                     "DefaultDurationDays": 84
                 },
                 {
-                    "ProviderName": "Heart Failure",
-                    "ProviderCode": "HeartFailure",
+                    "Provider" : "AHA",
+                    "Name": "Heart Failure",
+                    "Code": "HeartFailure",
                     "DisplayName": "AHA-Heart Failure",
                     "DefaultDurationDays": 84
                 }

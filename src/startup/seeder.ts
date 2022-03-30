@@ -495,9 +495,9 @@ export class Seeder {
 
         Logger.instance().log('Seeding health priority types...');
 
-        for (const priorityTYpe in HealthPriorityTypeList) {
+        for (const priorityType of HealthPriorityTypeList) {
             const model: HealthPriorityTypeDomainModel = {
-                Type : priorityTYpe,
+                Type : priorityType,
                 Tags : ["HeartFailure"]
             };
             await this._healthPriorityService.createType(model);

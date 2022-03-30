@@ -21946,7 +21946,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"value": "Bearer {{DOCTOR_USER_JWT}}",
 										"type": "text"
 									},
 									{
@@ -22174,7 +22174,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/clinical/orders/search?type=DrugOrder&orderDateFrom=2021-09-22&orderDateFrom=2021-10-23&orderBy=Type&order=ascending&pageIndex=0&itemsPerPage=25&patientUserId={{PATIENT_USER_ID}}",
+									"raw": "{{BASE_URL}}/clinical/orders/search?type=DrugOrder&orderBy=Type&order=ascending&pageIndex=0&itemsPerPage=25&patientUserId={{PATIENT_USER_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -22190,11 +22190,13 @@
 										},
 										{
 											"key": "orderDateFrom",
-											"value": "2021-09-22"
+											"value": "2021-09-22",
+											"disabled": true
 										},
 										{
 											"key": "orderDateFrom",
-											"value": "2021-10-23"
+											"value": "2021-10-23",
+											"disabled": true
 										},
 										{
 											"key": "orderBy",

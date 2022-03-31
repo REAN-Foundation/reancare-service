@@ -7,7 +7,7 @@ import { Logger } from '../../../common/logger';
 import { ConfigurationManager } from '../../../config/configuration.manager';
 
 import { LabVisitStore } from '../services/lab.visit.store';
-// import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
+import { DiagnosticConditionStore } from '../services/diagnostic.condition.store';
 // import { PharmacistStore } from '../services/pharmacist.store';
 // import { BloodPressureStore } from '../services/blood.pressure.store';
 // import { BiometricsWeightStore } from '../services/biometrics.weight.store';
@@ -36,7 +36,8 @@ export class TestLoader {
     private static _doctorStore: DoctorStore = container.resolve(DoctorStore);
 
     private static _labVisitStore: LabVisitStore = container.resolve(LabVisitStore);
-    // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
+    
+    private static _diagnosticConditionStore: DiagnosticConditionStore = container.resolve(DiagnosticConditionStore);
     // private static _pharmacistStore: PharmacistStore = container.resolve(PharmacistStore);
     // private static _bloodPressureStore: BloodPressureStore = container.resolve(BloodPressureStore);
     // private static _biometricsWeightStore: BiometricsWeightStore = container.resolve(BiometricsWeightStore);
@@ -61,9 +62,9 @@ export class TestLoader {
         return TestLoader._doctorStore;
     }
 
-    // public static get DiagnosticLabUserStore() {
-    //     return TestLoader._diagnosticlabuserStore;
-    // }
+    public static get DiagnosticConditionStore() {
+        return TestLoader._diagnosticConditionStore;
+    }
 
     // public static get PharmacistStore() {
     //     return TestLoader._pharmacistStore;
@@ -100,7 +101,7 @@ export class TestLoader {
             TestLoader._doctorStore = container.resolve(DoctorStore);
 
             TestLoader._labVisitStore = container.resolve(LabVisitStore);
-            // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
+            TestLoader._diagnosticConditionStore = container.resolve(DiagnosticConditionStore);
             // TestLoader._bloodPressureStore = container.resolve(BloodPressureStore);
             // TestLoader._bloodSugarStore = container.resolve(BloodSugarStore);
             // TestLoader._biometricsHeightStore = container.resolve(BiometricsHeightStore);

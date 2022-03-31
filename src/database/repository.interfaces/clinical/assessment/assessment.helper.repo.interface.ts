@@ -26,6 +26,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export interface IAssessmentHelperRepo {
+    
     getChildrenConditions(id: string): CAssessmentPathCondition[] | PromiseLike<CAssessmentPathCondition[]>;
     
     getNodeListChildren(nodeId: string): Promise<CAssessmentNode[]>;

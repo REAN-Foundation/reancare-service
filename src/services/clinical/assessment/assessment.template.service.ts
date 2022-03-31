@@ -1,3 +1,4 @@
+import { Helper } from "../../../common/helper";
 import { inject, injectable } from "tsyringe";
 import { Logger } from "../../../common/logger";
 import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
@@ -20,11 +21,16 @@ export class AssessmentTemplateService {
     ) {}
 
     public create = async (assessmentDomainModel: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
+        if (!assessmentDomainModel.DisplayCode) {
+            assessmentDomainModel.DisplayCode = Helper.generateDisplayCode('AssessmtTmpl');
+        }
         return await this._assessmentTemplateRepo.create(assessmentDomainModel);
     };
 
     public getById = async (id: uuid): Promise<AssessmentTemplateDto> => {
-        return await this._assessmentTemplateRepo.getById(id);
+        var templateDto = await this._assessmentTemplateRepo.getById(id);
+        
+        return templateDto;
     };
 
     public search = async (filters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchResults> => {

@@ -156,6 +156,9 @@ export class AssessmentTemplateController extends BaseController{
             if (assessmentTemplate == null) {
                 throw new ApiError(404, 'Cannot find assessment Template!');
             }
+            // if (!assessmentTemplate.FileResourceId) {
+
+            // }
             const localDestination = await this._fileResourceService.downloadById(assessmentTemplate.FileResourceId);
             if (localDestination == null) {
                 throw new ApiError(404, 'File resource not found.');

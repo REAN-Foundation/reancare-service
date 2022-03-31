@@ -60,6 +60,7 @@ export class AhaAssessmentConverter {
 
     private createOptionBasedQuestionNode(
         item: any, template: CAssessmentTemplate, items: any): CAssessmentQuestionNode {
+        
         //Option based question node has options associated and
         //may have multiple paths connected based on those options
         var node = new CAssessmentQuestionNode();

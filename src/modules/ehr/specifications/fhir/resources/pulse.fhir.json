@@ -32,6 +32,13 @@
     "subject": {
       "reference": "Patient/example"
     },
+    "performer": [
+      {
+        "reference" : "https://www.aiims.edu/images/pdf/CV.pdf",
+        "type"      : "Practitioner",
+        "id"       : "model.RecordedByUserId"
+      }
+    ],
     "effectiveDateTime": "1999-07-02",
     "valueQuantity": {
       "value": 44,

@@ -26,7 +26,7 @@ export class GcpBloodPressureStore implements IBloodPressureStore {
             
             return data.id;
         } catch (error) {
-            Logger.instance().log(error.message);
+            Logger.instance().log(`Error message:: ${JSON.stringify(error.message)}`);
             throw error;
         }
     };
@@ -138,7 +138,10 @@ export class GcpBloodPressureStore implements IBloodPressureStore {
         if (model.RecordedByUserId != null) {
             resource['performer'] = [
                 {
-                    reference : `Practitioner/${model.RecordedByUserId}`
+                    // reference   : `Practitioner/${model.RecordedByUserId}`,
+                    reference : "https://www.aiims.edu/images/pdf/CV.pdf",
+                    type      : "Practitioner",
+                    id        : model.RecordedByUserId
                 }
             ];
         }
@@ -213,12 +216,12 @@ export class GcpBloodPressureStore implements IBloodPressureStore {
         if (updates.RecordDate != null) {
             existingResource['effectiveDateTime'] = Helper.formatDate(updates.RecordDate);
         }
-
         if (updates.RecordedByUserId != null) {
             existingResource['performer'] = [
                 {
-                    reference : `Practitioner/${updates.RecordedByUserId}`
-                }
+                    reference : "https://www.aiims.edu/images/pdf/CV.pdf",
+                    type      : "Practitioner",
+                    id        : updates.RecordedByUserId                }
             ];
         }
 

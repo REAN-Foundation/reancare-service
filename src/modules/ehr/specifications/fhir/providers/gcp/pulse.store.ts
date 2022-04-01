@@ -138,7 +138,10 @@ export class GcpPulseStore implements IPulseStore {
         if (model.RecordedByUserId != null) {
             resource['performer'] = [
                 {
-                    reference : `Practitioner/${model.RecordedByUserId}`
+                    // reference   : `Practitioner/${model.RecordedByUserId}`,
+                    reference : "https://www.aiims.edu/images/pdf/CV.pdf",
+                    type      : "Practitioner",
+                    id        : model.RecordedByUserId
                 }
             ];
         }
@@ -188,8 +191,9 @@ export class GcpPulseStore implements IPulseStore {
         if (updates.RecordedByUserId != null) {
             existingResource['performer'] = [
                 {
-                    reference : `Practitioner/${updates.RecordedByUserId}`
-                }
+                    reference : "https://www.aiims.edu/images/pdf/CV.pdf",
+                    type      : "Practitioner",
+                    id        : updates.RecordedByUserId                }
             ];
         }
 

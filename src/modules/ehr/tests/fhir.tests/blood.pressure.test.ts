@@ -2,6 +2,7 @@ import { TestLoader } from "../test.loader";
 import { BloodPressureMapper } from "../test.data.mapper/blood.pressure.ehr.mapper";
 import { PatientMapper } from  '../test.data.mapper/patient.ehr.mapper';
 import { DoctorMapper } from '../test.data.mapper/doctor.ehr.mapper';
+import { Logger } from "../../../../common/logger";
 
 describe('Observation resource: Storage, retrieval', () => {
     it('Given blood pressure domain model, store observation resource to fhir interface, then returned blood pressure details are valid.', async () => {
@@ -14,10 +15,10 @@ describe('Observation resource: Storage, retrieval', () => {
         
         var model = BloodPressureMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
-        model.RecordedByUserId = doctorEhrId;
 
         var bloodPressureEhirId = await TestLoader.BloodPressureStore.add(model);
         var bloodPressureFhirResource = await TestLoader.BloodPressureStore.getById(bloodPressureEhirId);
+        Logger.instance().log(`blood pressure resource: ${JSON.stringify(bloodPressureFhirResource)}`);
 
         //Assertions
 
@@ -30,7 +31,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var extractedRecordDate = bloodPressureFhirResource.effectiveDateTime;
         expect(extractedRecordDate).toEqual(model.RecordDate);
 
-        var extractedRecordedByEhrId = bloodPressureFhirResource.performer[0].reference.split('/')[1];
+        var extractedRecordedByEhrId = bloodPressureFhirResource.performer[0].id;
         expect(extractedRecordedByEhrId).toEqual(model.RecordedByUserId);
 
         var extractedBloodPressureSystolic = bloodPressureFhirResource.component[0].valueQuantity.value;
@@ -65,7 +66,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var extractedRecordDate = updatedResource.effectiveDateTime;
         expect(extractedRecordDate).toEqual(expectedRecordDate);
 
-        var extractedRecordedByEhrId = updatedResource.performer[0].reference.split('/')[1];
+        var extractedRecordedByEhrId = updatedResource.performer[0].id;
         expect(extractedRecordedByEhrId).toEqual(model.RecordedByUserId);
 
         var extractedBloodPressureSystolic = updatedResource.component[0].valueQuantity.value;

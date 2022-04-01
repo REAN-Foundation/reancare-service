@@ -30,7 +30,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var extractedRecordDate = temperatureFhirResource.effectiveDateTime;
         expect(extractedRecordDate).toEqual(model.RecordDate);
 
-        var extractedRecordedByEhrId = temperatureFhirResource.performer[0].reference.split('/')[1];
+        var extractedRecordedByEhrId = temperatureFhirResource.performer[0].id;
         expect(extractedRecordedByEhrId).toEqual(model.RecordedByUserId);
 
         var extractedTemperature = temperatureFhirResource.component[0].valueQuantity.value;
@@ -61,7 +61,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var extractedRecordDate = updatedResource.effectiveDateTime;
         expect(extractedRecordDate).toEqual(expectedRecordDate);
 
-        var extractedRecordedByEhrId = updatedResource.performer[0].reference.split('/')[1];
+        var extractedRecordedByEhrId = updatedResource.performer[0].id;
         expect(extractedRecordedByEhrId).toEqual(model.RecordedByUserId);
 
         var extractedBiometricsWeight = updatedResource.component[0].valueQuantity.value;

@@ -14,7 +14,6 @@ describe('Observation resource: Storage, retrieval', () => {
         
         var model = BloodGlucoseMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
-        model.RecordedByUserId = doctorEhrId;
 
         var bloodSugarEhirId = await TestLoader.BloodGlucoseStore.add(model);
         var bloodSugarFhirResource = await TestLoader.BloodGlucoseStore.getById(bloodSugarEhirId);
@@ -30,7 +29,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var extractedRecordDate = bloodSugarFhirResource.effectiveDateTime;
         expect(extractedRecordDate).toEqual(model.RecordDate);
 
-        var extractedRecordedByEhrId = bloodSugarFhirResource.performer[0].reference.split('/')[1];
+        var extractedRecordedByEhrId = bloodSugarFhirResource.performer[0].id;
         expect(extractedRecordedByEhrId).toEqual(model.RecordedByUserId);
 
         var extractedBloodGlucose = bloodSugarFhirResource.component[0].valueQuantity.value;
@@ -61,7 +60,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var extractedRecordDate = updatedResource.effectiveDateTime;
         expect(extractedRecordDate).toEqual(expectedRecordDate);
 
-        var extractedRecordedByEhrId = updatedResource.performer[0].reference.split('/')[1];
+        var extractedRecordedByEhrId = updatedResource.performer[0].id;
         expect(extractedRecordedByEhrId).toEqual(model.RecordedByUserId);
 
         var extractedBiometricsWeight = updatedResource.component[0].valueQuantity.value;

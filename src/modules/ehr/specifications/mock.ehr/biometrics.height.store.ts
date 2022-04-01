@@ -13,10 +13,6 @@ export class MockBiometricsHeightStore implements IBiometricsHeightStore {
         return null;
     };
     
-    search = async (filter: any): Promise<any> => {
-        return null;
-    };
-
     update = async (updates: any): Promise<any> => {
         return null;
     };

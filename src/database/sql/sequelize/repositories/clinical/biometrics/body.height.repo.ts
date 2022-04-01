@@ -16,6 +16,7 @@ export class BodyHeightRepo implements IBodyHeightRepo {
         try {
             const entity = {
                 PatientUserId : BodyHeightDomainModel.PatientUserId,
+                EhrId         : BodyHeightDomainModel.EhrId,
                 BodyHeight    : BodyHeightDomainModel.BodyHeight ?? 0,
                 Unit          : BodyHeightDomainModel.Unit ?? 'cm'
             };

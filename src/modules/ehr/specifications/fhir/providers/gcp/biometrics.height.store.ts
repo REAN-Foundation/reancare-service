@@ -178,12 +178,6 @@ export class GcpBiometricsHeightStore implements IBiometricsHeightStore {
 
         existingResource.resourceType = "Observation";
 
-        if (updates.EhrId != null) {
-            existingResource['subject'] = {
-                reference : `Patient/${updates.EhrId}`
-            };
-        }
-
         if (updates.RecordDate != null) {
             var str = Helper.formatDate(updates.RecordDate);
             existingResource.effectiveDateTime = str;

@@ -50,7 +50,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var expectedRecordDate = '2022-03-03';
         model.RecordDate = new Date(expectedRecordDate);
         model.BodyHeight = 154;
-        model.Unit = "Kg";
+        model.Unit = "cm";
 
         var updatedResource = await TestLoader.BiometricsHeightStore.update(biometricsHeightEhirId, model);
 

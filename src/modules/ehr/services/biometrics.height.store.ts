@@ -1,7 +1,6 @@
 import { IBiometricsHeightStore } from '../interfaces/biometrics.height.store.interface';
 import { injectable, inject } from "tsyringe";
 import { BodyHeightDomainModel } from '../../../domain.types/clinical/biometrics/body.height/body.height.domain.model';
-import { BodyHeightSearchFilters } from '../../../domain.types/clinical/biometrics/body.height/body.height.search.types';
 
 ///////////////////////////////////////////////////////////////////
 
@@ -12,10 +11,6 @@ export class BiometricsHeightStore {
 
     add = async (model: BodyHeightDomainModel): Promise<any> => {
         return await this._service.add(model);
-    }
-
-    search = async (filter: BodyHeightSearchFilters): Promise<any> => {
-        return await this._service.search(filter);
     }
 
     getById = async (id: string): Promise<any> => {

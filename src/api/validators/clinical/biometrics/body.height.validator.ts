@@ -131,6 +131,7 @@ export class BodyHeightValidator {
         await body('BodyHeight').exists()
             .trim()
             .escape()
+            .toFloat()
             .run(request);
 
         await body('Unit').exists()

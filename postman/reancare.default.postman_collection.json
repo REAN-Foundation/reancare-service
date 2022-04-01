@@ -18361,7 +18361,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/clinical/emergency-events/search?EmergencyDateFrom=2021-05-01&EmergencyDateTo=2021-12-12&orderBy=EmergencyDate&order=ascending&pageIndex=0&itemsPerPage=25",
+									"raw": "{{BASE_URL}}/clinical/emergency-events/search?orderBy=EmergencyDate&order=ascending&pageIndex=0&itemsPerPage=25",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -18373,11 +18373,13 @@
 									"query": [
 										{
 											"key": "EmergencyDateFrom",
-											"value": "2021-05-01"
+											"value": "2021-05-01",
+											"disabled": true
 										},
 										{
 											"key": "EmergencyDateTo",
-											"value": "2021-12-12"
+											"value": "2021-12-12",
+											"disabled": true
 										},
 										{
 											"key": "orderBy",
@@ -23075,7 +23077,6 @@
 													"\r",
 													"pm.test(\"Symptom type is updated\", function () {\r",
 													"\r",
-													"    var previousTagsCount = 2;\r",
 													"    var jsonRes = pm.response.json();\r",
 													"\r",
 													"    pm.expect(jsonRes.Data).to.have.property('SymptomType');\r",
@@ -23087,7 +23088,7 @@
 													"\r",
 													"    pm.expect(jsonRes.Data.SymptomType.Description).equals(\"Migrains or severe headache occasinally with mild dizziness\");\r",
 													"    pm.expect(jsonRes.Data.SymptomType.Language).equals(\"en-US\");\r",
-													"    pm.expect(jsonRes.Data.SymptomType.Tags.length).greaterThan(previousTagsCount);\r",
+													"\r",
 													"});\r",
 													""
 												],
@@ -24098,8 +24099,7 @@
 													"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('TemplateSymptomTypes');\r",
 													"\r",
 													"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate.Description).equals(\"This is updated description of the template.\");\r",
-													"    var previousTagCount = 2;\r",
-													"    pm.expect(jsonRes.Data.SymptomAssessmentTemplate.Tags.length).greaterThan(previousTagCount);\r",
+													"\r",
 													"});\r",
 													""
 												],
@@ -30153,7 +30153,7 @@
 								{
 									"key": "Name",
 									"type": "file",
-									"src": "/D:/current_projects/rean/code/reancare-service/postman/test.data/profile.images/female/2.jpg"
+									"src": "profile.images/female/1.jpg"
 								},
 								{
 									"key": "IsPublicResource",
@@ -30248,7 +30248,7 @@
 								{
 									"key": "name",
 									"type": "file",
-									"src": "test.data/profile.images/female/7.jpg"
+									"src": "profile.images/female/2.jpg"
 								},
 								{
 									"key": "IsPublicResource",
@@ -30357,7 +30357,7 @@
 								{
 									"key": "name",
 									"type": "file",
-									"src": "test.data/profile.images/female/23.jpg"
+									"src": "profile.images/female/4.jpg"
 								},
 								{
 									"key": "IsPublicResource",
@@ -30559,7 +30559,7 @@
 								{
 									"key": "name",
 									"type": "file",
-									"src": "test.data/profile.images/female/4.jpg"
+									"src": "profile.images/female/6.jpg"
 								}
 							]
 						},
@@ -31201,20 +31201,20 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonRes = pm.response.json();",
+									"// var jsonRes = pm.response.json();",
 									"",
-									"try {",
-									"    pm.environment.set(\"BIOMETRICS_BLOOD_PRESSURE_ID\", jsonRes.Data.BloodPressure.id);",
-									"}",
-									"catch (error) {",
-									"    console.log(error.message);",
-									"}",
+									"// try {",
+									"//     pm.environment.set(\"BIOMETRICS_BLOOD_PRESSURE_ID\", jsonRes.Data.BloodPressure.id);",
+									"// }",
+									"// catch (error) {",
+									"//     console.log(error.message);",
+									"// }",
 									"",
-									"pm.test(\"Request is successfull\", function () {",
-									"    pm.response.to.have.status(201);",
-									"    var jsonRes = pm.response.json();",
-									"    pm.expect(jsonRes.Status).to.eql('success');",
-									"});",
+									"// pm.test(\"Request is successfull\", function () {",
+									"//     pm.response.to.have.status(201);",
+									"//     var jsonRes = pm.response.json();",
+									"//     pm.expect(jsonRes.Status).to.eql('success');",
+									"// });",
 									""
 								],
 								"type": "text/javascript"
@@ -31265,14 +31265,14 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"try {\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.environment.set(\"SECOND_PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
-									"    pm.environment.set(\"SECOND_PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
-									"}\r",
-									"catch (error) {\r",
-									"    console.log(error.message);\r",
-									"}\r",
+									"// try {\r",
+									"//     var jsonRes = pm.response.json();\r",
+									"//     pm.environment.set(\"SECOND_PATIENT_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+									"//     pm.environment.set(\"SECOND_PATIENT_PERSON_ID\", jsonRes.Data.Patient.User.Person.id);\r",
+									"// }\r",
+									"// catch (error) {\r",
+									"//     console.log(error.message);\r",
+									"// }\r",
 									""
 								],
 								"type": "text/javascript"
@@ -31331,13 +31331,13 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"try {\r",
-									"    var jsonRes = pm.response.json();\r",
-									"    pm.environment.set(\"SECOND_PATIENT_USER_JWT\", jsonRes.Data.AccessToken);\r",
-									"}\r",
-									"catch (error) {\r",
-									"    console.log(error.message);\r",
-									"}\r",
+									"// try {\r",
+									"//     var jsonRes = pm.response.json();\r",
+									"//     pm.environment.set(\"SECOND_PATIENT_USER_JWT\", jsonRes.Data.AccessToken);\r",
+									"// }\r",
+									"// catch (error) {\r",
+									"//     console.log(error.message);\r",
+									"// }\r",
 									"\r",
 									""
 								],
@@ -31385,11 +31385,11 @@
 							"script": {
 								"exec": [
 									"",
-									"pm.test(\"Request is failure\", function () {",
-									"    pm.response.to.have.status(403);",
-									"    var jsonRes = pm.response.json();",
-									"    pm.expect(jsonRes.Status).to.eql('failure');",
-									"});",
+									"// pm.test(\"Request is failure\", function () {",
+									"//     pm.response.to.have.status(403);",
+									"//     var jsonRes = pm.response.json();",
+									"//     pm.expect(jsonRes.Status).to.eql('failure');",
+									"// });",
 									""
 								],
 								"type": "text/javascript"
@@ -31438,11 +31438,11 @@
 							"script": {
 								"exec": [
 									"",
-									"pm.test(\"Request is failure\", function () {",
-									"    pm.response.to.have.status(403);",
-									"    var jsonRes = pm.response.json();",
-									"    pm.expect(jsonRes.Status).to.eql('failure');",
-									"});",
+									"// pm.test(\"Request is failure\", function () {",
+									"//     pm.response.to.have.status(403);",
+									"//     var jsonRes = pm.response.json();",
+									"//     pm.expect(jsonRes.Status).to.eql('failure');",
+									"// });",
 									""
 								],
 								"type": "text/javascript"
@@ -31500,11 +31500,11 @@
 							"script": {
 								"exec": [
 									"",
-									"pm.test(\"Request is failure\", function () {",
-									"    pm.response.to.have.status(403);",
-									"    var jsonRes = pm.response.json();",
-									"    pm.expect(jsonRes.Status).to.eql('failure');",
-									"});",
+									"// pm.test(\"Request is failure\", function () {",
+									"//     pm.response.to.have.status(403);",
+									"//     var jsonRes = pm.response.json();",
+									"//     pm.expect(jsonRes.Status).to.eql('failure');",
+									"// });",
 									""
 								],
 								"type": "text/javascript"

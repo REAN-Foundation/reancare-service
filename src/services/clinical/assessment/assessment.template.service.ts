@@ -67,4 +67,16 @@ export class AssessmentTemplateService {
         return await this._assessmentHelperRepo.addTemplate(template);
     };
 
+    getNodeById = async (nodeId: string): Promise<any> => {
+        throw new Error('Method not implemented.');
+    };
+
+    deleteNode = async (nodeId: string): Promise<boolean> => {
+        throw new Error('Method not implemented.');
+    };
+
+    addNode = async (model: any) => {
+        throw new Error('Method not implemented.');
+    }
+
 }

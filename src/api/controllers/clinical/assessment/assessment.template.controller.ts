@@ -11,6 +11,10 @@ import { BaseController } from '../../base.controller';
 import { FileResourceValidator } from '../../../validators/file.resource.validator';
 import { FileResourceService } from '../../../../services/file.resource.service';
 import { Helper } from '../../../../common/helper';
+import { CAssessmentNode } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { CAssessmentQuestionNode } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { CAssessmentMessageNode } from '../../../../domain.types/clinical/assessment/assessment.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -238,7 +242,9 @@ export class AssessmentTemplateController extends BaseController{
             
             await this.setContext('AssessmentTemplate.AddNode', request, response);
 
-            const model = await this._validator.addNode(request);
+            const model:CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode
+                = await this._validator.addNode(request);
+
             const assessmentNode = await this._service.addNode(model);
             if (assessmentNode == null) {
                 throw new ApiError(400, 'Cannot create record for assessment node!');
@@ -258,8 +264,8 @@ export class AssessmentTemplateController extends BaseController{
             
             await this.setContext('AssessmentTemplate.DeleteNode', request, response);
 
-            const nodeId = await this._validator.getParamUuid(request, 'nodeId');
-            const deleted = await this._service.deleteNode(nodeId);
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const deleted: boolean = await this._service.deleteNode(nodeId);
             if (!deleted) {
                 throw new ApiError(400, 'Cannot remove record for assessment node!');
             }
@@ -278,8 +284,8 @@ export class AssessmentTemplateController extends BaseController{
             
             await this.setContext('AssessmentTemplate.GetNodeById', request, response);
 
-            const nodeId = await this._validator.getParamUuid(request, 'nodeId');
-            const assessmentNode = await this._service.getNodeById(nodeId);
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const assessmentNode: CAssessmentNode = await this._service.getNodeById(nodeId);
             if (assessmentNode == null) {
                 throw new ApiError(400, 'Cannot retrieve record for assessment node!');
             }

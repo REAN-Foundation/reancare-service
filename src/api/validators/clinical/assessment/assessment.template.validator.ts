@@ -1,7 +1,9 @@
 import express from 'express';
+import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQueryOption, CAssessmentQuestionNode } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.template.search.types';
 import { BaseValidator, Where } from '../../base.validator';
+import { Helper } from '../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -90,6 +92,80 @@ export class AssessmentTemplateValidator extends BaseValidator {
     importFromJson = async (request: express.Request): Promise<AssessmentTemplateDomainModel> => {
         await this.validateCreateBody(request);
         return this.getDomainModel(request);
+    };
+
+    addNode = async (request: express.Request):
+        Promise<CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode> => {
+        
+        var templateId = await this.getParamUuid(request, 'id');
+        await this.validateUuid(request, 'ParentNodeId', Where.Body, false, true);
+        await this.validateString(request, 'NodeType', Where.Body, true, false);
+        await this.validateString(request, 'Title', Where.Body, true, false);
+        await this.validateString(request, 'Description', Where.Body, false, true);
+        await this.validateString(request, 'QueryResponseType', Where.Body, false, false);
+        await this.validateArray(request, 'Options', Where.Body, false, false);
+        await this.validateDecimal(request, 'Score', Where.Body, false, false);
+    
+        this.validateRequest(request);
+        
+        if (request.body.NodeType === AssessmentNodeType.Question) {
+            var questionNode : CAssessmentQuestionNode = {
+                ParentNodeId      : request.body.ParentNodeId,
+                NodeType          : AssessmentNodeType.Question,
+                QueryResponseType : request.body.QueryResponseType,
+                Required          : true,
+                ProviderGivenId   : request.body.ProviderGivenId ?? null,
+                ProviderGivenCode : request.body.ProviderGivenCode ?? null,
+                Title             : request.body.Title,
+                TemplateId        : templateId,
+                Score             : request.body.Score ?? 0,
+                Options           : []
+            };
+            if (request.body.Options && request.body.Options.length > 0) {
+                var options: CAssessmentQueryOption[] = [];
+                for (var o of request.body.Options) {
+                    var option: CAssessmentQueryOption = {
+                        DisplayCode       : Helper.generateDisplayCode('QNode'),
+                        Text              : o.Text,
+                        ProviderGivenCode : o.ProviderGivenCode ?? null,
+                        Sequence          : o.Sequence
+                    };
+                    options.push(option);
+                }
+                questionNode.Options = options;
+            }
+            return questionNode;
+        }
+        else if (request.body.NodeType === AssessmentNodeType.NodeList) {
+            var listNode : CAssessmentListNode = {
+                ParentNodeId             : request.body.ParentNodeId,
+                NodeType                 : AssessmentNodeType.NodeList,
+                Required                 : true,
+                ProviderGivenId          : request.body.ProviderGivenId ?? null,
+                ProviderGivenCode        : request.body.ProviderGivenCode ?? null,
+                Title                    : request.body.Title,
+                TemplateId               : templateId,
+                Score                    : request.body.Score ?? 0,
+                ChildrenNodeDisplayCodes : [],
+                ChildrenNodeIds          : []
+            };
+            return listNode;
+        }
+        else {
+            var messageNode : CAssessmentMessageNode = {
+                ParentNodeId      : request.body.ParentNodeId,
+                NodeType          : AssessmentNodeType.Message,
+                Required          : true,
+                ProviderGivenId   : request.body.ProviderGivenId ?? null,
+                ProviderGivenCode : request.body.ProviderGivenCode ?? null,
+                Title             : request.body.Title,
+                TemplateId        : templateId,
+                Score             : request.body.Score ?? 0,
+                Message           : request.body.Message,
+                Acknowledged      : false
+            };
+            return messageNode;
+        }
     };
 
 }

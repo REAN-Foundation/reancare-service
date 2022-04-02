@@ -15367,6 +15367,7 @@
 															"",
 															"try {",
 															"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.id);",
+															"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.RootNodeId);",
 															"}",
 															"catch (error) {",
 															"    console.log(error.message);",
@@ -15856,6 +15857,50 @@
 									"item": [
 										{
 											"name": "Add question node - single choice",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"var jsonRes = pm.response.json();\r",
+															"\r",
+															"try {\r",
+															"    pm.environment.set(\"ASSESSMENT_NODE_01_ID\", jsonRes.Data.AssessmentNode.id);\r",
+															"}\r",
+															"catch (error) {\r",
+															"    console.log(error.message);\r",
+															"}\r",
+															"\r",
+															"pm.test(\"Request is successfull\", function () {\r",
+															"    pm.response.to.have.status(201);\r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Status).to.eql('success');\r",
+															"});\r",
+															"\r",
+															"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
+															"   \r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
+															"    \r",
+															"    pm.expect(jsonRes.Data.AssessmentNode.Title).equals(\"Seen your physician for an unscheduled visit?\");\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals(\"Single Choice Selection\");\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode.NodeType).equals(\"Question\");\r",
+															"    \r",
+															"});\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
 											"request": {
 												"method": "POST",
 												"header": [
@@ -15877,7 +15922,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n    \"ParentNodeId\": \"{{ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Seen your physician for an unscheduled visit ?\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#1\",\r\n            \"ProviderGivenCode\": \"yes\",\r\n            \"Text\": \"Yes\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#2\",\r\n            \"ProviderGivenCode\": \"no\",\r\n            \"Text\": \"No\",\r\n            \"Sequence\": 2\r\n        }\r\n    ]\r\n}\r\n",
+													"raw": "{\r\n    \"ParentNodeId\": \"{{ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Seen your physician for an unscheduled visit?\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"ProviderGivenCode\": \"yes\",\r\n            \"Text\": \"Yes\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"ProviderGivenCode\": \"no\",\r\n            \"Text\": \"No\",\r\n            \"Sequence\": 2\r\n        }\r\n    ]\r\n}\r\n",
 													"options": {
 														"raw": {
 															"language": "json"
@@ -15901,6 +15946,50 @@
 										},
 										{
 											"name": "Add question node - multi-choice",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"var jsonRes = pm.response.json();\r",
+															"\r",
+															"try {\r",
+															"    pm.environment.set(\"ASSESSMENT_NODE_02_ID\", jsonRes.Data.AssessmentNode.id);\r",
+															"}\r",
+															"catch (error) {\r",
+															"    console.log(error.message);\r",
+															"}\r",
+															"\r",
+															"pm.test(\"Request is successfull\", function () {\r",
+															"    pm.response.to.have.status(201);\r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Status).to.eql('success');\r",
+															"});\r",
+															"\r",
+															"pm.test(\"Assessment question node - multi choice selection is created\", function () {\r",
+															"   \r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
+															"    \r",
+															"    pm.expect(jsonRes.Data.AssessmentNode.Title).equals(\"What are your preferred activity selections?\");\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals(\"Multi Choice Selection\");\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode.NodeType).equals(\"Question\");\r",
+															"    \r",
+															"});\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
 											"request": {
 												"method": "POST",
 												"header": [
@@ -15922,7 +16011,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n    \"ParentNodeId\": \"{{ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Seen your physician for an unscheduled visit ?\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#1\",\r\n            \"ProviderGivenCode\": \"yes\",\r\n            \"Text\": \"Yes\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#2\",\r\n            \"ProviderGivenCode\": \"no\",\r\n            \"Text\": \"No\",\r\n            \"Sequence\": 2\r\n        }\r\n    ]\r\n}\r\n",
+													"raw": "{\r\n    \"ParentNodeId\": \"{{ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"What are your preferred activity selections?\",\r\n    \"QueryResponseType\": \"Multi Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"Walking\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"Text\": \"Sports\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"Hiking\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"Cycling\",\r\n            \"Sequence\": 4\r\n        },\r\n        {\r\n            \"Text\": \"Yoga\",\r\n            \"Sequence\": 5\r\n        }\r\n    ]\r\n}\r\n",
 													"options": {
 														"raw": {
 															"language": "json"
@@ -15946,6 +16035,48 @@
 										},
 										{
 											"name": "Add list node",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"var jsonRes = pm.response.json();\r",
+															"\r",
+															"try {\r",
+															"    pm.environment.set(\"ASSESSMENT_NODE_03_ID\", jsonRes.Data.AssessmentNode.id);\r",
+															"    pm.environment.set(\"ASSESSMENT_LIST_NODE_ID\", jsonRes.Data.AssessmentNode.id);\r",
+															"}\r",
+															"catch (error) {\r",
+															"    console.log(error.message);\r",
+															"}\r",
+															"\r",
+															"pm.test(\"Request is successfull\", function () {\r",
+															"    pm.response.to.have.status(201);\r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Status).to.eql('success');\r",
+															"});\r",
+															"\r",
+															"pm.test(\"Assessment list node is created\", function () {\r",
+															"   \r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
+															"    \r",
+															"    pm.expect(jsonRes.Data.AssessmentNode.Title).equals(\"Daily check list\");\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode.NodeType).equals(\"Node list\");\r",
+															"    \r",
+															"});\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
 											"request": {
 												"method": "POST",
 												"header": [
@@ -15967,7 +16098,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n    \"ParentNodeId\": \"{{ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Seen your physician for an unscheduled visit ?\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#1\",\r\n            \"ProviderGivenCode\": \"yes\",\r\n            \"Text\": \"Yes\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#2\",\r\n            \"ProviderGivenCode\": \"no\",\r\n            \"Text\": \"No\",\r\n            \"Sequence\": 2\r\n        }\r\n    ]\r\n}\r\n",
+													"raw": "{\r\n    \"ParentNodeId\": \"{{ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Node list\",\r\n    \"Title\": \"Daily check list\"\r\n}\r\n",
 													"options": {
 														"raw": {
 															"language": "json"
@@ -15991,6 +16122,49 @@
 										},
 										{
 											"name": "Add question node - text",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"var jsonRes = pm.response.json();\r",
+															"\r",
+															"try {\r",
+															"    pm.environment.set(\"ASSESSMENT_NODE_01_ID\", jsonRes.Data.AssessmentNode.id);\r",
+															"}\r",
+															"catch (error) {\r",
+															"    console.log(error.message);\r",
+															"}\r",
+															"\r",
+															"pm.test(\"Request is successfull\", function () {\r",
+															"    pm.response.to.have.status(201);\r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Status).to.eql('success');\r",
+															"});\r",
+															"\r",
+															"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
+															"   \r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
+															"    \r",
+															"    pm.expect(jsonRes.Data.AssessmentNode.Title).equals(\"Seen your physician for an unscheduled visit?\");\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals(\"Single Choice Selection\");\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode.NodeType).equals(\"Question\");\r",
+															"    \r",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
 											"request": {
 												"method": "POST",
 												"header": [
@@ -16012,7 +16186,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n    \"ParentNodeId\": \"{{LIST_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Seen your physician for an unscheduled visit ?\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#1\",\r\n            \"ProviderGivenCode\": \"yes\",\r\n            \"Text\": \"Yes\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#2\",\r\n            \"ProviderGivenCode\": \"no\",\r\n            \"Text\": \"No\",\r\n            \"Sequence\": 2\r\n        }\r\n    ]\r\n}\r\n",
+													"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_LIST_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Time per week spent in moderate physical activity ?\",\r\n    \"Description\": \"Minutes\",\r\n    \"QueryResponseType\": \"Text\"\r\n}",
 													"options": {
 														"raw": {
 															"language": "json"
@@ -16057,7 +16231,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n    \"ParentNodeId\": \"{{LIST_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Seen your physician for an unscheduled visit ?\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#1\",\r\n            \"ProviderGivenCode\": \"yes\",\r\n            \"Text\": \"Yes\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#2\",\r\n            \"ProviderGivenCode\": \"no\",\r\n            \"Text\": \"No\",\r\n            \"Sequence\": 2\r\n        }\r\n    ]\r\n}\r\n",
+													"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_LIST_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Seen your physician for an unscheduled visit ?\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#1\",\r\n            \"ProviderGivenCode\": \"yes\",\r\n            \"Text\": \"Yes\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#2\",\r\n            \"ProviderGivenCode\": \"no\",\r\n            \"Text\": \"No\",\r\n            \"Sequence\": 2\r\n        }\r\n    ]\r\n}\r\n",
 													"options": {
 														"raw": {
 															"language": "json"
@@ -16102,7 +16276,7 @@
 												],
 												"body": {
 													"mode": "raw",
-													"raw": "{\r\n    \"ParentNodeId\": \"{{LIST_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Seen your physician for an unscheduled visit ?\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#1\",\r\n            \"ProviderGivenCode\": \"yes\",\r\n            \"Text\": \"Yes\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#2\",\r\n            \"ProviderGivenCode\": \"no\",\r\n            \"Text\": \"No\",\r\n            \"Sequence\": 2\r\n        }\r\n    ]\r\n}\r\n",
+													"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_LIST_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Seen your physician for an unscheduled visit ?\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#1\",\r\n            \"ProviderGivenCode\": \"yes\",\r\n            \"Text\": \"Yes\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"DisplayCode\": \"QNode#6em7ql5ljwi1s70l2md9fjrz:Option#2\",\r\n            \"ProviderGivenCode\": \"no\",\r\n            \"Text\": \"No\",\r\n            \"Sequence\": 2\r\n        }\r\n    ]\r\n}\r\n",
 													"options": {
 														"raw": {
 															"language": "json"

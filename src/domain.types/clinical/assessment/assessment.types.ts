@@ -224,7 +224,7 @@ export class CAssessmentListNode extends CAssessmentNode {
 export class CAssessmentQuestionNode extends CAssessmentNode {
 
     QueryResponseType: QueryResponseType;
-    DefaultPathId    : uuid;
+    DefaultPathId?   : uuid;
     Paths?           : CAssessmentNodePath[];
     Options?         : CAssessmentQueryOption[];
     UserResponse?    : CAssessmentQueryResponse;
@@ -249,6 +249,8 @@ export class CAssessmentMessageNode extends CAssessmentNode {
     constructor() {
         super();
         this.NodeType = AssessmentNodeType.Message;
+        this.Acknowledged = false;
+        this.Message = '';
     }
 
 }
@@ -271,9 +273,9 @@ export class CAssessmentQueryOption {
     id?               : uuid;
     DisplayCode       : string;
     ProviderGivenCode?: string;
-    NodeId            : uuid;
+    NodeId?           : uuid;
     Text              : string;
-    ImageUrl          : string;
+    ImageUrl?         : string;
     Sequence          : number;
 
 }

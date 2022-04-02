@@ -261,6 +261,22 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     };
 
+    public existsWithProviderSubmissionId = async (provider: string, providerSubmissionId: string)
+        : Promise<boolean> => {
+        try {
+            const assessment = await Assessment.findOne({
+                where : {
+                    Provider             : provider,
+                    ProviderAssessmentId : providerSubmissionId
+                },
+            });
+            return assessment != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
     //#endregion
 
 }

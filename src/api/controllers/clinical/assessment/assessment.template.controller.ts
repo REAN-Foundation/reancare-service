@@ -11,6 +11,10 @@ import { BaseController } from '../../base.controller';
 import { FileResourceValidator } from '../../../validators/file.resource.validator';
 import { FileResourceService } from '../../../../services/file.resource.service';
 import { Helper } from '../../../../common/helper';
+import { CAssessmentNode } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { CAssessmentQuestionNode } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { CAssessmentMessageNode } from '../../../../domain.types/clinical/assessment/assessment.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -156,6 +160,9 @@ export class AssessmentTemplateController extends BaseController{
             if (assessmentTemplate == null) {
                 throw new ApiError(404, 'Cannot find assessment Template!');
             }
+            // if (!assessmentTemplate.FileResourceId) {
+
+            // }
             const localDestination = await this._fileResourceService.downloadById(assessmentTemplate.FileResourceId);
             if (localDestination == null) {
                 throw new ApiError(404, 'File resource not found.');
@@ -230,6 +237,67 @@ export class AssessmentTemplateController extends BaseController{
         }
     };
 
+    addNode = async (request: express.Request, response: express.Response) => {
+        try {
+            
+            await this.setContext('AssessmentTemplate.AddNode', request, response);
+
+            const model:CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode
+                = await this._validator.addNode(request);
+
+            const assessmentNode = await this._service.addNode(model);
+            if (assessmentNode == null) {
+                throw new ApiError(400, 'Cannot create record for assessment node!');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment node record created successfully!', 201, {
+                AssessmentNode : assessmentNode,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
+    deleteNode = async (request: express.Request, response: express.Response) => {
+        try {
+            
+            await this.setContext('AssessmentTemplate.DeleteNode', request, response);
+
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const deleted: boolean = await this._service.deleteNode(nodeId);
+            if (!deleted) {
+                throw new ApiError(400, 'Cannot remove record for assessment node!');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment node record removed successfully!', 200, {
+                Deleted : deleted,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
+    getNodeById = async (request: express.Request, response: express.Response) => {
+        try {
+            
+            await this.setContext('AssessmentTemplate.GetNodeById', request, response);
+
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const assessmentNode: CAssessmentNode = await this._service.getNodeById(nodeId);
+            if (assessmentNode == null) {
+                throw new ApiError(400, 'Cannot retrieve record for assessment node!');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment node record retrieved successfully!', 200, {
+                AssessmentNode : assessmentNode,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
     //#endregion
 
 }

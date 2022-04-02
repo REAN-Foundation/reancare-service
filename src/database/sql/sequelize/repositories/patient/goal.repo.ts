@@ -148,6 +148,9 @@ export class GoalRepo implements IGoalRepo {
             if (goalModel.PatientUserId != null) {
                 goal.PatientUserId = goalModel.PatientUserId;
             }
+            if (goalModel.Title != null) {
+                goal.Title = goalModel.Title;
+            }
             if (goalModel.GoalAchieved != null) {
                 goal.GoalAchieved = goalModel.GoalAchieved;
             }

@@ -48,8 +48,9 @@ export interface TemporaryFoldersConfig {
 }
 
 export interface CareplanConfig {
-    ProviderName        : string;
-    ProviderCode        : string;
+    Provider            : string;
+    Name                : string;
+    Code                : string;
     DisplayName         : string;
     DefaultDurationDays?: number;
 }

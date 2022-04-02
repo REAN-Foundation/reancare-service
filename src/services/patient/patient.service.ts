@@ -14,6 +14,7 @@ import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults
 import { Roles } from '../../domain.types/role/role.types';
 import { PatientStore } from '../../modules/ehr/services/patient.store';
 import { Loader } from '../../startup/loader';
+import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +54,12 @@ export class PatientService {
         return dto;
     };
 
+    public getByPersonId = async (personId: string): Promise<PatientDetailsDto> => {
+        var dto = await this._patientRepo.getByPersonId(personId);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
+    };
+
     public search = async (
         filters: PatientSearchFilters
     ): Promise<PatientDetailsSearchResults | PatientSearchResults> => {
@@ -85,30 +92,16 @@ export class PatientService {
         return dto;
     };
 
-    public checkforDuplicatePatients = async (domainModel: PatientDomainModel): Promise<number> => {
+    public checkforExistingPersonWithRole
+        = async (domainModel: PatientDomainModel, roleId: number): Promise<PersonDetailsDto> => {
 
-        const role = await this._roleRepo.getByName(Roles.Patient);
-        if (role == null) {
-            throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');
-        }
-        const persons = await this._personRepo.getAllPersonsWithPhoneAndRole(domainModel.User.Person.Phone, role.id);
-
-        let displayName = Helper.constructPersonDisplayName(
-            domainModel.User.Person.Prefix,
-            domainModel.User.Person.FirstName,
-            domainModel.User.Person.LastName
-        );
-        displayName = displayName.toLowerCase();
-
-        //compare display name with all users sharing same phone number
-        for (const person of persons) {
-            const name = person.DisplayName.toLowerCase();
-            if (name === displayName) {
-                throw new ApiError(409, 'Patient with same name and phone number exists!');
+            const persons
+                = await this._personRepo.getAllPersonsWithPhoneAndRole(domainModel.User.Person.Phone, roleId);
+            if (persons.length > 0) {
+                return persons[0];
             }
-        }
-        return persons.length;
-    };
+            return null;
+        };
 
     //#endregion
 

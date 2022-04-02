@@ -55,7 +55,7 @@ export class CareplanHandler {
         if (foundProvider) {
             var providerPlans = foundProvider.Plans;
             const foundPlan = providerPlans.find(y => {
-                return y.ProviderCode === planCode;
+                return y.Code === planCode;
             });
             if (foundPlan) {
                 return true;
@@ -72,7 +72,7 @@ export class CareplanHandler {
         if (foundProvider) {
             var providerPlans = foundProvider.Plans;
             const foundPlan = providerPlans.find(y => {
-                return y.ProviderCode === planCode;
+                return y.Code === planCode;
             });
             if (foundPlan) {
                 return foundPlan;

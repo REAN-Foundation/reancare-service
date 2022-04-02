@@ -11,7 +11,7 @@ export const register = (app: express.Application): void => {
     const controller = new KnowledgeNuggetController();
 
     router.get("/today/:patientUserId", authenticator.authenticateClient, authenticator.authenticateUser, controller.getTodaysTopic);
-    router.post('/', authenticator.authenticateClient, controller.create);
+    router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);

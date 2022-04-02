@@ -23,7 +23,11 @@ import {
     CAssessmentNode,
     CAssessmentNodePath,
     CAssessmentQueryOption,
-    CAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer, DateQueryAnswer, FileQueryAnswer
+    CAssessmentQuestionNode,
+    SingleChoiceQueryAnswer,
+    TextQueryAnswer,
+    DateQueryAnswer,
+    FileQueryAnswer
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Loader } from '../../../startup/loader';
@@ -266,6 +270,7 @@ export class AssessmentService {
     }
 
     private async traverse(assessment: AssessmentDto, currentNodeId: uuid): Promise<AssessmentQueryDto> {
+        
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
         if (!currentNode) {
             throw new Error(`Error while executing assessment. Cannot find the node!`);

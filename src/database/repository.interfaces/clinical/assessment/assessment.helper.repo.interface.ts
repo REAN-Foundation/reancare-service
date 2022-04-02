@@ -26,6 +26,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export interface IAssessmentHelperRepo {
+
     getChildrenConditions(id: string): CAssessmentPathCondition[] | PromiseLike<CAssessmentPathCondition[]>;
     
     getNodeListChildren(nodeId: string): Promise<CAssessmentNode[]>;
@@ -33,6 +34,14 @@ export interface IAssessmentHelperRepo {
     addTemplate(template: CAssessmentTemplate): Promise<AssessmentTemplateDto>;
 
     getNodeById(nodeId: uuid): Promise<CAssessmentNode>;
+
+    createNode(
+        templateId: uuid,
+        parentNodeId: uuid,
+        nodeObj: CAssessmentNode
+    ): Promise<CAssessmentNode>;
+
+    deleteNode(nodeId: string): Promise<boolean>;
 
     getQueryResponse(assessmentId: uuid, nodeId: uuid): Promise<CAssessmentQueryResponse>;
 
@@ -57,5 +66,7 @@ export interface IAssessmentHelperRepo {
 
     getTemplateChildrenNodes(templateId: uuid)
         : Promise<(CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode)[]>;
- 
+
+    addRootNode(templateId: string): Promise<AssessmentTemplateDto>;
+    
 }

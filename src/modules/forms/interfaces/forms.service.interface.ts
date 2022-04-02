@@ -4,7 +4,7 @@ import {
     ThirdpartyApiCredentialsDomainModel,
     ThirdpartyApiCredentialsDto
 } from "../../../domain.types/thirdparty/thirdparty.api.credentials";
-import { CAssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.types";
+import { CAssessmentTemplate, QueryResponseType } from "../../../domain.types/clinical/assessment/assessment.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +16,8 @@ export interface IFormsService {
         
     downloadForm(connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<string>;
 
+    downloadFile(connectionModel: ThirdpartyApiCredentialsDto, fileUrl: string): Promise<string>;
+
     importFormFileAsAssessmentTemplate(userId: uuid, providerFormId: string, downloadedFilepath: string)
         : Promise<CAssessmentTemplate>;
 
@@ -24,5 +26,7 @@ export interface IFormsService {
     getFormsList(connectionModel: ThirdpartyApiCredentialsDto): Promise<FormDto[]>;
 
     importFormSubmissions(connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<any[]>;
+
+    processQueryResponse(responseType: QueryResponseType, value: any);
 
 }

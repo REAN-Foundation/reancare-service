@@ -1,4 +1,4 @@
-import { CAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
+import { CAssessmentTemplate, QueryResponseType } from "../../domain.types/clinical/assessment/assessment.types";
 import Dictionary from "../../common/dictionary";
 import { FormDto } from "../../domain.types/clinical/assessment/form.types";
 import { ThirdpartyApiCredentialsDomainModel, ThirdpartyApiCredentialsDto } from "../../domain.types/thirdparty/thirdparty.api.credentials";
@@ -29,7 +29,7 @@ export class FormsHandler {
 
     public static importFormFileAsAssessmentTemplate =
         async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string, downloadedFilepath: string)
-            : Promise<CAssessmentTemplate> => {
+        : Promise<CAssessmentTemplate> => {
             var service = FormsHandler.getService(connectionModel);
             return await service.importFormFileAsAssessmentTemplate(
                 connectionModel.UserId, providerFormId, downloadedFilepath);
@@ -41,12 +41,24 @@ export class FormsHandler {
         return await service.downloadForm(connectionModel, providerFormId);
     };
 
+    public static downloadFile = async (connectionModel: ThirdpartyApiCredentialsDto, fileUrl: string)
+        : Promise<string> => {
+        var service = FormsHandler.getService(connectionModel);
+        return await service.downloadFile(connectionModel, fileUrl);
+    };
+
     public static importFormSubmissions = async (
         connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string): Promise<any[]> => {
         var service = FormsHandler.getService(connectionModel);
         return await service.importFormSubmissions(connectionModel, providerFormId);
     }
     
+    public static processQueryResponse = (provider: string, responseType: QueryResponseType, value: any) => {
+        FormsHandler._services = ProviderResolver.resolve();
+        var service = FormsHandler._services.getItem(provider);
+        return service.processQueryResponse(responseType, value);
+    }
+
     // public convertFormToAssessmentTemplate = async (assessmentActivity: CareplanActivity)
     //     : Promise<SAssessmentTemplate> => {
     //     var service = FormsHandler._services.getItem(assessmentActivity.Provider);

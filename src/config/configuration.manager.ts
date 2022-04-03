@@ -1,5 +1,6 @@
 import path from 'path';
-import * as configuration from '../../reancare.config.json';
+import * as defaultConfiguration from '../../reancare.config.json';
+import * as localConfiguration from '../../reancare.config.local.json';
 import {
     AuthenticationType,
     AuthorizationType, CareplanConfig, Configurations, DatabaseFlavour, DatabaseORM, DatabaseType, EHRProvider,
@@ -13,6 +14,8 @@ export class ConfigurationManager {
     static _config: Configurations = null;
 
     public static loadConfigurations = (): void => {
+
+        const configuration = process.env.NODE_ENV === 'local' ? localConfiguration : defaultConfiguration;
 
         ConfigurationManager._config = {
             SystemIdentifier : configuration.SystemIdentifier,
@@ -48,6 +51,7 @@ export class ConfigurationManager {
             },
             FormServiceProviders : configuration.FormServiceProviders,
             MaxUploadFileSize    : configuration.MaxUploadFileSize,
+            JwtExpiresIn         : configuration.JwtExpiresIn
         };
 
         ConfigurationManager.checkConfigSanity();
@@ -96,6 +100,10 @@ export class ConfigurationManager {
     public static MaxUploadFileSize = (): number => {
         return ConfigurationManager._config.MaxUploadFileSize;
     };
+
+    public static JwtExpiresIn = (): number => {
+        return ConfigurationManager._config.JwtExpiresIn;
+    }
 
     public static FileStorageProvider = (): FileStorageProvider => {
         return ConfigurationManager._config.FileStorage.Provider;

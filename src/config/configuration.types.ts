@@ -77,5 +77,6 @@ export interface Configurations {
         Plans   : CareplanConfig[]
     } [];
     MaxUploadFileSize   : number;
+    JwtExpiresIn        : number;
     FormServiceProviders: FormServiceProvider[];
 }

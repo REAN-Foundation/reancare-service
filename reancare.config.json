@@ -66,5 +66,6 @@
             "Code": "GoogleForms"
         }
     ],
-    "MaxUploadFileSize": 104857600
+    "MaxUploadFileSize": 104857600,
+    "JwtExpiresIn": 2592000
 }

@@ -6,6 +6,7 @@ import { IAuthorizer } from '../authorizer.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { RolePrivilegeService } from '../../services/role.privilege.service';
 import { Loader } from '../../startup/loader';
+import { ConfigurationManager } from '../../config/configuration.manager';
 
 //const execSync = require('child_process').execSync;
 
@@ -51,7 +52,9 @@ export class CustomAuthorizer implements IAuthorizer {
     public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
         return new Promise((resolve, reject) => {
             try {
-                const token = jwt.sign(user, process.env.USER_ACCESS_TOKEN_SECRET, { expiresIn: '90d' });
+                const expiresIn: number = ConfigurationManager.JwtExpiresIn();
+                var seconds = expiresIn.toString() + 's';
+                const token = jwt.sign(user, process.env.USER_ACCESS_TOKEN_SECRET, { expiresIn: seconds });
                 resolve(token);
             } catch (error) {
                 reject(error);

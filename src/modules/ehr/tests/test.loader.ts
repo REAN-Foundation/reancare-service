@@ -15,6 +15,7 @@ import { ConfigurationManager } from '../../../config/configuration.manager';
 // import { BiometricsHeightStore } from '../services/biometrics.height.store';
 
 import { EhrInjector } from '../ehr.injector';
+import { CarePlanStore } from '../services/careplan.service';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,6 +35,8 @@ export class TestLoader {
     private static _patientStore: PatientStore = container.resolve(PatientStore);
 
     private static _doctorStore: DoctorStore = container.resolve(DoctorStore);
+
+    private static _carePlanStore: CarePlanStore = container.resolve(CarePlanStore);
 
     // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
     // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
@@ -59,6 +62,10 @@ export class TestLoader {
 
     public static get DoctorStore() {
         return TestLoader._doctorStore;
+    }
+
+    public static get CarePlanStore() {
+        return TestLoader._carePlanStore;
     }
 
     // public static get DiagnosticLabUserStore() {
@@ -98,6 +105,7 @@ export class TestLoader {
 
             TestLoader._patientStore = container.resolve(PatientStore);
             TestLoader._doctorStore = container.resolve(DoctorStore);
+            TestLoader._carePlanStore = container.resolve(CarePlanStore);
 
             // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
             // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);

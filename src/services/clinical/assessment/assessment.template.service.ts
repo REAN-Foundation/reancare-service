@@ -52,6 +52,10 @@ export class AssessmentTemplateService {
             provider, providerId);
     }
 
+    public readTemplateObjToExport = async (templateId: uuid): Promise<CAssessmentTemplate> => {
+        return await this._assessmentHelperRepo.readTemplateAsObj(templateId);
+    }
+
     public import = async (model: any): Promise<AssessmentTemplateDto> => {
 
         //Logger.instance().log(JSON.stringify(model, null, 2));

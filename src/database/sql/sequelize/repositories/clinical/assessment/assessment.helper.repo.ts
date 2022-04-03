@@ -26,6 +26,7 @@ import {
     BooleanQueryAnswer,
     FileQueryAnswer,
     DateQueryAnswer,
+    AssessmentType,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -94,7 +95,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             TemplateId               : template.id,
             DisplayCode              : rootNodeDisplayCode,
             ParentNodeId             : null,
-            Title                    : 'Root Node',
+            Title                    : 'Assessment root node',
             Sequence                 : 0,
             Score                    : 0,
             Required                 : true,
@@ -106,6 +107,32 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         await template.save();
 
         return AssessmentTemplateMapper.toDto(template);
+    };
+
+    public readTemplateAsObj = async (templateId: uuid): Promise<CAssessmentTemplate> => {
+        var template = await AssessmentTemplate.findByPk(templateId);
+        if (!template) {
+            return null;
+        }
+        var rootNodeId = template.RootNodeId;
+        var rootNode = await this.getNodeById(rootNodeId);
+        if (!rootNode) {
+            throw new ApiError(404, `Cannot find root node for the assessment template!`);
+        }
+        var nodes = await this.getTemplateChildrenNodes(templateId);
+        var templateObj: CAssessmentTemplate = {
+            TemplateId             : template.id,
+            DisplayCode            : template.DisplayCode,
+            Title                  : template.Title,
+            Description            : template.Description,
+            Provider               : template.Provider,
+            ProviderAssessmentCode : template.ProviderAssessmentCode,
+            Version                : template.Version,
+            RootNodeDisplayCode    : rootNode.DisplayCode,
+            Nodes                  : nodes,
+            Type                   : template.Type as AssessmentType,
+        };
+        return templateObj;
     };
 
     public getNodeById = async (
@@ -122,12 +149,30 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
     public deleteNode = async (nodeId: string): Promise<boolean> => {
         try {
+
+            var node = await AssessmentNode.findByPk(nodeId);
+            if (!node) {
+                throw new ApiError(404, `Node not found!`);
+            }
+            var parentNodeId = node.ParentNodeId;
+            var parentNode = await AssessmentNode.findByPk(parentNodeId);
+            if (!parentNodeId || !parentNode) {
+                throw new ApiError(400, `Cannot delete root node of the assessment template!`);
+            }
+
             const count = await AssessmentNode.destroy({
                 where : {
                     id : nodeId
                 }
             });
-            return count === 1;
+            var result = count === 1;
+
+            if (parentNode.NodeType === AssessmentNodeType.NodeList) {
+                //TODO: Recalculate sequence parameter of all sibllings
+                //...
+            }
+
+            return result;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

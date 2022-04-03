@@ -1,20 +1,18 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
-import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
-import { AssessmentTemplateValidator } from '../../../validators/clinical/assessment/assessment.template.validator';
-import { Loader } from '../../../../startup/loader';
-import { BaseController } from '../../base.controller';
-import { FileResourceValidator } from '../../../validators/file.resource.validator';
-import { FileResourceService } from '../../../../services/file.resource.service';
 import { Helper } from '../../../../common/helper';
-import { CAssessmentNode } from '../../../../domain.types/clinical/assessment/assessment.types';
-import { CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
-import { CAssessmentQuestionNode } from '../../../../domain.types/clinical/assessment/assessment.types';
-import { CAssessmentMessageNode } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { ResponseHandler } from '../../../../common/response.handler';
+import { CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { AssessmentTemplateFileConverter } from '../../../../services/clinical/assessment/assessment.template.file.converter';
+import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
+import { FileResourceService } from '../../../../services/file.resource.service';
+import { Loader } from '../../../../startup/loader';
+import { AssessmentTemplateValidator } from '../../../validators/clinical/assessment/assessment.template.validator';
+import { FileResourceValidator } from '../../../validators/file.resource.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -160,20 +158,16 @@ export class AssessmentTemplateController extends BaseController{
             if (assessmentTemplate == null) {
                 throw new ApiError(404, 'Cannot find assessment Template!');
             }
-            // if (!assessmentTemplate.FileResourceId) {
+            
+            var templateObj: CAssessmentTemplate = await this._service.readTemplateObjToExport(assessmentTemplate.id);
+            const { dateFolder, filename, sourceFileLocation }
+                = await AssessmentTemplateFileConverter.storeTemplateToFileLocally(templateObj);
 
-            // }
-            const localDestination = await this._fileResourceService.downloadById(assessmentTemplate.FileResourceId);
-            if (localDestination == null) {
-                throw new ApiError(404, 'File resource not found.');
-            }
-
-            var filename = path.basename(localDestination);
-            var mimeType = Helper.getMimeType(localDestination);
+            var mimeType = Helper.getMimeType(sourceFileLocation);
             response.setHeader('Content-type', mimeType);
             response.setHeader('Content-disposition', 'attachment; filename=' + filename);
     
-            var filestream = fs.createReadStream(localDestination);
+            var filestream = fs.createReadStream(sourceFileLocation);
             filestream.pipe(response);
 
         } catch (error) {

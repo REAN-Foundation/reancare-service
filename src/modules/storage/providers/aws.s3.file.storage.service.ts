@@ -13,7 +13,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         try {
             const s3 = this.getS3Client();
             const params = {
-                Bucket : process.env.STORAGE_BUCKET_NAME,
+                Bucket : process.env.STORAGE_BUCKET,
                 Key    : storageKey,
             };
             var stored = await s3.headObject(params).promise();
@@ -35,7 +35,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
 
             const s3 = this.getS3Client();
             const params = {
-                Bucket : process.env.STORAGE_BUCKET_NAME,
+                Bucket : process.env.STORAGE_BUCKET,
                 Key    : storageKey,
                 Body   : fileContent
             };
@@ -54,7 +54,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         
         const s3 = this.getS3Client();
         const params = {
-            Bucket : process.env.STORAGE_BUCKET_NAME,
+            Bucket : process.env.STORAGE_BUCKET,
             Key    : storageKey,
         };
 
@@ -101,7 +101,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
             throw new Error('Old and new file identifiers are same!');
         }
 
-        var BUCKET_NAME = process.env.STORAGE_BUCKET_NAME;
+        var BUCKET_NAME = process.env.STORAGE_BUCKET;
         var OLD_KEY = s3Path;
         var NEW_KEY = newPath;
 
@@ -124,7 +124,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
 
         const s3 = this.getS3Client();
         const params = {
-            Bucket : process.env.STORAGE_BUCKET_NAME,
+            Bucket : process.env.STORAGE_BUCKET,
             Key    : storageKey
         };
 
@@ -145,7 +145,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         });
 
         const url = s3.getSignedUrl('getObject', {
-            Bucket  : process.env.STORAGE_BUCKET_NAME,
+            Bucket  : process.env.STORAGE_BUCKET,
             Key     : storageKey,
             Expires : 60 * durationInMinutes
         });

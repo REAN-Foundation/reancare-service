@@ -1,20 +1,19 @@
-import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { inject, injectable } from 'tsyringe';
-import { ApiError } from '../../common/api.error';
-import { Helper } from '../../common/helper';
+import { ConfigurationManager } from '../../config/configuration.manager';
 import { IAddressRepo } from '../../database/repository.interfaces/address.repo.interface';
 import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
 import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
 import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
 import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
+import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { PatientDomainModel } from '../../domain.types/patient/patient/patient.domain.model';
 import { PatientDetailsDto, PatientDto } from '../../domain.types/patient/patient/patient.dto';
 import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults } from '../../domain.types/patient/patient/patient.search.types';
+import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { Roles } from '../../domain.types/role/role.types';
 import { PatientStore } from '../../modules/ehr/services/patient.store';
 import { Loader } from '../../startup/loader';
-import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,14 +30,19 @@ export class PatientService {
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
     ) {
-        this._ehrPatientStore = Loader.container.resolve(PatientStore);
+        if (ConfigurationManager.EhrEnabled()) {
+            this._ehrPatientStore = Loader.container.resolve(PatientStore);
+        }
     }
 
     //#region Publics
     
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
-        const ehrId = await this._ehrPatientStore.create(patientDomainModel);
-        patientDomainModel.EhrId = ehrId;
+
+        if (this._ehrPatientStore) {
+            const ehrId = await this._ehrPatientStore.create(patientDomainModel);
+            patientDomainModel.EhrId = ehrId;
+        }
 
         var dto = await this._patientRepo.create(patientDomainModel);
         dto = await this.updateDetailsDto(dto);

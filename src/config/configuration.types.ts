@@ -6,9 +6,9 @@ export type EHRSpecification = 'FHIR'| 'OpenEHR' | 'Mock';
 export type FHIRProvider = 'GCP-FHIR' | 'Azure-FHIR' | 'AWS-HealthLake' | 'Hapi-FHIR';
 export type OpenEHRProvider = 'OpenEHRBase';
 export type FileStorageProvider = 'AWS-S3' | 'GCP-FileStore' | 'Custom';
-export type SMSServiceProvider = 'Twilio';
-export type EmailServiceProvider = 'SendGrid';
-export type InAppNotificationServiceProvider = 'Firebase';
+export type SMSServiceProvider = 'Twilio' | 'Mock';
+export type EmailServiceProvider = 'SendGrid' | 'Mock';
+export type InAppNotificationServiceProvider = 'Firebase' | 'Mock';
 export type EHRProvider = FHIRProvider | OpenEHRProvider;
 export type AuthorizationType = 'Custom'; //TBD: Other options need to be supported
 export type AuthenticationType = 'Custom'; //TBD: Other options need to be supported
@@ -27,6 +27,7 @@ export interface DatabaseConfig {
 }
 
 export interface EHRConfig {
+    Enabled      : boolean;
     Specification: EHRSpecification;
     Provider     : EHRProvider;
 }
@@ -69,7 +70,12 @@ export interface Configurations {
     FileStorage         : FileStorageConfig;
     Communication       : CommunicationConfig;
     TemporaryFolders    : TemporaryFoldersConfig;
-    Careplans           : { Provider: string; Service: string; Plans: CareplanConfig[] } [];
+    Careplans           : {
+        Enabled : boolean;
+        Provider: string;
+        Service : string;
+        Plans   : CareplanConfig[]
+    } [];
     MaxUploadFileSize   : number;
     FormServiceProviders: FormServiceProvider[];
 }

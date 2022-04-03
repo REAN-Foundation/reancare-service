@@ -10,22 +10,22 @@
         "Flavour": "MySQL"
     },
     "Ehr" : {
-        "Enabled": true,
+        "Enabled": false,
         "Specification": "FHIR",
         "Provider": "GCP-FHIR"
     },
     "FileStorage" : {
-        "Provider": "AWS-S3"
+        "Provider": "Custom"
     },
     "Communication" : {
         "SMS": {
-            "Provider": "Twilio"
+            "Provider": "Mock"
         },
         "Email": {
-            "Provider": "SendGrid"
+            "Provider": "Mock"
         },
         "InAppNotifications": {
-            "Provider": "Firebase"
+            "Provider": "Mock"
         }
     },
     "TemporaryFolders": {
@@ -35,7 +35,7 @@
     },
     "Careplans" : [
         { 
-            "Enabled": true,
+            "Enabled" : false,
             "Provider": "AHA",
             "Service": "AhaCarePlanService",
             "Plans": [

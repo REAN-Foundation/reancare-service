@@ -27,6 +27,7 @@ export class ConfigurationManager {
                 Flavour : configuration.Database.Flavour as DatabaseFlavour,
             },
             Ehr : {
+                Enabled       : configuration.Ehr.Enabled,
                 Specification : configuration.Ehr.Specification as EHRSpecification,
                 Provider      : configuration.Ehr.Provider as EHRProvider,
             },
@@ -80,6 +81,10 @@ export class ConfigurationManager {
         return ConfigurationManager._config.Database.Flavour;
     };
     
+    public static EhrEnabled = (): boolean => {
+        return ConfigurationManager._config.Ehr.Enabled;
+    };
+
     public static EhrSpecification = (): EHRSpecification => {
         return ConfigurationManager._config.Ehr.Specification;
     };
@@ -122,7 +127,8 @@ export class ConfigurationManager {
         return ConfigurationManager._config.Communication.InAppNotificationProvider;
     };
 
-    public static careplans = (): { Provider: string; Service: string; Plans: CareplanConfig[] } [] => {
+    public static careplans = ()
+        : { Enabled: boolean, Provider: string; Service: string; Plans: CareplanConfig[] } [] => {
         return ConfigurationManager._config.Careplans;
     };
     

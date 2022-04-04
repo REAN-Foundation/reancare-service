@@ -5,7 +5,7 @@ import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces
 import { AssessmentTemplateDomainModel } from '../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateDto } from '../../../domain.types/clinical/assessment/assessment.template.dto';
 import { AssessmentTemplateSearchFilters, AssessmentTemplateSearchResults } from "../../../domain.types/clinical/assessment/assessment.template.search.types";
-import { CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.types";
+import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.types";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { AssessmentTemplateFileConverter } from "./assessment.template.file.converter";
 
@@ -53,13 +53,12 @@ export class AssessmentTemplateService {
     }
 
     public readTemplateObjToExport = async (templateId: uuid): Promise<CAssessmentTemplate> => {
-        return await this._assessmentHelperRepo.readTemplateAsObj(templateId);
+        var template = await this._assessmentHelperRepo.readTemplateAsObj(templateId);
+        template = this.sanitizeTemplateForExport(template);
+        return template;
     }
 
     public import = async (model: any): Promise<AssessmentTemplateDto> => {
-
-        //Logger.instance().log(JSON.stringify(model, null, 2));
-
         var tmpl: CAssessmentTemplate = model as CAssessmentTemplate;
         const resource = await AssessmentTemplateFileConverter.storeAssessmentTemplate(tmpl);
         tmpl.FileResourceId = resource.id;
@@ -88,5 +87,38 @@ export class AssessmentTemplateService {
     updateNode = async(nodeId: uuid, updates: any) => {
         return await this._assessmentHelperRepo.updateNode(nodeId, updates);
     }
+
+    sanitizeTemplateForExport = (template: CAssessmentTemplate): CAssessmentTemplate => {
+        
+        delete template.TemplateId;
+
+        for (var node of template.Nodes) {
+            delete node.id;
+            delete node.TemplateId;
+            delete node.ParentNodeId;
+
+            if (node.NodeType === AssessmentNodeType.NodeList) {
+                delete (node as CAssessmentListNode).ChildrenNodeIds;
+                delete (node as CAssessmentListNode).Children;
+            }
+            else if (node.NodeType === AssessmentNodeType.Question) {
+                for (var option of (node as CAssessmentQuestionNode).Options) {
+                    delete option.id;
+                    delete option.NodeId;
+                }
+                for (var path of (node as CAssessmentQuestionNode).Paths) {
+                    delete path.id;
+                    delete path.ParentNodeId;
+                    delete path.ConditionId;
+                    delete path.NextNodeId;
+                }
+            }
+            else if (node.NodeType === AssessmentNodeType.Message) {
+                delete (node as CAssessmentMessageNode).Acknowledged;
+            }
+        }
+
+        return template;
+    };
 
 }

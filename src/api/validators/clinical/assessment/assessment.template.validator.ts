@@ -142,7 +142,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             var listNode : CAssessmentListNode = {
                 ParentNodeId             : request.body.ParentNodeId,
                 NodeType                 : AssessmentNodeType.NodeList,
-                DisplayCode              : Helper.generateDisplayCode('QNode'),
+                DisplayCode              : Helper.generateDisplayCode('LNode'),
                 Required                 : true,
                 ProviderGivenId          : request.body.ProviderGivenId ?? null,
                 ProviderGivenCode        : request.body.ProviderGivenCode ?? null,

@@ -190,6 +190,8 @@ export class AssessmentTemplateController extends BaseController{
             const metadata = uploadModel.FileMetadata;
             const sourceFilePath = metadata.SourceFilePath;
             const originalFileName = metadata.OriginalName;
+
+            Helper.sleep(1000);
             const fileContent = fs.readFileSync(sourceFilePath, 'utf8');
             const extension = Helper.getFileExtension(originalFileName);
             if (extension.toLowerCase() !== 'json') {

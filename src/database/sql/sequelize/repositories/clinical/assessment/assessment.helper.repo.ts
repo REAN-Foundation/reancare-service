@@ -119,7 +119,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         if (!rootNode) {
             throw new ApiError(404, `Cannot find root node for the assessment template!`);
         }
-        var nodes = await this.getTemplateChildrenNodes(templateId);
+        var nodes = await this.getTemplateChildrenNodesForExport(templateId);
         var templateObj: CAssessmentTemplate = {
             TemplateId             : template.id,
             DisplayCode            : template.DisplayCode,
@@ -134,6 +134,26 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         };
         return templateObj;
     };
+
+    public getTemplateChildrenNodesForExport = async (templateId: uuid)
+        : Promise<(CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode)[]> => {
+        try {
+            var nodes = await AssessmentNode.findAll({
+                where : {
+                    TemplateId : templateId
+                }
+            });
+            var xNodes = [];
+            for await (var node of nodes) {
+                var xNode = await this.populateNodeDetails(node);
+                xNodes.push(xNode);
+            }
+            return xNodes;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
     public getNodeById = async (
         nodeId: string

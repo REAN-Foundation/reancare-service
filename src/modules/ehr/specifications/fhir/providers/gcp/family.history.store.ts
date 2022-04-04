@@ -184,12 +184,6 @@ export class GcpFamilyHistoryStore implements IFamilyHistoryStore {
 
         existingResource.resourceType = "FamilyMemberHistory";
 
-        if (updates.EhrId != null) {
-            existingResource["patient"] = {
-                reference : `Patient/${updates.EhrId}`,
-            };
-        }
-
         if (updates.Relationship != null) {
             existingResource['relationship'] = {
                 coding : [

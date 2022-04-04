@@ -1,4 +1,3 @@
-import { Logger } from "../../../common/logger";
 import { BiometricsHeightStore } from "../../../modules/ehr/services/biometrics.height.store";
 import { Loader } from "../../../startup/loader";
 import { inject, injectable } from "tsyringe";
@@ -23,7 +22,6 @@ export class BodyHeightService {
     create = async (bodyHeightDomainModel: BodyHeightDomainModel): Promise<BodyHeightDto> => {
         const ehrId = await this._ehrBiometricsHeightStore.add(bodyHeightDomainModel);
         bodyHeightDomainModel.EhrId = ehrId;
-        Logger.instance().log(`EHR Id for body height model: ${JSON.stringify(bodyHeightDomainModel.EhrId)}`);
         return await this._bodyHeightRepo.create(bodyHeightDomainModel);
     };
 
@@ -37,9 +35,7 @@ export class BodyHeightService {
 
     update = async (id: string, BodyHeightDomainModel: BodyHeightDomainModel): Promise<BodyHeightDto> => {
         var dto = await this._bodyHeightRepo.update(id, BodyHeightDomainModel);
-        var updates = await this._ehrBiometricsHeightStore.update(dto.EhrId,dto);
-        Logger.instance().log(`Updated resource:: ${JSON.stringify(updates)}`);
-        return dto;
+        return await this._ehrBiometricsHeightStore.update(dto.EhrId, dto);
     };
 
     delete = async (id: string): Promise<boolean> => {

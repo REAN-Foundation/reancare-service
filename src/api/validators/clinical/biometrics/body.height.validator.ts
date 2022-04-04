@@ -138,6 +138,12 @@ export class BodyHeightValidator {
             .trim()
             .run(request);
 
+        await body('RecordDate').optional()
+            .trim()
+            .escape()
+            .toDate()
+            .run(request);
+
         const result = validationResult(request);
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);

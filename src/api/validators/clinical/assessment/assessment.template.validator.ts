@@ -112,11 +112,13 @@ export class AssessmentTemplateValidator extends BaseValidator {
             var questionNode : CAssessmentQuestionNode = {
                 ParentNodeId      : request.body.ParentNodeId,
                 NodeType          : AssessmentNodeType.Question,
+                DisplayCode       : Helper.generateDisplayCode('QNode'),
                 QueryResponseType : request.body.QueryResponseType,
                 Required          : true,
                 ProviderGivenId   : request.body.ProviderGivenId ?? null,
                 ProviderGivenCode : request.body.ProviderGivenCode ?? null,
                 Title             : request.body.Title,
+                Description       : request.body.Description ?? null,
                 TemplateId        : templateId,
                 Score             : request.body.Score ?? 0,
                 Options           : []
@@ -125,7 +127,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 var options: CAssessmentQueryOption[] = [];
                 for (var o of request.body.Options) {
                     var option: CAssessmentQueryOption = {
-                        DisplayCode       : Helper.generateDisplayCode('QNode'),
+                        DisplayCode       : questionNode.DisplayCode + ':Option#' + o.Sequence.toString(),
                         Text              : o.Text,
                         ProviderGivenCode : o.ProviderGivenCode ?? null,
                         Sequence          : o.Sequence
@@ -140,10 +142,12 @@ export class AssessmentTemplateValidator extends BaseValidator {
             var listNode : CAssessmentListNode = {
                 ParentNodeId             : request.body.ParentNodeId,
                 NodeType                 : AssessmentNodeType.NodeList,
+                DisplayCode              : Helper.generateDisplayCode('QNode'),
                 Required                 : true,
                 ProviderGivenId          : request.body.ProviderGivenId ?? null,
                 ProviderGivenCode        : request.body.ProviderGivenCode ?? null,
                 Title                    : request.body.Title,
+                Description              : request.body.Description ?? null,
                 TemplateId               : templateId,
                 Score                    : request.body.Score ?? 0,
                 ChildrenNodeDisplayCodes : [],
@@ -159,6 +163,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 ProviderGivenId   : request.body.ProviderGivenId ?? null,
                 ProviderGivenCode : request.body.ProviderGivenCode ?? null,
                 Title             : request.body.Title,
+                Description       : request.body.Description ?? null,
                 TemplateId        : templateId,
                 Score             : request.body.Score ?? 0,
                 Message           : request.body.Message,
@@ -166,6 +171,22 @@ export class AssessmentTemplateValidator extends BaseValidator {
             };
             return messageNode;
         }
+    };
+
+    updateNode = async (request: express.Request):
+    Promise<CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode> => {
+    
+        await this.validateString(request, 'Title', Where.Body, false, false);
+        await this.validateString(request, 'ProviderGivenCode', Where.Body, false, false);
+        await this.validateString(request, 'ProviderGivenId', Where.Body, false, false);
+        await this.validateString(request, 'Description', Where.Body, false, true);
+        await this.validateString(request, 'QueryResponseType', Where.Body, false, false);
+        await this.validateDecimal(request, 'Score', Where.Body, false, false);
+        await this.validateDecimal(request, 'Sequence', Where.Body, false, false);
+
+        this.validateRequest(request);
+    
+        return request.body;
     };
 
 }

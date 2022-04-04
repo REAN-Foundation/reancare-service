@@ -1,6 +1,5 @@
 import express from 'express';
 import fs from 'fs';
-import path from 'path';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
@@ -160,6 +159,8 @@ export class AssessmentTemplateController extends BaseController{
             }
             
             var templateObj: CAssessmentTemplate = await this._service.readTemplateObjToExport(assessmentTemplate.id);
+            
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { dateFolder, filename, sourceFileLocation }
                 = await AssessmentTemplateFileConverter.storeTemplateToFileLocally(templateObj);
 
@@ -253,6 +254,33 @@ export class AssessmentTemplateController extends BaseController{
         }
     }
 
+    updateNode = async (request: express.Request, response: express.Response) => {
+        try {
+            
+            await this.setContext('AssessmentTemplate.UpdateNode', request, response);
+
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            var updates = await this._validator.updateNode(request);
+
+            var assessmentNode: CAssessmentNode = await this._service.getNode(nodeId);
+            if (assessmentNode == null) {
+                throw new ApiError(404, 'Cannot retrieve record for assessment node!');
+            }
+
+            var updatedNode = await this._service.updateNode(nodeId, updates);
+            if (updatedNode == null) {
+                throw new ApiError(500, 'Unable to update assessment node!');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment node record retrieved successfully!', 200, {
+                AssessmentNode : updatedNode,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
     deleteNode = async (request: express.Request, response: express.Response) => {
         try {
             
@@ -273,15 +301,15 @@ export class AssessmentTemplateController extends BaseController{
         }
     }
 
-    getNodeById = async (request: express.Request, response: express.Response) => {
+    getNode = async (request: express.Request, response: express.Response) => {
         try {
             
-            await this.setContext('AssessmentTemplate.GetNodeById', request, response);
+            await this.setContext('AssessmentTemplate.GetNode', request, response);
 
             const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
-            const assessmentNode: CAssessmentNode = await this._service.getNodeById(nodeId);
+            const assessmentNode: CAssessmentNode = await this._service.getNode(nodeId);
             if (assessmentNode == null) {
-                throw new ApiError(400, 'Cannot retrieve record for assessment node!');
+                throw new ApiError(404, 'Cannot retrieve record for assessment node!');
             }
 
             ResponseHandler.success(request, response, 'Assessment node record retrieved successfully!', 200, {

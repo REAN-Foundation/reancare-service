@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import xlsx from 'node-xlsx';
 import { Logger } from '../../../../common/logger';
 import { Helper } from '../../../../common/helper';

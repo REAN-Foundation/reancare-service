@@ -195,21 +195,23 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     }
 
-    public getQuestionNodeOptions = async (
-        nodeType: AssessmentNodeType,
-        nodeId: uuid
-    ): Promise<CAssessmentQueryOption[]> => {
+    public getQuestionNodeOptions = async (nodeType: AssessmentNodeType, nodeId: uuid)
+        : Promise<CAssessmentQueryOption[]> => {
+
         if (nodeType === AssessmentNodeType.Question) {
             const options = await AssessmentQueryOption.findAll({
                 where : {
                     NodeId : nodeId,
                 },
             });
+
             var dtos = options.map((x) => AssessmentHelperMapper.toOptionDto(x));
+
             //Sort in ascending order by sequence
             dtos = dtos.sort((a, b) => {
                 return a.Sequence - b.Sequence;
             });
+
             return dtos;
         }
         return [];
@@ -374,15 +376,17 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
 
-    public async createNode(
+    public createNode = async(
         templateId: uuid,
         parentNodeId: uuid,
-        nodeObj: CAssessmentNode): Promise<CAssessmentNode> {
+        nodeObj: CAssessmentNode): Promise<CAssessmentNode> => {
 
         try {
     
+            const sequence = await this.calculateNodeSequence(parentNodeId);
+            
             const nodeEntity = {
-                DisplayCode       : nodeObj.DisplayCode,
+                DisplayCode       : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
                 TemplateId        : templateId,
                 ParentNodeId      : parentNodeId,
                 NodeType          : nodeObj.NodeType,
@@ -390,8 +394,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 ProviderGivenCode : nodeObj.ProviderGivenCode,
                 Title             : nodeObj.Title,
                 Description       : nodeObj.Description,
-                Sequence          : nodeObj.Sequence,
+                Sequence          : nodeObj.Sequence ?? sequence,
                 Score             : nodeObj.Score,
+                QueryResponseType : QueryResponseType.None
             };
     
             var thisNode = await AssessmentNode.create(nodeEntity);
@@ -399,11 +404,12 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (nodeObj.NodeType === AssessmentNodeType.Message) {
                 const messageNode = nodeObj as CAssessmentMessageNode;
                 thisNode.Message = messageNode.Message;
+                thisNode.QueryResponseType = QueryResponseType.Ok;
                 thisNode.Acknowledged = false;
                 await thisNode.save();
             }
-            else {
-                //thisNode.NodeType === AssessmentNodeType.Question
+            else if (nodeObj.NodeType === AssessmentNodeType.Question) {
+
                 const questionNode = nodeObj as CAssessmentQuestionNode;
                 thisNode.QueryResponseType = questionNode.QueryResponseType;
                 await thisNode.save();
@@ -433,15 +439,65 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
+
+    public updateNode = async (nodeId: uuid, updates: any)
+        : Promise<CAssessmentNode | CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode> => {
+
+        try {
+
+            var thisNode = await AssessmentNode.findByPk(nodeId);
+
+            if (Helper.hasProperty(updates, 'ProviderGivenId')) {
+                thisNode.ProviderGivenId = updates['ProviderGivenId'];
+            }
+            if (Helper.hasProperty(updates, 'ProviderGivenCode')) {
+                thisNode.ProviderGivenCode = updates['ProviderGivenCode'];
+            }
+            if (Helper.hasProperty(updates, 'Title')) {
+                thisNode.Title = updates['Title'];
+            }
+            if (Helper.hasProperty(updates, 'Description')) {
+                thisNode.Description = updates['Description'];
+            }
+            if (Helper.hasProperty(updates, 'Sequence')) {
+                thisNode.Sequence = updates['Sequence'];
+            }
+            if (Helper.hasProperty(updates, 'Score')) {
+                thisNode.Score = updates['Score'];
+            }
+            if (Helper.hasProperty(updates, 'QueryResponseType')) {
+                thisNode.QueryResponseType = updates['QueryResponseType'];
+            }
+        
+            thisNode = await thisNode.save();
+            return await this.populateNodeDetails(thisNode);
+    
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
     //#endregion
 
     //#region Privates
+        
+    calculateNodeSequence = async (parentNodeId: uuid): Promise<number> => {
+        if (!parentNodeId) {
+            return 0;
+        }
+        var childrenCount = await AssessmentNode.count( {
+            where : {
+                ParentNodeId : parentNodeId
+            }
+        });
+        return childrenCount + 1;
+    };
 
-    private async populateNodeDetails(
-        node: AssessmentNode
-    ): Promise<CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode> {
+    private async populateNodeDetails(node: AssessmentNode)
+        : Promise<CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode> {
+        
         if (node == null) {
             return null;
         }
@@ -459,6 +515,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         templateId: string
     ) {
         if (questionNode.Options && questionNode.Options.length > 0) {
+
             //Create question answer options...
             const options: CAssessmentQueryOption[] = questionNode.Options;
 
@@ -526,7 +583,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
 
             const nodeEntity = {
-                DisplayCode       : nodeObj.DisplayCode,
+                DisplayCode       : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
                 TemplateId        : templateId,
                 ParentNodeId      : parentNodeId,
                 NodeType          : nodeObj.NodeType,
@@ -536,6 +593,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 Description       : nodeObj.Description,
                 Sequence          : nodeObj.Sequence,
                 Score             : nodeObj.Score,
+                QueryResponseType : QueryResponseType.None
             };
 
             var thisNode = await AssessmentNode.create(nodeEntity);
@@ -556,14 +614,13 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             } else if (nodeObj.NodeType === AssessmentNodeType.Message) {
                 const messageNode = nodeObj as CAssessmentMessageNode;
                 thisNode.Message = messageNode.Message;
+                thisNode.QueryResponseType = QueryResponseType.Ok;
                 thisNode.Acknowledged = false;
                 await thisNode.save();
             } else {
-            //thisNode.NodeType === AssessmentNodeType.Question
                 const questionNode = nodeObj as CAssessmentQuestionNode;
                 thisNode.QueryResponseType = questionNode.QueryResponseType;
                 await thisNode.save();
-
                 await this.updateQuestionNode(templateObj, questionNode, thisNode, templateId);
             }
             return thisNode;
@@ -764,6 +821,19 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         return null;
     };
     
+    private getNodeDisplayCode = (nodeType: AssessmentNodeType): string => {
+
+        if (nodeType === AssessmentNodeType.Message) {
+            return Helper.generateDisplayCode('MNode');
+        }
+        else if (nodeType === AssessmentNodeType.Question) {
+            return Helper.generateDisplayCode('QNode');
+        }
+        else {
+            return Helper.generateDisplayCode('LNode');
+        }
+    };
+
     //#endregion
 
 }

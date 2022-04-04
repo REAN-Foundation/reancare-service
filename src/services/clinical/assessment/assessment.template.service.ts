@@ -72,7 +72,7 @@ export class AssessmentTemplateService {
         return await this._assessmentHelperRepo.addTemplate(template);
     };
 
-    getNodeById = async (nodeId: string): Promise<any> => {
+    getNode = async (nodeId: string): Promise<any> => {
         return await this._assessmentHelperRepo.getNodeById(nodeId);
     };
 
@@ -84,5 +84,9 @@ export class AssessmentTemplateService {
         model: CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode) => {
         return await this._assessmentHelperRepo.createNode(model.TemplateId, model.ParentNodeId, model);
     };
+
+    updateNode = async(nodeId: uuid, updates: any) => {
+        return await this._assessmentHelperRepo.updateNode(nodeId, updates);
+    }
 
 }

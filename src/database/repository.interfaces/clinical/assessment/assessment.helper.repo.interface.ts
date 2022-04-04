@@ -69,6 +69,9 @@ export interface IAssessmentHelperRepo {
     getTemplateChildrenNodes(templateId: uuid)
         : Promise<(CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode)[]>;
 
-    addRootNode(templateId: string): Promise<AssessmentTemplateDto>;
-    
+    addRootNode(templateId: uuid): Promise<AssessmentTemplateDto>;
+
+    updateNode(nodeId: uuid, updates: any)
+        : Promise<CAssessmentNode | CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode>;
+
 }

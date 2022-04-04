@@ -29,6 +29,10 @@ export class Helper {
         return null;
     };
 
+    static hasProperty = (obj, prop) => {
+        return Object.prototype.hasOwnProperty.call(obj, prop);
+    }
+    
     static dumpJson(obj, filename) {
         const txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);

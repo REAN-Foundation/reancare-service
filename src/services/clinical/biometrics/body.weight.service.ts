@@ -6,7 +6,6 @@ import { BodyWeightDto } from '../../../domain.types/clinical/biometrics/body.we
 import { BodyWeightSearchFilters, BodyWeightSearchResults } from '../../../domain.types/clinical/biometrics/body.weight/body.weight.search.types';
 import { BodyWeightStore } from "../../../modules/ehr/services/body.weight.store";
 import { Loader } from "../../../startup/loader";
-import { Logger } from "../../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +24,6 @@ export class BodyWeightService {
 
         const ehrId = await this._ehrBodyWeightStore.add(bodyWeightDomainModel);
         bodyWeightDomainModel.EhrId = ehrId;
-        Logger.instance().log(`EHR Id for body weight model: ${JSON.stringify(bodyWeightDomainModel.EhrId)}`);
         var dto = await this._bodyWeightRepo.create(bodyWeightDomainModel);
         return dto;
     };
@@ -39,7 +37,9 @@ export class BodyWeightService {
     };
 
     update = async (id: uuid, bodyWeightDomainModel: BodyWeightDomainModel): Promise<BodyWeightDto> => {
-        return await this._bodyWeightRepo.update(id, bodyWeightDomainModel);
+        var dto = await this._bodyWeightRepo.update(id, bodyWeightDomainModel);
+        await this._ehrBodyWeightStore.update(dto.EhrId, dto);
+        return dto;
     };
 
     delete = async (id: uuid): Promise<boolean> => {

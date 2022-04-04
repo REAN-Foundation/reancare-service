@@ -20,8 +20,7 @@ export class GcpBodyWeightStore implements IBodyWeightStore {
                 request
             );
             var data: any = resource.data;
-            //var resourceStr = JSON.stringify(data, null, 2);
-            // console.log(`Created FHIR resource ${resourceStr}`);
+            
             return data.id;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -39,9 +38,6 @@ export class GcpBodyWeightStore implements IBodyWeightStore {
                 { name: parent }
             );
             var data: any = resource.data;
-
-            //var resourceStr = JSON.stringify(data, null, 2);
-            //console.log(`Created FHIR resource ${resourceStr}`);
 
             return data;
         } catch (error) {
@@ -70,8 +66,9 @@ export class GcpBodyWeightStore implements IBodyWeightStore {
             { name: parent }
         );
         var data:any = existingResource.data;
+
         //delete data.id; //Remove id from the resource
-        
+
         //Construct updated body
         const body: healthcare_v1.Schema$HttpBody = this.updateBiometricsWeightFhirResource(updates, data);
         const updatedResource = await g.projects.locations.datasets.fhirStores.fhir.update({
@@ -139,7 +136,6 @@ export class GcpBodyWeightStore implements IBodyWeightStore {
         if (model.RecordedByUserId != null) {
             resource['performer'] = [
                 {
-                    // reference   : `Practitioner/${model.RecordedByUserId}`,
                     reference : "https://www.aiims.edu/images/pdf/CV.pdf",
                     type      : "Practitioner",
                     id        : model.RecordedByUserId
@@ -174,11 +170,6 @@ export class GcpBodyWeightStore implements IBodyWeightStore {
 
         existingResource.resourceType = "Observation";
         
-        if (updates.EhrId != null) {
-            existingResource['subject'] = {
-                reference : `Patient/${updates.EhrId}`
-            };
-        }
         if (updates.RecordDate != null) {
             var str = Helper.formatDate(updates.RecordDate);
             existingResource.effectiveDateTime = str;

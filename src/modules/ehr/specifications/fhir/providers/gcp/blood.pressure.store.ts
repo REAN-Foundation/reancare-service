@@ -21,9 +21,6 @@ export class GcpBloodPressureStore implements IBloodPressureStore {
             );
             var data: any = resource.data;
 
-            //var resourceStr = JSON.stringify(data, null, 2);
-            //console.log(`Created FHIR resource ${resourceStr}`);
-            
             return data.id;
         } catch (error) {
             Logger.instance().log(`Error message:: ${JSON.stringify(error.message)}`);
@@ -41,12 +38,10 @@ export class GcpBloodPressureStore implements IBloodPressureStore {
                 { name: parent }
             );
             var data: any = resource.data;
-            //var resourceStr = JSON.stringify(data, null, 2);
-            //console.log(`Created FHIR resource ${resourceStr}`);
+
             return data;
         } catch (error) {
-            // var errorMessage = Helper.checkObj(error.message);
-            if (error.Message != null) {
+            if (error.message != null) {
                 // eslint-disable-next-line no-prototype-builtins
                 if (error.message.hasOwnProperty('issue')) {
                     var issue = error.message.issue[0];
@@ -70,6 +65,8 @@ export class GcpBloodPressureStore implements IBloodPressureStore {
             { name: parent }
         );
         var data:any = existingResource.data;
+
+        //delete data.id; //Remove id from the resource
 
         //Construct updated body
         const body: healthcare_v1.Schema$HttpBody = this.updateBloodPressureFhirResource(updates, data);
@@ -138,7 +135,6 @@ export class GcpBloodPressureStore implements IBloodPressureStore {
         if (model.RecordedByUserId != null) {
             resource['performer'] = [
                 {
-                    // reference   : `Practitioner/${model.RecordedByUserId}`,
                     reference : "https://www.aiims.edu/images/pdf/CV.pdf",
                     type      : "Practitioner",
                     id        : model.RecordedByUserId
@@ -202,12 +198,6 @@ export class GcpBloodPressureStore implements IBloodPressureStore {
     private updateBloodPressureFhirResource(updates: BloodPressureDomainModel, existingResource: any): any {
 
         existingResource.resourceType = "Observation";
-
-        if (updates.EhrId != null) {
-            existingResource['subject'] = {
-                reference : `Patient/${updates.EhrId}`
-            };
-        }
 
         /*if (updates.VisitEhirId != null) {
             existingResource['VisitId'] = updates.VisitEhrId

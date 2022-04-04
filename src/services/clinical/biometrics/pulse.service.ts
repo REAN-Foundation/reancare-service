@@ -6,7 +6,6 @@ import { PulseDto } from '../../../domain.types/clinical/biometrics/pulse/pulse.
 import { PulseSearchFilters, PulseSearchResults } from '../../../domain.types/clinical/biometrics/pulse/pulse.search.types';
 import { PulseStore } from "../../../modules/ehr/services/pulse.store";
 import { Loader } from "../../../startup/loader";
-import { Logger } from "../../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,7 +23,6 @@ export class PulseService {
     Promise<PulseDto> => {
         const ehrId = await this._ehrPulseStore.add(pulseDomainModel);
         pulseDomainModel.EhrId = ehrId;
-        Logger.instance().log(`EHR Id for pulse model: ${JSON.stringify(pulseDomainModel.EhrId)}`);
         var dto = await this._pulseRepo.create(pulseDomainModel);
         return dto;
     };
@@ -39,7 +37,9 @@ export class PulseService {
 
     update = async (id: uuid, pulseDomainModel: PulseDomainModel):
     Promise<PulseDto> => {
-        return await this._pulseRepo.update(id, pulseDomainModel);
+        var dto = await this._pulseRepo.update(id, pulseDomainModel);
+        await this._ehrPulseStore.update(dto.EhrId, dto);
+        return dto;
     };
 
     delete = async (id: uuid): Promise<boolean> => {

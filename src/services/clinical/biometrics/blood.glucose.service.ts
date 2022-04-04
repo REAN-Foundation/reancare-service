@@ -5,7 +5,6 @@ import { BloodGlucoseDomainModel } from '../../../domain.types/clinical/biometri
 import { BloodGlucoseDto } from '../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto';
 import { BloodGlucoseSearchFilters, BloodGlucoseSearchResults } from '../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.search.types';
 import { Loader } from "../../../startup/loader";
-import { Logger } from "../../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +24,6 @@ export class BloodGlucoseService {
 
         const ehrId = await this._ehrBloodGlucoseStore.add(bloodGlucoseDomainModel);
         bloodGlucoseDomainModel.EhrId = ehrId;
-        Logger.instance().log(`EHR Id for blood glucose model: ${JSON.stringify(bloodGlucoseDomainModel.EhrId)}`);
         var dto = await this._bloodGlucoseRepo.create(bloodGlucoseDomainModel);
         return dto;
     };
@@ -35,7 +33,9 @@ export class BloodGlucoseService {
     };
 
     update = async (id: string, bloodGlucoseDomainModel: BloodGlucoseDomainModel): Promise<BloodGlucoseDto> => {
-        return await this._bloodGlucoseRepo.update(id, bloodGlucoseDomainModel);
+        var dto = await this._bloodGlucoseRepo.update(id, bloodGlucoseDomainModel);
+        await this._ehrBloodGlucoseStore.update(dto.EhrId, dto);
+        return dto;
     };
 
     search = async (filters: BloodGlucoseSearchFilters): Promise<BloodGlucoseSearchResults> => {

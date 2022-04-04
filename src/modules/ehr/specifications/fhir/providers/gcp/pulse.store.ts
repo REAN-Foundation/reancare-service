@@ -21,9 +21,6 @@ export class GcpPulseStore implements IPulseStore {
             );
             var data: any = resource.data;
 
-            //var resourceStr = JSON.stringify(data, null, 2);
-            //console.log(`Created FHIR resource ${resourceStr}`);
-            
             return data.id;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -41,12 +38,10 @@ export class GcpPulseStore implements IPulseStore {
                 { name: parent }
             );
             var data: any = resource.data;
-            //var resourceStr = JSON.stringify(data, null, 2);
-            //console.log(`Created FHIR resource ${resourceStr}`);
+        
             return data;
         } catch (error) {
-            // var errorMessage = Helper.checkObj(error.message);
-            if (error.Message != null) {
+            if (error.message != null) {
                 // eslint-disable-next-line no-prototype-builtins
                 if (error.message.hasOwnProperty('issue')) {
                     var issue = error.message.issue[0];
@@ -138,7 +133,6 @@ export class GcpPulseStore implements IPulseStore {
         if (model.RecordedByUserId != null) {
             resource['performer'] = [
                 {
-                    // reference   : `Practitioner/${model.RecordedByUserId}`,
                     reference : "https://www.aiims.edu/images/pdf/CV.pdf",
                     type      : "Practitioner",
                     id        : model.RecordedByUserId
@@ -174,15 +168,13 @@ export class GcpPulseStore implements IPulseStore {
 
         existingResource.resourceType = "Observation";
 
-        if (updates.PatientUserId != null) {
-            existingResource['subject'] = {
-                reference : `Patient/${updates.PatientUserId}`
-            };
-        }
-
         /*if (updates.VisitEhirId != null) {
             existingResource['VisitId'] = updates.VisitEhrId
         }*/
+
+        if (updates.Pulse != null) {
+            existingResource.component[0].valueQuantity.value = updates.Pulse;
+        }
 
         if (updates.RecordDate != null) {
             existingResource['effectiveDateTime'] = Helper.formatDate(updates.RecordDate);

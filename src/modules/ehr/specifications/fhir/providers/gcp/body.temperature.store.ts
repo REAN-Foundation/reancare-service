@@ -21,9 +21,6 @@ export class GcpTemperatureStore implements ITemperatureStore {
             );
             var data: any = resource.data;
 
-            //var resourceStr = JSON.stringify(data, null, 2);
-            //console.log(`Created FHIR resource ${resourceStr}`);
-
             return data.id;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -41,12 +38,10 @@ export class GcpTemperatureStore implements ITemperatureStore {
                 { name: parent }
             );
             var data: any = resource.data;
-            //var resourceStr = JSON.stringify(data, null, 2);
-            //console.log(`Created FHIR resource ${resourceStr}`);
+        
             return data;
         } catch (error) {
-            //var errorMessage = Helper.checkObj(error.message);
-            if (error.Message != null) {
+            if (error.message != null) {
                 // eslint-disable-next-line no-prototype-builtins
                 if (error.message.hasOwnProperty('issue')) {
                     var issue = error.message.issue[0];
@@ -153,7 +148,6 @@ export class GcpTemperatureStore implements ITemperatureStore {
         if (model.RecordedByUserId != null) {
             resource['performer'] = [
                 {
-                    // reference   : `Practitioner/${model.RecordedByUserId}`,
                     reference : "https://www.aiims.edu/images/pdf/CV.pdf",
                     type      : "Practitioner",
                     id        : model.RecordedByUserId
@@ -189,8 +183,8 @@ export class GcpTemperatureStore implements ITemperatureStore {
                     "text" : "Temperature"
                 },
                 valueQuantity : {
-                    value  : 99,
-                    unit   : "°F",
+                    value  : model.BodyTemperature,
+                    unit   : model.Unit,
                     system : "http://unitsofmeasure.org",
                     code   : "Farenheit"
                 },
@@ -204,15 +198,13 @@ export class GcpTemperatureStore implements ITemperatureStore {
 
         existingResource.resourceType = "Observation";
 
-        if (updates.EhrId != null) {
-            existingResource['subject'] = {
-                reference : `Patient/${updates.EhrId}`
-            };
-        }
-
         /*if (updates.VisitEhirId != null) {
             existingResource['VisitId'] = updates.VisitEhrId
         }*/
+        
+        if (updates.BodyTemperature != null) {
+            existingResource.component[0].valueQuantity.value = updates.BodyTemperature;
+        }
 
         if (updates.RecordDate != null) {
             existingResource['effectiveDateTime'] = Helper.formatDate(updates.RecordDate);

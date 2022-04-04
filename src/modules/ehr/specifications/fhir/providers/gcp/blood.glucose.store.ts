@@ -41,12 +41,10 @@ export class GcpBloodGlucoseStore implements IBloodGlucoseStore {
                 { name: parent }
             );
             var data: any = resource.data;
-            //var resourceStr = JSON.stringify(data, null, 2);
-            //console.log(`Created FHIR resource ${resourceStr}`);
+            
             return data;
         } catch (error) {
-            // var errorMessage = Helper.checkObj(error.message);
-            if (error.Message != null) {
+            if (error.message != null) {
                 // eslint-disable-next-line no-prototype-builtins
                 if (error.message.hasOwnProperty('issue')) {
                     var issue = error.message.issue[0];
@@ -72,6 +70,7 @@ export class GcpBloodGlucoseStore implements IBloodGlucoseStore {
                 { name: parent }
             );
             var data:any = existingResource.data;
+
             //delete data.id; //Remove id from the resource
             
             //Construct updated body
@@ -148,7 +147,6 @@ export class GcpBloodGlucoseStore implements IBloodGlucoseStore {
         if (model.RecordedByUserId != null) {
             resource['performer'] = [
                 {
-                    // reference   : `Practitioner/${model.RecordedByUserId}`,
                     reference : "https://www.aiims.edu/images/pdf/CV.pdf",
                     type      : "Practitioner",
                     id        : model.RecordedByUserId
@@ -184,11 +182,6 @@ export class GcpBloodGlucoseStore implements IBloodGlucoseStore {
 
         existingResource.resourceType = "Observation";
         
-        if (updates.EhrId != null) {
-            existingResource['subject'] = {
-                reference : `Patient/${updates.EhrId}`
-            };
-        }
         if (updates.RecordDate != null) {
             var str = Helper.formatDate(updates.RecordDate);
             existingResource.effectiveDateTime = str;

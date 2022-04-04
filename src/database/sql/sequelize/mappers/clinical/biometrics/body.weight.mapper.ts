@@ -13,6 +13,7 @@ export class BodyWeightMapper {
         const dto: BodyWeightDto = {
             id               : bodyWeight.id,
             PatientUserId    : bodyWeight.PatientUserId,
+            EhrId            : bodyWeight.EhrId,
             BodyWeight       : bodyWeight.BodyWeight,
             Unit             : bodyWeight.Unit,
             RecordDate       : bodyWeight.RecordDate,

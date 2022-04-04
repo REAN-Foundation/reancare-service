@@ -6,7 +6,6 @@ import { BodyTemperatureDto } from '../../../domain.types/clinical/biometrics/bo
 import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.search.types';
 import { TemperatureStore } from "../../../modules/ehr/services/body.temperature.store";
 import { Loader } from "../../../startup/loader";
-import { Logger } from "../../../common/logger";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +26,6 @@ export class BodyTemperatureService {
 
         const ehrId = await this._ehrTemperatureStore.add(bodyTemperatureDomainModel);
         bodyTemperatureDomainModel.EhrId = ehrId;
-        Logger.instance().log(`EHR Id for body temperature model: ${JSON.stringify(bodyTemperatureDomainModel.EhrId)}`);
         var dto = await this._bodyTemperatureRepo.create(bodyTemperatureDomainModel);
         return dto;
     };
@@ -42,7 +40,9 @@ export class BodyTemperatureService {
 
     update = async (id: uuid, bodyTemperatureDomainModel: BodyTemperatureDomainModel):
     Promise<BodyTemperatureDto> => {
-        return await this._bodyTemperatureRepo.update(id, bodyTemperatureDomainModel);
+        var dto = await this._bodyTemperatureRepo.update(id, bodyTemperatureDomainModel);
+        await this._ehrTemperatureStore.update(dto.EhrId, dto);
+        return dto;
     };
 
     delete = async (id: uuid): Promise<boolean> => {

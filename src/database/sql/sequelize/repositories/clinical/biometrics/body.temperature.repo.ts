@@ -17,6 +17,7 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
         try {
             const entity = {
                 PatientUserId    : createModel.PatientUserId,
+                EhrId            : createModel.EhrId,
                 BodyTemperature  : createModel.BodyTemperature,
                 Unit             : createModel.Unit,
                 RecordDate       : createModel.RecordDate,

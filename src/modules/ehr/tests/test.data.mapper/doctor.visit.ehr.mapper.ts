@@ -13,15 +13,15 @@ export class DoctorVisitMapper {
         var obj = Helper.jsonToObj(jsonPath);
 
         var model: DoctorVisitDomainModel = {
-            PatientUserId  : obj.PatientUserId,
-            EhrId          : obj.EhrId,
-            DoctorUserId   : obj.DoctorUserId,
-            DoctorEhrId    : obj.DoctorEhrId,
-            PastVisitId    : obj.PastVisitId,
-            PastVisitEhrId : obj.PastVisitEhrId,
-            StartDate      : obj.StartDate,
-            EndDate        : obj.EndDate,
-            CreatedByUser  : obj.CreatedByUser,
+            PatientUserId    : obj.PatientUserId,
+            EhrId            : obj.EhrId,
+            RecordedByEhrId  : obj.RecordedByEhrId,
+            RecordedByUserId : obj.RecordedByUserId,
+            PastVisitId      : obj.PastVisitId,
+            PastVisitEhrId   : obj.PastVisitEhrId,
+            StartDate        : obj.StartDate,
+            EndDate          : obj.EndDate,
+            CreatedByUser    : obj.CreatedByUser,
         };
 
         return model;

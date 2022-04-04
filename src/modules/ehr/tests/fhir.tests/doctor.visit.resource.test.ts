@@ -6,7 +6,7 @@ import { DoctorMapper } from "../test.data.mapper/doctor.ehr.mapper";
 import { Logger } from "../../../../common/logger";
 
 describe('Encounter resource: Storage, retrieval', () => {
-    it('Given doctor visit domain model, store observation resource to fhir interface, then returned doctor visit details are valid.', async () => {
+    it('Given doctor visit domain model, store doctor visit resource to fhir interface, then returned doctor visit details are valid.', async () => {
 
         var patientModel = PatientMapper.convertJsonObjectToDomainModel();
         var patientEhrId = await TestLoader.PatientStore.create(patientModel);
@@ -16,7 +16,6 @@ describe('Encounter resource: Storage, retrieval', () => {
 
         var model = DoctorVisitMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
-        model.DoctorEhrId = doctorEhrId;
 
         var doctorVisitEhirId = await TestLoader.DoctorVisitStore.create(model);
         var doctorVisitFhirResource = await TestLoader.DoctorVisitStore.getById(doctorVisitEhirId);
@@ -32,8 +31,8 @@ describe('Encounter resource: Storage, retrieval', () => {
         var extractedEndDate = doctorVisitFhirResource.period.end;
         expect(extractedEndDate).toEqual(Helper.formatDate(model.EndDate));
 
-        var extractedDoctorEhrId = doctorVisitFhirResource.participant[0].individual.reference.split('/')[1];
-        expect(extractedDoctorEhrId).toEqual(model.DoctorEhrId);
+        var extractedRecordedByEhrId = doctorVisitFhirResource.participant[0].individual.reference.split('/')[1];
+        expect(extractedRecordedByEhrId).toEqual(model.RecordedByEhrId);
 
         /*var extractedAppointmentId = doctorVisitFhirResource.appointment[0].id;
         expect(extractedAppointmentId).toEqual(model.AppointmentId);*/
@@ -52,7 +51,7 @@ describe('Encounter resource: Storage, retrieval', () => {
         var expectedStartDate = '2022-03-28';
         model.StartDate = new Date(expectedStartDate);
 
-        var expectedEndDate = '2022-03-30';
+        var expectedEndDate = '2022-03-28';
         model.EndDate = new Date(expectedEndDate);
 
         var updatedResource = await TestLoader.DoctorVisitStore.update(doctorVisitEhirId, model);
@@ -62,10 +61,10 @@ describe('Encounter resource: Storage, retrieval', () => {
 
         //Assertions
         var extractedStartDate = updatedResource.period.start;
-        expect(extractedStartDate).toEqual(model.StartDate);
+        expect(extractedStartDate).toEqual(Helper.formatDate(model.StartDate));
 
         var extractedEndDate = updatedResource.period.end;
-        expect(extractedEndDate).toEqual(model.EndDate);
+        expect(extractedEndDate).toEqual(Helper.formatDate(model.EndDate));
 
     });
 

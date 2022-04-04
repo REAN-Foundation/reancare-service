@@ -24,7 +24,7 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
             Logger.instance().log(`Created FHIR resource ${resourceStr}`);
             return data.id;
         } catch (error) {
-            Logger.instance().log(`Error:: ${JSON.stringify(error)}`);
+            Logger.instance().log(`Error:: ${JSON.stringify(error.message, null, 2)}`);
             throw error;
         }
     };
@@ -80,7 +80,7 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
             return data;
 
         }  catch (error) {
-            Logger.instance().log(`Error:: ${JSON.stringify(error, null, 2)}`);
+            Logger.instance().log(`Error:: ${JSON.stringify(error.message, null, 2)}`);
             throw error;
         }
 
@@ -99,7 +99,7 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
             );
         }
         catch (error) {
-            Logger.instance().log(`Error:: ${JSON.stringify(error, null, 2)}`);
+            Logger.instance().log(`Error:: ${JSON.stringify(error.message, null, 2)}`);
             throw error;
         }
     };
@@ -118,21 +118,28 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
                 display : "ambulatory"
             },
             period : {
-                start : "2022-03-28",
-                end   : "2022-03-30"
+                start : "2022-04-03",
+                end   : "2022-04-04"
             },
             participant : [
                 {
-                    "individual" : {
-                        "reference" : "Practitioner/f201"
+                    individual : {
+                        reference : `Practitioner/${model.RecordedByUserId}`,
+                        
                     }
                 }
             ],
+
+            subject : {
+                reference : "Patient/f201",
+                display   : "Roel"
+            },
         };
 
         if (model.EhrId != null) {
             resource['subject'] = {
-                reference : `Patient/${model.EhrId}`
+                reference : `Patient/${model.EhrId}`,
+                display   : "roel"
             };
         }
 
@@ -148,10 +155,11 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
             resource.period.end = Helper.formatDate(model.EndDate);
         }
 
-        if (model.DoctorEhrId != null) {
+        if (model.RecordedByUserId != null) {
             resource.participant.push({
                 individual : {
-                    reference : `Practitioner/${model.DoctorEhrId}`
+                    reference : `Practitioner/${model.RecordedByUserId}`,
+        
                 }
             });
         }
@@ -163,18 +171,12 @@ export class GcpDoctorVisitStore implements IDoctorVisitStore {
 
         existingResource.resourceType = "Encounter";
 
-        if (updates.EhrId != null) {
-            existingResource['subject'] = {
-                reference : `Patient/${updates.EhrId}`
-            };
-        }
-
         if (updates.StartDate != null) {
-            existingResource['period.start'] = Helper.formatDate(updates.StartDate);
+            existingResource.period.start = Helper.formatDate(updates.StartDate);
         }
 
         if (updates.EndDate != null) {
-            existingResource['period.end'] = Helper.formatDate(updates.EndDate);
+            existingResource.period.end = Helper.formatDate(updates.EndDate);
         }
  
         return existingResource;

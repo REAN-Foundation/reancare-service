@@ -6,7 +6,7 @@ import { Helper } from "../../../../common/helper";
 import { Logger } from "../../../../common/logger";
 
 describe('ImagingStudy resource: Storage, retrieval', () => {
-    it('Given imaging study domain model, store observation resource to fhir interface, then returned imaging study details are valid.', async () => {
+    it('Given imaging study domain model, store imaging study resource to fhir interface, then returned imaging study details are valid.', async () => {
 
         var patientModel = PatientMapper.convertJsonObjectToDomainModel();
         var patientEhrId = await TestLoader.PatientStore.create(patientModel);
@@ -54,7 +54,7 @@ describe('ImagingStudy resource: Storage, retrieval', () => {
         model.InstanceCount = 2;
         model.SeriesCount = 2;
 
-        var updatedResource = await TestLoader.DoctorVisitStore.update(imagingStudyEhirId, model);
+        var updatedResource = await TestLoader.ImagingStudyStore.update(imagingStudyEhirId, model);
 
         var str = JSON.stringify(updatedResource, null, 2);
         Logger.instance().log(str);

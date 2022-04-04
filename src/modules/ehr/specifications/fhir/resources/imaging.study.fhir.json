@@ -1,6 +1,10 @@
 {
   "resourceType": "ImagingStudy",
   "id": "example",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">CT Chest.  John Smith (MRN: 09236). Accession: W12342398. Performed: 2011-01-01. 3 series, 12 images.</div>"
+  },
   "identifier": [
     {
       "system": "urn:dicom:uid",

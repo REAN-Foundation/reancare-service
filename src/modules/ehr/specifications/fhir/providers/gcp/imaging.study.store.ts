@@ -24,7 +24,7 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
             //console.log(`Created FHIR resource ${resourceStr}`);
             return data.id;
         } catch (error) {
-            Logger.instance().log(`Error:: ${JSON.stringify(error.message)}`);
+            Logger.instance().log(`Error:: ${JSON.stringify(error.message, null, 2)}`);
             throw error;
         }
     };
@@ -110,7 +110,13 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
             resourceType : "ImagingStudy",
             id           : "example",
             status       : "available",
-            series       : [
+            subject      : {
+                reference : "Patient/dicom",
+            },
+            numberOfInstances : 1,
+            numberOfSeries    : 1,
+            started           : "2022-04-04T11:01:20+03:00",
+            series            : [
                 {
                     uid      : "2.16.124.113543.6003.2588828330.45298.17418.2723805630",
                     number   : 3,
@@ -118,11 +124,8 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
                         system : "http://dicom.nema.org/resources/ontology/DCM",
                         code   : "CT"
                     },
-                    description       : "CT Surview 180",
-                    numberOfInstances : 1,
-                    numberOfSeries    : 1,
-                    started           : "2022-03-30T11:01:20+03:00",
-                    bodySite          : {
+                    description : "CT Surview 180",
+                    bodySite    : {
                         system  : "http://snomed.info/sct",
                         code    : "67734004",
                         display : "Upper Trunk Structure"
@@ -151,10 +154,6 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
             resource['started'] = Helper.formatDate(model.StudyDate);
         }
 
-        if (model.Name != null){
-            resource['description'] = model.Name;
-        }
-
         if (model.SeriesCount != null){
             resource['numberOfSeries'] = model.SeriesCount;
         }
@@ -174,12 +173,6 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
 
         existingResource.resourceType = "ImagingStudy";
 
-        if (updates.EhrId != null) {
-            existingResource['subject'] = {
-                reference : `Patient/${updates.EhrId}`
-            };
-        }
-
         /*if (updates.VisitEhirId != null) {
             existingResource['VisitId'] = updates.VisitEhrId
         }*/
@@ -189,15 +182,15 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
         }
 
         if (updates.BodySite != null) {
-            existingResource['bodySite'] = Helper.formatDate(updates.BodySite);
+            existingResource.series[0].bodySite.display = updates.BodySite;
         }
 
         if (updates.SeriesCount != null) {
-            existingResource['numberOfSeries'] = Helper.formatDate(updates.SeriesCount);
+            existingResource['numberOfSeries'] = updates.SeriesCount;
         }
 
         if (updates.InstanceCount != null) {
-            existingResource['numberOfInstances'] = Helper.formatDate(updates.InstanceCount);
+            existingResource['numberOfInstances'] = updates.InstanceCount;
         }
          
         return existingResource;

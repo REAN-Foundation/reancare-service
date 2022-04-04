@@ -40,7 +40,8 @@
     "participant": [
       {
         "individual": {
-          "reference": "Practitioner/f201"
+          "reference": "Practitioner/xcda1"
+    
         }
       }
     ],
@@ -53,7 +54,7 @@
       "reference": "Organization/f201"
     },
     "period": {
-      "start": "2021-05-28T12:04:55.748Z",
-      "end": "2021-06-28T12:04:55.748Z"
+      "start": "2021-05-28",
+      "end": "2021-06-28"
     }
   }

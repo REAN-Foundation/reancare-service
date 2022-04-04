@@ -5,6 +5,7 @@ import { GcpStorageService } from "./storage.service";
 import { GcpPatientStore } from "./patient.store";
 import { GcpDoctorStore } from './doctor.store';
 import { GcpCarePlanStore } from './careplan.store';
+import { GcpHospitalOrganizationStore } from './hospital.organization.store';
 
 // import { GcpClinicOrganizationStore } from "./clinic.organization.store";
 // import { GcpDiagnosticLabUserStore } from "./diagnostic.lab.user.store";
@@ -24,6 +25,7 @@ export class GcpFhirInjector {
         container.register('IPatientStore', GcpPatientStore);
         container.register('IDoctorStore', GcpDoctorStore);
         container.register('ICarePlanStore', GcpCarePlanStore);
+        container.register('IHospitalOrganizationStore', GcpHospitalOrganizationStore);
 
         // container.register('IClinicOrganizationStore', GcpClinicOrganizationStore);
         // container.register('IDiagnosticLabUserStore', GcpDiagnosticLabUserStore);

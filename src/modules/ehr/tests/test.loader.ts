@@ -5,15 +5,16 @@ import { PatientStore } from '../services/patient.store';
 import { DoctorStore } from '../services/doctor.store';
 import { Logger } from '../../../common/logger';
 import { ConfigurationManager } from '../../../config/configuration.manager';
-
 import { LabVisitStore } from '../services/lab.visit.store';
 import { DiagnosticConditionStore } from '../services/diagnostic.condition.store';
-// import { PharmacistStore } from '../services/pharmacist.store';
+// import { ClinicOrganizationStore } from '../services/clinic.organization.store';
+// import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
+import { PharmacistStore } from '../services/pharmacist.store';
+import { PharmacyStore } from '../services/pharmacy.organization.store';
 // import { BloodPressureStore } from '../services/blood.pressure.store';
 // import { BiometricsWeightStore } from '../services/biometrics.weight.store';
 // import { BloodSugarStore } from '../services/blood.sugar.store';
 // import { BiometricsHeightStore } from '../services/biometrics.height.store';
-
 import { EhrInjector } from '../ehr.injector';
 import { CarePlanStore } from '../services/careplan.service';
 import { HospitalOrganizationStore } from '../services/hospital.organization.store';
@@ -47,7 +48,9 @@ export class TestLoader {
 
     // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
     // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
-    // private static _pharmacistStore: PharmacistStore = container.resolve(PharmacistStore);
+    private static _pharmacistStore: PharmacistStore = container.resolve(PharmacistStore);
+
+    private static _pharmacyStore: PharmacyStore = container.resolve(PharmacyStore);
     // private static _bloodPressureStore: BloodPressureStore = container.resolve(BloodPressureStore);
     // private static _biometricsWeightStore: BiometricsWeightStore = container.resolve(BiometricsWeightStore);
     // private static _bloodSugarStore: BloodSugarStore = container.resolve(BloodSugarStore);
@@ -87,9 +90,13 @@ export class TestLoader {
     //     return TestLoader._diagnosticlabuserStore;
     // }
 
-    // public static get PharmacistStore() {
-    //     return TestLoader._pharmacistStore;
-    // }
+    public static get PharmacistStore() {
+        return TestLoader._pharmacistStore;
+    }
+
+    public static get PharmacyStore() {
+        return TestLoader._pharmacyStore;
+    }
 
     // public static get BloodPressureStore() {
     //     return TestLoader._bloodPressureStore;
@@ -128,7 +135,8 @@ export class TestLoader {
             // TestLoader._bloodPressureStore = container.resolve(BloodPressureStore);
             // TestLoader._bloodSugarStore = container.resolve(BloodSugarStore);
             // TestLoader._biometricsHeightStore = container.resolve(BiometricsHeightStore);
-            // TestLoader._pharmacistStore = container.resolve(PharmacistStore);
+            TestLoader._pharmacistStore = container.resolve(PharmacistStore);
+            TestLoader._pharmacyStore = container.resolve(PharmacyStore);
             // TestLoader._biometricsWeightStore = container.resolve(BiometricsWeightStore);
 
             //Finally intitialize Fhir storage provider

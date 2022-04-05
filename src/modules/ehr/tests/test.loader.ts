@@ -170,6 +170,7 @@ export class TestLoader {
             TestLoader._pulseStore = container.resolve(PulseStore);
             TestLoader._temperatureStore = container.resolve(TemperatureStore);
             TestLoader._doctorVisitStore = container.resolve(DoctorVisitStore);
+            TestLoader._imagingStudyStore = container.resolve(ImagingStudyStore);
 
             // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
             // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);

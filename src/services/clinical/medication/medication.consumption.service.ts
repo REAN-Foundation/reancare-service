@@ -151,16 +151,6 @@ export class MedicationConsumptionService implements IUserActionService {
                     continue;
                 }
     
-                if (medConsumption.Status === MedicationConsumptionStatus.Missed) {
-                    Logger.instance().log('Medication consumption instance with given id already marked as missed.');
-                    continue;
-                }
-    
-                if (medConsumption.Status === MedicationConsumptionStatus.Taken) {
-                    Logger.instance().log('Medication consumption instance with given id already marked as taken.');
-                    continue;
-                }
-    
                 var takenAt = new Date();
                 var isPastScheduleEnd = TimeHelper.isAfter(new Date(), medConsumption.TimeScheduleEnd);
                 if (isPastScheduleEnd) {

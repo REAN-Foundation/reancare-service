@@ -109,3 +109,4 @@ jobs:
           method: 'POST'
           data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1}'
           bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}
+

@@ -7,6 +7,8 @@ import { Logger } from '../../../common/logger';
 import { ConfigurationManager } from '../../../config/configuration.manager';
 import { LabVisitStore } from '../services/lab.visit.store';
 import { DiagnosticConditionStore } from '../services/diagnostic.condition.store';
+import { FamilyHistoryStore } from '../services/family.history.store';
+
 // import { ClinicOrganizationStore } from '../services/clinic.organization.store';
 // import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
 import { PharmacistStore } from '../services/pharmacist.store';
@@ -53,6 +55,8 @@ export class TestLoader {
     private static _doctorVisitStore: DoctorVisitStore = container.resolve(DoctorVisitStore);
 
     private static _imagingStudyStore: ImagingStudyStore = container.resolve(ImagingStudyStore);
+    
+    private static _familyHistoryStore: FamilyHistoryStore = container.resolve(FamilyHistoryStore);
 
     // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
     // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
@@ -107,6 +111,11 @@ export class TestLoader {
 
     public static get ImagingStudyStore() {
         return TestLoader._imagingStudyStore;
+
+    }
+    
+    public static get FamilyHistoryStore() {
+        return TestLoader._familyHistoryStore;
     }
 
     // public static get DiagnosticLabUserStore() {
@@ -171,15 +180,10 @@ export class TestLoader {
             TestLoader._temperatureStore = container.resolve(TemperatureStore);
             TestLoader._doctorVisitStore = container.resolve(DoctorVisitStore);
             TestLoader._imagingStudyStore = container.resolve(ImagingStudyStore);
+            TestLoader._familyHistoryStore = container.resolve(FamilyHistoryStore);
 
             // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
             // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
-            // TestLoader._bloodPressureStore = container.resolve(BloodPressureStore);
-            // TestLoader._bloodSugarStore = container.resolve(BloodSugarStore);
-            // TestLoader._biometricsHeightStore = container.resolve(BiometricsHeightStore);
-            // TestLoader._pharmacistStore = container.resolve(PharmacistStore);
-            // TestLoader._biometricsWeightStore = container.resolve(BiometricsWeightStore);
-
             //Finally intitialize Fhir storage provider
             const initialized = await TestLoader._storageService.init();
             if (initialized) {

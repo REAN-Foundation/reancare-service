@@ -4,6 +4,7 @@ import { MockStorageService } from "./storage.service";
 import { MockPatientStore } from "./patient.store";
 import { MockDoctorVisitStore } from "./doctor.visit.store";
 import { MockImagingStudyStore } from "./imaging.study.store";
+import { MockFamilyHistoryStore } from "./family.history.store";
 
 // import { MockClinicOrganizationStore } from "./clinic.organization.store";
 // import { MockDiagnosticLabUserStore } from "./diagnostic.lab.user.store";
@@ -26,6 +27,7 @@ export class MockEhrInjector {
         container.register('IPatientStore', MockPatientStore);
         container.register('IDoctorVisitStore', MockDoctorVisitStore);
         container.register('IImagingStudyStore', MockImagingStudyStore);
+        container.register('IFamilyHistoryStore', MockFamilyHistoryStore);
 
         // container.register('IClinicOrganizationStore', MockClinicOrganizationStore);
         // container.register('IDiagnosticLabUserStore', MockDiagnosticLabUserStore);

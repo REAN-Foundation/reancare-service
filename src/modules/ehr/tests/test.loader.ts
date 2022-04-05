@@ -20,6 +20,8 @@ import { HospitalOrganizationStore } from '../services/hospital.organization.sto
 import { PulseStore } from '../services/pulse.store';
 import { TemperatureStore } from '../services/body.temperature.store';
 import { BloodGlucoseStore } from '../services/blood.glucose.store';
+import { DoctorVisitStore } from '../services/doctor.visit.store';
+import { ImagingStudyStore } from '../services/imaging.study.store';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +49,10 @@ export class TestLoader {
     private static _carePlanStore: CarePlanStore = container.resolve(CarePlanStore);
 
     private static _hospitalOrganizationStore: HospitalOrganizationStore = container.resolve(HospitalOrganizationStore);
+
+    private static _doctorVisitStore: DoctorVisitStore = container.resolve(DoctorVisitStore);
+
+    private static _imagingStudyStore: ImagingStudyStore = container.resolve(ImagingStudyStore);
 
     // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
     // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
@@ -92,6 +98,15 @@ export class TestLoader {
 
     public static get HospitalOrganizationStore() {
         return TestLoader._hospitalOrganizationStore;
+
+    }
+        
+    public static get DoctorVisitStore() {
+        return TestLoader._doctorVisitStore;
+    }
+
+    public static get ImagingStudyStore() {
+        return TestLoader._imagingStudyStore;
     }
 
     // public static get DiagnosticLabUserStore() {
@@ -154,7 +169,16 @@ export class TestLoader {
             TestLoader._bodyWeightStore = container.resolve(BodyWeightStore);
             TestLoader._pulseStore = container.resolve(PulseStore);
             TestLoader._temperatureStore = container.resolve(TemperatureStore);
-            
+            TestLoader._doctorVisitStore = container.resolve(DoctorVisitStore);
+
+            // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
+            // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
+            // TestLoader._bloodPressureStore = container.resolve(BloodPressureStore);
+            // TestLoader._bloodSugarStore = container.resolve(BloodSugarStore);
+            // TestLoader._biometricsHeightStore = container.resolve(BiometricsHeightStore);
+            // TestLoader._pharmacistStore = container.resolve(PharmacistStore);
+            // TestLoader._biometricsWeightStore = container.resolve(BiometricsWeightStore);
+
             //Finally intitialize Fhir storage provider
             const initialized = await TestLoader._storageService.init();
             if (initialized) {

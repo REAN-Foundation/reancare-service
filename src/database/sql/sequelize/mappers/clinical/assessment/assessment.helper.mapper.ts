@@ -17,7 +17,12 @@ import {
     CAssessmentPathCondition,
     CAssessmentQueryOption,
     CAssessmentQueryResponse,
-    CAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer, DateQueryAnswer, FileQueryAnswer
+    CAssessmentQuestionNode,
+    SingleChoiceQueryAnswer,
+    TextQueryAnswer,
+    DateQueryAnswer,
+    FileQueryAnswer,
+    BooleanQueryAnswer
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import AssessmentNode from '../../../models/clinical/assessment/assessment.node.model';
@@ -309,7 +314,26 @@ export class AssessmentHelperMapper {
             QuestionSequence : node.Sequence,
             NodeDisplayCode  : node.DisplayCode,
             Title            : node.Title,
-            ResponseType     : QueryResponseType.Text,
+            ResponseType     : QueryResponseType.Integer,
+            Field            : field,
+            Value            : value
+        };
+        return dto;
+    }
+
+    static toBooleanAnswerDto(
+        assessmentId: uuid,
+        node: CAssessmentQuestionNode,
+        field: string,
+        value: boolean
+    ): BooleanQueryAnswer {
+        var dto: BooleanQueryAnswer = {
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : QueryResponseType.Boolean,
             Field            : field,
             Value            : value
         };
@@ -328,7 +352,7 @@ export class AssessmentHelperMapper {
             QuestionSequence : node.Sequence,
             NodeDisplayCode  : node.DisplayCode,
             Title            : node.Title,
-            ResponseType     : QueryResponseType.Text,
+            ResponseType     : QueryResponseType.Float,
             Field            : field,
             Value            : value
         };

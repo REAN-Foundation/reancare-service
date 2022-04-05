@@ -506,6 +506,23 @@ export class AssessmentService {
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
 
+    private async handleBooleanAnswer(
+        assessment: AssessmentDto,
+        questionNode: CAssessmentQuestionNode,
+        answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
+        
+        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
+        const answerDto = AssessmentHelperMapper.toBooleanAnswerDto(
+            assessment.id,
+            questionNode,
+            answerModel.FieldName,
+            answerModel.BooleanValue
+        );
+        
+        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
+    }
+
     private async handleFloatAnswer(
         assessment: AssessmentDto,
         questionNode: CAssessmentQuestionNode,
@@ -656,6 +673,9 @@ export class AssessmentService {
         }
         if (incomingResponseType === QueryResponseType.Integer) {
             return await this.handleIntegerAnswer(assessment, questionNode, answerModel);
+        }
+        if (incomingResponseType === QueryResponseType.Boolean) {
+            return await this.handleBooleanAnswer(assessment, questionNode, answerModel);
         }
         if (incomingResponseType === QueryResponseType.Float) {
             return await this.handleFloatAnswer(assessment, questionNode, answerModel);

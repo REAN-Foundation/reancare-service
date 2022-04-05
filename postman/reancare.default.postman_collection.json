@@ -17972,7 +17972,17 @@
 													"    pm.response.to.have.status(200);",
 													"    var jsonRes = pm.response.json();",
 													"    pm.expect(jsonRes.Status).to.eql('success');",
-													"    pm.expect(jsonRes.Message).to.eql('Assessment has completed successfully!');",
+													"});",
+													"",
+													"pm.test(\"Fourth assessment question (date answer) is answered\", function () {",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Data).to.have.property('AnswerResponse');",
+													"    pm.expect(jsonRes.Data.AnswerResponse).to.not.be.empty;",
+													"    pm.expect(jsonRes.Data.AnswerResponse).to.have.property('AssessmentId');",
+													"    pm.expect(jsonRes.Data.AnswerResponse).to.have.property('Parent');",
+													"    pm.expect(jsonRes.Data.AnswerResponse).to.have.property('Answer');",
+													"    pm.expect(jsonRes.Data.AnswerResponse).to.have.property('Next');",
+													"    pm.expect(jsonRes.Data.AnswerResponse.Next).to.have.property('id');",
 													"});",
 													""
 												],
@@ -18002,6 +18012,74 @@
 										"body": {
 											"mode": "raw",
 											"raw": "{\r\n    \"ResponseType\": \"Boolean\",\r\n    \"Answer\": false\r\n}"
+										},
+										"url": {
+											"raw": "{{BASE_URL}}/clinical/assessments/{{ASSESSMENT_ID}}/questions/{{ASSESSMENT_NEXT_QUESTION_ID}}/answer",
+											"host": [
+												"{{BASE_URL}}"
+											],
+											"path": [
+												"clinical",
+												"assessments",
+												"{{ASSESSMENT_ID}}",
+												"questions",
+												"{{ASSESSMENT_NEXT_QUESTION_ID}}",
+												"answer"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Answer last question - Message",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"try {",
+													"    var jsonRes = pm.response.json();",
+													"    pm.environment.set(\"ASSESSMENT_QUESTION_ID\", jsonRes.Data.AnswerResponse.Next.id);",
+													"    pm.environment.set(\"ASSESSMENT_NEXT_QUESTION_ID\", jsonRes.Data.AnswerResponse.Next.id);",
+													"}",
+													"catch (error) {",
+													"    console.log(error.message);",
+													"}",
+													"",
+													"pm.test(\"Request is successfull\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    var jsonRes = pm.response.json();",
+													"    pm.expect(jsonRes.Status).to.eql('success');",
+													"    pm.expect(jsonRes.Message).to.eql('Assessment has completed successfully!');",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{PATIENT_USER_JWT}}",
+												"type": "text"
+											},
+											{
+												"key": "x-api-key",
+												"value": "{{API_CLIENT_INTERNAL_KEY}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"ResponseType\": \"Ok\",\r\n    \"Answer\": \"Ok\"\r\n}"
 										},
 										"url": {
 											"raw": "{{BASE_URL}}/clinical/assessments/{{ASSESSMENT_ID}}/questions/{{ASSESSMENT_NEXT_QUESTION_ID}}/answer",

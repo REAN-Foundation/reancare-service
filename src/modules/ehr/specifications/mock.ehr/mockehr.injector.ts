@@ -2,15 +2,16 @@ import 'reflect-metadata';
 import { DependencyContainer } from 'tsyringe';
 import { MockStorageService } from "./storage.service";
 import { MockPatientStore } from "./patient.store";
-
 // import { MockClinicOrganizationStore } from "./clinic.organization.store";
 // import { MockDiagnosticLabUserStore } from "./diagnostic.lab.user.store";
 // import { MockDoctorStore } from './doctor.store';
 // import { MockPharmacistStore } from './pharmacist.store';
-// import { MockBloodPressureStore } from "./blood.pressure.store";
-// import { MockBiometricsWeightStore } from "./biometrics.weight.store";
-// import { MockBloodSugarStore } from "./blood.sugar.store";
 import { MockBiometricsHeightStore } from "./biometrics.height.store";
+import { MockBloodPressureStore } from "./blood.pressure.store";
+import { MockBodyWeightStore } from "./body.weight.store";
+import { MockBloodGlucoseStore } from "./blood.glucose.store";
+import { MockPulse } from "./pulse.store";
+import { MockBodyTemperatureStore } from "./body.temperature.store";
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -25,10 +26,12 @@ export class MockEhrInjector {
         // container.register('IDiagnosticLabUserStore', MockDiagnosticLabUserStore);
         // container.register('IDoctorStore', MockDoctorStore);
         // container.register('IPharmacistStore', MockPharmacistStore);
-        // container.register('IBloodPressureStore', MockBloodPressureStore);
-        // container.register('IBiometricsWeightStore', MockBiometricsWeightStore);
-        // container.register('IBloodSugarStore', MockBloodSugarStore);
-         container.register('IBiometricsHeightStore', MockBiometricsHeightStore);
+        container.register('IBiometricsHeightStore', MockBiometricsHeightStore);
+        container.register('IBloodPressureStore', MockBloodPressureStore);
+        container.register('IBodyWeightStore', MockBodyWeightStore);
+        container.register('IBloodGlucoseStore', MockBloodGlucoseStore);
+        container.register('IPulseStore',MockPulse);
+        container.register('IBodyTemperature',MockBodyTemperatureStore);
 
     }
 

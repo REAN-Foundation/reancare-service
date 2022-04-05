@@ -17,6 +17,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
         try {
             const entity = {
                 PatientUserId    : createModel.PatientUserId,
+                EhrId            : createModel.EhrId,
                 BloodGlucose     : createModel.BloodGlucose,
                 Unit             : createModel.Unit,
                 RecordDate       : createModel.RecordDate,

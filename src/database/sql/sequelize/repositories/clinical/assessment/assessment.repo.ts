@@ -91,6 +91,18 @@ export class AssessmentRepo implements IAssessmentRepo {
             if (updateModel.FinishedAt != null) {
                 assessment.FinishedAt = updateModel.FinishedAt;
             }
+            if (updateModel.ScheduledDateString != null) {
+                assessment.ScheduledDateString = updateModel.ScheduledDateString;
+            }
+            if (updateModel.Title != null) {
+                assessment.Title = updateModel.Title;
+            }
+            if (updateModel.Description != null) {
+                assessment.Description = updateModel.Description;
+            }
+            if (updateModel.ProviderAssessmentId != null) {
+                assessment.ProviderAssessmentId = updateModel.ProviderAssessmentId;
+            }
 
             await assessment.save();
 

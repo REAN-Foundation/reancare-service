@@ -174,6 +174,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (!node) {
                 throw new ApiError(404, `Node not found!`);
             }
+            
+            //Check if this is the root node,...
             var parentNodeId = node.ParentNodeId;
             var parentNode = await AssessmentNode.findByPk(parentNodeId);
             if (!parentNodeId || !parentNode) {
@@ -188,8 +190,22 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             var result = count === 1;
 
             if (parentNode.NodeType === AssessmentNodeType.NodeList) {
-                //TODO: Recalculate sequence parameter of all sibllings
-                //...
+                var siblings = await AssessmentNode.findAll({
+                    where : {
+                        parentNodeId : parentNodeId
+                    }
+                });
+                //Sort in ascending order by sequence
+                siblings = siblings.sort((a, b) => {
+                    return a.Sequence - b.Sequence;
+                });
+
+                var sequence = 1;
+                for await (var sibling of siblings) {
+                    sibling.Sequence = sequence;
+                    sequence++;
+                    await sibling.save();
+                }
             }
 
             return result;

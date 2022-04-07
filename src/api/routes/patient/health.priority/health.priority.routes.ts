@@ -14,6 +14,7 @@ export const register = (app: express.Application): void => {
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPriorities);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
+    router.get('/for-patient/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientHealthPriorities);
     
     app.use('/api/v1/patient-health-priorities', router);
 };

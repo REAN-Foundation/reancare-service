@@ -76,7 +76,7 @@ export class CustomAuthenticator implements IAuthenticator {
             };
             let apiKey: string = request.headers['x-api-key'] as string;
 
-            Logger.instance().log(`API key in custom authenticator: ${JSON.stringify(apiKey)}`);
+            //Logger.instance().log(`API key in custom authenticator: ${JSON.stringify(apiKey)}`);
 
             if (!apiKey) {
                 res = {

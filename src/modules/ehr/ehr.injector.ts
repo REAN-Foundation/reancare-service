@@ -11,18 +11,22 @@ import { MockEhrInjector } from './specifications/mock.ehr/mockehr.injector';
 export class EhrInjector {
 
     static registerInjections(container: DependencyContainer) {
-        
-        const ehrSpec = ConfigurationManager.EhrSpecification();
-        if (ehrSpec === 'FHIR') {
-            FhirInjector.registerInjections(container);
-        }
 
-        // else if (ehrSpec === 'OpenEHR') {
-        //     OpenEhrInjector.registerInjections(container);
-        // }
+        var ehrEnabled = ConfigurationManager.EhrEnabled();
 
-        else {
-            MockEhrInjector.registerInjections(container);
+        if (ehrEnabled) {
+            
+            const ehrSpec = ConfigurationManager.EhrSpecification();
+
+            if (ehrSpec === 'FHIR') {
+                FhirInjector.registerInjections(container);
+            }
+            // else if (ehrSpec === 'OpenEHR') {
+            //     OpenEhrInjector.registerInjections(container);
+            // }
+            else {
+                MockEhrInjector.registerInjections(container);
+            }
         }
 
     }

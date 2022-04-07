@@ -27,16 +27,16 @@ export class GoalService {
         return await this._goalRepo.getById(id);
     };
 
-    getSelectedGoals = async (id: string): Promise<GoalDto[]> => {
-        return await this._goalRepo.getSelectedGoals(id);
+    getPatientGoals = async (patientUserId: string): Promise<GoalDto[]> => {
+        return await this._goalRepo.getSelectedGoals(patientUserId);
     };
 
-    getGoals = async (priorityId: string): Promise<GoalDto[]> => {
+    getGoalsByPriority = async (priorityId: string): Promise<GoalDto[]> => {
         
         var priority =  await this._healthPriorityRepo.getById(priorityId);
 
         var goals =  await this._careplanHandler.getGoals(priority.PatientUserId, priority.ProviderEnrollmentId,
-            priority.Provider,priority.HealthPriorityType);
+            priority.Provider, priority.HealthPriorityType);
 
         const goalModels = goals.map(x => {
             var a: GoalDomainModel = {

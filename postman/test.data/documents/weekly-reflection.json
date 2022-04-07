@@ -1,0 +1,30 @@
+{
+  "DisplayCode": "AssessmtTmpl#u6w3nyehcqbpnbpvawibdet9",
+  "Version": "1.0",
+  "Type": "Careplan",
+  "Title": "Weekely reflection",
+  "Provider": "AHA",
+  "ProviderAssessmentCode": "16331",
+  "RootNodeDisplayCode": "RNode#bndv5l86d9ewhxewaw7omle6",
+  "Nodes": [
+    {
+      "DisplayCode": "RNode#bndv5l86d9ewhxewaw7omle6",
+      "NodeType": "Node list",
+      "ProviderGivenId": null,
+      "ProviderGivenCode": null,
+      "Title": "Assessment root node",
+      "ChildrenNodeDisplayCodes": [
+        "QNode#t455me6mbvbu4v7stratbcoq"
+      ]
+    },
+    {
+      "DisplayCode": "QNode#t455me6mbvbu4v7stratbcoq",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.1",
+      "ProviderGivenCode": "q1",
+      "Title": "Weekely reflection",
+      "Sequence": 1,
+      "QueryResponseType": "Text"
+    }
+  ]
+}

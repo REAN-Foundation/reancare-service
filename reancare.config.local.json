@@ -1,0 +1,71 @@
+{
+    "SystemIdentifier": "REAN HealthGuru",
+    "Auth" : {
+        "Authentication": "Custom",
+        "Authorization": "Custom"
+    },
+    "Database" : {
+        "Type": "SQL",
+        "ORM": "Sequelize",
+        "Flavour": "MySQL"
+    },
+    "Ehr" : {
+        "Enabled": false,
+        "Specification": "FHIR",
+        "Provider": "GCP-FHIR"
+    },
+    "FileStorage" : {
+        "Provider": "Custom"
+    },
+    "Communication" : {
+        "SMS": {
+            "Provider": "Mock"
+        },
+        "Email": {
+            "Provider": "Mock"
+        },
+        "InAppNotifications": {
+            "Provider": "Mock"
+        }
+    },
+    "TemporaryFolders": {
+        "Upload": "./tmp/resources/uploads/",
+        "Download": "./tmp/resources/downloads/",
+        "CleanupFolderBeforeMinutes": 10
+    },
+    "Careplans" : [
+        { 
+            "Enabled" : true,
+            "Provider": "AHA",
+            "Service": "AhaCarePlanService",
+            "Plans": [
+                {
+                    "Provider" : "AHA",
+                    "Name": "Core",
+                    "Code": "Core",
+                    "DisplayName": "AHA-Core",
+                    "DefaultDurationDays": 84
+                },
+                {
+                    "Provider" : "AHA",
+                    "Name": "Heart Failure",
+                    "Code": "HeartFailure",
+                    "DisplayName": "AHA-Heart Failure",
+                    "DefaultDurationDays": 84
+                }
+            ]
+        }
+    ],
+    "FormServiceProviders" : [
+        { 
+            "Provider": "KoboToolbox",
+            "Code": "KoboToolbox"
+        },
+        { 
+            "Provider": "GoogleForms",
+            "Code": "GoogleForms"
+        }
+    ],
+    "MaxUploadFileSize": 104857600,
+    "JwtExpiresIn": 2592000
+}

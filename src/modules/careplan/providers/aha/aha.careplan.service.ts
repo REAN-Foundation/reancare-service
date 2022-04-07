@@ -58,8 +58,8 @@ export class AhaCareplanService implements ICareplanService {
         var url = process.env.AHA_API_BASE_URL + '/token';
 
         var body = {
-            client_id     : process.env.AHA_CONTINUITY_CLIENT_ID,
-            client_secret : process.env.AHA_CONTINUITY_CLIENT_SECRET,
+            client_id     : process.env.AHA_API_CLIENT_ID,
+            client_secret : process.env.AHA_API_CLIENT_SECRET,
             grant_type    : 'client_credentials',
         };
 

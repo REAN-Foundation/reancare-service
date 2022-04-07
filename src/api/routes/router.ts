@@ -53,6 +53,7 @@ import { register as registerAssessmentRoutes } from './clinical/assessment/asse
 import { register as registerAssessmentTemplateRoutes } from './clinical/assessment/assessment.template.routes';
 import { register as registerHealthPriorityRoutes } from './patient/health.priority/health.priority.routes';
 import { register as registerActionPlanRoutes } from './action.plan/action.plan.routes';
+import { register as registerFormsRoutes } from './clinical/assessment/forms.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -130,6 +131,7 @@ export class Router {
                 registerAssessmentTemplateRoutes(this._app);
                 registerHealthPriorityRoutes(this._app);
                 registerActionPlanRoutes(this._app);
+                registerFormsRoutes(this._app);
 
                 resolve(true);
 

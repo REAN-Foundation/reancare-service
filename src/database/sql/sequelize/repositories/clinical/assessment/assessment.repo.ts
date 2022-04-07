@@ -27,6 +27,7 @@ export class AssessmentRepo implements IAssessmentRepo {
                 AssessmentTemplateId   : model.AssessmentTemplateId ?? null,
                 Provider               : model.Provider ?? null,
                 ProviderAssessmentCode : model.ProviderAssessmentCode ?? null,
+                ProviderAssessmentId   : model.ProviderAssessmentId ?? null,
                 ProviderEnrollmentId   : model.ProviderEnrollmentId ?? null,
                 Status                 : model.Status ?? ProgressStatus.Pending,
                 ParentActivityId       : model.ParentActivityId ?? null,
@@ -89,6 +90,18 @@ export class AssessmentRepo implements IAssessmentRepo {
             }
             if (updateModel.FinishedAt != null) {
                 assessment.FinishedAt = updateModel.FinishedAt;
+            }
+            if (updateModel.ScheduledDateString != null) {
+                assessment.ScheduledDateString = updateModel.ScheduledDateString;
+            }
+            if (updateModel.Title != null) {
+                assessment.Title = updateModel.Title;
+            }
+            if (updateModel.Description != null) {
+                assessment.Description = updateModel.Description;
+            }
+            if (updateModel.ProviderAssessmentId != null) {
+                assessment.ProviderAssessmentId = updateModel.ProviderAssessmentId;
             }
 
             await assessment.save();
@@ -259,6 +272,22 @@ export class AssessmentRepo implements IAssessmentRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    public existsWithProviderSubmissionId = async (provider: string, providerSubmissionId: string)
+        : Promise<boolean> => {
+        try {
+            const assessment = await Assessment.findOne({
+                where : {
+                    Provider             : provider,
+                    ProviderAssessmentId : providerSubmissionId
+                },
+            });
+            return assessment != null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
     //#endregion
 

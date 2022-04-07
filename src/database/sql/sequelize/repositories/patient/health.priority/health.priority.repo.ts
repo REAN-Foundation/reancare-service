@@ -35,7 +35,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
         }
     };
 
-    getAll = async (patientUserId: string): Promise<HealthPriorityDto[]> => {
+    getPatientHealthPriorities = async (patientUserId: string): Promise<HealthPriorityDto[]> => {
         try {
             const priorities = await HealthPriority.findAll({
                 where : { PatientUserId: patientUserId },

@@ -8,7 +8,7 @@ export interface IHealthPriorityRepo {
 
     create(healthPriorityDomainModel: HealthPriorityDomainModel): Promise<HealthPriorityDto>;
 
-    getAll(patientUserId: string): Promise<HealthPriorityDto[]>;
+    getPatientHealthPriorities(patientUserId: string): Promise<HealthPriorityDto[]>;
 
     getPriorityTypes(): Promise<HealthPriorityTypeDto[]>;
 

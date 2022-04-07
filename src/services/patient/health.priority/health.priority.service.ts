@@ -31,14 +31,14 @@ export class HealthPriorityService {
         return await this._healthPriorityRepo.create(model);
     };
 
-    getPriorities = async (patientUserId: string): Promise<HealthPriorityDto[]> => {
+    getPatientHealthPriorities = async (patientUserId: string): Promise<HealthPriorityDto[]> => {
 
         var patient = await this.getPatient(patientUserId);
         if (!patient) {
             throw new Error('Patient does not exist!');
         }
 
-        var priorities = await this._healthPriorityRepo.getAll(patientUserId);
+        var priorities = await this._healthPriorityRepo.getPatientHealthPriorities(patientUserId);
 
         if (!priorities) {
             throw new ApiError(500, 'Error while fetching priorities for given patient');

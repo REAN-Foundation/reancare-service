@@ -48,13 +48,13 @@ export class HealthPriorityController extends BaseController {
         }
     };
 
-    getPriorities = async (request: express.Request, response: express.Response): Promise<void> => {
+    getPatientHealthPriorities = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('HealthPriority.GetPriorities', request, response);
+            await this.setContext('HealthPriority.getPatientHealthPriorities', request, response);
 
             const patientUserId: uuid = await this._validator.getParamUuid(request, 'patientUserId');
 
-            const priorities = await this._service.getPriorities(patientUserId);
+            const priorities = await this._service.getPatientHealthPriorities(patientUserId);
             if (priorities == null) {
                 throw new ApiError(400, 'Cannot fetch priorities for given patient!');
             }

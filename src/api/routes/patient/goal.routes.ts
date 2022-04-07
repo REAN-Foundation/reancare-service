@@ -12,8 +12,8 @@ export const register = (app: express.Application): void => {
 
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.get('/by-priority/:priorityId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getGoals);
-    router.get('/for-patient/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getSelectedGoals);
+    router.get('/by-priority/:priorityId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientGoals);
+    router.get('/for-patient/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getGoalsByPriority);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);

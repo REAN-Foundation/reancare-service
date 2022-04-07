@@ -52,7 +52,7 @@ export class GoalController {
 
     getSelectedGoals = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Goal.getSelcetedGoals';
+            request.context = 'Goal.GetSelcetedGoals';
             
             await this._authorizer.authorize(request, response);
 
@@ -119,7 +119,7 @@ export class GoalController {
 
     getGoals = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Goal.getGoals';
+            request.context = 'Goal.GetGoals';
             
             await this._authorizer.authorize(request, response);
 

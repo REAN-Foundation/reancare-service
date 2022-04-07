@@ -10,21 +10,21 @@ import {
     PrimaryKey,
     ForeignKey,
 } from 'sequelize-typescript';
+import { HealthPriorityType, HealthPriorityTypeList } from '../../../../../../domain.types/patient/health.priority.type/health.priority.types';
 
 import { v4 } from 'uuid';
-import User from '../user/user.model';
-import HealthPriority from '../patient/health.priority/health.priority.model';
+import User from '../../user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'Goal',
-    tableName       : 'patient_goals',
+    modelName       : 'HealthPriority',
+    tableName       : 'health_priorities',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class Goal extends Model {
+export default class HealthPriority extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -36,7 +36,7 @@ export default class Goal extends Model {
         allowNull : false,
     })
     id: string;
-
+    
     @IsUUID(4)
     @ForeignKey(() => User)
     @Column({
@@ -46,13 +46,13 @@ export default class Goal extends Model {
     PatientUserId: string;
 
     @Column({
-        type      : DataType.STRING(64),
+        type      : DataType.STRING(32),
         allowNull : false,
     })
-    ProviderEnrollmentId: string;
+    Source: string;
 
     @Column({
-        type      : DataType.STRING,
+        type      : DataType.STRING(64),
         allowNull : false,
     })
     Provider: string;
@@ -61,54 +61,27 @@ export default class Goal extends Model {
         type      : DataType.STRING(32),
         allowNull : false,
     })
-    ProviderCareplanName: string;
+    ProviderEnrollmentId: string;
 
     @Column({
-        type      : DataType.STRING(32),
+        type      : DataType.STRING(64),
         allowNull : false,
     })
     ProviderCareplanCode: string;
 
-    @IsUUID(4)
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    ProviderGoalCode: string;
-
     @Column({
         type      : DataType.STRING(64),
         allowNull : false,
     })
-    Title: string;
+    ProviderCareplanName: string;
 
     @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    Sequence: string;
-
-    @IsUUID(4)
-    @ForeignKey(() => HealthPriority)
-    @Column({
-        type      : DataType.UUID,
-        allowNull : true,
-    })
-    HealthPriorityId: string;
-
-    @Column({
-        type         : DataType.BOOLEAN,
+        type         : DataType.STRING(64),
         allowNull    : true,
-        defaultValue : false ,
+        values       : HealthPriorityTypeList,
+        defaultValue : HealthPriorityType.Custom
     })
-    GoalAchieved: boolean;
-
-    @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
-        defaultValue : false ,
-    })
-    GoalAbandoned: boolean;
+    HealthPriorityType: string;
 
     @Column({
         type      : DataType.DATE,
@@ -121,6 +94,12 @@ export default class Goal extends Model {
         allowNull : true,
     })
     ScheduledEndDate: Date;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    IsPrimary: boolean; // for making priority primary or secondary
 
     @Column
     @CreatedAt

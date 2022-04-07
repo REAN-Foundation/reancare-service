@@ -58,8 +58,8 @@ import { CareplanRepo } from './repositories/clinical/careplan/careplan.repo';
 import { AssessmentRepo } from './repositories/clinical/assessment/assessment.repo';
 import { AssessmentTemplateRepo } from './repositories/clinical/assessment/assessment.template.repo';
 import { AssessmentHelperRepo } from './repositories/clinical/assessment/assessment.helper.repo';
-import { HealthPriorityRepo } from './repositories/health.priority/health.priority.repo';
-import { ActionPlanRepo } from './repositories/goal.action.plan/goal.action.plan.repo';
+import { HealthPriorityRepo } from './repositories/patient/health.priority/health.priority.repo';
+import { ActionPlanRepo } from './repositories/action.plan/action.plan.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -9,7 +9,7 @@ import { ConfigurationManager } from "../../config/configuration.manager";
 import { CareplanConfig } from "../../config/configuration.types";
 import { CAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import { GoalDto } from "../../domain.types/patient/goal/goal.dto";
-import { ActionPlanDto } from "../../domain.types/goal.action.plan/goal.action.plan.dto";
+import { ActionPlanDto } from "../../domain.types/action.plan/action.plan.dto";
 
 ////////////////////////////////////////////////////////////////////////
 

@@ -13,9 +13,9 @@ import CareplanActivity from "../../../models/clinical/careplan/careplan.activit
 import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityMapper } from '../../../mappers/clinical/careplan/activity.mapper';
 import { Op } from 'sequelize';
-import { HealthPriorityDto } from '../../../../../../domain.types/health.priority/health.priority.dto';
-import HealthPriority from '../../../models/health.priority/health.priority.model';
-import { HealthPriorityMapper } from '../../../mappers/health.priority/health.priority.mapper';
+import { HealthPriorityDto } from '../../../../../../domain.types/patient/health.priority/health.priority.dto';
+import HealthPriority from '../../../models/patient/health.priority/health.priority.model';
+import { HealthPriorityMapper } from '../../../mappers/patient/health.priority/health.priority.mapper';
 
 ///////////////////////////////////////////////////////////////////////
 

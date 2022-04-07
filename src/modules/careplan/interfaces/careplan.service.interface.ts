@@ -3,7 +3,7 @@ import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { CareplanActivity } from "../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { EnrollmentDomainModel } from "../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model";
 import { ParticipantDomainModel } from "../../../domain.types/clinical/careplan/participant/participant.domain.model";
-import { ActionPlanDto } from "../../../domain.types/goal.action.plan/goal.action.plan.dto";
+import { ActionPlanDto } from "../../../domain.types/action.plan/action.plan.dto";
 import { GoalDto } from "../../../domain.types/patient/goal/goal.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -16,8 +16,8 @@ import {
     CAssessmentTemplate,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AhaAssessmentConverter } from "./aha.assessment.converter";
-import { ActionPlanDto } from "../../../../domain.types/goal.action.plan/goal.action.plan.dto";
-import { HealthPriorityType } from "../../../../domain.types/health.priority.type/health.priority.types";
+import { ActionPlanDto } from "../../../../domain.types/action.plan/action.plan.dto";
+import { HealthPriorityType } from "../../../../domain.types/patient/health.priority.type/health.priority.types";
 import { GoalDto } from "../../../../domain.types/patient/goal/goal.dto";
 import { AssessmentDto } from "../../../../domain.types/clinical/assessment/assessment.dto";
 import { BiometricsType } from "../../../../domain.types/clinical/biometrics/biometrics.types";

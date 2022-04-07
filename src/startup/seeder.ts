@@ -14,7 +14,7 @@ import { IMedicationStockImageRepo } from "../database/repository.interfaces/cli
 import { ISymptomAssessmentTemplateRepo } from "../database/repository.interfaces/clinical/symptom/symptom.assessment.template.repo.interface";
 import { ISymptomTypeRepo } from "../database/repository.interfaces/clinical/symptom/symptom.type.repo.interface";
 import { IKnowledgeNuggetRepo } from "../database/repository.interfaces/educational/knowledge.nugget.repo.interface";
-import { IHealthPriorityRepo } from "../database/repository.interfaces/health.priority/health.priority.repo.interface";
+import { IHealthPriorityRepo } from "../database/repository.interfaces/patient/health.priority/health.priority.repo.interface";
 import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
 import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
 import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
@@ -28,8 +28,8 @@ import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/s
 import { SymptomTypeDomainModel } from "../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model";
 import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/symptom.type/symptom.type.search.types";
 import { KnowledgeNuggetDomainModel } from "../domain.types/educational/knowledge.nugget/knowledge.nugget.domain.model";
-import { HealthPriorityTypeDomainModel } from "../domain.types/health.priority.type/health.priority.type.domain.model";
-import { HealthPriorityTypeList } from "../domain.types/health.priority.type/health.priority.types";
+import { HealthPriorityTypeDomainModel } from "../domain.types/patient/health.priority.type/health.priority.type.domain.model";
+import { HealthPriorityTypeList } from "../domain.types/patient/health.priority.type/health.priority.types";
 import { PatientDomainModel } from "../domain.types/patient/patient/patient.domain.model";
 import { Roles } from "../domain.types/role/role.types";
 import { UserDomainModel } from "../domain.types/user/user/user.domain.model";
@@ -39,7 +39,7 @@ import { SymptomAssessmentTemplateService } from "../services/clinical/symptom/s
 import { SymptomTypeService } from "../services/clinical/symptom/symptom.type.service";
 import { KnowledgeNuggetService } from "../services/educational/knowledge.nugget.service";
 import { FileResourceService } from "../services/file.resource.service";
-import { HealthPriorityService } from "../services/health.priority/health.priority.service";
+import { HealthPriorityService } from "../services/patient/health.priority/health.priority.service";
 import { HealthProfileService } from "../services/patient/health.profile.service";
 import { PatientService } from "../services/patient/patient.service";
 import { PersonService } from "../services/person.service";
@@ -549,7 +549,7 @@ export class Seeder {
 
         Logger.instance().log('Seeding health priority types...');
 
-        for (const priorityTYpe in HealthPriorityTypeList) {
+        for (const priorityTYpe of HealthPriorityTypeList) {
             const model: HealthPriorityTypeDomainModel = {
                 Type : priorityTYpe,
                 Tags : ["HeartFailure"]

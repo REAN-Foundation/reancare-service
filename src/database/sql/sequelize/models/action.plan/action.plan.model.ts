@@ -13,18 +13,18 @@ import {
 
 import { v4 } from 'uuid';
 import User from '../user/user.model';
-import HealthPriority from '../patient/health.priority/health.priority.model';
+import Goal from '../patient/goal.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'Goal',
-    tableName       : 'patient_goals',
+    modelName       : 'ActionPlan',
+    tableName       : 'actions_plans',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class Goal extends Model {
+export default class ActionPlan extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -49,66 +49,39 @@ export default class Goal extends Model {
         type      : DataType.STRING(64),
         allowNull : false,
     })
-    ProviderEnrollmentId: string;
-
-    @Column({
-        type      : DataType.STRING,
-        allowNull : false,
-    })
     Provider: string;
 
     @Column({
-        type      : DataType.STRING(32),
+        type      : DataType.STRING(64),
         allowNull : false,
     })
-    ProviderCareplanName: string;
+    ProviderEnrollmentId: string;
 
     @Column({
-        type      : DataType.STRING(32),
+        type      : DataType.STRING(64),
         allowNull : false,
     })
     ProviderCareplanCode: string;
 
-    @IsUUID(4)
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    ProviderGoalCode: string;
-
     @Column({
         type      : DataType.STRING(64),
         allowNull : false,
     })
-    Title: string;
-
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    Sequence: string;
+    ProviderCareplanName: string;
 
     @IsUUID(4)
-    @ForeignKey(() => HealthPriority)
+    @ForeignKey(() => Goal)
     @Column({
         type      : DataType.UUID,
-        allowNull : true,
+        allowNull : false,
     })
-    HealthPriorityId: string;
+    GoalId: string; // id of goal table
 
     @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
-        defaultValue : false ,
+        type      : DataType.STRING(128),
+        allowNull : false,
     })
-    GoalAchieved: boolean;
-
-    @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
-        defaultValue : false ,
-    })
-    GoalAbandoned: boolean;
+    Title: string;
 
     @Column({
         type      : DataType.DATE,

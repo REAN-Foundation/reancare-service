@@ -4,7 +4,7 @@ import { IGoalRepo } from "../../database/repository.interfaces/patient/goal.rep
 import { GoalDomainModel } from '../../domain.types/patient/goal/goal.domain.model';
 import { GoalDto } from '../../domain.types/patient/goal/goal.dto';
 import { GoalSearchResults, GoalSearchFilters } from '../../domain.types/patient/goal/goal.search.types';
-import { IHealthPriorityRepo } from "../../database/repository.interfaces/health.priority/health.priority.repo.interface";
+import { IHealthPriorityRepo } from "../../database/repository.interfaces/patient/health.priority/health.priority.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

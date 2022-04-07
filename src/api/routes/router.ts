@@ -51,8 +51,8 @@ import { register as registerWaterConsumptionRoutes } from './wellness/nutrition
 import { register as registerCareplanRoutes } from './clinical/careplan/careplan.routes';
 import { register as registerAssessmentRoutes } from './clinical/assessment/assessment.routes';
 import { register as registerAssessmentTemplateRoutes } from './clinical/assessment/assessment.template.routes';
-import { register as registerHealthPriorityRoutes } from './health.priority/health.priority.routes';
-import { register as registerActionPlanRoutes } from './goal.action.plan/goal.action.plan.routes';
+import { register as registerHealthPriorityRoutes } from './patient/health.priority/health.priority.routes';
+import { register as registerActionPlanRoutes } from './action.plan/action.plan.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 

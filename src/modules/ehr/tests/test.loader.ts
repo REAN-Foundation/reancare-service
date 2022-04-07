@@ -1,20 +1,27 @@
 import 'reflect-metadata';
-import { container, DependencyContainer } from 'tsyringe';
+import { container } from 'tsyringe';
 import { StorageService } from '../services/storage.service';
 import { PatientStore } from '../services/patient.store';
 import { DoctorStore } from '../services/doctor.store';
 import { Logger } from '../../../common/logger';
 import { ConfigurationManager } from '../../../config/configuration.manager';
 
-// import { ClinicOrganizationStore } from '../services/clinic.organization.store';
-// import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
+import { ClinicOrganizationStore } from '../services/clinic.organization.store';
+// import { DiagnosticConditionStore } from '../services/diagnostic.condition.store';
 // import { PharmacistStore } from '../services/pharmacist.store';
 // import { BloodPressureStore } from '../services/blood.pressure.store';
 // import { BiometricsWeightStore } from '../services/biometrics.weight.store';
 // import { BloodSugarStore } from '../services/blood.sugar.store';
 // import { BiometricsHeightStore } from '../services/biometrics.height.store';
+import { MedicationConsumptionStore } from '../services/medication.consumption.store';
 
 import { EhrInjector } from '../ehr.injector';
+// import { PulseStore } from '../services/pulse.store';
+// import { TemperatureStore } from '../services/temperature.store';
+// import { BloodSugarStore } from '../services/blood.sugar.store';
+// import { BloodOxygenSaturationStore } from '../services/blood.oxygen.saturation.store';
+// import { DiagnosticConditionStore } from '../services/diagnostic.condition.store';
+// import { ClinicOrganizationStore } from '../services/clinic.organization.store';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,16 +42,26 @@ export class TestLoader {
 
     private static _doctorStore: DoctorStore = container.resolve(DoctorStore);
 
-    // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
-    // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
+    private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
+    // private static _diagnosticConditionStore: DiagnosticConditionStore = container.resolve(DiagnosticConditionStore);
     // private static _pharmacistStore: PharmacistStore = container.resolve(PharmacistStore);
     // private static _bloodPressureStore: BloodPressureStore = container.resolve(BloodPressureStore);
     // private static _biometricsWeightStore: BiometricsWeightStore = container.resolve(BiometricsWeightStore);
     // private static _bloodSugarStore: BloodSugarStore = container.resolve(BloodSugarStore);
+
     // private static _biometricsHeightStore: BiometricsHeightStore = container.resolve(BiometricsHeightStore);
+    // private static _pulseStore: PulseStore = container.resolve(PulseStore)
+    // private static _temperatureStore: TemperatureStore = container.resolve(TemperatureStore)
+    // private static _bloodoxygensaturationStore: BloodOxygenSaturationStore =
+    // container.resolve(BloodOxygenSaturationStore)
+    
+    private static _medicationconsumptionStore: MedicationConsumptionStore =
+        container.resolve(MedicationConsumptionStore)
+    // static DiagnosticConditionStore: any;
 
-    private static _container: DependencyContainer = container;
-
+    // static ClinicOrganizationStore: any;
+    // private static _clinicorganizationStore: ClinicOrganizationStore = container.resolve(BloodOxygenSaturationStore)
+    
     //#endregion
 
     //#region static properties
@@ -61,8 +78,8 @@ export class TestLoader {
         return TestLoader._doctorStore;
     }
 
-    // public static get DiagnosticLabUserStore() {
-    //     return TestLoader._diagnosticlabuserStore;
+    // public static get DiagnosticConditionStore() {
+    //     return TestLoader._diagnosticConditionStore;
     // }
 
     // public static get PharmacistStore() {
@@ -73,9 +90,9 @@ export class TestLoader {
     //     return TestLoader._bloodPressureStore;
     // }
 
-    // public static get BiometricsWeightStore() {
-    //     return TestLoader._biometricsWeightStore;
-    // }
+    //  public static get BiometricsWeightStore() {
+    //      return TestLoader._biometricsWeightStore;
+    //  }
   
     // public static get BloodSugarStore() {
     //     return TestLoader._bloodSugarStore;
@@ -85,9 +102,25 @@ export class TestLoader {
     //     return TestLoader._biometricsHeightStore;
     // }
 
-    // public static get ClinicOrganizationStore() {
-    //     return TestLoader._clinicOrganizationStore;
+    public static get ClinicOrganizationStore() {
+        return TestLoader._clinicOrganizationStore;
+    }
+
+    // public static get PulseStore() {
+    //     return TestLoader._pulseStore;
     // }
+
+    // public static get TemperatureStore() {
+    //     return TestLoader._temperatureStore;
+    // }
+
+    // public static get BloodOxygenSaturationStore() {
+    //     return TestLoader._bloodoxygensaturationStore;
+    // }
+
+    public static get MedicationConsumptionStore() {
+        return TestLoader._medicationconsumptionStore;
+    }
 
     //#endregion
 
@@ -99,13 +132,17 @@ export class TestLoader {
             TestLoader._patientStore = container.resolve(PatientStore);
             TestLoader._doctorStore = container.resolve(DoctorStore);
 
-            // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
-            // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
+            TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
+            // TestLoader._diagnosticConditionStore = container.resolve(DiagnosticConditionStore);
             // TestLoader._bloodPressureStore = container.resolve(BloodPressureStore);
             // TestLoader._bloodSugarStore = container.resolve(BloodSugarStore);
             // TestLoader._biometricsHeightStore = container.resolve(BiometricsHeightStore);
             // TestLoader._pharmacistStore = container.resolve(PharmacistStore);
             // TestLoader._biometricsWeightStore = container.resolve(BiometricsWeightStore);
+            // TestLoader._pulseStore = container.resolve(PulseStore);
+            // TestLoader._temperatureStore = container.resolve(TemperatureStore)
+            // TestLoader._bloodoxygensaturationStore = container.resolve(BloodOxygenSaturationStore);
+            TestLoader._medicationconsumptionStore = container.resolve(MedicationConsumptionStore);
 
             //Finally intitialize Fhir storage provider
             const initialized = await TestLoader._storageService.init();

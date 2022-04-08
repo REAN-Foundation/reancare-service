@@ -12,8 +12,9 @@ export const register = (app: express.Application): void => {
 
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
-    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
     router.get('/for-patient/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientHealthPriorities);
+    router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
+    router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
     
     app.use('/api/v1/patient-health-priorities', router);
 };

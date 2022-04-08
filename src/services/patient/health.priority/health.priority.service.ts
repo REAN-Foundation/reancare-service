@@ -71,6 +71,10 @@ export class HealthPriorityService {
         return await this._healthPriorityRepo.search(filters);
     };
 
+    update = async (id: uuid, healthPriorityDomainModel: HealthPriorityDomainModel): Promise<HealthPriorityDto> => {
+        return await this._healthPriorityRepo.update(id, healthPriorityDomainModel);
+    };
+
     delete = async (id: uuid): Promise<boolean> => {
         return await this._healthPriorityRepo.delete(id);
     };

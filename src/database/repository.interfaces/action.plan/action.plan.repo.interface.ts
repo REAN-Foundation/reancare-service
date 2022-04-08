@@ -12,6 +12,8 @@ export interface IActionPlanRepo {
 
     search(filters: ActionPlanSearchFilters): Promise<ActionPlanSearchResults>;
 
+    update(id: string, actionPlanDomainModel: ActionPlanDomainModel): Promise<ActionPlanDto>;
+
     delete(id: string): Promise<boolean>;
 
 }

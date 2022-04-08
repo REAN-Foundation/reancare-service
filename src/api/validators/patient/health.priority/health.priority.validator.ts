@@ -70,6 +70,28 @@ export class HealthPriorityValidator extends BaseValidator {
         return this.getFilter(request);
     };
 
+    update = async (request: express.Request): Promise<HealthPriorityDomainModel> => {
+ 
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
+        return domainModel;
+    };
+
+    private  async validateUpdateBody(request) {
+
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateString(request, 'Source', Where.Body, false, false);
+        await this.validateString(request, 'Provider', Where.Body, false, false);
+        await this.validateString(request, 'ProviderEnrollmentId', Where.Body, false, false);
+        await this.validateString(request, 'ProviderCareplanCode', Where.Body, false, false);
+        await this.validateString(request, 'ProviderCareplanName', Where.Body, false, false);
+        await this.validateString(request, 'HealthPriorityType', Where.Body, false, false);
+        await this.validateBoolean(request, 'IsPrimary', Where.Body, false, false);
+
+        this.validateRequest(request);
+    }
+
     private async validateQueryParams(request) {
 
         await this.validateString(request, 'providerEnrollmentId', Where.Query, true, false);

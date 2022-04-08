@@ -83,6 +83,29 @@ export class ActionPlanValidator extends BaseValidator {
         return this.getFilter(request);
     };
 
+    update = async (request: express.Request): Promise<ActionPlanDomainModel> => {
+ 
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
+        return domainModel;
+    };
+
+    private  async validateUpdateBody(request) {
+
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateString(request, 'Provider', Where.Body, false, false);
+        await this.validateString(request, 'ProviderEnrollmentId', Where.Body, false, false);
+        await this.validateString(request, 'ProviderCareplanCode', Where.Body, false, false);
+        await this.validateString(request, 'ProviderCareplanName', Where.Body, false, false);
+        await this.validateUuid(request, 'GoalId', Where.Body, false, false);
+        await this.validateString(request, 'Title', Where.Body, false, false);
+        await this.validateDate(request, 'StartedAt', Where.Body, false, false);
+        await this.validateDate(request, 'ScheduledEndDate', Where.Body, false, false);
+
+        this.validateRequest(request);
+    }
+
     private async validateQueryParams(request) {
 
         await this.validateString(request, 'providerEnrollmentId', Where.Query, true, false);

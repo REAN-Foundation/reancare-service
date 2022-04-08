@@ -88,6 +88,31 @@ export class HealthPriorityController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    update = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('HealthPriority.Update', request, response);
+
+            const domainModel = await this._validator.update(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const existingRecord = await this._service.getById(id);
+            if (existingRecord == null) {
+                throw new ApiError(404, 'Health priority record not found.');
+            }
+
+            const updated = await this._service.update(domainModel.id, domainModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update health priority record!');
+            }
+
+            ResponseHandler.success(request, response, 'Health priority record updated successfully!', 200, {
+                HealthPriority : updated,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
     
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {

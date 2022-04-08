@@ -81,6 +81,10 @@ export class ActionPlanService {
         return await this._actionPlanRepo.search(filters);
     };
 
+    update = async (id: uuid, actionPlanDomainModel: ActionPlanDomainModel): Promise<ActionPlanDto> => {
+        return await this._actionPlanRepo.update(id, actionPlanDomainModel);
+    };
+
     delete = async (id: uuid): Promise<boolean> => {
         return await this._actionPlanRepo.delete(id);
     };

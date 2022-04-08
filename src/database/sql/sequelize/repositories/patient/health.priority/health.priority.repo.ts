@@ -171,6 +171,45 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
         }
     }
 
+    update = async (id: string, updateModel: HealthPriorityDomainModel): Promise<HealthPriorityDto> => {
+        try {
+            const healthPriority = await HealthPriority.findByPk(id);
+
+            if (updateModel.PatientUserId != null) {
+                healthPriority.PatientUserId = updateModel.PatientUserId;
+            }
+            if (updateModel.Source != null) {
+                healthPriority.Source = updateModel.Source;
+            }
+            if (updateModel.Provider != null) {
+                healthPriority.Provider = updateModel.Provider;
+            }
+            if (updateModel.ProviderEnrollmentId != null) {
+                healthPriority.ProviderEnrollmentId = updateModel.ProviderEnrollmentId;
+            }
+            if (updateModel.ProviderCareplanCode != null) {
+                healthPriority.ProviderCareplanCode = updateModel.ProviderCareplanCode;
+            }
+            if (updateModel.ProviderCareplanName != null) {
+                healthPriority.ProviderCareplanName = updateModel.ProviderCareplanName;
+            }
+            if (updateModel.HealthPriorityType != null) {
+                healthPriority.HealthPriorityType = updateModel.HealthPriorityType;
+            }
+            if (updateModel.IsPrimary != null) {
+                healthPriority.IsPrimary = updateModel.IsPrimary;
+            }
+    
+            await healthPriority.save();
+
+            return await HealthPriorityMapper.toDto(healthPriority);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     delete = async (id: string): Promise<boolean> => {
         try {
 

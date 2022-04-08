@@ -16,6 +16,8 @@ export interface IHealthPriorityRepo {
 
     search(filters: HealthPrioritySearchFilters): Promise<HealthPrioritySearchResults>;
 
+    update(id: string, healthPriorityDomainModel: HealthPriorityDomainModel): Promise<HealthPriorityDto>;
+
     totalTypesCount(): Promise<number>;
 
     createType(healthPriorityTypeDomainModel: HealthPriorityTypeDomainModel): Promise<HealthPriorityTypeDto>;

@@ -143,6 +143,49 @@ export class ActionPlanRepo implements IActionPlanRepo {
     
     };
 
+    update = async (id: string, updateModel: ActionPlanDomainModel): Promise<ActionPlanDto> => {
+        try {
+            const actionPlan = await ActionPlan.findByPk(id);
+
+            if (updateModel.PatientUserId != null) {
+                actionPlan.PatientUserId = updateModel.PatientUserId;
+            }
+            if (updateModel.Provider != null) {
+                actionPlan.Provider = updateModel.Provider;
+            }
+            if (updateModel.ProviderEnrollmentId != null) {
+                actionPlan.ProviderEnrollmentId = updateModel.ProviderEnrollmentId;
+            }
+            if (updateModel.ProviderCareplanCode != null) {
+                actionPlan.ProviderCareplanCode = updateModel.ProviderCareplanCode;
+            }
+            if (updateModel.ProviderCareplanName != null) {
+                actionPlan.ProviderCareplanName = updateModel.ProviderCareplanName;
+            }
+            if (updateModel.GoalId != null) {
+                actionPlan.GoalId = updateModel.GoalId;
+            }
+            if (updateModel.Title != null) {
+                actionPlan.Title = updateModel.Title;
+            }
+            if (updateModel.StartedAt != null) {
+                actionPlan.StartedAt = updateModel.StartedAt;
+            }
+            if (updateModel.ScheduledEndDate != null) {
+                actionPlan.ScheduledEndDate = updateModel.ScheduledEndDate;
+            }
+
+            await actionPlan.save();
+
+            return await ActionPlanMapper.toDto(actionPlan);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+
+    };
+
     delete = async (id: string): Promise<boolean> => {
         try {
 

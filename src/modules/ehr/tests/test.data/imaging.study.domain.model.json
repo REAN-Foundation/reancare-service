@@ -1,6 +1,6 @@
 {
     "PatientUserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
-    "PatientEhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "EhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
     "LabVisitId": "",
     "LabVisitEhrId": "",
     "PrescribedById": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
@@ -11,7 +11,7 @@
     "DicomResourceEhrId": "",
     "SeriesCount": 1,
     "InstanceCount": 1,
-    "StudyDate": "2021-05-28T12:32:23.532Z",
+    "StudyDate": "2022-04-04T12:32:23.532Z",
     "PerformedById": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
     "PerformedByEhrId": "",
     "PerformedAtLocationEhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",

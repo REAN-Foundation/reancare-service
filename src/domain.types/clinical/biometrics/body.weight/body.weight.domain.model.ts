@@ -8,4 +8,5 @@ export interface BodyWeightDomainModel {
     Unit             : string;
     RecordDate?      : Date;
     RecordedByUserId?: uuid;
+    RecordedByEhrId? : uuid;
 }

@@ -4,19 +4,29 @@ import { IBloodPressureRepo } from "../../../database/repository.interfaces/clin
 import { BloodPressureDomainModel } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
 import { BloodPressureDto } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto';
 import { BloodPressureSearchFilters, BloodPressureSearchResults } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.search.types';
+import { BloodPressureStore } from "../../../modules/ehr/services/blood.pressure.store";
+import { Loader } from "../../../startup/loader";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class BloodPressureService {
 
+    _ehrBloodPressureStore: BloodPressureStore = null;
+
     constructor(
         @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
-    ) { }
+    ) {
+        this._ehrBloodPressureStore = Loader.container.resolve(BloodPressureStore);
+    }
 
     create = async (bloodPressureDomainModel: BloodPressureDomainModel):
     Promise<BloodPressureDto> => {
-        return await this._bloodPressureRepo.create(bloodPressureDomainModel);
+
+        const ehrId = await this._ehrBloodPressureStore.add(bloodPressureDomainModel);
+        bloodPressureDomainModel.EhrId = ehrId;
+        var dto = await this._bloodPressureRepo.create(bloodPressureDomainModel);
+        return dto;
     };
 
     getById = async (id: uuid): Promise<BloodPressureDto> => {
@@ -29,7 +39,9 @@ export class BloodPressureService {
 
     update = async (id: uuid, bloodPressureDomainModel: BloodPressureDomainModel):
     Promise<BloodPressureDto> => {
-        return await this._bloodPressureRepo.update(id, bloodPressureDomainModel);
+        var dto = await this._bloodPressureRepo.update(id, bloodPressureDomainModel);
+        await this._ehrBloodPressureStore.update(dto.EhrId, dto);
+        return dto;
     };
 
     delete = async (id: uuid): Promise<boolean> => {

@@ -17,6 +17,7 @@ export class PulseRepo implements IPulseRepo {
         try {
             const entity = {
                 PatientUserId    : createModel.PatientUserId,
+                EhrId            : createModel.EhrId,
                 Pulse            : createModel.Pulse,
                 Unit             : createModel.Unit,
                 RecordDate       : createModel.RecordDate,

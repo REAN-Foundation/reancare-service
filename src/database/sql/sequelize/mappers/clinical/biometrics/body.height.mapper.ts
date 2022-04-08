@@ -15,7 +15,9 @@ export class BodyHeightMapper {
             EhrId         : bodyHeight.EhrId,
             PatientUserId : bodyHeight.PatientUserId,
             BodyHeight    : bodyHeight.BodyHeight,
-            Unit          : bodyHeight.Unit
+            Unit          : bodyHeight.Unit,
+            RecordDate    : bodyHeight.RecordDate
+
         };
         return dto;
     };

@@ -13,9 +13,8 @@ describe('Observation resource: Storage, retrieval', () => {
         var doctorEhrId = await TestLoader.DoctorStore.create(doctorModel);
 
         var model = BloodOxygenSaturationMapper.convertJsonObjectToDomainModel();
-        model.PatientUserId = patientEhrId;
-        model.RecordedByUserId = doctorEhrId;
-
+        model.EhrId = patientEhrId;
+        
         var bloodOxygenSaturationEhirId = await TestLoader.BloodOxygenSaturationStore.add(model);
         var bloodOxygenFhirResource = await TestLoader.BloodOxygenSaturationStore.getById(bloodOxygenSaturationEhirId);
 
@@ -30,7 +29,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var extractedRecordDate = bloodOxygenFhirResource.effectiveDateTime;
         expect(extractedRecordDate).toEqual(model.RecordDate);
 
-        var extractedRecordedByEhrId = bloodOxygenFhirResource.performer[0].reference.split('/')[1];
+        var extractedRecordedByEhrId = bloodOxygenFhirResource.performer[0].id;
         expect(extractedRecordedByEhrId).toEqual(model.RecordedByUserId);
 
         // For now just check if Visit Id exists
@@ -58,7 +57,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var extractedUnit = updatedResource.component[0].valueQuantity.unit;
         expect(extractedUnit).toEqual(model.Unit);
 
-        var extractedRecordByUserId = updatedResource.performer;
+        var extractedRecordByUserId = updatedResource.performer[0].id;
         expect(extractedRecordByUserId).toEqual(extractedRecordByUserId);
 
         var extractedRecordDate = updatedResource.effectiveDateTime;

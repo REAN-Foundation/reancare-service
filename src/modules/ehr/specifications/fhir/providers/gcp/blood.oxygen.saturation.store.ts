@@ -121,9 +121,9 @@ export class GcpBloodOxygenSaturationStore implements IBloodOxygenSaturationStor
             component : []
         };
 
-        if (model.PatientUserId != null) {
+        if (model.EhrId != null) {
             resource['subject'] = {
-                reference : `Patient/${model.PatientUserId}`
+                reference : `Patient/${model.EhrId}`
             };
         }
 
@@ -138,7 +138,9 @@ export class GcpBloodOxygenSaturationStore implements IBloodOxygenSaturationStor
         if (model.RecordedByUserId != null) {
             resource['performer'] = [
                 {
-                    reference : `Practitioner/${model.RecordedByUserId}`
+                    reference : "https://www.aiims.edu/images/pdf/CV.pdf",
+                    type      : "Practitioner",
+                    id        : model.RecordedByUserId
                 }
             ];
         }
@@ -192,14 +194,14 @@ export class GcpBloodOxygenSaturationStore implements IBloodOxygenSaturationStor
         if (updates.RecordedByUserId != null) {
             existingResource['performer'] = [
                 {
-                    reference : `Practitioner/${updates.RecordedByUserId}`
-                }
+                    reference : "https://www.aiims.edu/images/pdf/CV.pdf",
+                    type      : "Practitioner",
+                    id        : updates.RecordedByUserId                }
             ];
         }
 
         if (updates.BloodOxygenSaturation != null) {
-            existingResource.valueQuantity = { value : updates.BloodOxygenSaturation,
-                unit  : updates.Unit };
+            existingResource.component[0].valueQuantity.value = updates.BloodOxygenSaturation;
         }
         
         return existingResource;

@@ -3,7 +3,7 @@ import { uuid } from "../../../miscellaneous/system.types";
 
 export interface CareplanActivityDomainModel {
     PatientUserId   : uuid;
-    EhrId           : uuid;
+    EhrId?         : uuid;
     EnrollmentId    : string;
     ParticipantId   : string;
     Provider        : string;

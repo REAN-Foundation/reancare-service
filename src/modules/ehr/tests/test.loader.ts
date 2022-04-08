@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable max-len */
 import 'reflect-metadata';
 import { container } from 'tsyringe';
+import { DependencyContainer } from 'tsyringe';
+
 import { StorageService } from '../services/storage.service';
 import { PatientStore } from '../services/patient.store';
 import { DoctorStore } from '../services/doctor.store';
@@ -10,6 +14,7 @@ import { DiagnosticConditionStore } from '../services/diagnostic.condition.store
 import { FamilyHistoryStore } from '../services/family.history.store';
 
 // import { ClinicOrganizationStore } from '../services/clinic.organization.store';
+import { BloodOxygenSaturationStore } from '../services/blood.oxygen.saturation.store';
 // import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
 import { PharmacistStore } from '../services/pharmacist.store';
 import { PharmacyStore } from '../services/pharmacy.organization.store';
@@ -59,7 +64,11 @@ export class TestLoader {
     private static _familyHistoryStore: FamilyHistoryStore = container.resolve(FamilyHistoryStore);
 
     // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
+
+    private static _bloodoxygensaturationStore: BloodOxygenSaturationStore = container.resolve(BloodOxygenSaturationStore)
+
     // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
+  
     private static _pharmacistStore: PharmacistStore = container.resolve(PharmacistStore);
 
     private static _pharmacyStore: PharmacyStore = container.resolve(PharmacyStore);
@@ -75,7 +84,7 @@ export class TestLoader {
     private static _pulseStore: PulseStore = container.resolve(PulseStore)
 
     private static _temperatureStore: TemperatureStore = container.resolve(TemperatureStore)
-
+  
     //#endregion
 
     //#region static properties
@@ -137,7 +146,7 @@ export class TestLoader {
     public static get BodyWeightStore() {
         return TestLoader._bodyWeightStore;
     }
-  
+
     public static get BloodGlucoseStore() {
         return TestLoader._bloodGlucoseStore;
     }
@@ -154,9 +163,14 @@ export class TestLoader {
         return TestLoader._pulseStore;
     }
 
+    public static get BloodOxygenSaturationStore() {
+        return TestLoader._bloodoxygensaturationStore;
+    }
+
     public static get TemperatureStore() {
         return TestLoader._temperatureStore;
     }
+
     //#endregion
 
     public static init = async () => {
@@ -181,9 +195,11 @@ export class TestLoader {
             TestLoader._doctorVisitStore = container.resolve(DoctorVisitStore);
             TestLoader._imagingStudyStore = container.resolve(ImagingStudyStore);
             TestLoader._familyHistoryStore = container.resolve(FamilyHistoryStore);
-
             // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
+            TestLoader._bloodoxygensaturationStore = container.resolve(BloodOxygenSaturationStore);
+           
             // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
+          
             //Finally intitialize Fhir storage provider
             const initialized = await TestLoader._storageService.init();
             if (initialized) {

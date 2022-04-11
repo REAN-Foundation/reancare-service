@@ -1,0 +1,43 @@
+{
+    "resourceType": "Organization",
+    "id": "1313222xyz",
+    "type": [{"text": "hospital"}],
+
+    "name": "Apollo Hospital",
+    "active": true,
+
+    "telecom": [
+      {
+        "system": "phone",
+        "value": "1233232346",
+        "use": "work"
+      },
+      {
+        "system": "email",
+        "value": "apollo.hospital@gmail.com",
+        "use": "work"
+      }
+    ],
+    "extension": [{
+      "url": "http.apollo.hospital.com",
+      "valueString": "Services Available : Emergency room service"
+    }],
+    "partOf": {
+      "reference": "Organization/f001"
+    },
+    "address": [
+      {
+        "line": ["hospital_organisation_first_line",
+          "hospital_organisation_second_line"],
+          "district": "Pune",
+          "id": "addressId",
+          "city": "Pune",
+          "state": "hospital_organisation_state",
+          "postalCode": "hospital_organisation_postalcode",
+          "period": {
+            "start": "2010-06-10T00:00:00.000Z"
+          }
+
+      }
+    ]
+}

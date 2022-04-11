@@ -4,19 +4,30 @@ import { IBodyTemperatureRepo } from "../../../database/repository.interfaces/cl
 import { BodyTemperatureDomainModel } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
 import { BodyTemperatureDto } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.dto';
 import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.search.types';
+import { TemperatureStore } from "../../../modules/ehr/services/body.temperature.store";
+import { Loader } from "../../../startup/loader";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class BodyTemperatureService {
 
+    _ehrTemperatureStore: TemperatureStore = null;
+
     constructor(
         @inject('IBodyTemperatureRepo') private _bodyTemperatureRepo: IBodyTemperatureRepo,
-    ) { }
+    ) {
+        this._ehrTemperatureStore = Loader.container.resolve(TemperatureStore);
+
+    }
 
     create = async (bodyTemperatureDomainModel: BodyTemperatureDomainModel):
     Promise<BodyTemperatureDto> => {
-        return await this._bodyTemperatureRepo.create(bodyTemperatureDomainModel);
+
+        const ehrId = await this._ehrTemperatureStore.add(bodyTemperatureDomainModel);
+        bodyTemperatureDomainModel.EhrId = ehrId;
+        var dto = await this._bodyTemperatureRepo.create(bodyTemperatureDomainModel);
+        return dto;
     };
 
     getById = async (id: uuid): Promise<BodyTemperatureDto> => {
@@ -29,7 +40,9 @@ export class BodyTemperatureService {
 
     update = async (id: uuid, bodyTemperatureDomainModel: BodyTemperatureDomainModel):
     Promise<BodyTemperatureDto> => {
-        return await this._bodyTemperatureRepo.update(id, bodyTemperatureDomainModel);
+        var dto = await this._bodyTemperatureRepo.update(id, bodyTemperatureDomainModel);
+        await this._ehrTemperatureStore.update(dto.EhrId, dto);
+        return dto;
     };
 
     delete = async (id: uuid): Promise<boolean> => {

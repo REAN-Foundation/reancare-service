@@ -1,3 +1,4 @@
+import { AddressDomainModel } from "../address/address.domain.model";
 
 export interface OrganizationDomainModel {
     id?: string,
@@ -10,6 +11,7 @@ export interface OrganizationDomainModel {
     About?: string;
     OperationalSince?: Date;
     AddressIds?: string[];
+    Address?   : AddressDomainModel;
     ImageResourceId?: string;
     IsHealthFacility?: boolean;
     NationalHealthFacilityRegistryId?: string;

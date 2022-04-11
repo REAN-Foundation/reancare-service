@@ -1,5 +1,6 @@
 import path from 'path';
-import * as configuration from '../../reancare.config.json';
+import * as defaultConfiguration from '../../reancare.config.json';
+import * as localConfiguration from '../../reancare.config.local.json';
 import {
     AuthenticationType,
     AuthorizationType, CareplanConfig, Configurations, DatabaseFlavour, DatabaseORM, DatabaseType, EHRProvider,
@@ -14,6 +15,8 @@ export class ConfigurationManager {
 
     public static loadConfigurations = (): void => {
 
+        const configuration = process.env.NODE_ENV === 'local' ? localConfiguration : defaultConfiguration;
+
         ConfigurationManager._config = {
             SystemIdentifier : configuration.SystemIdentifier,
             BaseUrl          : process.env.BASE_URL,
@@ -27,6 +30,7 @@ export class ConfigurationManager {
                 Flavour : configuration.Database.Flavour as DatabaseFlavour,
             },
             Ehr : {
+                Enabled       : configuration.Ehr.Enabled,
                 Specification : configuration.Ehr.Specification as EHRSpecification,
                 Provider      : configuration.Ehr.Provider as EHRProvider,
             },
@@ -45,7 +49,9 @@ export class ConfigurationManager {
                 Download                   : configuration.TemporaryFolders.Download as string,
                 CleanupFolderBeforeMinutes : configuration.TemporaryFolders.CleanupFolderBeforeMinutes as number,
             },
-            MaxUploadFileSize : configuration.MaxUploadFileSize,
+            FormServiceProviders : configuration.FormServiceProviders,
+            MaxUploadFileSize    : configuration.MaxUploadFileSize,
+            JwtExpiresIn         : configuration.JwtExpiresIn
         };
 
         ConfigurationManager.checkConfigSanity();
@@ -79,6 +85,10 @@ export class ConfigurationManager {
         return ConfigurationManager._config.Database.Flavour;
     };
     
+    public static EhrEnabled = (): boolean => {
+        return ConfigurationManager._config.Ehr.Enabled;
+    };
+
     public static EhrSpecification = (): EHRSpecification => {
         return ConfigurationManager._config.Ehr.Specification;
     };
@@ -90,6 +100,10 @@ export class ConfigurationManager {
     public static MaxUploadFileSize = (): number => {
         return ConfigurationManager._config.MaxUploadFileSize;
     };
+
+    public static JwtExpiresIn = (): number => {
+        return ConfigurationManager._config.JwtExpiresIn;
+    }
 
     public static FileStorageProvider = (): FileStorageProvider => {
         return ConfigurationManager._config.FileStorage.Provider;
@@ -121,8 +135,13 @@ export class ConfigurationManager {
         return ConfigurationManager._config.Communication.InAppNotificationProvider;
     };
 
-    public static careplans = (): { Provider: string; Service: string; Plans: CareplanConfig[] } [] => {
+    public static careplans = ()
+        : { Enabled: boolean, Provider: string; Service: string; Plans: CareplanConfig[] } [] => {
         return ConfigurationManager._config.Careplans;
+    };
+    
+    public static formServiceProviders = (): { Provider: string; Code: string; } [] => {
+        return ConfigurationManager._config.FormServiceProviders;
     };
 
     private static checkConfigSanity() {

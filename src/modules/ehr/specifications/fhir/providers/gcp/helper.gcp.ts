@@ -28,12 +28,12 @@ export class GcpHelper {
     public static getGcpFhirConfig(): GcpFhirConfiguration  {
 
         const c: GcpFhirConfiguration = {
-            ProjectId    : process.env.GCP_PROJECT_ID,
-            CloudRegion  : process.env.GCP_FHIR_CLOUD_REGION,
-            DatasetId    : process.env.GCP_FHIR_DATASET_ID,
-            FhirStoreId  : process.env.GCP_FHIR_STORE_NAME,
-            DicomStoreId : process.env.GCP_DICOM_STORE_NAME,
-            FhirVersion  : process.env.GCP_FHIR_CURRENT_VERSION,
+            ProjectId    : process.env.FHIR_PROJECT_ID,
+            CloudRegion  : process.env.FHIR_CLOUD_REGION,
+            DatasetId    : process.env.FHIR_DATASET_ID,
+            FhirStoreId  : process.env.FHIR_STORE_NAME,
+            DicomStoreId : process.env.DICOM_STORE_NAME,
+            FhirVersion  : process.env.FHIR_CURRENT_VERSION,
         };
         
         return c;

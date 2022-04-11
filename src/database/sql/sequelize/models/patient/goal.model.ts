@@ -47,25 +47,25 @@ export default class Goal extends Model {
 
     @Column({
         type      : DataType.STRING(64),
-        allowNull : false,
+        allowNull : true,
     })
     ProviderEnrollmentId: string;
 
     @Column({
         type      : DataType.STRING,
-        allowNull : false,
+        allowNull : true,
     })
     Provider: string;
 
     @Column({
         type      : DataType.STRING(32),
-        allowNull : false,
+        allowNull : true,
     })
     ProviderCareplanName: string;
 
     @Column({
         type      : DataType.STRING(32),
-        allowNull : false,
+        allowNull : true,
     })
     ProviderCareplanCode: string;
 

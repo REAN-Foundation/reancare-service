@@ -13,7 +13,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         try {
             const s3 = this.getS3Client();
             const params = {
-                Bucket : process.env.RESOURCES_S3_BUCKET_NAME,
+                Bucket : process.env.STORAGE_BUCKET,
                 Key    : storageKey,
             };
             var stored = await s3.headObject(params).promise();
@@ -35,7 +35,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
 
             const s3 = this.getS3Client();
             const params = {
-                Bucket : process.env.RESOURCES_S3_BUCKET_NAME,
+                Bucket : process.env.STORAGE_BUCKET,
                 Key    : storageKey,
                 Body   : fileContent
             };
@@ -54,7 +54,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
         
         const s3 = this.getS3Client();
         const params = {
-            Bucket : process.env.RESOURCES_S3_BUCKET_NAME,
+            Bucket : process.env.STORAGE_BUCKET,
             Key    : storageKey,
         };
 
@@ -101,7 +101,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
             throw new Error('Old and new file identifiers are same!');
         }
 
-        var BUCKET_NAME = process.env.RESOURCES_S3_BUCKET_NAME;
+        var BUCKET_NAME = process.env.STORAGE_BUCKET;
         var OLD_KEY = s3Path;
         var NEW_KEY = newPath;
 
@@ -124,7 +124,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
 
         const s3 = this.getS3Client();
         const params = {
-            Bucket : process.env.RESOURCES_S3_BUCKET_NAME,
+            Bucket : process.env.STORAGE_BUCKET,
             Key    : storageKey
         };
 
@@ -138,14 +138,14 @@ export class AWSS3FileStorageService implements IFileStorageService {
     getShareableLink(storageKey: string, durationInMinutes: number): string {
 
         const s3 = new aws.S3({
-            accessKeyId      : process.env.RESOURCES_S3_BUCKET_ACCESS_KEY_ID,
-            secretAccessKey  : process.env.RESOURCES_S3_BUCKET_ACCESS_KEY_SECRET,
+            accessKeyId      : process.env.STORAGE_BUCKET_ACCESS_KEY_ID,
+            secretAccessKey  : process.env.STORAGE_BUCKET_ACCESS_KEY_SECRET,
             signatureVersion : 'v4',
-            region           : process.env.RESOURCES_S3_REGION
+            region           : process.env.STORAGE_CLOUD_REGION
         });
 
         const url = s3.getSignedUrl('getObject', {
-            Bucket  : process.env.RESOURCES_S3_BUCKET_NAME,
+            Bucket  : process.env.STORAGE_BUCKET,
             Key     : storageKey,
             Expires : 60 * durationInMinutes
         });
@@ -159,8 +159,8 @@ export class AWSS3FileStorageService implements IFileStorageService {
 
     getS3Client = (): aws.S3 => {
         return new aws.S3({
-            accessKeyId     : process.env.RESOURCES_S3_BUCKET_ACCESS_KEY_ID,
-            secretAccessKey : process.env.RESOURCES_S3_BUCKET_ACCESS_KEY_SECRET
+            accessKeyId     : process.env.STORAGE_BUCKET_ACCESS_KEY_ID,
+            secretAccessKey : process.env.STORAGE_BUCKET_ACCESS_KEY_SECRET
         });
     };
 

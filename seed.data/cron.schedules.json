@@ -1,4 +1,10 @@
 {
+    "local": {
+        "FileCleanup": "*/30 * * * *",
+        "MedicationReminder": "*/15 * * * *",
+        "CreateMedicationTasks": "5 0 * * *",
+        "PatientDailyTasks": "*/7 * * * *"
+    },
     "development": {
         "FileCleanup": "*/30 * * * *",
         "MedicationReminder": "*/15 * * * *",

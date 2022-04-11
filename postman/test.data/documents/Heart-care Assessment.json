@@ -1,0 +1,170 @@
+{
+  "DisplayCode": "AssessmtTmpl#svi0iaxz0id8z6yzvbv6a3bl",
+  "Version": "11",
+  "Type": "Survey",
+  "Title": "Heart care Assessment",
+  "Provider": "KoboToolbox",
+  "ProviderAssessmentCode": "911036",
+  "RootNodeDisplayCode": "RNode#0jg83qjz46bi8fzny2uoxqmh",
+  "Nodes": [
+    {
+      "DisplayCode": "RNode#0jg83qjz46bi8fzny2uoxqmh",
+      "NodeType": "Node list",
+      "ProviderGivenId": null,
+      "ProviderGivenCode": null,
+      "Title": "Assessment root node",
+      "ChildrenNodeDisplayCodes": [
+        "QNode#7cyaec8ql8pwev4k9m15jmta",
+        "QNode#0nrbffx37xj29656a4ycesek",
+        "QNode#t3n8scxi1yw0al9c25sxifq8",
+        "QNode#ozc5lfd1usikpg9skbghtyi0",
+        "QNode#agclpo3rxdfc9nbfcdicczxi",
+        "QNode#msucnlnyclbmb71c7p0vczxd",
+        "QNode#5h05l4an8flx9gknfzrynend",
+        "QNode#r21pmgmja6t0n4vtdnpnkvll",
+        "QNode#2gxtydycuqw5z6ncq5njsvk2",
+        "QNode#d75q61jr5u9nmyjrfyrludcx"
+      ]
+    },
+    {
+      "DisplayCode": "QNode#7cyaec8ql8pwev4k9m15jmta",
+      "NodeType": "Question",
+      "ProviderGivenId": "First_Name",
+      "ProviderGivenCode": "First_Name",
+      "Title": "First Name",
+      "Description": "Your first name",
+      "Sequence": 1,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#0nrbffx37xj29656a4ycesek",
+      "NodeType": "Question",
+      "ProviderGivenId": "Last_Name",
+      "ProviderGivenCode": "Last_Name",
+      "Title": "Last Name",
+      "Description": "Your last name",
+      "Sequence": 2,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#t3n8scxi1yw0al9c25sxifq8",
+      "NodeType": "Question",
+      "ProviderGivenId": "Birth_Date",
+      "ProviderGivenCode": "Birth_Date",
+      "Title": "Birth Date",
+      "Description": "Your birthdate",
+      "Sequence": 3,
+      "QueryResponseType": "Date"
+    },
+    {
+      "DisplayCode": "QNode#ozc5lfd1usikpg9skbghtyi0",
+      "NodeType": "Question",
+      "ProviderGivenId": "Gender",
+      "ProviderGivenCode": "Gender",
+      "Title": "Gender",
+      "Description": "Your gender",
+      "Sequence": 4,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#ozc5lfd1usikpg9skbghtyi0:Option#1",
+          "ProviderGivenCode": "male",
+          "Text": "Male",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#ozc5lfd1usikpg9skbghtyi0:Option#2",
+          "ProviderGivenCode": "female",
+          "Text": "Female",
+          "Sequence": 2
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#agclpo3rxdfc9nbfcdicczxi",
+      "NodeType": "Question",
+      "ProviderGivenId": "Phone",
+      "ProviderGivenCode": "Phone",
+      "Title": "Phone",
+      "Description": null,
+      "Sequence": 5,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#msucnlnyclbmb71c7p0vczxd",
+      "NodeType": "Question",
+      "ProviderGivenId": "Country",
+      "ProviderGivenCode": "Country",
+      "Title": "Country",
+      "Description": null,
+      "Sequence": 6,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#5h05l4an8flx9gknfzrynend",
+      "NodeType": "Question",
+      "ProviderGivenId": "Salary",
+      "ProviderGivenCode": "Salary",
+      "Title": "Salary",
+      "Description": "Enter your salary",
+      "Sequence": 7,
+      "QueryResponseType": "Float"
+    },
+    {
+      "DisplayCode": "QNode#r21pmgmja6t0n4vtdnpnkvll",
+      "NodeType": "Question",
+      "ProviderGivenId": "Care_plans_subscribed",
+      "ProviderGivenCode": "Care_plans_subscribed",
+      "Title": "Care plans subscribed",
+      "Description": "Select the care plans you have subscribed to",
+      "Sequence": 8,
+      "QueryResponseType": "Multi Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#r21pmgmja6t0n4vtdnpnkvll:Option#1",
+          "ProviderGivenCode": "hf",
+          "Text": "HF",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#r21pmgmja6t0n4vtdnpnkvll:Option#2",
+          "ProviderGivenCode": "stroke",
+          "Text": "Stroke",
+          "Sequence": 2
+        },
+        {
+          "DisplayCode": "QNode#r21pmgmja6t0n4vtdnpnkvll:Option#3",
+          "ProviderGivenCode": "core",
+          "Text": "Core",
+          "Sequence": 3
+        },
+        {
+          "DisplayCode": "QNode#r21pmgmja6t0n4vtdnpnkvll:Option#4",
+          "ProviderGivenCode": "cr",
+          "Text": "CR",
+          "Sequence": 4
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#2gxtydycuqw5z6ncq5njsvk2",
+      "NodeType": "Question",
+      "ProviderGivenId": "rank",
+      "ProviderGivenCode": "rank",
+      "Title": "rank",
+      "Description": null,
+      "Sequence": 9,
+      "QueryResponseType": "Integer"
+    },
+    {
+      "DisplayCode": "QNode#d75q61jr5u9nmyjrfyrludcx",
+      "NodeType": "Question",
+      "ProviderGivenId": "Patient_photo",
+      "ProviderGivenCode": "Patient_photo",
+      "Title": "Patient photo",
+      "Description": null,
+      "Sequence": 10,
+      "QueryResponseType": "File"
+    }
+  ]
+}

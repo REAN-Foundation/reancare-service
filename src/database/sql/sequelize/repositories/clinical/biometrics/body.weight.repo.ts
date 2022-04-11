@@ -16,6 +16,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
         try {
             const entity = {
                 PatientUserId    : createModel.PatientUserId,
+                EhrId            : createModel.EhrId,
                 BodyWeight       : createModel.BodyWeight,
                 Unit             : createModel.Unit,
                 RecordDate       : createModel.RecordDate ?? new Date(),

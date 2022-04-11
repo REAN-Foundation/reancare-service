@@ -1,4 +1,3 @@
-
 import { DoctorDomainModel } from '../../../domain.types/doctor/doctor.domain.model';
 import { DoctorSearchFilters } from '../../../domain.types/doctor/doctor.search.types';
 

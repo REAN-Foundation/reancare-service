@@ -8,4 +8,5 @@ export interface BodyTemperatureDomainModel {
     Unit             : string;
     RecordDate?      : Date;
     RecordedByUserId?: uuid;
+    RecordedByEhrId?: uuid;
 }

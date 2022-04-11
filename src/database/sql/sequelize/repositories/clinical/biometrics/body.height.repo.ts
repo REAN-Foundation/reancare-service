@@ -16,8 +16,11 @@ export class BodyHeightRepo implements IBodyHeightRepo {
         try {
             const entity = {
                 PatientUserId : BodyHeightDomainModel.PatientUserId,
+                EhrId         : BodyHeightDomainModel.EhrId,
                 BodyHeight    : BodyHeightDomainModel.BodyHeight ?? 0,
-                Unit          : BodyHeightDomainModel.Unit ?? 'cm'
+                Unit          : BodyHeightDomainModel.Unit ?? 'cm',
+                RecordDate    : BodyHeightDomainModel.RecordDate
+
             };
             const bodyHeight = await BodyHeight.create(entity);
             const dto = await BodyHeightMapper.toDto(bodyHeight);

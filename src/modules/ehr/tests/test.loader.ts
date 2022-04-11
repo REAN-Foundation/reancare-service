@@ -13,6 +13,8 @@ import { ConfigurationManager } from '../../../config/configuration.manager';
 // import { BiometricsWeightStore } from '../services/biometrics.weight.store';
 // import { BloodSugarStore } from '../services/blood.sugar.store';
 // import { BiometricsHeightStore } from '../services/biometrics.height.store';
+import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
+import { LabOrganizationStore } from '../services/lab.organization.store';
 
 import { EhrInjector } from '../ehr.injector';
 
@@ -36,12 +38,14 @@ export class TestLoader {
     private static _doctorStore: DoctorStore = container.resolve(DoctorStore);
 
     // private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
-    // private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
+    private static _diagnosticlabuserStore: DiagnosticLabUserStore = container.resolve(DiagnosticLabUserStore);
+
     // private static _pharmacistStore: PharmacistStore = container.resolve(PharmacistStore);
     // private static _bloodPressureStore: BloodPressureStore = container.resolve(BloodPressureStore);
     // private static _biometricsWeightStore: BiometricsWeightStore = container.resolve(BiometricsWeightStore);
     // private static _bloodSugarStore: BloodSugarStore = container.resolve(BloodSugarStore);
     // private static _biometricsHeightStore: BiometricsHeightStore = container.resolve(BiometricsHeightStore);
+    private static _laborganizationStore: LabOrganizationStore = container.resolve(LabOrganizationStore);
 
     private static _container: DependencyContainer = container;
 
@@ -61,9 +65,13 @@ export class TestLoader {
         return TestLoader._doctorStore;
     }
 
-    // public static get DiagnosticLabUserStore() {
-    //     return TestLoader._diagnosticlabuserStore;
-    // }
+    public static get DiagnosticLabUserStore() {
+        return TestLoader._diagnosticlabuserStore;
+    }
+
+    public static get LabOrganizationStore() {
+        return TestLoader._laborganizationStore;
+    }
 
     // public static get PharmacistStore() {
     //     return TestLoader._pharmacistStore;
@@ -100,12 +108,13 @@ export class TestLoader {
             TestLoader._doctorStore = container.resolve(DoctorStore);
 
             // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
-            // TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
+            TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
             // TestLoader._bloodPressureStore = container.resolve(BloodPressureStore);
             // TestLoader._bloodSugarStore = container.resolve(BloodSugarStore);
             // TestLoader._biometricsHeightStore = container.resolve(BiometricsHeightStore);
             // TestLoader._pharmacistStore = container.resolve(PharmacistStore);
             // TestLoader._biometricsWeightStore = container.resolve(BiometricsWeightStore);
+            TestLoader._laborganizationStore = container.resolve(LabOrganizationStore);
 
             //Finally intitialize Fhir storage provider
             const initialized = await TestLoader._storageService.init();

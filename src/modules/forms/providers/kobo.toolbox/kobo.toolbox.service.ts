@@ -217,11 +217,10 @@ export class KoboToolboxService  implements IFormsService {
             Authorization     : `Token ${token}`
         };
 
-        var options = {
+        return {
             headers    : headers,
             compressed : true,
         };
-        return options;
     }
 
 }

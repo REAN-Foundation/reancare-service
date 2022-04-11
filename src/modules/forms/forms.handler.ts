@@ -59,23 +59,10 @@ export class FormsHandler {
         return service.processQueryResponse(responseType, value);
     }
 
-    // public convertFormToAssessmentTemplate = async (assessmentActivity: CareplanActivity)
-    //     : Promise<SAssessmentTemplate> => {
-    //     var service = FormsHandler._services.getItem(assessmentActivity.Provider);
-    //     return await service.convertToAssessmentTemplate(assessmentActivity);
-    // };
-
-    // public convertFormResponseToAssessmentResponse = async (assessmentActivity: CareplanActivity)
-    // : Promise<SAssessmentTemplate> => {
-    //     var service = FormsHandler._services.getItem(assessmentActivity.Provider);
-    //     return await service.convertToAssessmentTemplate(assessmentActivity);
-    // };
-
     private static getService(connectionModel: ThirdpartyApiCredentialsDomainModel) {
         const provider = connectionModel.Provider;
         FormsHandler._services = ProviderResolver.resolve();
-        var service = FormsHandler._services.getItem(provider);
-        return service;
+        return FormsHandler._services.getItem(provider);
     }
 
 }

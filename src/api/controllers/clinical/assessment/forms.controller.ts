@@ -173,44 +173,6 @@ export class FormsController extends BaseController{
         }
     };
 
-    // exportAssessmentTemplateAsForm = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-            
-    //         await this.setContext('Forms.ExportAssessmentTemplateAsForm', request, response);
-
-    //         const model = await this._validator.create(request);
-    //         const assessmentTemplate = await this._service.create(model);
-    //         if (assessmentTemplate == null) {
-    //             throw new ApiError(400, 'Cannot create record for assessment Template!');
-    //         }
-
-    //         ResponseHandler.success(request, response, 'Assessment template record created successfully!', 201, {
-    //             AssessmentTemplate : assessmentTemplate,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
-
-    // addAssessmentTemplateAsForm = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-            
-    //         await this.setContext('Forms.AddAssessmentTemplateAsForm', request, response);
-
-    //         const id: uuid = await this._validator.getParamUuid(request, 'id');
-    //         const assessmentTemplate = await this._service.getById(id);
-    //         if (assessmentTemplate == null) {
-    //             throw new ApiError(404, 'Assessment template record not found.');
-    //         }
-
-    //         ResponseHandler.success(request, response, 'Assessment template record retrieved successfully!', 200, {
-    //             AssessmentTemplate : assessmentTemplate,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
-
     importFormSubmissions = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             

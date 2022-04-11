@@ -223,8 +223,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                     TemplateId : templateId
                 }
             });
-            var dtos = nodes.map((x) => AssessmentHelperMapper.toNodeDto(x, null, null, null));
-            return dtos;
+            return nodes.map((x) => AssessmentHelperMapper.toNodeDto(x, null, null, null));
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

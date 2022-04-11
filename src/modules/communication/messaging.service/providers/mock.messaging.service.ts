@@ -13,10 +13,7 @@ export class MockMessagingService implements IMessagingService {
     sendSMS = async (toPhone: string, message: string): Promise<boolean> => {
         try {
             Logger.instance().log(`To phone: '${toPhone}', Message: '${message}'`);
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            return new Promise((resolve, reject) => {
-                resolve(true);
-            });
+            return Promise.resolve(true);
         } catch (error) {
             Logger.instance().log(error.message);
             return false;
@@ -26,11 +23,7 @@ export class MockMessagingService implements IMessagingService {
     sendWhatsappMessage = async (toPhone: string, message: string): Promise<boolean> => {
         try {
             Logger.instance().log(`To phone: '${toPhone}', Message: '${message}'`);
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            return new Promise((resolve, reject) => {
-                resolve(true);
-            });
-
+            return Promise.resolve(true);
         } catch (error) {
             Logger.instance().log(error.message);
             return false;

@@ -158,10 +158,9 @@ export class CareplanHandler {
 
     private isEnabledProvider(provider: string) {
         var careplans = ConfigurationManager.careplans();
-        var enabledProvider = careplans.find(x => {
+        return careplans.find(x => {
             return x.Provider === provider && x.Enabled;
         });
-        return enabledProvider;
     }
     
 }

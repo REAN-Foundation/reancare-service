@@ -121,9 +121,9 @@ export class GcpBloodOxygenSaturationStore implements IBloodOxygenSaturationStor
             component : []
         };
 
-        if (model.EhrId != null) {
+        if (model.PatientUserId != null) {
             resource['subject'] = {
-                reference : `Patient/${model.EhrId}`
+                reference : `Patient/${model.PatientUserId}`
             };
         }
 

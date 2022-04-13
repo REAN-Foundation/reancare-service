@@ -92,19 +92,6 @@
             }
           }
         ]
-      },
-      {
-        "resourceType": "Goal",
-        "id": "goal",
-        "language": "english",
-        "lifecycleStatus": "active",
-        "description": {
-          "text": "Maintain patient's health throughout pregnancy and ensure a healthy child"
-        },
-        "subject": {
-          "reference": "Patient/1",
-          "display": "Eve Everywoman"
-        }
       }
     ],
     "extension": [

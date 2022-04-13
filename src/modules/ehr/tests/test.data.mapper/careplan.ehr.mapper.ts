@@ -1,7 +1,6 @@
 import path from 'path';
+import { CarePlanDomainModel } from '../../../../domain.types/clinical/careplan/careplandomain.model';
 import { Helper } from "../../../../common/helper";
-import { CareplanActivityDomainModel
-} from '../../../../domain.types/clinical/careplan/activity/careplan.activity.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -12,25 +11,19 @@ export class CarePlanMapper {
         const jsonPath = path.join(cwd,'src/modules/ehr/tests/test.data/','care.plan.domain.model.json');
         var carePlanObj = Helper.jsonToObj(jsonPath);
 
-        var model: CareplanActivityDomainModel = {
+        var model: CarePlanDomainModel = {
+            id               : carePlanObj.id,
             PatientUserId    : carePlanObj.PatientUserId,
-            EhrId            : carePlanObj.EhrId,
-            ParticipantId    : carePlanObj.ParticipantId,
+            RegistrationId   : carePlanObj.RegistrationId,
             EnrollmentId     : carePlanObj.EnrollmentId,
             Provider         : carePlanObj.Provider,
             PlanName         : carePlanObj.PlanName,
             PlanCode         : carePlanObj.PlanCode,
-            Type             : carePlanObj.Type,
-            Category         : carePlanObj.Category,
-            ProviderActionId : carePlanObj.ProviderActionId,
-            Title            : carePlanObj.Title,
-            Description      : carePlanObj.Description,
-            Url              : carePlanObj.Url,
-            Language         : carePlanObj.Language,
-            ScheduledAt      : carePlanObj.ScheduledAt,
-            Sequence         : carePlanObj.Sequence,
-            Frequency        : carePlanObj.Frequency,
-            Status           : carePlanObj.Status
+            CarePlanType     : carePlanObj.CarePlanType,
+            RegistrationDate : carePlanObj.RegistrationDate,
+            StartDate        : carePlanObj.StartDate,
+            EndDate          : carePlanObj.EndDate,
+            Description      : carePlanObj.Description
         };
 
         return model;

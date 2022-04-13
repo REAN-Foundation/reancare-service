@@ -1,9 +1,8 @@
-import { CareplanActivityDomainModel
-} from '../../../../../../domain.types/clinical/careplan/activity/careplan.activity.domain.model';
-import { GcpHelper } from './helper.gcp';
+import { CarePlanDomainModel } from '../../../../../../domain.types/clinical/careplan/careplandomain.model';
 import { healthcare_v1 } from 'googleapis';
 import { Logger } from '../../../../../../common/logger';
 import { ICarePlanStore } from '../../../../interfaces/careplan.store.interface';
+import { GcpHelper } from './helper.gcp';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -13,7 +12,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
         throw new Error(`Method not implemented ${filter}.`);
     }
 
-    add = async (model: CareplanActivityDomainModel): Promise<any> => {
+    add = async (model: CarePlanDomainModel): Promise<any> => {
         try {
             var g = await GcpHelper.getGcpClient();
             const c = GcpHelper.getGcpFhirConfig();
@@ -57,7 +56,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
         }
     };
 
-    update = async (resourceId:string, updates: CareplanActivityDomainModel): Promise<any> => {
+    update = async (resourceId:string, updates: CarePlanDomainModel): Promise<any> => {
 
         try {
 
@@ -109,28 +108,17 @@ export class GcpCarePlanStore implements ICarePlanStore {
 
     //#region Private methods
 
-    private createCarePlanFhirResource(model: CareplanActivityDomainModel): any {
+    private createCarePlanFhirResource(model: CarePlanDomainModel): any {
 
         var resource = {
             resourceType : "CarePlan",
-            status       : model.Status,
-            intent       : "plan",
-            goal         : [
-                {
-                    reference : "#goal"
-                }
-            ],
-            contained : [],
-            activity  : []
+            status       : "unknown",
+            intent       : "plan"
             
         };
 
-        if (model.Title != null) {
-            resource['title'] = model.Title;
-        }
-
-        if (model.Language != null) {
-            resource['language'] = model.Language;
+        if (model.PlanName != null) {
+            resource['title'] = model.PlanName;
         }
 
         if (model.Description != null) {
@@ -143,78 +131,37 @@ export class GcpCarePlanStore implements ICarePlanStore {
             };
         }
 
-        if (model.Category != null) {
+        if (model.CarePlanType != null) {
             resource['category'] = [
                 {
-                    text : model.Category
+                    text : model.CarePlanType
                 }
             ];
         }
 
         if (model.PatientUserId != null) {
             resource['subject'] = {
-                id        : model.ParticipantId,
+                id        : model.EnrollmentId,
                 reference : `Patient/${model.PatientUserId}`
             };
         }
 
-        if (model.ScheduledAt != null) {
+        if (model.StartDate != null) {
             resource['period'] = {
-                start : model.ScheduledAt
+                start : model.StartDate,
+                end   : model.EndDate
             };
-        }
-
-        if (model.Description != null) {
-            
-            var goal = {
-                resourceType    : "Goal",
-                id              : "goal",
-                language        : model.Language,
-                lifecycleStatus : "active",
-                description     : {
-                    text : model.Description
-                },
-                subject : {
-                    reference : `Patient/${model.PatientUserId}`,
-                    display   : "patient"
-                }
-            };
-            resource.contained.push(goal);
-        }
-
-        if (model.Type != null) {
-            
-            var activity = {
-                reference : {
-                    id      : model.PlanCode,
-                    display : model.PlanName,
-                    type    : model.Type
-                }
-            };
-            resource.activity.push(activity);
         }
 
         return resource;
     }
     
-    private updateCarePlanFhirResource(updates: CareplanActivityDomainModel, existingResource: any): any {
+    private updateCarePlanFhirResource(updates: CarePlanDomainModel, existingResource: any): any {
 
         existingResource.resourceType = "CarePlan";
 
-        existingResource.contained = [];
-
-        existingResource.activity = [];
-
-        if (updates.Status != null) {
-            existingResource['status'] = updates.Status;
-        }
-
-        if (updates.Title != null) {
-            existingResource['title'] = updates.Title;
-        }
-
-        if (updates.Language != null) {
-            existingResource['language'] = updates.Language;
+        if (updates.PlanName != null) {
+            existingResource['title'] = updates.PlanName;
         }
 
         if (updates.Description != null) {
@@ -227,55 +174,26 @@ export class GcpCarePlanStore implements ICarePlanStore {
             };
         }
 
-        if (updates.Category != null) {
+        if (updates.CarePlanType != null) {
             existingResource['category'] = [
                 {
-                    text : updates.Category
+                    text : updates.CarePlanType
                 }
             ];
         }
 
         if (updates.PatientUserId != null) {
             existingResource['subject'] = {
-                id        : updates.ParticipantId,
+                id        : updates.EnrollmentId,
                 reference : `Patient/${updates.PatientUserId}`
             };
         }
 
-        if (updates.ScheduledAt != null) {
+        if (updates.StartDate != null) {
             existingResource['period'] = {
-                start : updates.ScheduledAt
+                start : updates.StartDate,
+                end   : updates.EndDate
             };
-        }
-
-        if (updates.Description != null) {
-            
-            var goal = {
-                resourceType    : "Goal",
-                id              : "goal",
-                language        : updates.Language,
-                lifecycleStatus : "active",
-                description     : {
-                    text : updates.Description
-                },
-                subject : {
-                    reference : `Patient/${updates.PatientUserId}`,
-                    display   : "patient"
-                }
-            };
-            existingResource.contained.push(goal);
-        }
-
-        if (updates.Type != null) {
-            
-            var activity = {
-                reference : {
-                    id      : updates.PlanCode,
-                    display : updates.PlanName,
-                    type    : updates.Type
-                }
-            };
-            existingResource.activity.push(activity);
         }
         
         return existingResource;

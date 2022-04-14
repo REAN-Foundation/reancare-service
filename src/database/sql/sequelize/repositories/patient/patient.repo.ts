@@ -35,8 +35,17 @@ export class PatientRepo implements IPatientRepo {
     getByUserId = async (userId: string): Promise<PatientDetailsDto> => {
         try {
             const patient = await Patient.findOne({ where: { UserId: userId } });
-            const dto = await PatientMapper.toDetailsDto(patient);
-            return dto;
+            return await PatientMapper.toDetailsDto(patient);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getByPersonId = async (personId: string): Promise<PatientDetailsDto> => {
+        try {
+            const patient = await Patient.findOne({ where: { PersonId: personId } });
+            return await PatientMapper.toDetailsDto(patient);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -54,13 +63,8 @@ export class PatientRepo implements IPatientRepo {
             if (model.EhrId !== undefined) {
                 patient.EhrId = model.EhrId;
             }
-
             await patient.save();
-
-            const dto = await PatientMapper.toDetailsDto(patient);
-
-            return dto;
-
+            return await PatientMapper.toDetailsDto(patient);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

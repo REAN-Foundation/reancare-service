@@ -50,17 +50,17 @@ export class GoalController {
         }
     };
 
-    getSelectedGoals = async (request: express.Request, response: express.Response): Promise<void> => {
+    getPatientGoals = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Goal.getSelcetedGoals';
+            request.context = 'Goal.GetPatientGoals';
             
             await this._authorizer.authorize(request, response);
 
-            const id: string = await GoalValidator.getSelectedGoals(request);
+            const patientUserId: string = await GoalValidator.getPatientGoals(request);
 
-            Logger.instance().log(`Patient User id: ${JSON.stringify(id)}`);
+            Logger.instance().log(`Patient User id: ${JSON.stringify(patientUserId)}`);
 
-            const goals = await this._service.getSelectedGoals(id);
+            const goals = await this._service.getPatientGoals(patientUserId);
             if (goals == null) {
                 throw new ApiError(400, 'Cannot fetch goals for given patient!');
             }
@@ -117,16 +117,15 @@ export class GoalController {
         }
     };
 
-    getGoals = async (request: express.Request, response: express.Response): Promise<void> => {
+    getGoalsByPriority = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Goal.getGoals';
+            request.context = 'Goal.GetGoalsByPriority';
             
             await this._authorizer.authorize(request, response);
 
-            const priorityId: string = await GoalValidator.getGoals(request);
-            Logger.instance().log(`Get goals by priority Id: ${priorityId}`);
+            const priorityId: string = await GoalValidator.getGoalsByPriority(request);
 
-            const patientGoals = await this._service.getGoals(priorityId);
+            const patientGoals = await this._service.getGoalsByPriority(priorityId);
             if (patientGoals == null || patientGoals.length === 0) {
                 throw new ApiError(404, 'Goals not found.');
             }

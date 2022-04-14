@@ -102,7 +102,20 @@ export default class AssessmentQueryResponse extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
-    DateValue: boolean;
+    DateValue: Date;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Url: string;
+
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    ResourceId: string;
 
     //Should also handle multiple choice selections in stringified array format
     @Column({

@@ -7,6 +7,8 @@ export interface IPatientRepo {
 
     getByUserId(userId: string): Promise<PatientDetailsDto>;
 
+    getByPersonId(personId: string): Promise<PatientDetailsDto>;
+
     updateByUserId(userId: string, updateModel: PatientDomainModel): Promise<PatientDetailsDto>;
 
     search(filters: PatientSearchFilters): Promise<PatientSearchResults>;

@@ -109,6 +109,12 @@ export default class Assessment extends Model {
         allowNull : true,
     })
     ProviderAssessmentCode: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    ProviderAssessmentId: string;
     
     @Length({ max: 128 })
     @Column({

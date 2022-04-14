@@ -32,24 +32,11 @@ export class AssessmentTemplateFileConverter {
     //#region Publics
 
     public static storeAssessmentTemplate = async (templateObj: CAssessmentTemplate): Promise<FileResourceDto> => {
-
-        const title = templateObj.Title;
-        const filename = Helper.strToFilename(title, 'json', '-');
-        const tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
-        const timestamp = TimeHelper.timestamp(new Date());
-        const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
-        const sourceLocation = path.join(tempDownloadFolder, dateFolder, timestamp);
-        const sourceFile = path.join(sourceLocation, filename);
+        const { dateFolder, filename, sourceFileLocation }
+            = await AssessmentTemplateFileConverter.storeTemplateToFileLocally(templateObj);
         const storageKey = `resources/${dateFolder}/${filename}`;
-
-        await fs.promises.mkdir(sourceLocation, { recursive: true });
-
-        const jsonObj = AssessmentTemplateFileConverter.convertToJson(templateObj);
-        const jsonStr = JSON.stringify(jsonObj, null, 2);
-        fs.writeFileSync(sourceFile, jsonStr);
-
         const fileResourceService = Loader.container.resolve(FileResourceService);
-        return await fileResourceService.uploadLocal(sourceFile, storageKey, false);
+        return await fileResourceService.uploadLocal(sourceFileLocation, storageKey, false);
     };
 
     public static convertToJson = (templateObj: CAssessmentTemplate):any => {
@@ -106,6 +93,22 @@ export class AssessmentTemplateFileConverter {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    };
+
+    public static storeTemplateToFileLocally = async (templateObj: CAssessmentTemplate) => {
+        const title = templateObj.Title;
+        const filename = Helper.strToFilename(title, 'json', '-');
+        const tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
+        const timestamp = TimeHelper.timestamp(new Date());
+        const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
+        const sourceFolder = path.join(tempDownloadFolder, dateFolder, timestamp);
+        const sourceFileLocation = path.join(sourceFolder, filename);
+        await fs.promises.mkdir(sourceFolder, { recursive: true });
+    
+        const jsonObj = AssessmentTemplateFileConverter.convertToJson(templateObj);
+        const jsonStr = JSON.stringify(jsonObj, null, 2);
+        fs.writeFileSync(sourceFileLocation, jsonStr);
+        return { dateFolder, filename, sourceFileLocation };
     };
 
     //#endregion
@@ -329,3 +332,4 @@ export class AssessmentTemplateFileConverter {
     //#endregion
 
 }
+

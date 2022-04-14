@@ -6,6 +6,7 @@ import { BaseController } from '../base.controller';
 import { UserService } from '../../../services/user/user.service';
 import { HealthPriorityValidator } from '../../validators/health.priority/health.priority.validator';
 import { HealthPriorityService } from '../../../services/health.priority/health.priority.service';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -47,13 +48,13 @@ export class HealthPriorityController extends BaseController {
         }
     };
 
-    getPriorities = async (request: express.Request, response: express.Response): Promise<void> => {
+    getPatientHealthPriorities = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('HealthPriority.getPriorities', request, response);
+            await this.setContext('HealthPriority.GetPatientHealthPriorities', request, response);
 
-            const model = await this._validator.getPriorities(request);
+            const patientUserId:uuid = await this._validator.getParamUuid(request, 'patientUserId');
 
-            const priorities = await this._service.getPriorities(model);
+            const priorities = await this._service.getPatientHealthPriorities(patientUserId);
             if (priorities == null) {
                 throw new ApiError(400, 'Cannot fetch priorities for given patient!');
             }
@@ -69,14 +70,14 @@ export class HealthPriorityController extends BaseController {
     
     getPriorityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('HealthPriority.getPrioritiesTypes', request, response);
+            await this.setContext('HealthPriority.GetPriorityTypes', request, response);
 
             const priorityTypes = await this._service.getPriorityTypes();
             if (priorityTypes.length === 0) {
                 throw new ApiError(400, 'Cannot fetch priorities types!');
             }
 
-            ResponseHandler.success(request, response, 'Fetched priority types successfully!', 201, {
+            ResponseHandler.success(request, response, 'Fetched priority types successfully!', 200, {
                 PriorityTypes : priorityTypes,
             });
 

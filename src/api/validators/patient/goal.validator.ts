@@ -39,11 +39,11 @@ export class GoalValidator {
         return await GoalValidator.getParamId(request);
     };
 
-    static getSelectedGoals= async (request: express.Request): Promise<uuid> => {
+    static getPatientGoals= async (request: express.Request): Promise<uuid> => {
         return await GoalValidator.getParamPatientUserId(request);
     };
 
-    static getGoals= async (request: express.Request): Promise<string> => {
+    static getGoalsByPriority= async (request: express.Request): Promise<string> => {
         return await GoalValidator.getParamPriorityId(request);
     };
 

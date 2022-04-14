@@ -1,0 +1,260 @@
+{
+  "DisplayCode": "AssessmtTmpl#9axzlpuptuorv4c85947stub",
+  "Version": "1.0",
+  "Type": "Careplan",
+  "Title": "Life's Simple 7 assessment",
+  "Provider": "AHA",
+  "ProviderAssessmentCode": "2011",
+  "RootNodeDisplayCode": "RNode#vpjqecbh99yv0er62c9fsa4l",
+  "Nodes": [
+    {
+      "DisplayCode": "RNode#vpjqecbh99yv0er62c9fsa4l",
+      "NodeType": "Node list",
+      "ProviderGivenId": null,
+      "ProviderGivenCode": null,
+      "Title": "Assessment root node",
+      "ChildrenNodeDisplayCodes": [
+        "QNode#wokyh3u650w8xjgn02ypu9l3",
+        "QNode#3kwypoc84vyn75p4iisfo1ko",
+        "QNode#bxu3ba231gbbbt4nrpp6oazv",
+        "QNode#sn36yfbi4pegg067hccbogw6",
+        "QNode#qmhmtqpo3v378ud1u7zfplwd",
+        "QNode#qs38mqey995ywnzdt2r86ywh",
+        "QNode#rc21ezepuvdwjoq2f298vlid",
+        "QNode#suwzzgt4xrhsmq3kygytxhwo",
+        "QNode#nn1vw4abpngvgbhx6o5lbgri",
+        "QNode#pasoqw7onjrz6i81odsve20w",
+        "QNode#iy2fti2nqvix6nkgkyed6qjk",
+        "QNode#wr15n4jwb4z8sydiwt9ibzix",
+        "QNode#co8pfzct9xjjukxa728sr3ss",
+        "QNode#0mv2mctrt6rxc3fiy95mvl1u",
+        "QNode#txhl981heof2v3i96776ew4f",
+        "QNode#d06gkimujv3v6zeessh44gzm"
+      ]
+    },
+    {
+      "DisplayCode": "QNode#wokyh3u650w8xjgn02ypu9l3",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.1",
+      "ProviderGivenCode": "q1",
+      "Title": "Time per week spent in moderate physical activity ?",
+      "Description": "Minutes",
+      "Sequence": 1,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#3kwypoc84vyn75p4iisfo1ko",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.2",
+      "ProviderGivenCode": "q2",
+      "Title": "Time per week spent in vigorous physical activity?",
+      "Description": "Minutes",
+      "Sequence": 2,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#bxu3ba231gbbbt4nrpp6oazv",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.3",
+      "ProviderGivenCode": "q3",
+      "Title": "How many cups of fruit do you eat in a day?",
+      "Description": "Cups",
+      "Sequence": 3,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#sn36yfbi4pegg067hccbogw6",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.4",
+      "ProviderGivenCode": "q4",
+      "Title": "How many cups of vegetables do you eat in a day?",
+      "Description": "Cups",
+      "Sequence": 4,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#qmhmtqpo3v378ud1u7zfplwd",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.5",
+      "ProviderGivenCode": "q5",
+      "Title": "How many servings of fish do you eat in a week?",
+      "Description": "Servings",
+      "Sequence": 5,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#qs38mqey995ywnzdt2r86ywh",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.6",
+      "ProviderGivenCode": "q6",
+      "Title": "How many servings of whole grains to you eat in a week?",
+      "Description": "Servings",
+      "Sequence": 6,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#rc21ezepuvdwjoq2f298vlid",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.7",
+      "ProviderGivenCode": "q7",
+      "Title": "How many 12oz beverages with added sugar to you drink each week?",
+      "Description": "Servings",
+      "Sequence": 7,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#suwzzgt4xrhsmq3kygytxhwo",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.8",
+      "ProviderGivenCode": "q8",
+      "Title": "I avoid eating prepackaged and processed foods?",
+      "Sequence": 8,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#suwzzgt4xrhsmq3kygytxhwo:Option#1",
+          "ProviderGivenCode": "yes",
+          "Text": "Yes",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#suwzzgt4xrhsmq3kygytxhwo:Option#2",
+          "ProviderGivenCode": "no",
+          "Text": "No",
+          "Sequence": 2
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#nn1vw4abpngvgbhx6o5lbgri",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.9",
+      "ProviderGivenCode": "q9",
+      "Title": "I rarely eat out, but when I do, I seek out lower sodium options?",
+      "Sequence": 9,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#nn1vw4abpngvgbhx6o5lbgri:Option#1",
+          "ProviderGivenCode": "yes",
+          "Text": "Yes",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#nn1vw4abpngvgbhx6o5lbgri:Option#2",
+          "ProviderGivenCode": "no",
+          "Text": "No",
+          "Sequence": 2
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#pasoqw7onjrz6i81odsve20w",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.10",
+      "ProviderGivenCode": "q10",
+      "Title": "I avoid salt when I am cooking at home?",
+      "Sequence": 10,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#pasoqw7onjrz6i81odsve20w:Option#1",
+          "ProviderGivenCode": "yes",
+          "Text": "Yes",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#pasoqw7onjrz6i81odsve20w:Option#2",
+          "ProviderGivenCode": "no",
+          "Text": "No",
+          "Sequence": 2
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#iy2fti2nqvix6nkgkyed6qjk",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.11",
+      "ProviderGivenCode": "q11",
+      "Title": "Weight?",
+      "Description": "pounds",
+      "Sequence": 11,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#wr15n4jwb4z8sydiwt9ibzix",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.12",
+      "ProviderGivenCode": "q12",
+      "Title": "Systolic blood pressure (SBP) ?",
+      "Description": "mmHg",
+      "Sequence": 12,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#co8pfzct9xjjukxa728sr3ss",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.13",
+      "ProviderGivenCode": "q13",
+      "Title": "Diastolic blood pressure (DBP) ?",
+      "Description": "mmHg",
+      "Sequence": 13,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#0mv2mctrt6rxc3fiy95mvl1u",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.14",
+      "ProviderGivenCode": "q14",
+      "Title": "Total cholesterol ?",
+      "Description": "mg/dL",
+      "Sequence": 14,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#txhl981heof2v3i96776ew4f",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.15",
+      "ProviderGivenCode": "q15",
+      "Title": "Glucose level?",
+      "Description": "mg/dL",
+      "Sequence": 15,
+      "QueryResponseType": "Text"
+    },
+    {
+      "DisplayCode": "QNode#d06gkimujv3v6zeessh44gzm",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.16",
+      "ProviderGivenCode": "q16",
+      "Title": "Smoking ?",
+      "Sequence": 16,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#d06gkimujv3v6zeessh44gzm:Option#1",
+          "ProviderGivenCode": "current",
+          "Text": "Current smoker",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#d06gkimujv3v6zeessh44gzm:Option#2",
+          "ProviderGivenCode": "less",
+          "Text": "Quit less than 1 year ago",
+          "Sequence": 2
+        },
+        {
+          "DisplayCode": "QNode#d06gkimujv3v6zeessh44gzm:Option#3",
+          "ProviderGivenCode": "more",
+          "Text": "Quit more than 1 year ago",
+          "Sequence": 3
+        },
+        {
+          "DisplayCode": "QNode#d06gkimujv3v6zeessh44gzm:Option#4",
+          "ProviderGivenCode": "never",
+          "Text": "Never smoked",
+          "Sequence": 4
+        }
+      ]
+    }
+  ]
+}

@@ -45,7 +45,7 @@ export class HealthPriorityValidator extends BaseValidator {
         this.validateRequest(request);
     }
 
-    getPriorities = async (request: express.Request): Promise<HealthPriorityDomainModel> => {
+    getPatientHealthPriorities = async (request: express.Request): Promise<HealthPriorityDomainModel> => {
 
         await this.validateUuid(request, 'patientUserId', Where.Param, true, false);
         await this.validateQueryParams(request);

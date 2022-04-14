@@ -3,6 +3,8 @@ import { DependencyContainer } from 'tsyringe';
 import { GcpStorageService } from "./storage.service";
 import { GcpPatientStore } from "./patient.store";
 import { GcpDoctorStore } from './doctor.store';
+import { GcpDiagnosticLabUserStore } from './diagnostic.lab.user.store';
+import { GcpLabOrganizationStore } from './lab.organization.store';
 import { GcpLabVisitStore } from './lab.visit.store';
 import { GcpCarePlanStore } from './careplan.store';
 import { GcpHospitalOrganizationStore } from './hospital.organization.store';
@@ -10,12 +12,9 @@ import { GcpDiagnosticConditionStore } from './diagnostic.condition.store';
 import { GcpDoctorVisitStore } from './doctor.visit.store';
 import { GcpImagingStudyStore } from './imaging.study.store';
 import { GcpFamilyHistoryStore } from './family.history.store';
-
 import { GcpClinicOrganizationStore } from "./clinic.organization.store";
 import { GcpMedicationConsumptionStore } from './medication.consumption.store';
-// import { GcpClinicOrganizationStore } from "./clinic.organization.store";
 import { GcpBloodOxygenSaturationStore } from './blood.oxygen.saturation.store';
-// import { GcpDiagnosticLabUserStore } from "./diagnostic.lab.user.store";
 import { GcpPharmacistStore } from './pharmacist.store';
 import { GcpPharmacyOrganizationStore } from './pharmacy.organization.store';
 import { GcpBiometricsHeightStore } from "./biometrics.height.store";
@@ -35,7 +34,6 @@ export class GcpFhirInjector {
         container.register('IPatientStore', GcpPatientStore);
         container.register('IDoctorStore', GcpDoctorStore);
         container.register('IBloodOxygenSaturationStore',GcpBloodOxygenSaturationStore);
-
         container.register('ILabVisitStore', GcpLabVisitStore);
         container.register('ICarePlanStore', GcpCarePlanStore);
         container.register('IHospitalOrganizationStore', GcpHospitalOrganizationStore);
@@ -43,10 +41,10 @@ export class GcpFhirInjector {
         container.register('IDoctorVisitStore', GcpDoctorVisitStore);
         container.register('IImagingStudyStore', GcpImagingStudyStore);
         container.register('IFamilyHistoryStore', GcpFamilyHistoryStore);
-
+        container.register('ILabOrganizationStore', GcpLabOrganizationStore);
+        container.register('IDiagnosticLabUserStore', GcpDiagnosticLabUserStore);
         container.register('IClinicOrganizationStore', GcpClinicOrganizationStore);
         container.register('IMedicationConsumptionStore',GcpMedicationConsumptionStore);
-        // container.register('IDiagnosticLabUserStore', GcpDiagnosticLabUserStore);
         container.register('IPharmacistStore', GcpPharmacistStore);
         container.register('IPharmacyOrganizationStore', GcpPharmacyOrganizationStore);
         container.register('IBiometricsHeightStore', GcpBiometricsHeightStore);

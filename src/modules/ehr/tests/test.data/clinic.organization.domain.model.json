@@ -1,0 +1,11 @@
+{
+    "Type": "Pathology-Lab",
+    "Name": "MedPlus Clinic Path",
+    "About": "Products Available : Ayurvedic Medicine Available,Health Accessories,Personal Care Products,Protein & Vitamins Supplements,Surgical Products,Patanjali Products Available,Allopathic Medicine Available,Processed Food & Beverages,Life Saving Drugs,Homeopathic Medicine Available",
+    "OperationalSince": "2022-06-10T00:00:00.000Z",       
+    "ContactPhone": "1233232346",
+    "ContactEmail": "excellent.diagnostics@gmail.com",
+    "IsHealthFacility": true,
+    "AddressIds": "495c791d-618e-4090-8fcf-a1299624a194"
+
+}

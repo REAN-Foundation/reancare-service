@@ -11,6 +11,8 @@ import { GcpDoctorVisitStore } from './doctor.visit.store';
 import { GcpImagingStudyStore } from './imaging.study.store';
 import { GcpFamilyHistoryStore } from './family.history.store';
 
+import { GcpClinicOrganizationStore } from "./clinic.organization.store";
+import { GcpMedicationConsumptionStore } from './medication.consumption.store';
 // import { GcpClinicOrganizationStore } from "./clinic.organization.store";
 import { GcpBloodOxygenSaturationStore } from './blood.oxygen.saturation.store';
 // import { GcpDiagnosticLabUserStore } from "./diagnostic.lab.user.store";
@@ -42,7 +44,8 @@ export class GcpFhirInjector {
         container.register('IImagingStudyStore', GcpImagingStudyStore);
         container.register('IFamilyHistoryStore', GcpFamilyHistoryStore);
 
-        // container.register('IClinicOrganizationStore', GcpClinicOrganizationStore);
+        container.register('IClinicOrganizationStore', GcpClinicOrganizationStore);
+        container.register('IMedicationConsumptionStore',GcpMedicationConsumptionStore);
         // container.register('IDiagnosticLabUserStore', GcpDiagnosticLabUserStore);
         container.register('IPharmacistStore', GcpPharmacistStore);
         container.register('IPharmacyOrganizationStore', GcpPharmacyOrganizationStore);

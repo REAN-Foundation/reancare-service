@@ -3,7 +3,6 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { DependencyContainer } from 'tsyringe';
-
 import { StorageService } from '../services/storage.service';
 import { PatientStore } from '../services/patient.store';
 import { DoctorStore } from '../services/doctor.store';
@@ -12,12 +11,11 @@ import { ConfigurationManager } from '../../../config/configuration.manager';
 import { LabVisitStore } from '../services/lab.visit.store';
 import { DiagnosticConditionStore } from '../services/diagnostic.condition.store';
 import { FamilyHistoryStore } from '../services/family.history.store';
-
-// import { ClinicOrganizationStore } from '../services/clinic.organization.store';
+import { ClinicOrganizationStore } from '../services/clinic.organization.store';
+import { MedicationConsumptionStore } from '../services/medication.consumption.store';
 import { BloodOxygenSaturationStore } from '../services/blood.oxygen.saturation.store';
 import { DiagnosticLabUserStore } from '../services/diagnostic.lab.user.store';
 import { LabOrganizationStore } from '../services/lab.organization.store';
-
 import { PharmacistStore } from '../services/pharmacist.store';
 import { PharmacyStore } from '../services/pharmacy.organization.store';
 import { BloodPressureStore } from '../services/blood.pressure.store';
@@ -51,6 +49,11 @@ export class TestLoader {
 
     private static _doctorStore: DoctorStore = container.resolve(DoctorStore);
 
+    private static _clinicOrganizationStore: ClinicOrganizationStore = container.resolve(ClinicOrganizationStore);
+    
+    private static _medicationconsumptionStore: MedicationConsumptionStore =
+        container.resolve(MedicationConsumptionStore);
+        
     private static _labVisitStore: LabVisitStore = container.resolve(LabVisitStore);
     
     private static _diagnosticConditionStore: DiagnosticConditionStore = container.resolve(DiagnosticConditionStore);
@@ -155,6 +158,10 @@ export class TestLoader {
         return TestLoader._bodyWeightStore;
     }
 
+    public static get ClinicOrganizationStore() {
+        return TestLoader._clinicOrganizationStore;
+    }
+
     public static get BloodGlucoseStore() {
         return TestLoader._bloodGlucoseStore;
     }
@@ -179,6 +186,18 @@ export class TestLoader {
         return TestLoader._temperatureStore;
     }
 
+    // public static get TemperatureStore() {
+    //     return TestLoader._temperatureStore;
+    // }
+
+    // public static get BloodOxygenSaturationStore() {
+    //     return TestLoader._bloodoxygensaturationStore;
+    // }
+
+    public static get MedicationConsumptionStore() {
+        return TestLoader._medicationconsumptionStore;
+    }
+
     //#endregion
 
     public static init = async () => {
@@ -188,6 +207,9 @@ export class TestLoader {
 
             TestLoader._patientStore = container.resolve(PatientStore);
             TestLoader._doctorStore = container.resolve(DoctorStore);
+
+            TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
+            TestLoader._medicationconsumptionStore = container.resolve(MedicationConsumptionStore);
             TestLoader._carePlanStore = container.resolve(CarePlanStore);
             TestLoader._hospitalOrganizationStore = container.resolve(HospitalOrganizationStore);
             TestLoader._labVisitStore = container.resolve(LabVisitStore);
@@ -203,8 +225,6 @@ export class TestLoader {
             TestLoader._doctorVisitStore = container.resolve(DoctorVisitStore);
             TestLoader._imagingStudyStore = container.resolve(ImagingStudyStore);
             TestLoader._familyHistoryStore = container.resolve(FamilyHistoryStore);
-            // TestLoader._clinicOrganizationStore = container.resolve(ClinicOrganizationStore);
-
             TestLoader._diagnosticlabuserStore = container.resolve(DiagnosticLabUserStore);
             TestLoader._laborganizationStore = container.resolve(LabOrganizationStore);
             TestLoader._bloodoxygensaturationStore = container.resolve(BloodOxygenSaturationStore);

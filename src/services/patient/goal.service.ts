@@ -28,13 +28,13 @@ export class GoalService {
     };
 
     getPatientGoals = async (patientUserId: string): Promise<GoalDto[]> => {
-        return await this._goalRepo.getSelectedGoals(patientUserId);
+        return await this._goalRepo.getPatientGoals(patientUserId);
     };
 
     getGoalsByPriority = async (priorityId: string): Promise<GoalDto[]> => {
         
         var priority =  await this._healthPriorityRepo.getById(priorityId);
-
+        
         var goals =  await this._careplanHandler.getGoals(priority.PatientUserId, priority.ProviderEnrollmentId,
             priority.Provider, priority.HealthPriorityType);
 
@@ -62,7 +62,16 @@ export class GoalService {
     };
 
     update = async (id: string, goalDomainModel: GoalDomainModel): Promise<GoalDto> => {
-        return await this._goalRepo.update(id, goalDomainModel);
+
+        var dto = await this._goalRepo.update(id, goalDomainModel);
+        if (dto.GoalAchieved && dto.Provider) {
+
+            await this._careplanHandler.updateGoal(dto.PatientUserId,
+                dto.Provider, dto.ProviderCareplanCode,
+                dto.ProviderEnrollmentId, dto.Title);
+        }
+
+        return dto;
     };
 
     delete = async (id: string): Promise<boolean> => {

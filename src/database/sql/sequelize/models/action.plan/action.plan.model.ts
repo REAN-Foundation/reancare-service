@@ -84,10 +84,22 @@ export default class ActionPlan extends Model {
     Title: string;
 
     @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    Status: string;
+
+    @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
     StartedAt: Date;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    CompletedAt: Date;
 
     @Column({
         type      : DataType.DATE,

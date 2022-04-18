@@ -72,7 +72,14 @@ export class HealthPriorityService {
     };
 
     update = async (id: uuid, healthPriorityDomainModel: HealthPriorityDomainModel): Promise<HealthPriorityDto> => {
-        return await this._healthPriorityRepo.update(id, healthPriorityDomainModel);
+        var dto = await this._healthPriorityRepo.update(id, healthPriorityDomainModel);
+        if (dto.Status === 'COMPLETED' && dto.Provider) {
+
+            await this._handler.updateHealthPriority(dto.PatientUserId,
+                dto.Provider, dto.ProviderCareplanCode,
+                dto.ProviderEnrollmentId, dto.HealthPriorityType.replace(" ", ""));
+        }
+        return dto;
     };
 
     delete = async (id: uuid): Promise<boolean> => {

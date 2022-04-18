@@ -21,6 +21,9 @@ export class HealthPriorityValidator extends BaseValidator {
             ProviderCareplanCode : request.body.ProviderCareplanCode ?? null,
             ProviderCareplanName : request.body.ProviderCareplanName ?? null,
             HealthPriorityType   : request.body.HealthPriorityType ?? null,
+            StartedAt            : request.body.StartedAt ?? new Date(),
+            CompletedAt          : request.body.CompletedAt ?? null,
+            Status               : request.body.Status ?? null,
             IsPrimary            : request.body.IsPrimary ?? null,
         };
  
@@ -41,6 +44,9 @@ export class HealthPriorityValidator extends BaseValidator {
         await this.validateString(request, 'ProviderCareplanCode', Where.Body, true, false);
         await this.validateString(request, 'ProviderCareplanName', Where.Body, true, false);
         await this.validateString(request, 'HealthPriorityType', Where.Body, false, true);
+        await this.validateDate(request, 'StartedAt', Where.Body, false, true);
+        await this.validateDate(request, 'CompletedAt', Where.Body, false, true);
+        await this.validateString(request, 'Status', Where.Body, false, true);
         await this.validateBoolean(request, 'IsPrimary', Where.Body, true, false);
 
         this.validateRequest(request);
@@ -87,6 +93,9 @@ export class HealthPriorityValidator extends BaseValidator {
         await this.validateString(request, 'ProviderCareplanCode', Where.Body, false, false);
         await this.validateString(request, 'ProviderCareplanName', Where.Body, false, false);
         await this.validateString(request, 'HealthPriorityType', Where.Body, false, false);
+        await this.validateDate(request, 'StartedAt', Where.Body, false, false);
+        await this.validateDate(request, 'CompletedAt', Where.Body, false, false);
+        await this.validateString(request, 'Status', Where.Body, false, false);
         await this.validateBoolean(request, 'IsPrimary', Where.Body, false, false);
 
         this.validateRequest(request);

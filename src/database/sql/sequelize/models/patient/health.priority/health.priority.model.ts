@@ -93,6 +93,18 @@ export default class HealthPriority extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
+    CompletedAt: Date;
+
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    Status: string;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
     ScheduledEndDate: Date;
 
     @Column({

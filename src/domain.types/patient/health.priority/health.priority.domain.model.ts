@@ -11,5 +11,7 @@ export interface HealthPriorityDomainModel {
     HealthPriorityType?  : HealthPriorityType;
     StartedAt?           : Date;
     ScheduledEndDate?    : Date;
+    CompletedAt?         : Date;
+    Status?              : string;
     IsPrimary?           : boolean;
 }

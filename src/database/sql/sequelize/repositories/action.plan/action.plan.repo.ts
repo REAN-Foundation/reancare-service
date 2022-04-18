@@ -171,6 +171,12 @@ export class ActionPlanRepo implements IActionPlanRepo {
             if (updateModel.StartedAt != null) {
                 actionPlan.StartedAt = updateModel.StartedAt;
             }
+            if (updateModel.CompletedAt != null) {
+                actionPlan.CompletedAt = updateModel.CompletedAt;
+            }
+            if (updateModel.Status != null) {
+                actionPlan.Status = updateModel.Status;
+            }
             if (updateModel.ScheduledEndDate != null) {
                 actionPlan.ScheduledEndDate = updateModel.ScheduledEndDate;
             }

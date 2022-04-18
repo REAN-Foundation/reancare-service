@@ -8,5 +8,7 @@ export interface ActionPlanDomainModel {
     GoalId?              : string;
     Title?               : string;
     StartedAt?           : Date;
+    CompletedAt?         : Date;
+    Status?              : string;
     ScheduledEndDate?    : Date;
 }

@@ -22,6 +22,8 @@ export class ActionPlanValidator extends BaseValidator {
             GoalId               : request.body.GoalId ?? null,
             Title                : request.body.Title ?? null,
             StartedAt            : request.body.StartedAt ?? new Date(),
+            CompletedAt          : request.body.CompletedAt ?? null,
+            Status               : request.body.Status ?? null,
             ScheduledEndDate     : request.body.ScheduledEndDate,
         };
  
@@ -50,7 +52,9 @@ export class ActionPlanValidator extends BaseValidator {
         await this.validateString(request, 'ProviderCareplanName', Where.Body, true, false);
         await this.validateUuid(request, 'GoalId', Where.Body, true, false);
         await this.validateString(request, 'Title', Where.Body, true, false);
+        await this.validateString(request, 'Status', Where.Body, false, true);
         await this.validateDate(request, 'StartedAt', Where.Body, false, true);
+        await this.validateDate(request, 'CompletedAt', Where.Body, false, true);
         await this.validateDate(request, 'ScheduledEndDate', Where.Body, false, true);
 
         this.validateRequest(request);
@@ -101,6 +105,8 @@ export class ActionPlanValidator extends BaseValidator {
         await this.validateUuid(request, 'GoalId', Where.Body, false, false);
         await this.validateString(request, 'Title', Where.Body, false, false);
         await this.validateDate(request, 'StartedAt', Where.Body, false, false);
+        await this.validateDate(request, 'CompletedAt', Where.Body, false, false);
+        await this.validateString(request, 'Status', Where.Body, false, false);
         await this.validateDate(request, 'ScheduledEndDate', Where.Body, false, false);
 
         this.validateRequest(request);

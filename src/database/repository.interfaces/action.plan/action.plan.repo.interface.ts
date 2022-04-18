@@ -9,7 +9,7 @@ export interface IActionPlanRepo {
     getAll(patientUserId: string): Promise<ActionPlanDto[]>;
 
     getById(id: string): Promise<ActionPlanDto>;
-
+    
     search(filters: ActionPlanSearchFilters): Promise<ActionPlanSearchResults>;
 
     update(id: string, actionPlanDomainModel: ActionPlanDomainModel): Promise<ActionPlanDto>;

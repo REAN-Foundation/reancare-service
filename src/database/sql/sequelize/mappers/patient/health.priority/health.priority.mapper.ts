@@ -24,6 +24,8 @@ export class HealthPriorityMapper {
             ProviderCareplanCode : healthPriority.ProviderCareplanCode,
             HealthPriorityType   : healthPriority.HealthPriorityType as HealthPriorityType,
             StartedAt            : healthPriority.StartedAt,
+            CompletedAt          : healthPriority.CompletedAt,
+            Status               : healthPriority.Status,
             ScheduledEndDate     : healthPriority.ScheduledEndDate,
             IsPrimary            : healthPriority.IsPrimary,
         };

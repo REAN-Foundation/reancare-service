@@ -53,6 +53,7 @@ export class KoboFileConverter {
         template.Provider = 'KoboToolbox';
         template.Version = versionNumber.toString();
         template.UpdatedAt = updatedAt;
+        template.CreatedBy = userId;
 
         //Root node
         const rootNodeDisplayCode = Helper.generateDisplayCode('RNode');

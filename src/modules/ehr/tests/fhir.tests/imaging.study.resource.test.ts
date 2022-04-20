@@ -1,7 +1,6 @@
 import { TestLoader } from "../test.loader";
 import { ImagingStudyMapper } from "../test.data.mapper/imaging.study.ehr.mapper";
 import { PatientMapper } from "../test.data.mapper/patient.ehr.mapper";
-import { DoctorMapper } from "../test.data.mapper/doctor.ehr.mapper";
 import { Helper } from "../../../../common/helper";
 import { Logger } from "../../../../common/logger";
 
@@ -11,9 +10,6 @@ describe('ImagingStudy resource: Storage, retrieval', () => {
         var patientModel = PatientMapper.convertJsonObjectToDomainModel();
         var patientEhrId = await TestLoader.PatientStore.create(patientModel);
 
-        var doctorModel = DoctorMapper.convertJsonObjectToDomainModel();
-        var doctorEhrId = await TestLoader.DoctorStore.create(doctorModel);
-        
         var model = ImagingStudyMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
 

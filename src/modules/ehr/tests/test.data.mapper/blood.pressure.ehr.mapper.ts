@@ -13,15 +13,12 @@ export class BloodPressureMapper {
 
         const cwd = process.cwd();
         const jsonPath = path.join(cwd, 'src/modules/ehr/tests/test.data/', 'blood.pressure.domain.model.json');
-
         var bloodPressureObj = Helper.jsonToObj(jsonPath);
 
         var model: BloodPressureDomainModel = {
             
             PatientUserId    : bloodPressureObj.PatientUserId,
             EhrId            : bloodPressureObj.EhrId,
-            // VisitId: bloodPressureObj.VisitId,
-            // VisitEhrId: bloodPressureObj.VisitEhrId,
             Unit             : bloodPressureObj.Unit,
             RecordedByUserId : bloodPressureObj.RecordedByUserId,
             RecordedByEhrId  : bloodPressureObj.RecordedByEhrId,

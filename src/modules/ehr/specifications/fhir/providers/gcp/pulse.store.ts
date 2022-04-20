@@ -3,96 +3,35 @@ import { PulseDomainModel } from '../../../../../../domain.types/clinical/biomet
 import { IPulseStore } from '../../../../interfaces/pulse.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
-import { Logger } from '../../../../../../common/logger';
 
 ////////////////////////////////////////////////////////////////////////////////
 
 export class GcpPulseStore implements IPulseStore {
 
     add = async (model: PulseDomainModel): Promise<any> => {
-        try {
-            var g = await GcpHelper.getGcpClient();
-            const c = GcpHelper.getGcpFhirConfig();
-            var body = this.createPulseFhirResource(model);
-            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}`;
-            const request = { parent, type: 'Observation', requestBody: body };
-            const resource = await g.projects.locations.datasets.fhirStores.fhir.create(
-                request
-            );
-            var data: any = resource.data;
-
-            return data.id;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw error;
-        }
+        var body = this.createPulseFhirResource(model);
+        const resourceType = 'Observation';
+        var id = await GcpHelper.addResource(body, resourceType);
+        return id;
     };
 
     getById = async (resourceId: string): Promise<any> => {
-        try {
-            var g = await GcpHelper.getGcpClient();
-            const c = GcpHelper.getGcpFhirConfig();
-            const resourceType = 'Observation';
-            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
-            const resource = await g.projects.locations.datasets.fhirStores.fhir.read(
-                { name: parent }
-            );
-            var data: any = resource.data;
-        
-            return data;
-        } catch (error) {
-            if (error.message != null) {
-                // eslint-disable-next-line no-prototype-builtins
-                if (error.message.hasOwnProperty('issue')) {
-                    var issue = error.message.issue[0];
-                    Logger.instance().log(issue.diagnostics);
-                    return null;
-                }
-            }
-            Logger.instance().log(error.message);
-        }
+        const resourceType = 'Observation';
+        var data = await GcpHelper.getResourceById(resourceId, resourceType);
+        return data;
     };
     
     update = async (resourceId:string, updates: PulseDomainModel): Promise<any> => {
-
-        var g = await GcpHelper.getGcpClient();
-        const c = GcpHelper.getGcpFhirConfig();
         const resourceType = 'Observation';
-
-        //Get the existing resource
-        const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
-        var existingResource = await g.projects.locations.datasets.fhirStores.fhir.read(
-            { name: parent }
-        );
-        var data:any = existingResource.data;
-
-        //Construct updated body
+        var data = await GcpHelper.getResourceById(resourceId, resourceType);
         const body: healthcare_v1.Schema$HttpBody = this.updatePulseFhirResource(updates, data);
-        const updatedResource = await g.projects.locations.datasets.fhirStores.fhir.update({
-            name        : parent,
-            requestBody : body,
-        });
-        var data: any = updatedResource.data;
-        Logger.instance().log(`Updated ${resourceType} resource:\n${updatedResource.data}`);
+        var data = await GcpHelper.updateResource(resourceId, resourceType, body);
         return data;
     };
 
     delete = async (resourceId: string): Promise<any> => {
-        try {
-            var g = await GcpHelper.getGcpClient();
-            const c = GcpHelper.getGcpFhirConfig();
-            const resourceType = 'Observation';
-
-            //Get the existing resource
-            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
-            await g.projects.locations.datasets.fhirStores.fhir.delete(
-                { name: parent }
-            );
-        }
-        catch (error) {
-            Logger.instance().log(error.message);
-            throw error;
-        }
+        const resourceType = 'Observation';
+        await GcpHelper.deleteResource(resourceId, resourceType);
     };
 
     //#region Private methods

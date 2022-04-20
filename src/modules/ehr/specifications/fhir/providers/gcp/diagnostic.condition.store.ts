@@ -1,21 +1,16 @@
 import 'reflect-metadata';
-import { DiagnosticConditionDomainModel,DiagnosticConditionSearchFilters
-} from "../../../../../../domain.types/diagnostic.condition/diagnostic.condition.domain.model";
 import { IDiagnosticConditionStore } from '../../../../interfaces/diagnostic.condition.store.interface';
 import { injectable } from "tsyringe";
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { Helper } from '../../../../../../common/helper';
 import { Logger } from '../../../../../../common/logger';
+import { DiagnosticConditionDomainModel } from '../../../../../../domain.types/diagnostic.condition/diagnostic.condition.domain.model';
 
 ///////////////////////////////////////////////////////////////////
 
 @injectable()
 export class GcpDiagnosticConditionStore implements IDiagnosticConditionStore {
-
-    search(filter: DiagnosticConditionSearchFilters): Promise<any> {
-        throw new Error('Method not implemented.');
-    }
 
     add = async (model: DiagnosticConditionDomainModel): Promise<any> => {
         try {

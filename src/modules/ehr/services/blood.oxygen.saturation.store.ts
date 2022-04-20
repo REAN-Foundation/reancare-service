@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { IBloodOxygenSaturationStore } from '../interfaces/blood.oxygen.saturation.store.interface';
 import { injectable, inject } from "tsyringe";
 import { BloodOxygenSaturationDomainModel } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
-import { BloodOxygenSaturationSearchFilters } from '../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.search.types';
 
 ///////////////////////////////////////////////////////////////////
 
@@ -13,10 +12,6 @@ export class BloodOxygenSaturationStore {
 
     add = async (model: BloodOxygenSaturationDomainModel): Promise<any> => {
         return await this._service.add(model);
-    }
-
-    search = async (filter: BloodOxygenSaturationSearchFilters): Promise<any> => {
-        return await this._service.search(filter);
     }
 
     getById = async (id: string): Promise<any> => {

@@ -8,8 +8,6 @@ export class BloodOxygenSaturationMapper {
 
     public static convertJsonObjectToDomainModel = () => {
         const cwd = process.cwd();
-        // var bloodOxygenSaturationObj = Helper.readJsonResource();
-        
         const jsonPath = path.join(cwd,'src/modules/ehr/tests/test.data/','blood.oxygen.saturation.domain.model.json');
         var bloodOxygenSaturationObj = Helper.jsonToObj(jsonPath);
 

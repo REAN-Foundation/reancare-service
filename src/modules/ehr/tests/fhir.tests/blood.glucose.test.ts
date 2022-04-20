@@ -14,6 +14,7 @@ describe('Observation resource: Storage, retrieval', () => {
         
         var model = BloodGlucoseMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
+        model.RecordedByUserId = doctorEhrId;
 
         var bloodSugarEhirId = await TestLoader.BloodGlucoseStore.add(model);
         var bloodSugarFhirResource = await TestLoader.BloodGlucoseStore.getById(bloodSugarEhirId);

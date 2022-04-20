@@ -28,11 +28,6 @@ export class MockEhrInjector {
         container.register('IDoctorVisitStore', MockDoctorVisitStore);
         container.register('IImagingStudyStore', MockImagingStudyStore);
         container.register('IFamilyHistoryStore', MockFamilyHistoryStore);
-
-        // container.register('IClinicOrganizationStore', MockClinicOrganizationStore);
-        // container.register('IDiagnosticLabUserStore', MockDiagnosticLabUserStore);
-        // container.register('IDoctorStore', MockDoctorStore);
-        // container.register('IPharmacistStore', MockPharmacistStore);
         container.register('IBiometricsHeightStore', MockBiometricsHeightStore);
         container.register('IBloodPressureStore', MockBloodPressureStore);
         container.register('IBodyWeightStore', MockBodyWeightStore);

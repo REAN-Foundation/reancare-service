@@ -20,8 +20,6 @@ export class GcpImagingStudyStore implements IImagingStudyStore {
                 request
             );
             var data: any = resource.data;
-            var resourceStr = JSON.stringify(data, null, 2);
-            //console.log(`Created FHIR resource ${resourceStr}`);
             return data.id;
         } catch (error) {
             Logger.instance().log(`Error:: ${JSON.stringify(error.message, null, 2)}`);

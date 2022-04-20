@@ -54,10 +54,6 @@ export class GcpClinicOrganizationStore implements IClinicOrganizationStore {
         }
     };
     
-    search = async (filter: any): Promise<any> => {
-        throw new Error(`Method not implemented. ${filter}`);
-    };
-
     update = async (resourceId:string, updates: OrganizationDomainModel): Promise<any> => {
 
         try {

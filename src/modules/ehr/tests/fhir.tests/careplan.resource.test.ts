@@ -17,14 +17,14 @@ describe('Care plan resource: Storage, retrieval', () => {
         var extractedTitle = carePlanResource.title;
         expect(extractedTitle).toEqual(model.PlanName);
 
-        var extractedCategory = carePlanResource.category[0].text;
-        expect(extractedCategory).toEqual(model.CarePlanType);
-
         var extractedStartTime = carePlanResource.period.start;
         expect(extractedStartTime).toEqual(model.StartDate);
 
         var extractedPatientEhrId = carePlanResource.subject.reference.split('/')[1];
         expect(extractedPatientEhrId).toEqual(model.PatientUserId);
+
+        var extractedPatientName = carePlanResource.subject.display;
+        expect(extractedPatientName).toEqual(model.Name);
 
         var extractedParticipantId = carePlanResource.subject.id;
         expect(extractedParticipantId).toEqual(model.EnrollmentId);
@@ -45,7 +45,6 @@ describe('Care plan resource: Storage, retrieval', () => {
         model.EndDate = new Date(expectedEndDate);
         model.PlanName = "Weight loss care plan";
         model.Provider = "WHO";
-        model.CarePlanType = "weight loss";
 
         var updatedResource = await TestLoader.CarePlanStore.update(carePlanFhirId, model);
 
@@ -55,11 +54,11 @@ describe('Care plan resource: Storage, retrieval', () => {
         var extractedTitle = updatedResource.title;
         expect(extractedTitle).toEqual(model.PlanName);
 
-        var extractedCategory = updatedResource.category[0].text;
-        expect(extractedCategory).toEqual(model.CarePlanType);
-
         var extractedStartTime = updatedResource.period.start;
         expect(extractedStartTime).toEqual(expectedStartDate);
+
+        var extractedPatientName = updatedResource.subject.display;
+        expect(extractedPatientName).toEqual(model.Name);
 
         var extractedEndTime = updatedResource.period.end;
         expect(extractedEndTime).toEqual(expectedEndDate);

@@ -4,7 +4,7 @@ import { Logger } from '../../../../common/logger';
 import { AhaCache } from './aha.cache';
 import { ApiError } from "../../../../common/api.error";
 import { injectable } from "tsyringe";
-import { EnrollmentDomainModel } from "../../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model";
+import { CarePlanEnrollmentDomainModel } from "../../../../domain.types/clinical/careplan/enrollment/careplan.enrollment.domain.model";
 import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { ParticipantDomainModel } from "../../../../domain.types/clinical/careplan/participant/participant.domain.model";
@@ -58,8 +58,8 @@ export class AhaCareplanService implements ICareplanService {
         var url = process.env.AHA_API_BASE_URL + '/token';
 
         var body = {
-            client_id     : process.env.AHA_CONTINUITY_CLIENT_ID,
-            client_secret : process.env.AHA_CONTINUITY_CLIENT_SECRET,
+            client_id     : process.env.AHA_API_CLIENT_ID,
+            client_secret : process.env.AHA_API_CLIENT_SECRET,
             grant_type    : 'client_credentials',
         };
 
@@ -136,7 +136,7 @@ export class AhaCareplanService implements ICareplanService {
         return response.body.data.participant.id;
     };
 
-    public enrollPatientToCarePlan = async (model: EnrollmentDomainModel): Promise<string> => {
+    public enrollPatientToCarePlan = async (model: CarePlanEnrollmentDomainModel): Promise<string> => {
 
         var enrollmentData = {
             userId       : model.PatientUserId,
@@ -187,9 +187,9 @@ export class AhaCareplanService implements ICareplanService {
         }
     
         // AHA response has incorrect spelling of activities: "activitites"
-        Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.activitites.length)}`);
+        Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.activities.length)}`);
 
-        var activities = response.body.data.activitites;
+        var activities = response.body.data.activities;
         var activityEntities: CareplanActivity[] = [];
 
         activities.forEach(activity => {

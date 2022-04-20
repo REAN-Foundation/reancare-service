@@ -7,8 +7,8 @@ import { IAssessmentRepo } from "../../database/repository.interfaces/clinical/a
 import { IAssessmentTemplateRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
 import { IAssessmentHelperRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
 import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
-import { EnrollmentDomainModel } from '../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
-import { EnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/enrollment.dto';
+import { CarePlanEnrollmentDomainModel } from '../../domain.types/clinical/careplan/enrollment/careplan.enrollment.domain.model';
+import { CarePlanEnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/careplan.enrollment.dto';
 import { ApiError } from "../../common/api.error";
 import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 import { ProgressStatus, uuid } from "../../domain.types/miscellaneous/system.types";
@@ -28,6 +28,8 @@ import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/as
 import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
 import { AssessmentTemplateFileConverter } from "./assessment/assessment.template.file.converter";
+import { CarePlanStore } from "../../modules/ehr/services/careplan.service";
+import { Loader } from "../../startup/loader";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,6 +37,8 @@ import { AssessmentTemplateFileConverter } from "./assessment/assessment.templat
 export class CareplanService implements IUserActionService {
 
     _handler: CareplanHandler = new CareplanHandler();
+
+    _ehrCarePlanStore: CarePlanStore = null;
 
     constructor(
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
@@ -45,13 +49,15 @@ export class CareplanService implements IUserActionService {
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
-    ) {}
+    ) {
+        this._ehrCarePlanStore = Loader.container.resolve(CarePlanStore);
+    }
 
     public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
         return this._handler.getAvailableCarePlans(provider);
     };
 
-    public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+    public enroll = async (enrollmentDetails: CarePlanEnrollmentDomainModel): Promise<CarePlanEnrollmentDto> => {
 
         var patient = await this.getPatient(enrollmentDetails.PatientUserId);
         if (!patient) {
@@ -112,7 +118,10 @@ export class CareplanService implements IUserActionService {
             throw new ApiError(500, 'Error while enrolling patient to careplan');
         }
         enrollmentDetails.EnrollmentId = enrollmentId;
-        
+
+        const ehrId = await this._ehrCarePlanStore.add(enrollmentDetails);
+        enrollmentDetails.EhrId = ehrId;
+
         var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
 
         var activities = await this._handler.fetchActivities(

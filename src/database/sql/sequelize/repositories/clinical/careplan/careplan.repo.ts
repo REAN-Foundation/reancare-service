@@ -3,8 +3,8 @@ import { CareplanActivityDto } from '../../../../../../domain.types/clinical/car
 import { ParticipantDto } from '../../../../../../domain.types/clinical/careplan/participant/participant.dto';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
-import { EnrollmentDomainModel } from "../../../../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model";
-import { EnrollmentDto } from "../../../../../../domain.types/clinical/careplan/enrollment/enrollment.dto";
+import { CarePlanEnrollmentDomainModel } from "../../../../../../domain.types/clinical/careplan/enrollment/careplan.enrollment.domain.model";
+import { CarePlanEnrollmentDto } from "../../../../../../domain.types/clinical/careplan/enrollment/careplan.enrollment.dto";
 import { ICareplanRepo } from "../../../../../repository.interfaces/clinical/careplan.repo.interface";
 import { EnrollmentMapper } from "../../../mappers/clinical/careplan/enrollment.mapper";
 import CareplanEnrollment from "../../../models/clinical/careplan/enrollment.model";
@@ -52,9 +52,10 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    public enrollPatient = async (model: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+    public enrollPatient = async (model: CarePlanEnrollmentDomainModel): Promise<CarePlanEnrollmentDto> => {
         try {
             const entity = {
+                EhrId         : model.EhrId,
                 PatientUserId : model.PatientUserId,
                 Provider      : model.Provider,
                 ParticipantId : model.ParticipantId,
@@ -73,7 +74,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    public getCareplanEnrollment = async (careplanId: uuid): Promise<EnrollmentDto> => {
+    public getCareplanEnrollment = async (careplanId: uuid): Promise<CarePlanEnrollmentDto> => {
         try {
             const enrollment = await CareplanEnrollment.findOne({
                 where : {
@@ -87,7 +88,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    public getPatientEnrollments = async (patientUserId: string): Promise<EnrollmentDto[]> => {
+    public getPatientEnrollments = async (patientUserId: string): Promise<CarePlanEnrollmentDto[]> => {
         try {
             const enrollments = await CareplanEnrollment.findAll({
                 where : {
@@ -104,7 +105,7 @@ export class CareplanRepo implements ICareplanRepo {
     };
 
     public getPatientEnrollment = async (
-        patientUserId: string, provider: string, enrollmentId: any): Promise<EnrollmentDto> => {
+        patientUserId: string, provider: string, enrollmentId: any): Promise<CarePlanEnrollmentDto> => {
         try {
             var enrollment = await CareplanEnrollment.findOne({
                 where : {

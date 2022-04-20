@@ -3,11 +3,12 @@
     "RegistrationId"  : "124",
     "EnrollmentId"    : "124",
     "Provider"        : "AHA",
+    "Name"            : "Rohit Shetty",
+    "Gender"          : "male",
+    "BirthDate"       : "1994-01-01",
     "PlanName"        : "Heart Assessment",
     "PlanCode"        : "AHA-HF",
     "CarePlanType"    : "CarePlan",
-    "Description"     : "Recomended for person above 50",
-    "RegistrationDate": "2022-02-03",
     "StartDate"       : "2022-02-03",
-    "EndDate"         : "2022-02-03"
+    "EndDate"         : "2022-02-20"
 }

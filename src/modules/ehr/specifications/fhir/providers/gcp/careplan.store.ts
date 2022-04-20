@@ -1,8 +1,8 @@
-import { CarePlanDomainModel } from '../../../../../../domain.types/clinical/careplan/careplandomain.model';
 import { healthcare_v1 } from 'googleapis';
 import { Logger } from '../../../../../../common/logger';
 import { ICarePlanStore } from '../../../../interfaces/careplan.store.interface';
 import { GcpHelper } from './helper.gcp';
+import { CarePlanEnrollmentDomainModel } from '../../../../../../domain.types/clinical/careplan/enrollment/careplan.enrollment.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -12,7 +12,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
         throw new Error(`Method not implemented ${filter}.`);
     }
 
-    add = async (model: CarePlanDomainModel): Promise<any> => {
+    add = async (model: CarePlanEnrollmentDomainModel): Promise<any> => {
         try {
             var g = await GcpHelper.getGcpClient();
             const c = GcpHelper.getGcpFhirConfig();
@@ -56,7 +56,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
         }
     };
 
-    update = async (resourceId:string, updates: CarePlanDomainModel): Promise<any> => {
+    update = async (resourceId:string, updates: CarePlanEnrollmentDomainModel): Promise<any> => {
 
         try {
 
@@ -108,7 +108,7 @@ export class GcpCarePlanStore implements ICarePlanStore {
 
     //#region Private methods
 
-    private createCarePlanFhirResource(model: CarePlanDomainModel): any {
+    private createCarePlanFhirResource(model: CarePlanEnrollmentDomainModel): any {
 
         var resource = {
             resourceType : "CarePlan",
@@ -121,28 +121,16 @@ export class GcpCarePlanStore implements ICarePlanStore {
             resource['title'] = model.PlanName;
         }
 
-        if (model.Description != null) {
-            resource['description'] = model.Description;
-        }
-
         if (model.Provider != null) {
             resource['author'] = {
                 display : model.Provider
             };
         }
 
-        if (model.CarePlanType != null) {
-            resource['category'] = [
-                {
-                    text : model.CarePlanType
-                }
-            ];
-        }
-
         if (model.PatientUserId != null) {
             resource['subject'] = {
-                id        : model.EnrollmentId,
-                reference : `Patient/${model.PatientUserId}`
+                id      : `${model.PatientUserId}`,
+                display : model.Name
             };
         }
 
@@ -156,16 +144,12 @@ export class GcpCarePlanStore implements ICarePlanStore {
         return resource;
     }
     
-    private updateCarePlanFhirResource(updates: CarePlanDomainModel, existingResource: any): any {
+    private updateCarePlanFhirResource(updates: CarePlanEnrollmentDomainModel, existingResource: any): any {
 
         existingResource.resourceType = "CarePlan";
 
         if (updates.PlanName != null) {
             existingResource['title'] = updates.PlanName;
-        }
-
-        if (updates.Description != null) {
-            existingResource['description'] = updates.Description;
         }
 
         if (updates.Provider != null) {
@@ -174,18 +158,10 @@ export class GcpCarePlanStore implements ICarePlanStore {
             };
         }
 
-        if (updates.CarePlanType != null) {
-            existingResource['category'] = [
-                {
-                    text : updates.CarePlanType
-                }
-            ];
-        }
-
         if (updates.PatientUserId != null) {
             existingResource['subject'] = {
-                id        : updates.EnrollmentId,
-                reference : `Patient/${updates.PatientUserId}`
+                id      : `${updates.PatientUserId}`,
+                display : updates.Name
             };
         }
 

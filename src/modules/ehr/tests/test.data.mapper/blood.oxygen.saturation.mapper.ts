@@ -15,7 +15,7 @@ export class BloodOxygenSaturationMapper {
 
         var model: BloodOxygenSaturationDomainModel = {
             PatientUserId         : bloodOxygenSaturationObj.PatientUserId,
-            EhrId                 : bloodOxygenSaturationObj.PatientEhrId,
+            EhrId                 : bloodOxygenSaturationObj.EhrId,
             Unit                  : bloodOxygenSaturationObj.Unit,
             RecordedByUserId      : bloodOxygenSaturationObj.RecordedByEhrId,
             RecordDate            : bloodOxygenSaturationObj.RecordDate,

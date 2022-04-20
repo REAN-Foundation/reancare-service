@@ -21,7 +21,7 @@ describe('Observation resource: Storage, retrieval', () => {
         //Assertions
 
         var extractedPatientEhrId = bloodOxygenFhirResource.subject.reference.split('/')[1];
-        expect(extractedPatientEhrId).toEqual(model.PatientUserId);
+        expect(extractedPatientEhrId).toEqual(model.EhrId);
 
         var extractedUnit = bloodOxygenFhirResource.component[0].valueQuantity.unit;
         expect(extractedUnit).toEqual(model.Unit);
@@ -51,7 +51,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var updatedResource = await TestLoader.BloodOxygenSaturationStore.update(bloodOxygenSaturationEhirId, model);
 
         // Assertions
-        var extractedPatientUserId = updatedResource.PatientUserId;
+        var extractedPatientUserId = updatedResource.EhrId;
         expect(extractedPatientUserId).toEqual(extractedPatientUserId);
       
         var extractedUnit = updatedResource.component[0].valueQuantity.unit;

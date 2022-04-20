@@ -20,14 +20,11 @@ describe('Care plan resource: Storage, retrieval', () => {
         var extractedStartTime = carePlanResource.period.start;
         expect(extractedStartTime).toEqual(model.StartDate);
 
-        var extractedPatientEhrId = carePlanResource.subject.reference.split('/')[1];
+        var extractedPatientEhrId = carePlanResource.subject.id;
         expect(extractedPatientEhrId).toEqual(model.PatientUserId);
 
         var extractedPatientName = carePlanResource.subject.display;
         expect(extractedPatientName).toEqual(model.Name);
-
-        var extractedParticipantId = carePlanResource.subject.id;
-        expect(extractedParticipantId).toEqual(model.EnrollmentId);
  
         var extractedCarePlanId = carePlanResource.id;
         expect(extractedCarePlanId).toBeTruthy();
@@ -63,8 +60,6 @@ describe('Care plan resource: Storage, retrieval', () => {
         var extractedEndTime = updatedResource.period.end;
         expect(extractedEndTime).toEqual(expectedEndDate);
         
-        var extractedParticipantId = updatedResource.subject.id;
-        expect(extractedParticipantId).toEqual(model.EnrollmentId);
     });
 
     it('Delete care plan resource, then empty resource is returned for next query.', async () => {

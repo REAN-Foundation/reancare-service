@@ -111,7 +111,7 @@ export class GcpPharmacyOrganizationStore implements IPharmacyOrganizationStore 
         var resource = {
             resourceType : "Organization",
             id           : "1313222xyz",
-            name         : "MedPlus Clinic Path",
+            name         : model.Name,
             type         : [
                 {
                     text : "clinic"

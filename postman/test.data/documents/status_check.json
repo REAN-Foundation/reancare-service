@@ -1,0 +1,212 @@
+{
+  "DisplayCode": "AssessmtTmpl#o40n0505wojn3znkw57rhwh6",
+  "Version": "1.0",
+  "Type": "Careplan",
+  "Title": "Status check",
+  "Provider": "AHA",
+  "ProviderAssessmentCode": "2010",
+  "RootNodeDisplayCode": "RNode#i4nbd6i0lxc8qx6asiec5ycv",
+  "Nodes": [
+    {
+      "DisplayCode": "RNode#i4nbd6i0lxc8qx6asiec5ycv",
+      "NodeType": "Node list",
+      "ProviderGivenId": null,
+      "ProviderGivenCode": null,
+      "Title": "Assessment root node",
+      "Children": [
+        "QNode#7ao5fbmgwn81roab5i0i7fro",
+        "QNode#6em7ql5ljwi1s70l2md9fjrz",
+        "QNode#3t5zbed6cxvfcc7uxdbehtii",
+        "QNode#ue96l87rna4sau063uxvbbh6",
+        "QNode#vnhbdjkabbzipvs06384tbc7",
+        "QNode#shjqrhfgiblnws3cp6swqnkh",
+        "QNode#mlbsvh0ocst79rkybhgtmixm",
+        "QNode#o1ptlg7067zg9am9ux8mzzsw"
+      ]
+    },
+    {
+      "DisplayCode": "QNode#7ao5fbmgwn81roab5i0i7fro",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.1",
+      "ProviderGivenCode": "q1",
+      "Title": "Seen your physician for a scheduled visit ?",
+      "Sequence": 1,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#7ao5fbmgwn81roab5i0i7fro:Option#1",
+          "ProviderGivenCode": "yes",
+          "Text": "Yes",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#7ao5fbmgwn81roab5i0i7fro:Option#2",
+          "ProviderGivenCode": "no",
+          "Text": "No",
+          "Sequence": 2
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#6em7ql5ljwi1s70l2md9fjrz",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.2",
+      "ProviderGivenCode": "q2",
+      "Title": "Seen your physician for an unscheduled visit ?",
+      "Sequence": 2,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#6em7ql5ljwi1s70l2md9fjrz:Option#1",
+          "ProviderGivenCode": "yes",
+          "Text": "Yes",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#6em7ql5ljwi1s70l2md9fjrz:Option#2",
+          "ProviderGivenCode": "no",
+          "Text": "No",
+          "Sequence": 2
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#3t5zbed6cxvfcc7uxdbehtii",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.3",
+      "ProviderGivenCode": "q3",
+      "Title": "Had a change in your medications ?",
+      "Sequence": 3,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#3t5zbed6cxvfcc7uxdbehtii:Option#1",
+          "ProviderGivenCode": "yes",
+          "Text": "Yes",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#3t5zbed6cxvfcc7uxdbehtii:Option#2",
+          "ProviderGivenCode": "no",
+          "Text": "No",
+          "Sequence": 2
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#ue96l87rna4sau063uxvbbh6",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.4",
+      "ProviderGivenCode": "q4",
+      "Title": "A new or worsening symptom ?",
+      "Sequence": 4,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#ue96l87rna4sau063uxvbbh6:Option#1",
+          "ProviderGivenCode": "yes",
+          "Text": "Yes",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#ue96l87rna4sau063uxvbbh6:Option#2",
+          "ProviderGivenCode": "no",
+          "Text": "No",
+          "Sequence": 2
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#vnhbdjkabbzipvs06384tbc7",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.5",
+      "ProviderGivenCode": "q5",
+      "Title": "Been given a new diagnosis ?",
+      "Sequence": 5,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#vnhbdjkabbzipvs06384tbc7:Option#1",
+          "ProviderGivenCode": "yes",
+          "Text": "Yes",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#vnhbdjkabbzipvs06384tbc7:Option#2",
+          "ProviderGivenCode": "no",
+          "Text": "No",
+          "Sequence": 2
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#shjqrhfgiblnws3cp6swqnkh",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.6",
+      "ProviderGivenCode": "q6",
+      "Title": "Gone to an emergency department ?",
+      "Sequence": 6,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#shjqrhfgiblnws3cp6swqnkh:Option#1",
+          "ProviderGivenCode": "yes",
+          "Text": "Yes",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#shjqrhfgiblnws3cp6swqnkh:Option#2",
+          "ProviderGivenCode": "no",
+          "Text": "No",
+          "Sequence": 2
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#mlbsvh0ocst79rkybhgtmixm",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.7",
+      "ProviderGivenCode": "q7",
+      "Title": "Been hospitalized for a heart-related reason ?",
+      "Sequence": 7,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#mlbsvh0ocst79rkybhgtmixm:Option#1",
+          "ProviderGivenCode": "yes",
+          "Text": "Yes",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#mlbsvh0ocst79rkybhgtmixm:Option#2",
+          "ProviderGivenCode": "no",
+          "Text": "No",
+          "Sequence": 2
+        }
+      ]
+    },
+    {
+      "DisplayCode": "QNode#o1ptlg7067zg9am9ux8mzzsw",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.8",
+      "ProviderGivenCode": "q8",
+      "Title": "Had heart-related surgical procedure ?",
+      "Sequence": 8,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#o1ptlg7067zg9am9ux8mzzsw:Option#1",
+          "ProviderGivenCode": "yes",
+          "Text": "Yes",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#o1ptlg7067zg9am9ux8mzzsw:Option#2",
+          "ProviderGivenCode": "no",
+          "Text": "No",
+          "Sequence": 2
+        }
+      ]
+    }
+  ]
+}

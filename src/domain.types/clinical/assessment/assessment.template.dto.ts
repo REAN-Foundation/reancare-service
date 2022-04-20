@@ -8,7 +8,9 @@ export interface AssessmentTemplateDto {
     Title                  : string;
     Description?           : string;
     ProviderAssessmentCode?: string;
+    ProviderAssessmentId?  : string;
     Provider?              : string;
     FileResourceId?        : uuid;
     RootNodeId?            : uuid;
+    QnAs?                  : any[];
 }

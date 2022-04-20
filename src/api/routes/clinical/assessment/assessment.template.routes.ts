@@ -10,6 +10,11 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new AssessmentTemplateController();
 
+    router.post('/:id/nodes', authenticator.authenticateClient, authenticator.authenticateUser, controller.addNode);
+    router.get('/:id/nodes/:nodeId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getNode);
+    router.put('/:id/nodes/:nodeId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateNode);
+    router.delete('/:id/nodes/:nodeId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteNode);
+
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);

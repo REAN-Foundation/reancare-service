@@ -8,6 +8,7 @@ import { ApiError } from '../../../../../common/api.error';
 import { HealthPriorityTypeDomainModel } from '../../../../../domain.types/health.priority.type/health.priority.type.domain.model';
 import { HealthPriorityTypeDto } from '../../../../../domain.types/health.priority.type/health.priority.type.dto';
 import HealthPriorityType    from '../../models/health.priority/health.priority.type.model';
+import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -34,10 +35,10 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
         }
     };
 
-    getAll = async (healthPriorityDomainModel: HealthPriorityDomainModel): Promise<HealthPriorityDto[]> => {
+    getPatientHealthPriorities = async (patientUserId: uuid): Promise<HealthPriorityDto[]> => {
         try {
             const priorities = await HealthPriority.findAll({
-                where : { PatientUserId: healthPriorityDomainModel.PatientUserId },
+                where : { PatientUserId: patientUserId },
             });
 
             const dtos: HealthPriorityDto[] = [];

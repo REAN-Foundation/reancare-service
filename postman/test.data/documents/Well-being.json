@@ -1,0 +1,44 @@
+{
+  "DisplayCode": "AssessmtTmpl#agkn5kblgrw4ywq6kwn95hlv",
+  "Version": "1.0",
+  "Type": "Careplan",
+  "Title": "Well-being",
+  "Provider": "AHA",
+  "ProviderAssessmentCode": "16236",
+  "RootNodeDisplayCode": "RNode#eyjbpf5f6ftf29opnc7x8yhv",
+  "Nodes": [
+    {
+      "DisplayCode": "RNode#eyjbpf5f6ftf29opnc7x8yhv",
+      "NodeType": "Node list",
+      "ProviderGivenId": null,
+      "ProviderGivenCode": null,
+      "Title": "Assessment root node",
+      "ChildrenNodeDisplayCodes": [
+        "QNode#bac876xbdgpa0jme5c4lc8xc"
+      ]
+    },
+    {
+      "DisplayCode": "QNode#bac876xbdgpa0jme5c4lc8xc",
+      "NodeType": "Question",
+      "ProviderGivenId": "1.1",
+      "ProviderGivenCode": "q1",
+      "Title": "Well-being",
+      "Sequence": 1,
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+        {
+          "DisplayCode": "QNode#bac876xbdgpa0jme5c4lc8xc:Option#1",
+          "ProviderGivenCode": "Completed",
+          "Text": "Completed",
+          "Sequence": 1
+        },
+        {
+          "DisplayCode": "QNode#bac876xbdgpa0jme5c4lc8xc:Option#2",
+          "ProviderGivenCode": "NotCompleted",
+          "Text": "Not Completed",
+          "Sequence": 2
+        }
+      ]
+    }
+  ]
+}

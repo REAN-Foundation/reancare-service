@@ -13,6 +13,12 @@ import {
     MultipleChoiceQueryAnswer,
     SingleChoiceQueryAnswer,
     TextQueryAnswer,
+    CAssessmentQuestionNode,
+    CAssessmentListNode,
+    CAssessmentMessageNode,
+    FileQueryAnswer,
+    BooleanQueryAnswer,
+    DateQueryAnswer,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -20,13 +26,24 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export interface IAssessmentHelperRepo {
+
     getChildrenConditions(id: string): CAssessmentPathCondition[] | PromiseLike<CAssessmentPathCondition[]>;
     
     getNodeListChildren(nodeId: string): Promise<CAssessmentNode[]>;
 
     addTemplate(template: CAssessmentTemplate): Promise<AssessmentTemplateDto>;
 
+    readTemplateAsObj(templateId: uuid): Promise<CAssessmentTemplate>;
+
     getNodeById(nodeId: uuid): Promise<CAssessmentNode>;
+
+    createNode(
+        templateId: uuid,
+        parentNodeId: uuid,
+        nodeObj: CAssessmentNode
+    ): Promise<CAssessmentNode>;
+
+    deleteNode(nodeId: string): Promise<boolean>;
 
     getQueryResponse(assessmentId: uuid, nodeId: uuid): Promise<CAssessmentQueryResponse>;
 
@@ -42,8 +59,19 @@ export interface IAssessmentHelperRepo {
         | MultipleChoiceQueryAnswer
         | MessageAnswer
         | TextQueryAnswer
+        | DateQueryAnswer
         | IntegerQueryAnswer
         | FloatQueryAnswer
+        | BooleanQueryAnswer
+        | FileQueryAnswer
         | BiometricQueryAnswer): Promise<CAssessmentQueryResponse>;
+
+    getTemplateChildrenNodes(templateId: uuid)
+        : Promise<(CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode)[]>;
+
+    addRootNode(templateId: uuid): Promise<AssessmentTemplateDto>;
+
+    updateNode(nodeId: uuid, updates: any)
+        : Promise<CAssessmentNode | CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode>;
 
 }

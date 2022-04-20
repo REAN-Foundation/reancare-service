@@ -12,7 +12,7 @@ export const register = (app: express.Application): void => {
 
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/types', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPriorityTypes);
-    router.get('/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPriorities);
+    router.get('/for-patient/:patientUserId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPatientHealthPriorities);
     
     app.use('/api/v1/health-priorities', router);
 };

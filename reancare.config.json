@@ -10,6 +10,7 @@
         "Flavour": "MySQL"
     },
     "Ehr" : {
+        "Enabled": true,
         "Specification": "FHIR",
         "Provider": "GCP-FHIR"
     },
@@ -34,23 +35,37 @@
     },
     "Careplans" : [
         { 
+            "Enabled": true,
             "Provider": "AHA",
             "Service": "AhaCarePlanService",
             "Plans": [
                 {
-                    "ProviderName": "Core",
-                    "ProviderCode": "Core",
+                    "Provider" : "AHA",
+                    "Name": "Core",
+                    "Code": "Core",
                     "DisplayName": "AHA-Core",
                     "DefaultDurationDays": 84
                 },
                 {
-                    "ProviderName": "Heart Failure",
-                    "ProviderCode": "HeartFailure",
+                    "Provider" : "AHA",
+                    "Name": "Heart Failure",
+                    "Code": "HeartFailure",
                     "DisplayName": "AHA-Heart Failure",
                     "DefaultDurationDays": 84
                 }
             ]
         }
     ],
-    "MaxUploadFileSize": 104857600
+    "FormServiceProviders" : [
+        { 
+            "Provider": "KoboToolbox",
+            "Code": "KoboToolbox"
+        },
+        { 
+            "Provider": "GoogleForms",
+            "Code": "GoogleForms"
+        }
+    ],
+    "MaxUploadFileSize": 104857600,
+    "JwtExpiresIn": 2592000
 }

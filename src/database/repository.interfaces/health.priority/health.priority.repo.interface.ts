@@ -1,3 +1,4 @@
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { HealthPriorityTypeDomainModel } from '../../../domain.types/health.priority.type/health.priority.type.domain.model';
 import { HealthPriorityTypeDto } from '../../../domain.types/health.priority.type/health.priority.type.dto';
 import { HealthPriorityDomainModel } from '../../../domain.types/health.priority/health.priority.domain.model';
@@ -7,7 +8,7 @@ export interface IHealthPriorityRepo {
 
     create(healthPriorityDomainModel: HealthPriorityDomainModel): Promise<HealthPriorityDto>;
 
-    getAll(healthPriorityDomainModel: HealthPriorityDomainModel): Promise<HealthPriorityDto[]>;
+    getPatientHealthPriorities(patientUserId: uuid): Promise<HealthPriorityDto[]>;
 
     getPriorityTypes(): Promise<HealthPriorityTypeDto[]>;
 

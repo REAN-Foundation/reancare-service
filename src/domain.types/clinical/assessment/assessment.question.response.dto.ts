@@ -1,6 +1,8 @@
 import { uuid } from "../../miscellaneous/system.types";
 import {
     BiometricQueryAnswer,
+    DateQueryAnswer,
+    FileQueryAnswer,
     FloatQueryAnswer,
     IntegerQueryAnswer,
     MessageAnswer,
@@ -19,7 +21,9 @@ export interface AssessmentQuestionResponseDto {
         | MultipleChoiceQueryAnswer
         | MessageAnswer
         | TextQueryAnswer
+        | DateQueryAnswer
         | IntegerQueryAnswer
         | FloatQueryAnswer
+        | FileQueryAnswer
         | BiometricQueryAnswer;
 }

@@ -11,6 +11,7 @@ import { StorageService } from '../modules/ehr/services/storage.service';
 import { Injector } from './injector';
 import { Scheduler } from './scheduler';
 import { Seeder } from './seeder';
+import { ConfigurationManager } from '../config/configuration.manager';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -81,8 +82,11 @@ export class Loader {
             Loader._authorizer = container.resolve(Authorizer);
             Loader._seeder = container.resolve(Seeder);
             
-            Loader._ehrStore = container.resolve(StorageService);
-            await Loader._ehrStore.init();
+            const ehrEnabled = ConfigurationManager.EhrEnabled();
+            if (ehrEnabled) {
+                Loader._ehrStore = container.resolve(StorageService);
+                await Loader._ehrStore.init();
+            }
 
             Loader._notificationService = container.resolve(NotificationService);
             Loader._notificationService.init();

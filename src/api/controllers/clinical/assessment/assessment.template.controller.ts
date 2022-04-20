@@ -1,16 +1,17 @@
 import express from 'express';
 import fs from 'fs';
-import path from 'path';
-import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
-import { ResponseHandler } from '../../../../common/response.handler';
-import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
-import { AssessmentTemplateValidator } from '../../../validators/clinical/assessment/assessment.template.validator';
-import { Loader } from '../../../../startup/loader';
-import { BaseController } from '../../base.controller';
-import { FileResourceValidator } from '../../../validators/file.resource.validator';
-import { FileResourceService } from '../../../../services/file.resource.service';
 import { Helper } from '../../../../common/helper';
+import { ResponseHandler } from '../../../../common/response.handler';
+import { CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
+import { AssessmentTemplateFileConverter } from '../../../../services/clinical/assessment/assessment.template.file.converter';
+import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
+import { FileResourceService } from '../../../../services/file.resource.service';
+import { Loader } from '../../../../startup/loader';
+import { AssessmentTemplateValidator } from '../../../validators/clinical/assessment/assessment.template.validator';
+import { FileResourceValidator } from '../../../validators/file.resource.validator';
+import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -156,17 +157,18 @@ export class AssessmentTemplateController extends BaseController{
             if (assessmentTemplate == null) {
                 throw new ApiError(404, 'Cannot find assessment Template!');
             }
-            const localDestination = await this._fileResourceService.downloadById(assessmentTemplate.FileResourceId);
-            if (localDestination == null) {
-                throw new ApiError(404, 'File resource not found.');
-            }
+            
+            var templateObj: CAssessmentTemplate = await this._service.readTemplateObjToExport(assessmentTemplate.id);
+            
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { dateFolder, filename, sourceFileLocation }
+                = await AssessmentTemplateFileConverter.storeTemplateToFileLocally(templateObj);
 
-            var filename = path.basename(localDestination);
-            var mimeType = Helper.getMimeType(localDestination);
+            var mimeType = Helper.getMimeType(sourceFileLocation);
             response.setHeader('Content-type', mimeType);
             response.setHeader('Content-disposition', 'attachment; filename=' + filename);
     
-            var filestream = fs.createReadStream(localDestination);
+            var filestream = fs.createReadStream(sourceFileLocation);
             filestream.pipe(response);
 
         } catch (error) {
@@ -188,6 +190,8 @@ export class AssessmentTemplateController extends BaseController{
             const metadata = uploadModel.FileMetadata;
             const sourceFilePath = metadata.SourceFilePath;
             const originalFileName = metadata.OriginalName;
+
+            Helper.sleep(1000);
             const fileContent = fs.readFileSync(sourceFilePath, 'utf8');
             const extension = Helper.getFileExtension(originalFileName);
             if (extension.toLowerCase() !== 'json') {
@@ -230,6 +234,94 @@ export class AssessmentTemplateController extends BaseController{
         }
     };
 
+    addNode = async (request: express.Request, response: express.Response) => {
+        try {
+            
+            await this.setContext('AssessmentTemplate.AddNode', request, response);
+
+            const model:CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode
+                = await this._validator.addNode(request);
+
+            const assessmentNode = await this._service.addNode(model);
+            if (assessmentNode == null) {
+                throw new ApiError(400, 'Cannot create record for assessment node!');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment node record created successfully!', 201, {
+                AssessmentNode : assessmentNode,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
+    updateNode = async (request: express.Request, response: express.Response) => {
+        try {
+            
+            await this.setContext('AssessmentTemplate.UpdateNode', request, response);
+
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            var updates = await this._validator.updateNode(request);
+
+            var assessmentNode: CAssessmentNode = await this._service.getNode(nodeId);
+            if (assessmentNode == null) {
+                throw new ApiError(404, 'Cannot retrieve record for assessment node!');
+            }
+
+            var updatedNode = await this._service.updateNode(nodeId, updates);
+            if (updatedNode == null) {
+                throw new ApiError(500, 'Unable to update assessment node!');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment node record retrieved successfully!', 200, {
+                AssessmentNode : updatedNode,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
+    deleteNode = async (request: express.Request, response: express.Response) => {
+        try {
+            
+            await this.setContext('AssessmentTemplate.DeleteNode', request, response);
+
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const deleted: boolean = await this._service.deleteNode(nodeId);
+            if (!deleted) {
+                throw new ApiError(400, 'Cannot remove record for assessment node!');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment node record removed successfully!', 200, {
+                Deleted : deleted,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
+    getNode = async (request: express.Request, response: express.Response) => {
+        try {
+            
+            await this.setContext('AssessmentTemplate.GetNode', request, response);
+
+            const nodeId: uuid = await this._validator.getParamUuid(request, 'nodeId');
+            const assessmentNode: CAssessmentNode = await this._service.getNode(nodeId);
+            if (assessmentNode == null) {
+                throw new ApiError(404, 'Cannot retrieve record for assessment node!');
+            }
+
+            ResponseHandler.success(request, response, 'Assessment node record retrieved successfully!', 200, {
+                AssessmentNode : assessmentNode,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
     //#endregion
 
 }

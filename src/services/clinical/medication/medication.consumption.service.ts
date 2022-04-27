@@ -21,11 +21,14 @@ import { UserTaskDomainModel } from "../../../domain.types/user/user.task/user.t
 import { IUserActionService } from "../../../services/user/user.action.service.interface";
 import { Loader } from "../../../startup/loader";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { MedicationConsumptionStore } from "../../../modules/ehr/services/medication.consumption.store";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class MedicationConsumptionService implements IUserActionService {
+
+    _ehrMedicationConsumptionStore: MedicationConsumptionStore = null
 
     constructor(
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,
@@ -34,7 +37,9 @@ export class MedicationConsumptionService implements IUserActionService {
         @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
-    ) {}
+    ) {
+        this._ehrMedicationConsumptionStore = Loader.container.resolve(MedicationConsumptionStore);
+    }
 
     create = async (medication: MedicationDto, customStartDate = null)
         :Promise<MedicationConsumptionStatsDto> => {
@@ -224,7 +229,11 @@ export class MedicationConsumptionService implements IUserActionService {
             Logger.instance().log('Medication consumption instance with given id cannot be found.');
             return null;
         }
-   
+
+        const ehrId = await this._ehrMedicationConsumptionStore.add(medConsumption);
+        medConsumption.EhrId = ehrId;
+        await this._medicationConsumptionRepo.assignEhrId(id, medConsumption.EhrId);
+
         var takenAt = new Date();
         var isPastScheduleEnd = TimeHelper.isAfter(new Date(), medConsumption.TimeScheduleEnd);
         if (isPastScheduleEnd) {

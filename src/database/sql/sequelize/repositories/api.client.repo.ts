@@ -98,7 +98,7 @@ export class ApiClientRepo implements IApiClientRepo {
     
     isApiKeyValid = async (apiKey: string): Promise<CurrentClient> => {
         try {
-
+            
             const client = await ApiClient.findOne({
                 where : {
                     ApiKey    : apiKey,

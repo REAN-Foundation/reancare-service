@@ -25,7 +25,9 @@
   "effectiveDateTime": "2012-09-17",
   "performer": [
     {
-      "reference": "Practitioner/example"
+      "reference" : "https://www.aiims.edu/images/pdf/CV.pdf",
+      "type"      : "Practitioner",
+      "id"       : "model.RecordedByUserId"
     }
   ],
 

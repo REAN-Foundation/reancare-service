@@ -131,10 +131,17 @@ export class BodyHeightValidator {
         await body('BodyHeight').exists()
             .trim()
             .escape()
+            .toFloat()
             .run(request);
 
         await body('Unit').exists()
             .trim()
+            .run(request);
+
+        await body('RecordDate').optional()
+            .trim()
+            .escape()
+            .toDate()
             .run(request);
 
         const result = validationResult(request);

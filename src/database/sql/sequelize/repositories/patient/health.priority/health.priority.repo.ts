@@ -24,6 +24,9 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
                 ProviderCareplanCode : createModel.ProviderCareplanCode,
                 ProviderCareplanName : createModel.ProviderCareplanName,
                 HealthPriorityType   : createModel.HealthPriorityType,
+                StartedAt            : createModel.StartedAt,
+                CompletedAt          : createModel.CompletedAt,
+                Status               : createModel.Status,
                 IsPrimary            : createModel.IsPrimary,
             };
 
@@ -174,7 +177,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
     update = async (id: string, updateModel: HealthPriorityDomainModel): Promise<HealthPriorityDto> => {
         try {
             const healthPriority = await HealthPriority.findByPk(id);
-
+            
             if (updateModel.PatientUserId != null) {
                 healthPriority.PatientUserId = updateModel.PatientUserId;
             }
@@ -199,7 +202,16 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
             if (updateModel.IsPrimary != null) {
                 healthPriority.IsPrimary = updateModel.IsPrimary;
             }
-    
+            if (updateModel.StartedAt != null) {
+                healthPriority.StartedAt = updateModel.StartedAt;
+            }
+            if (updateModel.CompletedAt != null) {
+                healthPriority.CompletedAt = updateModel.CompletedAt;
+            }
+            if (updateModel.Status != null) {
+                healthPriority.Status = updateModel.Status;
+            }
+
             await healthPriority.save();
 
             return await HealthPriorityMapper.toDto(healthPriority);

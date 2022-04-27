@@ -7,6 +7,8 @@ import { UserService } from '../../../services/user/user.service';
 import { ActionPlanValidator } from '../../validators/action.plan/action.plan.validator';
 import { ActionPlanService } from '../../../services/action.plan/action.plan.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { GoalService } from '../../../services/patient/goal.service';
+import { HealthPriorityService } from '../../../services/patient/health.priority/health.priority.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,12 +19,18 @@ export class ActionPlanController extends BaseController {
 
     _userService: UserService = null;
 
+    _goalService: GoalService = null;
+
+    _healthPriorityService: HealthPriorityService = null;
+
     _validator: ActionPlanValidator = new ActionPlanValidator();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(ActionPlanService);
         this._userService = Loader.container.resolve(UserService);
+        this._goalService = Loader.container.resolve(GoalService);
+        this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
     }
 
     //#endregion
@@ -124,12 +132,13 @@ export class ActionPlanController extends BaseController {
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
+
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update action plan record!');
             }
-
+        
             ResponseHandler.success(request, response, 'Action plan record updated successfully!', 200, {
-                HealthPriority : updated,
+                ActionPlan : updated,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -159,7 +168,7 @@ export class ActionPlanController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
     //#endregion
 
 }

@@ -11,6 +11,7 @@ import { IPersonRepo } from "../../database/repository.interfaces/person.repo.in
 import { IUserRepo } from "../../database/repository.interfaces/user/user.repo.interface";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 import { ActionPlanSearchFilters, ActionPlanSearchResults } from "../../domain.types/action.plan/action.plan.search.types";
+import { ICareplanRepo } from "../../database/repository.interfaces/clinical/careplan.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,6 +27,7 @@ export class ActionPlanService {
         @inject('IGoalRepo') private _goalRepo: IGoalRepo,
         @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
         @inject('IActionPlanRepo') private _actionPlanRepo: IActionPlanRepo,
+        @inject('ICareplanRepo') private _CareplanRepo: ICareplanRepo,
 
     ) {}
 
@@ -82,7 +84,14 @@ export class ActionPlanService {
     };
 
     update = async (id: uuid, actionPlanDomainModel: ActionPlanDomainModel): Promise<ActionPlanDto> => {
-        return await this._actionPlanRepo.update(id, actionPlanDomainModel);
+        var dto = await this._actionPlanRepo.update(id, actionPlanDomainModel);
+        if (dto.Status === 'COMPLETED' && actionPlanDomainModel.Provider) {
+
+            await this._careplanHandler.updateActionPlan(actionPlanDomainModel.PatientUserId,
+                actionPlanDomainModel.Provider, actionPlanDomainModel.ProviderCareplanCode,
+                actionPlanDomainModel.ProviderEnrollmentId, actionPlanDomainModel.Title);
+        }
+        return dto;
     };
 
     delete = async (id: uuid): Promise<boolean> => {

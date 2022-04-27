@@ -120,6 +120,12 @@ export default class Goal extends Model {
         type      : DataType.DATE,
         allowNull : true,
     })
+    CompletedAt: Date;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
     ScheduledEndDate: Date;
 
     @Column

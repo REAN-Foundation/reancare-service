@@ -10,6 +10,8 @@ export interface ActionPlanSearchFilters extends BaseSearchFilters{
     ProviderEnrollmentId?: string;
     GoalId?              : string;
     Title?               : string;
+    Status?              : string;
+    CompletedAt?         : Date;
     StartedAt?           : Date;
     ScheduledEndDate?    : Date;
 }

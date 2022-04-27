@@ -10,6 +10,8 @@ export interface HealthPriorityDto {
     ProviderCareplanName?: string;
     HealthPriorityType?  : HealthPriorityType;
     StartedAt?           : Date;
+    CompletedAt?         : Date;
+    Status?              : string;
     ScheduledEndDate?    : Date;
     IsPrimary?           : boolean;
 }

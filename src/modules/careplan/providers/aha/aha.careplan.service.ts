@@ -21,6 +21,7 @@ import { HealthPriorityType } from "../../../../domain.types/patient/health.prio
 import { GoalDto } from "../../../../domain.types/patient/goal/goal.dto";
 import { AssessmentDto } from "../../../../domain.types/clinical/assessment/assessment.dto";
 import { BiometricsType } from "../../../../domain.types/clinical/biometrics/biometrics.types";
+import { HealthPriorityDto } from "../../../../domain.types/patient/health.priority/health.priority.dto";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -459,6 +460,123 @@ export class AhaCareplanService implements ICareplanService {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    };
+
+    public updateActionPlan = async (
+        enrollmentId: string,
+        actionName: string ) => {
+
+        var updates = {
+            actionPlans : [actionName],
+            completedAt : Helper.formatDate(new Date()),
+            status      : 'COMPLETED',
+        };
+
+        var activityCode = this.getActivityCode();
+
+        const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+
+        var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/actionPlans/${activityCode}`;
+
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle("patch", url, updates, headerOptions);
+
+        if (response.statusCode !== 200) {
+            Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+            throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
+        }
+
+        var activity = response.body.data.activity;
+
+        var entity: ActionPlanDto = {
+            Provider    : this.providerName(),
+            Status      : activity.status,
+            CompletedAt : activity.completedAt,
+            Title       : activity.actionPlans
+        };
+
+        Logger.instance().log(`Updated action plan record from AHA:: ${JSON.stringify(entity)}`);
+
+        return entity;
+    };
+
+    public updateGoal = async (
+        enrollmentId: string,
+        goalName: string ) => {
+
+        var updates = {
+            goals : [goalName],
+            completedAt : Helper.formatDate(new Date()),
+            status      : 'COMPLETED',
+        };
+
+        var activityCode = this.getActivityCode();
+
+        const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+
+        var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${activityCode}`;
+
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle("patch", url, updates, headerOptions);
+
+        if (response.statusCode !== 200) {
+            Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+            throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
+        }
+
+        var activity = response.body.data.activity;
+
+        var entity: GoalDto = {
+            Provider     : this.providerName(),
+            GoalAchieved : activity.status,
+            CompletedAt  : activity.completedAt,
+            Title        : activity.goals
+        };
+
+        Logger.instance().log(`Updated goal record from AHA:: ${JSON.stringify(entity)}`);
+
+        return entity;
+    };
+
+    public updateHealthPriority = async (
+        patientUserId: string,
+        enrollmentId: string,
+        healthPriorityType: string ) => {
+
+        var updates = {
+            priorities : [healthPriorityType],
+            completedAt : Helper.formatDate(new Date()),
+            status      : 'COMPLETED',
+        };
+
+        var activityCode = this.getActivityCode();
+
+        const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+
+        var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/priorities/${activityCode}`;
+
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle("patch", url, updates, headerOptions);
+
+        if (response.statusCode !== 200) {
+            Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+            throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
+        }
+
+        var activity = response.body.data.activity;
+
+        var entity: HealthPriorityDto = {
+            Provider             : this.providerName(),
+            PatientUserId        : patientUserId,
+            ProviderEnrollmentId : enrollmentId,
+            Status               : activity.status,
+            CompletedAt          : activity.completedAt,
+            HealthPriorityType   : activity.priorities
+        };
+
+        Logger.instance().log(`Updated health priority record from AHA :: ${JSON.stringify(entity)}`);
+
+        return entity;
     };
 
     //#endregion

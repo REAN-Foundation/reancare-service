@@ -21,6 +21,8 @@ export class ActionPlanMapper {
             GoalId               : actionPlan.GoalId,
             Title                : actionPlan.Title,
             StartedAt            : actionPlan.StartedAt,
+            CompletedAt          : actionPlan.CompletedAt,
+            Status               : actionPlan.Status,
             ScheduledEndDate     : actionPlan.ScheduledEndDate,
         };
         

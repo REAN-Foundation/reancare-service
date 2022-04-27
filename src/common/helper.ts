@@ -307,7 +307,7 @@ export class Helper {
         if (!validCountryCode) {
             return Promise.reject('Invalid country code');
         }
-        const validPhoneNumber = Helper.isStr(phoneNumber) && phoneNumber.length > 9;
+        const validPhoneNumber = Helper.isStr(phoneNumber) && phoneNumber.length >= 9;
         if (!validPhoneNumber) {
 
             //throw new InputValidationError(['Invalid phone number']);

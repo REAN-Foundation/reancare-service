@@ -70,9 +70,8 @@ export class FormsService {
     public importFormAsAssessmentTemplate = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string)
             : Promise<CAssessmentTemplate> => {
         var downloadedFilepath = await FormsHandler.downloadForm(connectionModel, providerFormId);
-        var assessmentTemplate = await FormsHandler.importFormFileAsAssessmentTemplate(
+        return await FormsHandler.importFormFileAsAssessmentTemplate(
             connectionModel, providerFormId, downloadedFilepath);
-        return assessmentTemplate;
     };
 
     public formExists = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string)

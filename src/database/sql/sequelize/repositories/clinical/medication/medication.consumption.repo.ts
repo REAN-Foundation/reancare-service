@@ -377,4 +377,24 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
 
     };
 
+    assignEhrId = async(id: string, ehrId: string): Promise<MedicationConsumptionDetailsDto> => {
+        try {
+            const consumption = await MedicationConsumption.findByPk(id);
+
+            if (consumption === null) {
+                return null;
+            }
+            consumption.EhrId = ehrId;
+            
+            await consumption.save();
+
+            var dto = MedicationConsumptionMapper.toDetailsDto(consumption);
+            return dto;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

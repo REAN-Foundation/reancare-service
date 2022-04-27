@@ -1,3 +1,5 @@
+import { BiometricsHeightStore } from "../../../modules/ehr/services/biometrics.height.store";
+import { Loader } from "../../../startup/loader";
 import { inject, injectable } from "tsyringe";
 import { IBodyHeightRepo } from "../../../database/repository.interfaces/clinical/biometrics/body.height.repo.interface";
 import { BodyHeightDomainModel } from '../../../domain.types/clinical/biometrics/body.height/body.height.domain.model';
@@ -9,11 +11,17 @@ import { BodyHeightSearchFilters, BodyHeightSearchResults } from '../../../domai
 @injectable()
 export class BodyHeightService {
 
+    _ehrBiometricsHeightStore: BiometricsHeightStore = null;
+
     constructor(
         @inject('IBodyHeightRepo') private _bodyHeightRepo: IBodyHeightRepo,
-    ) {}
+    ) {
+        this._ehrBiometricsHeightStore = Loader.container.resolve(BiometricsHeightStore);
+    }
 
     create = async (bodyHeightDomainModel: BodyHeightDomainModel): Promise<BodyHeightDto> => {
+        const ehrId = await this._ehrBiometricsHeightStore.add(bodyHeightDomainModel);
+        bodyHeightDomainModel.EhrId = ehrId;
         return await this._bodyHeightRepo.create(bodyHeightDomainModel);
     };
 
@@ -26,7 +34,9 @@ export class BodyHeightService {
     };
 
     update = async (id: string, BodyHeightDomainModel: BodyHeightDomainModel): Promise<BodyHeightDto> => {
-        return await this._bodyHeightRepo.update(id, BodyHeightDomainModel);
+        var dto = await this._bodyHeightRepo.update(id, BodyHeightDomainModel);
+        await this._ehrBiometricsHeightStore.update(dto.EhrId, dto);
+        return dto;
     };
 
     delete = async (id: string): Promise<boolean> => {

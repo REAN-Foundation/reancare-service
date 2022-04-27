@@ -16,6 +16,8 @@ export interface IMedicationConsumptionRepo {
 
     markAsTaken(id: string, takenAt: Date): Promise<MedicationConsumptionDetailsDto>;
 
+    assignEhrId(id: string, ehrId: string): Promise<MedicationConsumptionDetailsDto>;
+
     markAsMissed(id: string): Promise<MedicationConsumptionDetailsDto>;
 
     deleteFutureMedicationSchedules(medicationId: string): Promise<number>;

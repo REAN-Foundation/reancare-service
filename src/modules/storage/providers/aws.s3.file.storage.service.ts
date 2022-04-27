@@ -141,7 +141,7 @@ export class AWSS3FileStorageService implements IFileStorageService {
             accessKeyId      : process.env.STORAGE_BUCKET_ACCESS_KEY_ID,
             secretAccessKey  : process.env.STORAGE_BUCKET_ACCESS_KEY_SECRET,
             signatureVersion : 'v4',
-            region           : process.env.RESOURCES_S3_REGION
+            region           : process.env.STORAGE_CLOUD_REGION
         });
 
         const url = s3.getSignedUrl('getObject', {

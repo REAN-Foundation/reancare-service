@@ -164,6 +164,7 @@ export class CAssessmentTemplate {
     Nodes                  : CAssessmentNode[];
     CreatedAt?             : Date;
     UpdatedAt?             : Date;
+    CreatedBy?             : uuid;
 
     constructor() {
         this.Nodes = [];

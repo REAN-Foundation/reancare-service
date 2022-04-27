@@ -51,22 +51,20 @@ export class MockNotificationService implements INotificationService {
     };
     
     formatNotificationMessage = (notificationType: string, title: string, body: any): any => {
-        var message = {
+        return {
             type  : notificationType,
             title : title,
             body  : body
         };
-        return message;
     };
     
     formatNotificationMessageWithData = (notificationType: string, title: string, body: any, customData: any): any => {
-        var message = {
+        return {
             type  : notificationType,
             title : title,
             body  : body,
             data  : customData
         };
-        return message;
     };
        
 }

@@ -186,11 +186,10 @@ export class AhaCareplanService implements ICareplanService {
             Logger.instance().error('Unable to fetch tasks for given enrollment id!', response.statusCode, null);
             throw new ApiError(500, "Careplan service error: " + response.body.error.message);
         }
-    
-        // AHA response has incorrect spelling of activities: "activitites"
-        Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.activitites.length)}`);
+        
+        Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.activities.length)}`);
 
-        var activities = response.body.data.activitites;
+        var activities = response.body.data.activities;
         var activityEntities: CareplanActivity[] = [];
 
         activities.forEach(activity => {

@@ -14,8 +14,6 @@ export class BodyTemperatureMapper {
         var model: BodyTemperatureDomainModel = {
             PatientUserId    : temperatureObj.PatientUserId,
             EhrId            : temperatureObj.EhrId,
-            //VisitId: temperatureObj.VisitId,
-            //VisitEhrId: temperatureObj.VisitEhrId,
             Unit             : temperatureObj.Unit,
             RecordedByEhrId  : temperatureObj.RecordedByEhrId,
             RecordedByUserId : temperatureObj.RecordedByUserId,

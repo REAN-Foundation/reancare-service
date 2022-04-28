@@ -1,15 +1,12 @@
 import { TestLoader } from "../test.loader";
 import { FamilyHistoryMapper } from "../test.data.mapper/family.history.ehr.mapper";
-import { PatientMapper } from "../test.data.mapper/patient.ehr.mapper";
 import { Helper } from "../../../../common/helper";
 
 describe('family history resource: Storage, retrieval', () => {
     it('Given family history domain model, store family history resource to fhir interface, then returned family history details are valid.', async () => {
 
-        var patientModel = PatientMapper.convertJsonObjectToDomainModel();
-        var patientEhrId = await TestLoader.PatientStore.create(patientModel);
-
         var model = FamilyHistoryMapper.convertJsonObjectToDomainModel();
+        
         var familyHistoryEhrId = await TestLoader.FamilyHistoryStore.create(model);
         var familyHistoryFhirResource = await TestLoader.FamilyHistoryStore.getById(familyHistoryEhrId);
 

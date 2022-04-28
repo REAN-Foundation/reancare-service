@@ -12,5 +12,6 @@ export interface GoalDto {
     GoalAchieved?        : boolean;
     GoalAbandoned?       : boolean;
     StartedAt?           : Date;
+    CompletedAt?         : Date;
     ScheduledEndDate?    : Date;
 }

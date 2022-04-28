@@ -4,7 +4,6 @@ import { OrganizationDomainModel } from '../../../domain.types/organization/orga
 
 export interface IHospitalOrganizationStore {
     create(organizationDomainModel: OrganizationDomainModel): Promise<any>;
-    search(filter): Promise<any>;
     getById(id: string): Promise<any>;
     update(id: string, updates: OrganizationDomainModel): Promise<any>;
     delete(id: string): Promise<any>;

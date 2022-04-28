@@ -3,7 +3,6 @@ import { PharmacistDomainModel } from '../../../../../../domain.types/pharmacist
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { IPharmacistStore } from '../../../../interfaces/pharmacist.store.interface';
-import { Logger } from '../../../../../../common/logger';
 import { FhirHelper } from '../../fhir.helper';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -11,89 +10,29 @@ import { FhirHelper } from '../../fhir.helper';
 export class GcpPharmacistStore implements IPharmacistStore {
     
     add = async (model: PharmacistDomainModel): Promise<any> => {
-        try {
-            var g = await GcpHelper.getGcpClient();
-            const c = GcpHelper.getGcpFhirConfig();
-            var body = this.createPharmacistFhirResource(model);
-            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}`;
-            const request = { parent, type: 'Practitioner', requestBody: body };
-            const resource = await g.projects.locations.datasets.fhirStores.fhir.create(
-                request
-            );
-            var data: any = resource.data;
-            //var resourceStr = JSON.stringify(data, null, 2);
-            //console.log(`Created FHIR resource ${resourceStr}`);
-            return data.id;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw error;
-        }
+        var body = this.createPharmacistFhirResource(model);
+        const resourceType = 'Practitioner';
+        var id = await GcpHelper.addResource(body, resourceType);
+        return id;
     };
 
     getById = async (resourceId: string): Promise<any> => {
-        try {
-            var g = await GcpHelper.getGcpClient();
-            const c = GcpHelper.getGcpFhirConfig();
-            const resourceType = 'Practitioner';
-            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
-            const resource = await g.projects.locations.datasets.fhirStores.fhir.read(
-                { name: parent }
-            );
-            var data: any = resource.data;
-            //var resourceStr = JSON.stringify(data, null, 2);
-            //console.log(`Created FHIR resource ${resourceStr}`);
-            return data;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw error;
-        }
-    };
-
-    update = async (resourceId:string, updates: PharmacistDomainModel): Promise<any> => {
-
-        var g = await GcpHelper.getGcpClient();
-        const c = GcpHelper.getGcpFhirConfig();
-
         const resourceType = 'Practitioner';
-
-        //Get the existing resource
-        const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
-        var existingResource = await g.projects.locations.datasets.fhirStores.fhir.read(
-            { name: parent }
-        );
-        var data:any = existingResource.data;
-
-        //delete data.id; //Remove id from the resource
-        
-        //Construct updated body
+        var data = await GcpHelper.getResourceById(resourceId, resourceType);
+        return data;
+    };
+    
+    update = async (resourceId:string, updates: PharmacistDomainModel): Promise<any> => {
+        const resourceType = 'Practitioner';
+        var data = await GcpHelper.getResourceById(resourceId, resourceType);
         const body: healthcare_v1.Schema$HttpBody = this.updatePharmacistFhirResource(updates, data);
-        const updatedResource = await g.projects.locations.datasets.fhirStores.fhir.update({
-            name        : parent,
-            requestBody : body,
-        });
-        
-        var data: any = updatedResource.data;
-        Logger.instance().log(`Updated ${resourceType} resource:\n${updatedResource.data}`);
-
+        var data = await GcpHelper.updateResource(resourceId, resourceType, body);
         return data;
     };
 
     delete = async (resourceId: string): Promise<any> => {
-        try {
-            var g = await GcpHelper.getGcpClient();
-            const c = GcpHelper.getGcpFhirConfig();
-            const resourceType = 'Practitioner';
-
-            //Get the existing resource
-            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
-            await g.projects.locations.datasets.fhirStores.fhir.delete(
-                { name: parent }
-            );
-        }
-        catch (error) {
-            await Logger.instance().log(JSON.stringify(error.message, null, 2));
-            throw error;
-        }
+        const resourceType = 'Practitioner';
+        await GcpHelper.deleteResource(resourceId, resourceType);
     };
 
     //#region Private methods

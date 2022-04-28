@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { IBloodGlucoseStore } from '../../interfaces/blood.glucose.store.interface';
 import { BloodGlucoseDomainModel }  from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model';
 

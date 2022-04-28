@@ -16,7 +16,8 @@ describe('Encounter resource: Storage, retrieval', () => {
 
         var model = DoctorVisitMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
-
+        model.RecordedByUserId = doctorEhrId;
+        
         var doctorVisitEhirId = await TestLoader.DoctorVisitStore.create(model);
         var doctorVisitFhirResource = await TestLoader.DoctorVisitStore.getById(doctorVisitEhirId);
 
@@ -32,7 +33,7 @@ describe('Encounter resource: Storage, retrieval', () => {
         expect(extractedEndDate).toEqual(Helper.formatDate(model.EndDate));
 
         var extractedRecordedByEhrId = doctorVisitFhirResource.participant[0].individual.reference.split('/')[1];
-        expect(extractedRecordedByEhrId).toEqual(model.RecordedByEhrId);
+        expect(extractedRecordedByEhrId).toEqual(model.RecordedByUserId);
 
         /*var extractedAppointmentId = doctorVisitFhirResource.appointment[0].id;
         expect(extractedAppointmentId).toEqual(model.AppointmentId);*/

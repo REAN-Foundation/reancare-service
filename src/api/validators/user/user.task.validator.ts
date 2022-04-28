@@ -46,8 +46,8 @@ export class UserTaskValidator extends BaseValidator {
         await this.validateString(request, 'category', Where.Query, false, false, true);
         await this.validateString(request, 'actionType', Where.Query, false, false, true);
         await this.validateUuid(request, 'actionId', Where.Query, false, false);
-        await this.validateDate(request, 'scheduledFrom', Where.Query, false, false);
-        await this.validateDate(request, 'scheduledTo', Where.Query, false, false);
+        await this.validateString(request, 'scheduledFrom', Where.Query, false, false);
+        await this.validateString(request, 'scheduledTo', Where.Query, false, false);
         await this.validateString(request, 'status', Where.Query, false, false);
 
         await this.validateBaseSearchFilters(request);
@@ -161,11 +161,13 @@ export class UserTaskValidator extends BaseValidator {
 
         var scheduledFrom: Date = null;
         if (request.query.scheduledFrom) {
-            scheduledFrom = await userService.getDateInUserTimeZone(userId, request.body.scheduledFrom);
+            const scheduledFromStr : string = request.query.scheduledFrom as string;
+            scheduledFrom = await userService.getDateInUserTimeZone(userId, scheduledFromStr);
         }
         var scheduledTo: Date = null;
         if (request.query.scheduledTo) {
-            scheduledTo = await userService.getDateInUserTimeZone(userId, request.body.scheduledTo);
+            const scheduledToStr : string = request.query.scheduledTo as string;
+            scheduledTo = await userService.getDateInUserTimeZone(userId, scheduledToStr);
             if (scheduledFrom.getTime() === scheduledTo.getTime()) {
                 scheduledTo = TimeHelper.addDuration(scheduledFrom, 1, DurationType.Day);
             }

@@ -15,6 +15,7 @@ describe('Observation resource: Storage, retrieval', () => {
         
         var model = BloodPressureMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
+        model.RecordedByUserId = doctorEhrId;
 
         var bloodPressureEhirId = await TestLoader.BloodPressureStore.add(model);
         var bloodPressureFhirResource = await TestLoader.BloodPressureStore.getById(bloodPressureEhirId);

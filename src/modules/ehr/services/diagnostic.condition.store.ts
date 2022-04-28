@@ -1,8 +1,7 @@
 import 'reflect-metadata';
 import { IDiagnosticConditionStore } from '../interfaces/diagnostic.condition.store.interface';
 import { injectable, inject } from "tsyringe";
-import { DiagnosticConditionDomainModel,DiagnosticConditionSearchFilters
-} from "../../../domain.types/diagnostic.condition/diagnostic.condition.domain.model";
+import { DiagnosticConditionDomainModel } from "../../../domain.types/diagnostic.condition/diagnostic.condition.domain.model";
 
 ///////////////////////////////////////////////////////////////////
 
@@ -13,10 +12,6 @@ export class DiagnosticConditionStore {
 
     add = async (model: DiagnosticConditionDomainModel): Promise<any> => {
         return await this._service.add(model);
-    }
-
-    search = async (filter: DiagnosticConditionSearchFilters): Promise<any> => {
-        return await this._service.search(filter);
     }
 
     getById = async (id: string): Promise<any> => {

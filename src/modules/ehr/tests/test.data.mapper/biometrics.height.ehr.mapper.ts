@@ -13,13 +13,13 @@ export class BiometricsHeightMapper {
         var biometricsHeightObj = Helper.jsonToObj(jsonPath);
 
         var model: BodyHeightDomainModel = {
-            PatientUserId: biometricsHeightObj.PatientUserId,
-            EhrId: biometricsHeightObj.EhrId, 
-            Unit: biometricsHeightObj.Unit,
-            RecordedByUserId: biometricsHeightObj.RecordedByUserId,
-            RecordDate: biometricsHeightObj.RecordDate, 
-            BodyHeight: biometricsHeightObj.BodyHeight,
-        }
+            PatientUserId    : biometricsHeightObj.PatientUserId,
+            EhrId            : biometricsHeightObj.EhrId,
+            Unit             : biometricsHeightObj.Unit,
+            RecordedByUserId : biometricsHeightObj.RecordedByUserId,
+            RecordDate       : biometricsHeightObj.RecordDate,
+            BodyHeight       : biometricsHeightObj.BodyHeight,
+        };
 
         return model;
     }

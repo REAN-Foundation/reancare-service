@@ -14,6 +14,7 @@ describe('Observation resource: Storage, retrieval', () => {
 
         var model = BloodOxygenSaturationMapper.convertJsonObjectToDomainModel();
         model.EhrId = patientEhrId;
+        model.RecordedByUserId = doctorEhrId;
         
         var bloodOxygenSaturationEhirId = await TestLoader.BloodOxygenSaturationStore.add(model);
         var bloodOxygenFhirResource = await TestLoader.BloodOxygenSaturationStore.getById(bloodOxygenSaturationEhirId);

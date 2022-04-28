@@ -35,7 +35,8 @@ export class BodyHeightService {
 
     update = async (id: string, BodyHeightDomainModel: BodyHeightDomainModel): Promise<BodyHeightDto> => {
         var dto = await this._bodyHeightRepo.update(id, BodyHeightDomainModel);
-        return await this._ehrBiometricsHeightStore.update(dto.EhrId, dto);
+        await this._ehrBiometricsHeightStore.update(dto.EhrId, dto);
+        return dto;
     };
 
     delete = async (id: string): Promise<boolean> => {

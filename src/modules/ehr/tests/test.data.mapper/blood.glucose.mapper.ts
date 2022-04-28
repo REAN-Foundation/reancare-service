@@ -14,14 +14,11 @@ export class BloodGlucoseMapper {
         var model: BloodGlucoseDomainModel = {
             PatientUserId    : bloodSugarObj.PatientUserId,
             EhrId            : bloodSugarObj.PatientEhrId,
-            //VisitId: bloodSugarObj.VisitId,
-            //VisitEhrId: bloodSugarObj.VisitEhrId,
             Unit             : bloodSugarObj.Unit,
             RecordedByUserId : bloodSugarObj.RecordedByUserId,
             RecordedByEhrId  : bloodSugarObj.RecordedByEhrId,
             RecordDate       : bloodSugarObj.RecordDate,
-            BloodGlucose     : bloodSugarObj.BloodGlucose
-            
+            BloodGlucose     : bloodSugarObj.BloodGlucose,
         };
 
         return model;

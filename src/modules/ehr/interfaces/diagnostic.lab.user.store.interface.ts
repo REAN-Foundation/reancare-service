@@ -3,7 +3,6 @@ import { DiagnosticLabUserDomainModel } from '../../../domain.types/diagnostic.l
 ////////////////////////////////////////////////////////////////////////////////////
 
 export interface IDiagnosticLabUserStore {
-    search(filter: any): any;
     create(DiagnosticLabUserDomainModel: DiagnosticLabUserDomainModel): Promise<any>;
     getById(id: string): Promise<any>;
     update(id: string, updates: DiagnosticLabUserDomainModel): Promise<any>;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ITemperatureStore } from '../../interfaces/body.temperature.store.interface';
 import { BodyTemperatureDomainModel } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
 ///////////////////////////////////////////////////////////////////

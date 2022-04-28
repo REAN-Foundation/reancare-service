@@ -166,7 +166,7 @@ export class CareplanService implements IUserActionService {
 
         //task scheduling
 
-        await this.createScheduledUserTasks(careplanActivities);
+        await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
 
         return dto;
     };
@@ -230,7 +230,7 @@ export class CareplanService implements IUserActionService {
 
         }
 
-        await this.createScheduledUserTasks(careplanActivities);
+        await this.createScheduledUserTasks(enrollment.PatientUserId, careplanActivities);
     
         return true;
     };
@@ -414,9 +414,15 @@ export class CareplanService implements IUserActionService {
         return patientDto;
     }
 
-    private async createScheduledUserTasks(careplanActivities) {
+    private async createScheduledUserTasks(patientUserId, careplanActivities) {
 
         // create user tasks based on activities
+
+        var userDto = await this._userRepo.getById(patientUserId);
+        var timezoneOffset = '+05:30';
+        if (userDto.DefaultTimeZone !== null) {
+            timezoneOffset = userDto.DefaultTimeZone;
+        }
 
         var activitiesGroupedByDate = {};
         for (const activity of careplanActivities) {
@@ -440,11 +446,12 @@ export class CareplanService implements IUserActionService {
             });
 
             activities.forEach( async (activity) => {
-
-                var dayStart = TimeHelper.addDuration(activity.ScheduledAt, 7, DurationType.Hour);       // Start at 7:00 AM
+                var dayStartStr = activity.ScheduledAt.toISOString();
+                var dayStart = TimeHelper.getDateWithTimezone(dayStartStr, timezoneOffset);
+                dayStart = TimeHelper.addDuration(dayStart, 7, DurationType.Hour); // Start at 7:00 AM
                 var scheduleDelay = (activity.Sequence - 1) * 1;
                 var startTime = TimeHelper.addDuration(dayStart, scheduleDelay, DurationType.Second);   // Scheduled at every 1 sec
-                var endTime = TimeHelper.addDuration(activity.ScheduledAt, 23, DurationType.Hour);       // End at 11:00 PM
+                var endTime = TimeHelper.addDuration(dayStart, 16, DurationType.Hour);       // End at 11:00 PM
 
                 var userTaskModel = {
                     UserId             : activity.PatientUserId,

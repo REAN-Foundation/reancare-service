@@ -14,10 +14,6 @@ export class ClinicOrganizationStore {
         return await this._service.create(model);
     }
 
-    search = async ( filter ): Promise<any> => {
-        return await this._service.search(filter);
-    }
-
     getById = async (id: string): Promise<any> => {
         return await this._service.getById(id);
     }

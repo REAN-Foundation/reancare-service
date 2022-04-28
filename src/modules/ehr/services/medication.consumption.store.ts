@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { IMedicationConsumptionStore } from '../interfaces/medication.consumption.store.interface';
 import { injectable, inject } from "tsyringe";
 import { MedicationConsumptionDomainModel } from '../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
-import { MedicationConsumptionSearchFilters } from '../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
 
 ///////////////////////////////////////////////////////////////////
 
@@ -12,11 +11,7 @@ export class MedicationConsumptionStore {
     constructor(@inject('IMedicationConsumptionStore') private _service: IMedicationConsumptionStore) {}
 
     add = async (model: MedicationConsumptionDomainModel): Promise<any> => {
-        return await this._service.add(model);
-    }
-
-    search = async (filter: MedicationConsumptionSearchFilters): Promise<any> => {
-        return await this._service.search(filter);
+        return await this._service.create(model);
     }
 
     getById = async (id: string): Promise<any> => {

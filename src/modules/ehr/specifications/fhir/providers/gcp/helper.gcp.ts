@@ -1,4 +1,5 @@
 import { google, healthcare_v1 } from 'googleapis';
+import { Logger } from '../../../../../../common/logger';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -24,7 +25,7 @@ export class GcpHelper {
         google.options({ auth });
         return healthcare;
     };
-
+    
     public static getGcpFhirConfig(): GcpFhirConfiguration  {
 
         const c: GcpFhirConfiguration = {
@@ -38,5 +39,85 @@ export class GcpHelper {
         
         return c;
     }
+
+    public static addResource = async (entity: any, resourceType: string): Promise<any> => {
+        
+        try {
+            var g = await GcpHelper.getGcpClient();
+            const c = GcpHelper.getGcpFhirConfig();
+            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}`;
+            const request = { parent, type: resourceType, requestBody: entity };
+            const resource = await g.projects.locations.datasets.fhirStores.fhir.create(
+                request
+            );
+            var data: any = resource.data;
+            return data.id;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw error;
+        }
+    };
+
+    public static getResourceById = async (resourceId: string, resourceType: string): Promise<any> => {
+        
+        try {
+            var g = await GcpHelper.getGcpClient();
+            const c = GcpHelper.getGcpFhirConfig();
+            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
+            const resource = await g.projects.locations.datasets.fhirStores.fhir.read(
+                { name: parent }
+            );
+            var data: any = resource.data;
+            return data;
+
+        } catch (error) {
+
+            if (error.message != null) {
+                // eslint-disable-next-line no-prototype-builtins
+                if (error.message.hasOwnProperty('issue')) {
+                    var issue = error.message.issue[0];
+                    Logger.instance().log(issue.diagnostics);
+                    return null;
+                }
+            }
+
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public static updateResource = async (resourceId: string, resourceType: string, entity: any): Promise<any> => {
+        try {
+            var g = await GcpHelper.getGcpClient();
+            const c = GcpHelper.getGcpFhirConfig();
+
+            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
+            const updatedResource = await g.projects.locations.datasets.fhirStores.fhir.update({
+                name        : parent,
+                requestBody : entity,
+            });
+            var data: any = updatedResource.data;
+            Logger.instance().log(`Updated ${resourceType} resource:\n, updatedResource.data`);
+            return data;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw error;
+        }
+    };
+
+    public static deleteResource = async (resourceId: string, resourceType: string): Promise<any> => {
+        try {
+            var g = await GcpHelper.getGcpClient();
+            const c = GcpHelper.getGcpFhirConfig();
+
+            //Get the existing resource
+            const parent = `projects/${c.ProjectId}/locations/${c.CloudRegion}/datasets/${c.DatasetId}/fhirStores/${c.FhirStoreId}/fhir/${resourceType}/${resourceId}`;
+            await g.projects.locations.datasets.fhirStores.fhir.delete(
+                { name: parent }
+            );
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw error;
+        }
+    };
 
 }

@@ -8,7 +8,7 @@ export interface IGoalRepo {
 
     getById(id: string): Promise<GoalDto>;
 
-    getSelectedGoals(patientUserId: string): Promise<GoalDto[]>;
+    getPatientGoals(patientUserId: string): Promise<GoalDto[]>;
 
     search(filters: GoalSearchFilters): Promise<GoalSearchResults>;
 

@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { IPulseStore } from '../../interfaces/pulse.store.interface';
 import { PulseDomainModel } from '../../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
 
 ///////////////////////////////////////////////////////////////////
-
 
 export class MockPulse implements IPulseStore {
 

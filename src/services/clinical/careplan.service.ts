@@ -244,6 +244,12 @@ export class CareplanService implements IUserActionService {
             activity.ProviderActionId,
             scheduledAt);
         
+        details.PatientUserId = activity.PatientUserId;
+        details.Provider = activity.Provider;
+        details.PlanCode = activity.PlanCode;
+        details.EnrollmentId = activity.EnrollmentId;
+        details.ProviderActionId = activity.ProviderActionId;
+
         if (!activity.RawContent) {
             activity = await this._careplanRepo.updateActivityDetails(activity.id, details.RawContent);
         }
@@ -322,31 +328,24 @@ export class CareplanService implements IUserActionService {
     };
 
     public getAssessmentTemplate = async (model: CareplanActivity): Promise<AssessmentTemplateDto> => {
-
-        const assessmentActivity = await this._handler.getActivity(
-            model.PatientUserId,
-            model.Provider,
-            model.PlanCode,
-            model.EnrollmentId,
-            model.ProviderActionId);
-        
-        if (!assessmentActivity) {
+ 
+        if (!model) {
             throw new Error('Invalid careplan activity encountered!');
         }
 
-        if (assessmentActivity.Category !== UserTaskCategory.Assessment) {
+        if (model.Category !== UserTaskCategory.Assessment) {
             throw new Error('The given careplan activity is not an assessment activity!');
         }
 
         var existingTemplate = await this._assessmentTemplateRepo.getByProviderAssessmentCode(
-            model.Provider, assessmentActivity.ProviderActionId);
+            model.Provider, model.ProviderActionId);
 
         if (existingTemplate) {
             return existingTemplate;
         }
         
         var assessmentTemplate: CAssessmentTemplate =
-            await this._handler.convertToAssessmentTemplate(assessmentActivity);
+            await this._handler.convertToAssessmentTemplate(model);
 
         const fileResourceDto = await AssessmentTemplateFileConverter.storeAssessmentTemplate(assessmentTemplate);
         assessmentTemplate.FileResourceId = fileResourceDto.id;

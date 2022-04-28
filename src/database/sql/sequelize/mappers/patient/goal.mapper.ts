@@ -22,6 +22,7 @@ export class GoalMapper {
             Sequence             : goal.Sequence ?? null,
             HealthPriorityId     : goal.HealthPriorityId ?? null,
             StartedAt            : goal.StartedAt ?? null,
+            CompletedAt          : goal.CompletedAt ?? null,
             ScheduledEndDate     : goal.ScheduledEndDate ?? null,
             GoalAchieved         : goal.GoalAchieved,
             GoalAbandoned        : goal.GoalAbandoned

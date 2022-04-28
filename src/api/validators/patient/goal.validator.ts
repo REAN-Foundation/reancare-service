@@ -1,17 +1,20 @@
 import express from 'express';
-import { body, param, validationResult, query } from 'express-validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import { Helper } from '../../../common/helper';
 import { GoalDomainModel } from '../../../domain.types/patient/goal/goal.domain.model';
 import { GoalSearchFilters } from '../../../domain.types/patient/goal/goal.search.types';
-
+import { BaseValidator, Where } from '../base.validator';
+ 
 ///////////////////////////////////////////////////////////////////////////////////////
+ 
+export class GoalValidator extends BaseValidator {
 
-export class GoalValidator {
-
-    static getDomainModel = (request: express.Request): GoalDomainModel => {
-
-        const goalModel: GoalDomainModel = {
+    constructor() {
+        super();
+    }
+ 
+    getDomainModel = (request: express.Request): GoalDomainModel => {
+ 
+        const GoalModel: GoalDomainModel = {
             PatientUserId        : request.body.PatientUserId,
             Provider             : request.body.Provider ?? null,
             ProviderCareplanCode : request.body.ProviderCareplanCode ?? null,
@@ -24,255 +27,117 @@ export class GoalValidator {
             GoalAchieved         : request.body.GoalAchieved ?? null,
             GoalAbandoned        : request.body.GoalAbandoned ?? null,
             StartedAt            : request.body.StartedAt ?? new Date(),
+            CompletedAt          : request.body.CompletedAt ?? null,
             ScheduledEndDate     : request.body.ScheduledEndDate,
         };
-
-        return goalModel;
+ 
+        return GoalModel;
+    };
+ 
+    create = async (request: express.Request): Promise<GoalDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static create = async (request: express.Request): Promise<GoalDomainModel> => {
-        await GoalValidator.validateBody(request);
-        return GoalValidator.getDomainModel(request);
+    getParamUuid = async(request: express.Request, field: string): Promise<uuid> => {
+        this.validateUuid(request, field, Where.Param, true, false);
+        this.validateRequest(request);
+        return request.params[field];
     };
+ 
+    search = async (request: express.Request): Promise<GoalSearchFilters> => {
+ 
+        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
+        await this.validateString(request, 'provider', Where.Query, false, false);
+        await this.validateString(request, 'providerEnrollmentId', Where.Query, false, false);
+        await this.validateString(request, 'providerCareplanName', Where.Query, false, false);
+        await this.validateString(request, 'providerCareplanCode', Where.Query, false, false);
+        await this.validateString(request, 'providerGoalCode', Where.Query, false, false);
+        await this.validateString(request, 'title', Where.Query, false, false);
+        await this.validateString(request, 'sequence', Where.Query, false, false);
+        await this.validateString(request, 'categoryCode', Where.Query, false, false);
+        await this.validateString(request, 'healthPriorityId', Where.Query, false, false);
+        await this.validateBoolean(request, 'goalAchieved', Where.Query, false, false);
+        await this.validateBoolean(request, 'goalAbandoned', Where.Query, false, false);
+        await this.validateDate(request, 'startedAt', Where.Query, false, false);
+        await this.validateDate(request, 'scheduledEndDate', Where.Query, false, false);
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await GoalValidator.getParamId(request);
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+
+        return this.getFilter(request);
     };
-
-    static getPatientGoals= async (request: express.Request): Promise<uuid> => {
-        return await GoalValidator.getParamPatientUserId(request);
-    };
-
-    static getGoalsByPriority= async (request: express.Request): Promise<string> => {
-        return await GoalValidator.getParamPriorityId(request);
-    };
-
-    static delete = async (request: express.Request): Promise<string> => {
-        return await GoalValidator.getParamId(request);
-    };
-
-    static search = async (request: express.Request): Promise<GoalSearchFilters> => {
-        await query('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('GoalId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('ActionId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('GoalAchieved').optional()
-            .trim()
-            .escape()
-            .isBoolean()
-            .run(request);
-
-        await query('GoalAbandoned').optional()
-            .trim()
-            .escape()
-            .isBoolean()
-            .run(request);
-
-        await query('CreatedDateFrom').optional()
-            .trim()
-            .run(request);
-
-        await query('CreatedDateTo').optional()
-            .trim()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return GoalValidator.getFilter(request);
-    };
-
-    private static getFilter(request): GoalSearchFilters {
-        const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
-
-        const itemsPerPage =
-            request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
-
-        const filters: GoalSearchFilters = {
-            PatientUserId   : request.query.PatientUserId ?? null,
-            GoalAchieved    : request.query.GoalAchieved ?? null,
-            GoalAbandoned   : request.query.GoalAbandoned ?? null,
-            CreatedDateFrom : request.query.CreatedDateFrom ?? null,
-            CreatedDateTo   : request.query.CreatedDateTo ?? null,
-            OrderBy         : request.query.orderBy ?? 'GoalAchieved',
-            Order           : request.query.order ?? 'descending',
-            PageIndex       : pageIndex,
-            ItemsPerPage    : itemsPerPage,
-        };
-        return filters;
-    }
-
-    static update = async (request: express.Request): Promise<GoalDomainModel> => {
-
-        const id = await GoalValidator.getParamId(request);
-        await GoalValidator.validateBody(request);
-
-        const domainModel = GoalValidator.getDomainModel(request);
-        domainModel.id = id;
-
+ 
+    update = async (request: express.Request): Promise<GoalDomainModel> => {
+ 
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
         return domainModel;
     };
+ 
+    private  async validateCreateBody(request) {
 
-    private static async validateBody(request) {
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateString(request, 'Provider', Where.Body, false, true);
+        await this.validateString(request, 'ProviderCareplanCode', Where.Body, false, true);
+        await this.validateString(request, 'ProviderCareplanName', Where.Body, false, true);
+        await this.validateString(request, 'ProviderEnrollmentId', Where.Body, false, true);
+        await this.validateString(request, 'ProviderGoalCode', Where.Body, false, true);
+        await this.validateString(request, 'Title', Where.Body, true, false);
+        await this.validateString(request, 'Sequence', Where.Body, false, true);
+        await this.validateString(request, 'HealthPriorityId', Where.Body, false, true);
+        await this.validateBoolean(request, 'GoalAchieved', Where.Body, false, true);
+        await this.validateBoolean(request, 'GoalAbandoned', Where.Body, false, true);
+        await this.validateDate(request, 'StartedAt', Where.Body, false, true);
+        await this.validateDate(request, 'CompletedAt', Where.Body, false, true);
+        await this.validateDate(request, 'ScheduledEndDate', Where.Body, false, true);
 
-        await body('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        this.validateRequest(request);
+    }
+    
+    private  async validateUpdateBody(request) {
 
-        await body('Provider').optional()
-            .trim()
-            .escape()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateString(request, 'Provider', Where.Body, false, false);
+        await this.validateString(request, 'ProviderCareplanCode', Where.Body, false, false);
+        await this.validateString(request, 'ProviderCareplanName', Where.Body, false, false);
+        await this.validateString(request, 'ProviderEnrollmentId', Where.Body, false, false);
+        await this.validateString(request, 'ProviderGoalCode', Where.Body, false, false);
+        await this.validateString(request, 'Title', Where.Body, false, false);
+        await this.validateString(request, 'Sequence', Where.Body, false, false);
+        await this.validateString(request, 'HealthPriorityId', Where.Body, false, false);
+        await this.validateBoolean(request, 'GoalAchieved', Where.Body, false, false);
+        await this.validateBoolean(request, 'GoalAbandoned', Where.Body, false, false);
+        await this.validateDate(request, 'StartedAt', Where.Body, false, false);
+        await this.validateDate(request, 'CompletedAt', Where.Body, false, false);
+        await this.validateDate(request, 'ScheduledEndDate', Where.Body, false, false);
 
-        await body('ProviderCareplanCode').optional()
-            .trim()
-            .escape()
-            .run(request);
+        this.validateRequest(request);
+    }
 
-        await body('ProviderCareplanName').optional()
-            .trim()
-            .escape()
-            .run(request);
+    private getFilter(request): GoalSearchFilters {
         
-        await body('ProviderEnrollmentId').optional()
-            .trim()
-            .escape()
-            .run(request);
+        var filters: GoalSearchFilters = {
+            PatientUserId        : request.query.patientUserId ?? null,
+            Provider             : request.query.provider ?? null,
+            ProviderEnrollmentId : request.query.providerEnrollmentId ?? null,
+            ProviderCareplanName : request.query.providerCareplanName ?? null,
+            ProviderCareplanCode : request.query.ProviderCareplanCode ?? null,
+            ProviderGoalCode     : request.query.providerGoalCode ?? null,
+            Title                : request.query.title ?? null,
+            Sequence             : request.query.sequence ?? null,
+            CategoryCode         : request.query.categoryCode ?? null,
+            HealthPriorityId     : request.query.healthPriorityId ?? null,
+            GoalAchieved         : request.query.goalAchieved ?? null,
+            GoalAbandoned        : request.query.goalAbandoned ?? null,
+            StartedAt            : request.query.startedAt ?? null,
+            ScheduledEndDate     : request.query.scheduledEndDate ?? null,
+    
+        };
 
-        await body('ProviderGoalCode').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Title').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Sequence').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('HealthPriorityId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-        
-        await body('GoalAchieved').optional()
-            .trim()
-            .escape()
-            .isBoolean()
-            .run(request);
-
-        await body('GoalAbandoned').optional()
-            .trim()
-            .escape()
-            .isBoolean()
-            .run(request);
-
-        await body('StartedAt').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        await body('ScheduledEndDate').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-    }
-
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
-    }
-
-    private static async getParamPriorityId(request) {
-
-        await param('priorityId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.priorityId;
-    }
-
-    private static async getParamPatientUserId(request) {
-
-        await param('patientUserId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.patientUserId;
+        return this.updateBaseSearchFilters(request, filters);
     }
 
 }

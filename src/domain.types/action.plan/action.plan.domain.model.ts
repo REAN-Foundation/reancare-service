@@ -1,17 +1,14 @@
-export interface GoalDto {
+export interface ActionPlanDomainModel {
     id?                  : string;
     PatientUserId?       : string;
     Provider?            : string;
-    ProviderEnrollmentId?: string;
-    ProviderCareplanName?: string;
     ProviderCareplanCode?: string;
-    ProviderGoalCode?    : string;
+    ProviderCareplanName?: string;
+    ProviderEnrollmentId?: string;
+    GoalId?              : string;
     Title?               : string;
-    Sequence?            : string;
-    HealthPriorityId?    : string;
-    GoalAchieved?        : boolean;
-    GoalAbandoned?       : boolean;
     StartedAt?           : Date;
     CompletedAt?         : Date;
+    Status?              : string;
     ScheduledEndDate?    : Date;
 }

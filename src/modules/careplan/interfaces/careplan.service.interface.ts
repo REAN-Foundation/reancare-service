@@ -3,8 +3,9 @@ import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { CareplanActivity } from "../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { EnrollmentDomainModel } from "../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model";
 import { ParticipantDomainModel } from "../../../domain.types/clinical/careplan/participant/participant.domain.model";
-import { ActionPlanDto } from "../../../domain.types/goal.action.plan/goal.action.plan.dto";
+import { ActionPlanDto } from "../../../domain.types/action.plan/action.plan.dto";
 import { GoalDto } from "../../../domain.types/patient/goal/goal.dto";
+import { HealthPriorityDto } from "../../../domain.types/patient/health.priority/health.priority.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,5 +54,21 @@ export interface ICareplanService {
             enrollmentId: string,
             category: string
         ): Promise<ActionPlanDto[]>;
+
+    updateActionPlan(
+            enrollmentId: string,
+            actionName: string
+        ): Promise<ActionPlanDto>;
+
+    updateGoal(
+            enrollmentId: string,
+            goalName: string
+        ): Promise<GoalDto>;
+
+    updateHealthPriority(
+            patientUserId: uuid,
+            enrollmentId: string,
+            healthPriorityType: string
+        ): Promise<HealthPriorityDto>;
 
 }

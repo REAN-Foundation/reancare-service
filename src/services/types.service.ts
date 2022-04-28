@@ -1,3 +1,6 @@
+import { ApiError } from "../common/api.error";
+import { IHealthPriorityRepo } from "../database/repository.interfaces/patient/health.priority/health.priority.repo.interface";
+import { HealthPriorityTypeDto } from "../domain.types/patient/health.priority.type/health.priority.type.dto";
 import { inject, injectable } from "tsyringe";
 import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
 import { Gender, GenderList } from "../domain.types/miscellaneous/system.types";
@@ -11,6 +14,7 @@ export class TypesService {
 
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
+        @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
     ) {}
 
     getPersonRoleTypes = async (): Promise<RoleDto[]> => {
@@ -31,6 +35,16 @@ export class TypesService {
         return new Promise((resolve, reject) => {
             resolve(GenderList);
         });
+    };
+
+    getPriorityTypes = async (): Promise<HealthPriorityTypeDto[]> => {
+        var priorityTypes = await this._healthPriorityRepo.getPriorityTypes();
+
+        if (!priorityTypes || priorityTypes.length === 0) {
+            throw new ApiError(500, 'Error while fetching priority types.');
+        }
+
+        return priorityTypes;
     };
 
 }

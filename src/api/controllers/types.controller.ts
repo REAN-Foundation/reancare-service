@@ -119,6 +119,23 @@ export class TypesController extends BaseController {
         }
     };
 
+    getPriorityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('HealthPriority.GetPrioritiesTypes', request, response);
+
+            const priorityTypes = await this._service.getPriorityTypes();
+            if (priorityTypes.length === 0) {
+                throw new ApiError(400, 'Cannot fetch priorities types!');
+            }
+
+            ResponseHandler.success(request, response, 'Fetched priority types successfully!', 201, {
+                PriorityTypes : priorityTypes,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
     //#endregion
 
 }

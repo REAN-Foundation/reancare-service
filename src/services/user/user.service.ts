@@ -277,11 +277,7 @@ export class UserService {
         else if (user.DefaultTimeZone !== null) {
             timezoneOffset = user.DefaultTimeZone;
         }
-        var todayStr = new Date().toISOString();
-        var str = dateStr ? dateStr.split('T')[0] : todayStr.split('T')[0];
-
-        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
-        return TimeHelper.strToUtc(str, offsetMinutes);
+        return TimeHelper.getDateWithTimezone(dateStr, timezoneOffset);
     };
 
     //#endregion

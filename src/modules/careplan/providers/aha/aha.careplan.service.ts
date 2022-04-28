@@ -505,7 +505,7 @@ export class AhaCareplanService implements ICareplanService {
         goalName: string ) => {
 
         var updates = {
-            goals : [goalName],
+            goals       : [goalName],
             completedAt : Helper.formatDate(new Date()),
             status      : 'COMPLETED',
         };
@@ -544,7 +544,7 @@ export class AhaCareplanService implements ICareplanService {
         healthPriorityType: string ) => {
 
         var updates = {
-            priorities : [healthPriorityType],
+            priorities  : [healthPriorityType],
             completedAt : Helper.formatDate(new Date()),
             status      : 'COMPLETED',
         };

@@ -157,7 +157,7 @@ export class CareplanService implements IUserActionService {
 
         //task scheduling
 
-        await this.createScheduledUserTasks(careplanActivities);
+        await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
 
         return dto;
     };
@@ -221,7 +221,7 @@ export class CareplanService implements IUserActionService {
 
         }
 
-        await this.createScheduledUserTasks(careplanActivities);
+        await this.createScheduledUserTasks(enrollment.PatientUserId, careplanActivities);
     
         return true;
     };
@@ -244,6 +244,12 @@ export class CareplanService implements IUserActionService {
             activity.ProviderActionId,
             scheduledAt);
         
+        details.PatientUserId = activity.PatientUserId;
+        details.Provider = activity.Provider;
+        details.PlanCode = activity.PlanCode;
+        details.EnrollmentId = activity.EnrollmentId;
+        details.ProviderActionId = activity.ProviderActionId;
+
         if (!activity.RawContent) {
             activity = await this._careplanRepo.updateActivityDetails(activity.id, details.RawContent);
         }
@@ -322,31 +328,24 @@ export class CareplanService implements IUserActionService {
     };
 
     public getAssessmentTemplate = async (model: CareplanActivity): Promise<AssessmentTemplateDto> => {
-
-        const assessmentActivity = await this._handler.getActivity(
-            model.PatientUserId,
-            model.Provider,
-            model.PlanCode,
-            model.EnrollmentId,
-            model.ProviderActionId);
-        
-        if (!assessmentActivity) {
+ 
+        if (!model) {
             throw new Error('Invalid careplan activity encountered!');
         }
 
-        if (assessmentActivity.Category !== UserTaskCategory.Assessment) {
+        if (model.Category !== UserTaskCategory.Assessment) {
             throw new Error('The given careplan activity is not an assessment activity!');
         }
 
         var existingTemplate = await this._assessmentTemplateRepo.getByProviderAssessmentCode(
-            model.Provider, assessmentActivity.ProviderActionId);
+            model.Provider, model.ProviderActionId);
 
         if (existingTemplate) {
             return existingTemplate;
         }
         
         var assessmentTemplate: CAssessmentTemplate =
-            await this._handler.convertToAssessmentTemplate(assessmentActivity);
+            await this._handler.convertToAssessmentTemplate(model);
 
         const fileResourceDto = await AssessmentTemplateFileConverter.storeAssessmentTemplate(assessmentTemplate);
         assessmentTemplate.FileResourceId = fileResourceDto.id;
@@ -405,9 +404,15 @@ export class CareplanService implements IUserActionService {
         return patientDto;
     }
 
-    private async createScheduledUserTasks(careplanActivities) {
+    private async createScheduledUserTasks(patientUserId, careplanActivities) {
 
         // create user tasks based on activities
+
+        var userDto = await this._userRepo.getById(patientUserId);
+        var timezoneOffset = '+05:30';
+        if (userDto.DefaultTimeZone !== null) {
+            timezoneOffset = userDto.DefaultTimeZone;
+        }
 
         var activitiesGroupedByDate = {};
         for (const activity of careplanActivities) {
@@ -431,11 +436,12 @@ export class CareplanService implements IUserActionService {
             });
 
             activities.forEach( async (activity) => {
-
-                var dayStart = TimeHelper.addDuration(activity.ScheduledAt, 7, DurationType.Hour);       // Start at 7:00 AM
+                var dayStartStr = activity.ScheduledAt.toISOString();
+                var dayStart = TimeHelper.getDateWithTimezone(dayStartStr, timezoneOffset);
+                dayStart = TimeHelper.addDuration(dayStart, 7, DurationType.Hour); // Start at 7:00 AM
                 var scheduleDelay = (activity.Sequence - 1) * 1;
                 var startTime = TimeHelper.addDuration(dayStart, scheduleDelay, DurationType.Second);   // Scheduled at every 1 sec
-                var endTime = TimeHelper.addDuration(activity.ScheduledAt, 23, DurationType.Hour);       // End at 11:00 PM
+                var endTime = TimeHelper.addDuration(dayStart, 16, DurationType.Hour);       // End at 11:00 PM
 
                 var userTaskModel = {
                     UserId             : activity.PatientUserId,

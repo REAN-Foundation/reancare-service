@@ -261,6 +261,9 @@ export class CareplanService implements IUserActionService {
             const assessment = await this.getAssessment(activity, template, scheduledAt);
             activity['Assessment'] = assessment;
         }
+        else {
+            activity['Details'] = details;
+        }
         return activity;
     };
 

@@ -59,10 +59,8 @@ export class AssessmentTemplateService {
     }
 
     public import = async (model: any): Promise<AssessmentTemplateDto> => {
-        var tmpl: CAssessmentTemplate = model as CAssessmentTemplate;
-        const resource = await AssessmentTemplateFileConverter.storeAssessmentTemplate(tmpl);
-        tmpl.FileResourceId = resource.id;
-        return await this._assessmentHelperRepo.addTemplate(tmpl);
+        var template: CAssessmentTemplate = model as CAssessmentTemplate;
+        return await this.addTemplate(template);
     };
 
     public addTemplate = async (template: CAssessmentTemplate): Promise<AssessmentTemplateDto> => {

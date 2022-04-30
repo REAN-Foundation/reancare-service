@@ -33,6 +33,18 @@ export class Helper {
         return Object.prototype.hasOwnProperty.call(obj, prop);
     }
     
+    static isUrl = (str) => {
+        if (!str) {
+            return false;
+        }
+        try {
+            new URL(str);
+            return true;
+        } catch (err) {
+            return false;
+        }
+    }
+
     static dumpJson(obj, filename) {
         const txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);

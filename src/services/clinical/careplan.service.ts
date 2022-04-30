@@ -236,7 +236,7 @@ export class CareplanService implements IUserActionService {
 
         var scheduledAt = activity.ScheduledAt ? activity.ScheduledAt.toISOString().split('T')[0] : null;
 
-        const details = await this._handler.getActivity(
+        const details: CareplanActivity = await this._handler.getActivity(
             activity.PatientUserId,
             activity.Provider,
             activity.PlanCode,
@@ -250,9 +250,7 @@ export class CareplanService implements IUserActionService {
         details.EnrollmentId = activity.EnrollmentId;
         details.ProviderActionId = activity.ProviderActionId;
 
-        if (!activity.RawContent) {
-            activity = await this._careplanRepo.updateActivityDetails(activity.id, details.RawContent);
-        }
+        activity = await this._careplanRepo.updateActivityDetails(activity.id, details);
 
         //Handle assessment activities in special manner...
         if (activity.Category === UserTaskCategory.Assessment ||
@@ -262,7 +260,7 @@ export class CareplanService implements IUserActionService {
             activity['Assessment'] = assessment;
         }
         else {
-            activity['Details'] = details;
+            activity['RawContent'] = details.RawContent;
         }
         return activity;
     };

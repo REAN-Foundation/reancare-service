@@ -604,10 +604,16 @@ export class AhaCareplanService implements ICareplanService {
         if (category === UserTaskCategory.EducationalNewsFeed) {
             var locale = activity.locale;
             if (locale && locale.length > 0)  {
-                Logger.instance().log("locale: " + JSON.stringify(locale, null, 2));
-                var obj = locale['en-US'];
-                Logger.instance().log("obj: " + JSON.stringify(locale, null, 2));
-                activityUrl = obj['url'];
+                var obj = locale[0];
+                if (obj) {
+                    var x = obj['en-US'];
+                    if (x) {
+                        var xUrl = x['url'];
+                        if (Helper.isUrl(xUrl)) {
+                            activityUrl = xUrl;
+                        }
+                    }
+                }
             }
         }
         return activityUrl;

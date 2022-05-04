@@ -28,6 +28,7 @@ import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/as
 import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
 import { AssessmentTemplateFileConverter } from "./assessment/assessment.template.file.converter";
+import { UserTaskDomainModel } from "../../domain.types/user/user.task/user.task.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -444,12 +445,12 @@ export class CareplanService implements IUserActionService {
                 var startTime = TimeHelper.addDuration(dayStart, scheduleDelay, DurationType.Second);   // Scheduled at every 1 sec
                 var endTime = TimeHelper.addDuration(dayStart, 16, DurationType.Hour);       // End at 11:00 PM
 
-                var userTaskModel = {
+                var userTaskModel: UserTaskDomainModel = {
                     UserId             : activity.PatientUserId,
                     DisplayId          : activity.PlanName + '-' + activity.ProviderActionId,
                     Task               : activity.Title,
-                    Category           : UserTaskCategory[activity.Type] ?? UserTaskCategory.Custom,
-                    Description        : null,
+                    Category           : activity.Category,
+                    Description        : activity.Description,
                     ActionType         : UserActionType.Careplan,
                     ActionId           : activity.id,
                     ScheduledStartTime : startTime,

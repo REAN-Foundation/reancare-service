@@ -196,7 +196,8 @@ export class AhaCareplanService implements ICareplanService {
 
             const tmp = activity.title ? activity.title : '';
             const title = activity.name ? activity.name : tmp;
-            const category: UserTaskCategory = this.getUserTaskCategory(activity.type);
+            const category: UserTaskCategory = this.getUserTaskCategory(
+                activity.type, activity.title, activity.contentTypeCode);
             const status = this.getActivityStatus(activity.status);
             const description = this.getActivityDescription(activity.text, activity.description);
 
@@ -245,19 +246,24 @@ export class AhaCareplanService implements ICareplanService {
         var activity = response.body.data.activity;
         const tmp = activity.title ? activity.title : '';
         const title = activity.name ? activity.name : tmp;
-        const category: UserTaskCategory = this.getUserTaskCategory(activity.type);
+
+        const category: UserTaskCategory = this.getUserTaskCategory(
+            activity.type, title, activity.contentTypeCode);
+
         const status = this.getActivityStatus(activity.status);
         const description = this.getActivityDescription(activity.text, activity.description);
+
+        var activityUrl = this.extractUrl(activity.url, category, activity);
             
         const entity: CareplanActivity = {
             ProviderActionId : activity.code,
             EnrollmentId     : enrollmentId,
             Provider         : 'AHA',
-            Type             : activity.type,
+            Type             : activity.type ?? activity.contentTypeCode,
             Category         : category,
             Title            : title,
             Description      : description,
-            Url              : activity.url ?? null,
+            Url              : activityUrl,
             Language         : 'English',
             Status           : status,
             // Comments        : ,
@@ -306,6 +312,26 @@ export class AhaCareplanService implements ICareplanService {
         return entity;
     };
 
+    public completeActivity = async(
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string,
+        providerActivityId: string,
+        activityUpdates: any): Promise<CareplanActivity> => {
+
+        Logger.instance().log(`Updating activity for patient user id '${patientUserId} associated with carte plan '${careplanCode}'.`);
+
+        const taskCategory = activityUpdates.Category as UserTaskCategory;
+        if (taskCategory === UserTaskCategory.Assessment) {
+            return await this.patchAssessment(enrollmentId, providerActivityId, activityUpdates);
+        }
+        else {
+            return await this.patchActivity(enrollmentId, providerActivityId);
+        }
+    };
+
+    //#region Assessment related
+
     public patchAssessment = async (
         enrollmentId: string,
         providerActivityId: string,
@@ -343,28 +369,14 @@ export class AhaCareplanService implements ICareplanService {
         return entity;
     };
 
-    public completeActivity = async(
-        patientUserId: string,
-        careplanCode: string,
-        enrollmentId: string,
-        providerActivityId: string,
-        activityUpdates: any): Promise<CareplanActivity> => {
-
-        Logger.instance().log(`Updating activity for patient user id '${patientUserId} associated with carte plan '${careplanCode}'.`);
-
-        const taskCategory = activityUpdates.Category as UserTaskCategory;
-        if (taskCategory === UserTaskCategory.Assessment) {
-            return await this.patchAssessment(enrollmentId, providerActivityId, activityUpdates);
-        }
-        else {
-            return await this.patchActivity(enrollmentId, providerActivityId);
-        }
-    };
-
     public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<CAssessmentTemplate> => {
         const ahaServiceHelper = new AhaAssessmentConverter();
         return await ahaServiceHelper.convertToAssessmentTemplate(activity);
     };
+
+    //#endregion
+
+    //#region Goals, priorities and action plans
 
     public getGoals = async (patientUserId: string, enrollmentId: string, category: string): Promise<GoalDto[]> => {
         try {
@@ -505,7 +517,7 @@ export class AhaCareplanService implements ICareplanService {
         goalName: string ) => {
 
         var updates = {
-            goals : [goalName],
+            goals       : [goalName],
             completedAt : Helper.formatDate(new Date()),
             status      : 'COMPLETED',
         };
@@ -544,7 +556,7 @@ export class AhaCareplanService implements ICareplanService {
         healthPriorityType: string ) => {
 
         var updates = {
-            priorities : [healthPriorityType],
+            priorities  : [healthPriorityType],
             completedAt : Helper.formatDate(new Date()),
             status      : 'COMPLETED',
         };
@@ -578,10 +590,34 @@ export class AhaCareplanService implements ICareplanService {
 
         return entity;
     };
+    //#endregion
 
     //#endregion
 
     //#region Privates
+
+    private extractUrl(url: string, category: UserTaskCategory, activity: any) {
+        var activityUrl = url ?? null;
+        if (activityUrl && Helper.isUrl(activityUrl)) {
+            return activityUrl;
+        }
+        if (category === UserTaskCategory.EducationalNewsFeed) {
+            var locale = activity.locale;
+            if (locale && locale.length > 0)  {
+                var obj = locale[0];
+                if (obj) {
+                    var x = obj['en-US'];
+                    if (x) {
+                        var xUrl = x['url'];
+                        if (Helper.isUrl(xUrl)) {
+                            activityUrl = xUrl;
+                        }
+                    }
+                }
+            }
+        }
+        return activityUrl;
+    }
 
     private async getAssessmentUpdateModel(activity: any): Promise<any> {
 
@@ -769,29 +805,47 @@ export class AhaCareplanService implements ICareplanService {
         }
     }
 
-    private getUserTaskCategory(activityType: string, title?: string): UserTaskCategory {
+    private getUserTaskCategory(activityType: string, title?: string, contentTypeCode?: string): UserTaskCategory {
         
         if (activityType === 'Questionnaire' || activityType === 'Assessment') {
             return UserTaskCategory.Assessment;
         }
-        if (activityType === 'Video' ||
-            activityType === 'Audio' ||
-            activityType === 'Animation' ||
-            activityType === 'Link' ||
-            activityType === 'Infographic') {
-            return UserTaskCategory.Educational;
+        var type = activityType ?? contentTypeCode;
+
+        if (type === 'Video')
+        {
+            return UserTaskCategory.EducationalVideo;
         }
-        if (activityType === 'Message') {
+        if (type === 'Audio')
+        {
+            return UserTaskCategory.EducationalAudio;
+        }
+        if (type === 'Animation')
+        {
+            return UserTaskCategory.EducationalAnimation;
+        }
+        if (type === 'Link')
+        {
+            return UserTaskCategory.EducationalLink;
+        }
+        if (type === 'Infographic')
+        {
+            return UserTaskCategory.EducationalInfographics;
+        }
+        if (type === 'Web') {
+            return UserTaskCategory.EducationalNewsFeed;
+        }
+        if (type === 'Message') {
             return UserTaskCategory.Message;
         }
-        if (activityType === 'Goal') {
+        if (type === 'Goal') {
             return UserTaskCategory.Goal;
         }
-        if (activityType === 'Challenge') {
+        if (type === 'Challenge') {
             return UserTaskCategory.Challenge;
         }
-        if ((activityType === 'Professional' && title === 'Weekely review') ||
-            (activityType === 'Professional' && title === 'Week televisit')) {
+        if ((type === 'Professional' && title === 'Weekely review') ||
+            (type === 'Professional' && title === 'Week televisit')) {
             return UserTaskCategory.Consultation;
         }
         return UserTaskCategory.Custom;

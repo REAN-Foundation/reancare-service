@@ -75,7 +75,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             sRootNode.Score = 0;
             const rootNode = await this.createNewNode(t, template.id, null, sRootNode);
             template.RootNodeId = rootNode.id;
-            await template.save();
+            var updatedTemplate = await template.save();
+            if (updatedTemplate.RootNodeId == null) {
+                throw new Error("Unable to save root node id for the template.");
+            }
 
             return AssessmentTemplateMapper.toDto(template);
 
@@ -104,7 +107,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         };
         const node = await this.createNode(template.id, null, rootNode);
         template.RootNodeId = node.id;
-        await template.save();
+        var updatedTemplate = await template.save();
+        if (updatedTemplate.RootNodeId == null) {
+            throw new Error("Unable to save root node id for the template.");
+        }
 
         return AssessmentTemplateMapper.toDto(template);
     };

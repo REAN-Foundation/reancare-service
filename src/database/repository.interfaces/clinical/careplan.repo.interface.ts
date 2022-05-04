@@ -49,7 +49,7 @@ export interface ICareplanRepo {
 
     setUserTaskToActivity(activityId: any, userTaskId: string): Promise<boolean>;
 
-    updateActivityDetails(activityId: uuid, rawContent: any ): Promise<CareplanActivityDto>;
+    updateActivityDetails(activityId: uuid, activityDetails: any): Promise<CareplanActivityDto>;
 
     activityExists(Provider: string, EnrollmentId: string,
         ProviderActionId: string, Sequence: number, ScheduledAt: Date): Promise<boolean>;

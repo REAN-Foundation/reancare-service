@@ -12,7 +12,6 @@ import { IPersonRoleRepo } from '../../database/repository.interfaces/person.rol
 import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
 import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
-import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { OtpPersistenceEntity } from '../../domain.types/otp/otp.domain.types';
 import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { Roles } from '../../domain.types/role/role.types';

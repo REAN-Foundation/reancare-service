@@ -118,6 +118,21 @@ export class CareplanController extends BaseController {
         }
     };
 
+    getWeeklyStatus = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Careplan.GetWeeklyStatus', request, response);
+
+            const careplanId = request.params.id; // careplan id
+            var careplanStatus = await this._service.getWeeklyStatus(careplanId);
+            ResponseHandler.success(request, response, 'Careplan weekly status fetched successfully!', 200, {
+                CareplanStatus : careplanStatus
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

@@ -360,4 +360,21 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
+    public updateActivityUserResponse = async (activityId: uuid, userResponse: string )
+        : Promise<CareplanActivityDto> => {
+        try {
+            var record = await CareplanActivity.findByPk(activityId);
+
+            if (userResponse != null) {
+                record.UserResponse = userResponse;
+            }
+
+            await record.save();
+
+            return CareplanActivityMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
 }

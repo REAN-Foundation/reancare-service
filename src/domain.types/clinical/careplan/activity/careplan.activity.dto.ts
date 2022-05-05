@@ -19,7 +19,7 @@ export interface CareplanActivityDto {
     ScheduledAt?     : Date;
     StartedAt?       : Date;
     CompletedAt?     : Date;
-    Comments?        : string;
+    UserResponse?    : string;
     Items?           : string[];
     Sequence?        : number;
     Frequency?       : number;

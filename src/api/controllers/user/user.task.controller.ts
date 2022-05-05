@@ -232,6 +232,10 @@ export class UserTaskController {
                 const result = await actionResolver.completeAction(
                     existing.ActionType, existing.ActionId, true, finishedAt);
                 Logger.instance().log(`${existing.ActionType} - Action result : ${result.toString()}`);
+
+                if (comments) {
+                    await this._careplanService.updateComments(existing.ActionId, comments );
+                }
             }
 
             const updated = await this._service.finishTask(id);

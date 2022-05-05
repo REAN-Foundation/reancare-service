@@ -517,9 +517,10 @@ export class CareplanService implements IUserActionService {
         return careplanStatus;
     };
 
-    public updateComments = async (activityId: uuid, comments: string): Promise<CareplanActivityDto> => {
+    public updateActivityUserResponse = async (activityId: uuid, userResponse: string):
+    Promise<CareplanActivityDto> => {
 
-        return await this._careplanRepo.updateActivityComments(activityId, comments);
+        return await this._careplanRepo.updateActivityUserResponse(activityId, userResponse);
     };
 
     //#endregion

@@ -220,8 +220,8 @@ export class UserTaskController {
             await this._authorizer.authorize(request, response);
             var actionResolver = new UserActionResolver();
 
-            const { id, finishedAt, comments } = await this._validator.finishTask(request);
-            Logger.instance().log(`Task comments: ${comments}`);
+            const { id, finishedAt, userResponse } = await this._validator.finishTask(request);
+            Logger.instance().log(`User Response: ${userResponse}`);
 
             const existing = await this._service.getById(id);
             if (existing == null) {
@@ -233,8 +233,8 @@ export class UserTaskController {
                     existing.ActionType, existing.ActionId, true, finishedAt);
                 Logger.instance().log(`${existing.ActionType} - Action result : ${result.toString()}`);
 
-                if (comments) {
-                    await this._careplanService.updateComments(existing.ActionId, comments );
+                if (userResponse) {
+                    await this._careplanService.updateActivityUserResponse(existing.ActionId, userResponse );
                 }
             }
 

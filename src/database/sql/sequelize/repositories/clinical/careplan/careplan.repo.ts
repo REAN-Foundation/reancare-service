@@ -360,13 +360,13 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    public updateActivityComments = async (activityId: uuid, comments: string )
+    public updateActivityUserResponse = async (activityId: uuid, userResponse: string )
         : Promise<CareplanActivityDto> => {
         try {
             var record = await CareplanActivity.findByPk(activityId);
 
-            if (comments != null) {
-                record.UserResponse = comments;
+            if (userResponse != null) {
+                record.UserResponse = userResponse;
             }
 
             await record.save();

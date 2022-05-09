@@ -1,6 +1,5 @@
 import express from 'express';
 import * as expressFileupload from 'express-fileupload';
-import { body, param, query, validationResult } from 'express-validator';
 import * as _ from 'lodash';
 import path from 'path';
 import { InputValidationError } from '../../common/input.validation.error';
@@ -10,7 +9,7 @@ import { ConfigurationManager } from '../../config/configuration.manager';
 import { FileResourceRenameDomainModel, FileResourceUpdateModel, FileResourceUploadDomainModel } from '../../domain.types/file.resource/file.resource.domain.model';
 import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
 import { DownloadDisposition, FileResourceMetadata, ResourceReference } from '../../domain.types/file.resource/file.resource.types';
-import { BaseValidator } from './base.validator';
+import { BaseValidator, Where } from './base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,29 +51,18 @@ export class FileResourceValidator extends BaseValidator{
         if (!request.files) {
             Helper.handleValidationError('No file uploaded!!');
         }
-        await this.validateBody(request);
+        await this.validateCreateBody(request);
         return this.getUploadDomainModel(request);
     };
 
     update = async (request: express.Request): Promise<FileResourceUpdateModel> => {
 
-        await param('id').exists()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'id', Where.Body, true, false);
+        await this.validateUuid(request, 'References', Where.Body, true, false);
+        await this.validateUuid(request, 'Tags', Where.Body, true, false);
 
-        await body('References').optional()
-            .run(request);
-
-        await body('Tags').optional()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-    
+        this.validateRequest(request);
+            
         var references: ResourceReference[] = [];
         if (request.body.References !== undefined && request.body.References.length > 0) {
             request.body.References.forEach((element) => {
@@ -109,25 +97,11 @@ export class FileResourceValidator extends BaseValidator{
             throw new InputValidationError(['No file uploaded!!']);
         }
 
-        await param('id').exists()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'id', Where.Body, true, false);
+        await this.validateUuid(request, 'Version', Where.Body, true, false);
+        await this.validateUuid(request, 'MakeAsDefault', Where.Body, true, false);
 
-        await body('Version').optional()
-            .trim()
-            .run(request);
-
-        await body('MakeAsDefault').optional()
-            .trim()
-            .isBoolean()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
 
         var metadataList = this.getFileMetadataList(request);
         if (metadataList.length === 0) {
@@ -144,21 +118,10 @@ export class FileResourceValidator extends BaseValidator{
 
     rename = async (request: express.Request): Promise<FileResourceRenameDomainModel> => {
 
-        await param('id').exists()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'id', Where.Body, true, false);
+        await this.validateString(request, 'newFileName', Where.Body, true, false);
 
-        await param('newFileName').exists()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
 
         var domainModel: FileResourceRenameDomainModel = {
             id          : request.params.id,
@@ -170,24 +133,11 @@ export class FileResourceValidator extends BaseValidator{
 
     getByVersionName = async (request: express.Request): Promise<FileResourceMetadata> => {
 
-        await param('id').exists()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'id', Where.Body, true, false);
+        await this.validateUuid(request, 'Version', Where.Body, true, false);
+        await this.validateUuid(request, 'disposition', Where.Body, true, false);
 
-        await param('version').exists()
-            .trim()
-            .run(request);
-
-        await query('disposition').optional()
-            .trim()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
 
         var disposition = this.getDownloadDisposition(request);
         
@@ -202,25 +152,11 @@ export class FileResourceValidator extends BaseValidator{
 
     getByVersionId = async (request: express.Request): Promise<FileResourceMetadata> => {
 
-        await param('id').exists()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'id', Where.Body, true, false);
+        await this.validateUuid(request, 'Version', Where.Body, true, false);
+        await this.validateUuid(request, 'disposition', Where.Body, true, false);
 
-        await param('versionId').exists()
-            .trim()
-            .isUUID()
-            .run(request);
-
-        await query('disposition').optional()
-            .trim()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
 
         var disposition = this.getDownloadDisposition(request);
         
@@ -235,20 +171,10 @@ export class FileResourceValidator extends BaseValidator{
 
     downloadById = async (request: express.Request): Promise<FileResourceMetadata> => {
 
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'id', Where.Body, true, false);
+        await this.validateUuid(request, 'disposition', Where.Body, true, false);
 
-        await query('disposition').optional()
-            .trim()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
 
         var disposition = this.getDownloadDisposition(request);
         
@@ -275,16 +201,9 @@ export class FileResourceValidator extends BaseValidator{
 
     deleteByReference = async (request: express.Request): Promise<string> => {
 
-        await param('referenceId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'referenceId', Where.Body, true, false);
 
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
         return request.params.referenceId;
     };
 
@@ -316,107 +235,33 @@ export class FileResourceValidator extends BaseValidator{
 
     //#region Privates
 
-    private async searchQueryParams(request) {
+    searchQueryParams = async(request) => {
 
-        await query('ownerUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateString(request, 'ownerUserId', Where.Body, true, false);
+        await this.validateBoolean(request, 'isPublicResource', Where.Body, false, false);
+        await this.validateUuid(request, 'version', Where.Body, true, false);
+        await this.validateUuid(request, 'referenceId', Where.Body, true, false);
+        await this.validateUuid(request, 'referenceType', Where.Body, true, false);
+        await this.validateUuid(request, 'referenceKeyword', Where.Body, true, false);
+        await this.validateUuid(request, 'tag', Where.Body, true, false);
+        await this.validateUuid(request, 'orderBy', Where.Body, true, false);
+        await this.validateUuid(request, 'order', Where.Body, true, false);
+        await this.validateUuid(request, 'pageIndex', Where.Body, true, false);
+        await this.validateUuid(request, 'itemsPerPage', Where.Body, true, false);
 
-        await query('isPublicResource').optional()
-            .trim()
-            .escape()
-            .isBoolean()
-            .run(request);
-
-        await query('version').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('referenceId').optional()
-            .trim()
-            .isUUID()
-            .escape()
-            .run(request);
-
-        await query('referenceType').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('referenceKeyword').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('tag').optional()
-            .trim()
-            .escape()
-            .run(request);
-            
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
     }
 
-    private async validateBody(request) {
+    private async validateCreateBody(request) {
 
-        await body('FileName').optional()
-            .trim()
-            .escape()
-            .run(request);
+        await this.validateString(request, 'FileName', Where.Body, true, false);
+        await this.validateString(request, 'OwnerUserId', Where.Body, true, false);
+        await this.validateBoolean(request, 'IsPublicResource', Where.Body, false, false);
+        await this.validateBoolean(request, 'IsMultiResolutionImage', Where.Body, false, false);
+        await this.validateUuid(request, 'References', Where.Body, true, false);
+        await this.validateString(request, 'Tags', Where.Body, true, false);
 
-        await body('OwnerUserId').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('IsPublicResource').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('IsMultiResolutionImage').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('References').optional()
-            .run(request);
-
-        await body('Tags').optional()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
     }
 
     private getFilter(request): FileResourceSearchFilters {
@@ -446,16 +291,9 @@ export class FileResourceValidator extends BaseValidator{
 
     private async getParamId(request) {
 
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateUuid(request, 'id', Where.Body, true, false);
+        this.validateRequest(request);
+        
         return request.params.id;
     }
 

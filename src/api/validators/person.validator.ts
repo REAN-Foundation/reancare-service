@@ -1,78 +1,47 @@
 import express from 'express';
-import { param, validationResult } from 'express-validator';
-import { Helper } from '../../common/helper';
+import { BaseValidator, Where } from './base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PersonValidator {
+export class PersonValidator extends BaseValidator{
 
-    static validateId = async (request: express.Request): Promise<string> => {
-        return await PersonValidator.getParamId(request);
-    };
+    constructor() {
+        super();
+    }
 
-    private static async getParamId(request): Promise<string> {
+    getParamId = async(request): Promise<string> => {
 
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateString(request, 'id', Where.Body, false, false);
 
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
         return request.params.id;
     }
 
-    static addOrRemoveAddress = async (request: express.Request): Promise<{ id: string; addressId: string }> => {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await param('addressId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
+    addOrRemoveAddress = async (request: express.Request): Promise<{ id, addressId }> => {
+        await this.validateString(request, 'id', Where.Body, false, true);
+        await this.validateString(request, 'addressId', Where.Body, false, true);
+        
+        this.validateRequest(request);
+        
         const id = request.params.id;
         const addressId = request.params.addressId;
 
         return { id, addressId };
+
     };
 
-    static getAllPersonsWithPhoneAndRole = async (request: express.Request)
-        : Promise<{ phone: string; roleId: number }> => {
+    getAllPersonsWithPhoneAndRole = async (request: express.Request): Promise<{ phone: string; roleId: number }> => {
 
-        await param('phone').trim()
-            .unescape()
-            .isUUID()
-            .run(request);
-
-        await param('roleId').trim()
-            .escape()
-            .isInt()
-            .toInt()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateString(request, 'phone', Where.Body, false, true);
+        await this.validateUuid(request, 'roleId', Where.Body, false, true);
+        
+        this.validateRequest(request);
 
         const phone = request.params.phone;
         const roleId = parseInt(request.params.roleId);
 
         return { phone, roleId };
+        
     };
 
 }

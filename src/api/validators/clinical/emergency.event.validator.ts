@@ -1,14 +1,19 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../common/helper';
+import { BaseValidator, Where } from '../../../../src/api/validators/base.validator';
 import { EmergencyEventDomainModel } from '../../../domain.types/clinical/emergency.event/emergency.event.domain.model';
 import { EmergencyEventSearchFilters } from '../../../domain.types/clinical/emergency.event/emergency.event.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class EmergencyEventValidator {
+export class EmergencyEventValidator extends BaseValidator{
+    
+    //static getParamId: any;
 
-    static getDomainModel = (request: express.Request): EmergencyEventDomainModel => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = (request: express.Request): EmergencyEventDomainModel => {
 
         const emergencyEventModel: EmergencyEventDomainModel = {
             EhrId         : request.body.EhrId ?? undefined,
@@ -20,117 +25,69 @@ export class EmergencyEventValidator {
         return emergencyEventModel;
     };
 
-    static create = async (request: express.Request): Promise<EmergencyEventDomainModel> => {
-        await EmergencyEventValidator.validateBody(request);
-        return EmergencyEventValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<EmergencyEventDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await EmergencyEventValidator.getParamId(request);
+    private async validateCreateBody(request) {
+
+        await this.validateString(request, 'EhrId', Where.Body, true, false);
+        await this.validateString(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateString(request, 'Details', Where.Body, false, false);
+        await this.validateDate(request, 'EmergencyDate', Where.Body, true, false);
+
+        this.validateRequest(request);
+
+    }
+
+    // getById = async (request: express.Request): Promise<string> => {
+    //     return await EmergencyEventValidator.getParamId(request);
+    // };
+
+    // delete = async (request: express.Request): Promise<string> => {
+    //     return await EmergencyEventValidator.getParamId(request);
+    // };
+
+    search = async (request: express.Request): Promise<EmergencyEventSearchFilters> => {
+
+        await this.validateString(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateString(request, 'MedicalPractitionerUserId', Where.Body, false, false);
+        await this.validateDate(request, 'EmergencyDateFrom', Where.Body, true, false);
+        await this.validateDate(request, 'EmergencyDateTo', Where.Body, true, false);
+        await this.validateDate(request, 'orderBy', Where.Body, true, false);
+        await this.validateDate(request, 'order', Where.Body, true, false);
+        await this.validateDate(request, 'pageIndex', Where.Body, true, false);
+        await this.validateDate(request, 'itemsPerPage', Where.Body, true, false);
+
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+
+        return this.getFilter(request);
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await EmergencyEventValidator.getParamId(request);
-    };
+    update = async (request: express.Request): Promise<EmergencyEventDomainModel> => {
 
-    static search = async (request: express.Request): Promise<EmergencyEventSearchFilters> => {
-
-        await query('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('MedicalPractitionerUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('EmergencyDateFrom').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('EmergencyDateTo').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return EmergencyEventValidator.getFilter(request);
-    };
-
-    static update = async (request: express.Request): Promise<EmergencyEventDomainModel> => {
-
-        const id = await EmergencyEventValidator.getParamId(request);
-        await EmergencyEventValidator.validateBody(request);
-
-        const domainModel = EmergencyEventValidator.getDomainModel(request);
-        domainModel.id = id;
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
 
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private async validateUpdateBody(request) {
 
-        await body('EhrId').optional()
-            .trim()
-            .escape()
-            .optional()
-            .run(request);
+        await this.validateString(request, 'EhrId', Where.Body, true, false);
+        await this.validateString(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateString(request, 'Details', Where.Body, false, false);
+        await this.validateDate(request, 'EmergencyDate', Where.Body, true, false);
 
-        await body('PatientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        this.validateRequest(request);
 
-        await body('Details').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('EmergencyDate').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
     }
 
-    private static getFilter(request): EmergencyEventSearchFilters {
+    private getFilter(request): EmergencyEventSearchFilters {
         const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
 
         const itemsPerPage =
@@ -147,21 +104,6 @@ export class EmergencyEventValidator {
             ItemsPerPage              : itemsPerPage,
         };
         return filters;
-    }
-
-    private static async getParamId(request) {
-
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return request.params.id;
     }
 
 }

@@ -1,35 +1,33 @@
 import express from 'express';
-
 import { ApiClientService } from '../../services/api.client.service';
 import { ResponseHandler } from '../../common/response.handler';
 import { Loader } from '../../startup/loader';
-import { Authorizer } from '../../auth/authorizer';
 import { ApiClientValidator } from '../validators/api.client.validator';
 import { ApiError } from '../../common/api.error';
+import { BaseController } from './base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ApiClientController {
+export class ApiClientController extends BaseController {
 
     //#region member variables and constructors
 
     _service: ApiClientService = null;
 
-    _authorizer: Authorizer = null;
+    _validator: ApiClientValidator = new ApiClientValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(ApiClientService);
-        this._authorizer = Loader.authorizer;
     }
 
     //#endregion
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.Create';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Client.Create', request, response);
 
-            const clientDomainModel = await ApiClientValidator.create(request);
+            const clientDomainModel = await this._validator.create(request);
 
             const client = await this._service.create(clientDomainModel);
             if (client == null) {
@@ -45,10 +43,9 @@ export class ApiClientController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.GetById';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Client.GetById', request, response);
 
-            const id: string = await ApiClientValidator.getById(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
 
             const client = await this._service.getById(id);
             if (client == null) {
@@ -64,14 +61,16 @@ export class ApiClientController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.Update';
-            await this._authorizer.authorize(request, response);
-
-            const id: string = await ApiClientValidator.getById(request);
-            const domainModel = await ApiClientValidator.update(request);
-            const client = await this._service.update(id, domainModel);
+            await this.setContext('Client.Update', request, response);
+            const domainModel = await this._validator.update(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
+            const client = await this._service.getById(id);
             if (client == null) {
                 throw new ApiError(404, 'Api client not found.');
+            }
+            const updated = await this._service.update(domainModel.id, domainModel);
+            if (updated == null) {
+                throw new ApiError(400, 'Unable to update Api client record!');
             }
             ResponseHandler.success(request, response, 'Api client updated successfully!', 200, {
                 Client : client,
@@ -83,10 +82,9 @@ export class ApiClientController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.Delete';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Client.Delete', request, response);
 
-            const id: string = await ApiClientValidator.getById(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
             await this._service.delete(id);
             ResponseHandler.success(request, response, 'Api client deleted successfully!', 200, null);
         } catch (error) {
@@ -96,11 +94,11 @@ export class ApiClientController {
 
     getCurrentApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.GetApiKey';
+            await this.setContext('Client.GetApiKey', request, response);
 
             //await this._authorizer.authorize(request, response);
 
-            const verificationModel = await ApiClientValidator.getOrRenewApiKey(request);
+            const verificationModel = await this._validator.getOrRenewApiKey(request);
 
             const apiKeyDto = await this._service.getApiKey(verificationModel);
             if (apiKeyDto == null) {
@@ -116,11 +114,11 @@ export class ApiClientController {
 
     renewApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Client.RenewApiKey';
+            await this.setContext('Client.RenewApiKey', request, response);
 
             //await this._authorizer.authorize(request, response);
 
-            const verificationModel = await ApiClientValidator.getOrRenewApiKey(request);
+            const verificationModel = await this._validator.getOrRenewApiKey(request);
             if (verificationModel.ValidFrom == null) {
                 verificationModel.ValidFrom = new Date();
             }

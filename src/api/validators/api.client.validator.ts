@@ -1,13 +1,17 @@
 import express from 'express';
-import { body, validationResult, param } from 'express-validator';
 import { Helper } from '../../common/helper';
 import { ApiClientDomainModel, ApiClientVerificationDomainModel } from '../../domain.types/api.client/api.client.domain.model';
+import { BaseValidator, Where } from './base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class ApiClientValidator {
+export class ApiClientValidator extends BaseValidator{
 
-    static getDomainModel = async (body: any): Promise<ApiClientDomainModel> => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = async (body: any): Promise<ApiClientDomainModel> => {
 
         let clientModel: ApiClientDomainModel = null;
 
@@ -25,52 +29,25 @@ export class ApiClientValidator {
         return clientModel;
     };
 
-    static create = async (
-        request: express.Request
-    ): Promise<ApiClientDomainModel> => {
+    create = async (request: express.Request): Promise<ApiClientDomainModel> => {
 
-        await body('ClientName').exists()
-            .trim()
-            .escape()
-            .isLength({ min: 3 })
-            .run(request);
-        await body('Phone').exists()
-            .trim()
-            .escape()
-            .isLength({ min: 10 })
-            .run(request);
-        await body('Email').exists()
-            .trim()
-            .escape()
-            .isEmail()
-            .isLength({ min: 3 })
-            .run(request);
-        await body('Password').exists()
-            .trim()
-            .escape()
-            .isLength({ min: 6 })
-            .run(request);
-        await body('ValidFrom').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-        await body('ValidTill').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return ApiClientValidator.getDomainModel(request.body);
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getOrRenewApiKey = async (
-        request: express.Request
-    ): Promise<ApiClientVerificationDomainModel> => {
+    private async validateCreateBody(request) {
+
+        await this.validateString(request, 'ClientName', Where.Body, false, false);
+        await this.validateString(request, 'Phone', Where.Body, true, false);
+        await this.validateString(request, 'Email', Where.Body, true, false);
+        await this.validateString(request, 'Password', Where.Body, true, false);
+        await this.validateDate(request, 'ValidFrom', Where.Body, false, false);
+        await this.validateDate(request, 'ValidTill', Where.Body, false, false);
+
+        this.validateRequest(request);
+    }
+
+    getOrRenewApiKey = async (request: express.Request): Promise<ApiClientVerificationDomainModel> => {
 
         const authHeader = request.headers['authorization'].toString();
         let tokens = authHeader.split(' ');
@@ -88,21 +65,11 @@ export class ApiClientValidator {
         const clientCode = tokens[0].trim();
         const password = tokens[1].trim();
 
-        await body('ValidFrom').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-        await body('ValidTill').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
+        await this.validateDate(request, 'ValidFrom', Where.Body, false, false);
+        await this.validateDate(request, 'ValidTill', Where.Body, false, false);
 
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
+        
         return ApiClientValidator.getVerificationDomainModel(request.body, clientCode, password);
     };
 
@@ -120,48 +87,32 @@ export class ApiClientValidator {
         return model;
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
+    getById = async (request: express.Request): Promise<string> => {
 
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateUuid(request, 'id', Where.Body, false, false);
+        
+        this.validateRequest(request);
         
         return request.params.id;
     };
 
-    static update = async (
-        request: express.Request
-    ): Promise<ApiClientDomainModel> => {
+    update = async (request: express.Request): Promise<ApiClientDomainModel> => {
 
-        await body('ClientName').exists()
-            .isLength({ min: 1 })
-            .trim()
-            .escape()
-            .run(request);
-        await body('Phone').exists()
-            .trim()
-            .escape()
-            .isLength({ min: 10 })
-            .run(request);
-        await body('Email').exists()
-            .trim()
-            .escape()
-            .isEmail()
-            .isLength({ min: 3 })
-            .run(request);
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        (await domainModel).id = await this.getParamUuid(request, 'id');
 
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-        return ApiClientValidator.getDomainModel(request.body);
+        return domainModel;
     };
+
+    private async validateUpdateBody(request) {
+
+        await this.validateString(request, 'ClientName', Where.Body, false, false);
+        await this.validateString(request, 'Phone', Where.Body, true, false);
+        await this.validateString(request, 'Email', Where.Body, true, false);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+
+        this.validateRequest(request);
+    }
 
 }

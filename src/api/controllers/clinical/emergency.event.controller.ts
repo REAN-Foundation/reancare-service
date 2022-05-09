@@ -1,37 +1,29 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
+import { EmergencyEventValidator } from '../../../../src/api/validators/clinical/emergency.event.validator';
+import { BaseController } from '../../../../src/api/controllers/base.controller';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { EmergencyEventService } from '../../../services/clinical/emergency.event.service';
-import { OrganizationService } from '../../../services/organization.service';
 import { PatientService } from '../../../services/patient/patient.service';
-import { RoleService } from '../../../services/role.service';
 import { Loader } from '../../../startup/loader';
-import { EmergencyEventValidator } from '../../validators/clinical/emergency.event.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class EmergencyEventController {
+export class EmergencyEventController extends BaseController{
 
     //#region member variables and constructors
 
     _service: EmergencyEventService = null;
 
-    _roleService: RoleService = null;
-
-    _patientService: PatientService = null;
-
-    _organizationService: OrganizationService = null;
-
-    _authorizer: Authorizer = null;
+    _validator: EmergencyEventValidator = new EmergencyEventValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(EmergencyEventService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._patientService = Loader.container.resolve(PatientService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
-        this._authorizer = Loader.authorizer;
+
     }
+
+    _patientService: PatientService = null;
 
     //#endregion
 
@@ -39,10 +31,9 @@ export class EmergencyEventController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Create';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('EmergencyEvent.Create', request, response);
             
-            const domainModel = await EmergencyEventValidator.create(request);
+            const domainModel = await this._validator.create(request);
 
             if (domainModel.PatientUserId != null) {
                 const person = await this._patientService.getByUserId(domainModel.PatientUserId);
@@ -66,11 +57,9 @@ export class EmergencyEventController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.GetById';
-            
-            await this._authorizer.authorize(request, response);
+            await this.setContext('EmergencyEvent.GetById', request, response);
 
-            const id: string = await EmergencyEventValidator.getById(request);
+            const id: string =  await this._validator.getParamUuid(request, 'id');
 
             const emergencyEvent = await this._service.getById(id);
             if (emergencyEvent == null) {
@@ -87,10 +76,9 @@ export class EmergencyEventController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Search';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('EmergencyEvent.Search', request, response);
 
-            const filters = await EmergencyEventValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -109,12 +97,11 @@ export class EmergencyEventController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Update';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('EmergencyEvent.Update', request, response);
 
-            const domainModel = await EmergencyEventValidator.update(request);
+            const domainModel = await this._validator.update(request);
 
-            const id: string = await EmergencyEventValidator.getById(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
             const existingEmergencyEvent = await this._service.getById(id);
             if (existingEmergencyEvent == null) {
                 throw new ApiError(404, 'Emergency Event not found.');
@@ -135,10 +122,9 @@ export class EmergencyEventController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'EmergencyEvent.Delete';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('EmergencyEvent.Delete', request, response);
 
-            const id: string = await EmergencyEventValidator.getById(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
             const existingEmergencyEvent = await this._service.getById(id);
             if (existingEmergencyEvent == null) {
                 throw new ApiError(404, 'Emergency Event not found.');

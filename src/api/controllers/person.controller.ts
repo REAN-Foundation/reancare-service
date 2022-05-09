@@ -1,46 +1,34 @@
 import express from 'express';
-import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
 import { ResponseHandler } from '../../common/response.handler';
-import { AddressService } from '../../services/address.service';
-import { OrganizationService } from '../../services/organization.service';
 import { PersonService } from '../../services/person.service';
-import { UserService } from '../../services/user/user.service';
 import { Loader } from '../../startup/loader';
 import { PersonValidator } from '../validators/person.validator';
+import { BaseController } from './base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PersonController {
+export class PersonController extends BaseController {
 
     //#region member variables and constructors
 
     _service: PersonService = null;
 
-    _userService: UserService = null;
-
-    _addressService: AddressService = null;
-
-    _organizationService: OrganizationService = null;
-
-    _authorizer: Authorizer = null;
+    _validator: PersonValidator = new PersonValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(PersonService);
-        this._userService = Loader.container.resolve(UserService);
-        this._addressService = Loader.container.resolve(AddressService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
-        this._authorizer = Loader.authorizer;
+
     }
 
     //#endregion
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetById';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Person.GetById', request, response);
 
-            const id: string = await PersonValidator.validateId(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
             const person = await this._service.getById(id);
             if (person == null) {
                 ResponseHandler.failure(request, response, 'Person not found.', 404);
@@ -51,15 +39,15 @@ export class PersonController {
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
+            
         }
     };
 
     getAllPersonsWithPhoneAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetAllPersonsWithPhoneAndRole';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('Person.GetAllPersonsWithPhoneAndRole', request, response);
 
-            const { phone, roleId } = await PersonValidator.getAllPersonsWithPhoneAndRole(request);
+            const { phone, roleId } = await this._validator.getAllPersonsWithPhoneAndRole(request);
             const persons = await this._service.getAllPersonsWithPhoneAndRole(phone, roleId);
             const message =
                 persons.length === 0 ?
@@ -76,10 +64,8 @@ export class PersonController {
     
     getOrganizations = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetOrganizations';
-            await this._authorizer.authorize(request, response);
-
-            const id: string = await PersonValidator.validateId(request);
+            await this.setContext('Person.GetOrganizations', request, response);
+            const id: string = await this._validator.getParamUuid(request, 'id');
             const organizations = await this._service.getOrganizations(id);
 
             const message = organizations.length === 0 ?
@@ -95,10 +81,8 @@ export class PersonController {
     
     addAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.AddAddress';
-            await this._authorizer.authorize(request, response);
-
-            const { id, addressId } = await PersonValidator.addOrRemoveAddress(request);
+            await this.setContext('Person.AddAddress', request, response);
+            const { id, addressId } = await this._validator.addOrRemoveAddress(request);
             const person = await this._service.getById(id);
             if (person == null) {
                 throw new ApiError(404, 'Person not found.');
@@ -119,10 +103,9 @@ export class PersonController {
 
     removeAddress = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.RemoveAddress';
-            await this._authorizer.authorize(request, response);
-
-            const { id, addressId } = await PersonValidator.addOrRemoveAddress(request);
+            await this.setContext('Person.RemoveAddress', request, response);
+            
+            const { id, addressId } = await this._validator.addOrRemoveAddress(request);
             const person = await this._service.getById(id);
             if (person == null) {
                 throw new ApiError(404, 'Person not found.');
@@ -143,10 +126,8 @@ export class PersonController {
 
     getAddresses = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'Person.GetAddresses';
-            await this._authorizer.authorize(request, response);
-
-            const id: string = await PersonValidator.validateId(request);
+            await this.setContext('Person.GetAddresses', request, response);
+            const id: string = await this._validator.getParamUuid(request, 'id');
             const addresses = await this._service.getAddresses(id);
                         
             const message = addresses.length === 0 ?

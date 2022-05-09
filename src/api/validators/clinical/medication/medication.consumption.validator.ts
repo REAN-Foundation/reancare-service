@@ -1,6 +1,5 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../../common/helper';
+import { BaseValidator, Where } from '../../../../../src/api/validators/base.validator';
 import { MedicationConsumptionScheduleDomainModel, MedicationConsumptionSummaryDomainModel } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
 import { MedicationConsumptionSearchFilters } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
 import { UserService } from '../../../../services/user/user.service';
@@ -8,53 +7,34 @@ import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class MedicationConsumptionValidator {
+export class MedicationConsumptionValidator extends BaseValidator{
 
-    static checkConsumptionIds = async (request: express.Request): Promise<string[]> => {
+    checkConsumptionIds = async (request: express.Request): Promise<string[]> => {
 
-        await body('MedicationConsumptionIds').exists()
-            .isArray()
-            .run(request);
+        await this.validateUuid(request, 'MedicationConsumptionIds', Where.Body, true, false);
 
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
 
         return request.body.MedicationConsumptionIds;
     };
     
-    static async getParam(request: express.Request, paramName) {
+    getParam = async(request: express.Request, paramName) => {
 
-        await param(paramName).trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateUuid(request, 'paramName', Where.Body, true, false);
+        
+        this.validateRequest(request);
         return request.params[paramName];
     }
 
-    static async getPatientUserId(request) {
+    getPatientUserId = async(request) => {
 
-        await param('patientUserId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'patientUserId', Where.Body, true, false);
 
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
         return request.params.patientUserId;
     }
 
-    static getScheduleForDuration = (request: express.Request): MedicationConsumptionScheduleDomainModel => {
+    getScheduleForDuration = (request: express.Request): MedicationConsumptionScheduleDomainModel => {
 
         const model: MedicationConsumptionScheduleDomainModel = {
             PatientUserId : request.params.patientUserId,
@@ -65,7 +45,7 @@ export class MedicationConsumptionValidator {
         return model;
     };
 
-    static getScheduleForDay = async (request: express.Request): Promise<MedicationConsumptionScheduleDomainModel> => {
+    getScheduleForDay = async (request: express.Request): Promise<MedicationConsumptionScheduleDomainModel> => {
         
         var userService = Loader.container.resolve(UserService);
         var date = await userService.getDateInUserTimeZone(request.params.patientUserId, request.query.date as string);
@@ -78,7 +58,7 @@ export class MedicationConsumptionValidator {
         return model;
     };
 
-    static getSummaryForDay = async (request: express.Request): Promise<MedicationConsumptionSummaryDomainModel> => {
+    getSummaryForDay = async (request: express.Request): Promise<MedicationConsumptionSummaryDomainModel> => {
         
         var userService = Loader.container.resolve(UserService);
         var date = await userService.getDateInUserTimeZone(request.params.patientUserId, request.query.date as string);
@@ -91,7 +71,7 @@ export class MedicationConsumptionValidator {
         return model;
     };
 
-    static getSummaryByCalendarMonths = (request: express.Request): MedicationConsumptionSummaryDomainModel => {
+    getSummaryByCalendarMonths = (request: express.Request): MedicationConsumptionSummaryDomainModel => {
 
         const model: MedicationConsumptionSummaryDomainModel = {
             PatientUserId     : request.params.patientUserId,
@@ -123,42 +103,15 @@ export class MedicationConsumptionValidator {
         return filters;
     }
 
-    static searchForPatient = async (request: express.Request): Promise<MedicationConsumptionSearchFilters> => {
+    searchForPatient = async (request: express.Request): Promise<MedicationConsumptionSearchFilters> => {
 
-        await param('patientUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
+        await this.validateUuid(request, 'orderId', Where.Body, true, false);
+        await this.validateString(request, 'medicationId', Where.Body, false, false);
+        await this.validateDate(request, 'fromDate', Where.Body, true, false);
+        await this.validateDate(request, 'toDate', Where.Body, true, false);
 
-        await query('orderId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('medicationId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('fromDate').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        await query('toDate').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
 
         return MedicationConsumptionValidator.getFilter(request);
     };

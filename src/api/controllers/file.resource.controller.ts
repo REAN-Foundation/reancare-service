@@ -2,7 +2,6 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { Authenticator } from '../../auth/authenticator';
-import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
 import { ResponseHandler } from '../../common/response.handler';
 import { TimeHelper } from '../../common/time.helper';
@@ -10,37 +9,28 @@ import { FileResourceDetailsDto, FileResourceDto } from '../../domain.types/file
 import { FileResourceSearchFilters } from '../../domain.types/file.resource/file.resource.search.types';
 import { DownloadDisposition, FileResourceMetadata } from '../../domain.types/file.resource/file.resource.types';
 import { FileResourceService } from '../../services/file.resource.service';
-import { PersonService } from '../../services/person.service';
-import { RoleService } from '../../services/role.service';
 import { Loader } from '../../startup/loader';
 import { FileResourceValidator } from '../validators/file.resource.validator';
 import AdmZip = require ('adm-zip');
 import { Helper } from '../../common/helper';
+import { BaseController } from './base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FileResourceController {
+export class FileResourceController extends BaseController{
 
     //#region member variables and constructors
 
     _service: FileResourceService = null;
 
-    _roleService: RoleService = null;
-
-    _personService: PersonService = null;
-
-    _authorizer: Authorizer = null;
-
+    _validator: FileResourceValidator = new FileResourceValidator();
+    
     _authenticator: Authenticator = null;
 
-    _validator: FileResourceValidator = new FileResourceValidator();
-
     constructor() {
+        super();
         this._service = Loader.container.resolve(FileResourceService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._authorizer = Loader.authorizer;
-        this._authenticator = Loader.authenticator;
+
     }
 
     //#endregion
@@ -49,8 +39,7 @@ export class FileResourceController {
 
     upload = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.Upload';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('FileResource.Upload', request, response);
             
             var domainModels = await this._validator.upload(request);
 
@@ -73,8 +62,7 @@ export class FileResourceController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.Update';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('FileResource.Update', request, response);
             
             var updateModel = await this._validator.update(request);
             var dto = await this._service.update(updateModel.ResourceId, updateModel);
@@ -89,9 +77,7 @@ export class FileResourceController {
 
     uploadVersion = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.UploadVersion';
-            
-            await this._authorizer.authorize(request, response);
+            await this.setContext('FileResource.UploadVersion', request, response);
 
             const metadata: FileResourceMetadata = await this._validator.uploadVersion(request);
             var dto = await this._service.uploadVersion(metadata, metadata.IsDefaultVersion);
@@ -108,9 +94,7 @@ export class FileResourceController {
 
     rename = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.Rename';
-            
-            await this._authorizer.authorize(request, response);
+            await this.setContext('FileResource.Rename', request, response);
 
             const model = await this._validator.rename(request);
             if (model.NewFileName === null) {
@@ -130,9 +114,7 @@ export class FileResourceController {
 
     searchAndDownload = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.SearchAndDownload';
-            
-            await this._authorizer.authorize(request, response);
+            await this.setContext('FileResource.SearchAndDownload', request, response);
 
             const filters: FileResourceSearchFilters =
                 await this._validator.search(request);
@@ -164,7 +146,8 @@ export class FileResourceController {
 
     downloadByVersionName = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.DownloadByVersionName';
+            await this.setContext('FileResource.DownloadByVersionName', request, response);
+
             const metadata: FileResourceMetadata = await this._validator.getByVersionName(request);
             var resource = await this._service.getById(metadata.ResourceId);
 
@@ -191,7 +174,7 @@ export class FileResourceController {
 
     downloadByVersionId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.DownloadByVersionId';
+            await this.setContext('FileResource.DownloadByVersionId', request, response);
             const metadata: FileResourceMetadata = await this._validator.getByVersionId(request);
             var resource = await this._service.getById(metadata.ResourceId);
 
@@ -218,7 +201,7 @@ export class FileResourceController {
 
     downloadById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.DownloadById';
+            await this.setContext('FileResource.DownloadById', request, response);
             const metadata = await this._validator.downloadById(request);
             var resource = await this._service.getById(metadata.ResourceId);
 
@@ -242,9 +225,7 @@ export class FileResourceController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.Search';
-            
-            await this._authorizer.authorize(request, response);
+            await this.setContext('FileResource.Search', request, response);
 
             const filters: FileResourceSearchFilters = await this._validator.search(request);
 
@@ -268,9 +249,7 @@ export class FileResourceController {
 
     getVersionById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.GetVersionById';
-            
-            await this._authorizer.authorize(request, response);
+            await this.setContext('FileResource.GetVersionById', request, response);
 
             const metadata: FileResourceMetadata = await this._validator.getByVersionId(request);
             
@@ -296,9 +275,7 @@ export class FileResourceController {
    
     getVersions = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.GetVersions';
-            
-            await this._authorizer.authorize(request, response);
+            await this.setContext('FileResource.GetVersions', request, response);
 
             const id: string = await this._validator.getById(request);
 
@@ -328,10 +305,7 @@ export class FileResourceController {
     
     getResourceInfo = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'FileResource.GetResourceInfo';
-            
-            await this._authorizer.authorize(request, response);
-
+            await this.setContext('FileResource.GetResourceInfo', request, response);
             const id: string = await this._validator.getById(request);
 
             var dto = await this._service.getById(id);
@@ -351,9 +325,7 @@ export class FileResourceController {
    
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            request.context = 'FileResource.Delete';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('FileResource.Delete', request, response);
 
             const id: string = await this._validator.delete(request);
             const existingFileResource = await this._service.getById(id);
@@ -377,9 +349,7 @@ export class FileResourceController {
 
     deleteVersionByVersionId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
-            request.context = 'FileResource.DeleteVersionByVersionId';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('FileResource.DeleteVersionByVersionId', request, response);
 
             const metadata: FileResourceMetadata = await this._validator.getByVersionId(request);
 

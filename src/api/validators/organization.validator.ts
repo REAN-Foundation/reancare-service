@@ -1,14 +1,17 @@
 import express from 'express';
-import { body, param, validationResult, query } from 'express-validator';
-import { Helper } from '../../common/helper';
 import { OrganizationDomainModel } from '../../domain.types/organization/organization.domain.model';
 import { OrganizationSearchFilters } from '../../domain.types/organization/organization.search.types';
+import { BaseValidator, Where } from './base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class OrganizationValidator {
+export class OrganizationValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): OrganizationDomainModel => {
+    constructor(){
+        super();
+    }
+
+    getDomainModel = (request: express.Request): OrganizationDomainModel => {
         const organizationModel: OrganizationDomainModel = {
             Type                             : request.body.Type ?? null,
             Name                             : request.body.Name ?? null,
@@ -27,219 +30,61 @@ export class OrganizationValidator {
         return organizationModel;
     };
 
-    static create = async (request: express.Request): Promise<OrganizationDomainModel> => {
-        await OrganizationValidator.validateBody(request, true);
-        return OrganizationValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<OrganizationDomainModel> => {
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await OrganizationValidator.getParamId(request);
-    };
+    private async validateCreateBody(request) {
+        await this.validateString(request, 'type', Where.Query, false, false);
+        await this.validateString(request, 'name', Where.Query, false, true);
+        await this.validateString(request, 'contactUserId', Where.Query, false, true);
+        await this.validateString(request, 'contactPhone', Where.Query, false, false);
+        await this.validateString(request, 'contactEmail', Where.Query, false, true);
+        await this.validateString(request, 'parentOrganizationId', Where.Query, false, true);
+        await this.validateString(request, 'about', Where.Query, false, true);
+        await this.validateDate(request, 'operationalSinceFrom', Where.Query, false, true);
+        await this.validateDate(request, 'operationalSinceTo', Where.Query, false, true);
+        await this.validateUuid(request, 'location', Where.Query, false, false);
+        await this.validateBoolean(request, 'isHealthFacility', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
+        await this.validateUuid(request, 'orderBy', Where.Query, false, false);
+        await this.validateUuid(request, 'order', Where.Query, false, false);
+        await this.validateUuid(request, 'pageIndex', Where.Query, false, false);
+        await this.validateUuid(request, 'itemsPerPage', Where.Query, false, false);
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await OrganizationValidator.getParamId(request);
-    };
-
-    static search = async (request: express.Request): Promise<OrganizationSearchFilters> => {
-        await query('type').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('name').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('contactUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('contactPhone')
-            .optional()
-            .notEmpty()
-            .trim()
-            .escape()
-            .customSanitizer(Helper.sanitizePhone)
-            .custom(Helper.validatePhone)
-            .run(request);
-
-        await body('contactEmail').optional()
-            .trim()
-            .isEmail()
-            .escape()
-            .normalizeEmail()
-            .run(request);
-
-        await query('parentOrganizationId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await query('about').optional()
-            .trim()
-            .run(request);
-
-        await query('operationalSinceFrom').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('operationalSinceTo').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('location').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('isHealthFacility').optional()
-            .trim()
-            .escape()
-            .isBoolean()
-            .run(request);
-
-        await query('createdDateFrom').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('createdDateTo').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return OrganizationValidator.getFilter(request);
-    };
-
-    private static async validateBody(request, create = true) {
-        await body('Type').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Name').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('ContactUserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        if (create) {
-            await body('ContactPhone')
-                .exists()
-                .notEmpty()
-                .trim()
-                .escape()
-                .customSanitizer(Helper.sanitizePhone)
-                .custom(Helper.validatePhone)
-                .run(request);
-        } else {
-            await body('ContactPhone')
-                .optional()
-                .notEmpty()
-                .trim()
-                .escape()
-                .customSanitizer(Helper.sanitizePhone)
-                .custom(Helper.validatePhone)
-                .run(request);
-        }
-
-        await body('ContactEmail').optional()
-            .trim()
-            .isEmail()
-            .escape()
-            .normalizeEmail()
-            .run(request);
-
-        await body('ParentOrganizationId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('About').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('OperationalSince').optional()
-            .trim()
-            .escape()
-            .toDate()
-            .run(request);
-
-        await body('AddressId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('ImageResourceId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('IsHealthFacility').optional()
-            .trim()
-            .escape()
-            .isBoolean()
-            .toBoolean()
-            .run(request);
-
-        await body('NationalHealthFacilityRegistryId').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
     }
+    
+    search = async (request: express.Request): Promise<OrganizationSearchFilters> => {
+        await this.validateString(request, 'type', Where.Query, false, false);
+        await this.validateString(request, 'name', Where.Query, false, false);
+        await this.validateString(request, 'contactUserId', Where.Query, false, false);
+        await this.validateString(request, 'contactPhone', Where.Query, false, false);
+        await this.validateString(request, 'contactEmail', Where.Query, false, false);
+        await this.validateString(request, 'parentOrganizationId', Where.Query, false, false);
+        await this.validateString(request, 'about', Where.Query, false, false);
+        await this.validateDate(request, 'operationalSinceFrom', Where.Query, false, false);
+        await this.validateDate(request, 'operationalSinceTo', Where.Query, false, false);
+        await this.validateUuid(request, 'location', Where.Query, false, false);
+        await this.validateBoolean(request, 'isHealthFacility', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
+        await this.validateUuid(request, 'orderBy', Where.Query, false, false);
+        await this.validateUuid(request, 'order', Where.Query, false, false);
+        await this.validateUuid(request, 'pageIndex', Where.Query, false, false);
+        await this.validateUuid(request, 'itemsPerPage', Where.Query, false, false);
 
-    private static getFilter(request): OrganizationSearchFilters {
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+
+        return this.getFilter(request);
+       
+    };
+
+    private getFilter(request): OrganizationSearchFilters {
         
         const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
 
@@ -263,59 +108,56 @@ export class OrganizationValidator {
         return filters;
     }
 
-    static update = async (request: express.Request): Promise<OrganizationDomainModel> => {
-        const id = await OrganizationValidator.getParamId(request);
-        await OrganizationValidator.validateBody(request, false);
-        const domainModel = OrganizationValidator.getDomainModel(request);
-        domainModel.id = id;
+    update = async (request: express.Request): Promise<OrganizationDomainModel> => {
+
+        await this.validateUpdateBody(request);
+        const domainModel = this.getDomainModel(request);
+        domainModel.id = await this.getParamUuid(request, 'id');
         return domainModel;
     };
 
-    static getByContactUserId = async (request: express.Request) => {
-        await param('contactUserId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
+    private async validateUpdateBody (request){
+        await this.validateString(request, 'type', Where.Query, false, false);
+        await this.validateString(request, 'name', Where.Query, false, false);
+        await this.validateString(request, 'contactUserId', Where.Query, false, false);
+        await this.validateString(request, 'contactPhone', Where.Query, false, false);
+        await this.validateString(request, 'contactEmail', Where.Query, false, false);
+        await this.validateString(request, 'parentOrganizationId', Where.Query, false, false);
+        await this.validateString(request, 'about', Where.Query, false, false);
+        await this.validateDate(request, 'operationalSinceFrom', Where.Query, false, false);
+        await this.validateDate(request, 'operationalSinceTo', Where.Query, false, false);
+        await this.validateUuid(request, 'location', Where.Query, false, false);
+        await this.validateBoolean(request, 'isHealthFacility', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
+        await this.validateUuid(request, 'orderBy', Where.Query, false, false);
+        await this.validateUuid(request, 'order', Where.Query, false, false);
+        await this.validateUuid(request, 'pageIndex', Where.Query, false, false);
+        await this.validateUuid(request, 'itemsPerPage', Where.Query, false, false);
 
-        const result = validationResult(request);
+        this.validateRequest(request);
+    }
 
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+    getByContactUserId = async (request: express.Request) => {
+        await this.validateString(request, 'contactUserId', Where.Query, true, false);
+        
+        this.validateRequest(request);
         return request.params.contactUserId;
     };
 
-    public static async getParamId(request) {
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+    public async getParamId(request) {
+        await this.validateString(request, 'id', Where.Query, false, false);
+        
+        this.validateRequest(request);
         return request.params.id;
     }
 
-    static addOrRemoveAddress = async (request: express.Request): Promise<{ id: string; addressId: string }> => {
+    addOrRemoveAddress = async (request: express.Request): Promise<{ id: string; addressId: string }> => {
 
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await param('addressId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateString(request, 'id', Where.Query, false, false);
+        await this.validateString(request, 'id', Where.Query, false, false);
+    
+        this.validateRequest(request);
 
         const id = request.params.id;
         const addressId = request.params.addressId;
@@ -323,23 +165,11 @@ export class OrganizationValidator {
         return { id, addressId };
     };
 
-    static addOrRemovePerson = async (request: express.Request): Promise<{ id: string; personId: string }> => {
+    addOrRemovePerson = async (request: express.Request): Promise<{ id: string; personId: string }> => {
+        await this.validateString(request, 'id', Where.Query, false, false);
+        await this.validateString(request, 'personId', Where.Query, false, false);
 
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await param('personId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
 
         const id = request.params.id;
         const personId = request.params.personId;

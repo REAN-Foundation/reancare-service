@@ -1,14 +1,18 @@
 import express from 'express';
-import { query, body, validationResult, param } from 'express-validator';
 import { Helper } from '../../common/helper';
 import { DoctorDomainModel } from '../../domain.types/doctor/doctor.domain.model';
 import { DoctorSearchFilters } from '../../domain.types/doctor/doctor.search.types';
+import { BaseValidator, Where } from './base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class DoctorValidator {
+export class DoctorValidator extends BaseValidator {
 
-    static getDomainModel = (request: express.Request): DoctorDomainModel => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = (request: express.Request): DoctorDomainModel => {
 
         const birthdate = request.body.BirthDate != null && typeof request.body.BirthDate !== undefined
             ? new Date(Date.parse(request.body.BirthDate))
@@ -58,288 +62,85 @@ export class DoctorValidator {
         return entity;
     };
 
-    static create = async (
-        request: express.Request
-    ): Promise<DoctorDomainModel> => {
-        await DoctorValidator.validateBody(request, true);
-        return DoctorValidator.getDomainModel(request);
+    create = async ( request: express.Request): Promise<DoctorDomainModel> => {
+    
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
+        
     };
 
-    private static async validateBody(request, create = true) {
+    private async validateCreateBody(request) {
 
-        if (create) {
-            await body('Phone')
-                .exists()
-                .notEmpty()
-                .trim()
-                .escape()
-                .customSanitizer(Helper.sanitizePhone)
-                .custom(Helper.validatePhone)
-                .run(request);
-        }
-        else {
-            await body('Phone')
-                .optional()
-                .notEmpty()
-                .trim()
-                .escape()
-                .customSanitizer(Helper.sanitizePhone)
-                .custom(Helper.validatePhone)
-                .run(request);
-        }
+        await this.validateString(request, 'phone', Where.Query, false, false);
+        await this.validateString(request, 'Email', Where.Query, false, false);
+        await this.validateString(request, 'FirstName', Where.Query, false, false);
+        await this.validateString(request, 'LastName', Where.Query, false, false);
+        await this.validateString(request, 'Prefix', Where.Query, false, false);
+        await this.validateString(request, 'Gender', Where.Query, false, false);
+        await this.validateString(request, 'BirthDate', Where.Query, false, false);
+        await this.validateString(request, 'ImageResourceId', Where.Query, false, false);
+        await this.validateString(request, 'NationalDigiDoctorId', Where.Query, false, false);
+        await this.validateString(request, 'About', Where.Query, false, false);
+        await this.validateString(request, 'Locality', Where.Query, false, false);
+        await this.validateString(request, 'Qualifications', Where.Query, false, false);
+        await this.validateString(request, 'Specialities', Where.Query, false, false);
+        await this.validateString(request, 'PractisingSince', Where.Query, false, false);
+        await this.validateString(request, 'ProfessionalHighlights', Where.Query, false, false);
+        await this.validateString(request, 'AddressIds', Where.Query, false, false);
+        await this.validateString(request, 'OrganizationIds', Where.Query, false, false);
+        await this.validateString(request, 'AvailabilitySchedule', Where.Query, false, false);
 
-        await body('Email').optional()
-            .trim()
-            .isEmail()
-            .escape()
-            .normalizeEmail()
-            .run(request);
-
-        await body('FirstName').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('LastName').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Prefix').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('Gender').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('BirthDate').optional()
-            .trim()
-            .escape()
-            .isDate()
-            .run(request);
-
-        await body('ImageResourceId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('NationalDigiDoctorId').optional()
-            .trim()
-            .isLength({ min: 3 })
-            .run(request);
-
-        await body('About').optional()
-            .trim()
-            .isLength({ min: 10 })
-            .run(request);
-
-        await body('Locality').optional()
-            .trim()
-            .isLength({ min: 3 })
-            .run(request);
-            
-        await body('Qualifications').optional()
-            .trim()
-            .isLength({ min: 3 })
-            .run(request);
-
-        await body('Specialities').optional()
-            .trim()
-            .isArray()
-            .run(request);
-
-        await body('PractisingSince')
-            .optional()
-            .trim()
-            .escape()
-            .toDate()
-            .isDate()
-            .run(request);
-
-        await body('ProfessionalHighlights').optional()
-            .trim()
-            .isArray()
-            .run(request);
-
-        await body('AddressIds')
-            .optional()
-            .trim()
-            .isArray()
-            .run(request);
-
-        await body('OrganizationIds')
-            .optional()
-            .trim()
-            .isArray()
-            .run(request);
-
-        await body('AvailabilitySchedule')
-            .optional()
-            .trim()
-            .escape()
-            .isObject()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
     }
 
-    static getByUserId = async (request: express.Request): Promise<string> => {
-        await DoctorValidator.GetParamUserId(request);
-        return request.params.userId;
+    // getByUserId = async (request: express.Request): Promise<string> => {
+    //     await DoctorValidator.GetParamUserId(request);
+    //     return request.params.userId;
+    // };
+
+    // delete = async (request: express.Request): Promise<string> => {
+    //     await DoctorValidator.GetParamUserId(request);
+    //     return request.params.userId;
+    // }
+
+    search = async (request: express.Request): Promise<DoctorSearchFilters> => {
+
+        await this.validateUuid(request, 'phone', Where.Query, false, false);
+        await this.validateUuid(request, 'email', Where.Query, false, false);
+        await this.validateUuid(request, 'name', Where.Query, false, false);
+        await this.validateUuid(request, 'gender', Where.Query, false, false);
+        await this.validateDate(request, 'practisingSinceFrom', Where.Query, false, false);
+        await this.validateDate(request, 'practisingSinceTo', Where.Query, false, false);
+        await this.validateString(request, 'locality', Where.Query, false, false);
+        await this.validateString(request, 'qualifications', Where.Query, false, false);
+        await this.validateString(request, 'specialities', Where.Query, false, false);
+        await this.validateString(request, 'professionalHighlights', Where.Query, false, false);
+        await this.validateDate(request, 'consultationFeeFrom', Where.Query, false, false);
+        await this.validateDate(request, 'consultationFeeTo', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
+        await this.validateUuid(request, 'orderBy', Where.Query, false, false);
+        await this.validateUuid(request, 'order', Where.Query, false, false);
+        await this.validateUuid(request, 'pageIndex', Where.Query, false, false);
+        await this.validateUuid(request, 'itemsPerPage', Where.Query, false, false);
+        await this.validateString(request, 'fullDetails', Where.Query, false, false);
+
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
+
+        return this.getFilter(request);
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        await DoctorValidator.GetParamUserId(request);
-        return request.params.userId;
-    };
+    GetParamUserId = async(request) => {
 
-    static search = async (
-        request: express.Request
-    ): Promise<DoctorSearchFilters> => {
-
-        await query('phone').optional()
-            .trim()
-            .run(request);
-
-        await query('email').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('name').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('gender').optional()
-            .isAlpha()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('practisingSinceFrom')
-            .optional()
-            .trim()
-            .escape()
-            .isDate()
-            .toDate()
-            .run(request);
-
-        await query('practisingSinceTo')
-            .optional()
-            .trim()
-            .escape()
-            .isDate()
-            .toDate()
-            .run(request);
-
-        await query('locality')
-            .optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('qualifications')
-            .optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('specialities')
-            .optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('professionalHighlights')
-            .optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('consultationFeeFrom')
-            .optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('consultationFeeTo')
-            .optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('createdDateFrom')
-            .optional()
-            .isDate()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('createdDateTo')
-            .optional()
-            .isDate()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex')
-            .optional()
-            .isInt()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('itemsPerPage')
-            .optional()
-            .isInt()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('fullDetails').optional()
-            .isBoolean()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return DoctorValidator.getFilter(request);
-    };
-
-    private static async GetParamUserId(request) {
-
-        await param('userId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateUuid(request, 'phone', Where.Query, false, false);
+        
+        this.validateRequest(request);
+        
     }
 
-    private static getFilter(request): DoctorSearchFilters {
+    private getFilter(request): DoctorSearchFilters {
 
         const pageIndex =
             request.query.pageIndex !== 'undefined'
@@ -375,30 +176,24 @@ export class DoctorValidator {
         return filters;
     }
 
-    private static async getParamUserId(request) {
+    getParamUserId = async (request) => {
 
-        await param('userId').trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'phone', Where.Query, false, false);
 
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
+        
         return request.params.userId;
     }
 
-    static updateByUserId = async (request: express.Request): Promise<DoctorDomainModel> => {
+    // updateByUserId = async (request: express.Request): Promise<DoctorDomainModel> => {
 
-        const userId = await DoctorValidator.getParamUserId(request);
-        await DoctorValidator.validateBody(request, false);
+    //     const userId = await DoctorValidator.getParamUserId(request);
+    //     await DoctorValidator.validateCreateBody(request);
 
-        var domainModel = DoctorValidator.getDomainModel(request);
-        domainModel.UserId = userId;
+    //     var domainModel = DoctorValidator.getDomainModel(request);
+    //     domainModel.UserId = userId;
 
-        return domainModel;
-    };
+    //     return domainModel;
+    // };
 
 }

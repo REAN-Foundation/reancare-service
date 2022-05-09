@@ -11,7 +11,8 @@ export const register = (app: express.Application): void => {
     router.post('/', authenticator.authenticateClient, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getByUserId);
-    router.put('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateByUserId);
+    // eslint-disable-next-line max-len
+    //router.put('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateByUserId);
     
     app.use('/api/v1/doctors', router);
 };

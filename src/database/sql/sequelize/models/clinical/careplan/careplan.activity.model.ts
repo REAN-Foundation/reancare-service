@@ -158,7 +158,7 @@ export default class CareplanActivity extends Model {
         type      : DataType.TEXT,
         allowNull : true,
     })
-    Comments: string;
+    UserResponse: string;
 
     @Column({
         type      : DataType.TEXT,

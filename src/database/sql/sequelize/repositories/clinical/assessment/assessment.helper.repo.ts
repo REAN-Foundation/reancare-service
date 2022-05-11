@@ -680,7 +680,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             dataType === ConditionOperandDataType.Float ||
             dataType === ConditionOperandDataType.Integer
         ) {
-            return operand.ToString();
+            return operand.toString();
         }
         if (dataType === ConditionOperandDataType.Array) {
             return JSON.stringify(operand);

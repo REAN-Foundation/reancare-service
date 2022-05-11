@@ -11,9 +11,11 @@ import {
     CAssessmentQueryOption,
     CAssessmentQuestionNode,
     CAssessmentTemplate,
+    ConditionOperand,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
+import { name } from 'dayjs/locale/*';
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -109,7 +111,7 @@ export class AhaAssessmentConverter {
             pathIndex++;
             var path = new CAssessmentNodePath();
             path.DisplayCode = node.DisplayCode + ':Path#' + pathIndex.toString();
-            this.constructConditionFromRules(act.Rules, path, node);
+            this.constructConditionFromRules(act.rules, path, node);
 
             if (actionType === 'TriggerQuestion') {
                 const nextProviderQuestionId = act.questionId;
@@ -148,7 +150,7 @@ export class AhaAssessmentConverter {
 
     private constructConditionFromRules(rules: any[], path: CAssessmentNodePath, node: CAssessmentQuestionNode) {
 
-        if (rules.length === 0) {
+        if (rules.length != 0) {
 
             var rule = rules[0];
             var condition = new CAssessmentPathCondition();
@@ -158,28 +160,18 @@ export class AhaAssessmentConverter {
             if (rule.operator === 'equals') {
 
                 condition.OperatorType = ConditionOperatorType.EqualTo;
-
-                condition.FirstOperand.Name = 'ReceivedAnswer';
-                condition.FirstOperand.Value = null;
-                condition.FirstOperand.DataType = ConditionOperandDataType.Integer;
-
+                condition.FirstOperand = new ConditionOperand(ConditionOperandDataType.Integer, 'ReceivedAnswer', null);
+                
                 var optionSequence: number = this.getOptionSequenceForAnswer(node.Options, rule.value);
-                condition.SecondOperand.Name = 'ExpectedAnswer';
-                condition.SecondOperand.Value = optionSequence;
-                condition.SecondOperand.DataType = ConditionOperandDataType.Integer;
+                condition.SecondOperand = new ConditionOperand(ConditionOperandDataType.Integer, 'ExpectedAnswer', optionSequence);
             }
             else if (rule.operator === 'in') {
 
                 condition.OperatorType = ConditionOperatorType.In;
-
-                condition.FirstOperand.Name = 'ReceivedAnswer';
-                condition.FirstOperand.Value = null;
-                condition.FirstOperand.DataType = ConditionOperandDataType.Integer;
+                condition.FirstOperand = new ConditionOperand(ConditionOperandDataType.Integer, 'ReceivedAnswer', null);
 
                 var arr = this.getOptionSequenceArrayForAnswer(node.Options, rule.value);
-                condition.SecondOperand.Name = 'ExpectedAnswer';
-                condition.SecondOperand.Value = arr;
-                condition.SecondOperand.DataType = ConditionOperandDataType.Array;
+                condition.SecondOperand = new ConditionOperand(ConditionOperandDataType.Array, 'ExpectedAnswer', arr);
             }
             path.Condition = condition;
         }
@@ -222,7 +214,9 @@ export class AhaAssessmentConverter {
 
     private getOptionSequenceForAnswer(options: CAssessmentQueryOption[], value: any): number {
         for (var option of options) {
-            if (option.Text === value) {
+            var valueStr = value ? value.toString().toLowerCase() : null;
+            var optionStr = option.Text ? option.Text.toString().toLowerCase() : null;
+            if (optionStr === valueStr) {
                 return option.Sequence;
             }
         }

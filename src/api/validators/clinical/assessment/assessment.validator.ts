@@ -69,11 +69,11 @@ export class AssessmentValidator extends BaseValidator {
         if (responseType === QueryResponseType.SingleChoiceSelection ||
             responseType === QueryResponseType.Integer) {
             await this.validateInt(request, 'Answer', Where.Body, true, false);
-            answerModel['IntegerValue'] = request.body.Answer;
+            answerModel['IntegerValue'] = parseInt(request.body.Answer);
         }
         else if (responseType === QueryResponseType.MultiChoiceSelection) {
             await this.validateArray(request, 'Answer', Where.Body, true, false);
-            answerModel['IntegerArray'] = request.body.Answer;
+            answerModel['IntegerArray'] = JSON.parse(request.body.Answer);
         }
         else if (responseType === QueryResponseType.Text ||
             responseType === QueryResponseType.Ok) {
@@ -91,7 +91,7 @@ export class AssessmentValidator extends BaseValidator {
         }
         else if (responseType === QueryResponseType.Float) {
             await this.validateDecimal(request, 'Answer', Where.Body, true, false);
-            answerModel['FloatValue'] = request.body.Answer;
+            answerModel['FloatValue'] = parseFloat(request.body.Answer);
         }
         else if (responseType === QueryResponseType.Boolean) {
             await this.validateBoolean(request, 'Answer', Where.Body, true, false);

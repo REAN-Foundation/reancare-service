@@ -44,7 +44,6 @@ export default class HealthPriorityType extends Model {
     @Column({
         type         : DataType.STRING(512),
         allowNull    : true,
-        defaultValue : "HeartFailure"
     })
     Tags: string;
 

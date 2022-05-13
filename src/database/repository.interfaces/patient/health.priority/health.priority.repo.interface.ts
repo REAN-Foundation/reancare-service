@@ -10,7 +10,7 @@ export interface IHealthPriorityRepo {
 
     getPatientHealthPriorities(patientUserId: string): Promise<HealthPriorityDto[]>;
 
-    getPriorityTypes(): Promise<HealthPriorityTypeDto[]>;
+    getPriorityTypes(tags?: string): Promise<HealthPriorityTypeDto[]>;
 
     getById(id: string): Promise<HealthPriorityDto>;
 

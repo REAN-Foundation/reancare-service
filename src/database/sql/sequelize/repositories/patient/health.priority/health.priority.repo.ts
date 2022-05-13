@@ -9,6 +9,7 @@ import { HealthPriorityTypeDomainModel } from '../../../../../../domain.types/pa
 import { HealthPriorityTypeDto } from '../../../../../../domain.types/patient/health.priority.type/health.priority.type.dto';
 import HealthPriorityType    from '../../../models/patient/health.priority/health.priority.type.model';
 import { HealthPrioritySearchFilters, HealthPrioritySearchResults } from '../../../../../../domain.types/patient/health.priority/health.priority.search.types';
+import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -57,9 +58,13 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
         }
     };
     
-    getPriorityTypes = async (): Promise<HealthPriorityTypeDto[]> => {
+    getPriorityTypes = async (tags?: string): Promise<HealthPriorityTypeDto[]> => {
         try {
-            const priorityTypes = await HealthPriorityType.findAll({});
+            if (tags === "HeartFailure") {
+            var priorityTypes = await HealthPriorityType.findAll({ where : { Tags: { [Op.like]: '%' + tags + '%' } },});
+            } else {    
+            var priorityTypes = await HealthPriorityType.findAll();
+            }
 
             const dtos: HealthPriorityTypeDto[] = [];
             for (const priorityType of priorityTypes) {

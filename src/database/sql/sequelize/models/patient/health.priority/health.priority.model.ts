@@ -79,7 +79,6 @@ export default class HealthPriority extends Model {
         type         : DataType.STRING(64),
         allowNull    : true,
         values       : HealthPriorityTypeList,
-        defaultValue : HealthPriorityType.Custom
     })
     HealthPriorityType: string;
 

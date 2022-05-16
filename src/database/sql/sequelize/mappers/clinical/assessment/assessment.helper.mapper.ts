@@ -22,7 +22,8 @@ import {
     TextQueryAnswer,
     DateQueryAnswer,
     FileQueryAnswer,
-    BooleanQueryAnswer
+    BooleanQueryAnswer,
+    ConditionOperand
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import AssessmentNode from '../../../models/clinical/assessment/assessment.node.model';
@@ -40,6 +41,7 @@ export class AssessmentHelperMapper {
             return null;
         }
         var conditionDto = new CAssessmentPathCondition();
+
         conditionDto.id = condition.id;
         conditionDto.NodeId = condition.NodeId;
         conditionDto.DisplayCode = condition.DisplayCode;
@@ -50,17 +52,21 @@ export class AssessmentHelperMapper {
 
         conditionDto.IsCompositeCondition = condition.IsCompositeCondition;
         conditionDto.CompositionType = condition.CompositionType as ConditionCompositionType;
-        conditionDto.FirstOperand.DataType = condition.FirstOperandDataType as ConditionOperandDataType;
-        conditionDto.FirstOperand.Name = condition.FirstOperandName;
-        conditionDto.FirstOperand.Value = condition.FirstOperandValue;
 
-        conditionDto.SecondOperand.DataType = condition.SecondOperandDataType as ConditionOperandDataType;
-        conditionDto.SecondOperand.Name = condition.SecondOperandName;
-        conditionDto.SecondOperand.Value = condition.SecondOperandValue;
+        conditionDto.FirstOperand = new ConditionOperand(
+            condition.FirstOperandDataType as ConditionOperandDataType,
+            condition.FirstOperandName,
+            condition.FirstOperandValue);
 
-        conditionDto.ThirdOperand.DataType = condition.ThirdOperandDataType as ConditionOperandDataType;
-        conditionDto.ThirdOperand.Name = condition.ThirdOperandName;
-        conditionDto.ThirdOperand.Value = condition.ThirdOperandValue;
+        conditionDto.SecondOperand = new ConditionOperand(
+            condition.SecondOperandDataType as ConditionOperandDataType,
+            condition.SecondOperandName,
+            condition.SecondOperandValue);
+
+        conditionDto.ThirdOperand = new ConditionOperand(
+            condition.ThirdOperandDataType as ConditionOperandDataType,
+            condition.ThirdOperandName,
+            condition.ThirdOperandValue);
 
         return conditionDto;
     }

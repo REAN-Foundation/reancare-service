@@ -62,7 +62,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
         try {
             const filter = { where: {} };
             if (tags != null) {
-                filter.where['Tags'] = { [Op.like]: '%' + tags + '%' }
+                filter.where['Tags'] = { [Op.like]: '%' + tags + '%' };
             }
 
             const priorityTypes = await HealthPriorityType.findAll(filter);

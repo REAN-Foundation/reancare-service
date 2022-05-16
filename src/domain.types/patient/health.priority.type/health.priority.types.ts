@@ -55,6 +55,3 @@ export const HealthPriorityTypeList: HealthPriorityType [] = [
     HealthPriorityType.Fat,
     HealthPriorityType.Carbohydrates,
 ];
-
-
-

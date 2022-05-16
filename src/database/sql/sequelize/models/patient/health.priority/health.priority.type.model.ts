@@ -35,8 +35,8 @@ export default class HealthPriorityType extends Model {
 
     @Length({ max: 256 })
     @Column({
-        type      : DataType.STRING(256),
-        allowNull : false,
+        type     : DataType.STRING(256),
+        allowNull: false,
     })
     Type: string;
 

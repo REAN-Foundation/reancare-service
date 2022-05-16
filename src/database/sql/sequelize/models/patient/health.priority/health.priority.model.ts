@@ -76,9 +76,9 @@ export default class HealthPriority extends Model {
     ProviderCareplanName: string;
 
     @Column({
-        type         : DataType.STRING(64),
-        allowNull    : true,
-        values       : HealthPriorityTypeList,
+        type     : DataType.STRING(64),
+        allowNull: true,
+        values   : HealthPriorityTypeList,
     })
     HealthPriorityType: string;
 

@@ -9,6 +9,7 @@ import { BodyHeightDto } from "../biometrics/body.height/body.height.dto";
 import { BodyTemperatureDto } from "../biometrics/body.temperature/body.temperature.dto";
 import { BodyWeightDto } from "../biometrics/body.weight/body.weight.dto";
 import { PulseDto } from "../biometrics/pulse/pulse.dto";
+import { Helper } from "../../../common/helper";
 
 //#region Enums
 
@@ -198,6 +199,7 @@ export class CAssessmentNode {
     TemplateId              : uuid;
     NodeType                : AssessmentNodeType;
     ParentNodeId?           : uuid;
+    ParentNodeDisplayCode?  : uuid;
     Title                   : string;
     Description?            : string;
     Hint?                   : string;
@@ -330,6 +332,27 @@ export class ConditionOperand {
         this.DataType = dataType;
         this.Name = name;
         this.Value = value;
+
+        if (Helper.isStr(this.Value) && this.DataType !== ConditionOperandDataType.Text) {
+            if (this.DataType === ConditionOperandDataType.Integer) {
+                this.Value = parseInt(this.Value as string);
+            }
+            if (this.DataType === ConditionOperandDataType.Float) {
+                this.Value = parseFloat(this.Value as string);
+            }
+            if (this.DataType === ConditionOperandDataType.Boolean) {
+                this.Value = parseInt(this.Value as string);
+                if (this.Value === 0) {
+                    this.Value = false;
+                }
+                else {
+                    this.Value = true;
+                }
+            }
+            if (this.DataType === ConditionOperandDataType.Array) {
+                this.Value = JSON.parse(this.Value as string);
+            }
+        }
     }
     
 }

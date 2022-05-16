@@ -13,6 +13,7 @@ export interface AssessmentQueryDto {
     Sequence?           : number;
     Title?              : string;
     Description?        : string;
+    Message?            : string;
     Options             : CAssessmentQueryOption[];
     ProviderGivenCode?  : string;
     ProviderGivenId?    : string;

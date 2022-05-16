@@ -60,12 +60,12 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
     
     getPriorityTypes = async (tags?: string): Promise<HealthPriorityTypeDto[]> => {
         try {
-            if (tags === "HeartFailure") {
-            var priorityTypes = await HealthPriorityType.findAll({ where : { Tags: { [Op.like]: '%' + tags + '%' } },});
-            } else {    
-            var priorityTypes = await HealthPriorityType.findAll();
+            const filter = { where: {} };
+            if (tags != null) {
+                filter.where['Tags'] = { [Op.like]: '%' + tags + '%' }
             }
 
+            const priorityTypes = await HealthPriorityType.findAll(filter);
             const dtos: HealthPriorityTypeDto[] = [];
             for (const priorityType of priorityTypes) {
                 const dto = HealthPriorityMapper.toTypeDto(priorityType);
@@ -149,12 +149,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            Logger.instance().log(`Search result:: ${JSON.stringify(search)}`);
-
             const foundResults = await HealthPriority.findAndCountAll(search);
-
-            Logger.instance().log(`found result:: ${JSON.stringify(foundResults)}`);
-
             const dtos: HealthPriorityDto[] = [];
             for (const healthPriority of foundResults.rows) {
                 const dto = await HealthPriorityMapper.toDto(healthPriority);

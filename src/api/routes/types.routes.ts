@@ -16,7 +16,7 @@ export const register = (app: express.Application): void => {
     router.get('/blood-groups', authenticator.authenticateClient, controller.getBloodGroups);
     router.get('/marital-statuses', authenticator.authenticateClient, controller.getMaritalStatuses);
     router.get('/severities', authenticator.authenticateClient, controller.getSeverities);
-    router.get('/priorities', authenticator.authenticateClient, authenticator.authenticateUser, controller.getPriorityTypes);
+    router.get('/priorities', authenticator.authenticateClient, controller.getPriorityTypes);
 
     app.use('/api/v1/types', router);
 };

@@ -1,11 +1,12 @@
 import express from 'express';
-import { EmergencyEventValidator } from '../../../../src/api/validators/clinical/emergency.event.validator';
+import { uuid } from '../../../../src/domain.types/miscellaneous/system.types';
 import { BaseController } from '../../../../src/api/controllers/base.controller';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { EmergencyEventService } from '../../../services/clinical/emergency.event.service';
 import { PatientService } from '../../../services/patient/patient.service';
 import { Loader } from '../../../startup/loader';
+import { EmergencyEventValidator } from '../../../../src/api/validators/clinical/emergency.event.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,13 +36,6 @@ export class EmergencyEventController extends BaseController{
             
             const domainModel = await this._validator.create(request);
 
-            if (domainModel.PatientUserId != null) {
-                const person = await this._patientService.getByUserId(domainModel.PatientUserId);
-                if (person == null) {
-                    throw new ApiError(404, `Patient with an id ${domainModel.PatientUserId} cannot be found.`);
-                }
-            }
-
             const emergencyEvent = await this._service.create(domainModel);
             if (emergencyEvent == null) {
                 throw new ApiError(400, 'Cannot create emergency event!');
@@ -59,7 +53,7 @@ export class EmergencyEventController extends BaseController{
         try {
             await this.setContext('EmergencyEvent.GetById', request, response);
 
-            const id: string =  await this._validator.getParamUuid(request, 'id');
+            const id: uuid =  await this._validator.getParamUuid(request, 'id');
 
             const emergencyEvent = await this._service.getById(id);
             if (emergencyEvent == null) {

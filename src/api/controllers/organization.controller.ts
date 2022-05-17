@@ -29,7 +29,7 @@ export class OrganizationController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Organization.Create', request, response);
+            await this.setContext('Organization.Create', request, response, false);
 
             const organizationDomainModel = await this._validator.create(request);
 

@@ -11,6 +11,7 @@ import {
     CAssessmentQueryOption,
     CAssessmentQuestionNode,
     CAssessmentTemplate,
+    ConditionOperand,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
@@ -37,19 +38,27 @@ export class AhaAssessmentConverter {
         rootNode.Title = 'Assessment root node';
         rootNode.ProviderGivenCode = null;
         rootNode.ProviderGivenId = null;
+        rootNode.ParentNodeDisplayCode = null;
         template.Nodes.push(rootNode);
 
         const items = activity.RawContent.items;
 
         for (var item of activity.RawContent.items) {
-
-            if (item.type === 'choice' || item.type === 'boolean') { //This is question node
-                const node = this.createOptionBasedQuestionNode(item, template, items);
-                rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
+            const existingNode = this.nodeExistsWithId(template.Nodes, item.id);
+            if (existingNode != null) {
+                if (existingNode.ParentNodeDisplayCode == null) {
+                    rootNode.ChildrenNodeDisplayCodes.push(existingNode.DisplayCode);
+                }
             }
-            else if (item.type === 'text') {
-                const node = this.createQueryBasedQuestionNode(item, template);
-                rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
+            else {
+                if (item.type === 'choice' || item.type === 'boolean') { //This is question node
+                    const node = this.createOptionBasedQuestionNode(item, template, items, rootNodeDisplayCode);
+                    rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
+                }
+                else if (item.type === 'text') {
+                    const node = this.createQueryBasedQuestionNode(item, template, rootNodeDisplayCode);
+                    rootNode.ChildrenNodeDisplayCodes.push(node.DisplayCode);
+                }
             }
         }
 
@@ -58,8 +67,20 @@ export class AhaAssessmentConverter {
 
     //#region Privates
 
+    private nodeExistsWithId(nodes: CAssessmentNode[], providerId: string) {
+        for (var node of nodes) {
+            if (node.ProviderGivenId === providerId) {
+                return node;
+            }
+        }
+        return null;
+    }
+
     private createOptionBasedQuestionNode(
-        item: any, template: CAssessmentTemplate, items: any): CAssessmentQuestionNode {
+        item: any,
+        template: CAssessmentTemplate,
+        items: any,
+        parentNodeDisplayCode: string): CAssessmentQuestionNode {
         
         //Option based question node has options associated and
         //may have multiple paths connected based on those options
@@ -71,6 +92,7 @@ export class AhaAssessmentConverter {
         node.Title = item.title;
         node.QueryResponseType = this.getQueryResponseType(item);
         node.DisplayCode = Helper.generateDisplayCode('QNode');
+        node.ParentNodeDisplayCode = parentNodeDisplayCode;
 
         this.addOptionsToQuestionNode(item, node);
         template.Nodes.push(node);
@@ -80,7 +102,9 @@ export class AhaAssessmentConverter {
     }
 
     private createQueryBasedQuestionNode(
-        item: any, template: CAssessmentTemplate): CAssessmentQuestionNode {
+        item: any,
+        template: CAssessmentTemplate,
+        parentNodeDisplayCode: string): CAssessmentQuestionNode {
         //Query based question node has no paths and simple text answer is expected
         //and will not have further paths associated.
         var node = new CAssessmentQuestionNode();
@@ -91,6 +115,7 @@ export class AhaAssessmentConverter {
         node.Title = item.title;
         node.QueryResponseType = this.getQueryResponseType(item);
         node.DisplayCode = Helper.generateDisplayCode('QNode');
+        node.ParentNodeDisplayCode = parentNodeDisplayCode;
         template.Nodes.push(node);
         return node;
     }
@@ -109,27 +134,31 @@ export class AhaAssessmentConverter {
             pathIndex++;
             var path = new CAssessmentNodePath();
             path.DisplayCode = node.DisplayCode + ':Path#' + pathIndex.toString();
-            this.constructConditionFromRules(act.Rules, path, node);
+            this.constructConditionFromRules(act.rules, path, node);
 
             if (actionType === 'TriggerQuestion') {
                 const nextProviderQuestionId = act.questionId;
                 path.NextNodeDisplayCode = this.createNextTriggerQuestionNode(
-                    template, items, nextProviderQuestionId);
+                    template, items, nextProviderQuestionId, node.DisplayCode);
             }
             else if (actionType === 'MessagePatient') {
                 const message = act.message;
-                path.NextNodeDisplayCode = this.createNextMessageNode(template, message);
+                path.NextNodeDisplayCode = this.createNextMessageNode(template, message, node.DisplayCode);
             }
             node.Paths.push(path);
         }
     }
 
-    private createNextMessageNode(template: CAssessmentTemplate, message: string): string {
+    private createNextMessageNode(
+        template: CAssessmentTemplate,
+        message: string,
+        parentNodeDisplayCode: string): string {
         const messageNode = new CAssessmentMessageNode();
         messageNode.Message = message;
         messageNode.ProviderGivenCode = null;
         messageNode.ProviderGivenId = null;
         messageNode.DisplayCode = Helper.generateDisplayCode('MNode');
+        messageNode.ParentNodeDisplayCode = parentNodeDisplayCode;
         template.Nodes.push(messageNode);
         return messageNode.DisplayCode;
     }
@@ -148,7 +177,7 @@ export class AhaAssessmentConverter {
 
     private constructConditionFromRules(rules: any[], path: CAssessmentNodePath, node: CAssessmentQuestionNode) {
 
-        if (rules.length === 0) {
+        if (rules.length !== 0) {
 
             var rule = rules[0];
             var condition = new CAssessmentPathCondition();
@@ -158,28 +187,18 @@ export class AhaAssessmentConverter {
             if (rule.operator === 'equals') {
 
                 condition.OperatorType = ConditionOperatorType.EqualTo;
-
-                condition.FirstOperand.Name = 'ReceivedAnswer';
-                condition.FirstOperand.Value = null;
-                condition.FirstOperand.DataType = ConditionOperandDataType.Integer;
-
+                condition.FirstOperand = new ConditionOperand(ConditionOperandDataType.Integer, 'ReceivedAnswer', null);
+                
                 var optionSequence: number = this.getOptionSequenceForAnswer(node.Options, rule.value);
-                condition.SecondOperand.Name = 'ExpectedAnswer';
-                condition.SecondOperand.Value = optionSequence;
-                condition.SecondOperand.DataType = ConditionOperandDataType.Integer;
+                condition.SecondOperand = new ConditionOperand(ConditionOperandDataType.Integer, 'ExpectedAnswer', optionSequence);
             }
             else if (rule.operator === 'in') {
 
                 condition.OperatorType = ConditionOperatorType.In;
-
-                condition.FirstOperand.Name = 'ReceivedAnswer';
-                condition.FirstOperand.Value = null;
-                condition.FirstOperand.DataType = ConditionOperandDataType.Integer;
+                condition.FirstOperand = new ConditionOperand(ConditionOperandDataType.Integer, 'ReceivedAnswer', null);
 
                 var arr = this.getOptionSequenceArrayForAnswer(node.Options, rule.value);
-                condition.SecondOperand.Name = 'ExpectedAnswer';
-                condition.SecondOperand.Value = arr;
-                condition.SecondOperand.DataType = ConditionOperandDataType.Array;
+                condition.SecondOperand = new ConditionOperand(ConditionOperandDataType.Array, 'ExpectedAnswer', arr);
             }
             path.Condition = condition;
         }
@@ -188,12 +207,13 @@ export class AhaAssessmentConverter {
     private createNextTriggerQuestionNode(
         template: CAssessmentTemplate,
         items: any[],
-        nextQuestionItemId: string): string {
+        nextQuestionItemId: string,
+        parentNodeDisplayCode: string): string {
 
         if (items.length === 0 || !nextQuestionItemId) {
             return null;
         }
-        const questionObject = items.find(x => x.id === nextQuestionItemId);
+        const questionObject = items.find(x => x.id === nextQuestionItemId.toString());
         if (!questionObject) {
             return null;
         }
@@ -207,7 +227,7 @@ export class AhaAssessmentConverter {
             return existingNode.DisplayCode;
         }
 
-        const node = this.createOptionBasedQuestionNode(questionObject, template, items);
+        const node = this.createOptionBasedQuestionNode(questionObject, template, items, parentNodeDisplayCode);
         return node.DisplayCode;
     }
 
@@ -222,7 +242,9 @@ export class AhaAssessmentConverter {
 
     private getOptionSequenceForAnswer(options: CAssessmentQueryOption[], value: any): number {
         for (var option of options) {
-            if (option.Text === value) {
+            var valueStr = value ? value.toString().toLowerCase() : null;
+            var optionStr = option.Text ? option.Text.toString().toLowerCase() : null;
+            if (optionStr === valueStr) {
                 return option.Sequence;
             }
         }

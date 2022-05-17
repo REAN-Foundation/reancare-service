@@ -252,6 +252,8 @@ export class CareplanService implements IUserActionService {
         details.ProviderActionId = activity.ProviderActionId;
 
         activity = await this._careplanRepo.updateActivityDetails(activity.id, details);
+        details.Title = activity.Title;
+        details.Description = activity.Description;
 
         //Handle assessment activities in special manner...
         if (activity.Category === UserTaskCategory.Assessment ||
@@ -349,8 +351,8 @@ export class CareplanService implements IUserActionService {
         var assessmentTemplate: CAssessmentTemplate =
             await this._handler.convertToAssessmentTemplate(model);
 
-        const fileResourceDto = await AssessmentTemplateFileConverter.storeAssessmentTemplate(assessmentTemplate);
-        assessmentTemplate.FileResourceId = fileResourceDto.id;
+        // const fileResourceDto = await AssessmentTemplateFileConverter.storeAssessmentTemplate(assessmentTemplate);
+        // assessmentTemplate.FileResourceId = fileResourceDto.id;
 
         const template = await this._assessmentHelperRepo.addTemplate(assessmentTemplate);
         return template;

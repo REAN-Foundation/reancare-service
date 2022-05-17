@@ -425,7 +425,11 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         try {
     
             const sequence = await this.calculateNodeSequence(parentNodeId);
-            
+                        
+            if (!nodeObj.Title) {
+                nodeObj.Title = nodeObj.NodeType;
+            }
+
             const nodeEntity = {
                 DisplayCode       : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
                 TemplateId        : templateId,
@@ -580,8 +584,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
             for await (var sPath of paths) {
                 const pathEntity = {
-                    DisplayCode  : sPath.DisplayCode,
-                    ParentNodeId : thisNode.id,
+                    DisplayCode         : sPath.DisplayCode,
+                    ParentNodeId        : thisNode.id,
+                    NextNodeDisplayCode : sPath.NextNodeDisplayCode
                 };
 
                 var path = await AssessmentNodePath.create(pathEntity);
@@ -595,9 +600,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 const sNextNode = CAssessmentTemplate.getNodeByDisplayCode(sTemplate.Nodes, sPath.NextNodeDisplayCode);
                 if (sNextNode) {
                     var nextNode = await this.createNewNode(sTemplate, templateId, thisNode.id, sNextNode);
-                    if (!nextNode) {
+                    if (nextNode) {
                         path.NextNodeId = nextNode.id;
-                        path.NextNodeDisplayCode = sPath.NextNodeDisplayCode;
+                        // path.NextNodeDisplayCode = sPath.NextNodeDisplayCode;
                         await path.save();
                     }
                 }
@@ -623,6 +628,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 return existingNode;
             }
 
+            if (!nodeObj.Title) {
+                nodeObj.Title = nodeObj.NodeType;
+            }
+
             const nodeEntity = {
                 DisplayCode       : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
                 TemplateId        : templateId,
@@ -639,6 +648,14 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
             var thisNode = await AssessmentNode.create(nodeEntity);
             const currentNodeId = thisNode.id;
+
+            if (thisNode.DisplayCode.startsWith('RNode#')) {
+                var template = await AssessmentTemplate.findByPk(templateId);
+                if (template !== null) {
+                    template.RootNodeId = thisNode.id;
+                    await template.save();
+                }
+            }
 
             if (nodeObj.NodeType === AssessmentNodeType.NodeList) {
                 var listNode: CAssessmentListNode = nodeObj as CAssessmentListNode;
@@ -680,7 +697,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             dataType === ConditionOperandDataType.Float ||
             dataType === ConditionOperandDataType.Integer
         ) {
-            return operand.ToString();
+            return operand.toString();
         }
         if (dataType === ConditionOperandDataType.Array) {
             return JSON.stringify(operand);
@@ -700,18 +717,22 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         pathId: string,
         parentConditionId: any
     ) {
-        const firstOperandValue = this.getOperandValueString(
+        const firstOperandValue = sCondition.FirstOperand ? this.getOperandValueString(
             sCondition.FirstOperand.Value,
             sCondition.FirstOperand.DataType
-        );
-        const secondOperandValue = this.getOperandValueString(
+        ) : null;
+
+        const secondOperandValue = sCondition.SecondOperand ? this.getOperandValueString(
             sCondition.SecondOperand.Value,
             sCondition.SecondOperand.DataType
-        );
-        const thirdOperandValue = this.getOperandValueString(
+        ) : null;
+
+        const thirdOperandValue = sCondition.ThirdOperand ? this.getOperandValueString(
             sCondition.ThirdOperand.Value,
             sCondition.ThirdOperand.DataType
-        );
+        ) : null;
+
+        const dt = ConditionOperandDataType.Text;
 
         var conditionEntity = {
             NodeId                : currentNodeId,
@@ -721,15 +742,15 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             CompositionType       : sCondition.CompositionType,
             ParentConditionId     : parentConditionId,
             OperatorType          : sCondition.OperatorType,
-            FirstOperandName      : sCondition.FirstOperand.Name,
+            FirstOperandName      : sCondition.FirstOperand ? sCondition.FirstOperand.Name : null,
             FirstOperandValue     : firstOperandValue,
-            FirstOperandDataType  : sCondition.FirstOperand.DataType,
-            SecondOperandName     : sCondition.SecondOperand.Name,
+            FirstOperandDataType  : sCondition.FirstOperand ? sCondition.FirstOperand.DataType : dt,
+            SecondOperandName     : sCondition.SecondOperand ? sCondition.SecondOperand.Name : null,
             SecondOperandValue    : secondOperandValue,
-            SecondOperandDataType : sCondition.SecondOperand.DataType,
-            ThirdOperandName      : sCondition.ThirdOperand.Name,
+            SecondOperandDataType : sCondition.SecondOperand ? sCondition.SecondOperand.DataType : dt,
+            ThirdOperandName      : sCondition.ThirdOperand ? sCondition.ThirdOperand.Name : null,
             ThirdOperandValue     : thirdOperandValue,
-            ThirdOperandDataType  : sCondition.ThirdOperand.DataType,
+            ThirdOperandDataType  : sCondition.ThirdOperand ? sCondition.ThirdOperand.DataType : dt,
         };
 
         const condition = await AssessmentPathCondition.create(conditionEntity);

@@ -6,6 +6,7 @@ import { BodyTemperatureDto } from '../../../domain.types/clinical/biometrics/bo
 import { BodyTemperatureSearchFilters, BodyTemperatureSearchResults } from '../../../domain.types/clinical/biometrics/body.temperature/body.temperature.search.types';
 import { TemperatureStore } from "../../../modules/ehr/services/body.temperature.store";
 import { Loader } from "../../../startup/loader";
+import { ConfigurationManager } from "../../../config/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,15 +18,19 @@ export class BodyTemperatureService {
     constructor(
         @inject('IBodyTemperatureRepo') private _bodyTemperatureRepo: IBodyTemperatureRepo,
     ) {
-        this._ehrTemperatureStore = Loader.container.resolve(TemperatureStore);
-
+        if (ConfigurationManager.EhrEnabled()) {
+            this._ehrTemperatureStore = Loader.container.resolve(TemperatureStore);
+        }
     }
 
     create = async (bodyTemperatureDomainModel: BodyTemperatureDomainModel):
     Promise<BodyTemperatureDto> => {
 
-        const ehrId = await this._ehrTemperatureStore.add(bodyTemperatureDomainModel);
-        bodyTemperatureDomainModel.EhrId = ehrId;
+        if (this._ehrTemperatureStore) {            
+            const ehrId = await this._ehrTemperatureStore.add(bodyTemperatureDomainModel);
+            bodyTemperatureDomainModel.EhrId = ehrId;
+        }
+
         var dto = await this._bodyTemperatureRepo.create(bodyTemperatureDomainModel);
         return dto;
     };
@@ -41,7 +46,9 @@ export class BodyTemperatureService {
     update = async (id: uuid, bodyTemperatureDomainModel: BodyTemperatureDomainModel):
     Promise<BodyTemperatureDto> => {
         var dto = await this._bodyTemperatureRepo.update(id, bodyTemperatureDomainModel);
-        await this._ehrTemperatureStore.update(dto.EhrId, dto);
+        if (this._ehrTemperatureStore) { 
+            await this._ehrTemperatureStore.update(dto.EhrId, dto);
+        }
         return dto;
     };
 

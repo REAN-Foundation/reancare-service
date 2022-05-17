@@ -22,6 +22,7 @@ import { IUserActionService } from "../../../services/user/user.action.service.i
 import { Loader } from "../../../startup/loader";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { MedicationConsumptionStore } from "../../../modules/ehr/services/medication.consumption.store";
+import { ConfigurationManager } from "../../../config/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +39,9 @@ export class MedicationConsumptionService implements IUserActionService {
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
     ) {
-        this._ehrMedicationConsumptionStore = Loader.container.resolve(MedicationConsumptionStore);
+        if (ConfigurationManager.EhrEnabled()) {
+            this._ehrMedicationConsumptionStore = Loader.container.resolve(MedicationConsumptionStore);
+        }
     }
 
     create = async (medication: MedicationDto, customStartDate = null)
@@ -230,9 +233,11 @@ export class MedicationConsumptionService implements IUserActionService {
             return null;
         }
 
-        const ehrId = await this._ehrMedicationConsumptionStore.add(medConsumption);
-        medConsumption.EhrId = ehrId;
-        await this._medicationConsumptionRepo.assignEhrId(id, medConsumption.EhrId);
+        if (this._ehrMedicationConsumptionStore) {            
+            const ehrId = await this._ehrMedicationConsumptionStore.add(medConsumption);
+            medConsumption.EhrId = ehrId;
+            await this._medicationConsumptionRepo.assignEhrId(id, medConsumption.EhrId);
+        }
 
         var takenAt = new Date();
         var isPastScheduleEnd = TimeHelper.isAfter(new Date(), medConsumption.TimeScheduleEnd);

@@ -5,6 +5,7 @@ import { Loader } from '../../startup/loader';
 import { ApiClientValidator } from '../validators/api.client.validator';
 import { ApiError } from '../../common/api.error';
 import { BaseController } from './base.controller';
+import { uuid } from '../../../src/domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,7 +46,7 @@ export class ApiClientController extends BaseController {
         try {
             await this.setContext('Client.GetById', request, response);
 
-            const id: string = await this._validator.getParamUuid(request, 'id');
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const client = await this._service.getById(id);
             if (client == null) {
@@ -94,7 +95,7 @@ export class ApiClientController extends BaseController {
 
     getCurrentApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Client.GetApiKey', request, response);
+            await this.setContext('Client.GetApiKey', request, response, false);
 
             //await this._authorizer.authorize(request, response);
 
@@ -114,7 +115,7 @@ export class ApiClientController extends BaseController {
 
     renewApiKey = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Client.RenewApiKey', request, response);
+            await this.setContext('Client.RenewApiKey', request, response, false);
 
             //await this._authorizer.authorize(request, response);
 

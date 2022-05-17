@@ -9,6 +9,10 @@ import { Loader } from '../../../../startup/loader';
 
 export class MedicationConsumptionValidator extends BaseValidator{
 
+    constructor() {
+        super();
+    }
+    
     checkConsumptionIds = async (request: express.Request): Promise<string[]> => {
 
         await this.validateUuid(request, 'MedicationConsumptionIds', Where.Body, true, false);
@@ -34,12 +38,12 @@ export class MedicationConsumptionValidator extends BaseValidator{
         return request.params.patientUserId;
     }
 
-    getScheduleForDuration = (request: express.Request): MedicationConsumptionScheduleDomainModel => {
+    getScheduleForDuration =  async (request: express.Request): Promise<MedicationConsumptionScheduleDomainModel> => {
 
         const model: MedicationConsumptionScheduleDomainModel = {
             PatientUserId : request.params.patientUserId,
-            Duration      : request.query.duration as string ?? null,
-            When          : request.query.when as string ?? null,
+            Duration      : request.params.duration as string   ?? null,
+            When          : request.params.when as string ?? null,
         };
 
         return model;
@@ -108,8 +112,8 @@ export class MedicationConsumptionValidator extends BaseValidator{
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
         await this.validateUuid(request, 'orderId', Where.Body, true, false);
         await this.validateString(request, 'medicationId', Where.Body, false, false);
-        await this.validateDate(request, 'fromDate', Where.Body, true, false);
-        await this.validateDate(request, 'toDate', Where.Body, true, false);
+        await this.validateDate(request, 'fromDate', Where.Body, false, false);
+        await this.validateDate(request, 'toDate', Where.Body, false, false);
 
         this.validateRequest(request);
 

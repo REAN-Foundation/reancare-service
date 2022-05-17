@@ -41,8 +41,8 @@ export class FileResourceController extends BaseController{
         try {
             await this.setContext('FileResource.Upload', request, response);
             
-            var domainModels = await this._validator.upload(request);
-
+            const domainModels = await this._validator.upload(request);
+            //const fileresource = await this._service.create(fileresourceDomainModel);
             if (domainModels.length === 0) {
                 throw new ApiError(400, 'File/s not found!');
             }

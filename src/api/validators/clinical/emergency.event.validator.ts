@@ -32,33 +32,33 @@ export class EmergencyEventValidator extends BaseValidator{
 
     private async validateCreateBody(request) {
 
-        await this.validateString(request, 'EhrId', Where.Body, true, false);
+        await this.validateString(request, 'EhrId', Where.Body, false, true);
         await this.validateString(request, 'PatientUserId', Where.Body, false, false);
         await this.validateString(request, 'Details', Where.Body, false, false);
-        await this.validateDate(request, 'EmergencyDate', Where.Body, true, false);
+        await this.validateDate(request, 'EmergencyDate', Where.Body, false, true);
 
         this.validateRequest(request);
 
     }
 
-    // getById = async (request: express.Request): Promise<string> => {
-    //     return await EmergencyEventValidator.getParamId(request);
-    // };
+    getById = async (request: express.Request): Promise<string> => {
+        return await this.getParamUuid(request, 'id');
+    };
 
-    // delete = async (request: express.Request): Promise<string> => {
-    //     return await EmergencyEventValidator.getParamId(request);
-    // };
-
+    delete = async (request: express.Request): Promise<string> => {
+        return await this.getParamUuid(request, 'id');
+    };
+    
     search = async (request: express.Request): Promise<EmergencyEventSearchFilters> => {
 
         await this.validateString(request, 'PatientUserId', Where.Body, false, false);
         await this.validateString(request, 'MedicalPractitionerUserId', Where.Body, false, false);
-        await this.validateDate(request, 'EmergencyDateFrom', Where.Body, true, false);
-        await this.validateDate(request, 'EmergencyDateTo', Where.Body, true, false);
-        await this.validateDate(request, 'orderBy', Where.Body, true, false);
-        await this.validateDate(request, 'order', Where.Body, true, false);
-        await this.validateDate(request, 'pageIndex', Where.Body, true, false);
-        await this.validateDate(request, 'itemsPerPage', Where.Body, true, false);
+        await this.validateDate(request, 'EmergencyDateFrom', Where.Body, false, false);
+        await this.validateDate(request, 'EmergencyDateTo', Where.Body, false, false);
+        // await this.validateString(request, 'orderBy', Where.Body, true, false);
+        // await this.validateString(request, 'order', Where.Body, true, false);
+        // await this.validateInt(request, 'pageIndex', Where.Body, true, false);
+        // await this.validateInt(request, 'itemsPerPage', Where.Body, true, false);
 
         await this.validateBaseSearchFilters(request);
         

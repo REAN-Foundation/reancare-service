@@ -1,4 +1,8 @@
 import express from 'express';
+import { Logger } from '../../../src/common/logger';
+import { uuid } from '../../../src/domain.types/miscellaneous/system.types';
+import { PersonDomainModel } from '../../../src/domain.types/person/person.domain.model';
+import { UserDomainModel } from '../../../src/domain.types/user/user/user.domain.model';
 import { ApiError } from '../../common/api.error';
 import { Helper } from '../../common/helper';
 import { ResponseHandler } from '../../common/response.handler';
@@ -29,7 +33,7 @@ export class DoctorController extends BaseUserController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Doctor.Create', request, response);
+            await this.setContext('Doctor.Create', request, response, false);
 
             const doctorDomainModel = await this._validator.create(request);
 
@@ -108,7 +112,7 @@ export class DoctorController extends BaseUserController {
         try {
             await this.setContext('Doctor.GetByUserId', request, response);
 
-            const userId: string = await this._validator.getParamUuid(request, 'id');
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
 
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
@@ -116,6 +120,9 @@ export class DoctorController extends BaseUserController {
             }
 
             const doctor = await this._service.getByUserId(userId);
+
+            Logger.instance().log(`Doctor: ${JSON.stringify(doctor)}`);
+
             if (doctor == null) {
                 throw new ApiError(404, 'Doctor not found.');
             }
@@ -130,7 +137,7 @@ export class DoctorController extends BaseUserController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('Doctor.Search', request, response);
+            await this.setContext('Doctor.Search', request, response, false);
 
             const filters = await this._validator.search(request);
 
@@ -138,7 +145,7 @@ export class DoctorController extends BaseUserController {
             //     request.query.fullDetails !== 'undefined' && typeof request.query.fullDetails === 'boolean'
             //         ? request.query.fullDetails
             //         : false;
-
+            
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -153,53 +160,54 @@ export class DoctorController extends BaseUserController {
         }
     };
 
-    // updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-    //         await this.setContext('Doctor.UpdateByUserId', request, response);
+    updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Doctor.UpdateByUserId', request, response);
 
-    //         const doctorDomainModel = await this._validator.getParamUuid(request, 'id');
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const existingUser = await this._userService.getById(userId);
+            if (existingUser == null) {
+                throw new ApiError(404, 'User not found.');
+            }
 
-    //         const userId: string = await this._validator.getParamUuid(request, 'id');
-    //         const existingUser = await this._userService.getById(userId);
-    //         if (existingUser == null) {
-    //             throw new ApiError(404, 'User not found.');
-    //         }
+            const updateModel = await this._validator.updateByUserId(request);
+            const userDomainModel: UserDomainModel = updateModel.User;
+            const updatedUser = await this._userService.update(userId, userDomainModel);
+            if (!updatedUser) {
+                throw new ApiError(400, 'Unable to update user!');
+            }
+            const personDomainModel: PersonDomainModel = updateModel.User.Person;
+            personDomainModel.id = updatedUser.Person.id;
+            const updatedPerson = await this._personService.update(existingUser.Person.id, personDomainModel);
+            if (!updatedPerson) {
+                throw new ApiError(400, 'Unable to update person!');
+            }
+            const updatedDoctor = await this._service.updateByUserId(
+                updatedUser.id,
+                updateModel
+            );
+            if (updatedDoctor == null) {
+                throw new ApiError(400, 'Unable to update doctor record!');
+            }
 
-    //         const userDomainModel: UserDomainModel = doctorDomainModel.User;
-    //         const updatedUser = await this._userService.update(doctorDomainModel.User.id, userDomainModel);
-    //         if (!updatedUser) {
-    //             throw new ApiError(400, 'Unable to update user!');
-    //         }
-    //         const personDomainModel: PersonDomainModel = doctorDomainModel.User.Person;
-    //         personDomainModel.id = updatedUser.Person.id;
-    //         const updatedPerson = await this._personService.update(personDomainModel.id, personDomainModel);
-    //         if (!updatedPerson) {
-    //             throw new ApiError(400, 'Unable to update person!');
-    //         }
-    //         const updatedDoctor = await this._service.updateByUserId(
-    //             doctorDomainModel.UserId,
-    //             doctorDomainModel
-    //         );
-    //         if (updatedDoctor == null) {
-    //             throw new ApiError(400, 'Unable to update doctor record!');
-    //         }
+            await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
 
-    //         await this.createOrUpdateDefaultAddress(request, existingUser.Person.id);
+            const doctor = await this._service.getByUserId(userId);
 
-    //         ResponseHandler.success(request, response, 'Doctor records updated successfully!', 200, {
-    //             Doctor : updatedDoctor,
-    //         });
+            ResponseHandler.success(request, response, 'Doctor records updated successfully!', 200, {
+                Doctor : doctor,
+            });
 
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Doctor.DeleteByUserId', request, response);
 
-            const userId: string = await this._validator.getParamUuid(request, 'id');
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');

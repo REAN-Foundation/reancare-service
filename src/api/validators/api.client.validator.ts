@@ -11,20 +11,21 @@ export class ApiClientValidator extends BaseValidator{
         super();
     }
 
-    getDomainModel = async (body: any): Promise<ApiClientDomainModel> => {
+    getDomainModel = async (request: express.Request): Promise<ApiClientDomainModel> => {
 
-        let clientModel: ApiClientDomainModel = null;
-
-        clientModel = {
-            ClientName   : body.ClientName ?? null,
-            ClientCode   : null,
-            IsPrivileged : body.IsPrivileged ?? false,
-            ApiKey       : null,
-            Phone        : body.Phone ?? null,
-            Email        : body.Email ?? null,
-            Password     : body.Password ?? null,
-            ValidFrom    : body.ValidFrom ?? null,
-            ValidTill    : body.ValidTill ?? null,
+        //let clientModel: ApiClientDomainModel = null;
+        
+        const clientModel: ApiClientDomainModel = {
+        //clientModel = {
+            ClientName   : request.body.ClientName ?? null,
+            ClientCode   : request.body.ClientCode ?? null,
+            IsPrivileged : request.body.IsPrivileged ?? false,
+            ApiKey       : request.body.ApiKey ?? null,
+            Phone        : request.body.Phone ?? null,
+            Email        : request.body.Email ?? null,
+            Password     : request.body.Password ?? null,
+            ValidFrom    : request.body.ValidFrom ?? null,
+            ValidTill    : request.body.ValidTill ?? null,
         };
         return clientModel;
     };
@@ -37,10 +38,10 @@ export class ApiClientValidator extends BaseValidator{
 
     private async validateCreateBody(request) {
 
-        await this.validateString(request, 'ClientName', Where.Body, false, false);
-        await this.validateString(request, 'Phone', Where.Body, true, false);
-        await this.validateString(request, 'Email', Where.Body, true, false);
-        await this.validateString(request, 'Password', Where.Body, true, false);
+        await this.validateString(request, 'ClientName', Where.Body, true, false);
+        await this.validateString(request, 'Phone', Where.Body, true, true);
+        await this.validateString(request, 'Email', Where.Body, true, true);
+        await this.validateString(request, 'Password', Where.Body, true, true);
         await this.validateDate(request, 'ValidFrom', Where.Body, false, false);
         await this.validateDate(request, 'ValidTill', Where.Body, false, false);
 
@@ -89,7 +90,7 @@ export class ApiClientValidator extends BaseValidator{
 
     getById = async (request: express.Request): Promise<string> => {
 
-        await this.validateUuid(request, 'id', Where.Body, false, false);
+        await this.validateString(request, 'id', Where.Body, true, false);
         
         this.validateRequest(request);
         
@@ -108,9 +109,9 @@ export class ApiClientValidator extends BaseValidator{
     private async validateUpdateBody(request) {
 
         await this.validateString(request, 'ClientName', Where.Body, false, false);
-        await this.validateString(request, 'Phone', Where.Body, true, false);
-        await this.validateString(request, 'Email', Where.Body, true, false);
-        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateString(request, 'Phone', Where.Body, true, true);
+        await this.validateString(request, 'Email', Where.Body, true, true);
+        await this.validateString(request, 'PatientUserId', Where.Body, false, false);
 
         this.validateRequest(request);
     }

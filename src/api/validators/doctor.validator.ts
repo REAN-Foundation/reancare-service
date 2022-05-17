@@ -71,21 +71,21 @@ export class DoctorValidator extends BaseValidator {
 
     private async validateCreateBody(request) {
 
-        await this.validateString(request, 'phone', Where.Query, false, false);
-        await this.validateString(request, 'Email', Where.Query, false, false);
-        await this.validateString(request, 'FirstName', Where.Query, false, false);
-        await this.validateString(request, 'LastName', Where.Query, false, false);
+        await this.validateString(request, 'phone', Where.Query, true, false);
+        await this.validateString(request, 'Email', Where.Query, false, true);
+        await this.validateString(request, 'FirstName', Where.Query, false, true);
+        await this.validateString(request, 'LastName', Where.Query, false, true);
         await this.validateString(request, 'Prefix', Where.Query, false, false);
-        await this.validateString(request, 'Gender', Where.Query, false, false);
-        await this.validateString(request, 'BirthDate', Where.Query, false, false);
-        await this.validateString(request, 'ImageResourceId', Where.Query, false, false);
-        await this.validateString(request, 'NationalDigiDoctorId', Where.Query, false, false);
-        await this.validateString(request, 'About', Where.Query, false, false);
-        await this.validateString(request, 'Locality', Where.Query, false, false);
-        await this.validateString(request, 'Qualifications', Where.Query, false, false);
-        await this.validateString(request, 'Specialities', Where.Query, false, false);
-        await this.validateString(request, 'PractisingSince', Where.Query, false, false);
-        await this.validateString(request, 'ProfessionalHighlights', Where.Query, false, false);
+        await this.validateString(request, 'Gender', Where.Query, false, true);
+        await this.validateDate(request, 'BirthDate', Where.Query, false, true);
+        await this.validateString(request, 'ImageResourceId', Where.Query, false, true);
+        await this.validateString(request, 'NationalDigiDoctorId', Where.Query, false, true);
+        await this.validateString(request, 'About', Where.Query, false, true);
+        await this.validateString(request, 'Locality', Where.Query, false, true);
+        await this.validateString(request, 'Qualifications', Where.Query, false, true);
+        await this.validateString(request, 'Specialities', Where.Query, false, true);
+        await this.validateDate(request, 'PractisingSince', Where.Query, false, true);
+        await this.validateString(request, 'ProfessionalHighlights', Where.Query, false, true);
         await this.validateString(request, 'AddressIds', Where.Query, false, false);
         await this.validateString(request, 'OrganizationIds', Where.Query, false, false);
         await this.validateString(request, 'AvailabilitySchedule', Where.Query, false, false);
@@ -93,15 +93,15 @@ export class DoctorValidator extends BaseValidator {
         this.validateRequest(request);
     }
 
-    // getByUserId = async (request: express.Request): Promise<string> => {
-    //     await DoctorValidator.GetParamUserId(request);
-    //     return request.params.userId;
-    // };
+    getByUserId = async (request: express.Request): Promise<string> => {
+        await this.GetParamUserId(request);
+        return request.params.userId;
+    };
 
-    // delete = async (request: express.Request): Promise<string> => {
-    //     await DoctorValidator.GetParamUserId(request);
-    //     return request.params.userId;
-    // }
+    delete = async (request: express.Request): Promise<string> => {
+        await this.GetParamUserId(request);
+        return request.params.userId;
+    }
 
     search = async (request: express.Request): Promise<DoctorSearchFilters> => {
 
@@ -134,7 +134,7 @@ export class DoctorValidator extends BaseValidator {
 
     GetParamUserId = async(request) => {
 
-        await this.validateUuid(request, 'phone', Where.Query, false, false);
+        await this.validateUuid(request, 'userId', Where.Query, false, false);
         
         this.validateRequest(request);
         
@@ -178,22 +178,22 @@ export class DoctorValidator extends BaseValidator {
 
     getParamUserId = async (request) => {
 
-        await this.validateUuid(request, 'phone', Where.Query, false, false);
+        await this.validateUuid(request, 'userId', Where.Query, false, false);
 
         this.validateRequest(request);
         
         return request.params.userId;
     }
 
-    // updateByUserId = async (request: express.Request): Promise<DoctorDomainModel> => {
+    updateByUserId = async (request: express.Request): Promise<DoctorDomainModel> => {
 
-    //     const userId = await DoctorValidator.getParamUserId(request);
-    //     await DoctorValidator.validateCreateBody(request);
+        const userId = await this.getParamUserId(request);
+        await this.validateCreateBody(request);
 
-    //     var domainModel = DoctorValidator.getDomainModel(request);
-    //     domainModel.UserId = userId;
+        var domainModel = this.getDomainModel(request);
+        domainModel.UserId = userId;
 
-    //     return domainModel;
-    // };
+        return domainModel;
+    };
 
 }

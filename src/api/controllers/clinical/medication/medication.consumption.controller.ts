@@ -1,5 +1,5 @@
 import express from 'express';
-import { MedicationConsumptionValidator } from '../../../../api/validators/clinical/medication/medication.consumption.validator';
+import { uuid } from '../../../../../src/domain.types/miscellaneous/system.types';
 import { BaseController } from '../../../../../src/api/controllers/base.controller';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
@@ -11,6 +11,8 @@ import { MedicationService } from '../../../../services/clinical/medication/medi
 import { PatientService } from '../../../../services/patient/patient.service';
 import { UserService } from '../../../../services/user/user.service';
 import { Loader } from '../../../../startup/loader';
+import { MedicationConsumptionValidator } from '../../../../../src/api/validators/clinical/medication/medication.consumption.validator';
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class MedicationConsumptionController extends BaseController{
@@ -163,7 +165,7 @@ export class MedicationConsumptionController extends BaseController{
         try {
             await this.setContext('MedicationConsumption.GetById', request, response);
 
-            const id: string = await this._validator.getParam(request, 'id');
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const medicationConsumption = await this._service.getById(id);
             if (medicationConsumption == null) {

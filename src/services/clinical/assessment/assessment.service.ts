@@ -27,7 +27,8 @@ import {
     SingleChoiceQueryAnswer,
     TextQueryAnswer,
     DateQueryAnswer,
-    FileQueryAnswer
+    FileQueryAnswer,
+    BooleanQueryAnswer
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Loader } from '../../../startup/loader';
@@ -241,10 +242,17 @@ export class AssessmentService {
 
     private async traverseQuestionNode(assessment: AssessmentDto, currentNode: CAssessmentNode)
         : Promise<AssessmentQueryDto> {
+
         var isAnswered = await this.isAnswered(assessment.id, currentNode.id);
         if (!isAnswered) {
             return await this.returnAsCurrentQuestionNode(assessment, currentNode as CAssessmentQuestionNode);
-        } else {
+        }
+
+        var questionNode = currentNode as CAssessmentQuestionNode;
+        if (questionNode.Paths.length > 0) {
+            return await this.traverseQuestionNodePaths(assessment, questionNode);
+        }
+        else {
             const nextSiblingNode = await this.traverseUpstream(currentNode);
             if (nextSiblingNode === null) {
                 //Assessment has finished
@@ -252,6 +260,119 @@ export class AssessmentService {
             }
             return await this.traverse(assessment, nextSiblingNode.id);
         }
+    }
+
+    private async getChosenPathForSingleChoice(
+        assessmentId: uuid,
+        currentQuestionNode: CAssessmentQuestionNode,
+        answerModel) {
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        var { answerDto, paths, chosenOptionSequence, nodeId } =
+        await this.getSingleChoiceQueryAnswer(assessmentId, currentQuestionNode, answerModel);
+
+        return await this.getChosenPath(currentQuestionNode.id, currentQuestionNode.Paths, chosenOptionSequence);
+    }
+
+    private async getChosenPathForMultipleChoice(
+        assessmentId: uuid,
+        currentQuestionNode: CAssessmentQuestionNode,
+        answerModel) {
+            
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        var { answerDto, paths, chosenOptionSequences, nodeId } =
+        await this.getMultipleChoiceQueryAnswer(assessmentId, currentQuestionNode, answerModel);
+
+        return await this.getChosenPath(currentQuestionNode.id, currentQuestionNode.Paths, chosenOptionSequences);
+    }
+
+    private async traverseQuestionNodePaths(
+        assessment: AssessmentDto,
+        currentQuestionNode: CAssessmentQuestionNode): Promise<AssessmentQueryDto> {
+
+        //PLEASE NOTE: Current assumption that only single choice and multi choice questions
+        //will have node paths may change in future! Till then...
+
+        const currentNodeId = currentQuestionNode.id;
+        const assessmentId = assessment.id;
+        
+        //Now check if all paths have been answered
+        var nextAnsweredNode = null;
+        const currentNodePaths = currentQuestionNode.Paths;
+        for await (var path of currentNodePaths) {
+            var nextNodeId = path.NextNodeId;
+            const isAnswered = await this.isAnswered(assessmentId, nextNodeId);
+            if (isAnswered) {
+                nextAnsweredNode = await this._assessmentHelperRepo.getNodeById(nextNodeId);
+                break;
+            }
+        }
+        if (nextAnsweredNode) {
+            return await this.traverse(assessment, nextAnsweredNode.id);
+        }
+
+        //This node has been answered but it seems next node is not selected
+        const { incomingResponseType, answerModel } = await this.getAnswerModelFromResponse(
+            assessmentId, currentNodeId, assessment);
+
+        if (incomingResponseType === QueryResponseType.SingleChoiceSelection ||
+            incomingResponseType === QueryResponseType.MultiChoiceSelection) {
+
+            var chosenPath = null;
+            
+            if (incomingResponseType === QueryResponseType.SingleChoiceSelection) {
+                chosenPath = await this.getChosenPathForSingleChoice(assessmentId, currentQuestionNode, answerModel);
+            }
+            else {
+                chosenPath = await this.getChosenPathForMultipleChoice(assessmentId, currentQuestionNode, answerModel);
+            }
+
+            if (chosenPath != null) {
+                const nextNodeId = chosenPath.NextNodeId;
+                var nextNode = await this._assessmentHelperRepo.getNodeById(nextNodeId);
+                if (nextNode) {
+                    var nodeType = nextNode.NodeType;
+
+                    if (nodeType === AssessmentNodeType.Question) {
+                        return await this.questionNodeAsQueryDto(nextNode, assessment);
+                    }
+                    else if (nodeType === AssessmentNodeType.Message) {
+                        return await this.messageNodeAsQueryDto(nextNode, assessment);
+                    }
+                    else {
+                        return await this.traverse(assessment, nextNode.id);
+                    }
+                }
+            }
+        }
+        const nextSiblingNode = await this.traverseUpstream(currentQuestionNode);
+        if (nextSiblingNode === null) {
+            //Assessment has finished
+            return null;
+        }
+        return await this.traverse(assessment, nextSiblingNode.id);
+    }
+
+    private async getAnswerModelFromResponse(assessmentId: string, currentNodeId: string, assessment: AssessmentDto) {
+        const response = await this._assessmentHelperRepo.getQueryResponse(assessmentId, currentNodeId);
+        const incomingResponseType = response.ResponseType;
+
+        const answerModel: AssessmentAnswerDomainModel = {
+            AssessmentId   : assessment.id,
+            QuestionNodeId : currentNodeId,
+            ResponseType   : incomingResponseType,
+            Biometrics     : response.ObjectValue ?? null,
+            BooleanValue   : response.BooleanValue ?? null,
+            DateValue      : response.DateValue ?? null,
+            FloatArray     : response.ArrayValue ?? null,
+            FloatValue     : response.FloatValue ?? null,
+            IntegerArray   : response.ArrayValue ?? null,
+            IntegerValue   : response.IntegerValue ?? null,
+            ObjectArray    : response.ArrayValue ?? null,
+            TextValue      : response.TextValue ?? null,
+            Url            : response.Url ?? null
+        };
+        return { incomingResponseType, answerModel };
     }
 
     private async traverseMessageNode(assessment: AssessmentDto, currentNode: CAssessmentNode)
@@ -307,6 +428,28 @@ export class AssessmentService {
         return this.questionNodeAsQueryDto(currentNode, assessment);
     }
 
+    private async getChosenPath(
+        nodeId: uuid,
+        paths: CAssessmentNodePath[],
+        chosenOptions: any): Promise<CAssessmentNodePath> {
+
+        var chosenPath: CAssessmentNodePath = null;
+        for await (var path of paths) {
+            const pathId = path.id;
+            const conditionId = path.ConditionId;
+            const condition = await this._assessmentHelperRepo.getPathCondition(conditionId, nodeId, pathId);
+            if (!condition) {
+                continue;
+            }
+            const resolved = await this._conditionProcessor.processCondition(condition, chosenOptions);
+            if (resolved === true) {
+                chosenPath = path;
+                break;
+            }
+        }
+        return chosenPath;
+    }
+
     private async processPathConditions(
         assessment: AssessmentDto,
         nodeId: uuid,
@@ -321,48 +464,63 @@ export class AssessmentService {
         | BiometricQueryAnswer,
         chosenOptions: any) {
 
-        //Persist the answer
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        const chosenPath = await this.getChosenPath(nodeId, paths, chosenOptions);
 
-        if (paths.length === 0) {
-            //In case there are no paths...
-            //This question node is a leaf node and should use traverseUp to find the next stop...
-            return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
+        if (chosenPath !== null) {
+            const nextNodeId = chosenPath.NextNodeId;
+            var nextNode = await this._assessmentHelperRepo.getNodeById(nextNodeId);
+            var nodeType = nextNode.NodeType;
+            var next: AssessmentQueryDto = null;
+
+            if (nodeType === AssessmentNodeType.NodeList) {
+                return await this.respondToUserAnswer(assessment, nextNodeId, currentQueryDto, answerDto);
+            }
+            else if (nodeType === AssessmentNodeType.Question) {
+                next = await this.questionNodeAsQueryDto(nextNode, assessment);
+            }
+            else if (nodeType === AssessmentNodeType.Message) {
+                next = await this.messageNodeAsQueryDto(nextNode, assessment);
+            }
+            const response: AssessmentQuestionResponseDto = {
+                AssessmentId : assessment.id,
+                Parent       : currentQueryDto,
+                Answer       : answerDto,
+                Next         : next,
+            };
+            return response;
         }
         else {
-            var chosenPath: CAssessmentNodePath = null;
-            for await (var path of paths) {
-                const pathId = path.id;
-                const conditionId = path.ConditionId;
-                const condition = await this._assessmentHelperRepo.getPathCondition(conditionId, nodeId, pathId);
-                if (!condition) {
-                    continue;
-                }
-                const resolved = await this._conditionProcessor.processCondition(condition, chosenOptions);
-                if (resolved === true) {
-                    chosenPath = path;
-                    break;
-                }
-            }
-            if (chosenPath !== null) {
-                return await this.respondToUserAnswer(assessment, chosenPath.NextNodeId, currentQueryDto, answerDto);
-            } else {
-                return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
-            }
+            return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
         }
     }
 
-    private async handleSingleChoiceSelectionAnswer(
+    private async createQueryResponse(
         assessment: AssessmentDto,
+        nodeId: string,
+        answerDto: | SingleChoiceQueryAnswer
+        | MultipleChoiceQueryAnswer
+        | MessageAnswer
+        | TextQueryAnswer
+        | DateQueryAnswer
+        | IntegerQueryAnswer
+        | BooleanQueryAnswer
+        | FloatQueryAnswer
+        | FileQueryAnswer
+        | BiometricQueryAnswer) {
+        var existingReposne = await this._assessmentHelperRepo.getQueryResponse(assessment.id, nodeId);
+        if (existingReposne == null) {
+            await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        }
+    }
+
+    private async getSingleChoiceQueryAnswer(
+        assessmentId: uuid,
         questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel
-    ): Promise<AssessmentQuestionResponseDto> {
-
+    ) {
         const { minSequenceValue, maxSequenceValue, options, paths, nodeId } = await this.getChoiceSelectionParams(
             questionNode
         );
-
-        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
 
         const chosenOptionSequence = answerModel.IntegerValue;
         if (
@@ -372,30 +530,49 @@ export class AssessmentService {
         ) {
             throw new Error(`Invalid option index! Cannot process the condition!`);
         }
+
         const answer = options.find((x) => x.Sequence === chosenOptionSequence);
         const answerDto = AssessmentHelperMapper.toSingleChoiceAnswerDto(
-            assessment.id,
+            assessmentId,
             questionNode,
             chosenOptionSequence,
             answer
         );
 
-        return await this.processPathConditions(
-            assessment, nodeId, currentQueryDto, paths, answerDto, chosenOptionSequence);
-
+        return { answerDto, paths, chosenOptionSequence, nodeId };
     }
 
-    private async handleMultipleChoiceSelectionAnswer(
+    private async handleSingleChoiceSelectionAnswer(
         assessment: AssessmentDto,
         questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel
     ): Promise<AssessmentQuestionResponseDto> {
 
+        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
+
+        const { answerDto, paths, chosenOptionSequence, nodeId } =
+            await this.getSingleChoiceQueryAnswer(assessment.id, questionNode, answerModel);
+
+        await this.createQueryResponse(assessment, nodeId, answerDto);
+
+        if (paths.length === 0) {
+            //In case there are no paths...
+            //This question node is a leaf node and should use traverseUp to find the next stop...
+            return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
+        }
+        
+        return await this.processPathConditions(
+            assessment, nodeId, currentQueryDto, paths, answerDto, chosenOptionSequence);
+    }
+
+    private async getMultipleChoiceQueryAnswer(
+        assessmentId: uuid,
+        questionNode: CAssessmentQuestionNode,
+        answerModel: AssessmentAnswerDomainModel
+    ) {
         const { minSequenceValue, maxSequenceValue, options, paths, nodeId } = await this.getChoiceSelectionParams(
             questionNode
         );
-
-        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
 
         const chosenOptionSequences = answerModel.IntegerArray;
         const selectedOptions: CAssessmentQueryOption[] = [];
@@ -408,15 +585,36 @@ export class AssessmentService {
         }
 
         const answerDto = AssessmentHelperMapper.toMultiChoiceAnswerDto(
-            assessment.id,
+            assessmentId,
             questionNode,
             chosenOptionSequences,
             selectedOptions
         );
 
+        return { answerDto, paths, chosenOptionSequences, nodeId };
+    }
+
+    private async handleMultipleChoiceSelectionAnswer(
+        assessment: AssessmentDto,
+        questionNode: CAssessmentQuestionNode,
+        answerModel: AssessmentAnswerDomainModel
+    ): Promise<AssessmentQuestionResponseDto> {
+
+        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
+
+        const { answerDto, paths, chosenOptionSequences, nodeId } =
+            await this.getMultipleChoiceQueryAnswer(assessment.id, questionNode, answerModel);
+
+        await this.createQueryResponse(assessment, nodeId, answerDto);
+
+        if (paths.length === 0) {
+            //In case there are no paths...
+            //This question node is a leaf node and should use traverseUp to find the next stop...
+            return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
+        }
+
         return await this.processPathConditions(
             assessment, nodeId, currentQueryDto, paths, answerDto, chosenOptionSequences);
-
     }
 
     private async handleBiometricsAnswer(
@@ -634,8 +832,9 @@ export class AssessmentService {
             AssessmentId         : assessment.id,
             Sequence             : messageNode.Sequence,
             NodeType             : messageNode.NodeType as AssessmentNodeType,
-            Title                : messageNode.Title,
+            Title                : messageNode.Message,
             Description          : messageNode.Description,
+            Message              : messageNode.Message,
             ExpectedResponseType : QueryResponseType.Ok,
             Options              : [],
             ProviderGivenCode    : messageNode.ProviderGivenCode,

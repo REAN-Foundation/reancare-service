@@ -103,11 +103,14 @@ export class AssessmentTemplateFileConverter {
         const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
         const sourceFolder = path.join(tempDownloadFolder, dateFolder, timestamp);
         const sourceFileLocation = path.join(sourceFolder, filename);
+
         await fs.promises.mkdir(sourceFolder, { recursive: true });
     
         const jsonObj = AssessmentTemplateFileConverter.convertToJson(templateObj);
         const jsonStr = JSON.stringify(jsonObj, null, 2);
         fs.writeFileSync(sourceFileLocation, jsonStr);
+        await Helper.sleep(500);
+
         return { dateFolder, filename, sourceFileLocation };
     };
 

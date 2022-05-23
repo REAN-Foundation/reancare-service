@@ -15,7 +15,7 @@ export class MedicationConsumptionValidator extends BaseValidator{
     
     checkConsumptionIds = async (request: express.Request): Promise<string[]> => {
 
-        await this.validateUuid(request, 'MedicationConsumptionIds', Where.Body, true, false);
+        await this.validateArray(request, 'MedicationConsumptionIds', Where.Body, true, false);
 
         this.validateRequest(request);
 
@@ -24,7 +24,7 @@ export class MedicationConsumptionValidator extends BaseValidator{
     
     getParam = async(request: express.Request, paramName) => {
 
-        await this.validateUuid(request, 'paramName', Where.Body, true, false);
+        await this.validateUuid(request, 'paramName', Where.Param, true, false);
         
         this.validateRequest(request);
         return request.params[paramName];
@@ -32,7 +32,7 @@ export class MedicationConsumptionValidator extends BaseValidator{
 
     getPatientUserId = async(request) => {
 
-        await this.validateUuid(request, 'patientUserId', Where.Body, true, false);
+        await this.validateUuid(request, 'patientUserId', Where.Param, true, false);
 
         this.validateRequest(request);
         return request.params.patientUserId;
@@ -42,8 +42,8 @@ export class MedicationConsumptionValidator extends BaseValidator{
 
         const model: MedicationConsumptionScheduleDomainModel = {
             PatientUserId : request.params.patientUserId,
-            Duration      : request.params.duration as string   ?? null,
-            When          : request.params.when as string ?? null,
+            Duration      : request.query.duration as string   ?? null,
+            When          : request.query.when as string ?? null,
         };
 
         return model;
@@ -109,11 +109,11 @@ export class MedicationConsumptionValidator extends BaseValidator{
 
     searchForPatient = async (request: express.Request): Promise<MedicationConsumptionSearchFilters> => {
 
-        await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
-        await this.validateUuid(request, 'orderId', Where.Body, true, false);
-        await this.validateString(request, 'medicationId', Where.Body, false, false);
-        await this.validateDate(request, 'fromDate', Where.Body, false, false);
-        await this.validateDate(request, 'toDate', Where.Body, false, false);
+        await this.validateUuid(request, 'patientUserId', Where.Param, false, false);
+        await this.validateUuid(request, 'orderId', Where.Query, false, false);
+        await this.validateUuid(request, 'medicationId', Where.Query, false, false);
+        await this.validateDate(request, 'fromDate', Where.Query, false, false);
+        await this.validateDate(request, 'toDate', Where.Query, false, false);
 
         this.validateRequest(request);
 

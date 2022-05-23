@@ -90,7 +90,7 @@ export class ApiClientValidator extends BaseValidator{
 
     getById = async (request: express.Request): Promise<string> => {
 
-        await this.validateString(request, 'id', Where.Body, true, false);
+        await this.validateUuid(request, 'id', Where.Param, true, false);
         
         this.validateRequest(request);
         
@@ -108,10 +108,10 @@ export class ApiClientValidator extends BaseValidator{
 
     private async validateUpdateBody(request) {
 
-        await this.validateString(request, 'ClientName', Where.Body, false, false);
+        await this.validateString(request, 'ClientName', Where.Body, true, false);
         await this.validateString(request, 'Phone', Where.Body, true, true);
         await this.validateString(request, 'Email', Where.Body, true, true);
-        await this.validateString(request, 'PatientUserId', Where.Body, false, false);
+        //await this.validateString(request, 'PatientUserId', Where.Body, false, false);
 
         this.validateRequest(request);
     }

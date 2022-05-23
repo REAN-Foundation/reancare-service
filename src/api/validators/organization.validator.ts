@@ -36,45 +36,47 @@ export class OrganizationValidator extends BaseValidator {
     };
 
     private async validateCreateBody(request) {
-        await this.validateString(request, 'type', Where.Query, false, false);
-        await this.validateString(request, 'name', Where.Query, false, true);
-        await this.validateString(request, 'contactUserId', Where.Query, false, true);
-        await this.validateString(request, 'contactPhone', Where.Query, false, false);
-        await this.validateString(request, 'contactEmail', Where.Query, false, true);
-        await this.validateString(request, 'parentOrganizationId', Where.Query, false, true);
-        await this.validateString(request, 'about', Where.Query, false, true);
-        await this.validateDate(request, 'operationalSinceFrom', Where.Query, false, true);
-        await this.validateDate(request, 'operationalSinceTo', Where.Query, false, true);
-        await this.validateUuid(request, 'location', Where.Query, false, false);
-        await this.validateBoolean(request, 'isHealthFacility', Where.Query, false, false);
-        await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
-        await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
-        await this.validateUuid(request, 'orderBy', Where.Query, false, false);
-        await this.validateUuid(request, 'order', Where.Query, false, false);
-        await this.validateUuid(request, 'pageIndex', Where.Query, false, false);
-        await this.validateUuid(request, 'itemsPerPage', Where.Query, false, false);
+
+        await this.validateString(request, 'Type', Where.Body, false, false);
+        await this.validateString(request, 'Name', Where.Body, false, true);
+        await this.validateUuid(request, 'ContactUserId', Where.Body, false, true);
+        await this.validateString(request, 'ContactPhone', Where.Body, false, false);
+        await this.validateString(request, 'ContactEmail', Where.Body, false, true);
+        await this.validateUuid(request, 'ParentOrganizationId', Where.Body, false, true);
+        await this.validateString(request, 'About', Where.Body, false, true);
+        await this.validateDate(request, 'OperationalSince', Where.Body, false, true);
+        //await this.validateDate(request, 'OperationalSinceTo', Where.Body, false, true);
+        await this.validateUuid(request, 'AddressId', Where.Body, false, false);
+        await this.validateUuid(request, 'ImageResourceId', Where.Body, false, true);
+        await this.validateBoolean(request, 'IsHealthFacility', Where.Body, false, true);
+        await this.validateString(request, 'NationalHealthFacilityRegistryId', Where.Body, false, true);
+        await this.validateString(request, 'orderBy', Where.Body, false, false);
+        await this.validateString(request, 'order', Where.Body, false, false);
+        await this.validateInt(request, 'pageIndex', Where.Body, false, false);
+        await this.validateInt(request, 'itemsPerPage', Where.Body, false, false);
 
         this.validateRequest(request);
     }
     
     search = async (request: express.Request): Promise<OrganizationSearchFilters> => {
+
         await this.validateString(request, 'type', Where.Query, false, false);
-        await this.validateString(request, 'name', Where.Query, false, false);
-        await this.validateString(request, 'contactUserId', Where.Query, false, false);
-        await this.validateString(request, 'contactPhone', Where.Query, false, false);
-        await this.validateString(request, 'contactEmail', Where.Query, false, false);
-        await this.validateString(request, 'parentOrganizationId', Where.Query, false, false);
-        await this.validateString(request, 'about', Where.Query, false, false);
-        await this.validateDate(request, 'operationalSinceFrom', Where.Query, false, false);
-        await this.validateDate(request, 'operationalSinceTo', Where.Query, false, false);
-        await this.validateUuid(request, 'location', Where.Query, false, false);
+        await this.validateString(request, 'name', Where.Query, false, true);
+        await this.validateUuid(request, 'contactUserId', Where.Query, false, true);
+        await this.validateString(request, 'contactPhone', Where.Body, false, false);
+        await this.validateString(request, 'contactEmail', Where.Body, false, true);
+        await this.validateUuid(request, 'parentOrganizationId', Where.Query, false, true);
+        await this.validateString(request, 'about', Where.Query, false, true);
+        await this.validateDate(request, 'operationalSinceFrom', Where.Query, false, true);
+        await this.validateDate(request, 'operationalSinceTo', Where.Query, false, true);
+        await this.validateString(request, 'location', Where.Query, false, false);
         await this.validateBoolean(request, 'isHealthFacility', Where.Query, false, false);
         await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
         await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
-        await this.validateUuid(request, 'orderBy', Where.Query, false, false);
-        await this.validateUuid(request, 'order', Where.Query, false, false);
-        await this.validateUuid(request, 'pageIndex', Where.Query, false, false);
-        await this.validateUuid(request, 'itemsPerPage', Where.Query, false, false);
+        await this.validateString(request, 'orderBy', Where.Query, false, false);
+        await this.validateString(request, 'order', Where.Query, false, false);
+        await this.validateInt(request, 'pageIndex', Where.Query, false, false);
+        await this.validateInt(request, 'itemsPerPage', Where.Query, false, false);
 
         await this.validateBaseSearchFilters(request);
         
@@ -117,36 +119,37 @@ export class OrganizationValidator extends BaseValidator {
     };
 
     private async validateUpdateBody (request){
-        await this.validateString(request, 'type', Where.Query, false, false);
-        await this.validateString(request, 'name', Where.Query, false, false);
-        await this.validateString(request, 'contactUserId', Where.Query, false, false);
-        await this.validateString(request, 'contactPhone', Where.Query, false, false);
-        await this.validateString(request, 'contactEmail', Where.Query, false, false);
-        await this.validateString(request, 'parentOrganizationId', Where.Query, false, false);
-        await this.validateString(request, 'about', Where.Query, false, false);
-        await this.validateDate(request, 'operationalSinceFrom', Where.Query, false, false);
-        await this.validateDate(request, 'operationalSinceTo', Where.Query, false, false);
-        await this.validateUuid(request, 'location', Where.Query, false, false);
-        await this.validateBoolean(request, 'isHealthFacility', Where.Query, false, false);
-        await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
-        await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
-        await this.validateUuid(request, 'orderBy', Where.Query, false, false);
-        await this.validateUuid(request, 'order', Where.Query, false, false);
-        await this.validateUuid(request, 'pageIndex', Where.Query, false, false);
-        await this.validateUuid(request, 'itemsPerPage', Where.Query, false, false);
+
+        await this.validateString(request, 'Type', Where.Body, false, false);
+        await this.validateString(request, 'Name', Where.Body, false, true);
+        await this.validateUuid(request, 'ContactUserId', Where.Body, false, true);
+        await this.validateString(request, 'ContactPhone', Where.Body, false, false);
+        await this.validateString(request, 'ContactEmail', Where.Body, false, true);
+        await this.validateUuid(request, 'ParentOrganizationId', Where.Body, false, true);
+        await this.validateString(request, 'About', Where.Body, false, true);
+        await this.validateDate(request, 'OperationalSince', Where.Body, false, true);
+        //await this.validateDate(request, 'OperationalSinceTo', Where.Body, false, true);
+        await this.validateUuid(request, 'AddressId', Where.Body, false, false);
+        await this.validateUuid(request, 'ImageResourceId', Where.Body, false, true);
+        await this.validateBoolean(request, 'IsHealthFacility', Where.Body, false, true);
+        await this.validateString(request, 'NationalHealthFacilityRegistryId', Where.Body, false, true);
+        await this.validateString(request, 'orderBy', Where.Body, false, false);
+        await this.validateString(request, 'order', Where.Body, false, false);
+        await this.validateInt(request, 'pageIndex', Where.Body, false, false);
+        await this.validateInt(request, 'itemsPerPage', Where.Body, false, false);
 
         this.validateRequest(request);
     }
 
     getByContactUserId = async (request: express.Request) => {
-        await this.validateString(request, 'contactUserId', Where.Query, true, false);
+        await this.validateUuid(request, 'contactUserId', Where.Param, true, true);
         
         this.validateRequest(request);
         return request.params.contactUserId;
     };
 
     public async getParamId(request) {
-        await this.validateString(request, 'id', Where.Query, false, false);
+        await this.validateUuid(request, 'id', Where.Param, true, false);
         
         this.validateRequest(request);
         return request.params.id;
@@ -154,8 +157,8 @@ export class OrganizationValidator extends BaseValidator {
 
     addOrRemoveAddress = async (request: express.Request): Promise<{ id: string; addressId: string }> => {
 
-        await this.validateString(request, 'id', Where.Query, false, false);
-        await this.validateString(request, 'id', Where.Query, false, false);
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+        await this.validateUuid(request, 'addressId', Where.Param, true, false);
     
         this.validateRequest(request);
 
@@ -166,8 +169,9 @@ export class OrganizationValidator extends BaseValidator {
     };
 
     addOrRemovePerson = async (request: express.Request): Promise<{ id: string; personId: string }> => {
-        await this.validateString(request, 'id', Where.Query, false, false);
-        await this.validateString(request, 'personId', Where.Query, false, false);
+
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+        await this.validateUuid(request, 'personId', Where.Param, true, false);
 
         this.validateRequest(request);
 

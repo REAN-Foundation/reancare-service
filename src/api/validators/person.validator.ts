@@ -11,15 +11,16 @@ export class PersonValidator extends BaseValidator{
 
     getParamId = async(request): Promise<string> => {
 
-        await this.validateString(request, 'id', Where.Body, false, false);
+        await this.validateUuid(request, 'id', Where.Param, true, false);
 
         this.validateRequest(request);
         return request.params.id;
     }
 
     addOrRemoveAddress = async (request: express.Request): Promise<{ id, addressId }> => {
-        await this.validateString(request, 'id', Where.Body, false, true);
-        await this.validateString(request, 'addressId', Where.Body, false, true);
+
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+        await this.validateUuid(request, 'addressId', Where.Param, true,false);
         
         this.validateRequest(request);
         
@@ -32,8 +33,8 @@ export class PersonValidator extends BaseValidator{
 
     getAllPersonsWithPhoneAndRole = async (request: express.Request): Promise<{ phone: string; roleId: number }> => {
 
-        await this.validateString(request, 'phone', Where.Body, false, true);
-        await this.validateUuid(request, 'roleId', Where.Body, false, true);
+        await this.validateUuid(request, 'phone', Where.Param, true, false);
+        await this.validateInt(request, 'roleId', Where.Param, true, false);
         
         this.validateRequest(request);
 

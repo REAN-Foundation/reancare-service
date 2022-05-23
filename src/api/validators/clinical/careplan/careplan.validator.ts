@@ -1,5 +1,5 @@
 import express from 'express';
-import { EnrollmentDomainModel } from '../../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
+import { CarePlanEnrollmentDomainModel } from '../../../../domain.types/clinical/careplan/enrollment/careplan.enrollment.domain.model';
 import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -10,9 +10,10 @@ export class CareplanValidator extends BaseValidator {
         super();
     }
 
-    getEnrollmentDomainModel = (request: express.Request): EnrollmentDomainModel => {
+    getEnrollmentDomainModel = (request: express.Request): CarePlanEnrollmentDomainModel => {
 
-        const model: EnrollmentDomainModel = {
+        const model: CarePlanEnrollmentDomainModel = {
+            EhrId         : request.params.ehrId,
             PatientUserId : request.params.patientUserId,
             Provider      : request.body.Provider,
             PlanName      : request.body.PlanName,
@@ -24,7 +25,7 @@ export class CareplanValidator extends BaseValidator {
         return model;
     };
 
-    enroll = async (request: express.Request): Promise<EnrollmentDomainModel> => {
+    enroll = async (request: express.Request): Promise<CarePlanEnrollmentDomainModel> => {
 
         await this.validateUuid(request, 'patientUserId', Where.Param, true, false);
         await this.validateCreateBody(request);

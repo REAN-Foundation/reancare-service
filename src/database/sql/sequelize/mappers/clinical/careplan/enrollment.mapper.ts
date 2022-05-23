@@ -1,18 +1,19 @@
-import { EnrollmentDto } from "../../../../../../domain.types/clinical/careplan/enrollment/enrollment.dto";
+import { CarePlanEnrollmentDto } from "../../../../../../domain.types/clinical/careplan/enrollment/careplan.enrollment.dto";
 import CareplanEnrollment from "../../../models/clinical/careplan/enrollment.model";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 export class EnrollmentMapper {
 
-    static toDto = (enrollment: CareplanEnrollment): EnrollmentDto => {
+    static toDto = (enrollment: CareplanEnrollment): CarePlanEnrollmentDto => {
 
         if (enrollment == null){
             return null;
         }
 
-        const dto: EnrollmentDto = {
+        const dto: CarePlanEnrollmentDto = {
             id            : enrollment.id,
+            EhrId         : enrollment.EhrId,
             PatientUserId : enrollment.PatientUserId,
             EnrollmentId  : enrollment.EnrollmentId,
             ParticipantId : enrollment.ParticipantId,

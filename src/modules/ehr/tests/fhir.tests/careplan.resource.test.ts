@@ -1,47 +1,30 @@
 import { TestLoader } from "../test.loader";
-import { PatientMapper } from "../test.data.mapper/patient.ehr.mapper";
 import { CarePlanMapper } from "../test.data.mapper/careplan.ehr.mapper";
 
 describe('Care plan resource: Storage, retrieval', () => {
     it('Given care plan domain model, store observation resource to fhir interface, then returned care plan details are valid.', async () => {
 
-        var patientModel = PatientMapper.convertJsonObjectToDomainModel();
-        var patientEhrId = await TestLoader.PatientStore.create(patientModel);
-    
         var model = CarePlanMapper.convertJsonObjectToDomainModel();
-        model.EhrId = patientEhrId;
-
+        
         var carePlanEhirId = await TestLoader.CarePlanStore.add(model);
         var carePlanResource = await TestLoader.CarePlanStore.getById(carePlanEhirId);
 
         //Assertions
 
-        var extractedTitle = carePlanResource.title;
-        expect(extractedTitle).toEqual(model.Title);
-
         var extractedProvider = carePlanResource.author.display;
         expect(extractedProvider).toEqual(model.Provider);
 
-        var extractedCategory = carePlanResource.category[0].text;
-        expect(extractedCategory).toEqual(model.Category);
+        var extractedTitle = carePlanResource.title;
+        expect(extractedTitle).toEqual(model.PlanName);
 
         var extractedStartTime = carePlanResource.period.start;
-        expect(extractedStartTime).toEqual(model.ScheduledAt);
+        expect(extractedStartTime).toEqual(model.StartDate);
 
-        var extractedStatus = carePlanResource.status;
-        expect(extractedStatus).toEqual(model.Status);
-
-        var extractedPlanName = carePlanResource.activity[0].reference.display;
-        expect(extractedPlanName).toEqual(model.PlanName);
-
-        var extractedPlanCode = carePlanResource.activity[0].reference.id;
-        expect(extractedPlanCode).toEqual(model.PlanCode);
-
-        var extractedPatientEhrId = carePlanResource.subject.reference.split('/')[1];
+        var extractedPatientEhrId = carePlanResource.subject.id;
         expect(extractedPatientEhrId).toEqual(model.PatientUserId);
 
-        var extractedParticipantId = carePlanResource.subject.id;
-        expect(extractedParticipantId).toEqual(model.ParticipantId);
+        var extractedPatientName = carePlanResource.subject.display;
+        expect(extractedPatientName).toEqual(model.Name);
  
         var extractedCarePlanId = carePlanResource.id;
         expect(extractedCarePlanId).toBeTruthy();
@@ -53,35 +36,30 @@ describe('Care plan resource: Storage, retrieval', () => {
         var model = CarePlanMapper.convertJsonObjectToDomainModel();
         var carePlanFhirId = await TestLoader.CarePlanStore.add(model);
 
-        var expectedStartDate = '2022-01-03T00:00:00.000Z';
-        model.PlanName = "Weight loss";
-        model.PlanCode = "WL";
-        model.ScheduledAt = new Date(expectedStartDate);
-        model.Status = "completed";
-        model.Title = "Weight loss care plan";
+        var expectedStartDate = '2022-01-05T00:00:00.000Z';
+        var expectedEndDate = '2022-01-21T00:00:00.000Z';
+        model.StartDate = new Date(expectedStartDate);
+        model.EndDate = new Date(expectedEndDate);
+        model.PlanName = "Weight loss care plan";
+        model.Provider = "WHO";
 
         var updatedResource = await TestLoader.CarePlanStore.update(carePlanFhirId, model);
 
+        var extractedProvider = updatedResource.author.display;
+        expect(extractedProvider).toEqual(model.Provider);
+
         var extractedTitle = updatedResource.title;
-        expect(extractedTitle).toEqual(model.Title);
+        expect(extractedTitle).toEqual(model.PlanName);
 
         var extractedStartTime = updatedResource.period.start;
         expect(extractedStartTime).toEqual(expectedStartDate);
 
-        var extractedStatus = updatedResource.status;
-        expect(extractedStatus).toEqual(model.Status);
+        var extractedPatientName = updatedResource.subject.display;
+        expect(extractedPatientName).toEqual(model.Name);
 
-        var extractedPlanName = updatedResource.activity[0].reference.display;
-        expect(extractedPlanName).toEqual(model.PlanName);
-
-        var extractedPlanCode = updatedResource.activity[0].reference.id;
-        expect(extractedPlanCode).toEqual(model.PlanCode);
-
-        var extractedPatientEhrId = updatedResource.subject.reference.split('/')[1];
-        expect(extractedPatientEhrId).toEqual(model.PatientUserId);
-
-        var extractedCarePlanId = updatedResource.id;
-        expect(extractedCarePlanId).toBeTruthy();
+        var extractedEndTime = updatedResource.period.end;
+        expect(extractedEndTime).toEqual(expectedEndDate);
+        
     });
 
     it('Delete care plan resource, then empty resource is returned for next query.', async () => {

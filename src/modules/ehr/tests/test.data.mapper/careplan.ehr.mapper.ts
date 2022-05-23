@@ -1,7 +1,6 @@
 import path from 'path';
 import { Helper } from "../../../../common/helper";
-import { CareplanActivityDomainModel
-} from '../../../../domain.types/clinical/careplan/activity/careplan.activity.domain.model';
+import { CarePlanEnrollmentDomainModel } from '../../../../domain.types/clinical/careplan/enrollment/careplan.enrollment.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -12,25 +11,16 @@ export class CarePlanMapper {
         const jsonPath = path.join(cwd,'src/modules/ehr/tests/test.data/','care.plan.domain.model.json');
         var carePlanObj = Helper.jsonToObj(jsonPath);
 
-        var model: CareplanActivityDomainModel = {
-            PatientUserId    : carePlanObj.PatientUserId,
-            EhrId            : carePlanObj.EhrId,
-            ParticipantId    : carePlanObj.ParticipantId,
-            EnrollmentId     : carePlanObj.EnrollmentId,
-            Provider         : carePlanObj.Provider,
-            PlanName         : carePlanObj.PlanName,
-            PlanCode         : carePlanObj.PlanCode,
-            Type             : carePlanObj.Type,
-            Category         : carePlanObj.Category,
-            ProviderActionId : carePlanObj.ProviderActionId,
-            Title            : carePlanObj.Title,
-            Description      : carePlanObj.Description,
-            Url              : carePlanObj.Url,
-            Language         : carePlanObj.Language,
-            ScheduledAt      : carePlanObj.ScheduledAt,
-            Sequence         : carePlanObj.Sequence,
-            Frequency        : carePlanObj.Frequency,
-            Status           : carePlanObj.Status
+        var model: CarePlanEnrollmentDomainModel = {
+            id            : carePlanObj.id,
+            PatientUserId : carePlanObj.PatientUserId,
+            EnrollmentId  : carePlanObj.EnrollmentId,
+            Provider      : carePlanObj.Provider,
+            PlanName      : carePlanObj.PlanName,
+            PlanCode      : carePlanObj.PlanCode,
+            StartDate     : carePlanObj.StartDate,
+            EndDate       : carePlanObj.EndDate,
+            Name          : carePlanObj.Name,
         };
 
         return model;

@@ -1,6 +1,6 @@
 import { ParticipantDto } from '../../../domain.types/clinical/careplan/participant/participant.dto';
-import { EnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
-import { EnrollmentDto } from "../../../domain.types/clinical/careplan/enrollment/enrollment.dto";
+import { CarePlanEnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/careplan.enrollment.domain.model';
+import { CarePlanEnrollmentDto } from "../../../domain.types/clinical/careplan/enrollment/careplan.enrollment.dto";
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityDto } from '../../../domain.types/clinical/careplan/activity/careplan.activity.dto';
 import { CareplanActivityDomainModel } from '../../../domain.types/clinical/careplan/activity/careplan.activity.domain.model';
@@ -14,13 +14,13 @@ export interface ICareplanRepo {
 
     getPatientRegistrationDetails(patientUserId: uuid, provider?: string): Promise<ParticipantDto>;
 
-    enrollPatient(model: EnrollmentDomainModel): Promise<EnrollmentDto>;
+    enrollPatient(model: CarePlanEnrollmentDomainModel): Promise<CarePlanEnrollmentDto>;
 
-    getCareplanEnrollment(careplanId: uuid): Promise<EnrollmentDto>;
+    getCareplanEnrollment(careplanId: uuid): Promise<CarePlanEnrollmentDto>;
 
-    getPatientEnrollments(patientUserId: uuid): Promise<EnrollmentDto[]>;
+    getPatientEnrollments(patientUserId: uuid): Promise<CarePlanEnrollmentDto[]>;
 
-    getPatientEnrollment(patientUserId: uuid, provider: string, enrollmentId): Promise<EnrollmentDto>;
+    getPatientEnrollment(patientUserId: uuid, provider: string, enrollmentId): Promise<CarePlanEnrollmentDto>;
 
     addActivities(
         provider: string,

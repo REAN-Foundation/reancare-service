@@ -1,9 +1,8 @@
-import { CareplanActivityDomainModel } from '../../../domain.types/clinical/careplan/activity/careplan.activity.domain.model';
-
+import { CarePlanEnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/careplan.enrollment.domain.model';
 export interface ICarePlanStore {
-    add(patientDomainModel: CareplanActivityDomainModel): Promise<any>;
+    add(patientDomainModel: CarePlanEnrollmentDomainModel): Promise<any>;
     search(filter): Promise<any>;
     getById(id: string): Promise<any>;
-    update(id: string, updates: CareplanActivityDomainModel): Promise<any>;
+    update(id: string, updates: CarePlanEnrollmentDomainModel): Promise<any>;
     delete(id: string): Promise<any>;
 }

@@ -1,6 +1,6 @@
 import { ICareplanService } from "./interfaces/careplan.service.interface";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
-import { EnrollmentDomainModel } from "../../domain.types/clinical/careplan/enrollment/enrollment.domain.model";
+import { CarePlanEnrollmentDomainModel } from "../../domain.types/clinical/careplan/enrollment/careplan.enrollment.domain.model";
 import Dictionary from "../../common/dictionary";
 import { CareplanActivity } from "../../domain.types/clinical/careplan/activity/careplan.activity";
 import { ParticipantDomainModel } from "../../domain.types/clinical/careplan/participant/participant.domain.model";
@@ -86,7 +86,9 @@ export class CareplanHandler {
         return null;
     };
 
-    public enrollPatientToCarePlan = async (enrollmentDetails: EnrollmentDomainModel): Promise<string> => {
+    public enrollPatientToCarePlan = async (
+        enrollmentDetails: CarePlanEnrollmentDomainModel
+    ): Promise<string> => {
         const provider = enrollmentDetails.Provider;
         if (this.isEnabledProvider(provider)) {
             var service = CareplanHandler._services.getItem(provider);

@@ -52,7 +52,7 @@ describe('Observation resource: Storage, retrieval', () => {
         var updatedResource = await TestLoader.BloodOxygenSaturationStore.update(bloodOxygenSaturationEhirId, model);
 
         // Assertions
-        var extractedPatientUserId = updatedResource.PatientUserId;
+        var extractedPatientUserId = updatedResource.EhrId;
         expect(extractedPatientUserId).toEqual(extractedPatientUserId);
       
         var extractedUnit = updatedResource.component[0].valueQuantity.unit;

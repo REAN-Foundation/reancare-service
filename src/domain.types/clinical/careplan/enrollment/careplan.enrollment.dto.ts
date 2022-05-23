@@ -1,5 +1,6 @@
-export interface EnrollmentDto {
+export interface CarePlanEnrollmentDto {
     id?          : string;
+    EhrId?       : string;
     PatientUserId: string;
     Provider?    : string;
     PlanCode?    : string;

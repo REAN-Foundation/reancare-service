@@ -1,6 +1,7 @@
-export interface EnrollmentDomainModel {
+export interface CarePlanEnrollmentDomainModel {
     id?           : string;
     Name?         : string;
+    EhrId?        : string;
     PatientUserId : string;
     Provider?     : string;
     PlanCode?     : string;

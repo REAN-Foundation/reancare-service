@@ -31,6 +31,7 @@ import { AssessmentTemplateFileConverter } from "./assessment/assessment.templat
 import { CarePlanStore } from "../../modules/ehr/services/careplan.service";
 import { Loader } from "../../startup/loader";
 import { UserTaskDomainModel } from "../../domain.types/user/user.task/user.task.domain.model";
+import { ConfigurationManager } from "../../config/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -51,7 +52,9 @@ export class CareplanService implements IUserActionService {
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
     ) {
-        this._ehrCarePlanStore = Loader.container.resolve(CarePlanStore);
+        if (ConfigurationManager.EhrEnabled()) {
+            this._ehrCarePlanStore = Loader.container.resolve(CarePlanStore);
+        }
     }
 
     public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
@@ -120,9 +123,10 @@ export class CareplanService implements IUserActionService {
         }
         enrollmentDetails.EnrollmentId = enrollmentId;
 
-        const ehrId = await this._ehrCarePlanStore.add(enrollmentDetails);
-        enrollmentDetails.EhrId = ehrId;
-
+        if (this._ehrCarePlanStore) {
+            const ehrId = await this._ehrCarePlanStore.add(enrollmentDetails);
+            enrollmentDetails.EhrId = ehrId;
+        }
         var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
 
         var activities = await this._handler.fetchActivities(

@@ -8,9 +8,10 @@ export class FirebaseNotificationService implements INotificationService {
     
     init = () => {
         try {
+            //@typescript-eslint/no-var-requires
             var serviceAccount = require(process.env.FCM_GOOGLE_APPLICATION_CREDENTIALS);
             admin.initializeApp({
-                credential: admin.credential.cert(serviceAccount),
+                credential : admin.credential.cert(serviceAccount),
             });
         } catch (error) {
             Logger.instance().log(error.message);

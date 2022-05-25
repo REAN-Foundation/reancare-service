@@ -23,7 +23,6 @@ import { Loader } from "../../../startup/loader";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { MedicationConsumptionStore } from "../../../modules/ehr/services/medication.consumption.store";
 import { ConfigurationManager } from "../../../config/configuration.manager";
-import { UserService } from "../../../services/user/user.service";
 import { IPersonRepo } from "../../../database/repository.interfaces/person.repo.interface";
 import * as MessageTemplates from '../../../modules/communication/message.template/message.templates.json';
 
@@ -237,7 +236,7 @@ export class MedicationConsumptionService implements IUserActionService {
             return null;
         }
 
-        if (this._ehrMedicationConsumptionStore) {            
+        if (this._ehrMedicationConsumptionStore) {
             const ehrId = await this._ehrMedicationConsumptionStore.add(medConsumption);
             medConsumption.EhrId = ehrId;
             await this._medicationConsumptionRepo.assignEhrId(id, medConsumption.EhrId);
@@ -766,13 +765,15 @@ export class MedicationConsumptionService implements IUserActionService {
         Logger.instance().log(`Notification Title: ${title}`);
         Logger.instance().log(`Notification Body: ${body}`);
 
-        var message = Loader.notificationService.formatNotificationMessage(MessageTemplates.MedicationReminder.NotificationType, title, body);
+        var message = Loader.notificationService.formatNotificationMessage(
+            MessageTemplates.MedicationReminder.NotificationType, title, body
+        );
         for await (var device of deviceList) {
-            await Loader.notificationService.sendNotificationToDevice(device.Token, message)
+            await Loader.notificationService.sendNotificationToDevice(device.Token, message);
         }
 
     };
 
     //#endregion
-    
+
 }

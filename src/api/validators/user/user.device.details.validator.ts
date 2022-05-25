@@ -195,19 +195,19 @@ export class UserDeviceDetailsValidator {
     static sendTestNotification = async (request: express.Request, response: express.Response): Promise<any> => {
         try {
             await body('Phone').exists()
-              .trim()
-              .escape()
-              .run(request);
+                .trim()
+                .escape()
+                .run(request);
 
             await body('Title').exists()
-              .trim()
-              .escape()
-              .run(request);
+                .trim()
+                .escape()
+                .run(request);
 
             await body('Body').exists()
-              .trim()
-              .escape()
-              .run(request);
+                .trim()
+                .escape()
+                .run(request);
 
             const result = validationResult(request);
             if (!result.isEmpty()) {
@@ -215,10 +215,10 @@ export class UserDeviceDetailsValidator {
             }
 
             var details = {
-                Phone: request.body.Phone,
-                Title: request.body.Title,
-                Body : request.body.Body,
-            }
+                Phone : request.body.Phone,
+                Title : request.body.Title,
+                Body  : request.body.Body,
+            };
             return details;
             
         } catch (error) {

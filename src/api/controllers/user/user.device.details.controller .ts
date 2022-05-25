@@ -92,9 +92,10 @@ export class UserDeviceDetailsController {
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} user device details records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
-                UserDeviceDetailsRecords : searchResults });
+                UserDeviceDetailsRecords : searchResults
+            });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -152,10 +153,9 @@ export class UserDeviceDetailsController {
         }
     };
 
-
     sendTestNotification = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.SendTestNotification'; 
+            request.context = 'UserDeviceDetails.SendTestNotification';
             await this._authorizer.authorize(request, response);
 
             var details = await UserDeviceDetailsValidator.sendTestNotification(request, response);
@@ -172,10 +172,10 @@ export class UserDeviceDetailsController {
                 throw new ApiError(404, ' User device details record not found.');
             }
 
-            const deviceTokens = [];  
+            const deviceTokens = [];
             UserDeviceDetails.forEach((device) => {
                 deviceTokens.push(device.Token);
-            })
+            });
 
             const message = await this._firebaseNotificationService.formatNotificationMessage('APP', details.Title, details.Body);
 
@@ -183,9 +183,9 @@ export class UserDeviceDetailsController {
             await this._firebaseNotificationService.sendNotificationToMultipleDevice(deviceTokens, message);
 
             ResponseHandler.success(request, response, 'Notification sent to device successfully!', 201, {
-                Title      : details.Title,
-                Body       : details.Body,
-                DeviceCount: deviceTokens.length,
+                Title       : details.Title,
+                Body        : details.Body,
+                DeviceCount : deviceTokens.length,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

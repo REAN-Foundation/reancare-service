@@ -23,6 +23,9 @@ import { Loader } from "../../../startup/loader";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { MedicationConsumptionStore } from "../../../modules/ehr/services/medication.consumption.store";
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import { UserService } from "../../../services/user/user.service";
+import { IPersonRepo } from "../../../database/repository.interfaces/person.repo.interface";
+import * as MessageTemplates from '../../../modules/communication/message.template/message.templates.json';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,6 +40,7 @@ export class MedicationConsumptionService implements IUserActionService {
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
+        @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
@@ -746,23 +750,25 @@ export class MedicationConsumptionService implements IUserActionService {
     sendMedicationReminder = async (medicationSchedule) => {
 
         var patientUserId = medicationSchedule.PatientUserId;
+        var user = await this._userRepo.getById(patientUserId);
+        var person = await this._personRepo.getById(user.PersonId);
 
         var deviceList = await this._userDeviceDetailsRepo.getByUserId(patientUserId);
         var deviceListsStr = JSON.stringify(deviceList, null, 2);
         Logger.instance().log(`Sent medication reminders to following devices - ${deviceListsStr}`);
+        
+        var title = MessageTemplates.MedicationReminder.Title;
+        title = title.replace("{{PatientName}}", person.FirstName ?? "there");
+        title = title.replace("{{DrugName}}", medicationSchedule.DrugName);
+        var body = MessageTemplates.MedicationReminder.Body;
+        body = body.replace("{{EndTime}}", TimeHelper.format(medicationSchedule.TimeScheduleEnd, 'hh:mm A'));
+    
+        Logger.instance().log(`Notification Title: ${title}`);
+        Logger.instance().log(`Notification Body: ${body}`);
 
-        var message = Loader.notificationService.formatNotificationMessage(
-            'Upcoming medication',
-            'You have upcoming scheduled medication!',
-            {
-                ScheduleStart : medicationSchedule.TimeScheduleStart.toUTCString(),
-                ScheduleEnd   : medicationSchedule.TimeScheduleEnd.toUTCString(),
-                DrugName      : medicationSchedule.DrugName,
-                Details       : medicationSchedule.Details
-            }
-        );
+        var message = Loader.notificationService.formatNotificationMessage(MessageTemplates.MedicationReminder.NotificationType, title, body);
         for await (var device of deviceList) {
-            await Loader.notificationService.sendMessageToTopic(device.Token, message);
+            await Loader.notificationService.sendNotificationToDevice(device.Token, message)
         }
 
     };

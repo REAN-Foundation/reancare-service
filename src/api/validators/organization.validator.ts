@@ -45,7 +45,6 @@ export class OrganizationValidator extends BaseValidator {
         await this.validateUuid(request, 'ParentOrganizationId', Where.Body, false, true);
         await this.validateString(request, 'About', Where.Body, false, true);
         await this.validateDate(request, 'OperationalSince', Where.Body, false, true);
-        //await this.validateDate(request, 'OperationalSinceTo', Where.Body, false, true);
         await this.validateUuid(request, 'AddressId', Where.Body, false, false);
         await this.validateUuid(request, 'ImageResourceId', Where.Body, false, true);
         await this.validateBoolean(request, 'IsHealthFacility', Where.Body, false, true);
@@ -128,7 +127,6 @@ export class OrganizationValidator extends BaseValidator {
         await this.validateUuid(request, 'ParentOrganizationId', Where.Body, false, true);
         await this.validateString(request, 'About', Where.Body, false, true);
         await this.validateDate(request, 'OperationalSince', Where.Body, false, true);
-        //await this.validateDate(request, 'OperationalSinceTo', Where.Body, false, true);
         await this.validateUuid(request, 'AddressId', Where.Body, false, false);
         await this.validateUuid(request, 'ImageResourceId', Where.Body, false, true);
         await this.validateBoolean(request, 'IsHealthFacility', Where.Body, false, true);

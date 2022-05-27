@@ -94,12 +94,12 @@ export class DoctorValidator extends BaseValidator {
     }
 
     getByUserId = async (request: express.Request): Promise<string> => {
-        await this.GetParamUserId(request);
+        await this.getParamUserId(request);
         return request.params.userId;
     };
 
     delete = async (request: express.Request): Promise<string> => {
-        await this.GetParamUserId(request);
+        await this.getParamUserId(request);
         return request.params.userId;
     }
 
@@ -119,7 +119,6 @@ export class DoctorValidator extends BaseValidator {
         await this.validateInt(request, 'consultationFeeTo', Where.Query, false, false);
         await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
         await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
-        //await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
         await this.validateString(request, 'orderBy', Where.Query, false, false);
         await this.validateString(request, 'order', Where.Query, false, false);
         await this.validateInt(request, 'pageIndex', Where.Query, false, false);
@@ -132,14 +131,6 @@ export class DoctorValidator extends BaseValidator {
 
         return this.getFilter(request);
     };
-
-    GetParamUserId = async(request) => {
-
-        await this.validateUuid(request, 'userId', Where.Param, true, false);
-        
-        this.validateRequest(request);
-        
-    }
 
     private getFilter(request): DoctorSearchFilters {
 

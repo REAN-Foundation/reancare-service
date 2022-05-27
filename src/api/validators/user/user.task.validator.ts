@@ -46,8 +46,8 @@ export class UserTaskValidator extends BaseValidator {
         await this.validateString(request, 'category', Where.Query, false, false, true);
         await this.validateString(request, 'actionType', Where.Query, false, false, true);
         await this.validateUuid(request, 'actionId', Where.Query, false, false);
-        await this.validateString(request, 'scheduledFrom', Where.Query, false, false);
-        await this.validateString(request, 'scheduledTo', Where.Query, false, false);
+        await this.validateDate(request, 'scheduledFrom', Where.Query, false, false);
+        await this.validateDate(request, 'scheduledTo', Where.Query, false, false);
         await this.validateString(request, 'status', Where.Query, false, false);
 
         await this.validateBaseSearchFilters(request);
@@ -69,13 +69,13 @@ export class UserTaskValidator extends BaseValidator {
 
         const id: string = await this.getParamUuid(request, 'id');
         await this.validateDate(request, 'FinishedAt', Where.Body, false, false);
-        await this.validateString(request, 'UserResponse', Where.Body, false, false);
+        await this.validateString(request, 'Comments', Where.Body, false, false);
         await this.validateArray(request, 'Items', Where.Body, false, false);
         this.validateRequest(request);
 
         var finishedAt = request.body.FinishedAt ?? null;
-        var userResponse = request.body.UserResponse ?? null;
-        return { id, finishedAt, userResponse };
+        var comments = request.body.Comments ?? null;
+        return { id, finishedAt, comments };
     };
 
     cancelTask = async (request: express.Request): Promise<any> => {
@@ -161,13 +161,11 @@ export class UserTaskValidator extends BaseValidator {
 
         var scheduledFrom: Date = null;
         if (request.query.scheduledFrom) {
-            const scheduledFromStr : string = request.query.scheduledFrom as string;
-            scheduledFrom = await userService.getDateInUserTimeZone(userId, scheduledFromStr);
+            scheduledFrom = await userService.getDateInUserTimeZone(userId, request.body.scheduledFrom);
         }
         var scheduledTo: Date = null;
         if (request.query.scheduledTo) {
-            const scheduledToStr : string = request.query.scheduledTo as string;
-            scheduledTo = await userService.getDateInUserTimeZone(userId, scheduledToStr);
+            scheduledTo = await userService.getDateInUserTimeZone(userId, request.body.scheduledTo);
             if (scheduledFrom.getTime() === scheduledTo.getTime()) {
                 scheduledTo = TimeHelper.addDuration(scheduledFrom, 1, DurationType.Day);
             }

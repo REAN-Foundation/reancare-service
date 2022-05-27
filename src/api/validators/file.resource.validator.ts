@@ -57,15 +57,15 @@ export class FileResourceValidator extends BaseValidator{
 
     update = async (request: express.Request): Promise<FileResourceUpdateModel> => {
 
-        await this.validateString(request, 'id', Where.Body, true, false);
-        await this.validateUuid(request, 'References', Where.Body, true, false);
-        await this.validateUuid(request, 'Tags', Where.Body, true, false);
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+        await this.validateString(request, 'References', Where.Body, false, false);
+        await this.validateString(request, 'Tags', Where.Body, false, true);
 
         this.validateRequest(request);
             
         var references: ResourceReference[] = [];
         if (request.body.References !== undefined && request.body.References.length > 0) {
-            request.body.References.forEach((element) => {
+            references.forEach((element) => {
                 var item: ResourceReference = {
                     ItemId   : element.ItemId,
                     ItemType : element.ItemType ?? null,
@@ -77,7 +77,7 @@ export class FileResourceValidator extends BaseValidator{
         
         var tags: string[] = [];
         if (request.body.Tags !== undefined && request.body.Tags.length > 0) {
-            request.body.Tags.forEach((element) => {
+            tags.forEach((element) => {
                 tags.push(element);
             });
         }
@@ -97,9 +97,9 @@ export class FileResourceValidator extends BaseValidator{
             throw new InputValidationError(['No file uploaded!!']);
         }
 
-        await this.validateString(request, 'id', Where.Body, true, false);
-        await this.validateString(request, 'Version', Where.Body, false, true);
-        await this.validateString(request, 'MakeAsDefault', Where.Body, false, false);
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+        await this.validateString(request, 'Version', Where.Body, false, false);
+        await this.validateBoolean(request, 'MakeAsDefault', Where.Body, false, false);
 
         this.validateRequest(request);
 
@@ -118,8 +118,8 @@ export class FileResourceValidator extends BaseValidator{
 
     rename = async (request: express.Request): Promise<FileResourceRenameDomainModel> => {
 
-        await this.validateString(request, 'id', Where.Body, true, false);
-        await this.validateString(request, 'newFileName', Where.Body, true, true);
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+        await this.validateString(request, 'newFileName', Where.Param, true, true);
 
         this.validateRequest(request);
 
@@ -133,9 +133,9 @@ export class FileResourceValidator extends BaseValidator{
 
     getByVersionName = async (request: express.Request): Promise<FileResourceMetadata> => {
 
-        await this.validateString(request, 'id', Where.Body, true, false);
-        await this.validateString(request, 'Version', Where.Body, true, false);
-        await this.validateUuid(request, 'disposition', Where.Body, false, false);
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+        await this.validateString(request, 'version', Where.Param, true, false);
+        await this.validateString(request, 'disposition', Where.Query, false, false);
 
         this.validateRequest(request);
 
@@ -152,9 +152,9 @@ export class FileResourceValidator extends BaseValidator{
 
     getByVersionId = async (request: express.Request): Promise<FileResourceMetadata> => {
 
-        await this.validateString(request, 'id', Where.Body, true, false);
-        await this.validateUuid(request, 'Version', Where.Body, true, false);
-        await this.validateUuid(request, 'disposition', Where.Body, false, false);
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+        await this.validateUuid(request, 'versionId', Where.Param, true, false);
+        await this.validateString(request, 'disposition', Where.Query, false, false);
 
         this.validateRequest(request);
 
@@ -171,8 +171,8 @@ export class FileResourceValidator extends BaseValidator{
 
     downloadById = async (request: express.Request): Promise<FileResourceMetadata> => {
 
-        await this.validateString(request, 'id', Where.Body, true, false);
-        await this.validateUuid(request, 'disposition', Where.Body, true, false);
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+        await this.validateString(request, 'disposition', Where.Query, false, false);
 
         this.validateRequest(request);
 
@@ -201,7 +201,7 @@ export class FileResourceValidator extends BaseValidator{
 
     deleteByReference = async (request: express.Request): Promise<string> => {
 
-        await this.validateString(request, 'referenceId', Where.Body, true, false);
+        await this.validateUuid(request, 'referenceId', Where.Param, true, false);
 
         this.validateRequest(request);
         return request.params.referenceId;
@@ -237,17 +237,17 @@ export class FileResourceValidator extends BaseValidator{
 
     searchQueryParams = async(request) => {
 
-        await this.validateString(request, 'ownerUserId', Where.Body, true, false);
-        await this.validateBoolean(request, 'isPublicResource', Where.Body, false, false);
-        await this.validateUuid(request, 'version', Where.Body, true, false);
-        await this.validateUuid(request, 'referenceId', Where.Body, true, false);
-        await this.validateUuid(request, 'referenceType', Where.Body, true, false);
-        await this.validateUuid(request, 'referenceKeyword', Where.Body, true, false);
-        await this.validateUuid(request, 'tag', Where.Body, true, false);
-        await this.validateUuid(request, 'orderBy', Where.Body, true, false);
-        await this.validateUuid(request, 'order', Where.Body, true, false);
-        await this.validateUuid(request, 'pageIndex', Where.Body, true, false);
-        await this.validateUuid(request, 'itemsPerPage', Where.Body, true, false);
+        await this.validateUuid(request, 'ownerUserId', Where.Query, false, true);
+        await this.validateBoolean(request, 'isPublicResource', Where.Query, false, false);
+        await this.validateString(request, 'version', Where.Query, false, false);
+        await this.validateUuid(request, 'referenceId', Where.Query, false, false);
+        await this.validateString(request, 'referenceType', Where.Query, false, true);
+        await this.validateString(request, 'referenceKeyword', Where.Query, false, true);
+        await this.validateString(request, 'tag', Where.Query, false, true);
+        await this.validateString(request, 'orderBy', Where.Query, false, false);
+        await this.validateString(request, 'order', Where.Query, false, false);
+        await this.validateInt(request, 'pageIndex', Where.Query, false, false);
+        await this.validateInt(request, 'itemsPerPage', Where.Query, false, false);
 
         this.validateRequest(request);
     }
@@ -255,10 +255,10 @@ export class FileResourceValidator extends BaseValidator{
     private async validateCreateBody(request) {
 
         await this.validateString(request, 'FileName', Where.Body, false, true);
-        await this.validateString(request, 'OwnerUserId', Where.Body, false, true);
+        await this.validateUuid(request, 'OwnerUserId', Where.Body, false, true);
         await this.validateBoolean(request, 'IsPublicResource', Where.Body, false, false);
         await this.validateBoolean(request, 'IsMultiResolutionImage', Where.Body, false, false);
-        await this.validateUuid(request, 'References', Where.Body, false, false);
+        await this.validateString(request, 'References', Where.Body, false, false);
         await this.validateString(request, 'Tags', Where.Body, false, true);
 
         this.validateRequest(request);
@@ -291,7 +291,7 @@ export class FileResourceValidator extends BaseValidator{
 
     private async getParamId(request) {
 
-        await this.validateUuid(request, 'id', Where.Body, true, false);
+        await this.validateUuid(request, 'id', Where.Param, true, false);
         this.validateRequest(request);
         
         return request.params.id;

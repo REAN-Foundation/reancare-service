@@ -33,7 +33,7 @@ export class EmergencyEventValidator extends BaseValidator{
     private async validateCreateBody(request) {
 
         await this.validateString(request, 'EhrId', Where.Body, false, true);
-        await this.validateString(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
         await this.validateString(request, 'Details', Where.Body, false, false);
         await this.validateDate(request, 'EmergencyDate', Where.Body, false, true);
 
@@ -51,14 +51,14 @@ export class EmergencyEventValidator extends BaseValidator{
     
     search = async (request: express.Request): Promise<EmergencyEventSearchFilters> => {
 
-        await this.validateString(request, 'PatientUserId', Where.Body, false, false);
-        await this.validateString(request, 'MedicalPractitionerUserId', Where.Body, false, false);
-        await this.validateDate(request, 'EmergencyDateFrom', Where.Body, false, false);
-        await this.validateDate(request, 'EmergencyDateTo', Where.Body, false, false);
-        // await this.validateString(request, 'orderBy', Where.Body, true, false);
-        // await this.validateString(request, 'order', Where.Body, true, false);
-        // await this.validateInt(request, 'pageIndex', Where.Body, true, false);
-        // await this.validateInt(request, 'itemsPerPage', Where.Body, true, false);
+        await this.validateUuid(request, 'PatientUserId', Where.Query, false, false);
+        await this.validateUuid(request, 'MedicalPractitionerUserId', Where.Query, false, false);
+        await this.validateDate(request, 'EmergencyDateFrom', Where.Query, false, true);
+        await this.validateDate(request, 'EmergencyDateTo', Where.Query, false, true);
+        await this.validateString(request, 'orderBy', Where.Query, false, false);
+        await this.validateString(request, 'order', Where.Query, false, false);
+        await this.validateInt(request, 'pageIndex', Where.Query, false, false);
+        await this.validateInt(request, 'itemsPerPage', Where.Query, false, false);
 
         await this.validateBaseSearchFilters(request);
         
@@ -78,10 +78,10 @@ export class EmergencyEventValidator extends BaseValidator{
 
     private async validateUpdateBody(request) {
 
-        await this.validateString(request, 'EhrId', Where.Body, true, false);
-        await this.validateString(request, 'PatientUserId', Where.Body, false, false);
+        await this.validateString(request, 'EhrId', Where.Body, false, true);
+        await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
         await this.validateString(request, 'Details', Where.Body, false, false);
-        await this.validateDate(request, 'EmergencyDate', Where.Body, true, false);
+        await this.validateDate(request, 'EmergencyDate', Where.Body, false, true);
 
         this.validateRequest(request);
 
@@ -104,6 +104,15 @@ export class EmergencyEventValidator extends BaseValidator{
             ItemsPerPage              : itemsPerPage,
         };
         return filters;
+    }
+
+    getParamId = async (request) => {
+
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+
+        this.validateRequest(request);
+
+        return request.params.id;
     }
 
 }

@@ -1,14 +1,17 @@
 import express from 'express';
-import { body, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../common/helper';
 import { UserDeviceDetailsDomainModel } from '../../../domain.types/user/user.device.details/user.device.domain.model';
 import { UserDeviceDetailsSearchFilters } from '../../../domain.types/user/user.device.details/user.device.search.types';
+import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserDeviceDetailsValidator {
+export class UserDeviceDetailsValidator extends BaseValidator{
 
-    static getDomainModel = (request: express.Request): UserDeviceDetailsDomainModel => {
+    constructor() {
+        super();
+    }
+
+    getDomainModel = (request: express.Request): UserDeviceDetailsDomainModel => {
 
         const UserDeviceDetailsModel: UserDeviceDetailsDomainModel = {
             Token      : request.body.Token,
@@ -24,138 +27,78 @@ export class UserDeviceDetailsValidator {
         return UserDeviceDetailsModel;
     };
 
-    static create = async (request: express.Request): Promise<UserDeviceDetailsDomainModel> => {
-        await UserDeviceDetailsValidator.validateBody(request);
-        return UserDeviceDetailsValidator.getDomainModel(request);
+    create = async (request: express.Request): Promise<UserDeviceDetailsDomainModel> => {
+
+        await this.validateCreateBody(request);
+        return this.getDomainModel(request);
     };
 
-    static getById = async (request: express.Request): Promise<string> => {
-        return await UserDeviceDetailsValidator.getParamId(request);
+    getById = async (request: express.Request): Promise<string> => {
+        return await this.getParamId(request);
     };
 
-    static delete = async (request: express.Request): Promise<string> => {
-        return await UserDeviceDetailsValidator.getParamId(request);
+    delete = async (request: express.Request): Promise<string> => {
+        return await this.getParamId(request);
     };
 
-    static search = async (request: express.Request): Promise<UserDeviceDetailsSearchFilters> => {
+    search = async (request: express.Request): Promise<UserDeviceDetailsSearchFilters> => {
 
-        await query('userId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
+        await this.validateUuid(request, 'userId', Where.Query, false, false);
+        await this.validateString(request, 'deviceName', Where.Query, false, false);
+        await this.validateString(request, 'oSType', Where.Query, false, false);
+        await this.validateString(request, 'oSVersion', Where.Query, false, false);
+        await this.validateString(request, 'appName', Where.Query, false, false);
+        await this.validateString(request, 'appVersion', Where.Query, false, false);
+        await this.validateString(request, 'orderBy', Where.Query, false, false);
+        await this.validateString(request, 'order', Where.Query, false, false);
+        await this.validateInt(request, 'pageIndex', Where.Query, false, false);
+        await this.validateInt(request, 'itemsPerPage', Where.Query, false, false);
 
-        await query('deviceName').optional()
-            .trim()
-            .escape()
-            .run(request);
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
 
-        await query('oSType').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('oSVersion').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('appName').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('appVersion').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('orderBy').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('order').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await query('pageIndex').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        await query('itemsPerPage').optional()
-            .trim()
-            .escape()
-            .isInt()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
-
-        return UserDeviceDetailsValidator.getFilter(request);
+        return this.getFilter(request);
     };
 
-    static update = async (request: express.Request): Promise<UserDeviceDetailsDomainModel> => {
+    update = async (request: express.Request): Promise<UserDeviceDetailsDomainModel> => {
 
-        const id = await UserDeviceDetailsValidator.getParamId(request);
-        await UserDeviceDetailsValidator.validateBody(request);
+        const id = await this.getParamId(request);
+        await this.validateUpdateBody(request);
 
-        const domainModel = UserDeviceDetailsValidator.getDomainModel(request);
+        const domainModel = this.getDomainModel(request);
         domainModel.id = id;
 
         return domainModel;
     };
 
-    private static async validateBody(request) {
+    private async validateUpdateBody(request) {
 
-        await body('UserId').optional()
-            .trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        await body('Token').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('DeviceName').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('OSType').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('OSVersion').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('AppName').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        await body('AppVersion').optional()
-            .trim()
-            .escape()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateUuid(request, 'UserId', Where.Body, false, false);
+        await this.validateString(request, 'Token', Where.Body, false, false);
+        await this.validateString(request, 'DeviceName', Where.Body, false, false);
+        await this.validateString(request, 'OSType', Where.Body, false, false);
+        await this.validateString(request, 'OSVersion', Where.Body, false, false);
+        await this.validateString(request, 'AppName', Where.Body, false, false);
+        await this.validateString(request, 'AppVersion', Where.Body, false, false);
+        
+        this.validateRequest(request);
     }
 
-    private static getFilter(request): UserDeviceDetailsSearchFilters {
+    private async validateCreateBody(request) {
+
+        await this.validateUuid(request, 'UserId', Where.Body, false, false);
+        await this.validateString(request, 'Token', Where.Body, false, false);
+        await this.validateString(request, 'DeviceName', Where.Body, false, false);
+        await this.validateString(request, 'OSType', Where.Body, false, false);
+        await this.validateString(request, 'OSVersion', Where.Body, false, false);
+        await this.validateString(request, 'AppName', Where.Body, false, false);
+        await this.validateString(request, 'AppVersion', Where.Body, false, false);
+        
+        this.validateRequest(request);
+    }
+
+    private getFilter(request): UserDeviceDetailsSearchFilters {
         const pageIndex = request.query.PageIndex !== 'undefined' ? parseInt(request.query.PageIndex as string, 10) : 0;
 
         const itemsPerPage =
@@ -176,18 +119,11 @@ export class UserDeviceDetailsValidator {
         return filters;
     }
 
-    private static async getParamId(request) {
+    getParamId = async(request) => {
 
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
-
-        const result = validationResult(request);
-
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+        
+        this.validateRequest(request);
         return request.params.id;
     }
 

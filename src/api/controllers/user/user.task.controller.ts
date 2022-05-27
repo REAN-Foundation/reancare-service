@@ -14,10 +14,11 @@ import { Loader } from '../../../startup/loader';
 import { UserTaskValidator } from '../../validators/user/user.task.validator';
 import { MedicationConsumptionService } from '../../../services/clinical/medication/medication.consumption.service';
 import { CareplanService } from '../../../services/clinical/careplan.service';
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserTaskController {
+export class UserTaskController extends BaseController{
 
     //#region member variables and constructors
 
@@ -38,6 +39,7 @@ export class UserTaskController {
     _validator: UserTaskValidator = new UserTaskValidator();
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(UserTaskService);
         this._roleService = Loader.container.resolve(RoleService);
         this._personService = Loader.container.resolve(PersonService);
@@ -73,8 +75,7 @@ export class UserTaskController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.Create';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserTask.Create', request, response);
             
             const domainModel = await this._validator.create(request);
 
@@ -94,9 +95,7 @@ export class UserTaskController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.GetById';
-            
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserTask.GetById', request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
 
@@ -124,9 +123,7 @@ export class UserTaskController {
 
     getByDisplayId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.GetByDisplayId';
-            
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserTask.GetByDisplayId', request, response);
 
             const id: string = await this._validator.getParamStr(request, 'displayId');
 
@@ -154,8 +151,7 @@ export class UserTaskController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.Search';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserTask.Search', request, response);
 
             const filters = await this._validator.search(request);
 
@@ -176,8 +172,8 @@ export class UserTaskController {
 
     startTask = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.StartTask';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserTask.StartTask', request, response);
+            
             var actionResolver = new UserActionResolver();
 
             const id: string = await this._validator.getParamUuid(request, 'id');
@@ -216,12 +212,12 @@ export class UserTaskController {
 
     finishTask = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.FinishTask';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserTask.FinishTask', request, response);
+            
             var actionResolver = new UserActionResolver();
 
-            const { id, finishedAt, userResponse } = await this._validator.finishTask(request);
-            Logger.instance().log(`User Response: ${userResponse}`);
+            const { id, finishedAt, comments } = await this._validator.finishTask(request);
+            Logger.instance().log(`Task comments: ${comments}`);
 
             const existing = await this._service.getById(id);
             if (existing == null) {
@@ -232,10 +228,6 @@ export class UserTaskController {
                 const result = await actionResolver.completeAction(
                     existing.ActionType, existing.ActionId, true, finishedAt);
                 Logger.instance().log(`${existing.ActionType} - Action result : ${result.toString()}`);
-
-                if (userResponse) {
-                    await this._careplanService.updateActivityUserResponse(existing.ActionId, userResponse );
-                }
             }
 
             const updated = await this._service.finishTask(id);
@@ -261,8 +253,8 @@ export class UserTaskController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.Update';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserTask.Update', request, response);
+
             var actionResolver = new UserActionResolver();
 
             const updateModel = await this._validator.update(request);
@@ -301,8 +293,8 @@ export class UserTaskController {
 
     cancelTask = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.CancelTask';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserTask.CancelTask', request, response);
+
             var actionResolver = new UserActionResolver();
 
             const { id, reason } = await this._validator.cancelTask(request);
@@ -340,8 +332,7 @@ export class UserTaskController {
 
     getTaskSummaryForDay = async(request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.SummaryForDay';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserTask.SummaryForDay', request, response);
 
             const { userId, date } = await this._validator.getTaskSummaryForDay(request);
             const summary = await this._service.getTaskSummaryForDay(userId, date);
@@ -360,8 +351,7 @@ export class UserTaskController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserTask.Delete';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserTask.Delete', request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
             const existingUserTask = await this._service.getById(id);

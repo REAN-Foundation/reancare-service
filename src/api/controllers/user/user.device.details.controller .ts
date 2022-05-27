@@ -1,26 +1,27 @@
 import express from 'express';
-import { Authorizer } from '../../../auth/authorizer';
+import { uuid } from '../../../../src/domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
 import { Loader } from '../../../startup/loader';
 import { UserDeviceDetailsValidator } from '../../validators/user/user.device.details.validator';
+import { BaseController } from '../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserDeviceDetailsController {
+export class UserDeviceDetailsController extends BaseController{
 
     //#region member variables and constructors
 
     _service: UserDeviceDetailsService = null;
 
-    _authorizer: Authorizer = null;
-
+    _validator: UserDeviceDetailsValidator = new UserDeviceDetailsValidator();
+    
     _personService: any;
 
     constructor() {
+        super();
         this._service = Loader.container.resolve(UserDeviceDetailsService);
-        this._authorizer = Loader.authorizer;
 
     }
 
@@ -30,9 +31,9 @@ export class UserDeviceDetailsController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Create';
+            await this.setContext('UserDeviceDetails.Create', request, response, false);
 
-            const userDeviceDetailsDomainModel = await UserDeviceDetailsValidator.create(request);
+            const userDeviceDetailsDomainModel = await this._validator.create(request);
 
             const UserDeviceDetails = await this._service.create(userDeviceDetailsDomainModel);
             if (UserDeviceDetails == null) {
@@ -49,11 +50,10 @@ export class UserDeviceDetailsController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.GetById';
             
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserDeviceDetails.GetById', request, response);
 
-            const id: string = await UserDeviceDetailsValidator.getById(request);
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
 
             const UserDeviceDetails = await this._service.getById(id);
             if (UserDeviceDetails == null) {
@@ -70,10 +70,9 @@ export class UserDeviceDetailsController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Search';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserDeviceDetails.Search', request, response);
 
-            const filters = await UserDeviceDetailsValidator.search(request);
+            const filters = await this._validator.search(request);
 
             const searchResults = await this._service.search(filters);
 
@@ -94,13 +93,10 @@ export class UserDeviceDetailsController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Update';
+            await this.setContext('UserDeviceDetails.Update', request, response);
+            const domainModel = await this._validator.update(request);
 
-            await this._authorizer.authorize(request, response);
-
-            const domainModel = await UserDeviceDetailsValidator.update(request);
-
-            const id: string = await UserDeviceDetailsValidator.getById(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'User device details record not found.');
@@ -121,10 +117,9 @@ export class UserDeviceDetailsController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'UserDeviceDetails.Delete';
-            await this._authorizer.authorize(request, response);
+            await this.setContext('UserDeviceDetails.Delete', request, response);
 
-            const id: string = await UserDeviceDetailsValidator.getById(request);
+            const id: string = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'User device details record not found.');

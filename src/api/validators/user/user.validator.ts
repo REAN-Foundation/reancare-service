@@ -1,123 +1,52 @@
 import express from 'express';
-import { body, oneOf, param, query, validationResult } from 'express-validator';
-import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
 import { UserExistanceModel, UserLoginDetails } from '../../../domain.types/user/user/user.domain.model';
 import { UserSearchFilters } from '../../../domain.types/user/user/user.search.types';
+import { BaseValidator, Where } from '../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class UserValidator {
+export class UserValidator extends BaseValidator {
 
-    static getById = async (request: express.Request): Promise<string> => {
+    constructor() {
+        super();
+    }
 
-        await param('id').trim()
-            .escape()
-            .isUUID()
-            .run(request);
+    getById = async (request: express.Request): Promise<string> => {
 
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        await this.validateUuid(request, 'id', Where.Param, true, false);
+
+        this.validateRequest(request);
         
         return request.params.id;
     };
 
-    static search = async (
-        request: express.Request,
-        response: express.Response
-    ): Promise<UserSearchFilters> => {
-        try {
-            await query('phone').optional()
-                .trim()
-                .escape()
-                .run(request);
+    search = async (request: express.Request): Promise<UserSearchFilters> => {
 
-            await query('email').optional()
-                .trim()
-                .escape()
-                .run(request);
+        await this.validateString(request, 'phone', Where.Query, false, false);
+        await this.validateString(request, 'email', Where.Query, false, true);
+        await this.validateUuid(request, 'userId', Where.Query, false, false);
+        await this.validateString(request, 'name', Where.Query, false, true);
+        await this.validateString(request, 'gender', Where.Query, false, true);
+        await this.validateDate(request, 'birthdateFrom', Where.Query, false, true);
+        await this.validateDate(request, 'birthdateTo', Where.Query, false, true);
+        await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
+        await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
+        await this.validateString(request, 'orderBy', Where.Query, false, false);
+        await this.validateString(request, 'order', Where.Query, false, false);
+        await this.validateInt(request, 'pageIndex', Where.Query, false, false);
+        await this.validateInt(request, 'itemsPerPage', Where.Query, false, false);
+        await this.validateBoolean(request, 'full', Where.Query, false, false);
 
-            await query('userId').optional()
-                .isUUID()
-                .trim()
-                .escape()
-                .run(request);
+        await this.validateBaseSearchFilters(request);
+        
+        this.validateRequest(request);
 
-            await query('name').optional()
-                .trim()
-                .escape()
-                .run(request);
+        return this.getFilter(request);
 
-            await query('gender').optional()
-                .isAlpha()
-                .trim()
-                .escape()
-                .run(request);
-
-            await query('birthdateFrom').optional()
-                .isDate()
-                .trim()
-                .escape()
-                .run(request);
-
-            await query('birthdateTo').optional()
-                .isDate()
-                .trim()
-                .escape()
-                .run(request);
-
-            await query('createdDateFrom').optional()
-                .isDate()
-                .trim()
-                .escape()
-                .run(request);
-
-            await query('createdDateTo').optional()
-                .isDate()
-                .trim()
-                .escape()
-                .run(request);
-
-            await query('orderBy').optional()
-                .trim()
-                .escape()
-                .run(request);
-
-            await query('order').optional()
-                .trim()
-                .escape()
-                .run(request);
-
-            await query('pageIndex').optional()
-                .isInt()
-                .trim()
-                .escape()
-                .run(request);
-
-            await query('itemsPerPage').optional()
-                .isInt()
-                .trim()
-                .escape()
-                .run(request);
-
-            await query('full').optional()
-                .isBoolean()
-                .run(request);
-
-            const result = validationResult(request);
-            if (!result.isEmpty()) {
-                Helper.handleValidationError(result);
-            }
-
-            return UserValidator.getFilter(request);
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
     };
 
-    private static getFilter(request): UserSearchFilters {
+    private getFilter(request): UserSearchFilters {
 
         const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
         const itemsPerPage = request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
@@ -140,36 +69,15 @@ export class UserValidator {
         return filters;
     }
 
-    static loginWithPassword = async (
-        request: express.Request,
-        response: express.Response
-    ): Promise<UserLoginDetails> => {
+    loginWithPassword = async (request: express.Request,response: express.Response): Promise<UserLoginDetails> => {
         try {
-            await oneOf([
-                body('Phone').optional()
-                    .trim()
-                    .escape(),
-                body('Email').optional()
-                    .trim()
-                    .escape(),
-                body('UserName').optional()
-                    .trim()
-                    .escape(),
-            ]).run(request);
+            await this.validateString(request, 'Phone', Where.Body, false, false);
+            await this.validateString(request, 'Email', Where.Body, false, true);
+            await this.validateString(request, 'UserName', Where.Body, false, true);
+            await this.validateString(request, 'Password', Where.Body, true, true);
+            await this.validateInt(request, 'LoginRoleId', Where.Body, true, false);
 
-            await body('Password').exists()
-                .trim()
-                .run(request);
-
-            await body('LoginRoleId').exists()
-                .trim()
-                .isNumeric()
-                .run(request);
-
-            const result = validationResult(request);
-            if (!result.isEmpty()) {
-                Helper.handleValidationError(result);
-            }
+            this.validateRequest(request);
 
             const loginDetails: UserLoginDetails = {
                 Phone       : null,
@@ -194,27 +102,13 @@ export class UserValidator {
         }
     };
     
-    static userExistsCheck = async (
-        request: express.Request): Promise<UserExistanceModel> => {
+    userExistsCheck = async (request: express.Request): Promise<UserExistanceModel> => {
 
-        await oneOf([
-            param('phone').optional()
-                .trim()
-                .escape(),
-            param('email').optional()
-                .trim()
-                .escape(),
-        ]).run(request);
+        await this.validateString(request, 'phone', Where.Param, false, false);
+        await this.validateString(request, 'email', Where.Param, false, true);
+        await this.validateInt(request, 'roleId', Where.Param, true, false);
 
-        await param('roleId').exists()
-            .trim()
-            .isNumeric()
-            .run(request);
-
-        const result = validationResult(request);
-        if (!result.isEmpty()) {
-            Helper.handleValidationError(result);
-        }
+        this.validateRequest(request);
 
         const userDetails: UserExistanceModel = {
             Phone  : null,
@@ -231,26 +125,13 @@ export class UserValidator {
         return userDetails;
     };
 
-    static resetPassword = async (request: express.Request, response: express.Response): Promise<any> => {
+    resetPassword = async (request: express.Request, response: express.Response): Promise<any> => {
         try {
+            await this.validateString(request, 'Phone', Where.Body, false, false);
+            await this.validateString(request, 'Email', Where.Body, false, true);
+            await this.validateString(request, 'NewPassword', Where.Body, true, true);
 
-            await oneOf([
-                body('Phone').optional()
-                    .trim()
-                    .escape(),
-                body('Email').optional()
-                    .trim()
-                    .escape(),
-            ]).run(request);
-
-            await body('NewPassword').exists()
-                .trim()
-                .run(request);
-
-            const result = validationResult(request);
-            if (!result.isEmpty()) {
-                Helper.handleValidationError(result);
-            }
+            this.validateRequest(request);
 
             const obj = {
                 Phone       : null,
@@ -269,38 +150,18 @@ export class UserValidator {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+        
     };
 
-    static generateOtp = async (request: express.Request, response: express.Response): Promise<any> => {
+    generateOtp = async (request: express.Request, response: express.Response): Promise<any> => {
         try {
+            await this.validateString(request, 'Phone', Where.Body, false, false);
+            await this.validateString(request, 'Email', Where.Body, false, true);
+            await this.validateUuid(request, 'UserId', Where.Body, false, false);
+            await this.validateString(request, 'Purpose', Where.Body, false, false);
+            await this.validateInt(request, 'RoleId', Where.Body, true, false);
 
-            await oneOf([
-                body('Phone').optional()
-                    .trim()
-                    .escape(),
-                body('Email').optional()
-                    .trim()
-                    .escape(),
-                body('UserId').optional()
-                    .isUUID()
-                    .trim()
-                    .escape(),
-            ]).run(request);
-
-            await body('Purpose').optional()
-                .trim()
-                .run(request);
-
-            await body('RoleId').exists()
-                .trim()
-                .toInt()
-                .run(request);
-
-            const result = validationResult(request);
-
-            if (!result.isEmpty()) {
-                Helper.handleValidationError(result);
-            }
+            this.validateRequest(request);
 
             const obj = {
                 Phone   : null,
@@ -327,38 +188,20 @@ export class UserValidator {
             }
 
             return obj;
-
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+
     };
 
-    static loginWithOtp = async (request: express.Request, response: express.Response): Promise<UserLoginDetails> => {
+    loginWithOtp = async (request: express.Request, response: express.Response): Promise<UserLoginDetails> => {
         try {
-            await oneOf([
-                body('Phone').optional()
-                    .trim()
-                    .isLength({ min: 9, max: 10 })
-                    .escape(),
-                body('Email').optional()
-                    .trim()
-                    .isEmail()
-                    .escape(),
-            ]).run(request);
-            await body('Otp').exists()
-                .trim()
-                .isNumeric()
-                .isLength({ min: 6, max: 6 })
-                .run(request);
-            await body('LoginRoleId').exists()
-                .trim()
-                .isNumeric()
-                .run(request);
+            await this.validateString(request, 'Phone', Where.Body, false, false);
+            await this.validateString(request, 'Email', Where.Body, false, true);
+            await this.validateInt(request, 'Otp', Where.Body, true, false);
+            await this.validateInt(request, 'LoginRoleId', Where.Body, true, false);
 
-            const result = validationResult(request);
-            if (!result.isEmpty()) {
-                Helper.handleValidationError(result);
-            }
+            this.validateRequest(request);
 
             const loginObject: UserLoginDetails = {
                 Phone       : null,
@@ -380,3 +223,4 @@ export class UserValidator {
     };
 
 }
+

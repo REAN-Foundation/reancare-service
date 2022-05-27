@@ -91,6 +91,13 @@ export default class AssessmentNode extends Model {
     NodeType: string;
 
     @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    ServeListNodeChildrenAtOnce: boolean;
+
+    @Column({
         type      : DataType.TEXT,
         allowNull : false,
     })

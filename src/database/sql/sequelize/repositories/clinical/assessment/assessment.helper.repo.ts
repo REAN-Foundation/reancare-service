@@ -633,19 +633,27 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
 
             const nodeEntity = {
-                DisplayCode       : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
-                TemplateId        : templateId,
-                ParentNodeId      : parentNodeId,
-                NodeType          : nodeObj.NodeType,
-                ProviderGivenId   : nodeObj.ProviderGivenId,
-                ProviderGivenCode : nodeObj.ProviderGivenCode,
-                Title             : nodeObj.Title,
-                Description       : nodeObj.Description,
-                Sequence          : nodeObj.Sequence,
-                Score             : nodeObj.Score,
-                QueryResponseType : QueryResponseType.None
+                DisplayCode                 : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
+                TemplateId                  : templateId,
+                ParentNodeId                : parentNodeId,
+                NodeType                    : nodeObj.NodeType,
+                ProviderGivenId             : nodeObj.ProviderGivenId,
+                ProviderGivenCode           : nodeObj.ProviderGivenCode,
+                Title                       : nodeObj.Title,
+                Description                 : nodeObj.Description,
+                Sequence                    : nodeObj.Sequence,
+                Score                       : nodeObj.Score,
+                QueryResponseType           : QueryResponseType.None,
+                ServeListNodeChildrenAtOnce : false
             };
 
+            if (nodeObj.ChildrenNodeDisplayCodes !== undefined) {
+                for await (var childDisplayCode of nodeObj.ChildrenNodeDisplayCodes) {
+                    if (childDisplayCode.startsWith('QNode#') && !nodeObj.DisplayCode.startsWith('RNode#')) {
+                        nodeEntity.ServeListNodeChildrenAtOnce = true;
+                    }
+                }
+            }
             var thisNode = await AssessmentNode.create(nodeEntity);
             const currentNodeId = thisNode.id;
 

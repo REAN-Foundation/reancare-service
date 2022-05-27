@@ -15,7 +15,7 @@ import { AssessmentQueryDto } from "./assessment.query.dto";
 export interface AssessmentQuestionResponseDto {
     AssessmentId?: uuid;
     Parent?      : AssessmentQueryDto;
-    Next?        : AssessmentQueryDto;
+    Next?        : AssessmentQueryDto | AssessmentQueryDto[];
     Answer?      :
         | SingleChoiceQueryAnswer
         | MultipleChoiceQueryAnswer

@@ -140,18 +140,19 @@ export class AssessmentTemplateValidator extends BaseValidator {
         }
         else if (request.body.NodeType === AssessmentNodeType.NodeList) {
             var listNode : CAssessmentListNode = {
-                ParentNodeId             : request.body.ParentNodeId,
-                NodeType                 : AssessmentNodeType.NodeList,
-                DisplayCode              : Helper.generateDisplayCode('LNode'),
-                Required                 : true,
-                ProviderGivenId          : request.body.ProviderGivenId ?? null,
-                ProviderGivenCode        : request.body.ProviderGivenCode ?? null,
-                Title                    : request.body.Title,
-                Description              : request.body.Description ?? null,
-                TemplateId               : templateId,
-                Score                    : request.body.Score ?? 0,
-                ChildrenNodeDisplayCodes : [],
-                ChildrenNodeIds          : []
+                ParentNodeId                : request.body.ParentNodeId,
+                NodeType                    : AssessmentNodeType.NodeList,
+                DisplayCode                 : Helper.generateDisplayCode('LNode'),
+                Required                    : true,
+                ProviderGivenId             : request.body.ProviderGivenId ?? null,
+                ProviderGivenCode           : request.body.ProviderGivenCode ?? null,
+                Title                       : request.body.Title,
+                Description                 : request.body.Description ?? null,
+                TemplateId                  : templateId,
+                Score                       : request.body.Score ?? 0,
+                ChildrenNodeDisplayCodes    : [],
+                ChildrenNodeIds             : [],
+                ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce
             };
             return listNode;
         }

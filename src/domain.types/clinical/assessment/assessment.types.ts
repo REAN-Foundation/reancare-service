@@ -205,6 +205,8 @@ export class CAssessmentNode {
     Hint?                   : string;
     Sequence?               : number;
     Score                   : number;
+    ChildrenNodeDisplayCodes? : string[]
+    ServeListNodeChildrenAtOnce?: boolean;
 
 }
 
@@ -213,6 +215,7 @@ export class CAssessmentListNode extends CAssessmentNode {
     ChildrenNodeDisplayCodes: string[];
     ChildrenNodeIds         : uuid[];
     Children?               : CAssessmentNode[];
+    ServeListNodeChildrenAtOnce?: boolean;
 
     constructor() {
         super();
@@ -220,6 +223,7 @@ export class CAssessmentListNode extends CAssessmentNode {
         this.ChildrenNodeDisplayCodes = [];
         this.ChildrenNodeIds = [];
         this.Children = [];
+        this.ServeListNodeChildrenAtOnce = null;
     }
 
 }

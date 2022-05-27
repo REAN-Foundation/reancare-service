@@ -1,5 +1,6 @@
 import express from 'express';
 import { body, param, query, validationResult } from 'express-validator';
+import { ResponseHandler } from '../../../common/response.handler';
 import { Helper } from '../../../common/helper';
 import { UserDeviceDetailsDomainModel } from '../../../domain.types/user/user.device.details/user.device.domain.model';
 import { UserDeviceDetailsSearchFilters } from '../../../domain.types/user/user.device.details/user.device.search.types';
@@ -190,5 +191,39 @@ export class UserDeviceDetailsValidator {
         }
         return request.params.id;
     }
+
+    static sendTestNotification = async (request: express.Request, response: express.Response): Promise<any> => {
+        try {
+            await body('Phone').exists()
+                .trim()
+                .escape()
+                .run(request);
+
+            await body('Title').exists()
+                .trim()
+                .escape()
+                .run(request);
+
+            await body('Body').exists()
+                .trim()
+                .escape()
+                .run(request);
+
+            const result = validationResult(request);
+            if (!result.isEmpty()) {
+                Helper.handleValidationError(result);
+            }
+
+            var details = {
+                Phone : request.body.Phone,
+                Title : request.body.Title,
+                Body  : request.body.Body,
+            };
+            return details;
+            
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
 
 }

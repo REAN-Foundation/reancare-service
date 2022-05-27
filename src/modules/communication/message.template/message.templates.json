@@ -1,0 +1,7 @@
+{
+    "MedicationReminder": {
+        "NotificationType": "Upcoming medication",
+        "Title"           : "Hey {{PatientName}}, reminder to take {{DrugName}}.",
+        "Body"            : "Please take your medicine before {{EndTime}}."
+    }
+}    

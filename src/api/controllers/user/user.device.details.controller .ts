@@ -1,10 +1,13 @@
 import express from 'express';
+import { PersonService } from '../../../services/person.service';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
 import { Loader } from '../../../startup/loader';
 import { UserDeviceDetailsValidator } from '../../validators/user/user.device.details.validator';
+import { PatientService } from '../../../services/patient/patient.service';
+import { FirebaseNotificationService } from '../../../modules/communication/notification.service/providers/firebase.notification.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,12 +19,18 @@ export class UserDeviceDetailsController {
 
     _authorizer: Authorizer = null;
 
-    _personService: any;
+    _personService: PersonService = null;
+
+    _patientService: PatientService = null;
+
+    _firebaseNotificationService: FirebaseNotificationService = null;
 
     constructor() {
         this._service = Loader.container.resolve(UserDeviceDetailsService);
         this._authorizer = Loader.authorizer;
-
+        this._personService = Loader.container.resolve(PersonService);
+        this._patientService = Loader.container.resolve(PatientService);
+        this._firebaseNotificationService = Loader.container.resolve(FirebaseNotificationService);
     }
 
     //#endregion
@@ -83,9 +92,10 @@ export class UserDeviceDetailsController {
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} user device details records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
-                UserDeviceDetailsRecords : searchResults });
+                UserDeviceDetailsRecords : searchResults
+            });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -137,6 +147,45 @@ export class UserDeviceDetailsController {
 
             ResponseHandler.success(request, response, 'User device details record deleted successfully!', 200, {
                 Deleted : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    sendTestNotification = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'UserDeviceDetails.SendTestNotification';
+            await this._authorizer.authorize(request, response);
+
+            var details = await UserDeviceDetailsValidator.sendTestNotification(request, response);
+
+            // get person by phone number
+            const personDetails = await this._personService.getPersonWithPhone(details.Phone);
+
+            // get patient by person id
+            const patientDetails = await this._patientService.getByPersonId(personDetails.id);
+
+            // get device tokens for user id
+            const UserDeviceDetails = await this._service.getByUserId(patientDetails.UserId);
+            if (UserDeviceDetails.length === 0) {
+                throw new ApiError(404, ' User device details record not found.');
+            }
+
+            const deviceTokens = [];
+            UserDeviceDetails.forEach((device) => {
+                deviceTokens.push(device.Token);
+            });
+
+            const message = await this._firebaseNotificationService.formatNotificationMessage('APP', details.Title, details.Body);
+
+            // call notification service to send multiple devices
+            await this._firebaseNotificationService.sendNotificationToMultipleDevice(deviceTokens, message);
+
+            ResponseHandler.success(request, response, 'Notification sent to device successfully!', 201, {
+                Title       : details.Title,
+                Body        : details.Body,
+                DeviceCount : deviceTokens.length,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

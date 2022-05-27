@@ -6,6 +6,7 @@ import { PulseDto } from '../../../domain.types/clinical/biometrics/pulse/pulse.
 import { PulseSearchFilters, PulseSearchResults } from '../../../domain.types/clinical/biometrics/pulse/pulse.search.types';
 import { PulseStore } from "../../../modules/ehr/services/pulse.store";
 import { Loader } from "../../../startup/loader";
+import { ConfigurationManager } from "../../../config/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,12 +18,19 @@ export class PulseService {
     constructor(
         @inject('IPulseRepo') private _pulseRepo: IPulseRepo,
     ) {
-        this._ehrPulseStore = Loader.container.resolve(PulseStore);    }
+        if (ConfigurationManager.EhrEnabled()) {
+            this._ehrPulseStore = Loader.container.resolve(PulseStore);    
+        }
+    }
 
     create = async (pulseDomainModel: PulseDomainModel):
     Promise<PulseDto> => {
-        const ehrId = await this._ehrPulseStore.add(pulseDomainModel);
-        pulseDomainModel.EhrId = ehrId;
+
+        if (this._ehrPulseStore) {            
+            const ehrId = await this._ehrPulseStore.add(pulseDomainModel);
+            pulseDomainModel.EhrId = ehrId;
+        }
+
         var dto = await this._pulseRepo.create(pulseDomainModel);
         return dto;
     };
@@ -38,7 +46,9 @@ export class PulseService {
     update = async (id: uuid, pulseDomainModel: PulseDomainModel):
     Promise<PulseDto> => {
         var dto = await this._pulseRepo.update(id, pulseDomainModel);
-        await this._ehrPulseStore.update(dto.EhrId, dto);
+        if (this._ehrPulseStore) { 
+            await this._ehrPulseStore.update(dto.EhrId, dto);
+        }
         return dto;
     };
 

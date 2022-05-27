@@ -6,6 +6,7 @@ import { BloodPressureDto } from '../../../domain.types/clinical/biometrics/bloo
 import { BloodPressureSearchFilters, BloodPressureSearchResults } from '../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.search.types';
 import { BloodPressureStore } from "../../../modules/ehr/services/blood.pressure.store";
 import { Loader } from "../../../startup/loader";
+import { ConfigurationManager } from "../../../config/configuration.manager";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,14 +18,19 @@ export class BloodPressureService {
     constructor(
         @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
     ) {
-        this._ehrBloodPressureStore = Loader.container.resolve(BloodPressureStore);
+        if (ConfigurationManager.EhrEnabled()) {
+            this._ehrBloodPressureStore = Loader.container.resolve(BloodPressureStore);
+        }
     }
 
     create = async (bloodPressureDomainModel: BloodPressureDomainModel):
     Promise<BloodPressureDto> => {
 
-        const ehrId = await this._ehrBloodPressureStore.add(bloodPressureDomainModel);
-        bloodPressureDomainModel.EhrId = ehrId;
+        if (this._ehrBloodPressureStore) { 
+            const ehrId = await this._ehrBloodPressureStore.add(bloodPressureDomainModel);
+            bloodPressureDomainModel.EhrId = ehrId;            
+        }
+
         var dto = await this._bloodPressureRepo.create(bloodPressureDomainModel);
         return dto;
     };
@@ -40,7 +46,9 @@ export class BloodPressureService {
     update = async (id: uuid, bloodPressureDomainModel: BloodPressureDomainModel):
     Promise<BloodPressureDto> => {
         var dto = await this._bloodPressureRepo.update(id, bloodPressureDomainModel);
-        await this._ehrBloodPressureStore.update(dto.EhrId, dto);
+        if (this._ehrBloodPressureStore) { 
+            await this._ehrBloodPressureStore.update(dto.EhrId, dto);
+        }
         return dto;
     };
 

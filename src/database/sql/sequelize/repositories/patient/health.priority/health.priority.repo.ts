@@ -9,6 +9,7 @@ import { HealthPriorityTypeDomainModel } from '../../../../../../domain.types/pa
 import { HealthPriorityTypeDto } from '../../../../../../domain.types/patient/health.priority.type/health.priority.type.dto';
 import HealthPriorityType    from '../../../models/patient/health.priority/health.priority.type.model';
 import { HealthPrioritySearchFilters, HealthPrioritySearchResults } from '../../../../../../domain.types/patient/health.priority/health.priority.search.types';
+import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -57,10 +58,14 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
         }
     };
     
-    getPriorityTypes = async (): Promise<HealthPriorityTypeDto[]> => {
+    getPriorityTypes = async (tags?: string): Promise<HealthPriorityTypeDto[]> => {
         try {
-            const priorityTypes = await HealthPriorityType.findAll({});
+            const filter = { where: {} };
+            if (tags != null) {
+                filter.where['Tags'] = { [Op.like]: '%' + tags + '%' };
+            }
 
+            const priorityTypes = await HealthPriorityType.findAll(filter);
             const dtos: HealthPriorityTypeDto[] = [];
             for (const priorityType of priorityTypes) {
                 const dto = HealthPriorityMapper.toTypeDto(priorityType);
@@ -144,12 +149,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            Logger.instance().log(`Search result:: ${JSON.stringify(search)}`);
-
             const foundResults = await HealthPriority.findAndCountAll(search);
-
-            Logger.instance().log(`found result:: ${JSON.stringify(foundResults)}`);
-
             const dtos: HealthPriorityDto[] = [];
             for (const healthPriority of foundResults.rows) {
                 const dto = await HealthPriorityMapper.toDto(healthPriority);

@@ -76,7 +76,8 @@
             "Forms.AddAssessmentTemplateAsForm",
             "Forms.ImportFormAsAssessmentTemplate",
             "Forms.ImportFormSubmissions",
-            "Forms.GetFormsList"
+            "Forms.GetFormsList",
+            "UserDeviceDetails.SendTestNotification"
         ]
     },
     {
@@ -375,7 +376,8 @@
             "Forms.AddAssessmentTemplateAsForm",
             "Forms.ImportFormAsAssessmentTemplate",
             "Forms.ImportFormSubmissions",
-            "Forms.GetFormsList"
+            "Forms.GetFormsList",
+            "UserDeviceDetails.SendTestNotification"
         ]
     },
     {
@@ -660,7 +662,8 @@
             "Forms.AddAssessmentTemplateAsForm",
             "Forms.ImportFormAsAssessmentTemplate",
             "Forms.ImportFormSubmissions",
-            "Forms.GetFormsList"
+            "Forms.GetFormsList",
+            "UserDeviceDetails.SendTestNotification"
         ]
     },
     {

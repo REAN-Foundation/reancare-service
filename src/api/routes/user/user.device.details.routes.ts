@@ -12,6 +12,7 @@ export const register = (app: express.Application): void => {
     const controller = new UserDeviceDetailsController();
 
     router.post('/', authenticator.authenticateClient, controller.create);
+    router.post('/notification', authenticator.authenticateClient, authenticator.authenticateUser, controller.sendTestNotification);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);

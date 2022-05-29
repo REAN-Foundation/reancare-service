@@ -140,6 +140,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             if (updateModel.Provider != null) {
                 assessmentTemplate.Provider = updateModel.Provider;
             }
+            if (updateModel.ServeListNodeChildrenAtOnce != null) {
+                assessmentTemplate.ServeListNodeChildrenAtOnce = updateModel.ServeListNodeChildrenAtOnce;
+            }
             await assessmentTemplate.save();
 
             return AssessmentTemplateMapper.toDto(assessmentTemplate);

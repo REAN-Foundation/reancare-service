@@ -97,6 +97,13 @@ export default class AssessmentTemplate extends Model {
         allowNull : true,
     })
     RootNodeId: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    ServeListNodeChildrenAtOnce: boolean;
     
     @IsUUID(4)
     @ForeignKey(() => FileResource)

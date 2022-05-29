@@ -152,20 +152,21 @@ export const ConditionOperandDataTypeList: ConditionOperandDataType[] = [
 
 export class CAssessmentTemplate {
 
-    TemplateId?            : uuid;
-    DisplayCode?           : string;
-    Version?               : string;
-    Type                   : AssessmentType;
-    Title                  : string;
-    Description?           : string;
-    ProviderAssessmentCode?: string;
-    Provider?              : string;
-    FileResourceId?        : uuid; //Assessment template storage file
-    RootNodeDisplayCode?   : string;
-    Nodes                  : CAssessmentNode[];
-    CreatedAt?             : Date;
-    UpdatedAt?             : Date;
-    CreatedBy?             : uuid;
+    TemplateId?                  : uuid;
+    DisplayCode?                 : string;
+    Version?                     : string;
+    Type                         : AssessmentType;
+    Title                        : string;
+    Description?                 : string;
+    ServeListNodeChildrenAtOnce? : boolean;
+    ProviderAssessmentCode?      : string;
+    Provider?                    : string;
+    FileResourceId?              : uuid; //Assessment template storage file
+    RootNodeDisplayCode?         : string;
+    Nodes                        : CAssessmentNode[];
+    CreatedAt?                   : Date;
+    UpdatedAt?                   : Date;
+    CreatedBy?                   : uuid;
 
     constructor() {
         this.Nodes = [];
@@ -205,7 +206,7 @@ export class CAssessmentNode {
     Hint?                   : string;
     Sequence?               : number;
     Score                   : number;
-    ChildrenNodeDisplayCodes? : string[]
+    ChildrenNodeDisplayCodes? : string[];
     ServeListNodeChildrenAtOnce?: boolean;
 
 }
@@ -223,7 +224,7 @@ export class CAssessmentListNode extends CAssessmentNode {
         this.ChildrenNodeDisplayCodes = [];
         this.ChildrenNodeIds = [];
         this.Children = [];
-        this.ServeListNodeChildrenAtOnce = null;
+        this.ServeListNodeChildrenAtOnce = false;
     }
 
 }

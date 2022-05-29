@@ -163,7 +163,7 @@ export class AssessmentController extends BaseController{
             const next = await this._service.startAssessment(id);
             
             ResponseHandler.success(request, response, 'Assessment started successfully!', 200, {
-                Parent : next,
+                Next : next,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -284,16 +284,15 @@ export class AssessmentController extends BaseController{
     answerQuestionList = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            await this.setContext('Assessment.AnswerQuestion', request, response);
+            await this.setContext('Assessment.AnswerQuestionList', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const questionIds = request.params.listQuestionId;
-            const questionIdList =  questionIds.split(',');
+            const questionIdString = request.params.questionIdList;
+            const questionIdList =  questionIdString.split(',');
             let question = null;
             let answerResponse: AssessmentQuestionResponseDto = null;
             const answerResponseList = [];
 
-            //await this._validator.getParamUuid(request, 'listQuestionId');
             const answerModelList = await this._validator.answerQuestionList(request);
 
             const assessment = await this._service.getById(id);
@@ -308,9 +307,20 @@ export class AssessmentController extends BaseController{
                     throw new ApiError(404, 'Assessment question not found.');
                 }
 
-                const isAnswered = await this._service.isAnswered(assessment.id, answerModel.QuestionNodeId);
-                if (isAnswered) {
-                    continue;
+                var childrenNodes = await this._serviceHelperRepo.getNodeListChildren(question.ParentNodeId);
+
+                for await (var children of childrenNodes) {
+                   
+                    const isPresent = questionIdList.includes(children.id);
+                    if (!isPresent) {
+                        throw new ApiError(400, `Answer for '${children.Title}' not found, please answer all the questions!`);
+                    }
+                }
+
+                const currentNode = await this._serviceHelperRepo.getNodeById(question.ParentNodeId);
+        
+                if (currentNode.ServeListNodeChildrenAtOnce === false) {
+                    throw new ApiError(400, `These questions can not be answered as a list.`);
                 }
             
                 answerResponse = await this._service.answerQuestion(answerModel);

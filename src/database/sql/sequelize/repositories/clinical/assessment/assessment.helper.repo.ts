@@ -58,13 +58,14 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
 
             const templateModel: AssessmentTemplateDomainModel = {
-                DisplayCode            : t.DisplayCode,
-                Title                  : t.Title,
-                Description            : t.Description,
-                Type                   : t.Type,
-                Provider               : t.Provider,
-                ProviderAssessmentCode : t.ProviderAssessmentCode,
-                FileResourceId         : t.FileResourceId,
+                DisplayCode                 : t.DisplayCode,
+                Title                       : t.Title,
+                Description                 : t.Description,
+                Type                        : t.Type,
+                Provider                    : t.Provider,
+                ProviderAssessmentCode      : t.ProviderAssessmentCode,
+                FileResourceId              : t.FileResourceId,
+                ServeListNodeChildrenAtOnce : t.ServeListNodeChildrenAtOnce,
             };
 
             var template = await AssessmentTemplate.create(templateModel as any);

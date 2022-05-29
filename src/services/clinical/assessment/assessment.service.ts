@@ -227,17 +227,7 @@ export class AssessmentService {
         var childrenNodes = await this._assessmentHelperRepo.getNodeListChildren(currentNodeId);
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
         
-        //if (currentNode.DisplayCode.startsWith('LNode#')) {
         if (currentNode.ServeListNodeChildrenAtOnce === true) {
-            // var listQNode = [];
-            
-            // for await (var childNode of childrenNodes) {
-                
-            //     const nextNode = await this.traverseUpstreamInChildrenNode(childNode);
-            //     if (nextNode != null) {
-            //         listQNode.push(nextNode);
-            //     }
-            // }
             return currentNode;
         }
 

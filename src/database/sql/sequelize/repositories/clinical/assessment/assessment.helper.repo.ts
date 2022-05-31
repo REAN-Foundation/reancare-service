@@ -432,17 +432,18 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
 
             const nodeEntity = {
-                DisplayCode       : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
-                TemplateId        : templateId,
-                ParentNodeId      : parentNodeId,
-                NodeType          : nodeObj.NodeType,
-                ProviderGivenId   : nodeObj.ProviderGivenId,
-                ProviderGivenCode : nodeObj.ProviderGivenCode,
-                Title             : nodeObj.Title,
-                Description       : nodeObj.Description,
-                Sequence          : nodeObj.Sequence ?? sequence,
-                Score             : nodeObj.Score,
-                QueryResponseType : QueryResponseType.None
+                DisplayCode                 : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
+                TemplateId                  : templateId,
+                ParentNodeId                : parentNodeId,
+                NodeType                    : nodeObj.NodeType,
+                ProviderGivenId             : nodeObj.ProviderGivenId,
+                ProviderGivenCode           : nodeObj.ProviderGivenCode,
+                Title                       : nodeObj.Title,
+                Description                 : nodeObj.Description,
+                Sequence                    : nodeObj.Sequence ?? sequence,
+                Score                       : nodeObj.Score,
+                ServeListNodeChildrenAtOnce : nodeObj.ServeListNodeChildrenAtOnce,
+                QueryResponseType           : QueryResponseType.None
             };
     
             var thisNode = await AssessmentNode.create(nodeEntity);
@@ -650,7 +651,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
             if (nodeObj.ChildrenNodeDisplayCodes !== undefined) {
                 for await (var childDisplayCode of nodeObj.ChildrenNodeDisplayCodes) {
-                    if (childDisplayCode.startsWith('QNode#') && !nodeObj.DisplayCode.startsWith('RNode#')) {
+                    if (childDisplayCode.startsWith('QNode#') && !nodeObj.DisplayCode.startsWith('RNode#')
+                    && templateObj.ServeListNodeChildrenAtOnce === true) {
                         nodeEntity.ServeListNodeChildrenAtOnce = true;
                     }
                 }

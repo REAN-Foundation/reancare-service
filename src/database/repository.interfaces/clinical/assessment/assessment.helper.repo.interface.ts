@@ -35,7 +35,7 @@ export interface IAssessmentHelperRepo {
 
     readTemplateAsObj(templateId: uuid): Promise<CAssessmentTemplate>;
 
-    getNodeById(nodeId: uuid): Promise<CAssessmentNode>;
+    getNodeById(nodeId: uuid): Promise<CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode>;
 
     createNode(
         templateId: uuid,

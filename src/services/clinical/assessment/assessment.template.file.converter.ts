@@ -234,15 +234,16 @@ export class AssessmentTemplateFileConverter {
 
             var listNode: CAssessmentListNode = new CAssessmentListNode();
 
-            listNode.DisplayCode              = nodeObj.DisplayCode;
-            listNode.NodeType                 = nodeObj.NodeType;
-            listNode.ProviderGivenId          = nodeObj.ProviderGivenId;
-            listNode.ProviderGivenCode        = nodeObj.ProviderGivenCode;
-            listNode.Title                    = nodeObj.Title;
-            listNode.Description              = nodeObj.Description;
-            listNode.Sequence                 = nodeObj.Sequence;
-            listNode.Score                    = nodeObj.Score;
-            listNode.ChildrenNodeDisplayCodes = nodeObj.ChildrenNodeDisplayCodes;
+            listNode.DisplayCode                 = nodeObj.DisplayCode;
+            listNode.NodeType                    = nodeObj.NodeType;
+            listNode.ProviderGivenId             = nodeObj.ProviderGivenId;
+            listNode.ProviderGivenCode           = nodeObj.ProviderGivenCode;
+            listNode.Title                       = nodeObj.Title;
+            listNode.Description                 = nodeObj.Description;
+            listNode.Sequence                    = nodeObj.Sequence;
+            listNode.Score                       = nodeObj.Score;
+            listNode.ChildrenNodeDisplayCodes    = nodeObj.ChildrenNodeDisplayCodes;
+            listNode.ServeListNodeChildrenAtOnce = nodeObj.ServeListNodeChildrenAtOnce;
 
             return listNode;
         }

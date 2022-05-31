@@ -91,7 +91,7 @@ export class AssessmentService {
         return await this._assessmentRepo.delete(id);
     };
 
-    public startAssessment = async (id: uuid): Promise<AssessmentQueryDto> => {
+    public startAssessment = async (id: uuid): Promise<AssessmentQueryDto | AssessmentQueryDto[]> => {
         var assessment = await this._assessmentRepo.getById(id);
         if (assessment.Status === ProgressStatus.InProgress && assessment.StartedAt !== null) {
             throw new Error('Assessment is already in progress.');
@@ -114,7 +114,7 @@ export class AssessmentService {
             throw new Error(`Error while starting assessment. Cannot find template root node.`);
         }
 
-        var nextQuestion: AssessmentQueryDto = await this.traverse(assessment, rootNodeId);
+        var nextQuestion = await this.traverse(assessment, rootNodeId);
 
         return nextQuestion;
     };
@@ -175,7 +175,7 @@ export class AssessmentService {
         }
     };
 
-    public getNextQuestion = async (assessmentId: uuid): Promise<AssessmentQueryDto> => {
+    public getNextQuestion = async (assessmentId: uuid): Promise<AssessmentQueryDto | AssessmentQueryDto[]> => {
         const assessment = await this._assessmentRepo.getById(assessmentId);
         const currentNodeId = assessment.CurrentNodeId;
         return await this.traverse(assessment, currentNodeId);
@@ -223,25 +223,55 @@ export class AssessmentService {
     }
 
     private async iterateListNodeChildren(assessment: AssessmentDto, currentNodeId: uuid)
-        : Promise<AssessmentQueryDto> {
+        : Promise<any> {
         var childrenNodes = await this._assessmentHelperRepo.getNodeListChildren(currentNodeId);
+        const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
+        
+        if (currentNode.ServeListNodeChildrenAtOnce === true) {
+            return currentNode;
+        }
+
         for await (var childNode of childrenNodes) {
-            if ((childNode.NodeType as AssessmentNodeType) === AssessmentNodeType.NodeList) {
+            if (currentNode.DisplayCode.startsWith('RNode#')) {
                 const nextNode = await this.traverse(assessment, childNode.id);
                 if (nextNode != null) {
                     return nextNode;
                 } else {
                     continue;
                 }
-            } else {
+            }
+            else {
                 return await this.traverse(assessment, childNode.id);
             }
         }
+
         return null;
     }
 
+    private async traverseUpstreamInChildrenNode(currentNode: CAssessmentNode): Promise<CAssessmentNode> {
+        const parentNode = await this._assessmentHelperRepo.getNodeById(currentNode.ParentNodeId);
+        if (parentNode === null) {
+            //We have reached the root node of the assessment
+            return null; //Check for this null which means the assessment is over...
+        }
+        var siblingNodes = await this._assessmentHelperRepo.getNodeListChildren(currentNode.ParentNodeId);
+        if (siblingNodes.length === 0) {
+            //The parent node is either a question node or message node
+            //In this case, check the siblings of its parent.
+            return this.traverseUpstream(parentNode);
+        }
+        const currentSequence = currentNode.Sequence;
+        for await (var sibling of siblingNodes) {
+            if (sibling.Sequence === currentSequence) {
+                return sibling;
+            }
+        }
+        //Since we no longer can find the next sibling, retract tracing by one step, move onto the parent
+        return this.traverseUpstream(parentNode);
+    }
+
     private async traverseQuestionNode(assessment: AssessmentDto, currentNode: CAssessmentNode)
-        : Promise<AssessmentQueryDto> {
+        : Promise<AssessmentQueryDto | AssessmentQueryDto[]> {
 
         var isAnswered = await this.isAnswered(assessment.id, currentNode.id);
         if (!isAnswered) {
@@ -288,7 +318,7 @@ export class AssessmentService {
 
     private async traverseQuestionNodePaths(
         assessment: AssessmentDto,
-        currentQuestionNode: CAssessmentQuestionNode): Promise<AssessmentQueryDto> {
+        currentQuestionNode: CAssessmentQuestionNode): Promise<AssessmentQueryDto | AssessmentQueryDto[]> {
 
         //PLEASE NOTE: Current assumption that only single choice and multi choice questions
         //will have node paths may change in future! Till then...
@@ -376,7 +406,7 @@ export class AssessmentService {
     }
 
     private async traverseMessageNode(assessment: AssessmentDto, currentNode: CAssessmentNode)
-        : Promise<AssessmentQueryDto> {
+        : Promise<AssessmentQueryDto | AssessmentQueryDto[]> {
         var isAnswered = await this.isAnswered(assessment.id, currentNode.id);
         if (!isAnswered) {
             return await this.returnAsCurrentMessageNode(assessment, currentNode as CAssessmentMessageNode);
@@ -390,7 +420,8 @@ export class AssessmentService {
         }
     }
 
-    private async traverse(assessment: AssessmentDto, currentNodeId: uuid): Promise<AssessmentQueryDto> {
+    // eslint-disable-next-line max-len
+    private async traverse(assessment: AssessmentDto, currentNodeId: uuid): Promise<AssessmentQueryDto | AssessmentQueryDto[]> {
         
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
         if (!currentNode) {
@@ -773,7 +804,13 @@ export class AssessmentService {
     ) {
         const next = await this.traverse(assessment, nextNodeId);
         if (next === null) {
-            return null;
+            const endResponse: AssessmentQuestionResponseDto = {
+                AssessmentId : assessment.id,
+                Parent       : currentQueryDto,
+                Answer       : answerDto,
+                Next         : null
+            };
+            return endResponse;
         }
         const response: AssessmentQuestionResponseDto = {
             AssessmentId : assessment.id,

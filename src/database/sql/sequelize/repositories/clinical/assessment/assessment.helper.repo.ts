@@ -58,13 +58,14 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
 
             const templateModel: AssessmentTemplateDomainModel = {
-                DisplayCode            : t.DisplayCode,
-                Title                  : t.Title,
-                Description            : t.Description,
-                Type                   : t.Type,
-                Provider               : t.Provider,
-                ProviderAssessmentCode : t.ProviderAssessmentCode,
-                FileResourceId         : t.FileResourceId,
+                DisplayCode                 : t.DisplayCode,
+                Title                       : t.Title,
+                Description                 : t.Description,
+                Type                        : t.Type,
+                Provider                    : t.Provider,
+                ProviderAssessmentCode      : t.ProviderAssessmentCode,
+                FileResourceId              : t.FileResourceId,
+                ServeListNodeChildrenAtOnce : t.ServeListNodeChildrenAtOnce,
             };
 
             var template = await AssessmentTemplate.create(templateModel as any);
@@ -431,17 +432,18 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
 
             const nodeEntity = {
-                DisplayCode       : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
-                TemplateId        : templateId,
-                ParentNodeId      : parentNodeId,
-                NodeType          : nodeObj.NodeType,
-                ProviderGivenId   : nodeObj.ProviderGivenId,
-                ProviderGivenCode : nodeObj.ProviderGivenCode,
-                Title             : nodeObj.Title,
-                Description       : nodeObj.Description,
-                Sequence          : nodeObj.Sequence ?? sequence,
-                Score             : nodeObj.Score,
-                QueryResponseType : QueryResponseType.None
+                DisplayCode                 : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
+                TemplateId                  : templateId,
+                ParentNodeId                : parentNodeId,
+                NodeType                    : nodeObj.NodeType,
+                ProviderGivenId             : nodeObj.ProviderGivenId,
+                ProviderGivenCode           : nodeObj.ProviderGivenCode,
+                Title                       : nodeObj.Title,
+                Description                 : nodeObj.Description,
+                Sequence                    : nodeObj.Sequence ?? sequence,
+                Score                       : nodeObj.Score,
+                ServeListNodeChildrenAtOnce : nodeObj.ServeListNodeChildrenAtOnce,
+                QueryResponseType           : QueryResponseType.None
             };
     
             var thisNode = await AssessmentNode.create(nodeEntity);
@@ -633,19 +635,28 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
 
             const nodeEntity = {
-                DisplayCode       : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
-                TemplateId        : templateId,
-                ParentNodeId      : parentNodeId,
-                NodeType          : nodeObj.NodeType,
-                ProviderGivenId   : nodeObj.ProviderGivenId,
-                ProviderGivenCode : nodeObj.ProviderGivenCode,
-                Title             : nodeObj.Title,
-                Description       : nodeObj.Description,
-                Sequence          : nodeObj.Sequence,
-                Score             : nodeObj.Score,
-                QueryResponseType : QueryResponseType.None
+                DisplayCode                 : nodeObj.DisplayCode ?? this.getNodeDisplayCode(nodeObj.NodeType),
+                TemplateId                  : templateId,
+                ParentNodeId                : parentNodeId,
+                NodeType                    : nodeObj.NodeType,
+                ProviderGivenId             : nodeObj.ProviderGivenId,
+                ProviderGivenCode           : nodeObj.ProviderGivenCode,
+                Title                       : nodeObj.Title,
+                Description                 : nodeObj.Description,
+                Sequence                    : nodeObj.Sequence,
+                Score                       : nodeObj.Score,
+                QueryResponseType           : QueryResponseType.None,
+                ServeListNodeChildrenAtOnce : false
             };
 
+            if (nodeObj.ChildrenNodeDisplayCodes !== undefined) {
+                for await (var childDisplayCode of nodeObj.ChildrenNodeDisplayCodes) {
+                    if (childDisplayCode.startsWith('QNode#') && !nodeObj.DisplayCode.startsWith('RNode#')
+                    && templateObj.ServeListNodeChildrenAtOnce === true) {
+                        nodeEntity.ServeListNodeChildrenAtOnce = true;
+                    }
+                }
+            }
             var thisNode = await AssessmentNode.create(nodeEntity);
             const currentNodeId = thisNode.id;
 

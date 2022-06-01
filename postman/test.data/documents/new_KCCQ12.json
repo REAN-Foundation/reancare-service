@@ -2,7 +2,7 @@
     "DisplayCode": "AssessmtTmpl#52a4n5yfyytxl2rovk2fd9qa",
     "Version": "1.0",
     "Type": "Careplan",
-    "Title": "Heart failure assessment template",
+    "Title": "KCCQ Heart failure assessment template",
     "Description": "Effect of heart failure on the life of a patient.",
     "ServeListNodeChildrenAtOnce": true,
     "Provider": "REAN",

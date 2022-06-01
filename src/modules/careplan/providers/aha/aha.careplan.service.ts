@@ -9,7 +9,7 @@ import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { ParticipantDomainModel } from "../../../../domain.types/clinical/careplan/participant/participant.domain.model";
 import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
-import { UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
+import { UserActionType, UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
 import {
     QueryResponseType,
     CAssessmentQueryResponse,
@@ -22,11 +22,29 @@ import { GoalDto } from "../../../../domain.types/patient/goal/goal.dto";
 import { AssessmentDto } from "../../../../domain.types/clinical/assessment/assessment.dto";
 import { BiometricsType } from "../../../../domain.types/clinical/biometrics/biometrics.types";
 import { HealthPriorityDto } from "../../../../domain.types/patient/health.priority/health.priority.dto";
+import { AssessmentService } from "../../../../services/clinical/assessment/assessment.service";
+import { Loader } from '../../../../startup/loader';
+import { UserTaskService } from '../../../../services/user/user.task.service';
+import { AssessmentTemplateRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.template.repo';
+import { AssessmentDomainModel } from "../../../../domain.types/clinical/assessment/assessment.domain.model";
+import { UserTaskDomainModel } from "../../../../domain.types/user/user.task/user.task.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class AhaCareplanService implements ICareplanService {
+
+    _assessmentService: AssessmentService = null;
+
+    _userTaskService: UserTaskService = null;
+
+    _assessmentTemplateRepo: AssessmentTemplateRepo = null;
+
+    constructor() {
+        this._assessmentService = Loader.container.resolve(AssessmentService);
+        this._userTaskService = Loader.container.resolve(UserTaskService);
+        this._assessmentTemplateRepo = Loader.container.resolve(AssessmentTemplateRepo);
+    }
 
     private ActivityCode = '9999';
 
@@ -159,6 +177,12 @@ export class AhaCareplanService implements ICareplanService {
         }
 
         Logger.instance().log(`response body: ${JSON.stringify(response.body)}`);
+
+        const actionIdKCCQ = await this.createInitialAssessmentTask(model, 'KCCQ');
+        const actionIdSurvey = await this.createInitialAssessmentTask(model, 'AHA Survey');
+
+        Logger.instance().log(`Action id for KCCQ is ${actionIdKCCQ}`);
+        Logger.instance().log(`Action id for Survey is ${actionIdSurvey}`);
 
         return response.body.data.enrollment.id;
 
@@ -862,6 +886,42 @@ export class AhaCareplanService implements ICareplanService {
             desc += '\n';
         }
         return desc;
+    }
+
+    private createInitialAssessmentTask = async (model, templateName: string): Promise<any> => {
+
+        const template = await this._assessmentTemplateRepo.search({ Title: templateName });
+        const templateId: string = template.Items[0].id;
+        const assessmentBody : AssessmentDomainModel = {
+            PatientUserId        : model.PatientUserId,
+            Title                : template.Items[0].Title,
+            Type                 : template.Items[0].Type,
+            AssessmentTemplateId : templateId,
+            ScheduledDateString  : model.StartDate.toISOString().split('T')[0]
+        };
+
+        const assessment = await this._assessmentService.create(assessmentBody);
+        const assessmentId = assessment.id;
+
+        const userTaskBody : UserTaskDomainModel = {
+            UserId             : model.PatientUserId,
+            Task               : templateName,
+            Category           : UserTaskCategory.Assessment,
+            ActionType         : UserActionType.Careplan,
+            ActionId           : assessmentId,
+            ScheduledStartTime : model.StartDate,
+            IsRecurrent        : false
+        };
+
+        if (templateName === "AHA Survey") {
+            userTaskBody.ActionType = UserActionType.Survey;
+            userTaskBody.Category = UserTaskCategory.Message;
+        }
+
+        const userTask = await this._userTaskService.create(userTaskBody);
+
+        return userTask.ActionId;
+
     }
 
     //#endregion

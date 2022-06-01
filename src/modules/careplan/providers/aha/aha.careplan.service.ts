@@ -185,7 +185,6 @@ export class AhaCareplanService implements ICareplanService {
         Logger.instance().log(`Action id for Survey is ${actionIdSurvey}`);
 
         return response.body.data.enrollment.id;
-
     };
 
     public fetchActivities = async (
@@ -888,7 +887,9 @@ export class AhaCareplanService implements ICareplanService {
         return desc;
     }
 
-    private createInitialAssessmentTask = async (model, templateName: string): Promise<any> => {
+    private createInitialAssessmentTask = async (
+        model: EnrollmentDomainModel,
+        templateName: string): Promise<any> => {
 
         const template = await this._assessmentTemplateRepo.search({ Title: templateName });
         const templateId: string = template.Items[0].id;
@@ -913,15 +914,9 @@ export class AhaCareplanService implements ICareplanService {
             IsRecurrent        : false
         };
 
-        if (templateName === "AHA Survey") {
-            userTaskBody.ActionType = UserActionType.Survey;
-            userTaskBody.Category = UserTaskCategory.Message;
-        }
-
         const userTask = await this._userTaskService.create(userTaskBody);
 
         return userTask.ActionId;
-
     }
 
     //#endregion

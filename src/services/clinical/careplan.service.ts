@@ -27,7 +27,6 @@ import { CareplanConfig } from "../../config/configuration.types";
 import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/assessment.domain.model";
 import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
-import { AssessmentTemplateFileConverter } from "./assessment/assessment.template.file.converter";
 import { UserTaskDomainModel } from "../../domain.types/user/user.task/user.task.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,38 +233,55 @@ export class CareplanService implements IUserActionService {
     public getAction = async (activityId: uuid): Promise<any> => {
 
         var activity = await this._careplanRepo.getActivity(activityId);
+        if (activity != null) {
 
-        var scheduledAt = activity.ScheduledAt ? activity.ScheduledAt.toISOString().split('T')[0] : null;
+            var scheduledAt = activity.ScheduledAt ? activity.ScheduledAt.toISOString().split('T')[0] : null;
 
-        const details: CareplanActivity = await this._handler.getActivity(
-            activity.PatientUserId,
-            activity.Provider,
-            activity.PlanCode,
-            activity.EnrollmentId,
-            activity.ProviderActionId,
-            scheduledAt);
+            const details: CareplanActivity = await this._handler.getActivity(
+                activity.PatientUserId,
+                activity.Provider,
+                activity.PlanCode,
+                activity.EnrollmentId,
+                activity.ProviderActionId,
+                scheduledAt);
         
-        details.PatientUserId = activity.PatientUserId;
-        details.Provider = activity.Provider;
-        details.PlanCode = activity.PlanCode;
-        details.EnrollmentId = activity.EnrollmentId;
-        details.ProviderActionId = activity.ProviderActionId;
+            details.PatientUserId = activity.PatientUserId;
+            details.Provider = activity.Provider;
+            details.PlanCode = activity.PlanCode;
+            details.EnrollmentId = activity.EnrollmentId;
+            details.ProviderActionId = activity.ProviderActionId;
 
-        activity = await this._careplanRepo.updateActivityDetails(activity.id, details);
-        details.Title = activity.Title;
-        details.Description = activity.Description;
-
-        //Handle assessment activities in special manner...
-        if (activity.Category === UserTaskCategory.Assessment ||
+            activity = await this._careplanRepo.updateActivityDetails(activity.id, details);
+            details.Title = activity.Title;
+            details.Description = activity.Description;
+            
+            //Handle assessment activities in special manner...
+            if (activity.Category === UserTaskCategory.Assessment ||
             activity.Type === 'Assessment') {
-            var template = await this.getAssessmentTemplate(details);
-            const assessment = await this.getAssessment(activity, template, scheduledAt);
-            activity['Assessment'] = assessment;
+                var template = await this.getAssessmentTemplate(details);
+                const assessment = await this.getAssessment(activity, template, scheduledAt);
+                activity['Assessment'] = assessment;
+            }
+            else {
+                activity['RawContent'] = details.RawContent;
+            }
+            return activity;
         }
         else {
-            activity['RawContent'] = details.RawContent;
+            var assessment = await this._assessmentRepo.getById(activityId);
+            var dummyActivity = {
+                id               : assessment.id,
+                Type             : "Assessment",
+                Category         : "Assessment",
+                ProviderActionId : "Custom-Assessment",
+                Title            : assessment.Title,
+                Description      : assessment.Description,
+                ScheduledAt      : assessment.ScheduledAt,
+                Status           : ProgressStatus.Pending,
+                Assessment       : assessment,
+            };
+            return dummyActivity;
         }
-        return activity;
     };
 
     public updateAction = async (activityId: uuid, updates: any): Promise<any> => {

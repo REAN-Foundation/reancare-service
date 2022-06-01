@@ -911,6 +911,7 @@ export class AhaCareplanService implements ICareplanService {
             ActionType         : UserActionType.Careplan,
             ActionId           : assessmentId,
             ScheduledStartTime : model.StartDate,
+            ScheduledEndTime   : new Date(model.StartDate.getTime() + (24 * 60 * 60 * 1000)),
             IsRecurrent        : false
         };
 

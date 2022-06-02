@@ -105,10 +105,13 @@ export class AssessmentValidator extends BaseValidator {
         return answerModel;
     };
 
-    answerQuestionList = async (request: express.Request) => {
+    answerQuestionList = async (request: express.Request)
+        :  Promise<AssessmentAnswerDomainModel[]> => {
 
         await this.validateArray(request, 'Answers', Where.Body, true, false);
-        const answerModelList = [];
+
+        var answerModelList: AssessmentAnswerDomainModel[] = [];
+
         for (let i = 0; i < request.body.Answers.length; i++) {
 
             var answerModel: AssessmentAnswerDomainModel = {

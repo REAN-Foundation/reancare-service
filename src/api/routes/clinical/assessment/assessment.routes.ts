@@ -14,7 +14,7 @@ export const register = (app: express.Application): void => {
     router.get('/:id/questions/next', authenticator.authenticateClient, authenticator.authenticateUser, controller.getNextQuestion);
     router.get('/:id/questions/:questionId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getQuestionById);
     router.post('/:id/questions/:questionId/answer', authenticator.authenticateClient, authenticator.authenticateUser, controller.answerQuestion);
-    router.post('/:id/question-lists/:questionIdList/answer', authenticator.authenticateClient, authenticator.authenticateUser, controller.answerQuestionList);
+    router.post('/:id/question-lists/:listId/answer', authenticator.authenticateClient, authenticator.authenticateUser, controller.answerQuestionList);
 
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);

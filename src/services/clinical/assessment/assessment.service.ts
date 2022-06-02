@@ -7,7 +7,7 @@ import { AssessmentHelperMapper } from '../../../database/sql/sequelize/mappers/
 import { AssessmentAnswerDomainModel } from '../../../domain.types/clinical/assessment/assessment.answer.domain.model';
 import { AssessmentDomainModel } from '../../../domain.types/clinical/assessment/assessment.domain.model';
 import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
-import { AssessmentQueryDto } from '../../../domain.types/clinical/assessment/assessment.query.dto';
+import { AssessmentQueryDto, AssessmentQueryListDto } from '../../../domain.types/clinical/assessment/assessment.query.dto';
 import { AssessmentQuestionResponseDto } from '../../../domain.types/clinical/assessment/assessment.question.response.dto';
 import {
     AssessmentSearchFilters,
@@ -28,7 +28,8 @@ import {
     TextQueryAnswer,
     DateQueryAnswer,
     FileQueryAnswer,
-    BooleanQueryAnswer
+    BooleanQueryAnswer,
+    CAssessmentListNode
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Loader } from '../../../startup/loader';
@@ -91,7 +92,7 @@ export class AssessmentService {
         return await this._assessmentRepo.delete(id);
     };
 
-    public startAssessment = async (id: uuid): Promise<AssessmentQueryDto | AssessmentQueryDto[]> => {
+    public startAssessment = async (id: uuid): Promise<AssessmentQueryDto | AssessmentQueryListDto> => {
         var assessment = await this._assessmentRepo.getById(id);
         if (assessment.Status === ProgressStatus.InProgress && assessment.StartedAt !== null) {
             throw new Error('Assessment is already in progress.');
@@ -159,6 +160,51 @@ export class AssessmentService {
         return null;
     };
 
+    public answerQuestionList = async (
+        assessmentId: uuid,
+        listNode: CAssessmentListNode,
+        answerModels: AssessmentAnswerDomainModel[]) => {
+
+        const assessment = await this._assessmentRepo.getById(assessmentId);
+        if (!assessment) {
+            throw new ApiError(404, `Assessment with id ${assessmentId} cannot be found!`);
+        }
+        if (listNode.TemplateId !== assessment.AssessmentTemplateId) {
+            throw new ApiError(400, `Template associated with assessment dows not match with the question!`);
+        }
+
+        var isListAnswered = await this.isListAnswered(assessmentId, listNode);
+        if (isListAnswered) {
+            return null;
+        }
+
+        var answerResponses: AssessmentQuestionResponseDto[] = [];
+
+        for await (var answerModel of answerModels) {
+            var question = await this.getQuestionById(assessmentId, answerModel.QuestionNodeId);
+            if (question == null) {
+                throw new ApiError(404, 'Assessment question not found.');
+            }
+            var answerResponse = await this.answerQuestion(answerModel);
+            answerResponses.push(answerResponse);
+        }
+
+        isListAnswered = await this.isListAnswered(assessmentId, listNode);
+        if (!isListAnswered) {
+            throw new ApiError(400, `Problem encountered in answering all children questions!`);
+        }
+
+        const queryListDto = await this.getQueryListDto(assessment, listNode);
+        const next = await this.traverse(assessment, listNode.id);
+        const response = {
+            AssessmentId : assessment.id,
+            Parent       : queryListDto,
+            Answer       : answerResponses,
+            Next         : next,
+        };
+        return response;
+    }
+
     public getQuestionById = async (assessmentId: uuid, questionId: uuid): Promise<AssessmentQueryDto | string> => {
         const questionNode = await this._assessmentHelperRepo.getNodeById(questionId);
         if (
@@ -175,7 +221,12 @@ export class AssessmentService {
         }
     };
 
-    public getNextQuestion = async (assessmentId: uuid): Promise<AssessmentQueryDto | AssessmentQueryDto[]> => {
+    public getNodeById = async (nodeId: uuid):
+        Promise<CAssessmentListNode | CAssessmentMessageNode | CAssessmentQuestionNode> => {
+        return this._assessmentHelperRepo.getNodeById(nodeId);
+    }
+
+    public getNextQuestion = async (assessmentId: uuid): Promise<AssessmentQueryDto | AssessmentQueryListDto> => {
         const assessment = await this._assessmentRepo.getById(assessmentId);
         const currentNodeId = assessment.CurrentNodeId;
         return await this.traverse(assessment, currentNodeId);
@@ -197,6 +248,20 @@ export class AssessmentService {
         const response = await this._assessmentHelperRepo.getQueryResponse(assessmentId, currentNodeId);
         return response !== null;
     };
+
+    public isListAnswered = async (assessmentId: uuid, listNode: CAssessmentListNode) => {
+        if (!listNode.ServeListNodeChildrenAtOnce) {
+            throw new ApiError(400, 'This list node cannot serve its children at once!');
+        }
+        const childrenNodeIds = listNode.ChildrenNodeIds;
+        for await (var qid of childrenNodeIds) {
+            var isAnswered = await this.isAnswered(assessmentId, qid);
+            if (!isAnswered) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     //#region Privates
 
@@ -227,10 +292,6 @@ export class AssessmentService {
         var childrenNodes = await this._assessmentHelperRepo.getNodeListChildren(currentNodeId);
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
         
-        if (currentNode.ServeListNodeChildrenAtOnce === true) {
-            return currentNode;
-        }
-
         for await (var childNode of childrenNodes) {
             if (currentNode.DisplayCode.startsWith('RNode#')) {
                 const nextNode = await this.traverse(assessment, childNode.id);
@@ -271,7 +332,7 @@ export class AssessmentService {
     }
 
     private async traverseQuestionNode(assessment: AssessmentDto, currentNode: CAssessmentNode)
-        : Promise<AssessmentQueryDto | AssessmentQueryDto[]> {
+        : Promise<AssessmentQueryDto | AssessmentQueryListDto> {
 
         var isAnswered = await this.isAnswered(assessment.id, currentNode.id);
         if (!isAnswered) {
@@ -318,7 +379,7 @@ export class AssessmentService {
 
     private async traverseQuestionNodePaths(
         assessment: AssessmentDto,
-        currentQuestionNode: CAssessmentQuestionNode): Promise<AssessmentQueryDto | AssessmentQueryDto[]> {
+        currentQuestionNode: CAssessmentQuestionNode): Promise<AssessmentQueryDto | AssessmentQueryListDto> {
 
         //PLEASE NOTE: Current assumption that only single choice and multi choice questions
         //will have node paths may change in future! Till then...
@@ -406,7 +467,7 @@ export class AssessmentService {
     }
 
     private async traverseMessageNode(assessment: AssessmentDto, currentNode: CAssessmentNode)
-        : Promise<AssessmentQueryDto | AssessmentQueryDto[]> {
+        : Promise<AssessmentQueryDto | AssessmentQueryListDto> {
         var isAnswered = await this.isAnswered(assessment.id, currentNode.id);
         if (!isAnswered) {
             return await this.returnAsCurrentMessageNode(assessment, currentNode as CAssessmentMessageNode);
@@ -421,7 +482,7 @@ export class AssessmentService {
     }
 
     // eslint-disable-next-line max-len
-    private async traverse(assessment: AssessmentDto, currentNodeId: uuid): Promise<AssessmentQueryDto | AssessmentQueryDto[]> {
+    private async traverse(assessment: AssessmentDto, currentNodeId: uuid): Promise<AssessmentQueryDto | AssessmentQueryListDto> {
         
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
         if (!currentNode) {
@@ -429,7 +490,25 @@ export class AssessmentService {
         }
 
         if (currentNode.NodeType === AssessmentNodeType.NodeList) {
-            return await this.iterateListNodeChildren(assessment, currentNodeId);
+            var currentListNode = currentNode as CAssessmentListNode;
+            const serveListNodeChildrenAtOnce = currentListNode.ServeListNodeChildrenAtOnce;
+            if (serveListNodeChildrenAtOnce) {
+                const isListAnswered = await this.isListAnswered(assessment.id, currentListNode);
+                if (isListAnswered) {
+                    const nextSiblingNode = await this.traverseUpstream(currentNode);
+                    if (nextSiblingNode === null) {
+                        //Assessment has finished
+                        return null;
+                    }
+                    return await this.traverse(assessment, nextSiblingNode.id);
+                }
+                else {
+                    return await this.returnAsCurrentListNode(assessment, currentListNode);
+                }
+            }
+            else {
+                return await this.iterateListNodeChildren(assessment, currentNodeId);
+            }
         }
         else {
             if (currentNode.NodeType === AssessmentNodeType.Question) {
@@ -439,6 +518,23 @@ export class AssessmentService {
                 return await this.traverseMessageNode(assessment, currentNode);
             }
         }
+    }
+
+    private getListNodeChildrenQueryDtos = async (
+        assessment: AssessmentDto, listNode: CAssessmentListNode): Promise<AssessmentQueryDto[]> => {
+        var queryDtos: AssessmentQueryDto[] = [];
+        for await (var childId of listNode.ChildrenNodeIds) {
+            var child = await this.getNodeById(childId);
+            if (child.NodeType === AssessmentNodeType.Question) {
+                var dto = await this.questionNodeAsQueryDto(child, assessment);
+                queryDtos.push(dto);
+            }
+            else if (child.NodeType === AssessmentNodeType.Message) {
+                var dto = await this.messageNodeAsQueryDto(child, assessment);
+                queryDtos.push(dto);
+            }
+        }
+        return queryDtos;
     }
 
     private async returnAsCurrentMessageNode(
@@ -457,6 +553,21 @@ export class AssessmentService {
         //Set as current node if not already
         await this._assessmentRepo.setCurrentNode(assessment.id, currentNode.id);
         return this.questionNodeAsQueryDto(currentNode, assessment);
+    }
+
+    private async returnAsCurrentListNode(
+        assessment: AssessmentDto,
+        currentNode: CAssessmentListNode
+    ): Promise<AssessmentQueryListDto> {
+        //Set as current node if not already
+        await this._assessmentRepo.setCurrentNode(assessment.id, currentNode.id);
+        return this.getQueryListDto(assessment, currentNode);
+    }
+
+    private async getQueryListDto(
+        assessment: AssessmentDto, currentNode: CAssessmentListNode): Promise<AssessmentQueryListDto> {
+        var childrenQueryDtos: AssessmentQueryDto[] = await this.getListNodeChildrenQueryDtos(assessment, currentNode);
+        return this.listNodeAsQueryListDto(currentNode, assessment, childrenQueryDtos);
     }
 
     private async getChosenPath(
@@ -875,6 +986,31 @@ export class AssessmentService {
             ExpectedResponseType : QueryResponseType.Ok,
             Options              : [],
             ProviderGivenCode    : messageNode.ProviderGivenCode,
+        };
+        return query;
+    }
+
+    private listNodeAsQueryListDto(
+        node: CAssessmentNode,
+        assessment: AssessmentDto,
+        childrenQueryDtos: AssessmentQueryDto[]) {
+
+        const listNode = node as CAssessmentListNode;
+
+        const query: AssessmentQueryListDto = {
+            id                          : listNode.id,
+            DisplayCode                 : listNode.DisplayCode,
+            PatientUserId               : assessment.PatientUserId,
+            AssessmentTemplateId        : assessment.AssessmentTemplateId,
+            ParentNodeId                : listNode.ParentNodeId,
+            AssessmentId                : assessment.id,
+            Sequence                    : listNode.Sequence,
+            NodeType                    : listNode.NodeType as AssessmentNodeType,
+            Title                       : listNode.Title,
+            Description                 : listNode.Description,
+            ProviderGivenCode           : listNode.ProviderGivenCode,
+            ServeListNodeChildrenAtOnce : listNode.ServeListNodeChildrenAtOnce,
+            ChildrenQuestions           : childrenQueryDtos
         };
         return query;
     }

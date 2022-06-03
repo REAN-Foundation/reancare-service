@@ -318,6 +318,16 @@ export class AssessmentController extends BaseController{
             }
             
             const answerResponse = await this._service.answerQuestionList(assessment.id, listNode, answerModels);
+            
+            const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
+            if ( isAssessmentCompleted) {
+                //Assessment has no more questions left and is completed successfully!
+                await this.completeAssessmentTask(id);
+                ResponseHandler.success(request, response, 'Assessment has completed successfully!', 200, {
+                    AnswerResponse : answerResponse,
+                });
+                return;
+            }
 
             ResponseHandler.success(request, response, 'Assessment question list answered successfully!', 200, {
                 AnswerResponse : answerResponse,

@@ -77,7 +77,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
     //Creates DB if does not exist
     public sync = async () => {
         try {
-            await this._sequelize.sync({ force: true });
+            await this._sequelize.sync({ alter: true });
             return true;
         } catch (error) {
             Logger.instance().log(error.message);

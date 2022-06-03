@@ -49,7 +49,7 @@ export enum UserActionType {
     Medication  = 'Medication',
     Appointment = 'Appointment',
     Careplan = "Careplan",
-    Survey   = "Survey"
+    Custom   = "Custom"
 }
 
 export const UserActionTypeList: UserActionType [] = [

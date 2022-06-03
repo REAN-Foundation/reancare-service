@@ -1,14 +1,14 @@
 import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system.types';
 import { UserActionType, UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task.types';
-import { UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
-import UserTask from '../../models/user/user.task.model';
+import { CustomTaskDto } from '../../../../../domain.types/user/custom.task/custom.task.dto';
+import CustomTask from '../../models/user/custom.task.model';
 import { getTaskStatus } from './task.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-export class UserTaskMapper {
+export class CustomTaskMapper {
 
-    static toDto = (task: UserTask): UserTaskDto => {
+    static toDto = (task: CustomTask): CustomTaskDto => {
 
         if (task == null) {
             return null;
@@ -16,15 +16,14 @@ export class UserTaskMapper {
 
         var status: ProgressStatus = getTaskStatus(task);
 
-        const dto: UserTaskDto = {
+        const dto: CustomTaskDto = {
             id                   : task.id,
-            DisplayId            : task.DisplayId,
             UserId               : task.UserId,
             Task                 : task.Task,
             Description          : task.Description,
             Category             : task.Category as UserTaskCategory,
             ActionType           : task.ActionType as UserActionType,
-            ActionId             : task.ActionId,
+            Details              : task.Details ?? JSON.parse(task.Details),
             ScheduledStartTime   : task.ScheduledStartTime,
             ScheduledEndTime     : task.ScheduledEndTime,
             Status               : status,
@@ -42,3 +41,4 @@ export class UserTaskMapper {
     };
 
 }
+

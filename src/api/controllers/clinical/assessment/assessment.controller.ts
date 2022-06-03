@@ -9,7 +9,7 @@ import { Loader } from '../../../../startup/loader';
 import { AssessmentValidator } from '../../../validators/clinical/assessment/assessment.validator';
 import { BaseController } from '../../base.controller';
 import { AssessmentQuestionResponseDto } from '../../../../domain.types/clinical/assessment/assessment.question.response.dto';
-import { AssessmentType } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { AssessmentNodeType, AssessmentType, CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentHelperRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.helper.repo';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -287,78 +287,42 @@ export class AssessmentController extends BaseController{
             await this.setContext('Assessment.AnswerQuestionList', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const questionIdString = request.params.questionIdList;
-            const questionIdList =  questionIdString.split(',');
-            let question = null;
-            let answerResponse: AssessmentQuestionResponseDto = null;
-            const answerResponseList = [];
+            const listId: uuid = await this._validator.getParamUuid(request, 'listId');
 
-            const answerModelList = await this._validator.answerQuestionList(request);
+            const node = await this._service.getNodeById(listId);
+            if (!node || node?.NodeType !== AssessmentNodeType.NodeList) {
+                throw new ApiError(404, 'Question list not found!');
+            }
+            const listNode: CAssessmentListNode = node as CAssessmentListNode;
+            if (listNode.ServeListNodeChildrenAtOnce === false) {
+                throw new ApiError(400, 'Cannot accept array of answers for this list. Answer questions one by one!');
+            }
+            const childrenIds = listNode.ChildrenNodeIds;
+
+            const answerModels = await this._validator.answerQuestionList(request);
+            const answeredQuestionIds = answerModels.map(x => x.QuestionNodeId);
+
+            if (childrenIds.length !== answeredQuestionIds.length) {
+                throw new ApiError(400, 'Discrepancy in answered question list!');
+            }
+
+            for (var q of answeredQuestionIds) {
+                if (!childrenIds.includes(q)) {
+                    throw new ApiError(400, 'Discrepancy in answered question list!');
+                }
+            }
 
             const assessment = await this._service.getById(id);
             if (assessment == null) {
                 throw new ApiError(404, 'Assessment record not found.');
             }
             
-            for await (var answerModel of answerModelList) {
+            const answerResponse = await this._service.answerQuestionList(assessment.id, listNode, answerModels);
 
-                question = await this._service.getQuestionById(id, answerModel.QuestionNodeId);
-                if (question == null) {
-                    throw new ApiError(404, 'Assessment question not found.');
-                }
-
-                var childrenNodes = await this._serviceHelperRepo.getNodeListChildren(question.ParentNodeId);
-
-                for await (var children of childrenNodes) {
-                   
-                    const isPresent = questionIdList.includes(children.id);
-                    if (!isPresent) {
-                        throw new ApiError(400, `Answer for '${children.Title}' not found, please answer all the questions!`);
-                    }
-                }
-
-                const currentNode = await this._serviceHelperRepo.getNodeById(question.ParentNodeId);
-        
-                if (currentNode.ServeListNodeChildrenAtOnce === false) {
-                    throw new ApiError(400, `These questions can not be answered as a list.`);
-                }
-            
-                answerResponse = await this._service.answerQuestion(answerModel);
-
-                answerResponseList.push(answerResponse);
-
-            }
-
-            var childrenNodes = await this._serviceHelperRepo.getNodeListChildren(question.ParentNodeId);
-
-            for await (var children of childrenNodes) {
-
-                const isAnswered = await this._service.isAnswered(assessment.id, children.id);
-                if (!isAnswered) {
-                    const isPresent = questionIdList.includes(children.id);
-                    if (!isPresent) {
-                        throw new ApiError(400, `Answer for '${children.Title}' not found, please answer this question!`);
-                    }
-                }
-            }
-
-            if (answerResponseList.length === 0) {
-                throw new ApiError(400, `All questions on this list have already been answered!`);
-            }
-
-            const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
-            if ( isAssessmentCompleted) {
-                //Assessment has no more questions left and is completed successfully!
-                await this.completeAssessmentTask(id);
-                ResponseHandler.success(request, response, 'Assessment has completed successfully!', 200, {
-                    AnswerResponse : answerResponseList,
-                });
-                return;
-            }
-
-            ResponseHandler.success(request, response, 'Assessment question answered successfully!', 200, {
-                AnswerResponse : answerResponseList,
+            ResponseHandler.success(request, response, 'Assessment question list answered successfully!', 200, {
+                AnswerResponse : answerResponse,
             });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

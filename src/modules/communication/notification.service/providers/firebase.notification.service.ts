@@ -9,7 +9,8 @@ export class FirebaseNotificationService implements INotificationService {
     
     init = () => {
         try {
-            const serviceAccount = JSON.parse(fs.readFileSync(process.env.FCM_GOOGLE_APPLICATION_CREDENTIALS).toString());
+            const accountCreds = fs.readFileSync(process.env.FCM_GOOGLE_APPLICATION_CREDENTIALS).toString();
+            const serviceAccount = JSON.parse(accountCreds);
             admin.initializeApp({
                 credential : admin.credential.cert(serviceAccount),
             });

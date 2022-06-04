@@ -144,9 +144,9 @@ export class HealthProfileRepo implements IHealthProfileRepo {
         }
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    deleteByPatientUserId = async (patientUserId: string): Promise<boolean> => {
         try {
-            var result = await HealthProfile.destroy({ where: { id: id } });
+            var result = await HealthProfile.destroy({ where: { PatientUserId: patientUserId } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);

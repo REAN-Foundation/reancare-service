@@ -96,6 +96,10 @@ export class PatientService {
         return dto;
     };
 
+    public deleteByUserId = async (id: string): Promise<boolean> => {
+        return await this._patientRepo.deleteByUserId(id);
+    };
+
     public checkforExistingPersonWithRole
         = async (domainModel: PatientDomainModel, roleId: number): Promise<PersonDetailsDto> => {
 

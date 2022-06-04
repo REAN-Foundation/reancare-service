@@ -79,6 +79,10 @@ export class UserService {
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
+    
+    public delete = async (id: string): Promise<boolean> => {
+        return await this._userRepo.delete(id);
+    };
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
 

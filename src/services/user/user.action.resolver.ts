@@ -2,6 +2,7 @@ import { UserActionType } from "../../domain.types/user/user.task/user.task.type
 import { Loader } from "../../startup/loader";
 import { MedicationConsumptionService } from "../clinical/medication/medication.consumption.service";
 import { CareplanService } from "../clinical/careplan.service";
+import { CustomTaskService } from "./custom.task.service";
 import { IUserActionService } from "./user.action.service.interface";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 
@@ -62,7 +63,10 @@ export class UserActionResolver {
             return null;
         } else if (actionType === UserActionType.Careplan) {
             return Loader.container.resolve(CareplanService);
+        } else if (actionType === UserActionType.Custom) {
+            return Loader.container.resolve(CustomTaskService);
         }
+
         return null;
     };
 

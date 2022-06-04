@@ -168,6 +168,22 @@ export class BaseValidator {
         await chain.run(request);
     };
 
+    validateObject = async(
+        request: express.Request,
+        field: string,
+        where: Where,
+        required: boolean,
+        nullable: boolean) => {
+
+        var chain: ValidationChain = this.getValidationChain(field, where);
+        chain = this.checkRequired(required, chain, nullable);
+        if (required) {
+            chain = chain.notEmpty();
+        }
+        
+        await chain.run(request);
+    }
+
     validateEmail = async(
         request: express.Request,
         field: string,

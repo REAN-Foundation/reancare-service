@@ -23,7 +23,7 @@ export class CustomTaskMapper {
             Description          : task.Description,
             Category             : task.Category as UserTaskCategory,
             ActionType           : task.ActionType as UserActionType,
-            Details              : task.Details ?? JSON.parse(task.Details),
+            Details              : task.Details ? JSON.parse(task.Details) : {},
             ScheduledStartTime   : task.ScheduledStartTime,
             ScheduledEndTime     : task.ScheduledEndTime,
             Status               : status,

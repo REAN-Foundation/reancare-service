@@ -162,6 +162,11 @@ export class PatientController extends BaseUserController {
             await this.setContext('Patient.DeleteByUserId', request, response);
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const currentUserId = request.currentUser.UserId;
+            const patientUserId = userId;
+            if (currentUserId !== patientUserId) {
+                throw new ApiError(403, 'You do not have permissions to delete this patient account.');
+            }
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');

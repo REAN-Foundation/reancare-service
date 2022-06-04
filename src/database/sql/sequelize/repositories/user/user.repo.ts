@@ -183,6 +183,20 @@ export class UserRepo implements IUserRepo {
         }
     };
 
+    delete = async (id: string): Promise<boolean> => {
+        try {
+            const count = await User.destroy({
+                where : {
+                    id : id
+                }
+            });
+            return count === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
     getUserHashedPassword = async (id: string): Promise<string> => {
         const user = await User.findByPk(id);
         if (user == null) {

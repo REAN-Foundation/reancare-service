@@ -6,8 +6,7 @@ import { CustomTaskService } from '../../../services/user/custom.task.service';
 import { UserTaskService } from '../../../services/user/user.task.service';
 import { CustomTaskValidator } from '../../validators/user/custom.task.validator';
 import { Loader } from '../../../startup/loader';
-import { UserTaskDomainModel } from '../../../domain.types/user/user.task/user.task.domain.model';
-import { UserActionType } from '../../../domain.types/user/user.task/user.task.types';
+import { CustomTaskHelper } from '../../helpers/custom.task.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,6 +21,8 @@ export class CustomTaskController {
     _authorizer: Authorizer = null;
 
     _validator: CustomTaskValidator = new CustomTaskValidator();
+
+    _customTaskHelper: CustomTaskHelper = new CustomTaskHelper();
 
     constructor() {
         this._service = Loader.container.resolve(CustomTaskService);
@@ -40,23 +41,7 @@ export class CustomTaskController {
             
             const domainModel = await this._validator.create(request);
 
-            const customTask = await this._service.create(domainModel);
-            if (customTask == null) {
-                throw new ApiError(400, 'Cannot create custom task!');
-            }
-
-            const userTaskModel: UserTaskDomainModel = {
-                ActionId           : customTask.id,
-                ActionType         : UserActionType.Custom,
-                Task               : customTask.Task,
-                Description        : customTask.Description,
-                ScheduledStartTime : customTask.ScheduledStartTime,
-                ScheduledEndTime   : customTask.ScheduledEndTime ?? null,
-                Category           : customTask.Category
-            };
-            
-            var userTask = await this._userTaskService.create(userTaskModel);
-            userTask['Action'] = customTask;
+            var userTask = await this._customTaskHelper.createCustomTask(domainModel);
 
             ResponseHandler.success(request, response, 'Custom task created successfully!', 201, {
                 UserTask : userTask,
@@ -114,7 +99,7 @@ export class CustomTaskController {
             userTask['Action'] = updated;
 
             ResponseHandler.success(request, response, 'Custom task record updated successfully!', 200, {
-                UserTask : updated,
+                UserTask : userTask,
             });
             
         } catch (error) {
@@ -129,3 +114,4 @@ export class CustomTaskController {
     //#endregion
 
 }
+

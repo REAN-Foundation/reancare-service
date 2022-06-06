@@ -7289,6 +7289,267 @@
 					]
 				},
 				{
+					"name": "Patient custom tasks",
+					"item": [
+						{
+							"name": "Add custom task",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();",
+											"",
+											"try {",
+											"    pm.environment.set(\"CUSTOM_TASK_ID\", jsonRes.Data.UserTask.Action.id);",
+											"}",
+											"catch (error) {",
+											"    console.log(error.message);",
+											"}",
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"New custom task is created\", function () {",
+											"",
+											"    var userId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.not.be.null;",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property('Action');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Task');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Description');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Category');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Details');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('ScheduledStartTime');",
+											"",
+											"    pm.expect(jsonRes.Data.UserTask.Action.UserId).equals(userId);",
+											"    pm.expect(jsonRes.Data.UserTask.Action.Task).equals(\"Take a walk\");",
+											"    pm.expect(jsonRes.Data.UserTask.Action.Description).equals(\"Take a walk 30 min. in morning\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Task\": \"Take a walk\",\n    \"Description\": \"Take a walk 30 min. in morning\",\n    \"Category\": \"Exercise\",\n    \"Details\": {\n        \"ExerciseType\": \"Brisk walk\",\n        \"IntensityLevel\": \"Moderate\"\n    },\n    \"ScheduledStartTime\": \"2022-07-01\",\n    \"IsRecurrent\": false\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/custom-tasks",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"custom-tasks"
+									]
+								},
+								"description": "Create new Goal record"
+							},
+							"response": []
+						},
+						{
+							"name": "Get custom task",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Custom task is retrieved\", function () {",
+											"",
+											"    var userId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.not.be.null;",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property('Action');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Task');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Description');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Category');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Details');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('ScheduledStartTime');",
+											"",
+											"    pm.expect(jsonRes.Data.UserTask.Action.UserId).equals(userId);",
+											"    pm.expect(jsonRes.Data.UserTask.Action.Task).equals(\"Take a walk\");",
+											"    pm.expect(jsonRes.Data.UserTask.Action.Description).equals(\"Take a walk 30 min. in morning\");",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/custom-tasks/{{CUSTOM_TASK_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"custom-tasks",
+										"{{CUSTOM_TASK_ID}}"
+									]
+								},
+								"description": "Gets list of Goal records"
+							},
+							"response": []
+						},
+						{
+							"name": "Update custom task",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Custom task is updated\", function () {",
+											"",
+											"    var userId = pm.environment.get(\"PATIENT_USER_ID\");",
+											"",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.not.be.null;",
+											"    pm.expect(jsonRes.Data).to.have.property('UserTask');",
+											"    pm.expect(jsonRes.Data.UserTask).to.have.property('Action');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Task');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Description');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Category');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('Details');",
+											"    pm.expect(jsonRes.Data.UserTask.Action).to.have.property('ScheduledStartTime');",
+											"",
+											"    pm.expect(jsonRes.Data.UserTask.Action.UserId).equals(userId);",
+											"    pm.expect(jsonRes.Data.UserTask.Action.Task).equals(\"Take a jog\");",
+											"    pm.expect(jsonRes.Data.UserTask.Action.Description).equals(\"Jog for 30 min. in morning\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"UserId\": \"{{PATIENT_USER_ID}}\",\n    \"Task\": \"Take a jog\",\n    \"Description\": \"Jog for 30 min. in morning\",\n    \"Category\": \"Exercise\",\n    \"Details\": {\n        \"ExerciseType\": \"Jog\",\n        \"IntensityLevel\": \"Hard\"\n    },\n    \"ScheduledStartTime\": \"2022-07-01\",\n    \"IsRecurrent\": false\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/custom-tasks/{{CUSTOM_TASK_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"custom-tasks",
+										"{{CUSTOM_TASK_ID}}"
+									]
+								},
+								"description": "Update Goal record with id"
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Patient document",
 					"item": [
 						{

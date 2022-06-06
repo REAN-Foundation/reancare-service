@@ -179,10 +179,7 @@ export class AhaCareplanService implements ICareplanService {
         Logger.instance().log(`response body: ${JSON.stringify(response.body)}`);
 
         const actionIdKCCQ = await this.createInitialAssessmentTask(model, 'KCCQ');
-        const actionIdSurvey = await this.createInitialAssessmentTask(model, 'AHA Survey');
-
         Logger.instance().log(`Action id for KCCQ is ${actionIdKCCQ}`);
-        Logger.instance().log(`Action id for Survey is ${actionIdSurvey}`);
 
         return response.body.data.enrollment.id;
     };

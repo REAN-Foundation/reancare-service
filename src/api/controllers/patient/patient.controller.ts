@@ -14,6 +14,11 @@ import { UserHelper } from '../../helpers/user.helper';
 import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
 import { PersonService } from '../../../services/person.service';
 import { UserService } from '../../../services/user/user.service';
+import { PatientDetailsDto } from '../../../domain.types/patient/patient/patient.dto';
+import { ConfigurationManager } from '../../../config/configuration.manager';
+import { CustomTaskHelper } from '../../helpers/custom.task.helper';
+import { CustomTaskDomainModel } from '../../../domain.types/user/custom.task/custom.task.domain.model';
+import { UserTaskCategory } from '../../../domain.types/user/user.task/user.task.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +37,8 @@ export class PatientController extends BaseUserController {
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
     _userHelper: UserHelper = new UserHelper();
+    
+    _customTaskHelper: CustomTaskHelper = new CustomTaskHelper();
 
     _validator = new PatientValidator();
 
@@ -54,6 +61,8 @@ export class PatientController extends BaseUserController {
 
             const createModel = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
+
+            await this.performCustomActions(patient);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -198,6 +207,42 @@ export class PatientController extends BaseUserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    ///////////////////////////////////////////////////////////////
+    //TODO: Move this method to separate customization module later
+    ///////////////////////////////////////////////////////////////
+
+    performCustomActions = async (patient: PatientDetailsDto) => {
+
+        const systemIdentifier = ConfigurationManager.SystemIdentifier();
+
+        const shouldAddSurveyTask = systemIdentifier.includes('AHA') ||
+            process.env.NODE_ENV === 'development' ||
+            process.env.NODE_ENV === 'uat';
+
+        if (shouldAddSurveyTask) {
+
+            //Add AHA specific tasks, events and handlers here...
+            const userId = patient.User.id;
+
+            //Adding survey task for AHA patients
+            const domainModel: CustomTaskDomainModel = {
+                UserId      : userId,
+                Task        : "Survey",
+                Description : "Take a survey to help us understand you better!",
+                Category    : UserTaskCategory.Custom,
+                Details     : {
+                    Link : "https://americanheart.co1.qualtrics.com/jfe/form/SV_b1anZr9DUmEOsce",
+                },
+                ScheduledStartTime : new Date(),
+            };
+
+            const task = await this._customTaskHelper.createCustomTask(domainModel);
+            if (task == null) {
+                Logger.instance().log('Unable to create AHA survey task!');
+            }
+        }
+    }
 
     //#endregion
 

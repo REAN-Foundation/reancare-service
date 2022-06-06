@@ -173,6 +173,11 @@ export class PatientController extends BaseUserController {
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const currentUserId = request.currentUser.UserId;
             const patientUserId = userId;
+            const patient = await this._service.getByUserId(userId);
+            if (!patient) {
+                throw new ApiError(404, 'Patient account does not exist!');
+            }
+            const personId = patient.User.PersonId;
             if (currentUserId !== patientUserId) {
                 throw new ApiError(403, 'You do not have permissions to delete this patient account.');
             }
@@ -188,15 +193,17 @@ export class PatientController extends BaseUserController {
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-            // deleted = await this._personService.delete(userId);
-            // if (!deleted) {
-            //     throw new ApiError(400, 'User cannot be deleted.');
-            // }
             deleted = await this._userService.delete(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
             deleted = await this._service.deleteByUserId(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
+            //TODO: Please add check here whether the patient-person
+            //has other roles in the system
+            deleted = await this._personService.delete(personId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }

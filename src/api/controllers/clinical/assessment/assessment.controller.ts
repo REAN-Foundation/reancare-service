@@ -344,17 +344,21 @@ export class AssessmentController extends BaseController{
     //#region Privates
 
     private async completeAssessmentTask(assessmentId: uuid) {
-        
         var assessment = await this._service.completeAssessment(assessmentId);
         var parentActivityId = assessment.ParentActivityId;
-
-        if (assessment.Type === AssessmentType.Careplan && parentActivityId !== null) {
-            var activity = await this._careplanService.getAction(parentActivityId);
-            if (activity !== null) {
-                var userTaskId = activity.UserTaskId;
-                await this._userTaskService.finishTask(userTaskId);
+        if (assessment.Type === AssessmentType.Careplan) {
+            if (parentActivityId !== null) {
+                var activity = await this._careplanService.getAction(parentActivityId);
+                if (activity !== null) {
+                    var userTaskId = activity.UserTaskId;
+                    await this._userTaskService.finishTask(userTaskId);
+                }
+                await this._careplanService.completeAction(parentActivityId, new Date(), true, assessment);
             }
-            await this._careplanService.completeAction(parentActivityId, new Date(), true, assessment);
+            else {
+                var task = await this._userTaskService.getByActionId(assessmentId);
+                await this._userTaskService.finishTask(task.id);
+            }
         }
     }
 

@@ -405,9 +405,18 @@ export class MedicationConsumptionService implements IUserActionService {
         var count = 0;
         var from = new Date();
         var to = TimeHelper.addDuration(from, upcomingInMinutes, DurationType.Minute);
-        var schedules = await this._medicationConsumptionRepo.getSchedulesForDuration(from, to);
-        for await (var a of schedules) {
-            await this.sendMedicationReminder(a);
+        var schedules = await this._medicationConsumptionRepo.getSchedulesForDuration(from, to, true);
+
+        var schedulesForPatient = {};
+        schedules.forEach(schedule => {
+            if(!schedulesForPatient[schedule.PatientUserId]) {
+                schedulesForPatient[schedule.PatientUserId] = [];
+            }
+            schedulesForPatient[schedule.PatientUserId].push(schedule);
+        });
+
+        for await (var a of Object.keys(schedulesForPatient)) {
+            await this.sendMedicationReminder(schedulesForPatient[a]);
             count++;
         }
         return count;
@@ -417,7 +426,7 @@ export class MedicationConsumptionService implements IUserActionService {
         var count = 0;
         var from = new Date();
         var to = TimeHelper.addDuration(from, upcomingInMinutes, DurationType.Minute);
-        var schedules = await this._medicationConsumptionRepo.getSchedulesForDuration(from, to);
+        var schedules = await this._medicationConsumptionRepo.getSchedulesForDuration(from, to, false);
         for await (var a of schedules) {
             if (true === await this.createMedicationTaskForSchedule(a))
             {
@@ -746,21 +755,29 @@ export class MedicationConsumptionService implements IUserActionService {
         return listByDrugName;
     };
 
-    sendMedicationReminder = async (medicationSchedule) => {
+    sendMedicationReminder = async (medicationSchedules) => {
 
-        var patientUserId = medicationSchedule.PatientUserId;
+        var patientUserId = medicationSchedules[0].PatientUserId;
         var user = await this._userRepo.getById(patientUserId);
         var person = await this._personRepo.getById(user.PersonId);
 
         var deviceList = await this._userDeviceDetailsRepo.getByUserId(patientUserId);
         var deviceListsStr = JSON.stringify(deviceList, null, 2);
         Logger.instance().log(`Sent medication reminders to following devices - ${deviceListsStr}`);
-        
+
+        var medicationDrugNames = [];
+        medicationSchedules.forEach(medicationSchedule => {
+            medicationDrugNames.push(medicationSchedule.DrugName);
+        });
+
+        var duration = TimeHelper.getTimezoneOffsets(user.DefaultTimeZone, DurationType.Minute)
+        var updatedTime = TimeHelper.subtractDuration(medicationSchedules[0].TimeScheduleEnd, duration, DurationType.Minute)
+
         var title = MessageTemplates.MedicationReminder.Title;
         title = title.replace("{{PatientName}}", person.FirstName ?? "there");
-        title = title.replace("{{DrugName}}", medicationSchedule.DrugName);
+        title = title.replace("{{DrugName}}", medicationDrugNames.join(', '));
         var body = MessageTemplates.MedicationReminder.Body;
-        body = body.replace("{{EndTime}}", TimeHelper.format(medicationSchedule.TimeScheduleEnd, 'hh:mm A'));
+        body = body.replace("{{EndTime}}", TimeHelper.format(updatedTime, 'hh:mm A'));
     
         Logger.instance().log(`Notification Title: ${title}`);
         Logger.instance().log(`Notification Body: ${body}`);

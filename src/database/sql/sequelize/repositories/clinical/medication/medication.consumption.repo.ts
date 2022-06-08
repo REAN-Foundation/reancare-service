@@ -281,18 +281,24 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    getSchedulesForDuration = async (from: Date, to: Date)
+    getSchedulesForDuration = async (from: Date, to: Date, filterTaken: boolean)
     : Promise<MedicationConsumptionDto[]> => {
         try {
+
+            var filter =  {
+                TimeScheduleStart : {
+                    [Op.lte] : to,
+                    [Op.gte] : from
+                },
+                IsCancelled : false
+            };
+
+            if(filterTaken) {
+                filter['IsTaken'] = false;
+            }
    
             const entities = await MedicationConsumption.findAll({
-                where : {
-                    TimeScheduleStart : {
-                        [Op.lte] : to,
-                        [Op.gte] : from
-                    },
-                    IsCancelled : false
-                }
+                where : filter
             });
             
             return entities.map(x => MedicationConsumptionMapper.toDto(x));

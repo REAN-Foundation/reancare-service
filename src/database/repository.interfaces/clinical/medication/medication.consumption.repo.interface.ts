@@ -33,7 +33,7 @@ export interface IMedicationConsumptionRepo {
 
     getSchedulesForPatientForDuration(patientUserId: string, from: Date, to: Date): Promise<MedicationConsumptionDto[]>;
 
-    getSchedulesForDuration(from: Date, to: Date): Promise<MedicationConsumptionDto[]>;
+    getSchedulesForDuration(from: Date, to: Date, filterTaken: boolean): Promise<MedicationConsumptionDto[]>;
 
     getSchedulesForDay(patientUserId: string, date: Date): Promise<MedicationConsumptionDto[]>;
 

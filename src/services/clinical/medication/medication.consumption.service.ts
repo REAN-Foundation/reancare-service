@@ -409,7 +409,7 @@ export class MedicationConsumptionService implements IUserActionService {
 
         var schedulesForPatient = {};
         schedules.forEach(schedule => {
-            if(!schedulesForPatient[schedule.PatientUserId]) {
+            if (!schedulesForPatient[schedule.PatientUserId]) {
                 schedulesForPatient[schedule.PatientUserId] = [];
             }
             schedulesForPatient[schedule.PatientUserId].push(schedule);
@@ -770,8 +770,9 @@ export class MedicationConsumptionService implements IUserActionService {
             medicationDrugNames.push(medicationSchedule.DrugName);
         });
 
-        var duration = TimeHelper.getTimezoneOffsets(user.DefaultTimeZone, DurationType.Minute)
-        var updatedTime = TimeHelper.subtractDuration(medicationSchedules[0].TimeScheduleEnd, duration, DurationType.Minute)
+        var duration = TimeHelper.getTimezoneOffsets(user.DefaultTimeZone, DurationType.Minute);
+        var updatedTime = TimeHelper.subtractDuration(
+            medicationSchedules[0].TimeScheduleEnd, duration, DurationType.Minute);
 
         var title = MessageTemplates.MedicationReminder.Title;
         title = title.replace("{{PatientName}}", person.FirstName ?? "there");

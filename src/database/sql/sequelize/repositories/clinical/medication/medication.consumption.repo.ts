@@ -293,7 +293,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                 IsCancelled : false
             };
 
-            if(filterTaken) {
+            if (filterTaken) {
                 filter['IsTaken'] = false;
             }
    

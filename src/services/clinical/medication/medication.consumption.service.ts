@@ -404,7 +404,7 @@ export class MedicationConsumptionService implements IUserActionService {
     sendMedicationReminders = async (pastMinutes: number): Promise<number> => {
         var count = 0;
         var from = TimeHelper.subtractDuration(new Date(), pastMinutes, DurationType.Minute);
-        var to = TimeHelper.subtractDuration(new Date(), 1, DurationType.Minute);;
+        var to = TimeHelper.subtractDuration(new Date(), 1, DurationType.Minute);
         var schedules = await this._medicationConsumptionRepo.getSchedulesForDuration(from, to, true);
 
         var schedulesForPatient = {};

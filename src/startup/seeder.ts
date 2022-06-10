@@ -115,7 +115,7 @@ export class Seeder {
             await this.seedRolePrivileges();
             await this.seedInternalClients();
             await this.seedSystemAdmin();
-            await this.seedInternalPatients();
+            // await this.seedInternalPatients();
             await this.seedMedicationStockImages();
             await this.seedSymptomTypes();
             await this.seedSymptomAsseessmentTemplates();

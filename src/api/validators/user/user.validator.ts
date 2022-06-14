@@ -379,4 +379,54 @@ export class UserValidator {
         }
     };
 
+    static loginWithOtpPassword =
+    async(request: express.Request, response: express.Response): Promise<UserLoginDetails> => {
+        try {
+            await oneOf([
+                body('Phone').optional()
+                    .trim()
+                    .isLength({ min: 9, max: 10 })
+                    .escape(),
+                body('Email').optional()
+                    .trim()
+                    .isEmail()
+                    .escape(),
+            ]).run(request);
+            await body('Otp').exists()
+                .trim()
+                .isNumeric()
+                .isLength({ min: 6, max: 6 })
+                .run(request);
+            await body('Password').exists()
+                .trim()
+                .run(request);
+            await body('LoginRoleId').exists()
+                .trim()
+                .isNumeric()
+                .run(request);
+
+            const result = validationResult(request);
+            if (!result.isEmpty()) {
+                Helper.handleValidationError(result);
+            }
+
+            const loginObject: UserLoginDetails = {
+                Phone       : null,
+                Email       : null,
+                Password    : request.body.Password,
+                Otp         : request.body.Otp,
+                LoginRoleId : parseInt(request.body.LoginRoleId),
+            };
+            if (typeof request.body.Phone !== 'undefined') {
+                loginObject.Phone = request.body.Phone;
+            }
+            if (typeof request.body.Email !== 'undefined') {
+                loginObject.Email = request.body.Email;
+            }
+            return loginObject;
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
 }

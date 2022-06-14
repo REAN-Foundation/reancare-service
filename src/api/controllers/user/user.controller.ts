@@ -150,5 +150,34 @@ export class UserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    loginWithOtpPassword = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'User.LoginWithOtpAndPassword';
+
+            const loginObject = await UserValidator.loginWithOtpPassword(request, response);
+            const userDetails = await this._service.loginWithOtpPassword(loginObject);
+            if (userDetails == null) {
+                ResponseHandler.failure(request, response, 'User not found!', 404);
+                return;
+            }
+
+            const user: UserDetailsDto = userDetails.user;
+            const accessToken = userDetails.accessToken;
+
+            const data = {
+                AccessToken : accessToken,
+                User        : user,
+                RoleId      : user.RoleId,
+            };
+
+            const message = `User '${user.Person.DisplayName}' logged in successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, data, true);
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
     
 }

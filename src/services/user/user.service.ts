@@ -208,6 +208,43 @@ export class UserService {
         return { user: user, accessToken: accessToken };
     };
 
+    public loginWithOtpPassword = async (loginModel: UserLoginDetails): Promise<any> => {
+        
+        const user: UserDetailsDto = await this.checkUserDetails(loginModel);
+        
+        if (user.Role.RoleName !== Roles.SystemAdmin) {
+            throw new ApiError(400, 'Current user is not a system admin!');
+        }
+
+        const hashedPassword = await this._userRepo.getUserHashedPassword(user.id);
+        const isPasswordValid = Helper.compare(loginModel.Password, hashedPassword);
+        if (!isPasswordValid) {
+            throw new ApiError(401, 'Invalid password!');
+        }
+
+        const storedOtp = await this._otpRepo.getByOtpAndUserId(user.id, loginModel.Otp);
+        if (!storedOtp) {
+            throw new ApiError(404, 'Active OTP record not found!');
+        }
+        const date = new Date();
+        if (storedOtp.ValidTill <= date) {
+            throw new ApiError(400, 'Login OTP has expired. Please regenerate OTP again!');
+        }
+
+        //The following user data is immutable. Don't include any mutable data
+        const currentUser: CurrentUser = {
+            UserId        : user.id,
+            DisplayName   : user.Person.DisplayName,
+            Phone         : user.Person.Phone,
+            Email         : user.Person.Email,
+            UserName      : user.UserName,
+            CurrentRoleId : loginModel.LoginRoleId,
+        };
+        const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
+
+        return { user: user, accessToken: accessToken };
+    };
+
     public generateUserName = async (firstName, lastName):Promise<string> => {
         if (firstName == null) {
             firstName = generate({ length: 4, numbers: false, lowercase: true, uppercase: false, symbols: false });
@@ -390,7 +427,7 @@ export class UserService {
         var isInternalTestUser = false;
         if (phoneNumber >= startingRange && phoneNumber <= endingRange) {
             isInternalTestUser = true;
-        }  
+        }
         return isInternalTestUser;
     }
 

@@ -23,6 +23,7 @@ export const register = (app: express.Application): void => {
     //router.post('/reset-password', authenticator.authenticateClient, controller.resetPassword);
     router.post('/generate-otp', authenticator.authenticateClient, controller.generateOtp);
     router.post('/login-with-otp', authenticator.authenticateClient, controller.loginWithOtp);
+    router.post('/login-with-otp-password', authenticator.authenticateClient, controller.loginWithOtpPassword);
 
     app.use('/api/v1/users', router);
 };

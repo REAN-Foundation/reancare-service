@@ -155,7 +155,10 @@ export class UserController {
         try {
             request.context = 'User.LoginWithOtpAndPassword';
 
-            const loginObject = await UserValidator.loginWithOtpPassword(request, response);
+            const loginObject = await UserValidator.loginWithOtp(request, response);
+            if (request.body.Password === undefined) {
+                ResponseHandler.failure(request, response, 'Input validation error: password can not be null!', 400);
+            }
             const userDetails = await this._service.loginWithOtpPassword(loginObject);
             if (userDetails == null) {
                 ResponseHandler.failure(request, response, 'User not found!', 404);

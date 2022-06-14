@@ -18,7 +18,12 @@ import { PatientDetailsDto } from '../../../domain.types/patient/patient/patient
 import { ConfigurationManager } from '../../../config/configuration.manager';
 import { CustomTaskHelper } from '../../helpers/custom.task.helper';
 import { CustomTaskDomainModel } from '../../../domain.types/user/custom.task/custom.task.domain.model';
-import { UserTaskCategory } from '../../../domain.types/user/user.task/user.task.types';
+import { UserActionType, UserTaskCategory } from '../../../domain.types/user/user.task/user.task.types';
+import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
+import { AssessmentDomainModel } from '../../../domain.types/clinical/assessment/assessment.domain.model';
+import { UserTaskDomainModel } from '../../../domain.types/user/user.task/user.task.domain.model';
+import { AssessmentService } from '../../../services/clinical/assessment/assessment.service';
+import { UserTaskService } from '../../../services/user/user.task.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +41,12 @@ export class PatientController extends BaseUserController {
 
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
+    _assessmentTemplateService: AssessmentTemplateService = null;
+
+    _assessmentService: AssessmentService = null;
+
+    _userTaskService: UserTaskService = null;
+
     _userHelper: UserHelper = new UserHelper();
     
     _customTaskHelper: CustomTaskHelper = new CustomTaskHelper();
@@ -48,6 +59,9 @@ export class PatientController extends BaseUserController {
         this._userService = Loader.container.resolve(UserService);
         this._personService = Loader.container.resolve(PersonService);
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+        this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
+        this._assessmentService = Loader.container.resolve(AssessmentService);
+        this._userTaskService = Loader.container.resolve(UserTaskService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
     }
 
@@ -63,6 +77,9 @@ export class PatientController extends BaseUserController {
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
 
             await this.performCustomActions(patient);
+
+            const actionIdKCCQ = await this.createInitialAssessmentTask(patient.UserId, 'KCCQ');
+            Logger.instance().log(`Action id for KCCQ is ${actionIdKCCQ}`);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -251,6 +268,37 @@ export class PatientController extends BaseUserController {
         }
     }
 
+    private createInitialAssessmentTask = async (
+        patientUserId: string,
+        templateName: string): Promise<any> => {
+
+        const template = await this._assessmentTemplateService.search({ Title: templateName });
+        const templateId: string = template.Items[0].id;
+        const assessmentBody : AssessmentDomainModel = {
+            PatientUserId        : patientUserId,
+            Title                : template.Items[0].Title,
+            Type                 : template.Items[0].Type,
+            AssessmentTemplateId : templateId,
+            ScheduledDateString  : new Date().toISOString().split('T')[0]
+        };
+
+        const assessment = await this._assessmentService.create(assessmentBody);
+        const assessmentId = assessment.id;
+
+        const userTaskBody : UserTaskDomainModel = {
+            UserId             : patientUserId,
+            Task               : templateName,
+            Category           : UserTaskCategory.Assessment,
+            ActionType         : UserActionType.Careplan,
+            ActionId           : assessmentId,
+            ScheduledStartTime : new Date(),
+            IsRecurrent        : false
+        };
+
+        const userTask = await this._userTaskService.create(userTaskBody);
+
+        return userTask.ActionId;
+    }
     //#endregion
 
 }

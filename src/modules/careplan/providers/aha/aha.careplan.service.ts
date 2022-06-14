@@ -178,9 +178,6 @@ export class AhaCareplanService implements ICareplanService {
 
         Logger.instance().log(`response body: ${JSON.stringify(response.body)}`);
 
-        const actionIdKCCQ = await this.createInitialAssessmentTask(model, 'KCCQ');
-        Logger.instance().log(`Action id for KCCQ is ${actionIdKCCQ}`);
-
         return response.body.data.enrollment.id;
     };
 
@@ -882,38 +879,6 @@ export class AhaCareplanService implements ICareplanService {
             desc += '\n';
         }
         return desc;
-    }
-
-    private createInitialAssessmentTask = async (
-        model: EnrollmentDomainModel,
-        templateName: string): Promise<any> => {
-
-        const template = await this._assessmentTemplateRepo.search({ Title: templateName });
-        const templateId: string = template.Items[0].id;
-        const assessmentBody : AssessmentDomainModel = {
-            PatientUserId        : model.PatientUserId,
-            Title                : template.Items[0].Title,
-            Type                 : template.Items[0].Type,
-            AssessmentTemplateId : templateId,
-            ScheduledDateString  : model.StartDate.toISOString().split('T')[0]
-        };
-
-        const assessment = await this._assessmentService.create(assessmentBody);
-        const assessmentId = assessment.id;
-
-        const userTaskBody : UserTaskDomainModel = {
-            UserId             : model.PatientUserId,
-            Task               : templateName,
-            Category           : UserTaskCategory.Assessment,
-            ActionType         : UserActionType.Careplan,
-            ActionId           : assessmentId,
-            ScheduledStartTime : model.StartDate,
-            IsRecurrent        : false
-        };
-
-        const userTask = await this._userTaskService.create(userTaskBody);
-
-        return userTask.ActionId;
     }
 
     //#endregion

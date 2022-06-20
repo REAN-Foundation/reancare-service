@@ -178,9 +178,6 @@ export class AhaCareplanService implements ICareplanService {
 
         Logger.instance().log(`response body: ${JSON.stringify(response.body)}`);
 
-        const actionIdKCCQ = await this.createInitialAssessmentTask(model, 'KCCQ');
-        Logger.instance().log(`Action id for KCCQ is ${actionIdKCCQ}`);
-
         return response.body.data.enrollment.id;
     };
 
@@ -275,7 +272,7 @@ export class AhaCareplanService implements ICareplanService {
 
         var activityUrl = this.extractUrl(activity.url, category, activity);
             
-        const entity: CareplanActivity = {
+        var entity: CareplanActivity = {
             ProviderActionId : activity.code,
             EnrollmentId     : enrollmentId,
             Provider         : 'AHA',
@@ -290,6 +287,11 @@ export class AhaCareplanService implements ICareplanService {
             RawContent       : activity,
         };
     
+        if (category === UserTaskCategory.EducationalNewsFeed) {
+            var newsItems = await this.extractNewsItems(activityUrl);
+            entity['RawContent'] = newsItems;
+        }
+        
         return entity;
     };
 
@@ -888,12 +890,16 @@ export class AhaCareplanService implements ICareplanService {
         model: EnrollmentDomainModel,
         templateName: string): Promise<any> => {
 
-        const template = await this._assessmentTemplateRepo.search({ Title: templateName });
-        const templateId: string = template.Items[0].id;
+        const searchResult = await this._assessmentTemplateRepo.search({ Title: templateName });
+        if (searchResult.Items.length === 0) {
+            return null;
+        }
+        const template = searchResult.Items[0];
+        const templateId: string = template.id;
         const assessmentBody : AssessmentDomainModel = {
             PatientUserId        : model.PatientUserId,
-            Title                : template.Items[0].Title,
-            Type                 : template.Items[0].Type,
+            Title                : template.Title,
+            Type                 : template.Type,
             AssessmentTemplateId : templateId,
             ScheduledDateString  : model.StartDate.toISOString().split('T')[0]
         };
@@ -914,6 +920,27 @@ export class AhaCareplanService implements ICareplanService {
         const userTask = await this._userTaskService.create(userTaskBody);
 
         return userTask.ActionId;
+    }
+
+    private extractNewsItems = async (url: string) => {
+        try {
+            var response = await needle("get", url, {});
+            var children = response.body.children[0].children;
+            var list = children.filter(x => x.name === 'item');
+            var items = list.map(x => {
+                const itemChildren = x.children;
+                var link = itemChildren.find(y => y.name === 'link')?.value;
+                var title = itemChildren.find(y => y.name === 'title')?.value;
+                return {
+                    Title : title,
+                    Link  : link
+                };
+            });
+            return items;
+        }
+        catch (error) {
+            throw new ApiError(500, 'Unable to extract news items from the RSS feed!');
+        }
     }
 
     //#endregion

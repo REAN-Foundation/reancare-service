@@ -179,7 +179,7 @@ export class UserService {
 
     public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
         
-        var isInternalTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
+        var isInternalTestUser = await this.isInternalTestUser(loginModel.Phone);
         
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
 
@@ -381,6 +381,18 @@ export class UserService {
         }
         return dto;
     };
+
+    private isInternalTestUser = async (phone: string): Promise<boolean> => {
+        var startingRange = 1000000001;
+        var endingRange = startingRange + parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS) - 1;
+
+        var phoneNumber = parseInt(phone);
+        var isInternalTestUser = false;
+        if (phoneNumber >= startingRange && phoneNumber <= endingRange) {
+            isInternalTestUser = true;
+        }  
+        return isInternalTestUser;
+    }
 
     //#endregion
 

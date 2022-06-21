@@ -112,8 +112,7 @@ export class PatientValidator extends BaseValidator {
 
     private async validateBody(request: express.Request, create = true): Promise<void> {
         
-        await this.validatePhone(request, 'Phone', Where.Body, create, false);
-
+        await this.validateString(request, 'Phone', Where.Body, create, false);
         await this.validateEmail(request, 'Email', Where.Body, false, true);
         await this.validateString(request, 'Prefix', Where.Body, false, true);
         await this.validateString(request, 'FirstName', Where.Body, false, true);

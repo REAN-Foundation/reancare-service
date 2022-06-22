@@ -936,7 +936,9 @@ export class AhaCareplanService implements ICareplanService {
                     Link  : link
                 };
             });
-            return items;
+            return {
+                Newsfeed : items
+            };
         }
         catch (error) {
             throw new ApiError(500, 'Unable to extract news items from the RSS feed!');

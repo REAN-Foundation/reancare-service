@@ -77,7 +77,12 @@
             "Forms.ImportFormAsAssessmentTemplate",
             "Forms.ImportFormSubmissions",
             "Forms.GetFormsList",
-            "UserDeviceDetails.SendTestNotification"
+            "UserDeviceDetails.SendTestNotification",
+            "FoodComponent.Create",
+            "FoodComponent.GetById",
+            "FoodComponent.Search",
+            "FoodComponent.Update",
+            "FoodComponent.Delete"
         ]
     },
     {
@@ -380,7 +385,12 @@
             "UserDeviceDetails.SendTestNotification",
             "CustomTask.Create",
             "CustomTask.GetById",
-            "CustomTask.Update"
+            "CustomTask.Update",
+            "FoodComponent.Create",
+            "FoodComponent.GetById",
+            "FoodComponent.Search",
+            "FoodComponent.Update",
+            "FoodComponent.Delete"
         ]
     },
     {
@@ -669,7 +679,12 @@
             "UserDeviceDetails.SendTestNotification",
             "CustomTask.Create",
             "CustomTask.GetById",
-            "CustomTask.Update"
+            "CustomTask.Update",
+            "FoodComponent.Create",
+            "FoodComponent.GetById",
+            "FoodComponent.Search",
+            "FoodComponent.Update",
+            "FoodComponent.Delete"
         ]
     },
     {

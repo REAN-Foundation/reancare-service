@@ -31,7 +31,7 @@ export class KoboFileConverter {
         const workSheetsFromBuffer = xlsx.parse(downloadedFilepath);
        
         const surveyData = workSheetsFromBuffer.find(x => x.name === 'survey').data;
-        var choices = null;
+        let choices = null;
         if (workSheetsFromBuffer.find(x => x.name === 'choices')) {
             const choicesData = workSheetsFromBuffer.find(x => x.name === 'choices').data;
             choices = this.getChoices(choicesData);

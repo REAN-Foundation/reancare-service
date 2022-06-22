@@ -1,5 +1,4 @@
-import { BaseSearchResults } from "../../miscellaneous/base.search.types";
-import { BaseSearchFilters } from "../../miscellaneous/base.search.types";
+import { BaseSearchResults, BaseSearchFilters } from "../../miscellaneous/base.search.types";
 import { uuid } from "../../miscellaneous/system.types";
 import { FoodComponentDto } from "./food.component.dto";
 

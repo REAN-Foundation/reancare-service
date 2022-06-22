@@ -134,8 +134,8 @@ export class FoodComponentRepo implements IFoodComponentRepo {
 
             await foodComponent.save();
 
-            const dto = await FoodComponentMapper.toDto(foodComponent);
-            return dto;
+            return await FoodComponentMapper.toDto(foodComponent);
+           
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

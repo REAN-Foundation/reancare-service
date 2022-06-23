@@ -11,6 +11,10 @@ import {
     Length,
     ForeignKey,
 } from 'sequelize-typescript';
+import { 
+    FoodComponentMonitoringTypes,
+    FoodComponentMonitoringTypesList
+} from '../../../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.types';
 
 import { v4 } from 'uuid';
 import User from '../../user/user.model';
@@ -19,12 +23,12 @@ import User from '../../user/user.model';
 
 @Table({
     timestamps      : true,
-    modelName       : 'FoodComponent',
-    tableName       : 'food_components',
+    modelName       : 'FoodComponentMonitoring',
+    tableName       : 'food_components_monitoring',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class FoodComponent extends Model {
+export default class FoodComponentMonitoring extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -53,10 +57,12 @@ export default class FoodComponent extends Model {
     PatientUserId: string;
 
     @Column({
-        type      : DataType.STRING(256),
-        allowNull : false,
+        type        : DataType.ENUM,
+        allowNull   : false,
+        values      : FoodComponentMonitoringTypesList,
+        defaultValue: FoodComponentMonitoringTypes.Other,
     })
-    TypeOfFood: string;
+    MonitoredFoodComponent: string;
 
     @Column({
         type      : DataType.FLOAT,
@@ -65,8 +71,9 @@ export default class FoodComponent extends Model {
     Amount: number;
 
     @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
+        type        : DataType.STRING(256),
+        allowNull   : false,
+        defaultValue: 'grams'
     })
     Unit: string;
 

@@ -83,6 +83,11 @@
             "FoodComponent.Search",
             "FoodComponent.Update",
             "FoodComponent.Delete"
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete"
         ]
     },
     {
@@ -391,6 +396,11 @@
             "FoodComponent.Search",
             "FoodComponent.Update",
             "FoodComponent.Delete"
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete"
         ]
     },
     {
@@ -685,6 +695,11 @@
             "FoodComponent.Search",
             "FoodComponent.Update",
             "FoodComponent.Delete"
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete"
         ]
     },
     {

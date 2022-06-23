@@ -2,24 +2,24 @@ import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
-import { FoodComponentService } from '../../../../services/wellness/food.component.monitoring/food.component.service';
+import { FoodComponentMonitoringService } from '../../../../services/wellness/food.component.monitoring/food.component.monitoring.service';
 import { Loader } from '../../../../startup/loader';
-import { FoodComponentValidator } from '../../../validators/wellness/food.component.monitoring/food.component.validator';
+import { FoodComponentMonitoringValidator } from '../../../validators/wellness/food.component.monitoring/food.component.monitoring.validator';
 import { BaseController } from '../../base.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class FoodComponentController extends BaseController {
+export class FoodComponentMonitoringController extends BaseController {
 
     //#region member variables and constructors
 
-    _service: FoodComponentService = null;
+    _service: FoodComponentMonitoringService = null;
 
-    _validator: FoodComponentValidator = new FoodComponentValidator();
+    _validator: FoodComponentMonitoringValidator = new FoodComponentMonitoringValidator();
 
     constructor() {
         super();
-        this._service = Loader.container.resolve(FoodComponentService);
+        this._service = Loader.container.resolve(FoodComponentMonitoringService);
     
     }
 
@@ -29,17 +29,17 @@ export class FoodComponentController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('FoodComponent.Create', request, response);
+            await this.setContext('FoodComponentMonitoring.Create', request, response);
 
             const model = await this._validator.create(request);
 
-            const foodComponent = await this._service.create(model);
-            if (foodComponent == null) {
+            const foodComponentMonitoring = await this._service.create(model);
+            if (foodComponentMonitoring == null) {
                 throw new ApiError(400, 'Cannot create record for food component monitoring!');
             }
 
             ResponseHandler.success(request, response, 'Food component monitoring record created successfully!', 201, {
-                FoodComponent : foodComponent,
+                FoodComponentMonitoring : foodComponentMonitoring,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -49,17 +49,17 @@ export class FoodComponentController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('FoodComponent.GetById', request, response);
+            await this.setContext('FoodComponentMonitoring.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
 
-            const foodComponent = await this._service.getById(id);
-            if (foodComponent == null) {
+            const foodComponentMonitoring = await this._service.getById(id);
+            if (foodComponentMonitoring == null) {
                 throw new ApiError(404, 'Food component monitoring record not found.');
             }
 
             ResponseHandler.success(request, response, 'Food component monitoring record retrieved successfully!', 200, {
-                FoodComponent : foodComponent,
+                FoodComponentMonitoring : foodComponentMonitoring,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -69,7 +69,7 @@ export class FoodComponentController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             
-            await this.setContext('FoodComponent.Search', request, response);
+            await this.setContext('FoodComponentMonitoring.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -80,7 +80,7 @@ export class FoodComponentController extends BaseController {
                     : `Total ${count} food component monitoring records retrieved successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, {
-                FoodComponentRecords : searchResults });
+                FoodComponentMonitoringRecords : searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -89,7 +89,7 @@ export class FoodComponentController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('FoodComponent.Update', request, response);
+            await this.setContext('FoodComponentMonitoring.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -104,7 +104,7 @@ export class FoodComponentController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Food component monitoring record updated successfully!', 200, {
-                FoodComponent : updated,
+                FoodComponentMonitoring : updated,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -113,7 +113,7 @@ export class FoodComponentController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.setContext('FoodComponent.Delete', request, response);
+            await this.setContext('FoodComponentMonitoring.Delete', request, response);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {

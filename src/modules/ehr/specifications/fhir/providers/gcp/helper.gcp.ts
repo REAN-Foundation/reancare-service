@@ -27,11 +27,11 @@ export class GcpHelper {
         }
         
         const auth = await google.auth.getClient({
-            keyFilename: process.env.GCP_FHIR_CREDENTIALS_PATH,
-            scopes : ['https://www.googleapis.com/auth/cloud-platform'],
+            keyFilename : process.env.GCP_FHIR_CREDENTIALS_PATH,
+            scopes      : ['https://www.googleapis.com/auth/cloud-platform'],
         });
 
-        // temporary logas for debugging. 
+        // temporary logs for debugging.
         Logger.instance().log(`Path of GCP credential file:: ${process.env.GCP_FHIR_CREDENTIALS_PATH}`);
         const fileContent = fs.readFileSync(process.env.GCP_FHIR_CREDENTIALS_PATH).toString();
         Logger.instance().log(`File content of GCP credential file:: ${JSON.stringify(fileContent)}`);

@@ -22,9 +22,9 @@ export class FoodComponentMonitoringRepo implements IFoodComponentMonitoringRepo
     create = async (foodComponentMonitoringDomainModel: FoodComponentMonitoringDomainModel):
     Promise<FoodComponentMonitoringDto> => {
         try {
-            const monitoredFoodComponent = FoodComponentMonitoringTypesList.includes
-                (foodComponentMonitoringDomainModel.MonitoredFoodComponent) ?
-                foodComponentMonitoringDomainModel.MonitoredFoodComponent : FoodComponentMonitoringTypes.Other;
+            const monitoredFoodComponent =
+                FoodComponentMonitoringTypesList.includes(foodComponentMonitoringDomainModel.MonitoredFoodComponent) ?
+                    foodComponentMonitoringDomainModel.MonitoredFoodComponent : FoodComponentMonitoringTypes.Other;
 
             const entity = {
                 PatientUserId          : foodComponentMonitoringDomainModel.PatientUserId,

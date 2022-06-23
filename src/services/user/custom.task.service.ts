@@ -47,8 +47,7 @@ export class CustomTaskService implements IUserActionService {
     }
 
     create = async (model: CustomTaskDomainModel): Promise<CustomTaskDto> => {
-        var dto = await this._customTaskRepo.create(model);
-        return dto;
+        return await this._customTaskRepo.create(model);
     };
 
     getById = async (id: string): Promise<CustomTaskDto> => {
@@ -56,8 +55,7 @@ export class CustomTaskService implements IUserActionService {
     };
 
     update = async (id: string, updateModel: CustomTaskDomainModel): Promise<CustomTaskDto> => {
-        var dto = await this._customTaskRepo.update(id, updateModel);
-        return dto;
+        return await this._customTaskRepo.update(id, updateModel);
     };
 
     delete = async (id: string): Promise<boolean> => {

@@ -115,7 +115,7 @@ export class Seeder {
             await this.seedRolePrivileges();
             await this.seedInternalClients();
             await this.seedSystemAdmin();
-            await this.seedInternalPatients();
+            // await this.seedInternalPatients();
             await this.seedMedicationStockImages();
             await this.seedSymptomTypes();
             await this.seedSymptomAsseessmentTemplates();
@@ -282,15 +282,17 @@ export class Seeder {
 
     private seedInternalPatients = async () => {
         try {
-            const SeededInternalTestsUsers = this.loadJSONSeedFile('internal.test.users.seed.json');
-            const arr = SeededInternalTestsUsers.Patients;
-            for (let i = 0; i < arr.length; i++) {
-                var phone = arr[i];
-                var exists = await this._personRepo.personExistsWithPhone(phone);
-                if (!exists) {
-                    var added = await this.createTestPatient(phone);
-                    if (added) {
-                        await this._internalTestUserRepo.create(phone);
+            var number = parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS);
+            var arr = JSON.parse("[" + [...Array(number)].map((_, i) => 1000000001 + i * 1) + "]");
+            if (arr.length == number) {
+                for (let i = 0; i < arr.length; i++) {
+                    var phone = arr[i];
+                    var exists = await this._personRepo.personExistsWithPhone(phone.toString());
+                    if (!exists) {
+                        var added = await this.createTestPatient(phone.toString());
+                        if (added) {
+                            await this._internalTestUserRepo.create(phone.toString());
+                        }
                     }
                 }
             }

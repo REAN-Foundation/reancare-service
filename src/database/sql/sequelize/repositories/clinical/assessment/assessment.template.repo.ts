@@ -21,12 +21,13 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
     public create = async (model: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
         try {
             const entity = {
-                DisplayCode            : model.DisplayCode ?? null,
-                Type                   : model.Type ?? null,
-                Title                  : model.Title ?? model.Title,
-                Description            : model.Description ?? null,
-                ProviderAssessmentCode : model.ProviderAssessmentCode ?? null,
-                Provider               : model.Provider ?? null,
+                DisplayCode                 : model.DisplayCode ?? null,
+                Type                        : model.Type ?? null,
+                Title                       : model.Title ?? model.Title,
+                Description                 : model.Description ?? null,
+                ProviderAssessmentCode      : model.ProviderAssessmentCode ?? null,
+                Provider                    : model.Provider ?? null,
+                ServeListNodeChildrenAtOnce : model.ServeListNodeChildrenAtOnce ?? null
             };
             const assessmentTemplate = await AssessmentTemplate.create(entity);
             return AssessmentTemplateMapper.toDto(assessmentTemplate);

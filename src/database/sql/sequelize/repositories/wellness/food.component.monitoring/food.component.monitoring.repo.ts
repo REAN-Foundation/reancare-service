@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import { 
+import {
     FoodComponentMonitoringTypes,
     FoodComponentMonitoringTypesList
 } from '../../../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.types';
@@ -7,9 +7,9 @@ import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { FoodComponentMonitoringDomainModel } from "../../../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.domain.model";
 import { FoodComponentMonitoringDto } from "../../../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.dto";
-import { 
+import {
     FoodComponentMonitoringSearchFilters,
-    FoodComponentMonitoringSearchResults 
+    FoodComponentMonitoringSearchResults
 } from "../../../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.search.types";
 import { IFoodComponentMonitoringRepo } from '../../../../../repository.interfaces/wellness/food.component.monitoring/food.component.monitoring.repo.interface';
 import { FoodComponentMonitoringMapper } from '../../../mappers/wellness/food.component.monitoring/food.component.monitoring.mapper';
@@ -22,14 +22,15 @@ export class FoodComponentMonitoringRepo implements IFoodComponentMonitoringRepo
     create = async (foodComponentMonitoringDomainModel: FoodComponentMonitoringDomainModel):
     Promise<FoodComponentMonitoringDto> => {
         try {
-            let monitoredFoodComponent = FoodComponentMonitoringTypesList.includes(foodComponentMonitoringDomainModel.MonitoredFoodComponent) ?
+            const monitoredFoodComponent = FoodComponentMonitoringTypesList.includes
+                (foodComponentMonitoringDomainModel.MonitoredFoodComponent) ?
                 foodComponentMonitoringDomainModel.MonitoredFoodComponent : FoodComponentMonitoringTypes.Other;
 
             const entity = {
-                PatientUserId         : foodComponentMonitoringDomainModel.PatientUserId,
-                MonitoredFoodComponent: monitoredFoodComponent,
-                Amount                : foodComponentMonitoringDomainModel.Amount,
-                Unit                  : foodComponentMonitoringDomainModel.Unit,
+                PatientUserId          : foodComponentMonitoringDomainModel.PatientUserId,
+                MonitoredFoodComponent : monitoredFoodComponent,
+                Amount                 : foodComponentMonitoringDomainModel.Amount,
+                Unit                   : foodComponentMonitoringDomainModel.Unit,
             };
 
             const foodComponentMonitoring = await FoodComponentMonitoringModel.create(entity);

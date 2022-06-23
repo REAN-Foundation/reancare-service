@@ -1,8 +1,8 @@
 import { FoodComponentMonitoringDomainModel } from "../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.domain.model";
 import { FoodComponentMonitoringDto } from "../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.dto";
-import { 
+import {
     FoodComponentMonitoringSearchFilters,
-    FoodComponentMonitoringSearchResults 
+    FoodComponentMonitoringSearchResults
 } from "../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.search.types";
 
 export interface IFoodComponentMonitoringRepo {

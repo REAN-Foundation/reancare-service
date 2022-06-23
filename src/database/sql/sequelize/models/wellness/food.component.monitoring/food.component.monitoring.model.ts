@@ -11,7 +11,7 @@ import {
     Length,
     ForeignKey,
 } from 'sequelize-typescript';
-import { 
+import {
     FoodComponentMonitoringTypes,
     FoodComponentMonitoringTypesList
 } from '../../../../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.types';
@@ -57,10 +57,10 @@ export default class FoodComponentMonitoring extends Model {
     PatientUserId: string;
 
     @Column({
-        type        : DataType.ENUM,
-        allowNull   : false,
-        values      : FoodComponentMonitoringTypesList,
-        defaultValue: FoodComponentMonitoringTypes.Other,
+        type         : DataType.ENUM,
+        allowNull    : false,
+        values       : FoodComponentMonitoringTypesList,
+        defaultValue : FoodComponentMonitoringTypes.Other,
     })
     MonitoredFoodComponent: string;
 
@@ -71,9 +71,9 @@ export default class FoodComponentMonitoring extends Model {
     Amount: number;
 
     @Column({
-        type        : DataType.STRING(256),
-        allowNull   : false,
-        defaultValue: 'grams'
+        type         : DataType.STRING(256),
+        allowNull    : false,
+        defaultValue : 'grams'
     })
     Unit: string;
 

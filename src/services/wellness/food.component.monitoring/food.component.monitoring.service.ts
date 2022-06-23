@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { IFoodComponentMonitoringRepo } from "../../../database/repository.interfaces/wellness/food.component.monitoring/food.component.monitoring.repo.interface";
 import { FoodComponentMonitoringDomainModel } from '../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.domain.model';
 import { FoodComponentMonitoringDto } from '../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.dto';
-import { 
+import {
     FoodComponentMonitoringSearchResults,
     FoodComponentMonitoringSearchFilters
 } from '../../../domain.types/wellness/food.component.monitoring/food.component.monitoring.search.types';

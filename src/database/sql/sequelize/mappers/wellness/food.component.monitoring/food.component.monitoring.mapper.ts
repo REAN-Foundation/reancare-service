@@ -12,12 +12,12 @@ export class FoodComponentMonitoringMapper {
             return null;
         }
         const dto: FoodComponentMonitoringDto = {
-            id                    : foodComponentMonitoring.id,
-            EhrId                 : foodComponentMonitoring.EhrId,
-            PatientUserId         : foodComponentMonitoring.PatientUserId,
-            MonitoredFoodComponent: foodComponentMonitoring.MonitoredFoodComponent as FoodComponentMonitoringTypes,
-            Amount                : foodComponentMonitoring.Amount,
-            Unit                  : foodComponentMonitoring.Unit,
+            id                     : foodComponentMonitoring.id,
+            EhrId                  : foodComponentMonitoring.EhrId,
+            PatientUserId          : foodComponentMonitoring.PatientUserId,
+            MonitoredFoodComponent : foodComponentMonitoring.MonitoredFoodComponent as FoodComponentMonitoringTypes,
+            Amount                 : foodComponentMonitoring.Amount,
+            Unit                   : foodComponentMonitoring.Unit,
 
         };
         return dto;

@@ -14,10 +14,10 @@ export class FoodComponentMonitoringValidator extends BaseValidator {
     getDomainModel = (request: express.Request): FoodComponentMonitoringDomainModel => {
 
         const foodComponentMonitoringModel: FoodComponentMonitoringDomainModel = {
-            PatientUserId         : request.body.PatientUserId,
-            MonitoredFoodComponent: request.body.MonitoredFoodComponent,
-            Amount                : request.body.Amount,
-            Unit                  : request.body.Unit,
+            PatientUserId          : request.body.PatientUserId,
+            MonitoredFoodComponent : request.body.MonitoredFoodComponent,
+            Amount                 : request.body.Amount,
+            Unit                   : request.body.Unit,
         };
 
         return foodComponentMonitoringModel;
@@ -72,10 +72,10 @@ export class FoodComponentMonitoringValidator extends BaseValidator {
     private getFilter(request): FoodComponentMonitoringSearchFilters {
         
         var filters: FoodComponentMonitoringSearchFilters = {
-            PatientUserId         : request.query.patientUserId ?? null,
-            MonitoredFoodComponent: request.query.monitoredFoodComponent ?? null,
-            AmountFrom            : request.query.amountFrom ?? null,
-            AmountTo              : request.query.amountTo ?? null,
+            PatientUserId          : request.query.patientUserId ?? null,
+            MonitoredFoodComponent : request.query.monitoredFoodComponent ?? null,
+            AmountFrom             : request.query.amountFrom ?? null,
+            AmountTo               : request.query.amountTo ?? null,
         
         };
 

@@ -1,5 +1,7 @@
 import { google, healthcare_v1 } from 'googleapis';
 import { Logger } from '../../../../../../common/logger';
+import * as fs from 'fs';
+import { ApiError } from '../../../../../../common/api.error';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -19,9 +21,21 @@ export class GcpHelper {
             version : 'v1',
             headers : { 'Content-Type': 'application/fhir+json' }
         });
+
+        if (!fs.existsSync(process.env.GCP_FHIR_CREDENTIALS_PATH)) {
+            throw new ApiError(400, 'GCP FHIR credentials file does not exist!');
+        }
+        
         const auth = await google.auth.getClient({
+            keyFilename: process.env.GCP_FHIR_CREDENTIALS_PATH,
             scopes : ['https://www.googleapis.com/auth/cloud-platform'],
         });
+
+        // temporary logas for debugging. 
+        Logger.instance().log(`Path of GCP credential file:: ${process.env.GCP_FHIR_CREDENTIALS_PATH}`);
+        const fileContent = fs.readFileSync(process.env.GCP_FHIR_CREDENTIALS_PATH).toString();
+        Logger.instance().log(`File content of GCP credential file:: ${JSON.stringify(fileContent)}`);
+
         google.options({ auth });
         return healthcare;
     };

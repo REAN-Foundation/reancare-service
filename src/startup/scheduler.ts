@@ -66,8 +66,8 @@ export class Scheduler {
             (async () => {
                 Logger.instance().log('Running scheducled jobs: Reminders for medications...');
                 var service = Loader.container.resolve(MedicationConsumptionService);
-                var upcomingInMinutes = 30;
-                var count = await service.sendMedicationReminders(upcomingInMinutes);
+                var pastMinutes = 15;
+                var count = await service.sendMedicationReminders(pastMinutes);
                 Logger.instance().log(`Total ${count} medication reminders sent.`);
             })();
         });

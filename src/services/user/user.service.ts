@@ -12,7 +12,6 @@ import { IPersonRoleRepo } from '../../database/repository.interfaces/person.rol
 import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
 import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
-import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { OtpPersistenceEntity } from '../../domain.types/otp/otp.domain.types';
 import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { Roles } from '../../domain.types/role/role.types';
@@ -79,6 +78,10 @@ export class UserService {
         var dto = await this._userRepo.update(id, userDomainModel);
         dto = await this.updateDetailsDto(dto);
         return dto;
+    };
+    
+    public delete = async (id: string): Promise<boolean> => {
+        return await this._userRepo.delete(id);
     };
 
     public loginWithPassword = async (loginModel: UserLoginDetails): Promise<any> => {
@@ -176,7 +179,7 @@ export class UserService {
 
     public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
         
-        var isInternalTestUser = await this._internalTestUserRepo.isInternalTestUser(loginModel.Phone);
+        var isInternalTestUser = await this.isInternalTestUser(loginModel.Phone);
         
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
 
@@ -277,11 +280,7 @@ export class UserService {
         else if (user.DefaultTimeZone !== null) {
             timezoneOffset = user.DefaultTimeZone;
         }
-        var todayStr = new Date().toISOString();
-        var str = dateStr ? dateStr.split('T')[0] : todayStr.split('T')[0];
-
-        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
-        return TimeHelper.strToUtc(str, offsetMinutes);
+        return TimeHelper.getDateWithTimezone(dateStr, timezoneOffset);
     };
 
     //#endregion
@@ -382,6 +381,18 @@ export class UserService {
         }
         return dto;
     };
+
+    private isInternalTestUser = async (phone: string): Promise<boolean> => {
+        var startingRange = 1000000001;
+        var endingRange = startingRange + parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS) - 1;
+
+        var phoneNumber = parseInt(phone);
+        var isInternalTestUser = false;
+        if (phoneNumber >= startingRange && phoneNumber <= endingRange) {
+            isInternalTestUser = true;
+        }  
+        return isInternalTestUser;
+    }
 
     //#endregion
 

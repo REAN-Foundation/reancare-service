@@ -26,8 +26,8 @@ export class HealthProfileService {
         return await this._patientHealthProfileRepo.updateByPatientUserId(patientUserId, healthProfileDomainModel);
     };
 
-    delete = async (id: string): Promise<boolean> => {
-        return await this._patientHealthProfileRepo.delete(id);
+    deleteByPatientUserId = async (patientUserId: string): Promise<boolean> => {
+        return await this._patientHealthProfileRepo.deleteByPatientUserId(patientUserId);
     };
 
     createDefault = async (patientUserId : string)

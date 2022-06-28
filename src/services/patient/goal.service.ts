@@ -4,7 +4,7 @@ import { IGoalRepo } from "../../database/repository.interfaces/patient/goal.rep
 import { GoalDomainModel } from '../../domain.types/patient/goal/goal.domain.model';
 import { GoalDto } from '../../domain.types/patient/goal/goal.dto';
 import { GoalSearchResults, GoalSearchFilters } from '../../domain.types/patient/goal/goal.search.types';
-import { IHealthPriorityRepo } from "../../database/repository.interfaces/health.priority/health.priority.repo.interface";
+import { IHealthPriorityRepo } from "../../database/repository.interfaces/patient/health.priority/health.priority.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,16 +27,16 @@ export class GoalService {
         return await this._goalRepo.getById(id);
     };
 
-    getSelectedGoals = async (id: string): Promise<GoalDto[]> => {
-        return await this._goalRepo.getSelectedGoals(id);
+    getPatientGoals = async (patientUserId: string): Promise<GoalDto[]> => {
+        return await this._goalRepo.getPatientGoals(patientUserId);
     };
 
-    getGoals = async (priorityId: string): Promise<GoalDto[]> => {
+    getGoalsByPriority = async (priorityId: string): Promise<GoalDto[]> => {
         
         var priority =  await this._healthPriorityRepo.getById(priorityId);
-
+        
         var goals =  await this._careplanHandler.getGoals(priority.PatientUserId, priority.ProviderEnrollmentId,
-            priority.Provider,priority.HealthPriorityType);
+            priority.Provider, priority.HealthPriorityType);
 
         const goalModels = goals.map(x => {
             var a: GoalDomainModel = {
@@ -62,7 +62,16 @@ export class GoalService {
     };
 
     update = async (id: string, goalDomainModel: GoalDomainModel): Promise<GoalDto> => {
-        return await this._goalRepo.update(id, goalDomainModel);
+
+        var dto = await this._goalRepo.update(id, goalDomainModel);
+        if (dto.GoalAchieved && dto.Provider) {
+
+            await this._careplanHandler.updateGoal(dto.PatientUserId,
+                dto.Provider, dto.ProviderCareplanCode,
+                dto.ProviderEnrollmentId, dto.Title);
+        }
+
+        return dto;
     };
 
     delete = async (id: string): Promise<boolean> => {

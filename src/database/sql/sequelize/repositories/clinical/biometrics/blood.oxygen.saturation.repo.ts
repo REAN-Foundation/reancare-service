@@ -17,6 +17,7 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
         try {
             const entity = {
                 PatientUserId         : createModel.PatientUserId,
+                EhrId                 : createModel.EhrId,
                 BloodOxygenSaturation : createModel.BloodOxygenSaturation,
                 Unit                  : createModel.Unit,
                 RecordDate            : createModel.RecordDate,

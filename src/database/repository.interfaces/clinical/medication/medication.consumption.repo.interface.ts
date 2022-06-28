@@ -16,6 +16,8 @@ export interface IMedicationConsumptionRepo {
 
     markAsTaken(id: string, takenAt: Date): Promise<MedicationConsumptionDetailsDto>;
 
+    assignEhrId(id: string, ehrId: string): Promise<MedicationConsumptionDetailsDto>;
+
     markAsMissed(id: string): Promise<MedicationConsumptionDetailsDto>;
 
     deleteFutureMedicationSchedules(medicationId: string): Promise<number>;
@@ -31,7 +33,7 @@ export interface IMedicationConsumptionRepo {
 
     getSchedulesForPatientForDuration(patientUserId: string, from: Date, to: Date): Promise<MedicationConsumptionDto[]>;
 
-    getSchedulesForDuration(from: Date, to: Date): Promise<MedicationConsumptionDto[]>;
+    getSchedulesForDuration(from: Date, to: Date, filterTaken: boolean): Promise<MedicationConsumptionDto[]>;
 
     getSchedulesForDay(patientUserId: string, date: Date): Promise<MedicationConsumptionDto[]>;
 

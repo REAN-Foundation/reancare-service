@@ -338,7 +338,7 @@ export class UserValidator {
             await oneOf([
                 body('Phone').optional()
                     .trim()
-                    .isLength({ min: 10 })
+                    .isLength({ min: 9, max: 10 })
                     .escape(),
                 body('Email').optional()
                     .trim()

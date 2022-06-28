@@ -53,6 +53,13 @@ export default class AssessmentNode extends Model {
     })
     DisplayCode: string;
 
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : true,
+    })
+    Required: boolean;
+
     @IsUUID(4)
     @ForeignKey(() => AssessmentTemplate)
     @Column({
@@ -82,6 +89,13 @@ export default class AssessmentNode extends Model {
         allowNull    : false,
     })
     NodeType: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    ServeListNodeChildrenAtOnce: boolean;
 
     @Column({
         type      : DataType.TEXT,

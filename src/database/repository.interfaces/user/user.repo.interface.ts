@@ -13,6 +13,8 @@ export interface IUserRepo {
 
     getById(id: string): Promise<UserDetailsDto>;
 
+    delete(id: string): Promise<boolean>;
+
     getUserByPersonIdAndRole(personId: string, loginRoleId: number): Promise<UserDetailsDto>;
 
     userNameExists(userName: string): Promise<boolean>;

@@ -1,0 +1,35 @@
+{
+    "resourceType": "Organization",
+    "id": "1313222xyz",
+    "type": [{"text": "clinic"}],
+
+    "name": "MedPlus Clinic Path",
+    "active": true,
+
+    "telecom": [
+      {
+        "system": "phone",
+        "value": "1233232346",
+        "use": "work"
+      },
+      {
+        "system": "email",
+        "value": "excellent.diagnostics@gmail.com",
+        "use": "work"
+      }
+    ],
+    "address": [
+      {
+        "line": ["clinic_organisation_first_line",
+          "clinic_organisation_second_line"],
+          "district": "Pune",
+          "city": "Pune",
+          "state": "clinic_organisation_state",
+          "postalCode": "clinic_organisation_postalcode",
+          "period": {
+            "start": "2010-06-10T00:00:00.000Z"
+          }
+
+      }
+    ]
+}

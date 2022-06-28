@@ -29,4 +29,6 @@ export interface IAssessmentRepo {
 
     completeAssessment(assessmentId: string): Promise<AssessmentDto>;
 
+    existsWithProviderSubmissionId(provider: string, providerSubmissionId: string): Promise<boolean>;
+
 }

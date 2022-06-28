@@ -1,0 +1,30 @@
+{
+    "UserId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "DisplayId": "string",
+    "EhrId": "4e7d4175-cdef-412b-ac26-be3c57eb822d",
+    "NationalHealthId":"ff81568a-6933-4031-a776-4316156fe03c",
+    "MedicalProfileId": "ff81568a-6933-4031-a776-4316156fe03c",
+    "Prefix": "Miss.",
+    "FirstName": "Sarah",
+    "LastName": "Robinson",
+    "Phone": "8265596983",
+    "Email": "Sarah.53252.Robinson@gmail.com",
+    "Gender": "Female",
+    "BirthDate": "1234-12-12",
+    "ImageResourceId":"string",
+    "InsuranceIds":"56781234-A",
+    "EmergencyContactIds": "edfd4b16-590c-4e20-9e38-8b94a1f058ea",
+    "Address": {
+        "Type": "Official",
+        "AddressLine": "Gold Adlabs Mariplex Mall, Ground Floor, next to Axis Bank, Kalyani Nagar",
+        "City": "Pune",
+        "District": "Pune",
+        "State": "Maharashtra",
+        "Country": "India",
+        "PostalCode": "411006",
+        "Location": {
+            "LocationCoords_Longitude": "73.894525",
+            "LocationCoords_Lattitude": "18.556302"
+        }
+    }
+}

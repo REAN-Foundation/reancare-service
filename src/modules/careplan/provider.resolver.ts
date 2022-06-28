@@ -12,7 +12,7 @@ export class ProviderResolver {
         var services = new Dictionary<ICareplanService>();
         var careplans = ConfigurationManager.careplans();
         for (var cp of careplans) {
-            if (cp.Provider === 'AHA') {
+            if (cp.Provider === 'AHA' && cp.Enabled) {
                 var service = Loader.container.resolve(AhaCareplanService);
                 services.add(cp.Provider, service);
             }

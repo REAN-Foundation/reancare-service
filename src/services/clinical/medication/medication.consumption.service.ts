@@ -21,11 +21,17 @@ import { UserTaskDomainModel } from "../../../domain.types/user/user.task/user.t
 import { IUserActionService } from "../../../services/user/user.action.service.interface";
 import { Loader } from "../../../startup/loader";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { MedicationConsumptionStore } from "../../../modules/ehr/services/medication.consumption.store";
+import { ConfigurationManager } from "../../../config/configuration.manager";
+import { IPersonRepo } from "../../../database/repository.interfaces/person.repo.interface";
+import * as MessageTemplates from '../../../modules/communication/message.template/message.templates.json';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class MedicationConsumptionService implements IUserActionService {
+
+    _ehrMedicationConsumptionStore: MedicationConsumptionStore = null
 
     constructor(
         @inject('IMedicationRepo') private _medicationRepo: IMedicationRepo,
@@ -33,8 +39,13 @@ export class MedicationConsumptionService implements IUserActionService {
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
+        @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
-    ) {}
+    ) {
+        if (ConfigurationManager.EhrEnabled()) {
+            this._ehrMedicationConsumptionStore = Loader.container.resolve(MedicationConsumptionStore);
+        }
+    }
 
     create = async (medication: MedicationDto, customStartDate = null)
         :Promise<MedicationConsumptionStatsDto> => {
@@ -224,7 +235,13 @@ export class MedicationConsumptionService implements IUserActionService {
             Logger.instance().log('Medication consumption instance with given id cannot be found.');
             return null;
         }
-   
+
+        if (this._ehrMedicationConsumptionStore) {
+            const ehrId = await this._ehrMedicationConsumptionStore.add(medConsumption);
+            medConsumption.EhrId = ehrId;
+            await this._medicationConsumptionRepo.assignEhrId(id, medConsumption.EhrId);
+        }
+
         var takenAt = new Date();
         var isPastScheduleEnd = TimeHelper.isAfter(new Date(), medConsumption.TimeScheduleEnd);
         if (isPastScheduleEnd) {
@@ -384,13 +401,22 @@ export class MedicationConsumptionService implements IUserActionService {
         return consumptionSummaryForMonths;
     };
 
-    sendMedicationReminders = async (upcomingInMinutes: number): Promise<number> => {
+    sendMedicationReminders = async (pastMinutes: number): Promise<number> => {
         var count = 0;
-        var from = new Date();
-        var to = TimeHelper.addDuration(from, upcomingInMinutes, DurationType.Minute);
-        var schedules = await this._medicationConsumptionRepo.getSchedulesForDuration(from, to);
-        for await (var a of schedules) {
-            await this.sendMedicationReminder(a);
+        var from = TimeHelper.subtractDuration(new Date(), pastMinutes, DurationType.Minute);
+        var to = TimeHelper.subtractDuration(new Date(), 1, DurationType.Minute);
+        var schedules = await this._medicationConsumptionRepo.getSchedulesForDuration(from, to, true);
+
+        var schedulesForPatient = {};
+        schedules.forEach(schedule => {
+            if (!schedulesForPatient[schedule.PatientUserId]) {
+                schedulesForPatient[schedule.PatientUserId] = [];
+            }
+            schedulesForPatient[schedule.PatientUserId].push(schedule);
+        });
+
+        for await (var a of Object.keys(schedulesForPatient)) {
+            await this.sendMedicationReminder(schedulesForPatient[a]);
             count++;
         }
         return count;
@@ -400,7 +426,7 @@ export class MedicationConsumptionService implements IUserActionService {
         var count = 0;
         var from = new Date();
         var to = TimeHelper.addDuration(from, upcomingInMinutes, DurationType.Minute);
-        var schedules = await this._medicationConsumptionRepo.getSchedulesForDuration(from, to);
+        var schedules = await this._medicationConsumptionRepo.getSchedulesForDuration(from, to, false);
         for await (var a of schedules) {
             if (true === await this.createMedicationTaskForSchedule(a))
             {
@@ -729,30 +755,43 @@ export class MedicationConsumptionService implements IUserActionService {
         return listByDrugName;
     };
 
-    sendMedicationReminder = async (medicationSchedule) => {
+    sendMedicationReminder = async (medicationSchedules) => {
 
-        var patientUserId = medicationSchedule.PatientUserId;
+        var patientUserId = medicationSchedules[0].PatientUserId;
+        var user = await this._userRepo.getById(patientUserId);
+        var person = await this._personRepo.getById(user.PersonId);
 
         var deviceList = await this._userDeviceDetailsRepo.getByUserId(patientUserId);
         var deviceListsStr = JSON.stringify(deviceList, null, 2);
         Logger.instance().log(`Sent medication reminders to following devices - ${deviceListsStr}`);
 
+        var medicationDrugNames = [];
+        medicationSchedules.forEach(medicationSchedule => {
+            medicationDrugNames.push(medicationSchedule.DrugName);
+        });
+
+        var duration = TimeHelper.getTimezoneOffsets(user.DefaultTimeZone, DurationType.Minute);
+        var updatedTime = TimeHelper.subtractDuration(
+            medicationSchedules[0].TimeScheduleEnd, duration, DurationType.Minute);
+
+        var title = MessageTemplates.MedicationReminder.Title;
+        title = title.replace("{{PatientName}}", person.FirstName ?? "there");
+        title = title.replace("{{DrugName}}", medicationDrugNames.join(', '));
+        var body = MessageTemplates.MedicationReminder.Body;
+        body = body.replace("{{EndTime}}", TimeHelper.format(updatedTime, 'hh:mm A'));
+    
+        Logger.instance().log(`Notification Title: ${title}`);
+        Logger.instance().log(`Notification Body: ${body}`);
+
         var message = Loader.notificationService.formatNotificationMessage(
-            'Upcoming medication',
-            'You have upcoming scheduled medication!',
-            {
-                ScheduleStart : medicationSchedule.TimeScheduleStart.toUTCString(),
-                ScheduleEnd   : medicationSchedule.TimeScheduleEnd.toUTCString(),
-                DrugName      : medicationSchedule.DrugName,
-                Details       : medicationSchedule.Details
-            }
+            MessageTemplates.MedicationReminder.NotificationType, title, body
         );
         for await (var device of deviceList) {
-            await Loader.notificationService.sendMessageToTopic(device.Token, message);
+            await Loader.notificationService.sendNotificationToDevice(device.Token, message);
         }
 
     };
 
     //#endregion
-    
+
 }

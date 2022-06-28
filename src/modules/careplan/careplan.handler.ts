@@ -9,7 +9,8 @@ import { ConfigurationManager } from "../../config/configuration.manager";
 import { CareplanConfig } from "../../config/configuration.types";
 import { CAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import { GoalDto } from "../../domain.types/patient/goal/goal.dto";
-import { ActionPlanDto } from "../../domain.types/goal.action.plan/goal.action.plan.dto";
+import { ActionPlanDto } from "../../domain.types/action.plan/action.plan.dto";
+import { HealthPriorityDto } from "../../domain.types/patient/health.priority/health.priority.dto";
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -33,29 +34,28 @@ export class CareplanHandler {
         var plans: CareplanConfig[] = [];
         if (provider) {
             for (var careplan of careplans) {
-                if (careplan.Provider === provider) {
+                if (careplan.Provider === provider && careplan.Enabled) {
                     return careplan.Plans;
                 }
             }
         }
         else {
             for (var c of careplans) {
-                var tmp = c.Plans;
-                plans.push(...tmp);
+                if (c.Enabled) {
+                    var tmp = c.Plans;
+                    plans.push(...tmp);
+                }
             }
         }
         return plans;
     };
 
     public isPlanAvailable = (provider: string, planCode: string): boolean => {
-        var careplans = ConfigurationManager.careplans();
-        var foundProvider = careplans.find(x => {
-            return x.Provider === provider;
-        });
-        if (foundProvider) {
-            var providerPlans = foundProvider.Plans;
+        var enabledProvider = this.isEnabledProvider(provider);
+        if (enabledProvider) {
+            var providerPlans = enabledProvider.Plans;
             const foundPlan = providerPlans.find(y => {
-                return y.ProviderCode === planCode;
+                return y.Code === planCode;
             });
             if (foundPlan) {
                 return true;
@@ -65,14 +65,11 @@ export class CareplanHandler {
     };
 
     public getPlanDetails(provider: string, planCode: string): CareplanConfig {
-        var careplans = ConfigurationManager.careplans();
-        var foundProvider = careplans.find(x => {
-            return x.Provider === provider;
-        });
-        if (foundProvider) {
-            var providerPlans = foundProvider.Plans;
+        var enabledProvider = this.isEnabledProvider(provider);
+        if (enabledProvider) {
+            var providerPlans = enabledProvider.Plans;
             const foundPlan = providerPlans.find(y => {
-                return y.ProviderCode === planCode;
+                return y.Code === planCode;
             });
             if (foundPlan) {
                 return foundPlan;
@@ -82,16 +79,20 @@ export class CareplanHandler {
     }
 
     public registerPatientWithProvider = async (patientDetails: ParticipantDomainModel, provider: string) => {
-        var service = CareplanHandler._services.getItem(provider);
-        return await service.registerPatient(patientDetails);
+        if (this.isEnabledProvider(provider)) {
+            var service = CareplanHandler._services.getItem(provider);
+            return await service.registerPatient(patientDetails);
+        }
+        return null;
     };
 
-    public enrollPatientToCarePlan = async (
-        enrollmentDetails: EnrollmentDomainModel
-    ): Promise<string> => {
+    public enrollPatientToCarePlan = async (enrollmentDetails: EnrollmentDomainModel): Promise<string> => {
         const provider = enrollmentDetails.Provider;
-        var service = CareplanHandler._services.getItem(provider);
-        return await service.enrollPatientToCarePlan(enrollmentDetails);
+        if (this.isEnabledProvider(provider)) {
+            var service = CareplanHandler._services.getItem(provider);
+            return await service.enrollPatientToCarePlan(enrollmentDetails);
+        }
+        return null;
     };
 
     public fetchActivities = async (
@@ -156,4 +157,44 @@ export class CareplanHandler {
         return await service.getActionPlans(patientUserId, enrollmentId, category);
     };
 
+    public updateActionPlan = async (
+        patientUserId: uuid,
+        provider: string,
+        careplanCode: string,
+        enrollmentId: string,
+        actionName: string,
+    ): Promise<ActionPlanDto> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.updateActionPlan(enrollmentId, actionName);
+    };
+
+    public updateGoal = async (
+        patientUserId: uuid,
+        provider: string,
+        careplanCode: string,
+        enrollmentId: string,
+        goalName: string,
+    ): Promise<GoalDto> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.updateGoal(enrollmentId, goalName);
+    };
+
+    public updateHealthPriority = async (
+        patientUserId: uuid,
+        provider: string,
+        careplanCode: string,
+        enrollmentId: string,
+        healthPriorityType: string,
+    ): Promise<HealthPriorityDto> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.updateHealthPriority(patientUserId, enrollmentId, healthPriorityType);
+    };
+
+    private isEnabledProvider(provider: string) {
+        var careplans = ConfigurationManager.careplans();
+        return careplans.find(x => {
+            return x.Provider === provider && x.Enabled;
+        });
+    }
+    
 }

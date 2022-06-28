@@ -29,6 +29,22 @@ export class Helper {
         return null;
     };
 
+    static hasProperty = (obj, prop) => {
+        return Object.prototype.hasOwnProperty.call(obj, prop);
+    }
+    
+    static isUrl = (str) => {
+        if (!str) {
+            return false;
+        }
+        try {
+            new URL(str);
+            return true;
+        } catch (err) {
+            return false;
+        }
+    }
+
     static dumpJson(obj, filename) {
         const txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);
@@ -303,7 +319,7 @@ export class Helper {
         if (!validCountryCode) {
             return Promise.reject('Invalid country code');
         }
-        const validPhoneNumber = Helper.isStr(phoneNumber) && phoneNumber.length > 9;
+        const validPhoneNumber = Helper.isStr(phoneNumber) && phoneNumber.length >= 9;
         if (!validPhoneNumber) {
 
             //throw new InputValidationError(['Invalid phone number']);
@@ -459,7 +475,7 @@ export class Helper {
     public static createTempDownloadFolder = async() => {
         var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
         if (fs.existsSync(tempDownloadFolder)) {
-            return;
+            return tempDownloadFolder;
         }
         await fs.promises.mkdir(tempDownloadFolder, { recursive: true });
         return tempDownloadFolder;
@@ -468,7 +484,7 @@ export class Helper {
     public static createTempUploadFolder = async() => {
         var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
         if (fs.existsSync(tempUploadFolder)) {
-            return;
+            return tempUploadFolder;
         }
         await fs.promises.mkdir(tempUploadFolder, { recursive: true });
         return tempUploadFolder;
@@ -487,6 +503,17 @@ export class Helper {
             mimeType = 'text/plain';
         }
         return mimeType;
+    };
+    
+    public static getValueForEitherKeys = (obj: any, keys: string[]): string => {
+        const existingKeys = Object.keys(obj);
+        for (var key of keys) {
+            var found = existingKeys.includes(key);
+            if (found) {
+                return obj[key];
+            }
+        }
+        return null;
     };
 
 }

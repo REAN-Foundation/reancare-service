@@ -9,6 +9,7 @@ import { BodyHeightDto } from "../biometrics/body.height/body.height.dto";
 import { BodyTemperatureDto } from "../biometrics/body.temperature/body.temperature.dto";
 import { BodyWeightDto } from "../biometrics/body.weight/body.weight.dto";
 import { PulseDto } from "../biometrics/pulse/pulse.dto";
+import { Helper } from "../../../common/helper";
 
 //#region Enums
 
@@ -30,6 +31,7 @@ export enum QueryResponseType {
     Integer               = 'Integer',
     Boolean               = 'Boolean',
     Object                = 'Object',
+    TextArray             = 'Text Array',
     FloatArray            = 'Float Array',
     IntegerArray          = 'Integer Array',
     BooleanArray          = 'Boolean Array',
@@ -42,6 +44,7 @@ export enum QueryResponseType {
     DateTime              = 'DateTime',
     Rating                = 'Rating',
     Location              = 'Location',
+    Range                 = 'Range',
     Ok                    = 'Ok', //Acknowledgement
     None                  = 'None', //Not expecting response
 }
@@ -50,15 +53,22 @@ export const QueryResponseTypeList: QueryResponseType[] = [
     QueryResponseType.Text,
     QueryResponseType.Float,
     QueryResponseType.Integer,
+    QueryResponseType.Boolean,
     QueryResponseType.Object,
-    QueryResponseType.SingleChoiceSelection,
-    QueryResponseType.MultiChoiceSelection,
+    QueryResponseType.TextArray,
     QueryResponseType.FloatArray,
     QueryResponseType.IntegerArray,
     QueryResponseType.BooleanArray,
     QueryResponseType.ObjectArray,
     QueryResponseType.Biometrics,
-    QueryResponseType.Boolean,
+    QueryResponseType.SingleChoiceSelection,
+    QueryResponseType.MultiChoiceSelection,
+    QueryResponseType.File,
+    QueryResponseType.Date,
+    QueryResponseType.DateTime,
+    QueryResponseType.Rating,
+    QueryResponseType.Location,
+    QueryResponseType.Range,
     QueryResponseType.Ok,
     QueryResponseType.None,
 ];
@@ -142,17 +152,21 @@ export const ConditionOperandDataTypeList: ConditionOperandDataType[] = [
 
 export class CAssessmentTemplate {
 
-    TemplateId?            : uuid;
-    DisplayCode?           : string;
-    Version?               : string;
-    Type                   : AssessmentType;
-    Title                  : string;
-    Description?           : string;
-    ProviderAssessmentCode?: string;
-    Provider?              : string;
-    FileResourceId?        : uuid; //Assessment template storage file
-    RootNodeDisplayCode?   : string;
-    Nodes                  : CAssessmentNode[];
+    TemplateId?                  : uuid;
+    DisplayCode?                 : string;
+    Version?                     : string;
+    Type                         : AssessmentType;
+    Title                        : string;
+    Description?                 : string;
+    ServeListNodeChildrenAtOnce? : boolean;
+    ProviderAssessmentCode?      : string;
+    Provider?                    : string;
+    FileResourceId?              : uuid; //Assessment template storage file
+    RootNodeDisplayCode?         : string;
+    Nodes                        : CAssessmentNode[];
+    CreatedAt?                   : Date;
+    UpdatedAt?                   : Date;
+    CreatedBy?                   : uuid;
 
     constructor() {
         this.Nodes = [];
@@ -180,15 +194,20 @@ export class CAssessmentNode {
 
     id?                     : uuid;
     DisplayCode?            : string;
+    Required                : boolean;
     ProviderGivenId?        : string;
     ProviderGivenCode?      : string;
     TemplateId              : uuid;
     NodeType                : AssessmentNodeType;
     ParentNodeId?           : uuid;
+    ParentNodeDisplayCode?  : uuid;
     Title                   : string;
     Description?            : string;
+    Hint?                   : string;
     Sequence?               : number;
     Score                   : number;
+    ChildrenNodeDisplayCodes? : string[];
+    ServeListNodeChildrenAtOnce?: boolean;
 
 }
 
@@ -197,6 +216,7 @@ export class CAssessmentListNode extends CAssessmentNode {
     ChildrenNodeDisplayCodes: string[];
     ChildrenNodeIds         : uuid[];
     Children?               : CAssessmentNode[];
+    ServeListNodeChildrenAtOnce?: boolean;
 
     constructor() {
         super();
@@ -204,6 +224,7 @@ export class CAssessmentListNode extends CAssessmentNode {
         this.ChildrenNodeDisplayCodes = [];
         this.ChildrenNodeIds = [];
         this.Children = [];
+        this.ServeListNodeChildrenAtOnce = false;
     }
 
 }
@@ -211,14 +232,16 @@ export class CAssessmentListNode extends CAssessmentNode {
 export class CAssessmentQuestionNode extends CAssessmentNode {
 
     QueryResponseType: QueryResponseType;
-    DefaultPathId    : uuid;
+    DefaultPathId?   : uuid;
     Paths?           : CAssessmentNodePath[];
     Options?         : CAssessmentQueryOption[];
     UserResponse?    : CAssessmentQueryResponse;
+    SkipCondition?   : CAssessmentPathCondition;
 
     constructor() {
         super();
         this.NodeType = AssessmentNodeType.Question;
+        this.Required = true;
         this.QueryResponseType = QueryResponseType.SingleChoiceSelection;
         this.Paths = [];
         this.Options = [];
@@ -234,6 +257,8 @@ export class CAssessmentMessageNode extends CAssessmentNode {
     constructor() {
         super();
         this.NodeType = AssessmentNodeType.Message;
+        this.Acknowledged = false;
+        this.Message = '';
     }
 
 }
@@ -256,9 +281,9 @@ export class CAssessmentQueryOption {
     id?               : uuid;
     DisplayCode       : string;
     ProviderGivenCode?: string;
-    NodeId            : uuid;
+    NodeId?           : uuid;
     Text              : string;
-    ImageUrl          : string;
+    ImageUrl?         : string;
     Sequence          : number;
 
 }
@@ -275,6 +300,9 @@ export class CAssessmentQueryResponse {
     FloatValue?          : number;
     TextValue?           : string;
     BooleanValue?        : boolean;
+    DateValue?           : Date;
+    Url?                 : string;
+    ResourceId?          : uuid;
     ArrayValue?          : number[];
     ObjectValue?         : any;
     Additional?          : string;
@@ -289,6 +317,9 @@ export class CAssessmentQueryResponse {
         this.BooleanValue = false;
         this.ArrayValue = [];
         this.ObjectValue = null;
+        this.DateValue = null;
+        this.Url = null;
+        this.ResourceId = null;
     }
 
 }
@@ -306,6 +337,27 @@ export class ConditionOperand {
         this.DataType = dataType;
         this.Name = name;
         this.Value = value;
+
+        if (Helper.isStr(this.Value) && this.DataType !== ConditionOperandDataType.Text) {
+            if (this.DataType === ConditionOperandDataType.Integer) {
+                this.Value = parseInt(this.Value as string);
+            }
+            if (this.DataType === ConditionOperandDataType.Float) {
+                this.Value = parseFloat(this.Value as string);
+            }
+            if (this.DataType === ConditionOperandDataType.Boolean) {
+                this.Value = parseInt(this.Value as string);
+                if (this.Value === 0) {
+                    this.Value = false;
+                }
+                else {
+                    this.Value = true;
+                }
+            }
+            if (this.DataType === ConditionOperandDataType.Array) {
+                this.Value = JSON.parse(this.Value as string);
+            }
+        }
     }
     
 }
@@ -361,15 +413,30 @@ export interface MessageAnswer extends BaseQueryAnswer {
 export interface TextQueryAnswer extends BaseQueryAnswer {
     Text : string;
 }
+export interface DateQueryAnswer extends BaseQueryAnswer {
+    Date : Date;
+}
 
 export interface IntegerQueryAnswer extends BaseQueryAnswer {
     Field? : string;
     Value  : number;
 }
 
+export interface BooleanQueryAnswer extends BaseQueryAnswer {
+    Field? : string;
+    Value  : boolean;
+}
+
 export interface FloatQueryAnswer extends BaseQueryAnswer {
     Field? : string;
     Value  : number;
+}
+
+export interface FileQueryAnswer extends BaseQueryAnswer {
+    Field?     : string;
+    Filepath?  : string;
+    Url?       : string;
+    ResourceId?: uuid;
 }
 
 export interface AssessmentBiometrics {

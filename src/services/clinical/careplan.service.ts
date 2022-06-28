@@ -27,7 +27,7 @@ import { CareplanConfig } from "../../config/configuration.types";
 import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/assessment.domain.model";
 import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
-import { AssessmentTemplateFileConverter } from "./assessment/assessment.template.file.converter";
+import { UserTaskDomainModel } from "../../domain.types/user/user.task/user.task.domain.model";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -157,7 +157,7 @@ export class CareplanService implements IUserActionService {
 
         //task scheduling
 
-        await this.createScheduledUserTasks(careplanActivities);
+        await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
 
         return dto;
     };
@@ -221,7 +221,7 @@ export class CareplanService implements IUserActionService {
 
         }
 
-        await this.createScheduledUserTasks(careplanActivities);
+        await this.createScheduledUserTasks(enrollment.PatientUserId, careplanActivities);
     
         return true;
     };
@@ -233,29 +233,55 @@ export class CareplanService implements IUserActionService {
     public getAction = async (activityId: uuid): Promise<any> => {
 
         var activity = await this._careplanRepo.getActivity(activityId);
+        if (activity != null) {
 
-        var scheduledAt = activity.ScheduledAt ? activity.ScheduledAt.toISOString().split('T')[0] : null;
+            var scheduledAt = activity.ScheduledAt ? activity.ScheduledAt.toISOString().split('T')[0] : null;
 
-        const details = await this._handler.getActivity(
-            activity.PatientUserId,
-            activity.Provider,
-            activity.PlanCode,
-            activity.EnrollmentId,
-            activity.ProviderActionId,
-            scheduledAt);
+            const details: CareplanActivity = await this._handler.getActivity(
+                activity.PatientUserId,
+                activity.Provider,
+                activity.PlanCode,
+                activity.EnrollmentId,
+                activity.ProviderActionId,
+                scheduledAt);
         
-        if (!activity.RawContent) {
-            activity = await this._careplanRepo.updateActivityDetails(activity.id, details.RawContent);
-        }
+            details.PatientUserId = activity.PatientUserId;
+            details.Provider = activity.Provider;
+            details.PlanCode = activity.PlanCode;
+            details.EnrollmentId = activity.EnrollmentId;
+            details.ProviderActionId = activity.ProviderActionId;
 
-        //Handle assessment activities in special manner...
-        if (activity.Category === UserTaskCategory.Assessment ||
+            activity = await this._careplanRepo.updateActivityDetails(activity.id, details);
+            details.Title = activity.Title;
+            details.Description = activity.Description;
+            
+            //Handle assessment activities in special manner...
+            if (activity.Category === UserTaskCategory.Assessment ||
             activity.Type === 'Assessment') {
-            var template = await this.getAssessmentTemplate(details);
-            const assessment = await this.getAssessment(activity, template, scheduledAt);
-            activity['Assessment'] = assessment;
+                var template = await this.getAssessmentTemplate(details);
+                const assessment = await this.getAssessment(activity, template, scheduledAt);
+                activity['Assessment'] = assessment;
+            }
+            else {
+                activity['RawContent'] = details.RawContent;
+            }
+            return activity;
         }
-        return activity;
+        else {
+            var assessment = await this._assessmentRepo.getById(activityId);
+            var dummyActivity = {
+                id               : assessment.id,
+                Type             : "Assessment",
+                Category         : "Assessment",
+                ProviderActionId : "Custom-Assessment",
+                Title            : assessment.Title,
+                Description      : assessment.Description,
+                ScheduledAt      : assessment.ScheduledAt,
+                Status           : ProgressStatus.Pending,
+                Assessment       : assessment,
+            };
+            return dummyActivity;
+        }
     };
 
     public updateAction = async (activityId: uuid, updates: any): Promise<any> => {
@@ -322,34 +348,27 @@ export class CareplanService implements IUserActionService {
     };
 
     public getAssessmentTemplate = async (model: CareplanActivity): Promise<AssessmentTemplateDto> => {
-
-        const assessmentActivity = await this._handler.getActivity(
-            model.PatientUserId,
-            model.Provider,
-            model.PlanCode,
-            model.EnrollmentId,
-            model.ProviderActionId);
-        
-        if (!assessmentActivity) {
+ 
+        if (!model) {
             throw new Error('Invalid careplan activity encountered!');
         }
 
-        if (assessmentActivity.Category !== UserTaskCategory.Assessment) {
+        if (model.Category !== UserTaskCategory.Assessment) {
             throw new Error('The given careplan activity is not an assessment activity!');
         }
 
         var existingTemplate = await this._assessmentTemplateRepo.getByProviderAssessmentCode(
-            model.Provider, assessmentActivity.ProviderActionId);
+            model.Provider, model.ProviderActionId);
 
         if (existingTemplate) {
             return existingTemplate;
         }
         
         var assessmentTemplate: CAssessmentTemplate =
-            await this._handler.convertToAssessmentTemplate(assessmentActivity);
+            await this._handler.convertToAssessmentTemplate(model);
 
-        const fileResourceDto = await AssessmentTemplateFileConverter.storeAssessmentTemplate(assessmentTemplate);
-        assessmentTemplate.FileResourceId = fileResourceDto.id;
+        // const fileResourceDto = await AssessmentTemplateFileConverter.storeAssessmentTemplate(assessmentTemplate);
+        // assessmentTemplate.FileResourceId = fileResourceDto.id;
 
         const template = await this._assessmentHelperRepo.addTemplate(assessmentTemplate);
         return template;
@@ -405,9 +424,15 @@ export class CareplanService implements IUserActionService {
         return patientDto;
     }
 
-    private async createScheduledUserTasks(careplanActivities) {
+    private async createScheduledUserTasks(patientUserId, careplanActivities) {
 
         // create user tasks based on activities
+
+        var userDto = await this._userRepo.getById(patientUserId);
+        var timezoneOffset = '+05:30';
+        if (userDto.DefaultTimeZone !== null) {
+            timezoneOffset = userDto.DefaultTimeZone;
+        }
 
         var activitiesGroupedByDate = {};
         for (const activity of careplanActivities) {
@@ -431,18 +456,19 @@ export class CareplanService implements IUserActionService {
             });
 
             activities.forEach( async (activity) => {
-
-                var dayStart = TimeHelper.addDuration(activity.ScheduledAt, 7, DurationType.Hour);       // Start at 7:00 AM
+                var dayStartStr = activity.ScheduledAt.toISOString();
+                var dayStart = TimeHelper.getDateWithTimezone(dayStartStr, timezoneOffset);
+                dayStart = TimeHelper.addDuration(dayStart, 7, DurationType.Hour); // Start at 7:00 AM
                 var scheduleDelay = (activity.Sequence - 1) * 1;
                 var startTime = TimeHelper.addDuration(dayStart, scheduleDelay, DurationType.Second);   // Scheduled at every 1 sec
-                var endTime = TimeHelper.addDuration(activity.ScheduledAt, 23, DurationType.Hour);       // End at 11:00 PM
+                var endTime = TimeHelper.addDuration(dayStart, 16, DurationType.Hour);       // End at 11:00 PM
 
-                var userTaskModel = {
+                var userTaskModel: UserTaskDomainModel = {
                     UserId             : activity.PatientUserId,
                     DisplayId          : activity.PlanName + '-' + activity.ProviderActionId,
                     Task               : activity.Title,
-                    Category           : UserTaskCategory[activity.Type] ?? UserTaskCategory.Custom,
-                    Description        : null,
+                    Category           : activity.Category,
+                    Description        : activity.Description,
                     ActionType         : UserActionType.Careplan,
                     ActionId           : activity.id,
                     ScheduledStartTime : startTime,
@@ -458,7 +484,63 @@ export class CareplanService implements IUserActionService {
             });
         }
     }
-    
+
+    getWeeklyStatus = async (careplanId: uuid): Promise<any> => {
+
+        var enrollment = await this._careplanRepo.getCareplanEnrollment(careplanId);
+
+        var startDate = enrollment.StartAt;
+        var endDate = enrollment.EndAt;
+
+        var today = new Date();
+        var begin =  new Date(startDate);
+        var end =  new Date(endDate);
+
+        var currentWeek = -1;
+        var dayOfCurrentWeek = -1;
+        var message = "Your careplan is in progress.";
+
+        if (TimeHelper.isBefore(today, begin)) {
+            currentWeek = 0;
+            dayOfCurrentWeek = 0;
+            message = "Your careplan has not yet started.";
+            return { currentWeek, dayOfCurrentWeek, message };
+        }
+        if (TimeHelper.isAfter(today, end)){
+            message = "Your careplan has been finished.";
+            return { currentWeek, dayOfCurrentWeek, message };
+        }
+
+        // current week
+        var diff = Math.abs(today.getTime() - begin.getTime());
+        var days = Math.floor(diff / (1000 * 3600 * 24));
+        currentWeek = (Math.floor(days / 7)) + 1;
+        dayOfCurrentWeek = (days % 7) + 1;
+
+        // total weeks
+        var duration = Math.abs(end.getTime() - begin.getTime());
+        var totalDays = Math.floor(duration / (1000 * 3600 * 24));
+        var totalWeeks = (Math.floor(totalDays / 7));
+
+        var careplanStatus = {
+
+            CurrentWeek      : currentWeek,
+            DayOfCurrentWeek : dayOfCurrentWeek,
+            Message          : message,
+            TotalWeeks       : totalWeeks,
+            StartDate        : startDate,
+            EndDate          : endDate,
+        };
+
+        return careplanStatus;
+    };
+
+    public updateActivityUserResponse = async (activityId: uuid, userResponse: string):
+    Promise<CareplanActivityDto> => {
+
+        return await this._careplanRepo.updateActivityUserResponse(activityId, userResponse);
+    };
+
     //#endregion
 
 }

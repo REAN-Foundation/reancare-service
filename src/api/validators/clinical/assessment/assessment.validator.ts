@@ -3,6 +3,7 @@ import { QueryResponseType } from '../../../../domain.types/clinical/assessment/
 import { AssessmentDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
 import { AssessmentSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.search.types';
 import { BaseValidator, Where } from '../../base.validator';
+import { AssessmentAnswerDomainModel } from '../../../../domain.types/clinical/assessment/assessment.answer.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +15,9 @@ export class AssessmentValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): AssessmentDomainModel => {
 
+        var dateStr = request.body.ScheduledDate ? new Date(request.body.ScheduledDate).toISOString()
+            .split('T')[0] : null;
+            
         const patientAssessmentModel: AssessmentDomainModel = {
             PatientUserId          : request.body.PatientUserId ?? null,
             Title                  : request.body.Title ?? null,
@@ -23,6 +27,7 @@ export class AssessmentValidator extends BaseValidator {
             ProviderAssessmentCode : request.body.ProviderAssessmentCode ?? null,
             Provider               : request.body.Provider ?? null,
             Status                 : request.body.Status ?? null,
+            ScheduledDateString    : dateStr
         };
 
         return patientAssessmentModel;
@@ -53,30 +58,40 @@ export class AssessmentValidator extends BaseValidator {
 
         await this.validateString(request, 'ResponseType', Where.Body, true, false, false);
 
-        var answerModel = {
+        var answerModel: AssessmentAnswerDomainModel = {
             AssessmentId   : request.params.id,
             QuestionNodeId : request.params.questionId,
             ResponseType   : request.body.ResponseType,
         };
         
         const responseType = request.body.ResponseType;
+
         if (responseType === QueryResponseType.SingleChoiceSelection ||
             responseType === QueryResponseType.Integer) {
             await this.validateInt(request, 'Answer', Where.Body, true, false);
-            answerModel['IntegerValue'] = request.body.Answer;
+            answerModel['IntegerValue'] = parseInt(request.body.Answer);
         }
         else if (responseType === QueryResponseType.MultiChoiceSelection) {
             await this.validateArray(request, 'Answer', Where.Body, true, false);
-            answerModel['IntegerValue'] = request.body.Answer;
+            answerModel['IntegerArray'] = request.body.Answer;
         }
         else if (responseType === QueryResponseType.Text ||
             responseType === QueryResponseType.Ok) {
             await this.validateString(request, 'Answer', Where.Body, true, false);
             answerModel['TextValue'] = request.body.Answer;
         }
+        else if (responseType === QueryResponseType.Date) {
+            await this.validateDateString(request, 'Answer', Where.Body, true, false);
+            answerModel['DateValue'] = new Date(request.body.Answer);
+        }
+        else if (responseType === QueryResponseType.File) {
+            answerModel['FieldName'] = request.body.Answer.FileName ?? null;
+            answerModel['Url'] = request.body.Answer.Url ?? null;
+            answerModel['ResourceId'] = request.body.Answer.ResourceId ?? null;
+        }
         else if (responseType === QueryResponseType.Float) {
             await this.validateDecimal(request, 'Answer', Where.Body, true, false);
-            answerModel['FloatValue'] = request.body.Answer;
+            answerModel['FloatValue'] = parseFloat(request.body.Answer);
         }
         else if (responseType === QueryResponseType.Boolean) {
             await this.validateBoolean(request, 'Answer', Where.Body, true, false);
@@ -88,6 +103,64 @@ export class AssessmentValidator extends BaseValidator {
         }
 
         return answerModel;
+    };
+
+    answerQuestionList = async (request: express.Request)
+        :  Promise<AssessmentAnswerDomainModel[]> => {
+
+        await this.validateArray(request, 'Answers', Where.Body, true, false);
+
+        var answerModelList: AssessmentAnswerDomainModel[] = [];
+
+        for (let i = 0; i < request.body.Answers.length; i++) {
+
+            var answerModel: AssessmentAnswerDomainModel = {
+                AssessmentId   : request.params.id,
+                QuestionNodeId : request.body.Answers[i].QuestionId,
+                ResponseType   : request.body.Answers[i].ResponseType,
+            };
+        
+            const responseType = request.body.Answers[i].ResponseType;
+
+            if (responseType === QueryResponseType.SingleChoiceSelection ||
+            responseType === QueryResponseType.Integer) {
+                await this.validateInt(request, 'Answers.Answer', Where.Body, true, false);
+                answerModel['IntegerValue'] = parseInt(request.body.Answers[i].Answer);
+            }
+            else if (responseType === QueryResponseType.MultiChoiceSelection) {
+                await this.validateArray(request, 'Answer', Where.Body, true, false);
+                answerModel['IntegerArray'] = request.body.Answers[i].Answer;
+            }
+            else if (responseType === QueryResponseType.Text ||
+            responseType === QueryResponseType.Ok) {
+                await this.validateString(request, 'Answer', Where.Body, true, false);
+                answerModel['TextValue'] = request.body.Answers[i].Answer;
+            }
+            else if (responseType === QueryResponseType.Date) {
+                await this.validateDateString(request, 'Answer', Where.Body, true, false);
+                answerModel['DateValue'] = new Date(request.body.Answers[i].Answer);
+            }
+            else if (responseType === QueryResponseType.File) {
+                answerModel['FieldName'] = request.body.Answers[i].Answer.FileName ?? null;
+                answerModel['Url'] = request.body.Answers[i].Answer.Url ?? null;
+                answerModel['ResourceId'] = request.body.Answers[i].Answer.ResourceId ?? null;
+            }
+            else if (responseType === QueryResponseType.Float) {
+                await this.validateDecimal(request, 'Answer', Where.Body, true, false);
+                answerModel['FloatValue'] = parseFloat(request.body.Answers[i].Answer);
+            }
+            else if (responseType === QueryResponseType.Boolean) {
+                await this.validateBoolean(request, 'Answer', Where.Body, true, false);
+                answerModel['BooleanValue'] = request.body.Answers[i].Answer;
+            }
+            else if (responseType === QueryResponseType.Biometrics) {
+                await this.validateArray(request, 'Answer', Where.Body, true, false);
+                answerModel['Biometrics'] = request.body.Answers[i].Answer;
+            }
+
+            answerModelList.push(answerModel);
+        }
+        return answerModelList;
     };
 
     private getFilter(request): AssessmentSearchFilters {
@@ -119,6 +192,7 @@ export class AssessmentValidator extends BaseValidator {
         await this.validateString(request, 'ProviderEnrollmentId', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateString(request, 'Provider', Where.Body, false, false);
+        await this.validateDate(request, 'ScheduledDate', Where.Body, false, false);
 
         this.validateRequest(request);
 
@@ -133,6 +207,7 @@ export class AssessmentValidator extends BaseValidator {
         await this.validateString(request, 'ProviderEnrollmentId', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateString(request, 'Provider', Where.Body, false, false);
+        await this.validateDate(request, 'ScheduledDate', Where.Body, false, false);
 
         this.validateRequest(request);
         

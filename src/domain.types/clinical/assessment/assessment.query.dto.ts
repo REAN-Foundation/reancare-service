@@ -13,7 +13,25 @@ export interface AssessmentQueryDto {
     Sequence?           : number;
     Title?              : string;
     Description?        : string;
+    Message?            : string;
     Options             : CAssessmentQueryOption[];
     ProviderGivenCode?  : string;
     ProviderGivenId?    : string;
+}
+
+export interface AssessmentQueryListDto {
+    id                         : uuid;
+    NodeType                   : AssessmentNodeType;
+    ServeListNodeChildrenAtOnce: boolean;
+    DisplayCode                : string;
+    PatientUserId              : uuid;
+    AssessmentTemplateId       : uuid;
+    ParentNodeId?              : uuid;
+    AssessmentId?              : uuid;
+    Sequence?                  : number;
+    Title?                     : string;
+    Description?               : string;
+    ChildrenQuestions          : AssessmentQueryDto[];
+    ProviderGivenCode?         : string;
+    ProviderGivenId?           : string;
 }

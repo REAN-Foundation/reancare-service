@@ -1,0 +1,65 @@
+{
+    "SystemIdentifier": "REAN HealthGuru",
+    "Auth" : {
+        "Authentication": "Custom",
+        "Authorization": "Custom"
+    },
+    "Database" : {
+        "Type": "SQL",
+        "ORM": "Sequelize",
+        "Flavour": "MySQL"
+    },
+    "Ehr" : {
+        "Enabled": false,
+        "Specification": "FHIR",
+        "Provider": "GCP-FHIR"
+    },
+    "FileStorage" : {
+        "Provider": "Custom"
+    },
+    "Communication" : {
+        "SMS": {
+            "Provider": "Mock"
+        },
+        "Email": {
+            "Provider": "Mock"
+        },
+        "InAppNotifications": {
+            "Provider": "Mock"
+        }
+    },
+    "TemporaryFolders": {
+        "Upload": "./tmp/resources/uploads/",
+        "Download": "./tmp/resources/downloads/",
+        "CleanupFolderBeforeMinutes": 10
+    },
+    "Careplans" : [
+        { 
+            "Enabled" : true,
+            "Provider": "AHA",
+            "Service": "AhaCarePlanService",
+            "Plans": [
+                {
+                    "Provider" : "AHA",
+                    "Name": "Heart Failure",
+                    "Code": "HeartFailure",
+                    "DisplayName": "AHA-Heart Failure",
+                    "DefaultDurationDays": 84,
+                    "Description": "Heart Failure is a chronic condition in which the heart doesn't pump blood as well as it should. Heart failure can occur if the heart cannot pump (systolic) or fill (diastolic) adequately. Symptoms include shortness of breath, fatigue, swollen legs and rapid heartbeat.\nHeart Failure care plan helps in managing the condition."
+                }
+            ]
+        }
+    ],
+    "FormServiceProviders" : [
+        { 
+            "Provider": "KoboToolbox",
+            "Code": "KoboToolbox"
+        },
+        { 
+            "Provider": "GoogleForms",
+            "Code": "GoogleForms"
+        }
+    ],
+    "MaxUploadFileSize": 104857600,
+    "JwtExpiresIn": 2592000
+}

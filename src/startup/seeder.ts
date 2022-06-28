@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { UserHelper } from "../api/helpers/user.helper";
 import { inject, injectable } from "tsyringe";
 import * as SeededDrugs from '../../seed.data/drugs.seed.json';
 import * as SeededKnowledgeNuggets from '../../seed.data/knowledge.nuggets.seed.json';
@@ -14,7 +15,7 @@ import { IMedicationStockImageRepo } from "../database/repository.interfaces/cli
 import { ISymptomAssessmentTemplateRepo } from "../database/repository.interfaces/clinical/symptom/symptom.assessment.template.repo.interface";
 import { ISymptomTypeRepo } from "../database/repository.interfaces/clinical/symptom/symptom.type.repo.interface";
 import { IKnowledgeNuggetRepo } from "../database/repository.interfaces/educational/knowledge.nugget.repo.interface";
-import { IHealthPriorityRepo } from "../database/repository.interfaces/health.priority/health.priority.repo.interface";
+import { IHealthPriorityRepo } from "../database/repository.interfaces/patient/health.priority/health.priority.repo.interface";
 import { IInternalTestUserRepo } from "../database/repository.interfaces/internal.test.user.repo.interface";
 import { IPersonRepo } from "../database/repository.interfaces/person.repo.interface";
 import { IPersonRoleRepo } from "../database/repository.interfaces/person.role.repo.interface";
@@ -28,8 +29,8 @@ import { SymptomAssessmentTemplateDomainModel } from "../domain.types/clinical/s
 import { SymptomTypeDomainModel } from "../domain.types/clinical/symptom/symptom.type/symptom.type.domain.model";
 import { SymptomTypeSearchFilters } from "../domain.types/clinical/symptom/symptom.type/symptom.type.search.types";
 import { KnowledgeNuggetDomainModel } from "../domain.types/educational/knowledge.nugget/knowledge.nugget.domain.model";
-import { HealthPriorityTypeDomainModel } from "../domain.types/health.priority.type/health.priority.type.domain.model";
-import { HealthPriorityTypeList } from "../domain.types/health.priority.type/health.priority.types";
+import { HealthPriorityTypeDomainModel } from "../domain.types/patient/health.priority.type/health.priority.type.domain.model";
+import { HealthPriorityTypeList } from "../domain.types/patient/health.priority.type/health.priority.types";
 import { PatientDomainModel } from "../domain.types/patient/patient/patient.domain.model";
 import { Roles } from "../domain.types/role/role.types";
 import { UserDomainModel } from "../domain.types/user/user/user.domain.model";
@@ -39,7 +40,7 @@ import { SymptomAssessmentTemplateService } from "../services/clinical/symptom/s
 import { SymptomTypeService } from "../services/clinical/symptom/symptom.type.service";
 import { KnowledgeNuggetService } from "../services/educational/knowledge.nugget.service";
 import { FileResourceService } from "../services/file.resource.service";
-import { HealthPriorityService } from "../services/health.priority/health.priority.service";
+import { HealthPriorityService } from "../services/patient/health.priority/health.priority.service";
 import { HealthProfileService } from "../services/patient/health.profile.service";
 import { PatientService } from "../services/patient/patient.service";
 import { PersonService } from "../services/person.service";
@@ -75,6 +76,8 @@ export class Seeder {
     _drugService: DrugService = null;
 
     _healthPriorityService: HealthPriorityService = null;
+
+    _userHelper = new UserHelper();
 
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
@@ -112,7 +115,7 @@ export class Seeder {
             await this.seedRolePrivileges();
             await this.seedInternalClients();
             await this.seedSystemAdmin();
-            await this.seedInternalPatients();
+            // await this.seedInternalPatients();
             await this.seedMedicationStockImages();
             await this.seedSymptomTypes();
             await this.seedSymptomAsseessmentTemplates();
@@ -279,15 +282,17 @@ export class Seeder {
 
     private seedInternalPatients = async () => {
         try {
-            const SeededInternalTestsUsers = this.loadJSONSeedFile('internal.test.users.seed.json');
-            const arr = SeededInternalTestsUsers.Patients;
-            for (let i = 0; i < arr.length; i++) {
-                var phone = arr[i];
-                var exists = await this._personRepo.personExistsWithPhone(phone);
-                if (!exists) {
-                    var added = await this.createTestPatient(phone);
-                    if (added) {
-                        await this._internalTestUserRepo.create(phone);
+            var number = parseInt(process.env.NUMBER_OF_INTERNAL_TEST_USERS);
+            var arr = JSON.parse("[" + [...Array(number)].map((_, i) => 1000000001 + i * 1) + "]");
+            if (arr.length == number) {
+                for (let i = 0; i < arr.length; i++) {
+                    var phone = arr[i];
+                    var exists = await this._personRepo.personExistsWithPhone(phone.toString());
+                    if (!exists) {
+                        var added = await this.createTestPatient(phone.toString());
+                        if (added) {
+                            await this._internalTestUserRepo.create(phone.toString());
+                        }
                     }
                 }
             }
@@ -299,8 +304,7 @@ export class Seeder {
     };
 
     private createTestPatient = async (phone: string): Promise<boolean> => {
-
-        var patientDomainModel: PatientDomainModel = {
+        var createModel: PatientDomainModel = {
             User : {
                 Person : {
                     Phone : phone
@@ -308,68 +312,12 @@ export class Seeder {
             },
             Address : null
         };
+        var [patient, createdNew ] = await this._userHelper.createPatient(createModel);
 
-        //Throw an error if patient with same name and phone number exists
-        const existingPatientCountSharingPhone = await this._patientService.checkforDuplicatePatients(
-            patientDomainModel
-        );
-        
-        const userName = await this._userService.generateUserName(
-            patientDomainModel.User.Person.FirstName,
-            patientDomainModel.User.Person.LastName
-        );
-        
-        const displayId = await this._userService.generateUserDisplayId(
-            Roles.Patient,
-            patientDomainModel.User.Person.Phone,
-            existingPatientCountSharingPhone
-        );
-        
-        const displayName = Helper.constructPersonDisplayName(
-            patientDomainModel.User.Person.Prefix,
-            patientDomainModel.User.Person.FirstName,
-            patientDomainModel.User.Person.LastName
-        );
-        
-        patientDomainModel.User.Person.DisplayName = displayName;
-        patientDomainModel.User.UserName = userName;
-        patientDomainModel.DisplayId = displayId;
-        
-        const userDomainModel = patientDomainModel.User;
-        const personDomainModel = userDomainModel.Person;
-        
-        //Create a person first
-        
-        let person = await this._personService.getPersonWithPhone(patientDomainModel.User.Person.Phone);
-        if (person == null) {
-            person = await this._personService.create(personDomainModel);
-            if (person == null) {
-                return false;
-            }
-        }
-        
-        const role = await this._roleService.getByName(Roles.Patient);
-        patientDomainModel.PersonId = person.id;
-        userDomainModel.Person.id = person.id;
-        userDomainModel.RoleId = role.id;
-        
-        const user = await this._userService.create(userDomainModel);
-        if (user == null) {
-            return false;
-        }
-        patientDomainModel.UserId = user.id;
-        
-        patientDomainModel.DisplayId = displayId;
-        const patient = await this._patientService.create(patientDomainModel);
-        if (patient == null) {
-            return false;
-        }
-        
-        const healthProfile = await this._patientHealthProfileService.createDefault(user.id);
-        patient.HealthProfile = healthProfile;
+        const message = createdNew ? `Created new test patient with phone ${phone}!` : `Test patient with phone ${phone} already exists!`;
+        Logger.instance().log(message);
 
-        return true;
-        
+        return patient != null;
     };
     
     private seedMedicationStockImages = async () => {
@@ -549,9 +497,9 @@ export class Seeder {
 
         Logger.instance().log('Seeding health priority types...');
 
-        for (const priorityTYpe in HealthPriorityTypeList) {
+        for (const priorityType of HealthPriorityTypeList) {
             const model: HealthPriorityTypeDomainModel = {
-                Type : priorityTYpe,
+                Type : priorityType,
                 Tags : ["HeartFailure"]
             };
             await this._healthPriorityService.createType(model);

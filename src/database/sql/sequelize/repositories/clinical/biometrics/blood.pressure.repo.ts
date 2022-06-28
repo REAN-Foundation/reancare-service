@@ -17,6 +17,7 @@ export class BloodPressureRepo implements IBloodPressureRepo {
         try {
             const entity = {
                 PatientUserId    : createModel.PatientUserId,
+                EhrId            : createModel.EhrId,
                 Systolic         : createModel.Systolic,
                 Diastolic        : createModel.Diastolic,
                 Unit             : createModel.Unit,

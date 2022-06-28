@@ -384,8 +384,8 @@ export class FileResourceService {
 
         var metadataList: FileResourceMetadata[] = [];
 
-        var thumbnailHeight = aspectRatio < 1.0 ? 200 : 200 * aspectRatio;
-        var thumbnailWidth = aspectRatio < 1.0 ? aspectRatio * 200 : 200;
+        var thumbnailHeight = aspectRatio < 1.0 ? 200 : Math.floor(200 * aspectRatio);
+        var thumbnailWidth = aspectRatio < 1.0 ?  Math.floor(aspectRatio * 200) : 200;
         var tempFile = strippedFilename + '_thumbnail' + extension;
         var thumbnailFilename = path.join(folder, tempFile);
         await sharp(sourceFilePath)
@@ -405,8 +405,8 @@ export class FileResourceService {
         };
         metadataList.push(thumbnailMetadata);
 
-        var previewHeight = aspectRatio < 1.0 ? 640 : 640 * aspectRatio;
-        var previewWidth = aspectRatio < 1.0 ? aspectRatio * 640 : 640;
+        var previewHeight = aspectRatio < 1.0 ? 640 : Math.floor(640 * aspectRatio);
+        var previewWidth = aspectRatio < 1.0 ? Math.floor(aspectRatio * 640) : 640;
         tempFile = strippedFilename + '_preview' + extension;
         var previewFilename = path.join(folder, tempFile);
         await sharp(sourceFilePath)

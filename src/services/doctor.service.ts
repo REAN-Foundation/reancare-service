@@ -1,3 +1,4 @@
+import { ConfigurationManager } from '../config/configuration.manager';
 import { inject, injectable } from 'tsyringe';
 import { ApiError } from '../common/api.error';
 import { IAddressRepo } from '../database/repository.interfaces/address.repo.interface';
@@ -32,15 +33,19 @@ export class DoctorService {
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
         @inject('IOrganizationRepo') private _organizationRepo: IOrganizationRepo
     ) {
-        this._ehrDoctorStore = Loader.container.resolve(DoctorStore);
+        if (ConfigurationManager.EhrEnabled()) {
+            this._ehrDoctorStore = Loader.container.resolve(DoctorStore);
+        }
     }
 
     //#region Publics
 
     create = async (doctorDomainModel: DoctorDomainModel): Promise<DoctorDetailsDto> => {
         
-        const ehrId = await this._ehrDoctorStore.create(doctorDomainModel);
-        doctorDomainModel.EhrId = ehrId;
+        if (this._ehrDoctorStore) {
+            const ehrId = await this._ehrDoctorStore.create(doctorDomainModel);
+            doctorDomainModel.EhrId = ehrId;
+        }
 
         var dto = await this._doctorRepo.create(doctorDomainModel);
         dto = await this.updateDetailsDto(dto);

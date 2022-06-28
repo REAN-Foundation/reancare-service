@@ -1,0 +1,709 @@
+{
+    "DisplayCode": "AssessmtTmpl#52a4n5yfyytxl2rovk2fd9qa",
+    "Version": "1.0",
+    "Type": "Careplan",
+    "Title": "KCCQ Heart failure assessment template",
+    "Description": "Effect of heart failure on the life of a patient.",
+    "ServeListNodeChildrenAtOnce": true,
+    "Provider": "REAN",
+    "ProviderAssessmentCode": "1",
+    "RootNodeDisplayCode": "RNode#qajxdsu4peahgihbvyhe3832",
+    "Nodes": [
+        {
+            "DisplayCode": "QNode#932eohv0hfxdzmrej0qoxxxf",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "How much does your heart failure affect your hobbies recreational activities?",
+            "Description": "Checks over past 2 weeks",
+            "Sequence": 1,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#932eohv0hfxdzmrej0qoxxxf:Option#1",
+                    "ProviderGivenCode": "severely limited",
+                    "Text": "Severely limited",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#932eohv0hfxdzmrej0qoxxxf:Option#2",
+                    "ProviderGivenCode": "limited quite a bit",
+                    "Text": "Limited quite a bit",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#932eohv0hfxdzmrej0qoxxxf:Option#3",
+                    "ProviderGivenCode": "moderately limited",
+                    "Text": "Moderately limited",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#932eohv0hfxdzmrej0qoxxxf:Option#4",
+                    "ProviderGivenCode": "slightly limited",
+                    "Text": "Slightly limited",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#932eohv0hfxdzmrej0qoxxxf:Option#5",
+                    "ProviderGivenCode": "did not limit at all",
+                    "Text": "Did not limit at all",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                },
+                {
+                    "DisplayCode": "QNode#932eohv0hfxdzmrej0qoxxxf:Option#6",
+                    "ProviderGivenCode": "does not apply or did not do for other reasons",
+                    "Text": "Does not apply or did not do for other reasons",
+                    "ImageUrl": null,
+                    "Sequence": 6
+                }
+            ]
+        },
+        {
+            "DisplayCode": "QNode#ld50of02mnof2q4mxsdkafqc",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "Over the past 2 weeks, on average, how many times have you been forced to sleep sitting up in a chair or with at least 3 pillows to prop you up because of shortness of breath?",
+            "Description": "Checks over past 2 weeks",
+            "Sequence": 5,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#ld50of02mnof2q4mxsdkafqc:Option#1",
+                    "ProviderGivenCode": "every night",
+                    "Text": "Every night",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#ld50of02mnof2q4mxsdkafqc:Option#2",
+                    "ProviderGivenCode": "3 or more times per week but not every day",
+                    "Text": "3 or more times per week but not every day",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#ld50of02mnof2q4mxsdkafqc:Option#3",
+                    "ProviderGivenCode": "1-2 times per week",
+                    "Text": "1-2 times per week",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#ld50of02mnof2q4mxsdkafqc:Option#4",
+                    "ProviderGivenCode": "less than once a week",
+                    "Text": "Less than once a week",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#ld50of02mnof2q4mxsdkafqc:Option#5",
+                    "ProviderGivenCode": "never over the past 2 weeks",
+                    "Text": "Never over the past 2 weeks",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                }
+            ]
+        },
+        {
+            "DisplayCode": "QNode#5e090xzf58rbbrvkhgr9cosx",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "How frequently do you take showering or bathing?",
+            "Description": "Unscheduled daily checks",
+            "Sequence": 1,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#5e090xzf58rbbrvkhgr9cosx:Option#1",
+                    "ProviderGivenCode": "extremely limited",
+                    "Text": "Extremely limited",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#5e090xzf58rbbrvkhgr9cosx:Option#2",
+                    "ProviderGivenCode": "quite a bit limited",
+                    "Text": "Quite a bit limited",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#5e090xzf58rbbrvkhgr9cosx:Option#3",
+                    "ProviderGivenCode": "moderately limited",
+                    "Text": "Moderately limited",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#5e090xzf58rbbrvkhgr9cosx:Option#4",
+                    "ProviderGivenCode": "slightly limited",
+                    "Text": "Slightly limited",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#5e090xzf58rbbrvkhgr9cosx:Option#5",
+                    "ProviderGivenCode": "not at all limited",
+                    "Text": "Not at all limited",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                },
+                {
+                    "DisplayCode": "QNode#5e090xzf58rbbrvkhgr9cosx:Option#6",
+                    "ProviderGivenCode": "Limited for other reasons or did not do the activity",
+                    "Text": "Limited for other reasons or did not do the activity",
+                    "ImageUrl": null,
+                    "Sequence": 6
+                }
+            ]
+        },
+        {
+            "DisplayCode": "QNode#4cv4haex0etlybx26wpmtw3g",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "How frequently do you walk 1 block on level ground?",
+            "Description": "Unscheduled daily checks",
+            "Sequence": 2,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#4cv4haex0etlybx26wpmtw3g:Option#1",
+                    "ProviderGivenCode": "extremely limited",
+                    "Text": "Extremely limited",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#4cv4haex0etlybx26wpmtw3g:Option#2",
+                    "ProviderGivenCode": "quite a bit limited",
+                    "Text": "Quite a bit limited",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#4cv4haex0etlybx26wpmtw3g:Option#3",
+                    "ProviderGivenCode": "moderately limited",
+                    "Text": "Moderately limited",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#4cv4haex0etlybx26wpmtw3g:Option#4",
+                    "ProviderGivenCode": "slightly limited",
+                    "Text": "Slightly limited",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#4cv4haex0etlybx26wpmtw3g:Option#5",
+                    "ProviderGivenCode": "not at all limited",
+                    "Text": "Not at all limited",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                },
+                {
+                    "DisplayCode": "QNode#4cv4haex0etlybx26wpmtw3g:Option#6",
+                    "ProviderGivenCode": "Limited for other reasons or did not do the activity",
+                    "Text": "Limited for other reasons or did not do the activity",
+                    "ImageUrl": null,
+                    "Sequence": 6
+                }
+            ]
+        },
+        {
+            "DisplayCode": "QNode#c8ckgsegf354js7bhrth1z3p",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "Over the past 2 weeks, on average, how many times has shortness of breath limited your ability to do what you wanted?",
+            "Description": "Checks over past 2 weeks",
+            "Sequence": 4,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#c8ckgsegf354js7bhrth1z3p:Option#1",
+                    "ProviderGivenCode": "all of the time",
+                    "Text": "All of the time",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#c8ckgsegf354js7bhrth1z3p:Option#2",
+                    "ProviderGivenCode": "several times per day",
+                    "Text": "Several times per day",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#c8ckgsegf354js7bhrth1z3p:Option#3",
+                    "ProviderGivenCode": "atleast once a day",
+                    "Text": "Atleast once a day",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#c8ckgsegf354js7bhrth1z3p:Option#4",
+                    "ProviderGivenCode": "3 or more times per week but not every day",
+                    "Text": "3 or more times per week but not every day",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#c8ckgsegf354js7bhrth1z3p:Option#5",
+                    "ProviderGivenCode": "1-2 times per week",
+                    "Text": "1-2 times per week",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                },
+                {
+                    "DisplayCode": "QNode#c8ckgsegf354js7bhrth1z3p:Option#6",
+                    "ProviderGivenCode": "less than once a week",
+                    "Text": "Less than once a week",
+                    "ImageUrl": null,
+                    "Sequence": 6
+                },
+                {
+                    "DisplayCode": "QNode#c8ckgsegf354js7bhrth1z3p:Option#7",
+                    "ProviderGivenCode": "never over the past 2 weeks",
+                    "Text": "Never over the past 2 weeks",
+                    "ImageUrl": null,
+                    "Sequence": 7
+                }
+            ]
+        },
+        {
+            "DisplayCode": "RNode#qajxdsu4peahgihbvyhe3832",
+            "NodeType": "Node list",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "Assessment root node",
+            "Description": null,
+            "Sequence": 0,
+            "Score": 0,
+            "ChildrenNodeDisplayCodes": [
+                "LNode#d38whn3rerwvbvw27ko62ydr",
+                "QNode#ps6jfnz2hzmkeho3g4cqwlir",
+                "QNode#leud7vj9l6hlv43ihqe07o2p",
+                "QNode#c8ckgsegf354js7bhrth1z3p",
+                "QNode#ld50of02mnof2q4mxsdkafqc",
+                "QNode#gknrxattsb78lpjv7ek2smzb",
+                "QNode#6hyxsapbrvipn6az4giz1qbp",
+                "LNode#6xbu84vovm9nkbq85jen3ril"
+            ]
+        },
+        {
+            "DisplayCode": "QNode#ps6jfnz2hzmkeho3g4cqwlir",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "Over the past 2 weeks, how many times did you have swelling in your feet, ankles or legs when you woke up in the morning?",
+            "Description": "Checks over past 2 weeks",
+            "Sequence": 2,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#ps6jfnz2hzmkeho3g4cqwlir:Option#1",
+                    "ProviderGivenCode": "every morning",
+                    "Text": "Every morning",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#ps6jfnz2hzmkeho3g4cqwlir:Option#2",
+                    "ProviderGivenCode": "3 or more times per week but not every day",
+                    "Text": "3 or more times per week but not every day",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#ps6jfnz2hzmkeho3g4cqwlir:Option#3",
+                    "ProviderGivenCode": "1-2 times per week",
+                    "Text": "1-2 times per week",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#ps6jfnz2hzmkeho3g4cqwlir:Option#4",
+                    "ProviderGivenCode": "less than once a week",
+                    "Text": "less than once a week",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#ps6jfnz2hzmkeho3g4cqwlir:Option#5",
+                    "ProviderGivenCode": "never over the past 2 weeks",
+                    "Text": "Never over the past 2 weeks",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                }
+            ]
+        },
+        {
+            "DisplayCode": "QNode#q8e7tjx0rhw6jucnax35647o",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "How much does your heart failure affect your working or doing household chores?",
+            "Description": "Checks over past 2 weeks",
+            "Sequence": 2,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#q8e7tjx0rhw6jucnax35647o:Option#1",
+                    "ProviderGivenCode": "severely limited",
+                    "Text": "Severely limited",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#q8e7tjx0rhw6jucnax35647o:Option#2",
+                    "ProviderGivenCode": "limited quite a bit",
+                    "Text": "Limited quite a bit",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#q8e7tjx0rhw6jucnax35647o:Option#3",
+                    "ProviderGivenCode": "moderately limited",
+                    "Text": "Moderately limited",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#q8e7tjx0rhw6jucnax35647o:Option#4",
+                    "ProviderGivenCode": "slightly limited",
+                    "Text": "Slightly limited",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#q8e7tjx0rhw6jucnax35647o:Option#5",
+                    "ProviderGivenCode": "did not limit at all",
+                    "Text": "Did not limit at all",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                },
+                {
+                    "DisplayCode": "QNode#q8e7tjx0rhw6jucnax35647o:Option#6",
+                    "ProviderGivenCode": "does not apply or did not do for other reasons",
+                    "Text": "Does not apply or did not do for other reasons",
+                    "ImageUrl": null,
+                    "Sequence": 6
+                }
+            ]
+        },
+        {
+            "DisplayCode": "LNode#6xbu84vovm9nkbq85jen3ril",
+            "NodeType": "Node list",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "How much does your heart failure affect your lifestyle? Please indicate how your heart failure may have limited your participation in the following activities over the past 2 weeks.",
+            "Description": null,
+            "Sequence": 8,
+            "Score": 0,
+            "ChildrenNodeDisplayCodes": [
+                "QNode#932eohv0hfxdzmrej0qoxxxf",
+                "QNode#q8e7tjx0rhw6jucnax35647o",
+                "QNode#0ds9ly7cty4qgfg1k81slmf8"
+            ]
+        },
+        {
+            "DisplayCode": "QNode#gknrxattsb78lpjv7ek2smzb",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "Over the past 2 weeks, how much has your heart failure limited your enjoyment of life?",
+            "Description": "Checks over past 2 weeks",
+            "Sequence": 6,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#gknrxattsb78lpjv7ek2smzb:Option#1",
+                    "ProviderGivenCode": "it has extremely limited my enjoyment of life",
+                    "Text": "It has extremely limited my enjoyment of life",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#gknrxattsb78lpjv7ek2smzb:Option#2",
+                    "ProviderGivenCode": "it has limited my enjoyment of life quite a bit",
+                    "Text": "it has limited my enjoyment of life quite a bit",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#gknrxattsb78lpjv7ek2smzb:Option#3",
+                    "ProviderGivenCode": "it has moderately limited my enjoyment of life",
+                    "Text": "It has moderately limited my enjoyment of life",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#gknrxattsb78lpjv7ek2smzb:Option#4",
+                    "ProviderGivenCode": "It has slightly limited my enjoyment of life",
+                    "Text": "It has slightly limited my enjoyment of life",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#gknrxattsb78lpjv7ek2smzb:Option#5",
+                    "ProviderGivenCode": "it has not limited my enjoyment of life at all",
+                    "Text": "It has not limited my enjoyment of life at all",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                }
+            ]
+        },
+        {
+            "DisplayCode": "QNode#0ds9ly7cty4qgfg1k81slmf8",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "How much does your heart failure affect your visiting family or friends out of your home?",
+            "Description": "Checks over past 2 weeks",
+            "Sequence": 3,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#0ds9ly7cty4qgfg1k81slmf8:Option#1",
+                    "ProviderGivenCode": "severely limited",
+                    "Text": "Severely limited",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#0ds9ly7cty4qgfg1k81slmf8:Option#2",
+                    "ProviderGivenCode": "limited quite a bit",
+                    "Text": "Limited quite a bit",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#0ds9ly7cty4qgfg1k81slmf8:Option#3",
+                    "ProviderGivenCode": "moderately limited",
+                    "Text": "Moderately limited",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#0ds9ly7cty4qgfg1k81slmf8:Option#4",
+                    "ProviderGivenCode": "slightly limited",
+                    "Text": "Slightly limited",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#0ds9ly7cty4qgfg1k81slmf8:Option#5",
+                    "ProviderGivenCode": "did not limit at all",
+                    "Text": "Did not limit at all",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                },
+                {
+                    "DisplayCode": "QNode#0ds9ly7cty4qgfg1k81slmf8:Option#6",
+                    "ProviderGivenCode": "does not apply or did not do for other reasons",
+                    "Text": "Does not apply or did not do for other reasons",
+                    "ImageUrl": null,
+                    "Sequence": 6
+                }
+            ]
+        },
+        {
+            "DisplayCode": "QNode#8vj8uo4pbw6qylv4v66wtk6t",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "How frequently do you Hurrying or jogging (as if to catch a bus)?",
+            "Description": "Unscheduled daily checks",
+            "Sequence": 3,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#8vj8uo4pbw6qylv4v66wtk6t:Option#1",
+                    "ProviderGivenCode": "extremely limited",
+                    "Text": "Extremely limited",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#8vj8uo4pbw6qylv4v66wtk6t:Option#2",
+                    "ProviderGivenCode": "quite a bit limited",
+                    "Text": "Quite a bit limited",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#8vj8uo4pbw6qylv4v66wtk6t:Option#3",
+                    "ProviderGivenCode": "moderately limited",
+                    "Text": "Moderately limited",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#8vj8uo4pbw6qylv4v66wtk6t:Option#4",
+                    "ProviderGivenCode": "slightly limited",
+                    "Text": "Slightly limited",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#8vj8uo4pbw6qylv4v66wtk6t:Option#5",
+                    "ProviderGivenCode": "not at all limited",
+                    "Text": "Not at all limited",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                },
+                {
+                    "DisplayCode": "QNode#8vj8uo4pbw6qylv4v66wtk6t:Option#6",
+                    "ProviderGivenCode": "Limited for other reasons or did not do the activity",
+                    "Text": "Limited for other reasons or did not do the activity",
+                    "ImageUrl": null,
+                    "Sequence": 6
+                }
+            ]
+        },
+        {
+            "DisplayCode": "QNode#6hyxsapbrvipn6az4giz1qbp",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "If you had to spend the rest of your life with your heart failure the way it is right now, how would you feel about this?",
+            "Description": "Some random checks",
+            "Sequence": 7,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#6hyxsapbrvipn6az4giz1qbp:Option#1",
+                    "ProviderGivenCode": "not at all satisfied",
+                    "Text": "Not at all satisfied",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#6hyxsapbrvipn6az4giz1qbp:Option#2",
+                    "ProviderGivenCode": "mostly dissatisfied",
+                    "Text": "Mostly dissatisfied",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#6hyxsapbrvipn6az4giz1qbp:Option#3",
+                    "ProviderGivenCode": "somewhat satisfied",
+                    "Text": "Somewhat satisfied",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#6hyxsapbrvipn6az4giz1qbp:Option#4",
+                    "ProviderGivenCode": "mostly satisfied",
+                    "Text": "Mostly satisfied",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#6hyxsapbrvipn6az4giz1qbp:Option#5",
+                    "ProviderGivenCode": "completely satisfied",
+                    "Text": "Completely satisfied",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                }
+            ]
+        },
+        {
+            "DisplayCode": "LNode#d38whn3rerwvbvw27ko62ydr",
+            "NodeType": "Node list",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "Effects of heart failure on daily activities",
+            "Description": null,
+            "Sequence": 1,
+            "Score": 0,
+            "ChildrenNodeDisplayCodes": [
+                "QNode#5e090xzf58rbbrvkhgr9cosx",
+                "QNode#4cv4haex0etlybx26wpmtw3g",
+                "QNode#8vj8uo4pbw6qylv4v66wtk6t"
+            ]
+        },
+        {
+            "DisplayCode": "QNode#leud7vj9l6hlv43ihqe07o2p",
+            "NodeType": "Question",
+            "ProviderGivenId": null,
+            "ProviderGivenCode": null,
+            "Title": "Over the past 2 weeks, on average, how many times has fatigue limited your ability to do what you wanted?",
+            "Description": "Checks over past 2 weeks",
+            "Sequence": 3,
+            "Score": 0,
+            "QueryResponseType": "Single Choice Selection",
+            "Options": [
+                {
+                    "DisplayCode": "QNode#leud7vj9l6hlv43ihqe07o2p:Option#1",
+                    "ProviderGivenCode": "all of the time",
+                    "Text": "All of the time",
+                    "ImageUrl": null,
+                    "Sequence": 1
+                },
+                {
+                    "DisplayCode": "QNode#leud7vj9l6hlv43ihqe07o2p:Option#2",
+                    "ProviderGivenCode": "several times per day",
+                    "Text": "Several times per day",
+                    "ImageUrl": null,
+                    "Sequence": 2
+                },
+                {
+                    "DisplayCode": "QNode#leud7vj9l6hlv43ihqe07o2p:Option#3",
+                    "ProviderGivenCode": "atleast once a day",
+                    "Text": "Atleast once a day",
+                    "ImageUrl": null,
+                    "Sequence": 3
+                },
+                {
+                    "DisplayCode": "QNode#leud7vj9l6hlv43ihqe07o2p:Option#4",
+                    "ProviderGivenCode": "3 or more times per week but not every day",
+                    "Text": "3 or more times per week but not every day",
+                    "ImageUrl": null,
+                    "Sequence": 4
+                },
+                {
+                    "DisplayCode": "QNode#leud7vj9l6hlv43ihqe07o2p:Option#5",
+                    "ProviderGivenCode": "1-2 times per week",
+                    "Text": "1-2 times per week",
+                    "ImageUrl": null,
+                    "Sequence": 5
+                },
+                {
+                    "DisplayCode": "QNode#leud7vj9l6hlv43ihqe07o2p:Option#6",
+                    "ProviderGivenCode": "less than once a week",
+                    "Text": "Less than once a week",
+                    "ImageUrl": null,
+                    "Sequence": 6
+                },
+                {
+                    "DisplayCode": "QNode#leud7vj9l6hlv43ihqe07o2p:Option#7",
+                    "ProviderGivenCode": "never over the past 2 weeks",
+                    "Text": "Never over the past 2 weeks",
+                    "ImageUrl": null,
+                    "Sequence": 7
+                }
+            ]
+        }
+    ]
+}

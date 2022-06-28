@@ -281,18 +281,24 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    getSchedulesForDuration = async (from: Date, to: Date)
+    getSchedulesForDuration = async (from: Date, to: Date, filterTaken: boolean)
     : Promise<MedicationConsumptionDto[]> => {
         try {
+
+            var filter =  {
+                TimeScheduleStart : {
+                    [Op.lte] : to,
+                    [Op.gte] : from
+                },
+                IsCancelled : false
+            };
+
+            if (filterTaken) {
+                filter['IsTaken'] = false;
+            }
    
             const entities = await MedicationConsumption.findAll({
-                where : {
-                    TimeScheduleStart : {
-                        [Op.lte] : to,
-                        [Op.gte] : from
-                    },
-                    IsCancelled : false
-                }
+                where : filter
             });
             
             return entities.map(x => MedicationConsumptionMapper.toDto(x));
@@ -375,6 +381,26 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             throw new ApiError(500, error.message);
         }
 
+    };
+
+    assignEhrId = async(id: string, ehrId: string): Promise<MedicationConsumptionDetailsDto> => {
+        try {
+            const consumption = await MedicationConsumption.findByPk(id);
+
+            if (consumption === null) {
+                return null;
+            }
+            consumption.EhrId = ehrId;
+            
+            await consumption.save();
+
+            var dto = MedicationConsumptionMapper.toDetailsDto(consumption);
+            return dto;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
 }

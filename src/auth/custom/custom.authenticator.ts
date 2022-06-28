@@ -75,6 +75,7 @@ export class CustomAuthenticator implements IAuthenticator {
                 HttpErrorCode : 200,
             };
             let apiKey: string = request.headers['x-api-key'] as string;
+
             if (!apiKey) {
                 res = {
                     Result        : false,

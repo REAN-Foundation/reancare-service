@@ -12,15 +12,16 @@ export class AssessmentTemplateMapper {
         }
 
         const dto: AssessmentTemplateDto = {
-            id                     : template.id,
-            DisplayCode            : template.DisplayCode,
-            Title                  : template.Title,
-            Type                   : template.Type as AssessmentType,
-            Description            : template.Description,
-            Provider               : template.Provider,
-            ProviderAssessmentCode : template.ProviderAssessmentCode,
-            RootNodeId             : template.RootNodeId,
-            FileResourceId         : template.FileResourceId,
+            id                          : template.id,
+            DisplayCode                 : template.DisplayCode,
+            Title                       : template.Title,
+            Type                        : template.Type as AssessmentType,
+            Description                 : template.Description,
+            Provider                    : template.Provider,
+            ProviderAssessmentCode      : template.ProviderAssessmentCode,
+            RootNodeId                  : template.RootNodeId,
+            FileResourceId              : template.FileResourceId,
+            ServeListNodeChildrenAtOnce : template.ServeListNodeChildrenAtOnce
         };
         return dto;
     };

@@ -17,7 +17,13 @@ import {
     CAssessmentPathCondition,
     CAssessmentQueryOption,
     CAssessmentQueryResponse,
-    CAssessmentQuestionNode, SingleChoiceQueryAnswer, TextQueryAnswer
+    CAssessmentQuestionNode,
+    SingleChoiceQueryAnswer,
+    TextQueryAnswer,
+    DateQueryAnswer,
+    FileQueryAnswer,
+    BooleanQueryAnswer,
+    ConditionOperand
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import AssessmentNode from '../../../models/clinical/assessment/assessment.node.model';
@@ -35,6 +41,7 @@ export class AssessmentHelperMapper {
             return null;
         }
         var conditionDto = new CAssessmentPathCondition();
+
         conditionDto.id = condition.id;
         conditionDto.NodeId = condition.NodeId;
         conditionDto.DisplayCode = condition.DisplayCode;
@@ -45,17 +52,21 @@ export class AssessmentHelperMapper {
 
         conditionDto.IsCompositeCondition = condition.IsCompositeCondition;
         conditionDto.CompositionType = condition.CompositionType as ConditionCompositionType;
-        conditionDto.FirstOperand.DataType = condition.FirstOperandDataType as ConditionOperandDataType;
-        conditionDto.FirstOperand.Name = condition.FirstOperandName;
-        conditionDto.FirstOperand.Value = condition.FirstOperandValue;
 
-        conditionDto.SecondOperand.DataType = condition.SecondOperandDataType as ConditionOperandDataType;
-        conditionDto.SecondOperand.Name = condition.SecondOperandName;
-        conditionDto.SecondOperand.Value = condition.SecondOperandValue;
+        conditionDto.FirstOperand = new ConditionOperand(
+            condition.FirstOperandDataType as ConditionOperandDataType,
+            condition.FirstOperandName,
+            condition.FirstOperandValue);
 
-        conditionDto.ThirdOperand.DataType = condition.ThirdOperandDataType as ConditionOperandDataType;
-        conditionDto.ThirdOperand.Name = condition.ThirdOperandName;
-        conditionDto.ThirdOperand.Value = condition.ThirdOperandValue;
+        conditionDto.SecondOperand = new ConditionOperand(
+            condition.SecondOperandDataType as ConditionOperandDataType,
+            condition.SecondOperandName,
+            condition.SecondOperandValue);
+
+        conditionDto.ThirdOperand = new ConditionOperand(
+            condition.ThirdOperandDataType as ConditionOperandDataType,
+            condition.ThirdOperandName,
+            condition.ThirdOperandValue);
 
         return conditionDto;
     }
@@ -101,6 +112,7 @@ export class AssessmentHelperMapper {
         dto.Description = node.Description;
         dto.Sequence = node.Sequence;
         dto.Score = node.Score;
+        dto.ServeListNodeChildrenAtOnce = node.ServeListNodeChildrenAtOnce;
     }
 
     static toNodeDto = (
@@ -170,6 +182,9 @@ export class AssessmentHelperMapper {
             responseDto.BooleanValue = response.BooleanValue;
         } else if (responseType === QueryResponseType.SingleChoiceSelection) {
             responseDto.IntegerValue = response.IntegerValue;
+        } else if (responseType === QueryResponseType.Date ||
+            responseType === QueryResponseType.DateTime) {
+            responseDto.DateValue = response.DateValue;
         } else if (
             responseType === QueryResponseType.MultiChoiceSelection ||
             responseType === QueryResponseType.FloatArray ||
@@ -179,7 +194,9 @@ export class AssessmentHelperMapper {
         ) {
             responseDto.ArrayValue = JSON.parse(response.TextValue);
         } else if (responseType === QueryResponseType.File) {
-            responseDto.TextValue = response.TextValue; //This is file resource uuid
+            responseDto.TextValue = response.TextValue;
+            responseDto.Url = response.Url;
+            responseDto.ResourceId = response.ResourceId; //This is file resource uuid
         } else if (responseType === QueryResponseType.Object || responseType === QueryResponseType.Biometrics) {
             responseDto.ObjectValue = JSON.parse(response.TextValue);
         }
@@ -275,6 +292,23 @@ export class AssessmentHelperMapper {
         return dto;
     }
 
+    static toDateAnswerDto(
+        assessmentId: uuid,
+        node: CAssessmentQuestionNode,
+        date: Date,
+    ): DateQueryAnswer {
+        var dto: DateQueryAnswer = {
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : QueryResponseType.Date,
+            Date             : date,
+        };
+        return dto;
+    }
+
     static toIntegerAnswerDto(
         assessmentId: uuid,
         node: CAssessmentQuestionNode,
@@ -287,7 +321,26 @@ export class AssessmentHelperMapper {
             QuestionSequence : node.Sequence,
             NodeDisplayCode  : node.DisplayCode,
             Title            : node.Title,
-            ResponseType     : QueryResponseType.Text,
+            ResponseType     : QueryResponseType.Integer,
+            Field            : field,
+            Value            : value
+        };
+        return dto;
+    }
+
+    static toBooleanAnswerDto(
+        assessmentId: uuid,
+        node: CAssessmentQuestionNode,
+        field: string,
+        value: boolean
+    ): BooleanQueryAnswer {
+        var dto: BooleanQueryAnswer = {
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : QueryResponseType.Boolean,
             Field            : field,
             Value            : value
         };
@@ -306,9 +359,31 @@ export class AssessmentHelperMapper {
             QuestionSequence : node.Sequence,
             NodeDisplayCode  : node.DisplayCode,
             Title            : node.Title,
-            ResponseType     : QueryResponseType.Text,
+            ResponseType     : QueryResponseType.Float,
             Field            : field,
             Value            : value
+        };
+        return dto;
+    }
+
+    static toFileAnswerDto(
+        assessmentId: uuid,
+        node: CAssessmentQuestionNode,
+        fileName: string,
+        url: string,
+        resourceId: uuid
+    ): FileQueryAnswer {
+        var dto: FileQueryAnswer = {
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : QueryResponseType.File,
+            Field            : fileName,
+            Filepath         : url,
+            Url              : url,
+            ResourceId       : resourceId
         };
         return dto;
     }

@@ -1,33 +1,67 @@
 import express from 'express';
 import { Logger } from '../../../common/logger';
 import { ApiError } from '../../../common/api.error';
-import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
-import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../domain.types/user/user/user.domain.model';
 import { HealthProfileService } from '../../../services/patient/health.profile.service';
 import { PatientService } from '../../../services/patient/patient.service';
 import { Loader } from '../../../startup/loader';
 import { PatientValidator } from '../../validators/patient/patient.validator';
 import { BaseUserController } from '../base.user.controller';
+import { UserHelper } from '../../helpers/user.helper';
+import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
+import { PersonService } from '../../../services/person.service';
+import { UserService } from '../../../services/user/user.service';
+import { PatientDetailsDto } from '../../../domain.types/patient/patient/patient.dto';
+import { ConfigurationManager } from '../../../config/configuration.manager';
+import { CustomTaskHelper } from '../../helpers/custom.task.helper';
+import { CustomTaskDomainModel } from '../../../domain.types/user/custom.task/custom.task.domain.model';
+import { UserActionType, UserTaskCategory } from '../../../domain.types/user/user.task/user.task.types';
+import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
+import { AssessmentDomainModel } from '../../../domain.types/clinical/assessment/assessment.domain.model';
+import { UserTaskDomainModel } from '../../../domain.types/user/user.task/user.task.domain.model';
+import { AssessmentService } from '../../../services/clinical/assessment/assessment.service';
+import { UserTaskService } from '../../../services/user/user.task.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-export class PatientController extends BaseUserController{
+export class PatientController extends BaseUserController {
 
     //#region member variables and constructors
 
     _service: PatientService = null;
 
+    _userService: UserService = null;
+
     _patientHealthProfileService: HealthProfileService = null;
+
+    _personService: PersonService = null;
+
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
+
+    _assessmentTemplateService: AssessmentTemplateService = null;
+
+    _assessmentService: AssessmentService = null;
+
+    _userTaskService: UserTaskService = null;
+
+    _userHelper: UserHelper = new UserHelper();
+    
+    _customTaskHelper: CustomTaskHelper = new CustomTaskHelper();
 
     _validator = new PatientValidator();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(PatientService);
+        this._userService = Loader.container.resolve(UserService);
+        this._personService = Loader.container.resolve(PersonService);
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+        this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
+        this._assessmentService = Loader.container.resolve(AssessmentService);
+        this._userTaskService = Loader.container.resolve(UserTaskService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
     }
 
@@ -40,93 +74,20 @@ export class PatientController extends BaseUserController{
             await this.setContext('Patient.Create', request, response, false);
 
             const createModel = await this._validator.create(request);
+            const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
 
-            //Throw an error if patient with same name and phone number exists
-            const existingPatientCountSharingPhone = await this._service.checkforDuplicatePatients(
-                createModel
-            );
+            //await this.performCustomActions(patient);
 
-            //NOTE: Currently we are not allowing multiple patients to share same phone number,
-            // but in future, we will be. For example, family members sharing the same phone number.
-            // But for now, throw the error!
+            //const actionIdKCCQ = await this.createInitialAssessmentTask(patient.UserId, 'KCCQ');
+            //Logger.instance().log(`Action id for KCCQ is ${actionIdKCCQ}`);
 
-            if (existingPatientCountSharingPhone > 0) {
-                const msg = `Patient already exists with this phone number. Please verify with OTP to gain access to the patient account.`;
-                throw new ApiError(409, msg);
+            if (createdNew) {
+                ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
+                    Patient : patient,
+                });
+                return;
             }
-            
-            const userName = await this._userService.generateUserName(
-                createModel.User.Person.FirstName,
-                createModel.User.Person.LastName
-            );
-
-            const displayId = await this._userService.generateUserDisplayId(
-                Roles.Patient,
-                createModel.User.Person.Phone,
-                existingPatientCountSharingPhone
-            );
-
-            const displayName = Helper.constructPersonDisplayName(
-                createModel.User.Person.Prefix,
-                createModel.User.Person.FirstName,
-                createModel.User.Person.LastName
-            );
-
-            createModel.User.Person.DisplayName = displayName;
-            createModel.User.UserName = userName;
-            createModel.DisplayId = displayId;
-
-            const userDomainModel = createModel.User;
-            const personDomainModel = userDomainModel.Person;
-
-            //Create a person first
-
-            let person = await this._personService.getPersonWithPhone(createModel.User.Person.Phone);
-            if (person == null) {
-                person = await this._personService.create(personDomainModel);
-                if (person == null) {
-                    throw new ApiError(400, 'Cannot create person!');
-                }
-            }
-
-            const role = await this._roleService.getByName(Roles.Patient);
-            createModel.PersonId = person.id;
-            userDomainModel.Person.id = person.id;
-            userDomainModel.RoleId = role.id;
-
-            const user = await this._userService.create(userDomainModel);
-            if (user == null) {
-                throw new ApiError(400, 'Cannot create user!');
-            }
-            createModel.UserId = user.id;
-
-            //KK: Note - Please add user to appointment service here...
-            // var appointmentCustomerModel = PatientMapper.ToAppointmentCustomerDomainModel(userDomainModel);
-            // var customer = await this._appointmentService.createCustomer(appointmentCustomerModel);
-
-            createModel.DisplayId = displayId;
-            const patient = await this._service.create(createModel);
-            if (patient == null) {
-                throw new ApiError(400, 'Cannot create patient!');
-            }
-
-            const healthProfile = await this._patientHealthProfileService.createDefault(user.id);
-            patient.HealthProfile = healthProfile;
-
-            if (person.Phone !== null) {
-                var otpDetails = {
-                    Phone   : person.Phone,
-                    Email   : null,
-                    UserId  : null,
-                    Purpose : 'Login',
-                    RoleId  : role.id
-                };
-                await this._userService.generateOtp(otpDetails);
-            }
-
-            ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
-                Patient : patient,
-            });
+            ResponseHandler.failure(request, response, `Patient account already exists!`, 409);
         } catch (error) {
 
             //KK: Todo: Add rollback in case of mid-way exception
@@ -222,21 +183,47 @@ export class PatientController extends BaseUserController{
         }
     };
 
-    delete = async (request: express.Request, response: express.Response): Promise<void> => {
+    deleteByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Patient.DeleteByUserId', request, response);
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const currentUserId = request.currentUser.UserId;
+            const patientUserId = userId;
+            const patient = await this._service.getByUserId(userId);
+            if (!patient) {
+                throw new ApiError(404, 'Patient account does not exist!');
+            }
+            const personId = patient.User.PersonId;
+            if (currentUserId !== patientUserId) {
+                throw new ApiError(403, 'You do not have permissions to delete this patient account.');
+            }
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
-
-            const deleted = await this._personService.delete(userId);
+            var deleted = await this._userDeviceDetailsService.deleteByUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-
+            deleted = await this._patientHealthProfileService.deleteByPatientUserId(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
+            deleted = await this._userService.delete(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
+            deleted = await this._service.deleteByUserId(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
+            //TODO: Please add check here whether the patient-person
+            //has other roles in the system
+            deleted = await this._personService.delete(personId);
+            if (!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
                 Deleted : true,
             });
@@ -245,6 +232,73 @@ export class PatientController extends BaseUserController{
         }
     };
 
+    ///////////////////////////////////////////////////////////////
+    //TODO: Move this method to separate customization module later
+    ///////////////////////////////////////////////////////////////
+
+    performCustomActions = async (patient: PatientDetailsDto) => {
+
+        const systemIdentifier = ConfigurationManager.SystemIdentifier();
+
+        const shouldAddSurveyTask = systemIdentifier.includes('AHA') ||
+            process.env.NODE_ENV === 'development' ||
+            process.env.NODE_ENV === 'uat';
+
+        if (shouldAddSurveyTask) {
+
+            //Add AHA specific tasks, events and handlers here...
+            const userId = patient.User.id;
+
+            //Adding survey task for AHA patients
+            const domainModel: CustomTaskDomainModel = {
+                UserId      : userId,
+                Task        : "Survey",
+                Description : "Take a survey to help us understand you better!",
+                Category    : UserTaskCategory.Custom,
+                Details     : {
+                    Link : "https://americanheart.co1.qualtrics.com/jfe/form/SV_b1anZr9DUmEOsce",
+                },
+                ScheduledStartTime : new Date(),
+            };
+
+            const task = await this._customTaskHelper.createCustomTask(domainModel);
+            if (task == null) {
+                Logger.instance().log('Unable to create AHA survey task!');
+            }
+        }
+    }
+
+    private createInitialAssessmentTask = async (
+        patientUserId: string,
+        templateName: string): Promise<any> => {
+
+        const template = await this._assessmentTemplateService.search({ Title: templateName });
+        const templateId: string = template.Items[0].id;
+        const assessmentBody : AssessmentDomainModel = {
+            PatientUserId        : patientUserId,
+            Title                : template.Items[0].Title,
+            Type                 : template.Items[0].Type,
+            AssessmentTemplateId : templateId,
+            ScheduledDateString  : new Date().toISOString().split('T')[0]
+        };
+
+        const assessment = await this._assessmentService.create(assessmentBody);
+        const assessmentId = assessment.id;
+
+        const userTaskBody : UserTaskDomainModel = {
+            UserId             : patientUserId,
+            Task               : templateName,
+            Category           : UserTaskCategory.Assessment,
+            ActionType         : UserActionType.Careplan,
+            ActionId           : assessmentId,
+            ScheduledStartTime : new Date(),
+            IsRecurrent        : false
+        };
+
+        const userTask = await this._userTaskService.create(userTaskBody);
+
+        return userTask.ActionId;
+    }
     //#endregion
 
 }

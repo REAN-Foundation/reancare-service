@@ -9,23 +9,42 @@ import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { ParticipantDomainModel } from "../../../../domain.types/clinical/careplan/participant/participant.domain.model";
 import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
-import { UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
+import { UserActionType, UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
 import {
     QueryResponseType,
     CAssessmentQueryResponse,
     CAssessmentTemplate,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AhaAssessmentConverter } from "./aha.assessment.converter";
-import { ActionPlanDto } from "../../../../domain.types/goal.action.plan/goal.action.plan.dto";
-import { HealthPriorityType } from "../../../../domain.types/health.priority.type/health.priority.types";
+import { ActionPlanDto } from "../../../../domain.types/action.plan/action.plan.dto";
+import { HealthPriorityType } from "../../../../domain.types/patient/health.priority.type/health.priority.types";
 import { GoalDto } from "../../../../domain.types/patient/goal/goal.dto";
 import { AssessmentDto } from "../../../../domain.types/clinical/assessment/assessment.dto";
 import { BiometricsType } from "../../../../domain.types/clinical/biometrics/biometrics.types";
+import { HealthPriorityDto } from "../../../../domain.types/patient/health.priority/health.priority.dto";
+import { AssessmentService } from "../../../../services/clinical/assessment/assessment.service";
+import { Loader } from '../../../../startup/loader';
+import { UserTaskService } from '../../../../services/user/user.task.service';
+import { AssessmentTemplateRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.template.repo';
+import { AssessmentDomainModel } from "../../../../domain.types/clinical/assessment/assessment.domain.model";
+import { UserTaskDomainModel } from "../../../../domain.types/user/user.task/user.task.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class AhaCareplanService implements ICareplanService {
+
+    _assessmentService: AssessmentService = null;
+
+    _userTaskService: UserTaskService = null;
+
+    _assessmentTemplateRepo: AssessmentTemplateRepo = null;
+
+    constructor() {
+        this._assessmentService = Loader.container.resolve(AssessmentService);
+        this._userTaskService = Loader.container.resolve(UserTaskService);
+        this._assessmentTemplateRepo = Loader.container.resolve(AssessmentTemplateRepo);
+    }
 
     private ActivityCode = '9999';
 
@@ -58,8 +77,8 @@ export class AhaCareplanService implements ICareplanService {
         var url = process.env.AHA_API_BASE_URL + '/token';
 
         var body = {
-            client_id     : process.env.AHA_CONTINUITY_CLIENT_ID,
-            client_secret : process.env.AHA_CONTINUITY_CLIENT_SECRET,
+            client_id     : process.env.AHA_API_CLIENT_ID,
+            client_secret : process.env.AHA_API_CLIENT_SECRET,
             grant_type    : 'client_credentials',
         };
 
@@ -160,7 +179,6 @@ export class AhaCareplanService implements ICareplanService {
         Logger.instance().log(`response body: ${JSON.stringify(response.body)}`);
 
         return response.body.data.enrollment.id;
-
     };
 
     public fetchActivities = async (
@@ -185,18 +203,18 @@ export class AhaCareplanService implements ICareplanService {
             Logger.instance().error('Unable to fetch tasks for given enrollment id!', response.statusCode, null);
             throw new ApiError(500, "Careplan service error: " + response.body.error.message);
         }
-    
-        // AHA response has incorrect spelling of activities: "activitites"
-        Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.activitites.length)}`);
+        
+        Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.activities.length)}`);
 
-        var activities = response.body.data.activitites;
+        var activities = response.body.data.activities;
         var activityEntities: CareplanActivity[] = [];
 
         activities.forEach(activity => {
 
             const tmp = activity.title ? activity.title : '';
             const title = activity.name ? activity.name : tmp;
-            const category: UserTaskCategory = this.getUserTaskCategory(activity.type);
+            const category: UserTaskCategory = this.getUserTaskCategory(
+                activity.type, activity.title, activity.contentTypeCode);
             const status = this.getActivityStatus(activity.status);
             const description = this.getActivityDescription(activity.text, activity.description);
 
@@ -245,25 +263,35 @@ export class AhaCareplanService implements ICareplanService {
         var activity = response.body.data.activity;
         const tmp = activity.title ? activity.title : '';
         const title = activity.name ? activity.name : tmp;
-        const category: UserTaskCategory = this.getUserTaskCategory(activity.type);
+
+        const category: UserTaskCategory = this.getUserTaskCategory(
+            activity.type, title, activity.contentTypeCode);
+
         const status = this.getActivityStatus(activity.status);
         const description = this.getActivityDescription(activity.text, activity.description);
+
+        var activityUrl = this.extractUrl(activity.url, category, activity);
             
-        const entity: CareplanActivity = {
+        var entity: CareplanActivity = {
             ProviderActionId : activity.code,
             EnrollmentId     : enrollmentId,
             Provider         : 'AHA',
-            Type             : activity.type,
+            Type             : activity.type ?? activity.contentTypeCode,
             Category         : category,
             Title            : title,
             Description      : description,
-            Url              : activity.url ?? null,
+            Url              : activityUrl,
             Language         : 'English',
             Status           : status,
             // Comments        : ,
             RawContent       : activity,
         };
     
+        if (category === UserTaskCategory.EducationalNewsFeed) {
+            var newsItems = await this.extractNewsItems(activityUrl);
+            entity['RawContent'] = newsItems;
+        }
+        
         return entity;
     };
 
@@ -306,6 +334,26 @@ export class AhaCareplanService implements ICareplanService {
         return entity;
     };
 
+    public completeActivity = async(
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string,
+        providerActivityId: string,
+        activityUpdates: any): Promise<CareplanActivity> => {
+
+        Logger.instance().log(`Updating activity for patient user id '${patientUserId} associated with carte plan '${careplanCode}'.`);
+
+        const taskCategory = activityUpdates.Category as UserTaskCategory;
+        if (taskCategory === UserTaskCategory.Assessment) {
+            return await this.patchAssessment(enrollmentId, providerActivityId, activityUpdates);
+        }
+        else {
+            return await this.patchActivity(enrollmentId, providerActivityId);
+        }
+    };
+
+    //#region Assessment related
+
     public patchAssessment = async (
         enrollmentId: string,
         providerActivityId: string,
@@ -343,28 +391,14 @@ export class AhaCareplanService implements ICareplanService {
         return entity;
     };
 
-    public completeActivity = async(
-        patientUserId: string,
-        careplanCode: string,
-        enrollmentId: string,
-        providerActivityId: string,
-        activityUpdates: any): Promise<CareplanActivity> => {
-
-        Logger.instance().log(`Updating activity for patient user id '${patientUserId} associated with carte plan '${careplanCode}'.`);
-
-        const taskCategory = activityUpdates.Category as UserTaskCategory;
-        if (taskCategory === UserTaskCategory.Assessment) {
-            return await this.patchAssessment(enrollmentId, providerActivityId, activityUpdates);
-        }
-        else {
-            return await this.patchActivity(enrollmentId, providerActivityId);
-        }
-    };
-
     public convertToAssessmentTemplate = async (activity: CareplanActivity): Promise<CAssessmentTemplate> => {
         const ahaServiceHelper = new AhaAssessmentConverter();
         return await ahaServiceHelper.convertToAssessmentTemplate(activity);
     };
+
+    //#endregion
+
+    //#region Goals, priorities and action plans
 
     public getGoals = async (patientUserId: string, enrollmentId: string, category: string): Promise<GoalDto[]> => {
         try {
@@ -462,9 +496,150 @@ export class AhaCareplanService implements ICareplanService {
         }
     };
 
+    public updateActionPlan = async (
+        enrollmentId: string,
+        actionName: string ) => {
+
+        var updates = {
+            actionPlans : [actionName],
+            completedAt : Helper.formatDate(new Date()),
+            status      : 'COMPLETED',
+        };
+
+        var activityCode = this.getActivityCode();
+
+        const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+
+        var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/actionPlans/${activityCode}`;
+
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle("patch", url, updates, headerOptions);
+
+        if (response.statusCode !== 200) {
+            Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+            throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
+        }
+
+        var activity = response.body.data.activity;
+
+        var entity: ActionPlanDto = {
+            Provider    : this.providerName(),
+            Status      : activity.status,
+            CompletedAt : activity.completedAt,
+            Title       : activity.actionPlans
+        };
+
+        Logger.instance().log(`Updated action plan record from AHA:: ${JSON.stringify(entity)}`);
+
+        return entity;
+    };
+
+    public updateGoal = async (
+        enrollmentId: string,
+        goalName: string ) => {
+
+        var updates = {
+            goals       : [goalName],
+            completedAt : Helper.formatDate(new Date()),
+            status      : 'COMPLETED',
+        };
+
+        var activityCode = this.getActivityCode();
+
+        const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+
+        var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${activityCode}`;
+
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle("patch", url, updates, headerOptions);
+
+        if (response.statusCode !== 200) {
+            Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+            throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
+        }
+
+        var activity = response.body.data.activity;
+
+        var entity: GoalDto = {
+            Provider     : this.providerName(),
+            GoalAchieved : activity.status,
+            CompletedAt  : activity.completedAt,
+            Title        : activity.goals
+        };
+
+        Logger.instance().log(`Updated goal record from AHA:: ${JSON.stringify(entity)}`);
+
+        return entity;
+    };
+
+    public updateHealthPriority = async (
+        patientUserId: string,
+        enrollmentId: string,
+        healthPriorityType: string ) => {
+
+        var updates = {
+            priorities  : [healthPriorityType],
+            completedAt : Helper.formatDate(new Date()),
+            status      : 'COMPLETED',
+        };
+
+        var activityCode = this.getActivityCode();
+
+        const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
+
+        var url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/priorities/${activityCode}`;
+
+        var headerOptions = await this.getHeaderOptions();
+        var response = await needle("patch", url, updates, headerOptions);
+
+        if (response.statusCode !== 200) {
+            Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+            throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
+        }
+
+        var activity = response.body.data.activity;
+
+        var entity: HealthPriorityDto = {
+            Provider             : this.providerName(),
+            PatientUserId        : patientUserId,
+            ProviderEnrollmentId : enrollmentId,
+            Status               : activity.status,
+            CompletedAt          : activity.completedAt,
+            HealthPriorityType   : activity.priorities
+        };
+
+        Logger.instance().log(`Updated health priority record from AHA :: ${JSON.stringify(entity)}`);
+
+        return entity;
+    };
+    //#endregion
+
     //#endregion
 
     //#region Privates
+
+    private extractUrl(url: string, category: UserTaskCategory, activity: any) {
+        var activityUrl = url ?? null;
+        if (activityUrl && Helper.isUrl(activityUrl)) {
+            return activityUrl;
+        }
+        if (category === UserTaskCategory.EducationalNewsFeed) {
+            var locale = activity.locale;
+            if (locale && locale.length > 0)  {
+                var obj = locale[0];
+                if (obj) {
+                    var x = obj['en-US'];
+                    if (x) {
+                        var xUrl = x['url'];
+                        if (Helper.isUrl(xUrl)) {
+                            activityUrl = xUrl;
+                        }
+                    }
+                }
+            }
+        }
+        return activityUrl;
+    }
 
     private async getAssessmentUpdateModel(activity: any): Promise<any> {
 
@@ -652,29 +827,47 @@ export class AhaCareplanService implements ICareplanService {
         }
     }
 
-    private getUserTaskCategory(activityType: string, title?: string): UserTaskCategory {
+    private getUserTaskCategory(activityType: string, title?: string, contentTypeCode?: string): UserTaskCategory {
         
         if (activityType === 'Questionnaire' || activityType === 'Assessment') {
             return UserTaskCategory.Assessment;
         }
-        if (activityType === 'Video' ||
-            activityType === 'Audio' ||
-            activityType === 'Animation' ||
-            activityType === 'Link' ||
-            activityType === 'Infographic') {
-            return UserTaskCategory.Educational;
+        var type = activityType ?? contentTypeCode;
+
+        if (type === 'Video')
+        {
+            return UserTaskCategory.EducationalVideo;
         }
-        if (activityType === 'Message') {
+        if (type === 'Audio')
+        {
+            return UserTaskCategory.EducationalAudio;
+        }
+        if (type === 'Animation')
+        {
+            return UserTaskCategory.EducationalAnimation;
+        }
+        if (type === 'Link')
+        {
+            return UserTaskCategory.EducationalLink;
+        }
+        if (type === 'Infographic')
+        {
+            return UserTaskCategory.EducationalInfographics;
+        }
+        if (type === 'Web') {
+            return UserTaskCategory.EducationalNewsFeed;
+        }
+        if (type === 'Message') {
             return UserTaskCategory.Message;
         }
-        if (activityType === 'Goal') {
+        if (type === 'Goal') {
             return UserTaskCategory.Goal;
         }
-        if (activityType === 'Challenge') {
+        if (type === 'Challenge') {
             return UserTaskCategory.Challenge;
         }
-        if ((activityType === 'Professional' && title === 'Weekely review') ||
-            (activityType === 'Professional' && title === 'Week televisit')) {
+        if ((type === 'Professional' && title === 'Weekely review') ||
+            (type === 'Professional' && title === 'Week televisit')) {
             return UserTaskCategory.Consultation;
         }
         return UserTaskCategory.Custom;
@@ -691,6 +884,65 @@ export class AhaCareplanService implements ICareplanService {
             desc += '\n';
         }
         return desc;
+    }
+
+    private createInitialAssessmentTask = async (
+        model: EnrollmentDomainModel,
+        templateName: string): Promise<any> => {
+
+        const searchResult = await this._assessmentTemplateRepo.search({ Title: templateName });
+        if (searchResult.Items.length === 0) {
+            return null;
+        }
+        const template = searchResult.Items[0];
+        const templateId: string = template.id;
+        const assessmentBody : AssessmentDomainModel = {
+            PatientUserId        : model.PatientUserId,
+            Title                : template.Title,
+            Type                 : template.Type,
+            AssessmentTemplateId : templateId,
+            ScheduledDateString  : model.StartDate.toISOString().split('T')[0]
+        };
+
+        const assessment = await this._assessmentService.create(assessmentBody);
+        const assessmentId = assessment.id;
+
+        const userTaskBody : UserTaskDomainModel = {
+            UserId             : model.PatientUserId,
+            Task               : templateName,
+            Category           : UserTaskCategory.Assessment,
+            ActionType         : UserActionType.Careplan,
+            ActionId           : assessmentId,
+            ScheduledStartTime : model.StartDate,
+            IsRecurrent        : false
+        };
+
+        const userTask = await this._userTaskService.create(userTaskBody);
+
+        return userTask.ActionId;
+    }
+
+    private extractNewsItems = async (url: string) => {
+        try {
+            var response = await needle("get", url, {});
+            var children = response.body.children[0].children;
+            var list = children.filter(x => x.name === 'item');
+            var items = list.map(x => {
+                const itemChildren = x.children;
+                var link = itemChildren.find(y => y.name === 'link')?.value;
+                var title = itemChildren.find(y => y.name === 'title')?.value;
+                return {
+                    Title : title,
+                    Link  : link
+                };
+            });
+            return {
+                Newsfeed : items
+            };
+        }
+        catch (error) {
+            throw new ApiError(500, 'Unable to extract news items from the RSS feed!');
+        }
     }
 
     //#endregion

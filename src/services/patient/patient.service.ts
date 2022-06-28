@@ -1,16 +1,16 @@
-import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { inject, injectable } from 'tsyringe';
-import { ApiError } from '../../common/api.error';
-import { Helper } from '../../common/helper';
+import { ConfigurationManager } from '../../config/configuration.manager';
 import { IAddressRepo } from '../../database/repository.interfaces/address.repo.interface';
 import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
 import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
 import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
 import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
+import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { PatientDomainModel } from '../../domain.types/patient/patient/patient.domain.model';
 import { PatientDetailsDto, PatientDto } from '../../domain.types/patient/patient/patient.dto';
 import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults } from '../../domain.types/patient/patient/patient.search.types';
+import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { Roles } from '../../domain.types/role/role.types';
 import { PatientStore } from '../../modules/ehr/services/patient.store';
 import { Loader } from '../../startup/loader';
@@ -30,14 +30,19 @@ export class PatientService {
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IAddressRepo') private _addressRepo: IAddressRepo,
     ) {
-        this._ehrPatientStore = Loader.container.resolve(PatientStore);
+        if (ConfigurationManager.EhrEnabled()) {
+            this._ehrPatientStore = Loader.container.resolve(PatientStore);
+        }
     }
 
     //#region Publics
     
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
-        const ehrId = await this._ehrPatientStore.create(patientDomainModel);
-        patientDomainModel.EhrId = ehrId;
+
+        if (this._ehrPatientStore) {
+            const ehrId = await this._ehrPatientStore.create(patientDomainModel);
+            patientDomainModel.EhrId = ehrId;
+        }
 
         var dto = await this._patientRepo.create(patientDomainModel);
         dto = await this.updateDetailsDto(dto);
@@ -49,6 +54,12 @@ export class PatientService {
 
     public getByUserId = async (id: string): Promise<PatientDetailsDto> => {
         var dto = await this._patientRepo.getByUserId(id);
+        dto = await this.updateDetailsDto(dto);
+        return dto;
+    };
+
+    public getByPersonId = async (personId: string): Promise<PatientDetailsDto> => {
+        var dto = await this._patientRepo.getByPersonId(personId);
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
@@ -85,30 +96,20 @@ export class PatientService {
         return dto;
     };
 
-    public checkforDuplicatePatients = async (domainModel: PatientDomainModel): Promise<number> => {
-
-        const role = await this._roleRepo.getByName(Roles.Patient);
-        if (role == null) {
-            throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');
-        }
-        const persons = await this._personRepo.getAllPersonsWithPhoneAndRole(domainModel.User.Person.Phone, role.id);
-
-        let displayName = Helper.constructPersonDisplayName(
-            domainModel.User.Person.Prefix,
-            domainModel.User.Person.FirstName,
-            domainModel.User.Person.LastName
-        );
-        displayName = displayName.toLowerCase();
-
-        //compare display name with all users sharing same phone number
-        for (const person of persons) {
-            const name = person.DisplayName.toLowerCase();
-            if (name === displayName) {
-                throw new ApiError(409, 'Patient with same name and phone number exists!');
-            }
-        }
-        return persons.length;
+    public deleteByUserId = async (id: string): Promise<boolean> => {
+        return await this._patientRepo.deleteByUserId(id);
     };
+
+    public checkforExistingPersonWithRole
+        = async (domainModel: PatientDomainModel, roleId: number): Promise<PersonDetailsDto> => {
+
+            const persons
+                = await this._personRepo.getAllPersonsWithPhoneAndRole(domainModel.User.Person.Phone, roleId);
+            if (persons.length > 0) {
+                return persons[0];
+            }
+            return null;
+        };
 
     //#endregion
 

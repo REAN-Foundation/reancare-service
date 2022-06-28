@@ -71,9 +71,9 @@ export default class FoodComponentMonitoring extends Model {
     Amount: number;
 
     @Column({
-        type         : DataType.STRING(256),
-        allowNull    : false,
-        defaultValue : 'grams'
+        type      : DataType.STRING(256),
+        allowNull : false,
+    
     })
     Unit: string;
 

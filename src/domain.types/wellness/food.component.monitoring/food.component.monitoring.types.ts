@@ -1,10 +1,12 @@
 
 export enum FoodComponentMonitoringTypes {
-    SodiumSalt     = 'Sodium salt',
-    Sugar          = 'Sugar',
+    SodiumSalt      = 'Sodium salt',
+    Sugar           = 'Sugar',
     SaruratedFats   = 'Saturated fats',
     UnsaturatedFats = 'Unsaturated fats',
-    Other = 'Other'
+    Alcohol         = 'Alcohol',
+    Tobacco         = 'Tobacco',
+    Other           = 'Other'
 }
 
 export const FoodComponentMonitoringTypesList: FoodComponentMonitoringTypes [] = [
@@ -12,5 +14,7 @@ export const FoodComponentMonitoringTypesList: FoodComponentMonitoringTypes [] =
     FoodComponentMonitoringTypes.Sugar,
     FoodComponentMonitoringTypes.SaruratedFats,
     FoodComponentMonitoringTypes.UnsaturatedFats,
+    FoodComponentMonitoringTypes.Alcohol,
+    FoodComponentMonitoringTypes.Tobacco,
     FoodComponentMonitoringTypes.Other
 ];

@@ -24,6 +24,21 @@ export class UserValidator {
         return request.params.id;
     };
 
+    static logoutToken = async (request: express.Request): Promise<string> => {
+
+        await body('DeviceToken').exists()
+            .trim()
+            .escape()
+            .run(request);
+
+        const result = validationResult(request);
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+        
+        return request.body.Token;
+    };
+
     static search = async (
         request: express.Request,
         response: express.Response

@@ -65,19 +65,22 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             if (filters.UserId != null) {
                 search.where['UserId'] = filters.UserId;
             }
-            if (filters.DeviceName !== null) {
+            if (filters.Token != null) {
+                search.where['Token'] = filters.Token;
+            }
+            if (filters.DeviceName != null) {
                 search.where['DeviceName'] = filters.DeviceName;
             }
-            if (filters.OSType !== null) {
+            if (filters.OSType != null) {
                 search.where['OSType'] = filters.OSType;
             }
-            if (filters.OSVersion !== null) {
+            if (filters.OSVersion != null) {
                 search.where['OSVersion'] = filters.OSVersion;
             }
-            if (filters.AppName !== null) {
+            if (filters.AppName != null) {
                 search.where['AppName'] = filters.AppName;
             }
-            if (filters.AppVersion !== null) {
+            if (filters.AppVersion != null) {
                 search.where['AppVersion'] = filters.AppVersion;
             }
             let orderByColum = 'CreatedAt';

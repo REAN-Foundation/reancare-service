@@ -76,10 +76,10 @@ export class PatientController extends BaseUserController {
             const createModel = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
 
-            await this.performCustomActions(patient);
+            //await this.performCustomActions(patient);
 
-            const actionIdKCCQ = await this.createInitialAssessmentTask(patient.UserId, 'KCCQ');
-            Logger.instance().log(`Action id for KCCQ is ${actionIdKCCQ}`);
+            //const actionIdKCCQ = await this.createInitialAssessmentTask(patient.UserId, 'KCCQ');
+            //Logger.instance().log(`Action id for KCCQ is ${actionIdKCCQ}`);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -224,6 +224,12 @@ export class PatientController extends BaseUserController {
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
+            // invalidate all sessions
+            var invalidatedAllSessions = await this._userService.invalidateAllSessions(request.currentUser.UserId);
+            if (!invalidatedAllSessions) {
+                throw new ApiError(400, 'User sessions cannot be deleted.');
+            }
+
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
                 Deleted : true,
             });

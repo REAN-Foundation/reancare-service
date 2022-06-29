@@ -1,4 +1,5 @@
 import express from 'express';
+import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
@@ -6,6 +7,7 @@ import { UserDetailsDto } from '../../../domain.types/user/user/user.dto';
 import { UserService } from '../../../services/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { UserValidator } from '../../validators/user/user.validator';
+import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,9 +19,12 @@ export class UserController {
 
     _authorizer: Authorizer = null;
 
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
+
     constructor() {
         this._service = Loader.container.resolve(UserService);
         this._authorizer = Loader.authorizer;
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
     }
 
     //#endregion
@@ -177,6 +182,43 @@ export class UserController {
             const message = `User '${user.Person.DisplayName}' logged in successfully!`;
 
             ResponseHandler.success(request, response, message, 200, data, true);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+     };
+     
+    logout = async (request: express.Request, response: express.Response): Promise<any> => {
+        try {
+            request.context = 'User.Logout';
+
+            const sesssionId = request.currentUser.SessionId;
+            const userId = request.currentUser.UserId;
+
+            var deviceToken = await UserValidator.logoutToken(request);
+            
+            if (!sesssionId) {
+                return true;
+            }
+            var invalidated = await this._service.invalidateSession(sesssionId);
+
+            if (invalidated) {
+                Logger.instance().log(`Session invalidated successfully!`);
+            }
+            
+            var filter = {
+                UserId : userId,
+                Token  : deviceToken
+            };
+        
+            var deviceDetails = await this._userDeviceDetailsService.search(filter);
+
+            if (deviceDetails.Items.length > 0) {
+                for await (var d of deviceDetails.Items) {
+                    await this._userDeviceDetailsService.delete(d.id);
+                }
+            }
+
+            ResponseHandler.success(request, response, 'User logged out successfully!', 200);
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

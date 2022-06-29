@@ -77,7 +77,8 @@
             "Forms.ImportFormAsAssessmentTemplate",
             "Forms.ImportFormSubmissions",
             "Forms.GetFormsList",
-            "UserDeviceDetails.SendTestNotification"
+            "UserDeviceDetails.SendTestNotification",
+            "User.Logout"
         ]
     },
     {
@@ -380,7 +381,8 @@
             "UserDeviceDetails.SendTestNotification",
             "CustomTask.Create",
             "CustomTask.GetById",
-            "CustomTask.Update"
+            "CustomTask.Update",
+            "User.Logout"
         ]
     },
     {
@@ -669,7 +671,8 @@
             "UserDeviceDetails.SendTestNotification",
             "CustomTask.Create",
             "CustomTask.GetById",
-            "CustomTask.Update"
+            "CustomTask.Update",
+            "User.Logout"
         ]
     },
     {

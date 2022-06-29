@@ -80,4 +80,5 @@ export interface Configurations {
     MaxUploadFileSize   : number;
     JwtExpiresIn        : number;
     FormServiceProviders: FormServiceProvider[];
+    SessionExpiresIn    : number;
 }

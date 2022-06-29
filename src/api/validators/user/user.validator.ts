@@ -26,7 +26,7 @@ export class UserValidator {
 
     static logoutToken = async (request: express.Request): Promise<string> => {
 
-        await body('Token').exists()
+        await body('DeviceToken').exists()
             .trim()
             .escape()
             .run(request);

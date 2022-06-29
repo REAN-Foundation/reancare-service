@@ -163,7 +163,7 @@ export class UserController {
             const sesssionId = request.currentUser.SessionId;
             const userId = request.currentUser.UserId;
 
-            var token = await UserValidator.logoutToken(request);
+            var deviceToken = await UserValidator.logoutToken(request);
             
             if (!sesssionId) {
                 return true;
@@ -176,7 +176,7 @@ export class UserController {
             
             var filter = {
                 UserId : userId,
-                Token  : token
+                Token  : deviceToken
             };
         
             var deviceDetails = await this._userDeviceDetailsService.search(filter);

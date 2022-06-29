@@ -10,4 +10,6 @@ export interface IUserLoginSessionRepo {
     isValidUserLoginSession(sessionId: uuid);
 
     invalidateSession(sessionId: uuid);
+
+    invalidateAllSessions(userId: uuid);
 }

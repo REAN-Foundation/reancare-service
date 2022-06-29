@@ -241,6 +241,12 @@ export class UserService {
         return invalidated;
     };
 
+    public invalidateAllSessions = async (userId: uuid): Promise<boolean> => {
+
+        var invalidatedAllSessions = await this._userLoginSessionRepo.invalidateAllSessions(userId);
+        return invalidatedAllSessions;
+    };
+
     public generateUserName = async (firstName, lastName):Promise<string> => {
         if (firstName == null) {
             firstName = generate({ length: 4, numbers: false, lowercase: true, uppercase: false, symbols: false });

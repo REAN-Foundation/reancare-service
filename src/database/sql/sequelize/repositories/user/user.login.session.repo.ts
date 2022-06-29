@@ -48,4 +48,20 @@ export class UserLoginSessionRepo implements IUserLoginSessionRepo {
         return true;
     };
 
+    invalidateAllSessions = async (userId: uuid): Promise<boolean> => {
+       
+        const userLoginSessionsDetails = await UserLoginSession.findAll({
+            where : {
+                UserId : userId
+            }
+        });
+        if (userLoginSessionsDetails.length > 0) {
+            for await (var u of userLoginSessionsDetails) {
+                u.IsActive = false;
+                await u.save();
+            }
+        }
+        return true;
+    };
+
 }

@@ -61,5 +61,6 @@
         }
     ],
     "MaxUploadFileSize": 104857600,
-    "JwtExpiresIn": 2592000
+    "JwtExpiresIn": 2592000,
+    "SessionExpiresIn": 2592000 
 }

@@ -83,6 +83,7 @@
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
             "FoodComponentMonitoring.Delete"
+            "User.Logout"
         ]
     },
     {
@@ -391,6 +392,7 @@
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
             "FoodComponentMonitoring.Delete"
+            "User.Logout"
         ]
     },
     {
@@ -685,6 +687,7 @@
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
             "FoodComponentMonitoring.Delete"
+            "User.Logout"
         ]
     },
     {

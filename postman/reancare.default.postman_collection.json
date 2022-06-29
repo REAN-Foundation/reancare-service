@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1983b0be-2d9d-4d06-bda9-163bf73da0f4",
+		"_postman_id": "63451206-d6ad-4777-8ba7-14f88b3aacf2",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -53,6 +53,74 @@
 		{
 			"name": "system admin",
 			"item": [
+				{
+					"name": "Generate otp",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"OTP has been successfully generated\", function () {\r",
+									"\r",
+									"    var expectedValue = true;\r",
+									"    \r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('GenerateOTPResult');\r",
+									"    \r",
+									"    pm.expect(jsonRes.Data.GenerateOTPResult).equals(expectedValue);\r",
+									"    \r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Phone\": \"+91 0000000000\",\r\n    \"Purpose\": \"Login\",\r\n    \"RoleId\": 1\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/generate-otp",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"generate-otp"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Admin log-in",
 					"event": [
@@ -110,16 +178,16 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"UserName\": \"admin\",\r\n    \"Password\": \"{{ADMIN_PASSWORD}}\",\r\n    \"LoginRoleId\": 1\r\n}\r\n"
+							"raw": "{\r\n    \"Phone\": \"+91 0000000000\",\r\n    \"Otp\": \"200676\",\r\n    \"Password\": \"{{ADMIN_PASSWORD}}\",\r\n    \"LoginRoleId\": 1\r\n}"
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/users/login-with-password",
+							"raw": "{{BASE_URL}}/users/login-with-otp-password",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"users",
-								"login-with-password"
+								"login-with-otp-password"
 							]
 						},
 						"description": "User login with username/phone/email and password.\n\n'LoginRoleId' is the role id through which user wants to log into the system provided the user has the role."

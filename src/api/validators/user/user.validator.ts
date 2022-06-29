@@ -365,6 +365,9 @@ export class UserValidator {
                 .isNumeric()
                 .isLength({ min: 6, max: 6 })
                 .run(request);
+            await body('Password').optional()
+                .trim()
+                .run(request);
             await body('LoginRoleId').exists()
                 .trim()
                 .isNumeric()
@@ -387,6 +390,9 @@ export class UserValidator {
             }
             if (typeof request.body.Email !== 'undefined') {
                 loginObject.Email = request.body.Email;
+            }
+            if (typeof request.body.Password !== 'undefined') {
+                loginObject.Password = request.body.Password;
             }
             return loginObject;
         } catch (error) {

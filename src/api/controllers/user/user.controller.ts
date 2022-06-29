@@ -156,6 +156,37 @@ export class UserController {
         }
     };
 
+    loginWithOtpPassword = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'User.LoginWithOtpAndPassword';
+
+            const loginObject = await UserValidator.loginWithOtp(request, response);
+            if (request.body.Password === undefined) {
+                ResponseHandler.failure(request, response, 'Input validation error: password can not be null!', 400);
+            }
+            const userDetails = await this._service.loginWithOtpPassword(loginObject);
+            if (userDetails == null) {
+                ResponseHandler.failure(request, response, 'User not found!', 404);
+                return;
+            }
+
+            const user: UserDetailsDto = userDetails.user;
+            const accessToken = userDetails.accessToken;
+
+            const data = {
+                AccessToken : accessToken,
+                User        : user,
+                RoleId      : user.RoleId,
+            };
+
+            const message = `User '${user.Person.DisplayName}' logged in successfully!`;
+
+            ResponseHandler.success(request, response, message, 200, data, true);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+     };
+     
     logout = async (request: express.Request, response: express.Response): Promise<any> => {
         try {
             request.context = 'User.Logout';

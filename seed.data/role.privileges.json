@@ -10,7 +10,7 @@
             "Client.RenewApiKey",
             "User.GetById",
             "User.Search",
-            "User.LoginWithPasswordAndOtp",
+            "User.LoginWithOtpAndPassword",
             "User.ResetPassword",
             "User.GenerateOtp",
             "Patient.Search",

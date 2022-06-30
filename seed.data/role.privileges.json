@@ -82,7 +82,7 @@
             "FoodComponentMonitoring.GetById",
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
-            "FoodComponentMonitoring.Delete"
+            "FoodComponentMonitoring.Delete",
             "User.Logout"
         ]
     },
@@ -391,7 +391,7 @@
             "FoodComponentMonitoring.GetById",
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
-            "FoodComponentMonitoring.Delete"
+            "FoodComponentMonitoring.Delete",
             "User.Logout"
         ]
     },
@@ -686,7 +686,7 @@
             "FoodComponentMonitoring.GetById",
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
-            "FoodComponentMonitoring.Delete"
+            "FoodComponentMonitoring.Delete",
             "User.Logout"
         ]
     },

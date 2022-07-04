@@ -382,7 +382,12 @@
             "CustomTask.Create",
             "CustomTask.GetById",
             "CustomTask.Update",
-            "User.Logout"
+            "User.Logout",
+            "DailyRecords.Stand.Create",
+            "DailyRecords.Stand.GetById",
+            "DailyRecords.Stand.Search",
+            "DailyRecords.Stand.Update",
+            "DailyRecords.Stand.Delete"
         ]
     },
     {
@@ -672,7 +677,12 @@
             "CustomTask.Create",
             "CustomTask.GetById",
             "CustomTask.Update",
-            "User.Logout"
+            "User.Logout",
+            "DailyRecords.Stand.Create",
+            "DailyRecords.Stand.GetById",
+            "DailyRecords.Stand.Search",
+            "DailyRecords.Stand.Update",
+            "DailyRecords.Stand.Delete"
         ]
     },
     {

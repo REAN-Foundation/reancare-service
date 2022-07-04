@@ -78,8 +78,8 @@ export class PatientController extends BaseUserController {
 
             //await this.performCustomActions(patient);
 
-            //const actionIdKCCQ = await this.createInitialAssessmentTask(patient.UserId, 'KCCQ');
-            //Logger.instance().log(`Action id for KCCQ is ${actionIdKCCQ}`);
+            const actionIdKCCQ = await this.createInitialAssessmentTask(patient.UserId, 'KCCQ');
+            Logger.instance().log(`Action id for KCCQ is ${actionIdKCCQ}`);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {

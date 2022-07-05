@@ -77,7 +77,13 @@
             "Forms.ImportFormAsAssessmentTemplate",
             "Forms.ImportFormSubmissions",
             "Forms.GetFormsList",
-            "UserDeviceDetails.SendTestNotification"
+            "UserDeviceDetails.SendTestNotification",
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete",
+            "User.Logout"
         ]
     },
     {
@@ -380,7 +386,13 @@
             "UserDeviceDetails.SendTestNotification",
             "CustomTask.Create",
             "CustomTask.GetById",
-            "CustomTask.Update"
+            "CustomTask.Update",
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete",
+            "User.Logout"
         ]
     },
     {
@@ -669,7 +681,13 @@
             "UserDeviceDetails.SendTestNotification",
             "CustomTask.Create",
             "CustomTask.GetById",
-            "CustomTask.Update"
+            "CustomTask.Update",
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete",
+            "User.Logout"
         ]
     },
     {

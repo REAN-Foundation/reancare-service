@@ -46,6 +46,11 @@ export class UserDeviceDetailsValidator {
             .isUUID()
             .run(request);
 
+        await query('token').optional()
+            .trim()
+            .escape()
+            .run(request);
+
         await query('deviceName').optional()
             .trim()
             .escape()
@@ -164,6 +169,7 @@ export class UserDeviceDetailsValidator {
 
         const filters: UserDeviceDetailsSearchFilters = {
             UserId       : request.query.userId ?? null,
+            Token        : request.query.token ?? null,
             DeviceName   : request.query.deviceName ?? null,
             OSType       : request.query.oSType ?? null,
             OSVersion    : request.query.oSVersion ?? null,

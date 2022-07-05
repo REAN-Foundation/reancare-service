@@ -35,7 +35,7 @@ export class CustomAuthenticator implements IAuthenticator {
             const token = authHeader && authHeader.split(' ')[1];
 
             if (token == null) {
-                var IsPrivileged = request.currentClient.IsPrivileged as boolean;
+                const IsPrivileged = request.currentClient.IsPrivileged as boolean;
                 if (IsPrivileged) {
                     return res;
                 }
@@ -52,8 +52,8 @@ export class CustomAuthenticator implements IAuthenticator {
             var user = jwt.verify(token, process.env.USER_ACCESS_TOKEN_SECRET);
             var sessionId = user.SessionId ?? null;
             if (!sessionId) {
-                var IsPrivileged = request.currentClient.IsPrivileged as boolean;
-                if (IsPrivileged) {
+                const IsPrivilegedUser = request.currentClient.IsPrivileged as boolean;
+                if (IsPrivilegedUser) {
                     request.currentUser = user;
                     return res;
                 }

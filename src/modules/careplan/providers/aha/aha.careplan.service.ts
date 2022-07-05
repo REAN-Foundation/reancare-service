@@ -28,6 +28,8 @@ import { UserTaskService } from '../../../../services/user/user.task.service';
 import { AssessmentTemplateRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.template.repo';
 import { AssessmentDomainModel } from "../../../../domain.types/clinical/assessment/assessment.domain.model";
 import { UserTaskDomainModel } from "../../../../domain.types/user/user.task/user.task.domain.model";
+import { TimeHelper } from "../../../../common/time.helper";
+import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -92,6 +94,28 @@ export class AhaCareplanService implements ICareplanService {
             return false;
         }
 
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public getPatientEligibility = async (user: any, planCode: string) => {
+        
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        return new Promise((resolve, reject) => {
+            const patientBirthDate : Date = user.Person.BirthDate;
+            const dateTurned18 = TimeHelper.addDuration(patientBirthDate, 18, DurationType.Year);
+            var isBefore = TimeHelper.isBefore(dateTurned18, new Date());
+            if (isBefore) {
+                resolve({
+                    Eligible : true
+                });
+            }
+            else {
+                resolve({
+                    Eligible : false,
+                    Reason   : `You need to be atleast 18 years of age before enrolling to this care plan!`
+                });
+            }
+        });
     };
 
     public registerPatient = async (patientDetails: ParticipantDomainModel): Promise<string> => {

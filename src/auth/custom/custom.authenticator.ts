@@ -7,7 +7,6 @@ import { CurrentClient } from '../../domain.types/miscellaneous/current.client';
 import { ApiClientService } from '../../services/api.client.service';
 import { Loader } from '../../startup/loader';
 import { IAuthenticator } from '../authenticator.interface';
-import { ApiError } from '../../common/api.error';
 
 //////////////////////////////////////////////////////////////
 
@@ -53,6 +52,11 @@ export class CustomAuthenticator implements IAuthenticator {
             var user = jwt.verify(token, process.env.USER_ACCESS_TOKEN_SECRET);
             var sessionId = user.SessionId ?? null;
             if (!sessionId) {
+                var IsPrivileged = request.currentClient.IsPrivileged as boolean;
+                if (IsPrivileged) {
+                    request.currentUser = user;
+                    return res;
+                }
                 res = {
                     Result        : false,
                     Message       : 'Forebidden user access. Invalid user login session.',

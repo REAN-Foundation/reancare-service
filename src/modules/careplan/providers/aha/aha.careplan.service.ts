@@ -200,6 +200,16 @@ export class AhaCareplanService implements ICareplanService {
             throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
         }
 
+        if (model.PlanCode === 'CholesterolMini') {
+            var assessmentTitles = ['Cholesterol Demographic', 'Nutrition'];
+            var index = 0;
+            for await (var assessmentTitle of assessmentTitles) {
+                const actionId = await this.createInitialAssessmentTask(model, assessmentTitle, index);
+                Logger.instance().log(`Action id for ${assessmentTitle} assessment is ${actionId}`);
+                index++;
+            }
+        }
+
         Logger.instance().log(`response body: ${JSON.stringify(response.body)}`);
 
         return response.body.data.enrollment.id;
@@ -912,7 +922,8 @@ export class AhaCareplanService implements ICareplanService {
 
     private createInitialAssessmentTask = async (
         model: EnrollmentDomainModel,
-        templateName: string): Promise<any> => {
+        templateName: string,
+        index: number): Promise<any> => {
 
         const searchResult = await this._assessmentTemplateRepo.search({ Title: templateName });
         if (searchResult.Items.length === 0) {
@@ -920,6 +931,7 @@ export class AhaCareplanService implements ICareplanService {
         }
         const template = searchResult.Items[0];
         const templateId: string = template.id;
+
         const assessmentBody : AssessmentDomainModel = {
             PatientUserId        : model.PatientUserId,
             Title                : template.Title,
@@ -937,7 +949,7 @@ export class AhaCareplanService implements ICareplanService {
             Category           : UserTaskCategory.Assessment,
             ActionType         : UserActionType.Careplan,
             ActionId           : assessmentId,
-            ScheduledStartTime : model.StartDate,
+            ScheduledStartTime : (TimeHelper.addDuration(model.StartDate, index, DurationType.Minute)),
             IsRecurrent        : false
         };
 

@@ -79,6 +79,11 @@
             "Forms.ImportFormSubmissions",
             "Forms.GetFormsList",
             "UserDeviceDetails.SendTestNotification",
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete",
             "User.Logout"
         ]
     },
@@ -384,6 +389,11 @@
             "CustomTask.Create",
             "CustomTask.GetById",
             "CustomTask.Update",
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete",
             "User.Logout"
         ]
     },
@@ -675,6 +685,11 @@
             "CustomTask.Create",
             "CustomTask.GetById",
             "CustomTask.Update",
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete",
             "User.Logout"
         ]
     },

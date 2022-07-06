@@ -19,6 +19,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
                 PatientUserId    : createModel.PatientUserId,
                 EhrId            : createModel.EhrId,
                 BloodGlucose     : createModel.BloodGlucose,
+                A1CLevel         : createModel.A1CLevel,
                 Unit             : createModel.Unit,
                 RecordDate       : createModel.RecordDate,
                 RecordedByUserId : createModel.RecordedByUserId,

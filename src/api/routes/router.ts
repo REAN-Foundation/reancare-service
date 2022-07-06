@@ -55,6 +55,7 @@ import { register as registerHealthPriorityRoutes } from './patient/health.prior
 import { register as registerActionPlanRoutes } from './action.plan/action.plan.routes';
 import { register as registerFormsRoutes } from './clinical/assessment/forms.routes';
 import { register as registerCustomTaskRoutes } from './user/custom.task.routes';
+import { register as registerBloodCholesterolRoutes } from './clinical/biometrics/blood.cholesterol.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -134,6 +135,7 @@ export class Router {
                 registerActionPlanRoutes(this._app);
                 registerFormsRoutes(this._app);
                 registerCustomTaskRoutes(this._app);
+                registerBloodCholesterolRoutes(this._app);
 
                 resolve(true);
 

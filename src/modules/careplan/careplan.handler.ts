@@ -29,6 +29,17 @@ export class CareplanHandler {
         return true;
     };
 
+    public getPatientEligibility = async (patient: any, provider: string, careplanCode: string) => {
+        if (this.isEnabledProvider(provider)) {
+            var service = CareplanHandler._services.getItem(provider);
+            return await service.getPatientEligibility(patient, careplanCode);
+        }
+        return {
+            Eligible : false,
+            Reason   : `The careplan by the provider is not available currently!`
+        };
+    };
+
     public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
         var careplans = ConfigurationManager.careplans();
         var plans: CareplanConfig[] = [];

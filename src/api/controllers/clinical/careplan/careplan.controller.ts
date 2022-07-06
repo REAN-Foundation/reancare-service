@@ -84,6 +84,24 @@ export class CareplanController extends BaseController {
         }
     };
 
+    getPatientEligibility = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Careplan.GetPatientEligibility', request, response);
+
+            const patientUserId = request.params.patientUserId;
+            const provider = request.params.provider;
+            const careplanCode = request.params.careplanCode;
+            
+            const patient = await this._userService.getById(patientUserId);
+            const eligibility = await this._service.getPatientEligibility(patient, provider, careplanCode);
+            ResponseHandler.success(request, response, 'Patient eligibility for careplan retrieved successfully!', 200, {
+                Eligibility : eligibility,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     getPatientEnrollments = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Careplan.GetPatientEnrollments', request, response);

@@ -224,6 +224,12 @@ export class PatientController extends BaseUserController {
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
+            // invalidate all sessions
+            var invalidatedAllSessions = await this._userService.invalidateAllSessions(request.currentUser.UserId);
+            if (!invalidatedAllSessions) {
+                throw new ApiError(400, 'User sessions cannot be deleted.');
+            }
+
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
                 Deleted : true,
             });

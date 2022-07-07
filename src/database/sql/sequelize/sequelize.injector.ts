@@ -62,6 +62,8 @@ import { HealthPriorityRepo } from './repositories/patient/health.priority/healt
 import { ActionPlanRepo } from './repositories/action.plan/action.plan.repo';
 import { ThirdpartyApiRepo } from './repositories/thirdparty/thirdparty.api.repo';
 import { CustomTaskRepo } from './repositories/user/custom.task.repo';
+import { FoodComponentMonitoringRepo } from './repositories/wellness/food.component.monitoring/food.component.monitoring.repo';
+import { UserLoginSessionRepo } from './repositories/user/user.login.session.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -133,6 +135,8 @@ export class SequelizeInjector {
         container.register('IActionPlanRepo', ActionPlanRepo);
         container.register('IThirdpartyApiRepo', ThirdpartyApiRepo);
         container.register('ICustomTaskRepo', CustomTaskRepo);
+        container.register('IFoodComponentMonitoringRepo', FoodComponentMonitoringRepo);
+        container.register('IUserLoginSessionRepo', UserLoginSessionRepo);
         
     }
 

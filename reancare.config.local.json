@@ -46,6 +46,22 @@
                     "DisplayName": "AHA-Heart Failure",
                     "DefaultDurationDays": 84,
                     "Description": "Heart Failure is a chronic condition in which the heart doesn't pump blood as well as it should. Heart failure can occur if the heart cannot pump (systolic) or fill (diastolic) adequately. Symptoms include shortness of breath, fatigue, swollen legs and rapid heartbeat.\nHeart Failure care plan helps in managing the condition."
+                },
+                {
+                    "Provider" : "AHA",
+                    "Name": "Cholesterol - Mini",
+                    "Code": "CholesterolMini",
+                    "DisplayName": "AHA-CholesterolMini",
+                    "DefaultDurationDays": 84,
+                    "Description": "Cholesterol is a waxy substance. It’s not inherently “bad.” In fact, your body needs it to build cells. But too much cholesterol can pose a problem."
+                },
+                {
+                    "Provider" : "AHA",
+                    "Name": "Stroke",
+                    "Code": "Stroke",
+                    "DisplayName": "AHA-Stroke",
+                    "DefaultDurationDays": 84,
+                    "Description": "A stroke is a disease that affects the arteries leading to and within the brain. A stroke occurs when a blood vessel that carries oxygen and nutrients to the brain is either blocked by a clot or bursts (or ruptures). When that happens, part of the brain cannot get the blood (and oxygen) it needs, so it and brain cells die."
                 }
             ]
         }
@@ -61,5 +77,6 @@
         }
     ],
     "MaxUploadFileSize": 104857600,
-    "JwtExpiresIn": 2592000
+    "JwtExpiresIn": 2592000,
+    "SessionExpiresIn": 2592000 
 }

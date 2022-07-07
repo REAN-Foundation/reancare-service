@@ -112,7 +112,7 @@ export class AhaCareplanService implements ICareplanService {
             else {
                 resolve({
                     Eligible : false,
-                    Reason   : `You need to be atleast 18 years of age before enrolling to this care plan!`
+                    Reason   : `Sorry, you are too young to register. Check out our resources at https://heart.org/cholesterol`
                 });
             }
         });

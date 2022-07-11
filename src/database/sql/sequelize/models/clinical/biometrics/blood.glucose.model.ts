@@ -83,6 +83,12 @@ export default class BloodGlucose extends Model {
     })
     BloodGlucose: number;
 
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    A1CLevel: number;
+
     @Length({ max: 8 })
     @Column({
         type         : DataType.STRING(8),

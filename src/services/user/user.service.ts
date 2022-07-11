@@ -108,7 +108,24 @@ export class UserService {
             }
         }
 
+        await this._userRepo.updateLastLogin(user.id);
+
+        //Generate login session
+
+        const expiresIn: number = ConfigurationManager.SessionExpiresIn();
+        var validTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
+
+        var entity: UserLoginSessionDomainModel = {
+            UserId    : user.id,
+            IsActive  : true,
+            StartedAt : new Date(),
+            ValidTill : validTill
+        };
+        
+        const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
+
         //The following user data is immutable. Don't include any mutable data
+
         var currentUser: CurrentUser = {
             UserId        : user.id,
             DisplayName   : user.Person.DisplayName,
@@ -116,11 +133,12 @@ export class UserService {
             Email         : user.Person.Email,
             UserName      : user.UserName,
             CurrentRoleId : loginModel.LoginRoleId,
-            SessionId     : currentUser.SessionId,
+            SessionId     : loginSessionDetails.id,
         };
+
         const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
 
-        return { user: user, accessToken: accessToken };
+        return { user: user, accessToken: accessToken, sessionId: currentUser.SessionId };
     };
 
     public generateOtp = async (otpDetails: any): Promise<boolean> => {
@@ -205,7 +223,8 @@ export class UserService {
             }
         }
 
-        //The following user data is immutable. Don't include any mutable data
+        await this._userRepo.updateLastLogin(user.id);
+
         //Generate login session
 
         const expiresIn: number = ConfigurationManager.SessionExpiresIn();
@@ -219,6 +238,8 @@ export class UserService {
         };
         
         const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
+
+        //The following user data is immutable. Don't include any mutable data
 
         var currentUser: CurrentUser = {
             UserId        : user.id,

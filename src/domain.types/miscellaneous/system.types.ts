@@ -23,6 +23,7 @@ export const BloodGroupList: BloodGroup[] = [
 export enum Gender {
     Male = 'Male',
     Female = 'Female',
+    Intersex = 'Intersex',
     Other = 'Other',
     Unknown = 'Unknown',
 }
@@ -30,6 +31,7 @@ export enum Gender {
 export const GenderList: Gender[] = [
     Gender.Male,
     Gender.Female,
+    Gender.Intersex,
     Gender.Other,
     Gender.Unknown,
 ];

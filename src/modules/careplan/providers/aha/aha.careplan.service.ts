@@ -104,7 +104,7 @@ export class AhaCareplanService implements ICareplanService {
             const patientBirthDate : Date = user.Person.BirthDate;
             const dateTurned18 = TimeHelper.addDuration(patientBirthDate, 18, DurationType.Year);
             var isBefore = TimeHelper.isBefore(dateTurned18, new Date());
-            if (isBefore) {
+            if (isBefore || planCode !== 'CholesterolMini') {
                 resolve({
                     Eligible : true
                 });
@@ -112,7 +112,7 @@ export class AhaCareplanService implements ICareplanService {
             else {
                 resolve({
                     Eligible : false,
-                    Reason   : `You need to be atleast 18 years of age before enrolling to this care plan!`
+                    Reason   : `Sorry, you are too young to register. Check out our resources at https://heart.org/cholesterol`
                 });
             }
         });
@@ -201,7 +201,7 @@ export class AhaCareplanService implements ICareplanService {
         }
 
         if (model.PlanCode === 'CholesterolMini') {
-            var assessmentTitles = ['Cholesterol Demographic', 'Nutrition'];
+            var assessmentTitles = ['Cholesterol Demographic', 'Nutrition', 'Cholesterol medical details'];
             var index = 0;
             for await (var assessmentTitle of assessmentTitles) {
                 const actionId = await this.createInitialAssessmentTask(model, assessmentTitle, index);

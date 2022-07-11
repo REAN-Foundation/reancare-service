@@ -1,67 +1,61 @@
 import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
-import { BloodGlucoseDomainModel } from "../../../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model";
-import { BloodGlucoseDto } from "../../../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto";
-import { BloodGlucoseSearchFilters, BloodGlucoseSearchResults } from "../../../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.search.types";
-import { IBloodGlucoseRepo } from "../../../../../repository.interfaces/clinical/biometrics/blood.glucose.repo.interface";
-import { BloodGlucoseMapper } from "../../../mappers/clinical/biometrics/blood.glucose.mapper";
-import BloodGlucoseModel from "../../../models/clinical/biometrics/blood.glucose.model";
+import { StandDomainModel } from '../../../../../../domain.types/wellness/daily.records/stand/stand.domain.model';
+import { StandDto } from '../../../../../../domain.types/wellness/daily.records/stand/stand.dto';
+import { StandSearchFilters, StandSearchResults } from '../../../../../../domain.types/wellness/daily.records/stand/stand.search.types';
+import { IStandRepo } from '../../../../../repository.interfaces/wellness/daily.records/stand.repo.interface';
+import { StandMapper } from '../../../mappers/wellness/daily.records/stand.mapper';
+import Stand from '../../../models/wellness/daily.records/stand.model';
 
 ///////////////////////////////////////////////////////////////////////
 
-export class BloodGlucoseRepo implements IBloodGlucoseRepo {
+export class StandRepo implements IStandRepo {
 
-    create = async (createModel: BloodGlucoseDomainModel):
-    Promise<BloodGlucoseDto> => {
+    create = async (createModel: StandDomainModel): Promise<StandDto> => {
         try {
             const entity = {
-                PatientUserId    : createModel.PatientUserId,
-                EhrId            : createModel.EhrId,
-                BloodGlucose     : createModel.BloodGlucose,
-                A1CLevel         : createModel.A1CLevel,
-                Unit             : createModel.Unit,
-                RecordDate       : createModel.RecordDate,
-                RecordedByUserId : createModel.RecordedByUserId,
+                PatientUserId : createModel.PatientUserId ?? null,
+                Stand         : createModel.Stand ?? null,
+                Unit          : createModel.Unit ?? null,
+                RecordDate    : createModel.RecordDate ?? null,
             };
-
-            const bloodGlucose = await BloodGlucoseModel.create(entity);
-            return await BloodGlucoseMapper.toDto(bloodGlucose);
+            const stand = await Stand.create(entity);
+            return await StandMapper.toDto(stand);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    getById = async (id: string): Promise<BloodGlucoseDto> => {
+    getById = async (id: string): Promise<StandDto> => {
         try {
-            const bloodGlucose = await BloodGlucoseModel.findByPk(id);
-            return await BloodGlucoseMapper.toDto(bloodGlucose);
+            const stand = await Stand.findByPk(id);
+            return await StandMapper.toDto(stand);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    search = async (filters: BloodGlucoseSearchFilters): Promise<BloodGlucoseSearchResults> => {
+    search = async (filters: StandSearchFilters): Promise<StandSearchResults> => {
         try {
-            
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
                 search.where['PatientUserId'] = filters.PatientUserId;
             }
             if (filters.MinValue != null && filters.MaxValue != null) {
-                search.where['BloodGlucose'] = {
+                search.where['Stand'] = {
                     [Op.gte] : filters.MinValue,
                     [Op.lte] : filters.MaxValue,
                 };
             } else if (filters.MinValue === null && filters.MaxValue !== null) {
-                search.where['BloodGlucose'] = {
+                search.where['Stand'] = {
                     [Op.lte] : filters.MaxValue,
                 };
             } else if (filters.MinValue !== null && filters.MaxValue === null) {
-                search.where['BloodGlucose'] = {
+                search.where['Stand'] = {
                     [Op.gte] : filters.MinValue,
                 };
             }
@@ -78,9 +72,6 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
                 search.where['CreatedAt'] = {
                     [Op.gte] : filters.CreatedDateFrom,
                 };
-            }
-            if (filters.RecordedByUserId !== null) {
-                search.where['RecordedByUserId'] = filters.RecordedByUserId;
             }
 
             let orderByColum = 'CreatedAt';
@@ -106,15 +97,15 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            const foundResults = await BloodGlucoseModel.findAndCountAll(search);
+            const foundResults = await Stand.findAndCountAll(search);
 
-            const dtos: BloodGlucoseDto[] = [];
-            for (const bloodGlucose of foundResults.rows) {
-                const dto = await BloodGlucoseMapper.toDto(bloodGlucose);
+            const dtos: StandDto[] = [];
+            for (const stand of foundResults.rows) {
+                const dto = await StandMapper.toDto(stand);
                 dtos.push(dto);
             }
 
-            const searchResults: BloodGlucoseSearchResults = {
+            const searchResults: StandSearchResults = {
                 TotalCount     : foundResults.count,
                 RetrievedCount : dtos.length,
                 PageIndex      : pageIndex,
@@ -131,30 +122,26 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
         }
     };
 
-    update = async (id: string, updateModel: BloodGlucoseDomainModel):
-    Promise<BloodGlucoseDto> => {
+    update = async (id: string, updateModel: StandDomainModel): Promise<StandDto> => {
         try {
-            const bloodGlucose = await BloodGlucoseModel.findByPk(id);
+            const stand = await Stand.findByPk(id);
 
             if (updateModel.PatientUserId != null) {
-                bloodGlucose.PatientUserId = updateModel.PatientUserId;
+                stand.PatientUserId = updateModel.PatientUserId;
             }
-            if (updateModel.BloodGlucose != null) {
-                bloodGlucose.BloodGlucose = updateModel.BloodGlucose;
+            if (updateModel.Stand != null) {
+                stand.Stand = updateModel.Stand;
             }
             if (updateModel.Unit != null) {
-                bloodGlucose.Unit = updateModel.Unit;
+                stand.Unit = updateModel.Unit;
             }
             if (updateModel.RecordDate != null) {
-                bloodGlucose.RecordDate = updateModel.RecordDate;
+                stand.RecordDate = updateModel.RecordDate;
             }
-            if (updateModel.RecordedByUserId != null) {
-                bloodGlucose.RecordedByUserId = updateModel.RecordedByUserId;
-            }
-    
-            await bloodGlucose.save();
 
-            return await BloodGlucoseMapper.toDto(bloodGlucose);
+            await stand.save();
+
+            return await StandMapper.toDto(stand);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -163,9 +150,8 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            
-            const result = await BloodGlucoseModel.destroy({ where: { id: id } });
-            return result === 1;
+            await Stand.destroy({ where: { id: id } });
+            return true;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

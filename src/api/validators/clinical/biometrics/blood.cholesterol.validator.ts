@@ -67,11 +67,11 @@ export class BloodCholesterolValidator extends BaseValidator {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
         await this.validateDecimal(request, 'TotalCholesterol', Where.Body, false, true);
-        await this.validateDecimal(request, 'HDL', Where.Body, true, false);
-        await this.validateDecimal(request, 'LDL', Where.Body, true, false);
+        await this.validateDecimal(request, 'HDL', Where.Body, false, true);
+        await this.validateDecimal(request, 'LDL', Where.Body, false, true);
         await this.validateDecimal(request, 'TriglycerideLevel', Where.Body, false, true);
         await this.validateDecimal(request, 'Ratio', Where.Body, false, true);
-        await this.validateString(request, 'Unit', Where.Body, true, false);
+        await this.validateString(request, 'Unit', Where.Body, false, true);
         await this.validateDate(request, 'RecordDate', Where.Body, false, true);
         await this.validateUuid(request, 'RecordedByUserId', Where.Body, false, true);
 

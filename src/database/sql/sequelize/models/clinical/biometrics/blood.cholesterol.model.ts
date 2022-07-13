@@ -60,7 +60,7 @@ export default class BloodCholesterol extends Model {
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : true,
+        allowNull : false,
     })
     PatientUserId: string;
 
@@ -74,14 +74,14 @@ export default class BloodCholesterol extends Model {
     @IsDecimal
     @Column({
         type      : DataType.FLOAT,
-        allowNull : false,
+        allowNull : true,
     })
     HDL: number;
 
     @IsDecimal
     @Column({
         type      : DataType.FLOAT,
-        allowNull : false,
+        allowNull : true,
     })
     LDL: number;
 
@@ -102,8 +102,8 @@ export default class BloodCholesterol extends Model {
     @Length({ max: 8 })
     @Column({
         type         : DataType.STRING(8),
-        allowNull    : false,
-        defaultValue : 'mg-dl'
+        allowNull    : true,
+        defaultValue : 'mg/dl'
     })
     Unit: string;
 

@@ -35,7 +35,7 @@ export class CareplanController extends BaseController {
         try {
             await this.setContext('Careplan.GetAvailableCareplans', request, response);
 
-            var plans = this._service.getAvailableCarePlans(request.params.provider);
+            var plans = this._service.getAvailableCarePlans(request.query.provider as string);
 
             ResponseHandler.success(request, response, 'Available careplans retrieved successfully!', 200, {
                 AvailablePlans : plans,

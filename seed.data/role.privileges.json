@@ -40,6 +40,7 @@
             "MedicalCondition.Delete",
             "Careplan.Enroll",
             "Careplan.GetWeeklyStatus",
+            "Careplan.GetPatientEligibility",
             "HealthPriority.GetPatientHealthPriorities",
             "HealthPriority.GetPriorityTypes",
             "HealthPriority.Create",
@@ -77,7 +78,13 @@
             "Forms.ImportFormAsAssessmentTemplate",
             "Forms.ImportFormSubmissions",
             "Forms.GetFormsList",
-            "UserDeviceDetails.SendTestNotification"
+            "UserDeviceDetails.SendTestNotification",
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete",
+            "User.Logout"
         ]
     },
     {
@@ -335,6 +342,7 @@
             "Careplan.FetchTasks",
             "Careplan.GetAvailableCareplans",
             "Careplan.GetWeeklyStatus",
+            "Careplan.GetPatientEligibility",
             "Assessment.Create",
             "Assessment.GetById",
             "Assessment.Search",
@@ -380,7 +388,18 @@
             "UserDeviceDetails.SendTestNotification",
             "CustomTask.Create",
             "CustomTask.GetById",
-            "CustomTask.Update"
+            "CustomTask.Update",
+            "User.Logout",
+            "DailyRecords.Stand.Create",
+            "DailyRecords.Stand.GetById",
+            "DailyRecords.Stand.Search",
+            "DailyRecords.Stand.Update",
+            "DailyRecords.Stand.Delete",
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete"
         ]
     },
     {
@@ -622,6 +641,7 @@
             "Careplan.FetchTasks",
             "Careplan.GetAvailableCareplans",
             "Careplan.GetWeeklyStatus",
+            "Careplan.GetPatientEligibility",
             "Assessment.Create",
             "Assessment.GetById",
             "Assessment.Search",
@@ -669,7 +689,18 @@
             "UserDeviceDetails.SendTestNotification",
             "CustomTask.Create",
             "CustomTask.GetById",
-            "CustomTask.Update"
+            "CustomTask.Update",
+            "User.Logout",
+            "DailyRecords.Stand.Create",
+            "DailyRecords.Stand.GetById",
+            "DailyRecords.Stand.Search",
+            "DailyRecords.Stand.Update",
+            "DailyRecords.Stand.Delete",
+            "FoodComponentMonitoring.Create",
+            "FoodComponentMonitoring.GetById",
+            "FoodComponentMonitoring.Search",
+            "FoodComponentMonitoring.Update",
+            "FoodComponentMonitoring.Delete"
         ]
     },
     {

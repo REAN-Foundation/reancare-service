@@ -1,5 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
+import { UserService } from '../../services/user/user.service';
 import { Logger } from '../../common/logger';
 import { AuthenticationResult } from '../../domain.types/auth/auth.domain.types';
 import { CurrentClient } from '../../domain.types/miscellaneous/current.client';
@@ -13,8 +14,11 @@ export class CustomAuthenticator implements IAuthenticator {
 
     _clientService: ApiClientService = null;
 
+    _userService: UserService = null;
+
     constructor() {
         this._clientService = Loader.container.resolve(ApiClientService);
+        this._userService = Loader.container.resolve(UserService);
     }
 
     public authenticateUser = async (
@@ -31,7 +35,7 @@ export class CustomAuthenticator implements IAuthenticator {
             const token = authHeader && authHeader.split(' ')[1];
 
             if (token == null) {
-                var IsPrivileged = request.currentClient.IsPrivileged as boolean;
+                const IsPrivileged = request.currentClient.IsPrivileged as boolean;
                 if (IsPrivileged) {
                     return res;
                 }
@@ -44,27 +48,53 @@ export class CustomAuthenticator implements IAuthenticator {
                 return res;
             }
 
-            jwt.verify(token, process.env.USER_ACCESS_TOKEN_SECRET, (error, user) => {
-                if (error) {
-                    res = {
-                        Result        : false,
-                        Message       : 'Forebidden user access',
-                        HttpErrorCode : 403,
-                    };
+            // synchronous verification
+            var user = jwt.verify(token, process.env.USER_ACCESS_TOKEN_SECRET);
+            var sessionId = user.SessionId ?? null;
+            if (!sessionId) {
+                const IsPrivilegedUser = request.currentClient.IsPrivileged as boolean;
+                if (IsPrivilegedUser) {
+                    request.currentUser = user;
                     return res;
                 }
-                request.currentUser = user;
-            });
-            
+                res = {
+                    Result        : false,
+                    Message       : 'Forebidden user access. Invalid user login session.',
+                    HttpErrorCode : 403,
+                };
+
+                return res;
+            }
+
+            var isValidUserLoginSession = await this._userService.isValidUserLoginSession(sessionId);
+
+            if (!isValidUserLoginSession) {
+                res = {
+                    Result        : false,
+                    Message       : 'Invalid or expired user login session.',
+                    HttpErrorCode : 403,
+                };
+
+                return res;
+            }
+
+            request.currentUser = user;
+            res = {
+                Result        : true,
+                Message       : 'Authenticated',
+                HttpErrorCode : 200,
+            };
+
+            return res;
         } catch (err) {
             Logger.instance().log(JSON.stringify(err, null, 2));
             res = {
                 Result        : false,
-                Message       : 'Error authenticating user',
-                HttpErrorCode : 401,
+                Message       : 'Forebidden user access',
+                HttpErrorCode : 403,
             };
+            return res;
         }
-        return res;
     };
 
     public authenticateClient = async (request: express.Request): Promise<AuthenticationResult> => {

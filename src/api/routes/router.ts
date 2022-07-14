@@ -55,6 +55,8 @@ import { register as registerHealthPriorityRoutes } from './patient/health.prior
 import { register as registerActionPlanRoutes } from './action.plan/action.plan.routes';
 import { register as registerFormsRoutes } from './clinical/assessment/forms.routes';
 import { register as registerCustomTaskRoutes } from './user/custom.task.routes';
+import { register as registerStandRoutes } from './wellness/daily.records/stand.routes';
+import { register as registerFoodComponentMonitoringRoutes } from './wellness/food.component.monitoring/food.component.monitoring.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -134,6 +136,8 @@ export class Router {
                 registerActionPlanRoutes(this._app);
                 registerFormsRoutes(this._app);
                 registerCustomTaskRoutes(this._app);
+                registerStandRoutes(this._app);
+                registerFoodComponentMonitoringRoutes(this._app);
 
                 resolve(true);
 

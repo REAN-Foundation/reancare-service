@@ -64,6 +64,7 @@ import { ThirdpartyApiRepo } from './repositories/thirdparty/thirdparty.api.repo
 import { CustomTaskRepo } from './repositories/user/custom.task.repo';
 import { FoodComponentMonitoringRepo } from './repositories/wellness/food.component.monitoring/food.component.monitoring.repo';
 import { UserLoginSessionRepo } from './repositories/user/user.login.session.repo';
+import { BloodCholesterolRepo } from './repositories/clinical/biometrics/blood.cholesterol.repo';
 import { StandRepo } from './repositories/wellness/daily.records/stand.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +139,7 @@ export class SequelizeInjector {
         container.register('ICustomTaskRepo', CustomTaskRepo);
         container.register('IFoodComponentMonitoringRepo', FoodComponentMonitoringRepo);
         container.register('IUserLoginSessionRepo', UserLoginSessionRepo);
+        container.register('IBloodCholesterolRepo', BloodCholesterolRepo);
         container.register('IStandRepo', StandRepo);
         
     }

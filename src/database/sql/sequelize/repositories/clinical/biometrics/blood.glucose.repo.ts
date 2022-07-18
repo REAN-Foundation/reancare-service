@@ -65,6 +65,9 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
                     [Op.gte] : filters.MinValue,
                 };
             }
+            if (filters.A1CLevel != null) {
+                search.where['A1CLevel'] = filters.A1CLevel;
+            }
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
                 search.where['CreatedAt'] = {
                     [Op.gte] : filters.CreatedDateFrom,

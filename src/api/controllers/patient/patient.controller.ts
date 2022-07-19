@@ -268,7 +268,9 @@ export class PatientController extends BaseUserController {
                     Link : "https://americanheart.co1.qualtrics.com/jfe/form/SV_b1anZr9DUmEOsce",
                 },
                 ScheduledStartTime : new Date(),
-                ScheduledEndTime   : new Date("2022-09-30 23:00:00")
+
+                // for all patient end date is fixed irrespective of date of patient registration
+                ScheduledEndTime : new Date("2022-09-30 23:00:00")
 
             };
 
@@ -316,7 +318,7 @@ export class PatientController extends BaseUserController {
             ActionType         : UserActionType.Careplan,
             ActionId           : assessmentId,
             ScheduledStartTime : new Date(),
-            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 10, DurationType.Day),
+            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 9, DurationType.Day),
             IsRecurrent        : false
         };
 

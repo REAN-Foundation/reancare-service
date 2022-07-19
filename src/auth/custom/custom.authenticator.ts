@@ -59,7 +59,7 @@ export class CustomAuthenticator implements IAuthenticator {
                 }
                 res = {
                     Result        : false,
-                    Message       : 'Forebidden user access. Invalid user login session.',
+                    Message       : 'Your session has expired. Please login to the app again.',
                     HttpErrorCode : 403,
                 };
 

@@ -24,6 +24,9 @@ import { AssessmentDomainModel } from '../../../domain.types/clinical/assessment
 import { UserTaskDomainModel } from '../../../domain.types/user/user.task/user.task.domain.model';
 import { AssessmentService } from '../../../services/clinical/assessment/assessment.service';
 import { UserTaskService } from '../../../services/user/user.task.service';
+import { TimeHelper } from '../../../common/time.helper';
+import { DurationType } from '../../../domain.types/miscellaneous/time.types';
+import { PatientSearchFilters } from '../../../domain.types/patient/patient/patient.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -265,6 +268,8 @@ export class PatientController extends BaseUserController {
                     Link : "https://americanheart.co1.qualtrics.com/jfe/form/SV_b1anZr9DUmEOsce",
                 },
                 ScheduledStartTime : new Date(),
+                ScheduledEndTime   : new Date("2022-09-30 23:00:00")
+
             };
 
             const task = await this._customTaskHelper.createCustomTask(domainModel);
@@ -272,6 +277,16 @@ export class PatientController extends BaseUserController {
                 Logger.instance().log('Unable to create AHA survey task!');
             }
         }
+    }
+
+    public scheduleMonthlyCustomTasks = async (): Promise<void> => {
+
+        const filters: PatientSearchFilters = {};
+        const patients = await this._service.search(filters);
+        for await (var p of patients.Items) {
+            await this.createInitialAssessmentTask(p.UserId, 'Quality of Life Questionnaire');
+        }
+
     }
 
     private createInitialAssessmentTask = async (
@@ -301,6 +316,7 @@ export class PatientController extends BaseUserController {
             ActionType         : UserActionType.Careplan,
             ActionId           : assessmentId,
             ScheduledStartTime : new Date(),
+            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 10, DurationType.Day),
             IsRecurrent        : false
         };
 

@@ -246,7 +246,9 @@ export class PatientController extends BaseUserController {
 
         const systemIdentifier = ConfigurationManager.SystemIdentifier();
 
-        const shouldAddSurveyTask = systemIdentifier.includes('AHA') ||
+        const shouldAddSurveyTask =
+            systemIdentifier.includes('AHA') ||
+            systemIdentifier.includes('HF Helper') ||
             process.env.NODE_ENV === 'development' ||
             process.env.NODE_ENV === 'uat';
 

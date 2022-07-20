@@ -280,12 +280,15 @@ export class PatientController extends BaseUserController {
         patientUserId: string,
         templateName: string): Promise<any> => {
 
-        const template = await this._assessmentTemplateService.search({ Title: templateName });
-        const templateId: string = template.Items[0].id;
+        const templates = await this._assessmentTemplateService.search({ Title: templateName });
+        if (templates.Items.length === 0) {
+            return null;
+        }
+        const templateId: string = templates.Items[0].id;
         const assessmentBody : AssessmentDomainModel = {
             PatientUserId        : patientUserId,
-            Title                : template.Items[0].Title,
-            Type                 : template.Items[0].Type,
+            Title                : templates.Items[0].Title,
+            Type                 : templates.Items[0].Type,
             AssessmentTemplateId : templateId,
             ScheduledDateString  : new Date().toISOString().split('T')[0]
         };

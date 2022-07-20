@@ -24,6 +24,9 @@ import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { IUserDeviceDetailsRepo } from '../../database/repository.interfaces/user/user.device.details.repo.interface ';
 import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
+import { IAssessmentTemplateRepo } from '../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface';
+import { IAssessmentRepo } from '../../database/repository.interfaces/clinical/assessment/assessment.repo.interface';
+import { IUserTaskRepo } from '../../database/repository.interfaces/user/user.task.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,6 +43,9 @@ export class UserService {
         @inject('IUserLoginSessionRepo') private _userLoginSessionRepo: IUserLoginSessionRepo,
         @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
+        @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
+        @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
+        @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
 
     ) {}
 

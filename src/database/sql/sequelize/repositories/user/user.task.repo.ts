@@ -134,9 +134,7 @@ export class UserTaskRepo implements IUserTaskRepo {
             }
 
             if (filters.ScheduledFrom != null && filters.ScheduledTo != null) {
-
                 //Sanitization
-
                 if (TimeHelper.isAfter(filters.ScheduledFrom, filters.ScheduledTo)) {
                     var temp = filters.ScheduledFrom;
                     filters.ScheduledFrom = filters.ScheduledTo;

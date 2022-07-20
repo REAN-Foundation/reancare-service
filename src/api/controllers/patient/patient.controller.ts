@@ -24,6 +24,8 @@ import { AssessmentDomainModel } from '../../../domain.types/clinical/assessment
 import { UserTaskDomainModel } from '../../../domain.types/user/user.task/user.task.domain.model';
 import { AssessmentService } from '../../../services/clinical/assessment/assessment.service';
 import { UserTaskService } from '../../../services/user/user.task.service';
+import { TimeHelper } from '../../../common/time.helper';
+import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -265,6 +267,7 @@ export class PatientController extends BaseUserController {
                     Link : "https://americanheart.co1.qualtrics.com/jfe/form/SV_b1anZr9DUmEOsce",
                 },
                 ScheduledStartTime : new Date(),
+                ScheduledEndTime   : TimeHelper.addDuration(new Date(), 75, DurationType.Day)
             };
 
             const task = await this._customTaskHelper.createCustomTask(domainModel);

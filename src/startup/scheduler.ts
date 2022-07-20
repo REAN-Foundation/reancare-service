@@ -4,7 +4,7 @@ import { Logger } from '../common/logger';
 import { MedicationConsumptionService } from '../services/clinical/medication/medication.consumption.service';
 import { FileResourceService } from '../services/file.resource.service';
 import { Loader } from './loader';
-import { PatientController } from '../api/controllers/patient/patient.controller';
+import { UserHelper } from '../api/helpers/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -91,9 +91,8 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['ScheduleCustomTasks'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: Schedule Custom Tasks...');
-                var controller = Loader.container.resolve(PatientController);
-
-                await controller.scheduleMonthlyCustomTasks();
+                var userHelper = new UserHelper();
+                await userHelper.scheduleMonthlyCustomTasks();
             })();
         });
     };

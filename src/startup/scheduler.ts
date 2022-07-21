@@ -4,6 +4,7 @@ import { Logger } from '../common/logger';
 import { MedicationConsumptionService } from '../services/clinical/medication/medication.consumption.service';
 import { FileResourceService } from '../services/file.resource.service';
 import { Loader } from './loader';
+import { UserHelper } from '../api/helpers/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +37,7 @@ export class Scheduler {
                 this.scheduleFileCleanup();
                 this.scheduleMedicationReminders();
                 this.scheduleCreateMedicationTasks();
+                this.scheduleMonthlyCustomTasks();
 
                 //this.scheduleDaillyPatientTasks();
                 
@@ -82,6 +84,16 @@ export class Scheduler {
             //     var count = await service.createMedicationTasks(upcomingInMinutes);
             //     Logger.instance().log(`Total ${count} new medication tasks created.`);
             // })();
+        });
+    };
+
+    private scheduleMonthlyCustomTasks = () => {
+        cron.schedule(Scheduler._schedules['ScheduleCustomTasks'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Custom Tasks...');
+                var userHelper = new UserHelper();
+                await userHelper.scheduleMonthlyCustomTasks();
+            })();
         });
     };
 

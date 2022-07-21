@@ -134,10 +134,59 @@ export class UserTaskRepo implements IUserTaskRepo {
             }
 
             if (filters.ScheduledFrom != null && filters.ScheduledTo != null) {
-                search.where['ScheduledStartTime'] = {
-                    [Op.gte] : filters.ScheduledFrom,
-                    [Op.lte] : filters.ScheduledTo,
+                //Sanitization
+                if (TimeHelper.isAfter(filters.ScheduledFrom, filters.ScheduledTo)) {
+                    var temp = filters.ScheduledFrom;
+                    filters.ScheduledFrom = filters.ScheduledTo;
+                    filters.ScheduledTo = temp;
+                }
+
+                const x = {
+                    [Op.or] : [
+                        {
+                            ScheduledStartTime : {
+                                [Op.gte] : filters.ScheduledFrom,
+                                [Op.lte] : filters.ScheduledTo
+                            }
+                        },
+                        {
+                            ScheduledEndTime : {
+                                [Op.gte] : filters.ScheduledFrom,
+                                [Op.lte] : filters.ScheduledTo
+                            }
+                        },
+                        {
+                            [Op.and] : [
+                                {
+                                    ScheduledStartTime : {
+                                        [Op.lte] : filters.ScheduledFrom,
+                                    }
+                                },
+                                {
+                                    ScheduledEndTime : {
+                                        [Op.gte] : filters.ScheduledTo,
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            [Op.and] : [
+                                {
+                                    ScheduledStartTime : {
+                                        [Op.gte] : filters.ScheduledFrom,
+                                    }
+                                },
+                                {
+                                    ScheduledEndTime : {
+                                        [Op.lte] : filters.ScheduledTo,
+                                    }
+                                }
+                            ]
+                        },
+                    ]
                 };
+
+                search.where = Object.assign(search.where, x);
             }
             else if (filters.ScheduledTo != null) {
                 search.where['ScheduledStartTime'] = {
@@ -145,7 +194,7 @@ export class UserTaskRepo implements IUserTaskRepo {
                 };
             }
             else if (filters.ScheduledFrom != null) {
-                search.where['ScheduledStartTime'] = {
+                search.where['ScheduledEndTime'] = {
                     [Op.gte] : filters.ScheduledFrom,
                 };
             }

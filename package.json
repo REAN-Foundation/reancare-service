@@ -30,7 +30,7 @@
     "ansi-regex": "^6.0.1",
     "approx-string-match": "^1.1.0",
     "aws-sdk": "^2.1149.0",
-    "axios": "^0.26.1",
+    "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",

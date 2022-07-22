@@ -16,6 +16,7 @@ export class BloodGlucoseMapper {
             EhrId            : bloodGlucose.EhrId,
             PatientUserId    : bloodGlucose.PatientUserId,
             BloodGlucose     : bloodGlucose.BloodGlucose,
+            A1CLevel         : bloodGlucose.A1CLevel,
             Unit             : bloodGlucose.Unit,
             RecordDate       : bloodGlucose.RecordDate,
             RecordedByUserId : bloodGlucose.RecordedByUserId,

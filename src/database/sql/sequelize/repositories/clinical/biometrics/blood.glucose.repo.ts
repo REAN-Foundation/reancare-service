@@ -19,6 +19,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
                 PatientUserId    : createModel.PatientUserId,
                 EhrId            : createModel.EhrId,
                 BloodGlucose     : createModel.BloodGlucose,
+                A1CLevel         : createModel.A1CLevel,
                 Unit             : createModel.Unit,
                 RecordDate       : createModel.RecordDate,
                 RecordedByUserId : createModel.RecordedByUserId,
@@ -63,6 +64,9 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
                 search.where['BloodGlucose'] = {
                     [Op.gte] : filters.MinValue,
                 };
+            }
+            if (filters.A1CLevel != null) {
+                search.where['A1CLevel'] = filters.A1CLevel;
             }
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
                 search.where['CreatedAt'] = {

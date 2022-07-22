@@ -1,0 +1,15 @@
+import { uuid } from "../../../miscellaneous/system.types";
+
+export interface BloodCholesterolDomainModel {
+    id?                : uuid;
+    EhrId?             : uuid;
+    PatientUserId      : uuid;
+    TotalCholesterol?  : number;
+    HDL?               : number;
+    LDL?               : number;
+    TriglycerideLevel? : number;
+    Ratio?             : number;
+    Unit?              : string;
+    RecordDate?        : Date;
+    RecordedByUserId?  : uuid;
+}

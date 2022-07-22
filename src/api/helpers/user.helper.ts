@@ -205,38 +205,50 @@ export class UserHelper {
         patientUserId: string,
         templateName: string): Promise<any> => {
 
-        const templates = await this._assessmentTemplateService.search({ Title: templateName });
-        if (templates.Items.length === 0) {
-            return null;
+        const systemIdentifier = ConfigurationManager.SystemIdentifier();
+        const shouldAddAssessmentTask =
+            systemIdentifier.includes('AHA') ||
+            systemIdentifier.includes('AHA Helper') ||
+            systemIdentifier.includes('HF Helper') ||
+            systemIdentifier.includes('Lipid Helper') ||
+            process.env.NODE_ENV === 'development' ||
+            process.env.NODE_ENV === 'uat';
+
+        if (shouldAddAssessmentTask) {
+
+            const templates = await this._assessmentTemplateService.search({ Title: templateName });
+            if (templates.Items.length === 0) {
+                return null;
+            }
+            const templateId: string = templates.Items[0].id;
+            const assessmentBody : AssessmentDomainModel = {
+                PatientUserId        : patientUserId,
+                Title                : templates.Items[0].Title,
+                Type                 : templates.Items[0].Type,
+                AssessmentTemplateId : templateId,
+                ScheduledDateString  : new Date().toISOString()
+                    .split('T')[0]
+            };
+
+            const assessment = await this._assessmentService.create(assessmentBody);
+            const assessmentId = assessment.id;
+
+            const userTaskBody : UserTaskDomainModel = {
+                UserId             : patientUserId,
+                Task               : templateName,
+                Category           : UserTaskCategory.Assessment,
+                ActionType         : UserActionType.Careplan,
+                ActionId           : assessmentId,
+                ScheduledStartTime : new Date(),
+                ScheduledEndTime   : TimeHelper.addDuration(new Date(), 9, DurationType.Day),
+                IsRecurrent        : false
+            };
+
+            const userTask = await this._userTaskService.create(userTaskBody);
+            Logger.instance().log(`Action id for Quality of Life Questionnaire is ${userTask.ActionId}`);
+
+            return userTask.ActionId;
         }
-        const templateId: string = templates.Items[0].id;
-        const assessmentBody : AssessmentDomainModel = {
-            PatientUserId        : patientUserId,
-            Title                : templates.Items[0].Title,
-            Type                 : templates.Items[0].Type,
-            AssessmentTemplateId : templateId,
-            ScheduledDateString  : new Date().toISOString()
-                .split('T')[0]
-        };
-
-        const assessment = await this._assessmentService.create(assessmentBody);
-        const assessmentId = assessment.id;
-
-        const userTaskBody : UserTaskDomainModel = {
-            UserId             : patientUserId,
-            Task               : templateName,
-            Category           : UserTaskCategory.Assessment,
-            ActionType         : UserActionType.Careplan,
-            ActionId           : assessmentId,
-            ScheduledStartTime : new Date(),
-            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 9, DurationType.Day),
-            IsRecurrent        : false
-        };
-
-        const userTask = await this._userTaskService.create(userTaskBody);
-        Logger.instance().log(`Action id for Quality of Life Questionnaire is ${userTask.ActionId}`);
-
-        return userTask.ActionId;
     };
 
     private createHealthSurveyTask = async (patient: PatientDetailsDto) => {
@@ -245,6 +257,7 @@ export class UserHelper {
 
         const shouldAddSurveyTask =
             systemIdentifier.includes('AHA') ||
+            systemIdentifier.includes('AHA Helper') ||
             systemIdentifier.includes('HF Helper') ||
             systemIdentifier.includes('Lipid Helper') ||
             process.env.NODE_ENV === 'development' ||

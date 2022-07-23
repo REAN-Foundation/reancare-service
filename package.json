@@ -18,7 +18,7 @@
   "author": "Kiran Kharade",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-comprehendmedical": "^3.13.0",
+    "@aws-sdk/client-comprehendmedical": "^3.105.0",
     "@types/adm-zip": "^0.4.34",
     "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.13",

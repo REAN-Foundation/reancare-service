@@ -4,7 +4,6 @@ import { BloodGlucoseDto } from "./blood.glucose.dto";
 
 export interface BloodGlucoseSearchFilters extends BaseSearchFilters{
     PatientUserId?   : uuid;
-    A1CLevel?        : number;
     MinValue?        : number;
     MaxValue?        : number;
     CreatedDateFrom? : Date;

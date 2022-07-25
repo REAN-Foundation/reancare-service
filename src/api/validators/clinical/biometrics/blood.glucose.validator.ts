@@ -82,7 +82,6 @@ export class BloodGlucoseValidator extends BaseValidator {
         const filters: BloodGlucoseSearchFilters = {
             PatientUserId    : request.query.patientUserId ?? null,
             RecordedByUserId : request.query.recordedByUserId ?? null,
-            A1CLevel         : request.query.A1CLevel ?? null,
             MinValue         : request.query.minValue ?? null,
             MaxValue         : request.query.maxValue ?? null,
             CreatedDateFrom  : request.query.createdDateFrom ?? null,

@@ -4,7 +4,6 @@ export interface BloodGlucoseDomainModel {
     EhrId?            : uuid;
     PatientUserId?    : uuid;
     BloodGlucose      : number;
-    A1CLevel?         : number;
     Unit              : string;
     RecordDate?       : Date;
     RecordedByUserId? : uuid;

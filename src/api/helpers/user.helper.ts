@@ -278,7 +278,7 @@ export class UserHelper {
                     Link : "https://americanheart.co1.qualtrics.com/jfe/form/SV_b1anZr9DUmEOsce",
                 },
                 ScheduledStartTime : new Date(),
-                ScheduledEndTime   : new Date("2022-10-30 23:00:00")
+                ScheduledEndTime   : new Date("2022-10-31 23:00:00")
             };
 
             const task = await this._customTaskHelper.createCustomTask(domainModel);

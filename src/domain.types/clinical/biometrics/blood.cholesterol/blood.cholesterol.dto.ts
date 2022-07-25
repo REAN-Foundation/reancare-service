@@ -9,6 +9,7 @@ export interface BloodCholesterolDto {
     LDL?               : number;
     TriglycerideLevel? : number;
     Ratio?             : number;
+    A1CLevel?          : number;
     Unit?              : string;
     RecordDate?        : Date;
     RecordedByUserId?  : uuid;

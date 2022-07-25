@@ -29,7 +29,6 @@ export class BloodGlucoseService {
             bloodGlucoseDomainModel.EhrId = ehrId;
         }
 
-        bloodGlucoseDomainModel.A1CLevel = Number(((bloodGlucoseDomainModel.BloodGlucose + 46.7) / 28.7).toFixed(2));
         var dto = await this._bloodGlucoseRepo.create(bloodGlucoseDomainModel);
         return dto;
     };

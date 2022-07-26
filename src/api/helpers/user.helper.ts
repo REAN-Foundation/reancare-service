@@ -26,6 +26,7 @@ import { CustomTaskHelper } from '../helpers/custom.task.helper';
 import { AssessmentTemplateService } from '../../services/clinical/assessment/assessment.template.service';
 import { AssessmentService } from '../../services/clinical/assessment/assessment.service';
 import { UserTaskService } from '../../services/user/user.task.service';
+import { UserTaskSearchFilters } from '../../domain.types/user/user.task/user.task.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -197,7 +198,23 @@ export class UserHelper {
         const patients = await this._patientService.search(filters);
         const assessmentTemplateName = 'Quality of Life Questionnaire';
         for await (var p of patients.Items) {
-            await this.createAssessmentTask(p.UserId, assessmentTemplateName);
+            const filters: UserTaskSearchFilters = {
+                UserId       : p.UserId,
+                Task         : assessmentTemplateName,
+                OrderBy      : 'CreatedAt',
+                Order        : 'descending',
+                ItemsPerPage : 1
+            };
+            const userTask = await this._userTaskService.search(filters);
+            if (userTask.TotalCount === 0) {
+                await this.createAssessmentTask(p.UserId, assessmentTemplateName);
+            } else {
+                const taskCreationDate = userTask.Items[0].CreatedAt;
+                const dayDiff = TimeHelper.dayDiff(new Date(), taskCreationDate);
+                if (dayDiff > 30) {
+                    await this.createAssessmentTask(p.UserId, assessmentTemplateName);
+                }
+            }
         }
     };
 

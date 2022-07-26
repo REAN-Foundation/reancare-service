@@ -26,6 +26,7 @@ import { CustomTaskHelper } from '../helpers/custom.task.helper';
 import { AssessmentTemplateService } from '../../services/clinical/assessment/assessment.template.service';
 import { AssessmentService } from '../../services/clinical/assessment/assessment.service';
 import { UserTaskService } from '../../services/user/user.task.service';
+import { UserTaskSearchFilters } from '../../domain.types/user/user.task/user.task.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -197,7 +198,23 @@ export class UserHelper {
         const patients = await this._patientService.search(filters);
         const assessmentTemplateName = 'Quality of Life Questionnaire';
         for await (var p of patients.Items) {
-            await this.createAssessmentTask(p.UserId, assessmentTemplateName);
+            const filters: UserTaskSearchFilters = {
+                UserId       : p.UserId,
+                Task         : assessmentTemplateName,
+                OrderBy      : 'CreatedAt',
+                Order        : 'descending',
+                ItemsPerPage : 1
+            };
+            const userTask = await this._userTaskService.search(filters);
+            if (userTask.TotalCount === 0) {
+                await this.createAssessmentTask(p.UserId, assessmentTemplateName);
+            } else {
+                const taskCreationDate = userTask.Items[0].CreatedAt;
+                const dayDiff = TimeHelper.dayDiff(new Date(), taskCreationDate);
+                if (dayDiff > 30) {
+                    await this.createAssessmentTask(p.UserId, assessmentTemplateName);
+                }
+            }
         }
     };
 
@@ -205,38 +222,50 @@ export class UserHelper {
         patientUserId: string,
         templateName: string): Promise<any> => {
 
-        const templates = await this._assessmentTemplateService.search({ Title: templateName });
-        if (templates.Items.length === 0) {
-            return null;
+        const systemIdentifier = ConfigurationManager.SystemIdentifier();
+        const shouldAddAssessmentTask =
+            systemIdentifier.includes('AHA') ||
+            systemIdentifier.includes('AHA Helper') ||
+            systemIdentifier.includes('HF Helper') ||
+            systemIdentifier.includes('Lipid Helper') ||
+            process.env.NODE_ENV === 'development' ||
+            process.env.NODE_ENV === 'uat';
+
+        if (shouldAddAssessmentTask) {
+
+            const templates = await this._assessmentTemplateService.search({ Title: templateName });
+            if (templates.Items.length === 0) {
+                return null;
+            }
+            const templateId: string = templates.Items[0].id;
+            const assessmentBody : AssessmentDomainModel = {
+                PatientUserId        : patientUserId,
+                Title                : templates.Items[0].Title,
+                Type                 : templates.Items[0].Type,
+                AssessmentTemplateId : templateId,
+                ScheduledDateString  : new Date().toISOString()
+                    .split('T')[0]
+            };
+
+            const assessment = await this._assessmentService.create(assessmentBody);
+            const assessmentId = assessment.id;
+
+            const userTaskBody : UserTaskDomainModel = {
+                UserId             : patientUserId,
+                Task               : templateName,
+                Category           : UserTaskCategory.Assessment,
+                ActionType         : UserActionType.Careplan,
+                ActionId           : assessmentId,
+                ScheduledStartTime : new Date(),
+                ScheduledEndTime   : TimeHelper.addDuration(new Date(), 9, DurationType.Day),
+                IsRecurrent        : false
+            };
+
+            const userTask = await this._userTaskService.create(userTaskBody);
+            Logger.instance().log(`Action id for Quality of Life Questionnaire is ${userTask.ActionId}`);
+
+            return userTask.ActionId;
         }
-        const templateId: string = templates.Items[0].id;
-        const assessmentBody : AssessmentDomainModel = {
-            PatientUserId        : patientUserId,
-            Title                : templates.Items[0].Title,
-            Type                 : templates.Items[0].Type,
-            AssessmentTemplateId : templateId,
-            ScheduledDateString  : new Date().toISOString()
-                .split('T')[0]
-        };
-
-        const assessment = await this._assessmentService.create(assessmentBody);
-        const assessmentId = assessment.id;
-
-        const userTaskBody : UserTaskDomainModel = {
-            UserId             : patientUserId,
-            Task               : templateName,
-            Category           : UserTaskCategory.Assessment,
-            ActionType         : UserActionType.Careplan,
-            ActionId           : assessmentId,
-            ScheduledStartTime : new Date(),
-            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 9, DurationType.Day),
-            IsRecurrent        : false
-        };
-
-        const userTask = await this._userTaskService.create(userTaskBody);
-        Logger.instance().log(`Action id for Quality of Life Questionnaire is ${userTask.ActionId}`);
-
-        return userTask.ActionId;
     };
 
     private createHealthSurveyTask = async (patient: PatientDetailsDto) => {
@@ -245,6 +274,7 @@ export class UserHelper {
 
         const shouldAddSurveyTask =
             systemIdentifier.includes('AHA') ||
+            systemIdentifier.includes('AHA Helper') ||
             systemIdentifier.includes('HF Helper') ||
             systemIdentifier.includes('Lipid Helper') ||
             process.env.NODE_ENV === 'development' ||
@@ -265,7 +295,7 @@ export class UserHelper {
                     Link : "https://americanheart.co1.qualtrics.com/jfe/form/SV_b1anZr9DUmEOsce",
                 },
                 ScheduledStartTime : new Date(),
-                ScheduledEndTime   : TimeHelper.addDuration(new Date(), 75, DurationType.Day)
+                ScheduledEndTime   : new Date("2022-10-31 23:59:59")
             };
 
             const task = await this._customTaskHelper.createCustomTask(domainModel);

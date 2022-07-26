@@ -37,6 +37,7 @@ export class UserTaskMapper {
             CancellationReason   : task.CancellationReason,
             IsRecurrent          : task.IsRecurrent,
             RecurrenceScheduleId : task.RecurrenceScheduleId,
+            CreatedAt            : task.CreatedAt
         };
         return dto;
     };

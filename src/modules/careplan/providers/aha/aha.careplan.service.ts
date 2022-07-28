@@ -201,7 +201,7 @@ export class AhaCareplanService implements ICareplanService {
         }
 
         if (model.PlanCode === 'CholesterolMini') {
-            var assessmentTitles = ['Cholesterol Demographic', 'Nutrition', 'Cholesterol medical details'];
+            var assessmentTitles = ['Demographic', 'Nutrition', 'Medical details'];
             var index = 0;
             for await (var assessmentTitle of assessmentTitles) {
                 const actionId = await this.createInitialAssessmentTask(model, assessmentTitle, index);

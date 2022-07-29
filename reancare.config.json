@@ -54,6 +54,14 @@
                     "DisplayName": "AHA-CholesterolMini",
                     "DefaultDurationDays": 84,
                     "Description": "Cholesterol is a waxy substance. It’s not inherently “bad.” In fact, your body needs it to build cells. But too much cholesterol can pose a problem."
+                },
+                {
+                    "Provider" : "AHA",
+                    "Name": "Stroke",
+                    "Code": "Stroke",
+                    "DisplayName": "AHA-Stroke",
+                    "DefaultDurationDays": 84,
+                    "Description": "A stroke occurs when a blood vessel that carries oxygen and nutrients to the brain is either blocked by a clot or bursts (or ruptures). When that happens, part of the brain cannot get the blood (and oxygen) it needs, so it and brain cells die."
                 }
             ]
         }

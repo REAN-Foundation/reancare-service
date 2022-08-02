@@ -104,7 +104,8 @@ export class AhaCareplanService implements ICareplanService {
             const patientBirthDate : Date = user.Person.BirthDate;
             const dateTurned18 = TimeHelper.addDuration(patientBirthDate, 18, DurationType.Year);
             var isBefore = TimeHelper.isBefore(dateTurned18, new Date());
-            if (isBefore || planCode !== 'CholesterolMini') {
+            var careplansWithAgeLimit = ["CholesterolMini", "Stroke"];
+            if (isBefore || careplansWithAgeLimit.indexOf(planCode) === -1) {
                 resolve({
                     Eligible : true
                 });

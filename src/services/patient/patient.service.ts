@@ -100,6 +100,10 @@ export class PatientService {
         return await this._patientRepo.deleteByUserId(id);
     };
 
+    public getAllPatientUserIds = async (): Promise<any[]> => {
+        return await this._patientRepo.getAllPatientUserIds();
+    };
+
     public checkforExistingPersonWithRole
         = async (domainModel: PatientDomainModel, roleId: number): Promise<PersonDetailsDto> => {
 

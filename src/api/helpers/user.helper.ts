@@ -15,7 +15,6 @@ import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { RoleDto } from '../../domain.types/role/role.dto';
 import { TimeHelper } from '../../common/time.helper';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
-import { PatientSearchFilters } from '../../domain.types/patient/patient/patient.search.types';
 import { AssessmentDomainModel } from '../../domain.types/clinical/assessment/assessment.domain.model';
 import { UserTaskDomainModel } from '../../domain.types/user/user.task/user.task.domain.model';
 import { CustomTaskDomainModel } from '../../domain.types/user/custom.task/custom.task.domain.model';
@@ -194,12 +193,13 @@ export class UserHelper {
     };
 
     public scheduleMonthlyCustomTasks = async (): Promise<void> => {
-        const filters: PatientSearchFilters = {};
-        const patients = await this._patientService.search(filters);
+        const patientUserIds = await this._patientService.getAllPatientUserIds();
+        Logger.instance().log(`Count of patients being processed for custom task:
+            ${JSON.stringify(patientUserIds.length)}`);
         const assessmentTemplateName = 'Quality of Life Questionnaire';
-        for await (var p of patients.Items) {
+        for await (var patientUserId of patientUserIds) {
             const filters: UserTaskSearchFilters = {
-                UserId       : p.UserId,
+                UserId       : patientUserId,
                 Task         : assessmentTemplateName,
                 OrderBy      : 'CreatedAt',
                 Order        : 'descending',
@@ -207,12 +207,19 @@ export class UserHelper {
             };
             const userTask = await this._userTaskService.search(filters);
             if (userTask.TotalCount === 0) {
-                await this.createAssessmentTask(p.UserId, assessmentTemplateName);
+                Logger.instance().log(`Creating custom task as no task found. PatientUserId:
+                    ${JSON.stringify(patientUserId)}`);
+                await this.createAssessmentTask(patientUserId, assessmentTemplateName);
             } else {
                 const taskCreationDate = userTask.Items[0].CreatedAt;
                 const dayDiff = TimeHelper.dayDiff(new Date(), taskCreationDate);
                 if (dayDiff > 30) {
-                    await this.createAssessmentTask(p.UserId, assessmentTemplateName);
+                    Logger.instance().log(`Creating custom task as 30 days have passed.
+                        PatientUserId: ${JSON.stringify(patientUserId)}`);
+                    await this.createAssessmentTask(patientUserId, assessmentTemplateName);
+                } else {
+                    Logger.instance().log(`No custom task created for patient UserId:
+                        ${JSON.stringify(patientUserId)}`);
                 }
             }
         }

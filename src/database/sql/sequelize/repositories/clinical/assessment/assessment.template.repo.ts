@@ -73,7 +73,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             if (filters.Type != null) {
                 search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
             }
-
+            if (filters.DisplayCode != null) {
+                search.where['DisplayCode'] = filters.DisplayCode;
+            }
             let orderByColum = 'Title';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
@@ -131,6 +133,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             }
             if (updateModel.Title != null) {
                 assessmentTemplate.Title = updateModel.Title;
+            }
+            if (updateModel.DisplayCode != null) {
+                assessmentTemplate.DisplayCode = updateModel.DisplayCode;
             }
             if (updateModel.Description != null) {
                 assessmentTemplate.Description = updateModel.Description;

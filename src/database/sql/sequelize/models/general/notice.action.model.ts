@@ -13,6 +13,7 @@ import {
 
 import { v4 } from 'uuid';
 import User from '../user/user.model';
+import Notice from './notice.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -43,6 +44,14 @@ export default class NoticeAction extends Model {
         allowNull : false,
     })
     UserId: string;
+
+    @IsUUID(4)
+    @ForeignKey(() => Notice)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    NoticeId: string;
 
     @Column({
         type      : DataType.STRING(128),

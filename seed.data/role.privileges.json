@@ -84,7 +84,14 @@
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
             "FoodComponentMonitoring.Delete",
-            "User.Logout"
+            "User.Logout",
+            "General.Notice.Create",
+            "General.Notice.GetById",
+            "General.Notice.Update",
+            "General.Notice.Search",
+            "General.Notice.Delete",
+            "General.Notice.CreateAction",
+            "General.Notice.GetActionById"
         ]
     },
     {

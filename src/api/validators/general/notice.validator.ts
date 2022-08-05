@@ -1,6 +1,7 @@
 import express from 'express';
-import { NoticeDomainModel } from '../../../domain.types/general/notice.domain.model';
-import { NoticeSearchFilters } from '../../../domain.types/general/notice.search.types';
+import { NoticeActionDomainModel } from '../../../domain.types/general/notice.action/notice.action.domain.model';
+import { NoticeDomainModel } from '../../../domain.types/general/notice/notice.domain.model';
+import { NoticeSearchFilters } from '../../../domain.types/general/notice/notice.search.types';
 import { BaseValidator, Where } from '../base.validator';
  
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -17,10 +18,10 @@ export class NoticeValidator extends BaseValidator {
             Title       : request.body.Title,
             Description : request.body.Description,
             Link        : request.body.Link,
-            PostDate    : request.body.PostDate,
+            PostDate    : request.body.PostDate ?? new Date(),
             DaysActive  : request.body.DaysActive,
             IsActive    : request.body.IsActive,
-            Tags        : request.body.Tags,
+            Tags        : request.body.Tags ?? [],
             ImageUrl    : request.body.ImageUrl,
             Action      : request.body.Action,
         };
@@ -33,22 +34,23 @@ export class NoticeValidator extends BaseValidator {
         return this.getDomainModel(request);
     };
 
+    createAction = async(request: express.Request): Promise<NoticeActionDomainModel> => {
+        await this.validateCreateActionBody(request);
+        return this.getActionDomainModel(request);
+    };
+
     search = async (request: express.Request): Promise<NoticeSearchFilters> => {
  
-        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
-        await this.validateDecimal(request, 'minTotalCholesterol', Where.Query, false, false);
-        await this.validateDecimal(request, 'maxTotalCholesterol', Where.Query, false, false);
-        await this.validateDecimal(request, 'minRatio', Where.Query, false, false);
-        await this.validateDecimal(request, 'maxRatio', Where.Query, false, false);
-        await this.validateDecimal(request, 'minHDL', Where.Query, false, false);
-        await this.validateDecimal(request, 'maxHDL', Where.Query, false, false);
-        await this.validateDecimal(request, 'minLDL', Where.Query, false, false);
-        await this.validateDecimal(request, 'maxLDL', Where.Query, false, false);
-        await this.validateDecimal(request, 'minA1CLevel', Where.Query, false, false);
-        await this.validateDecimal(request, 'maxA1CLevel', Where.Query, false, false);
-        await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
-        await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
-        await this.validateUuid(request, 'recordedByUserId', Where.Query, false, false);
+        await this.validateString(request, 'title', Where.Query, false, false);
+        await this.validateString(request, 'description', Where.Query, false, false);
+        await this.validateString(request, 'link', Where.Query, false, false);
+        await this.validateDate(request, 'postDate', Where.Query, false, false);
+        await this.validateDate(request, 'endDate', Where.Query, false, false);
+        await this.validateDecimal(request, 'daysActive', Where.Query, false, false);
+        await this.validateBoolean(request, 'isActive', Where.Query, false, false);
+        await this.validateString(request, 'tags', Where.Query, false, false);
+        await this.validateString(request, 'imageUrl', Where.Query, false, false);
+        await this.validateString(request, 'action', Where.Query, false, false);
 
         await this.validateBaseSearchFilters(request);
         
@@ -73,12 +75,34 @@ export class NoticeValidator extends BaseValidator {
         await this.validateDate(request, 'PostDate', Where.Body, false, true);
         await this.validateDecimal(request, 'DaysActive', Where.Body, false, true);
         await this.validateBoolean(request, 'IsActive', Where.Body, false, true);
-        await this.validateString(request, 'Tags', Where.Body, false, true);
+        await this.validateArray(request, 'Tags', Where.Body, false, true);
         await this.validateString(request, 'ImageUrl', Where.Body, false, true);
         await this.validateString(request, 'Action', Where.Body, false, true);
 
         this.validateRequest(request);
     }
+
+    private  async validateCreateActionBody(request) {
+
+        await this.validateUuid(request, 'noticeId', Where.Param, true, false);
+        await this.validateString(request, 'actionName', Where.Param, false, true);
+        await this.validateString(request, 'ActionContent', Where.Body, false, true);
+        await this.validateDate(request, 'ActionTakenAt', Where.Body, false, true);
+        this.validateRequest(request);
+    }
+
+    getActionDomainModel = (request: express.Request): NoticeActionDomainModel => {
+ 
+        const NoticeActionModel: NoticeActionDomainModel = {
+
+            NoticeId      : request.params.noticeId,
+            Action        : request.params.actionName,
+            ActionContent : request.body.ActionContent,
+            ActionTakenAt : request.body.ActionTakenAt ?? new Date(),
+        };
+ 
+        return NoticeActionModel;
+    };
     
     private  async validateUpdateBody(request) {
 
@@ -88,8 +112,8 @@ export class NoticeValidator extends BaseValidator {
         await this.validateDate(request, 'PostDate', Where.Body, false, false);
         await this.validateDecimal(request, 'DaysActive', Where.Body, false, false);
         await this.validateBoolean(request, 'IsActive', Where.Body, false, false);
-        await this.validateString(request, 'Tags', Where.Body, false, false);
-        await this.validateDate(request, 'ImageUrl', Where.Body, false, false);
+        await this.validateArray(request, 'Tags', Where.Body, false, false);
+        await this.validateString(request, 'ImageUrl', Where.Body, false, false);
         await this.validateUuid(request, 'Action', Where.Body, false, false);
 
         this.validateRequest(request);

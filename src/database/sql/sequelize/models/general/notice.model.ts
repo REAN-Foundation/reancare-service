@@ -65,6 +65,12 @@ export default class Notice extends Model {
     DaysActive: number;
 
     @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    EndDate: Date;
+
+    @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,
         defaultValue : true

@@ -2,10 +2,11 @@ import express from 'express';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
-import { NoticeService } from '../../../services/clinical/biometrics/blood.cholesterol.service';
+import { NoticeService } from '../../../services/general/notice.service';
 import { Loader } from '../../../startup/loader';
 import { NoticeValidator } from '../../validators/general/notice.validator';
 import { BaseController } from '../base.controller';
+import { NoticeActionDomainModel } from '../../../domain.types/general/notice.action/notice.action.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -129,6 +130,53 @@ export class NoticeController extends BaseController {
 
             ResponseHandler.success(request, response, 'Notice deleted successfully!', 200, {
                 Deleted : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createAction = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('General.Notice.CreateAction', request, response);
+
+            const userId = request.currentUser.UserId;
+            const model = await this._validator.createAction(request);
+            const entity: NoticeActionDomainModel = {
+                UserId        : userId,
+                NoticeId      : model.NoticeId,
+                Action        : model.Action,
+                ActionContent : model.ActionContent,
+                ActionTakenAt : model.ActionTakenAt
+            };
+
+            const noticeAction = await this._service.createAction(entity);
+            if (noticeAction == null) {
+                throw new ApiError(400, 'Could not perform notice action!');
+            }
+
+            ResponseHandler.success(request, response, 'Notice action performed successfully!', 201, {
+                NoticeAction : noticeAction,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getActionById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            await this.setContext('General.Notice.GetActionById', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const noticeAction = await this._service.getActionById(id);
+            if (noticeAction == null) {
+                throw new ApiError(404, 'Notice action not found.');
+            }
+
+            ResponseHandler.success(request, response, 'Notice action retrieved successfully!', 200, {
+                NoticeAction : noticeAction,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

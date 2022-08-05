@@ -66,6 +66,7 @@ import { FoodComponentMonitoringRepo } from './repositories/wellness/food.compon
 import { UserLoginSessionRepo } from './repositories/user/user.login.session.repo';
 import { BloodCholesterolRepo } from './repositories/clinical/biometrics/blood.cholesterol.repo';
 import { StandRepo } from './repositories/wellness/daily.records/stand.repo';
+import { NoticeRepo } from './repositories/general/notice.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -141,6 +142,7 @@ export class SequelizeInjector {
         container.register('IUserLoginSessionRepo', UserLoginSessionRepo);
         container.register('IBloodCholesterolRepo', BloodCholesterolRepo);
         container.register('IStandRepo', StandRepo);
+        container.register('INoticeRepo', NoticeRepo);
         
     }
 

@@ -1,6 +1,6 @@
-import { uuid } from "../miscellaneous/system.types";
+import { uuid } from "../../miscellaneous/system.types";
 
-export interface NoticeDomainModel {
+export interface NoticeDto {
     id?          : uuid;
     Title?       : string;
     Description? : string;
@@ -9,7 +9,7 @@ export interface NoticeDomainModel {
     EndDate?     : Date;
     DaysActive?  : number;
     IsActive?    : boolean;
-    Tags?        : string;
+    Tags?        : string[];
     ImageUrl?    : string;
     Action?      : string;
 }

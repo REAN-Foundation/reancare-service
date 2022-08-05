@@ -209,5 +209,20 @@ export class PatientRepo implements IPatientRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    getAllPatientUserIds = async (): Promise<any[]> => {
+        try {
+            const patients = await Patient.findAll({ attributes: ["UserId"] });
+            var patientUserIds = [];
+            patients.forEach(p => {
+                patientUserIds.push(p.UserId);
+            });
+
+            return patientUserIds;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
     
 }

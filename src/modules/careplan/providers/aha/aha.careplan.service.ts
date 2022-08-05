@@ -201,11 +201,21 @@ export class AhaCareplanService implements ICareplanService {
         }
 
         if (model.PlanCode === 'CholesterolMini') {
-            var assessmentTitles = ['Demographic', 'Nutrition', 'Medical details'];
+            var displayCodes = ['AssessmtTmpl#choldemo', 'AssessmtTmpl#cholNutri','AssessmtTmpl#cholMed'];
             var index = 0;
-            for await (var assessmentTitle of assessmentTitles) {
-                const actionId = await this.createInitialAssessmentTask(model, assessmentTitle, index);
-                Logger.instance().log(`Action id for ${assessmentTitle} assessment is ${actionId}`);
+            for await (var displayCode of displayCodes) {
+                const actionId = await this.createInitialAssessmentTask(model, index, displayCode);
+                Logger.instance().log(`Action id for assessment is ${actionId}`);
+                index++;
+            }
+        }
+
+        if (model.PlanCode === 'Stroke') {
+            var displayCodes = ['AssessmtTmpl#strokedemo', 'AssessmtTmpl#strokeMed'];
+            var index = 0;
+            for await (var displayCode of displayCodes) {
+                const actionId = await this.createInitialAssessmentTask(model, index, displayCode);
+                Logger.instance().log(`Action id for assessment is ${actionId}`);
                 index++;
             }
         }
@@ -922,10 +932,12 @@ export class AhaCareplanService implements ICareplanService {
 
     private createInitialAssessmentTask = async (
         model: EnrollmentDomainModel,
-        templateName: string,
-        index: number): Promise<any> => {
-
-        const searchResult = await this._assessmentTemplateRepo.search({ Title: templateName });
+        index: number,
+        displayCode?: string
+    ): Promise<any> => {
+        
+        var searchResult = await this._assessmentTemplateRepo.search({ DisplayCode: displayCode });
+    
         if (searchResult.Items.length === 0) {
             return null;
         }
@@ -945,7 +957,7 @@ export class AhaCareplanService implements ICareplanService {
 
         const userTaskBody : UserTaskDomainModel = {
             UserId             : model.PatientUserId,
-            Task               : templateName,
+            Task               : template.Title,
             Category           : UserTaskCategory.Assessment,
             ActionType         : UserActionType.Careplan,
             ActionId           : assessmentId,

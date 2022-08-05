@@ -5,6 +5,7 @@ import { AssessmentType } from "./assessment.types";
 export interface AssessmentTemplateSearchFilters extends BaseSearchFilters{
     Title?           : string;
     Type?            : AssessmentType;
+    DisplayCode?     : string;
     CreatedDateFrom? : Date;
     CreatedDateTo?   : Date;
 }

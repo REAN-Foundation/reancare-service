@@ -118,6 +118,7 @@ export class PersonRepo implements IPersonRepo {
                 Email           : personDomainModel.Email ?? null,
                 Gender          : personDomainModel.Gender ?? 'Unknown',
                 BirthDate       : personDomainModel.BirthDate ?? null,
+                Age             : personDomainModel.Age,
                 ImageResourceId : personDomainModel.ImageResourceId ?? null,
             };
             const person = await Person.create(entity);
@@ -171,6 +172,9 @@ export class PersonRepo implements IPersonRepo {
             }
             if (personDomainModel.Gender !== undefined) {
                 person.Gender = personDomainModel.Gender;
+            }
+            if (personDomainModel.Age !== undefined) {
+                person.Age = personDomainModel.Age;
             }
             if (personDomainModel.BirthDate !== undefined) {
                 person.BirthDate = personDomainModel.BirthDate;

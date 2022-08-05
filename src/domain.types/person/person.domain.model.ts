@@ -13,6 +13,7 @@ export interface PersonDomainModel {
     Email?: string;
     Gender?: Gender;
     BirthDate?: Date;
+    Age?: string;
     ImageResourceId?: string;
     AddressIds?: string[];
 }

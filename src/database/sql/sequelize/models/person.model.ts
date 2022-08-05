@@ -87,6 +87,12 @@ export default class Person extends Model {
     })
     BirthDate: Date;
 
+    @Column({
+        type      : DataType.STRING(28),
+        allowNull : true,
+    })
+    Age: string;
+
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,

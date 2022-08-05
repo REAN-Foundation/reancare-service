@@ -30,7 +30,7 @@ export class PersonMapper {
             DisplayName     : displayName,
             Gender          : person.Gender as Gender,
             BirthDate       : person.BirthDate,
-            Age             : age,
+            Age             : person.Age ?? age,
             Phone           : person.Phone,
             Email           : person.Email,
             ImageResourceId : person.ImageResourceId,

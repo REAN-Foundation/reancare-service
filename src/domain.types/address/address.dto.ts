@@ -9,4 +9,5 @@ export interface AddressDto {
     PostalCode: string;
     Longitude: number;
     Lattitude: number;
+    Location?: string;
 }

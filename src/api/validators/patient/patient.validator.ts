@@ -30,6 +30,7 @@ export class PatientValidator extends BaseValidator {
                     Email           : request.body.Email ?? null,
                     Gender          : request.body.Gender ?? null,
                     BirthDate       : birthdate,
+                    Age             : request.body.Age ?? null,
                     ImageResourceId : request.body.ImageResourceId ?? null,
                 },
                 id              : request.params.userId,
@@ -58,6 +59,7 @@ export class PatientValidator extends BaseValidator {
                     Email           : request.body.Email !== undefined ? request.body.Email : undefined,
                     Gender          : request.body.Gender !== undefined ? request.body.Gender : undefined,
                     BirthDate       : birthdate,
+                    Age             : request.body.Age !== undefined ? request.body.Age : undefined,
                     ImageResourceId : request.body.ImageResourceId !== undefined ?
                         request.body.ImageResourceId : undefined,
                 },
@@ -119,6 +121,7 @@ export class PatientValidator extends BaseValidator {
         await this.validateString(request, 'LastName', Where.Body, false, true);
         await this.validateString(request, 'Gender', Where.Body, false, true);
         await this.validateDate(request, 'BirthDate', Where.Body, false, true);
+        await this.validateString(request, 'Age', Where.Body, false, true);
         await this.validateUuid(request, 'ImageResourceId', Where.Body, false, true);
 
         await body('AddressIds').optional()

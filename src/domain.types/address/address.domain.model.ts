@@ -10,4 +10,5 @@ export interface AddressDomainModel {
     PostalCode?: string;
     Longitude?: number;
     Lattitude?: number;
+    Location?: string;
 }

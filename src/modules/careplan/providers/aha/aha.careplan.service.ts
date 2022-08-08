@@ -110,10 +110,15 @@ export class AhaCareplanService implements ICareplanService {
                     Eligible : true
                 });
             }
-            else {
+            else if (planCode === 'CholesterolMini') {
                 resolve({
                     Eligible : false,
                     Reason   : `Sorry, you are too young to register. Check out our resources at https://heart.org/cholesterol`
+                });
+            } else {
+                resolve({
+                    Eligible : false,
+                    Reason   : `Sorry, you are too young to register. Check out our resources at https://heart.org/stroke`
                 });
             }
         });

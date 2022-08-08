@@ -4,7 +4,7 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
-        "ScheduleCustomTasks": "0 1 * * *"
+        "ScheduleCustomTasks": "0 11 * * *"
 
     },
     "development": {
@@ -12,7 +12,7 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
-        "ScheduleCustomTasks": "0 1 * * *"
+        "ScheduleCustomTasks": "0 11 * * *"
 
     },
     "uat": {
@@ -20,7 +20,7 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
-        "ScheduleCustomTasks": "0 1 * * *"
+        "ScheduleCustomTasks": "0 11 * * *"
 
     },
     "production": {
@@ -28,7 +28,7 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "5 0 * * *",
-        "ScheduleCustomTasks": "0 1 * * *"
+        "ScheduleCustomTasks": "0 11 * * *"
         
     }
 }

@@ -49,10 +49,10 @@
                 },
                 {
                     "Provider" : "AHA",
-                    "Name": "Cholesterol - Mini",
-                    "Code": "CholesterolMini",
-                    "DisplayName": "AHA-CholesterolMini",
-                    "DefaultDurationDays": 84,
+                    "Name": "Cholesterol",
+                    "Code": "Cholesterol",
+                    "DisplayName": "AHA-Cholesterol",
+                    "DefaultDurationDays": 91,
                     "Description": "Cholesterol is a waxy substance. It’s not inherently “bad.” In fact, your body needs it to build cells. But too much cholesterol can pose a problem."
                 },
                 {

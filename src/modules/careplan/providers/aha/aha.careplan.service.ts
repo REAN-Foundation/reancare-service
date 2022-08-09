@@ -892,7 +892,7 @@ export class AhaCareplanService implements ICareplanService {
         {
             return UserTaskCategory.EducationalAnimation;
         }
-        if (type === 'Link')
+        if (type === 'Link' || type === 'Web' || type === 'Article')
         {
             return UserTaskCategory.EducationalLink;
         }
@@ -900,9 +900,9 @@ export class AhaCareplanService implements ICareplanService {
         {
             return UserTaskCategory.EducationalInfographics;
         }
-        if (type === 'Web') {
+        /*if (type === 'Web') {
             return UserTaskCategory.EducationalNewsFeed;
-        }
+        }*/
         if (type === 'Message') {
             return UserTaskCategory.Message;
         }

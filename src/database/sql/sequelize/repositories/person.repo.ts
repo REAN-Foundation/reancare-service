@@ -111,15 +111,16 @@ export class PersonRepo implements IPersonRepo {
     create = async (personDomainModel: PersonDomainModel): Promise<PersonDetailsDto> => {
         try {
             const entity = {
-                Prefix          : personDomainModel.Prefix ?? '',
-                FirstName       : personDomainModel.FirstName,
-                MiddleName      : personDomainModel.MiddleName ?? null,
-                LastName        : personDomainModel.LastName,
-                Phone           : personDomainModel.Phone,
-                Email           : personDomainModel.Email ?? null,
-                Gender          : personDomainModel.Gender ?? 'Unknown',
-                BirthDate       : personDomainModel.BirthDate ?? null,
-                ImageResourceId : personDomainModel.ImageResourceId ?? null,
+                Prefix               : personDomainModel.Prefix ?? '',
+                FirstName            : personDomainModel.FirstName,
+                MiddleName           : personDomainModel.MiddleName ?? null,
+                LastName             : personDomainModel.LastName,
+                Phone                : personDomainModel.Phone,
+                Email                : personDomainModel.Email ?? null,
+                Gender               : personDomainModel.Gender ?? 'Unknown',
+                SelfIdentifiedGender : personDomainModel.SelfIdentifiedGender ?? null,
+                BirthDate            : personDomainModel.BirthDate ?? null,
+                ImageResourceId      : personDomainModel.ImageResourceId ?? null,
             };
             const person = await Person.create(entity);
             const dto = await PersonMapper.toDetailsDto(person);
@@ -172,6 +173,9 @@ export class PersonRepo implements IPersonRepo {
             }
             if (personDomainModel.Gender !== undefined) {
                 person.Gender = Helper.getEnumKeyFromValue(Gender, personDomainModel.Gender) || 'Unknown';
+            }
+            if (personDomainModel.SelfIdentifiedGender !== undefined) {
+                person.SelfIdentifiedGender = personDomainModel.SelfIdentifiedGender;
             }
             if (personDomainModel.BirthDate !== undefined) {
                 person.BirthDate = personDomainModel.BirthDate;

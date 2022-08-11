@@ -57,12 +57,23 @@ export class CareplanController extends BaseController {
             Logger.instance().log(`Start Date: ${JSON.stringify(startDate)}`);
 
             var endDate: Date = null;
-            if (model.EndDateStr) {
-                endDate = new Date(model.EndDateStr);
-                endDate = TimeHelper.addDuration(endDate, 1, DurationType.Day);
-            }
-            else {
-                endDate = TimeHelper.addDuration(startDate, 84, DurationType.Day);
+            if (model.PlanCode === 'Cholesterol') {
+                if (model.EndDateStr) {
+                    endDate = new Date(model.EndDateStr);
+                    endDate = TimeHelper.addDuration(endDate, 1, DurationType.Day);
+                }
+                else {
+                    endDate = TimeHelper.addDuration(startDate, 91, DurationType.Day);
+                }
+            } else {
+                if (model.EndDateStr) {
+                    endDate = new Date(model.EndDateStr);
+                    endDate = TimeHelper.addDuration(endDate, 1, DurationType.Day);
+                }
+                else {
+                    endDate = TimeHelper.addDuration(startDate, 84, DurationType.Day);
+                }
+
             }
 
             Logger.instance().log(`End Date: ${JSON.stringify(endDate)}`);

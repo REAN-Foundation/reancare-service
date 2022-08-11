@@ -104,7 +104,7 @@ export class AhaCareplanService implements ICareplanService {
             const patientBirthDate : Date = user.Person.BirthDate;
             const dateTurned18 = TimeHelper.addDuration(patientBirthDate, 18, DurationType.Year);
             var isBefore = TimeHelper.isBefore(dateTurned18, new Date());
-            if (isBefore || planCode !== 'CholesterolMini') {
+            if (isBefore || planCode !== 'Cholesterol') {
                 resolve({
                     Eligible : true
                 });
@@ -200,7 +200,7 @@ export class AhaCareplanService implements ICareplanService {
             throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
         }
 
-        if (model.PlanCode === 'CholesterolMini') {
+        if (model.PlanCode === 'Cholesterol') {
             var displayCodes = ['AssessmtTmpl#choldemo', 'AssessmtTmpl#cholNutri','AssessmtTmpl#cholMed'];
             var index = 0;
             for await (var displayCode of displayCodes) {
@@ -261,6 +261,7 @@ export class AhaCareplanService implements ICareplanService {
                 activity.type, activity.title, activity.contentTypeCode);
             const status = this.getActivityStatus(activity.status);
             const description = this.getActivityDescription(activity.text, activity.description);
+            var activityUrl = this.extractUrl(activity.url, activity);
 
             var entity: CareplanActivity = {
                 EnrollmentId     : enrollmentId,
@@ -270,7 +271,7 @@ export class AhaCareplanService implements ICareplanService {
                 ProviderActionId : activity.code,
                 Title            : title,
                 Description      : description,
-                Url              : activity.url ?? null,
+                Url              : activityUrl,
                 Language         : 'English',
                 ScheduledAt      : activity.scheduledAt,
                 Sequence         : activity.sequence,
@@ -314,7 +315,7 @@ export class AhaCareplanService implements ICareplanService {
         const status = this.getActivityStatus(activity.status);
         const description = this.getActivityDescription(activity.text, activity.description);
 
-        var activityUrl = this.extractUrl(activity.url, category, activity);
+        var activityUrl = this.extractUrl(activity.url, activity);
             
         var entity: CareplanActivity = {
             ProviderActionId : activity.code,
@@ -662,12 +663,11 @@ export class AhaCareplanService implements ICareplanService {
 
     //#region Privates
 
-    private extractUrl(url: string, category: UserTaskCategory, activity: any) {
+    private extractUrl(url: string, activity: any) {
         var activityUrl = url ?? null;
         if (activityUrl && Helper.isUrl(activityUrl)) {
             return activityUrl;
-        }
-        if (category === UserTaskCategory.EducationalNewsFeed) {
+        } else {
             var locale = activity.locale;
             if (locale && locale.length > 0)  {
                 var obj = locale[0];
@@ -677,12 +677,14 @@ export class AhaCareplanService implements ICareplanService {
                         var xUrl = x['url'];
                         if (Helper.isUrl(xUrl)) {
                             activityUrl = xUrl;
+                            return activityUrl;
                         }
                     }
                 }
+            } else {
+                return activityUrl;
             }
         }
-        return activityUrl;
     }
 
     private async getAssessmentUpdateModel(activity: any): Promise<any> {
@@ -890,7 +892,7 @@ export class AhaCareplanService implements ICareplanService {
         {
             return UserTaskCategory.EducationalAnimation;
         }
-        if (type === 'Link')
+        if (type === 'Link' || type === 'Web' || type === 'Article')
         {
             return UserTaskCategory.EducationalLink;
         }
@@ -898,9 +900,9 @@ export class AhaCareplanService implements ICareplanService {
         {
             return UserTaskCategory.EducationalInfographics;
         }
-        if (type === 'Web') {
+        /*if (type === 'Web') {
             return UserTaskCategory.EducationalNewsFeed;
-        }
+        }*/
         if (type === 'Message') {
             return UserTaskCategory.Message;
         }

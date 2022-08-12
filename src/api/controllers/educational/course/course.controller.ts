@@ -2,7 +2,7 @@ import express from 'express';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { CourseService } from '../../../services/educational/knowledge.nugget.service';
+import { CourseService } from '../../../../services/educational/course/course.service';
 import { Loader } from '../../../../startup/loader';
 import { CourseValidator } from '../../../validators/educational/course/course.validator';
 import { BaseController } from '../../base.controller';
@@ -26,7 +26,7 @@ export class CourseController extends BaseController {
     //#endregion
 
     //#region Action methods
-    
+
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Course.Create', request, response);

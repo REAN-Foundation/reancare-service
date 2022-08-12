@@ -84,7 +84,12 @@
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
             "FoodComponentMonitoring.Delete",
-            "User.Logout"
+            "User.Logout",
+            "Course.Create",
+            "Course.GetById",
+            "Course.Update",
+            "Course.Search",
+            "Course.Delete"
         ]
     },
     {

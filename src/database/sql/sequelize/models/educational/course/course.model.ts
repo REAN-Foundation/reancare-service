@@ -56,7 +56,7 @@ export default class Course extends Model {
         type      : DataType.FLOAT,
         allowNull : true,
     })
-    Duration: number;
+    DurationInDays: number;
 
     @Column({
         type      : DataType.DATE,

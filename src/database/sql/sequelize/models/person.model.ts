@@ -82,6 +82,12 @@ export default class Person extends Model {
     Gender: string;
 
     @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    SelfIdentifiedGender: string;
+
+    @Column({
         type      : DataType.DATE,
         allowNull : true,
     })

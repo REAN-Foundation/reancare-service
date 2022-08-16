@@ -5,6 +5,7 @@ import { MedicationConsumptionService } from '../services/clinical/medication/me
 import { FileResourceService } from '../services/file.resource.service';
 import { Loader } from './loader';
 import { UserHelper } from '../api/helpers/user.helper';
+import { CareplanService } from '../services/clinical/careplan.service';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +39,7 @@ export class Scheduler {
                 this.scheduleMedicationReminders();
                 this.scheduleCreateMedicationTasks();
                 this.scheduleMonthlyCustomTasks();
+                this.sendWhatsappMaternityCraeplan();
 
                 //this.scheduleDaillyPatientTasks();
                 
@@ -93,6 +95,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Custom Tasks...');
                 var userHelper = new UserHelper();
                 await userHelper.scheduleMonthlyCustomTasks();
+            })();
+        });
+    };
+
+    private sendWhatsappMaternityCraeplan = () => {
+        cron.schedule(Scheduler._schedules['ScheduleMaternityCareplan'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
+                const careplanService = Loader.container.resolve(CareplanService);
+                await careplanService.getActivitiesAndSendWhatsapp();
             })();
         });
     };

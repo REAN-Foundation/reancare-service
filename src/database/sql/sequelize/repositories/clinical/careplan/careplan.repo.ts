@@ -131,6 +131,8 @@ export class CareplanRepo implements ICareplanRepo {
 
             var activityEntities = [];
 
+            let count = 1;
+
             activities.forEach(activity => {
                 var entity = {
                     Provider         : provider,
@@ -146,10 +148,14 @@ export class CareplanRepo implements ICareplanRepo {
                     Url              : activity.Url,
                     Language         : activity.Language,
                     ScheduledAt      : activity.ScheduledAt,
-                    Sequence         : activity.Sequence,
-                    Frequency        : activity.Frequency,
+                    Sequence         : activity.Sequence ?? count,
+                    Frequency        : activity.Frequency ?? 1,
                     Status           : activity.Status
                 };
+                count++;
+                if (entity.Provider === "REAN") {
+                    entity.Type = "Message";
+                }
                 activityEntities.push(entity);
             });
             
@@ -372,6 +378,31 @@ export class CareplanRepo implements ICareplanRepo {
             await record.save();
 
             return CareplanActivityMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public getAllReanActivities = async ()
+        : Promise<CareplanActivityDto[]> => {
+        try {
+            const orderByColum = 'ScheduledAt';
+            const order = 'ASC';
+
+            const foundResults = await CareplanActivity.findAndCountAll({
+                where : {
+                    Provider : "REAN",
+                    PlanName : "Maternity Careplan"
+                },
+                order : [[orderByColum, order]]
+            });
+            const dtos: CareplanActivityDto[] = [];
+            for (const activity of foundResults.rows) {
+                const dto = CareplanActivityMapper.toDto(activity);
+                dtos.push(dto);
+            }
+            return dtos;
+
         } catch (error) {
             Logger.instance().log(error.message);
         }

@@ -228,6 +228,7 @@ export class AhaCareplanService implements ICareplanService {
     public fetchActivities = async (
         careplanCode: string,
         enrollmentId: string,
+        participantId: string,
         fromDate: Date,
         toDate: Date): Promise<CareplanActivity[]> => {
         

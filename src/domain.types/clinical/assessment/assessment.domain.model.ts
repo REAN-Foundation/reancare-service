@@ -10,7 +10,7 @@ export interface AssessmentDomainModel {
     PatientUserId          : uuid;
     AssessmentTemplateId   : uuid;
     Provider?              : string;
-    ProviderEnrollmentId?  : string;
+    ProviderEnrollmentId?  : string | number;
     ProviderAssessmentCode?: string;
     ProviderAssessmentId?  : string;
     CurrentNodeId?         : uuid;

@@ -18,6 +18,9 @@ export class SleepValidator extends BaseValidator{
             SleepDuration : request.body.SleepDuration ?? null,
             RecordDate    : request.body.RecordDate ?? new Date(),
             Unit          : request.body.Unit,
+            StartTime     : request.body.StartTime,
+            EndTime       : request.body.EndTime,
+
         };
 
         return sleepModel;
@@ -33,6 +36,8 @@ export class SleepValidator extends BaseValidator{
         await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
         await this.validateInt(request, 'minValue', Where.Query, false, false);
         await this.validateInt(request, 'maxValue', Where.Query, false, false);
+        await this.validateDate(request, 'startTime', Where.Query, false, false);
+        await this.validateDate(request, 'endTime', Where.Query, false, false);
         await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
         await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
 
@@ -56,6 +61,8 @@ export class SleepValidator extends BaseValidator{
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
         await this.validateInt(request, 'SleepDuration', Where.Body, true, false);
         await this.validateString(request, 'Unit', Where.Body, false, true);
+        await this.validateDate(request, 'StartTime', Where.Body, false, true);
+        await this.validateDate(request, 'EndTime', Where.Body, false, true);
         await this.validateDate(request, 'RecordDate', Where.Body, false, true);
 
         this.validateRequest(request);
@@ -66,6 +73,8 @@ export class SleepValidator extends BaseValidator{
         await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
         await this.validateInt(request, 'SleepDuration', Where.Body, false, false);
         await this.validateString(request, 'Unit', Where.Body, false, false);
+        await this.validateDate(request, 'StartTime', Where.Body, false, false);
+        await this.validateDate(request, 'EndTime', Where.Body, false, false);
         await this.validateDate(request, 'RecordDate', Where.Body, false, false);
     
         this.validateRequest(request);
@@ -77,6 +86,8 @@ export class SleepValidator extends BaseValidator{
             PatientUserId   : request.query.patientUserId ?? null,
             MinValue        : request.query.minValue ?? null,
             MaxValue        : request.query.maxValue ?? null,
+            StartTime       : request.query.startTime ?? null,
+            EndTime         : request.query.endTime ?? null,
             CreatedDateFrom : request.query.createdDateFrom ?? null,
             CreatedDateTo   : request.query.createdDateTo ?? null,
         };

@@ -15,6 +15,8 @@ export class SleepMapper {
             id            : sleep.id,
             PatientUserId : sleep.PatientUserId,
             Unit          : sleep.Unit,
+            StartTime     : sleep.StartTime,
+            EndTime       : sleep.EndTime,
             SleepDuration : sleep.SleepDuration,
             RecordDate    : sleep.RecordDate,
         };

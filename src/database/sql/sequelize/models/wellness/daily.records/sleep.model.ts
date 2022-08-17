@@ -57,6 +57,20 @@ export default class DailyRecordsSleep extends Model {
         type      : DataType.DATE,
         allowNull : true
     })
+    StartTime: Date;
+
+    @IsDate
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true
+    })
+    EndTime: Date;
+
+    @IsDate
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true
+    })
     RecordDate: Date;
 
     @Column

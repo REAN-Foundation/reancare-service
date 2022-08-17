@@ -81,7 +81,7 @@ export class AhaAssessmentConverter {
         template: CAssessmentTemplate,
         items: any,
         parentNodeDisplayCode: string): CAssessmentQuestionNode {
-        
+
         //Option based question node has options associated and
         //may have multiple paths connected based on those options
         var node = new CAssessmentQuestionNode();
@@ -132,7 +132,8 @@ export class AhaAssessmentConverter {
 
             const actionType = act.action;
             pathIndex++;
-            var path = new CAssessmentNodePath();
+            var path: CAssessmentNodePath = new CAssessmentNodePath();
+            path.IsExitPath = false;
             path.DisplayCode = node.DisplayCode + ':Path#' + pathIndex.toString();
             this.constructConditionFromRules(act.rules, path, node);
 
@@ -144,6 +145,9 @@ export class AhaAssessmentConverter {
             else if (actionType === 'MessagePatient') {
                 const message = act.message;
                 path.NextNodeDisplayCode = this.createNextMessageNode(template, message, node.DisplayCode);
+            }
+            else if (actionType === 'End') {
+                path.IsExitPath = true;
             }
             node.Paths.push(path);
         }
@@ -184,11 +188,11 @@ export class AhaAssessmentConverter {
             condition.IsCompositeCondition = false;
             condition.DisplayCode = path.DisplayCode + ':Condition';
 
-            if (rule.operator === 'equals') {
+            if (rule.operator === 'equals' || rule.operator === 'isequalto') {
 
                 condition.OperatorType = ConditionOperatorType.EqualTo;
                 condition.FirstOperand = new ConditionOperand(ConditionOperandDataType.Integer, 'ReceivedAnswer', null);
-                
+
                 var optionSequence: number = this.getOptionSequenceForAnswer(node.Options, rule.value);
                 condition.SecondOperand = new ConditionOperand(ConditionOperandDataType.Integer, 'ExpectedAnswer', optionSequence);
             }
@@ -199,6 +203,9 @@ export class AhaAssessmentConverter {
 
                 var arr = this.getOptionSequenceArrayForAnswer(node.Options, rule.value);
                 condition.SecondOperand = new ConditionOperand(ConditionOperandDataType.Array, 'ExpectedAnswer', arr);
+            }
+            else if (rule.operator === 'any') {
+                condition.OperatorType = ConditionOperatorType.None;
             }
             path.Condition = condition;
         }

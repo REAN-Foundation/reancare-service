@@ -58,6 +58,7 @@ import { register as registerCustomTaskRoutes } from './user/custom.task.routes'
 import { register as registerBloodCholesterolRoutes } from './clinical/biometrics/blood.cholesterol.routes';
 import { register as registerStandRoutes } from './wellness/daily.records/stand.routes';
 import { register as registerFoodComponentMonitoringRoutes } from './wellness/food.component.monitoring/food.component.monitoring.routes';
+import { register as registerCourseModuleRoutes } from './educational/course.module/course.module.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -140,6 +141,7 @@ export class Router {
                 registerBloodCholesterolRoutes(this._app);
                 registerStandRoutes(this._app);
                 registerFoodComponentMonitoringRoutes(this._app);
+                registerCourseModuleRoutes(this._app);
 
                 resolve(true);
 

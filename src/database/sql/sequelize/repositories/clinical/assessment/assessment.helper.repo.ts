@@ -181,7 +181,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (!node) {
                 throw new ApiError(404, `Node not found!`);
             }
-            
+
             //Check if this is the root node,...
             var parentNodeId = node.ParentNodeId;
             var parentNode = await AssessmentNode.findByPk(parentNodeId);
@@ -401,7 +401,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     public getChildrenConditions = async (conditionId: uuid): Promise<CAssessmentPathCondition[]> => {
         try {
             var conditions = await AssessmentPathCondition.findAll({
@@ -424,9 +424,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         nodeObj: CAssessmentNode): Promise<CAssessmentNode> => {
 
         try {
-    
+
             const sequence = await this.calculateNodeSequence(parentNodeId);
-                        
+
             if (!nodeObj.Title) {
                 nodeObj.Title = nodeObj.NodeType;
             }
@@ -445,7 +445,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 ServeListNodeChildrenAtOnce : nodeObj.ServeListNodeChildrenAtOnce,
                 QueryResponseType           : QueryResponseType.None
             };
-    
+
             var thisNode = await AssessmentNode.create(nodeEntity);
 
             if (nodeObj.NodeType === AssessmentNodeType.Message) {
@@ -460,11 +460,11 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 const questionNode = nodeObj as CAssessmentQuestionNode;
                 thisNode.QueryResponseType = questionNode.QueryResponseType;
                 await thisNode.save();
-    
+
                 if (questionNode.Options && questionNode.Options.length > 0) {
                     //Create question answer options...
                     const options: CAssessmentQueryOption[] = questionNode.Options;
-        
+
                     for await (var option of options) {
                         const optEntity = {
                             DisplayCode       : option.DisplayCode,
@@ -479,7 +479,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                     }
                 }
             }
-            
+
             return await this.populateNodeDetails(thisNode);
 
         } catch (error) {
@@ -516,10 +516,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (Helper.hasProperty(updates, 'QueryResponseType')) {
                 thisNode.QueryResponseType = updates['QueryResponseType'];
             }
-        
+
             thisNode = await thisNode.save();
             return await this.populateNodeDetails(thisNode);
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -529,7 +529,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
     //#endregion
 
     //#region Privates
-        
+
     calculateNodeSequence = async (parentNodeId: uuid): Promise<number> => {
         if (!parentNodeId) {
             return 0;
@@ -544,7 +544,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
     private async populateNodeDetails(node: AssessmentNode)
         : Promise<CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode> {
-        
+
         if (node == null) {
             return null;
         }
@@ -581,36 +581,41 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
 
         if (questionNode.Paths && questionNode.Paths.length > 0) {
-        //Create paths conditions
+
+            //Create paths conditions
             const paths: CAssessmentNodePath[] = questionNode.Paths;
 
             for await (var sPath of paths) {
                 const pathEntity = {
                     DisplayCode         : sPath.DisplayCode,
                     ParentNodeId        : thisNode.id,
-                    NextNodeDisplayCode : sPath.NextNodeDisplayCode
+                    NextNodeDisplayCode : sPath.NextNodeDisplayCode,
+                    IsExitPath          : sPath.IsExitPath
                 };
 
                 var path = await AssessmentNodePath.create(pathEntity);
                 Logger.instance().log(`QueryOption - ${path.DisplayCode}`);
 
-                //Create condition for the path
-                const condition = await this.createNewPathCondition(sPath.Condition, thisNode.id, path.id, null);
-                path.ConditionId = condition.id;
+                if (!sPath.IsExitPath) {
 
-                //Create the next node
-                const sNextNode = CAssessmentTemplate.getNodeByDisplayCode(sTemplate.Nodes, sPath.NextNodeDisplayCode);
-                if (sNextNode) {
-                    var nextNode = await this.createNewNode(sTemplate, templateId, thisNode.id, sNextNode);
-                    if (nextNode) {
-                        path.NextNodeId = nextNode.id;
-                        // path.NextNodeDisplayCode = sPath.NextNodeDisplayCode;
-                        await path.save();
+                    //Create condition for the path
+                    const condition = await this.createNewPathCondition(sPath.Condition, thisNode.id, path.id, null);
+                    path.ConditionId = condition.id;
+
+                    //Create the next node
+                    const sNextNode =
+                        CAssessmentTemplate.getNodeByDisplayCode(sTemplate.Nodes, sPath.NextNodeDisplayCode);
+                    if (sNextNode) {
+                        var nextNode = await this.createNewNode(sTemplate, templateId, thisNode.id, sNextNode);
+                        if (nextNode) {
+                            path.NextNodeId = nextNode.id;
+                            // path.NextNodeDisplayCode = sPath.NextNodeDisplayCode;
+                            await path.save();
+                        }
                     }
                 }
             }
         }
-
     }
 
     private async createNewNode(
@@ -785,7 +790,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         BooleanQueryAnswer |
         FileQueryAnswer |
         BiometricQueryAnswer) => {
-        
+
         if (answer.ResponseType === QueryResponseType.SingleChoiceSelection) {
             const a = answer as SingleChoiceQueryAnswer;
             return {
@@ -893,7 +898,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
         return null;
     };
-    
+
     private getNodeDisplayCode = (nodeType: AssessmentNodeType): string => {
 
         if (nodeType === AssessmentNodeType.Message) {

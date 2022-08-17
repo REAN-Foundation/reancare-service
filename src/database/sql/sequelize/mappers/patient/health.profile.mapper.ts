@@ -34,6 +34,8 @@ export class HealthProfileMapper {
             ProcedureHistory   : patientHealthProfile.ProcedureHistory,
             ObstetricHistory   : patientHealthProfile.ObstetricHistory,
             OtherInformation   : patientHealthProfile.OtherInformation,
+            TobaccoQuestion    : patientHealthProfile.TobaccoQuestion,
+            TobaccoQuestionAns : patientHealthProfile.TobaccoQuestionAns
         };
 
         return dto;

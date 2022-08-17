@@ -21,4 +21,6 @@ export interface HealthProfileDto {
     ProcedureHistory?: string;
     ObstetricHistory?: string;
     OtherInformation?: string;
+    TobaccoQuestion?: string;
+    TobaccoQuestionAns?: boolean;
 }

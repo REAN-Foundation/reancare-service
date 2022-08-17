@@ -77,7 +77,7 @@ export default class HealthProfile extends Model {
         type         : DataType.ENUM,
         values       : MaritalStatusList,
         defaultValue : 'Unknown',
-        allowNull    : false,
+        allowNull    : true,
     })
     MaritalStatus: string;
 
@@ -111,7 +111,7 @@ export default class HealthProfile extends Model {
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
+        allowNull    : true,
         defaultValue : false,
     })
     IsSmoker: boolean;
@@ -133,7 +133,7 @@ export default class HealthProfile extends Model {
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
+        allowNull    : true,
         defaultValue : false,
     })
     IsDrinker: boolean;
@@ -180,6 +180,19 @@ export default class HealthProfile extends Model {
         allowNull : true,
     })
     OtherInformation: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    TobaccoQuestion: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : true,
+        defaultValue : false,
+    })
+    TobaccoQuestionAns: boolean;
 
     @Column
     @CreatedAt

@@ -35,6 +35,7 @@ export class HealthProfileRepo implements IHealthProfileRepo {
                 ProcedureHistory   : patientHealthProfileDomainModel.ProcedureHistory ?? '',
                 ObstetricHistory   : patientHealthProfileDomainModel.ObstetricHistory ?? '',
                 OtherInformation   : patientHealthProfileDomainModel.OtherInformation ?? '',
+                TobaccoQuestion    : "Have you used tobacco products (such as cigarettes, electronic cigarettes, cigars, smokeless tobacco, or hookah) over the past year?"
             };
             const patientHealthProfile = await HealthProfile.create(entity);
             return HealthProfileMapper.toDto(patientHealthProfile);
@@ -132,6 +133,9 @@ export class HealthProfileRepo implements IHealthProfileRepo {
             }
             if (patientHealthProfileDomainModel.OtherInformation !== undefined) {
                 patientHealthProfile.OtherInformation = patientHealthProfileDomainModel.OtherInformation;
+            }
+            if (patientHealthProfileDomainModel.TobaccoQuestionAns !== undefined) {
+                patientHealthProfile.TobaccoQuestionAns = patientHealthProfileDomainModel.TobaccoQuestionAns;
             }
 
             await patientHealthProfile.save();

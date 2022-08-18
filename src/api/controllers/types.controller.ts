@@ -1,7 +1,7 @@
 import express from 'express';
 import { ApiError } from '../../common/api.error';
 import { ResponseHandler } from '../../common/response.handler';
-import { BloodGroupList, MaritalStatusList, SeverityList } from '../../domain.types/miscellaneous/system.types';
+import { BloodGroupList, EthnicityTypeList, MaritalStatusList, RaceTypeList, SeverityList } from '../../domain.types/miscellaneous/system.types';
 import { TypesService } from '../../services/types.service';
 import { Loader } from '../../startup/loader';
 import { BaseController } from './base.controller';
@@ -85,6 +85,32 @@ export class TypesController extends BaseController {
 
             ResponseHandler.success(request, response, 'Blood group types retrieved successfully!', 200, {
                 BloodGroups : BloodGroupList,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getRaceTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Types.GetRaceTypes', request, response, false);
+
+            ResponseHandler.success(request, response, 'Race types retrieved successfully!', 200, {
+                RaceTypes : RaceTypeList,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getEthnicityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Types.GetEthnicityTypes', request, response, false);
+
+            ResponseHandler.success(request, response, 'Ethnicity types retrieved successfully!', 200, {
+                EthnicityTypes : EthnicityTypeList,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

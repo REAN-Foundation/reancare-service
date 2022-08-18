@@ -22,6 +22,7 @@ export class HealthProfileRepo implements IHealthProfileRepo {
                 HasHeartAilment    : patientHealthProfileDomainModel.HasHeartAilment ?? false,
                 MaritalStatus      : patientHealthProfileDomainModel.MaritalStatus ?? 'Unknown',
                 Ethnicity          : patientHealthProfileDomainModel.Ethnicity ?? '',
+                Race               : patientHealthProfileDomainModel.Race ?? '',
                 Nationality        : patientHealthProfileDomainModel.Nationality ?? '',
                 Occupation         : patientHealthProfileDomainModel.Occupation ?? '',
                 SedentaryLifestyle : patientHealthProfileDomainModel.SedentaryLifestyle ?? false,
@@ -93,6 +94,9 @@ export class HealthProfileRepo implements IHealthProfileRepo {
             }
             if (patientHealthProfileDomainModel.Ethnicity !== undefined) {
                 patientHealthProfile.Ethnicity = patientHealthProfileDomainModel.Ethnicity;
+            }
+            if (patientHealthProfileDomainModel.Race !== undefined) {
+                patientHealthProfile.Race = patientHealthProfileDomainModel.Race;
             }
             if (patientHealthProfileDomainModel.Nationality !== undefined) {
                 patientHealthProfile.Nationality = patientHealthProfileDomainModel.Nationality;

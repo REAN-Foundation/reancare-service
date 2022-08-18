@@ -47,6 +47,7 @@ export class HealthProfileService {
             HasHeartAilment    : false,
             MaritalStatus      : 'Unknown',
             Ethnicity          : null,
+            Race               : null,
             Nationality        : null,
             Occupation         : null,
             SedentaryLifestyle : false,

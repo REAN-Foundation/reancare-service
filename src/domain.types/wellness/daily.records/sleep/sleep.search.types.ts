@@ -6,8 +6,6 @@ export interface SleepSearchFilters extends BaseSearchFilters{
     PatientUserId?   : uuid;
     MinValue?        : number;
     MaxValue?        : number;
-    StartTime?       : Date;
-    EndTime?         : Date;
     CreatedDateFrom? : Date;
     CreatedDateTo?   : Date;
 }

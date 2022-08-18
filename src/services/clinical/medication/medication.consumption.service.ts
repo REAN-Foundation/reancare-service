@@ -684,9 +684,6 @@ export class MedicationConsumptionService implements IUserActionService {
         if (frequencyUnit === MedicationFrequencyUnits.Monthly) {
             return Math.round(30 / frequency);
         }
-        if (frequencyUnit === MedicationFrequencyUnits.Other) {
-            return 1;
-        }
         return 1;
     };
 

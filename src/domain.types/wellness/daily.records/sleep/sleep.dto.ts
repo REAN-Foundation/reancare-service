@@ -4,7 +4,5 @@ export interface SleepDto {
     PatientId?    : string;
     SleepDuration : number;
     Unit          : string;
-    StartTime?    : Date;
-    EndTime?      : Date;
     RecordDate?   : Date;
 }

@@ -31,9 +31,9 @@ export class MedicationValidator {
             Frequency                 : parseInt(request.body.Frequency),
             FrequencyUnit             : request.body.FrequencyUnit,
             Route                     : request.body.Route ?? MedicationAdministrationRoutes.Oral,
-            Duration                  : parseInt(request.body.Duration) ?? 1,
+            Duration                  : request.body.Duration ? parseInt(request.body.Duration) : 1,
             DurationUnit              : request.body.DurationUnit ?? MedicationDurationUnits.Weeks,
-            StartDate                 : startDate,
+            StartDate                 : startDate ?? new Date(),
             EndDate                   : request.body.EndDate ?? null,
             RefillNeeded              : request.body.RefillNeeded ?? false,
             RefillCount               : request.body.RefillCount ?? 0,
@@ -153,7 +153,7 @@ export class MedicationValidator {
             .trim()
             .run(request);
 
-        await body('Duration').exists()
+        await body('Duration').optional()
             .isInt()
             .run(request);
 

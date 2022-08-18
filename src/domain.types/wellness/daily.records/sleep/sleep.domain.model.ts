@@ -5,7 +5,5 @@ export interface SleepDomainModel {
     PatientUserId? : string;
     SleepDuration  : number;
     Unit           : string;
-    StartTime?     : Date;
-    EndTime?       : Date;
     RecordDate?    : Date;
 }

@@ -3,7 +3,7 @@ export enum MedicationTimeSchedules {
     Afternoon = 'Afternoon',
     Evening   = 'Evening',
     Night     = 'Night',
-    Custom    = 'Custom',
+    Custom    = 'Custom'
 }
 
 export const MedicationTimeSchedulesList: MedicationTimeSchedules [] = [
@@ -167,13 +167,11 @@ export const MedicationAdministrationRoutesList: MedicationAdministrationRoutes 
 export enum MedicationFrequencyUnits {
     Daily   = 'Daily',
     Weekly  = 'Weekly',
-    Monthly = 'Monthly',
-    Other   = 'Other'
+    Monthly = 'Monthly'
 }
 
 export const MedicationFrequencyUnitsList: MedicationFrequencyUnits [] = [
     MedicationFrequencyUnits.Daily,
     MedicationFrequencyUnits.Weekly,
-    MedicationFrequencyUnits.Monthly,
-    MedicationFrequencyUnits.Other
+    MedicationFrequencyUnits.Monthly
 ];

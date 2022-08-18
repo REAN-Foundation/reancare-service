@@ -18,8 +18,6 @@ export class SleepRepo implements ISleepRepo {
                 PatientUserId : createModel.PatientUserId,
                 SleepDuration : createModel.SleepDuration,
                 Unit          : createModel.Unit,
-                StartTime     : createModel.StartTime,
-                EndTime       : createModel.EndTime,
                 RecordDate    : createModel.RecordDate,
             };
             const sleep = await Sleep.create(entity);
@@ -62,12 +60,6 @@ export class SleepRepo implements ISleepRepo {
                 search.where['SleepDuration'] = {
                     [Op.gte] : filters.MinValue,
                 };
-            }
-            if (filters.StartTime != null) {
-                search.where['StartTime'] = filters.StartTime;
-            }
-            if (filters.EndTime != null) {
-                search.where['EndTime'] = filters.EndTime;
             }
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
                 search.where['CreatedAt'] = {
@@ -144,12 +136,6 @@ export class SleepRepo implements ISleepRepo {
             }
             if (updateModel.Unit != null) {
                 sleep.Unit = updateModel.Unit;
-            }
-            if (updateModel.StartTime != null) {
-                sleep.StartTime = updateModel.StartTime;
-            }
-            if (updateModel.EndTime != null) {
-                sleep.EndTime = updateModel.EndTime;
             }
             if (updateModel.RecordDate != null) {
                 sleep.RecordDate = updateModel.RecordDate;

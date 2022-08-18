@@ -462,4 +462,29 @@ export interface BiometricQueryAnswer extends BaseQueryAnswer {
     Values  : AssessmentBiometrics[];
 }
 
+export class CScoringCondition {
+
+    id?             : uuid;
+    DisplayCode?    : string;
+    NodeId          : uuid;
+    ResolutionScore?: number;
+
+    //For composition type condition
+    IsCompositeCondition?: boolean;
+    CompositionType?    : ConditionCompositionType;
+    ParentConditionId?  : uuid;
+    OperatorType?       : ConditionOperatorType;
+
+    FirstOperand? : ConditionOperand;
+    SecondOperand?: ConditionOperand;
+    ThirdOperand? : ConditionOperand;
+
+    Children?: CScoringCondition[];
+
+    constructor() {
+        this.Children = [];
+    }
+
+}
+
 //#endregion

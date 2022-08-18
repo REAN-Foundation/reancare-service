@@ -5,7 +5,7 @@ import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces
 import { AssessmentTemplateDomainModel } from '../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateDto } from '../../../domain.types/clinical/assessment/assessment.template.dto';
 import { AssessmentTemplateSearchFilters, AssessmentTemplateSearchResults } from "../../../domain.types/clinical/assessment/assessment.template.search.types";
-import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.types";
+import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate, CScoringCondition } from "../../../domain.types/clinical/assessment/assessment.types";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { AssessmentTemplateFileConverter } from "./assessment.template.file.converter";
 
@@ -13,6 +13,22 @@ import { AssessmentTemplateFileConverter } from "./assessment.template.file.conv
 
 @injectable()
 export class AssessmentTemplateService {
+
+    addScoringCondition(model: CScoringCondition): Promise<CScoringCondition> {
+        throw new Error('Method not implemented.');
+    }
+
+    getScoringCondition(conditionId: string): Promise<CScoringCondition> {
+        throw new Error('Method not implemented.');
+    }
+
+    updateScoringCondition(nodeId: string, updates: any) {
+        throw new Error('Method not implemented.');
+    }
+
+    deleteScoringCondition(nodeId: string): Promise<boolean> {
+        throw new Error('Method not implemented.');
+    }
 
     constructor(
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
@@ -30,7 +46,7 @@ export class AssessmentTemplateService {
 
     public getById = async (id: uuid): Promise<AssessmentTemplateDto> => {
         var templateDto = await this._assessmentTemplateRepo.getById(id);
-        
+
         return templateDto;
     };
 
@@ -87,7 +103,7 @@ export class AssessmentTemplateService {
     }
 
     sanitizeTemplateForExport = (template: CAssessmentTemplate): CAssessmentTemplate => {
-        
+
         delete template.TemplateId;
 
         for (var node of template.Nodes) {

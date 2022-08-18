@@ -21,6 +21,7 @@ export class HealthProfileMapper {
             HasHeartAilment    : patientHealthProfile.HasHeartAilment,
             MaritalStatus      : patientHealthProfile.MaritalStatus,
             Ethnicity          : patientHealthProfile.Ethnicity,
+            Race               : patientHealthProfile.Race,
             Nationality        : patientHealthProfile.Nationality,
             Occupation         : patientHealthProfile.Occupation,
             SedentaryLifestyle : patientHealthProfile.SedentaryLifestyle,

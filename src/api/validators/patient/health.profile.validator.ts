@@ -25,6 +25,7 @@ export class HealthProfileValidator extends BaseValidator {
             HasHeartAilment    : request.body.HasHeartAilment ?? undefined,
             MaritalStatus      : request.body.MaritalStatus ?? undefined,
             Ethnicity          : request.body.Ethnicity ?? undefined,
+            Race               : request.body.Race ?? undefined,
             Nationality        : request.body.Nationality ?? undefined,
             Occupation         : request.body.Occupation ?? undefined,
             SedentaryLifestyle : request.body.SedentaryLifestyle ?? undefined,

@@ -88,6 +88,13 @@ export default class HealthProfile extends Model {
     })
     Ethnicity: string;
 
+    @Column({
+        type         : DataType.STRING(128),
+        allowNull    : true,
+        defaultValue : ''
+    })
+    Race: string;
+
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),

@@ -103,6 +103,7 @@ export enum ConditionOperatorType {
     IsTrue             = 'Is true',
     IsFalse            = 'Is false',
     Exists             = 'Exists',
+    None               = 'None',
 }
 
 export const ConditionOperatorTypeList: ConditionOperatorType[] = [
@@ -273,6 +274,11 @@ export class CAssessmentNodePath {
     NextNodeDisplayCode: string;
     ConditionId        : string;
     Condition          : CAssessmentPathCondition;
+    IsExitPath         : boolean;
+
+    constructor() {
+        this.IsExitPath = false;
+    }
 
 }
 
@@ -359,7 +365,7 @@ export class ConditionOperand {
             }
         }
     }
-    
+
 }
 
 export class CAssessmentPathCondition {

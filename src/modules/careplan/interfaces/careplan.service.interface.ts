@@ -15,6 +15,8 @@ export interface ICareplanService {
 
     providerName(): string;
 
+    getPatientEligibility(patient: any, planCode: string): Promise<any>;
+
     registerPatient(patientDetails: ParticipantDomainModel): Promise<string>;
 
     enrollPatientToCarePlan(enrollmentDetails: EnrollmentDomainModel): Promise<string>;

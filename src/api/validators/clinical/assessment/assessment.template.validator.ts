@@ -19,6 +19,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             Type                        : request.body.Type ?? null,
             Title                       : request.body.Title ?? null,
             Description                 : request.body.Description,
+            DisplayCode                 : request.body.DisplayCode ?? null,
             ProviderAssessmentCode      : request.body.ProviderAssessmentCode ?? null,
             Provider                    : request.body.Provider ?? null,
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
@@ -50,8 +51,9 @@ export class AssessmentTemplateValidator extends BaseValidator {
     private getFilter(request): AssessmentTemplateSearchFilters {
 
         var filters: AssessmentTemplateSearchFilters = {
-            Title : request.query.title ?? null,
-            Type  : request.query.type ?? null,
+            Title       : request.query.title ?? null,
+            Type        : request.query.type ?? null,
+            DisplayCode : request.query.displayCode ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -73,6 +75,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'Description', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, false);
+        await this.validateString(request, 'DisplayCode', Where.Body, false, false);
         
         this.validateRequest(request);
 
@@ -113,7 +116,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             var questionNode : CAssessmentQuestionNode = {
                 ParentNodeId      : request.body.ParentNodeId,
                 NodeType          : AssessmentNodeType.Question,
-                DisplayCode       : Helper.generateDisplayCode('QNode'),
+                DisplayCode       : request.body.DisplayCode ?? Helper.generateDisplayCode('QNode'),
                 QueryResponseType : request.body.QueryResponseType,
                 Required          : true,
                 ProviderGivenId   : request.body.ProviderGivenId ?? null,

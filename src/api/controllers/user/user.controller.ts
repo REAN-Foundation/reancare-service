@@ -8,6 +8,7 @@ import { UserService } from '../../../services/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { UserValidator } from '../../validators/user/user.validator';
 import { Logger } from '../../../common/logger';
+import { UserHelper } from '../../../api/helpers/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -224,5 +225,18 @@ export class UserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
+    scheduleMonthlyCustomTasks = async (request: express.Request, response: express.Response): Promise<any> => {
+        try {
+            
+            Logger.instance().log('Running scheduled jobs via endpoint: Schedule Custom Tasks...');
+            var userHelper = new UserHelper();
+            await userHelper.scheduleMonthlyCustomTasks();
+            ResponseHandler.success(request, response, 'Cron completed successfully!', 200);
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
 }

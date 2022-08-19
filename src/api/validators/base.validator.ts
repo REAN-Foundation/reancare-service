@@ -158,7 +158,7 @@ export class BaseValidator {
 
         chain = chain.customSanitizer((value) => {
             if (value !== null && value !== undefined) {
-                value = value.trim();
+                //value = value.trim();
                 var x = Date.parse(value);
                 value = new Date(x);
                 return value;

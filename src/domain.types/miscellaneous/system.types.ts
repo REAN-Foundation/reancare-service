@@ -21,16 +21,24 @@ export const BloodGroupList: BloodGroup[] = [
 ];
 
 export enum Gender {
-    Male = 'Male',
-    Female = 'Female',
-    Other = 'Other',
-    Unknown = 'Unknown',
+    Male                 = 'Male',
+    Female               = 'Female',
+    Intersex             = 'Intersex',
+    Other                = 'Other',
+    NonBinary            = 'Non-binary',
+    PreferToSelfDescribe = 'Prefer to self-describe',
+    PreferNotToAnswer    = 'Prefer not to answer',
+    Unknown              = 'Unknown'
 }
 
 export const GenderList: Gender[] = [
     Gender.Male,
     Gender.Female,
+    Gender.Intersex,
     Gender.Other,
+    Gender.NonBinary,
+    Gender.PreferToSelfDescribe,
+    Gender.PreferNotToAnswer,
     Gender.Unknown,
 ];
 

@@ -921,6 +921,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             const entity = {
                 DisplayCode           : model.DisplayCode ?? Helper.generateDisplayCode('ScCondition'),
                 NodeId                : model.NodeId,
+                TemplateId            : model.TemplateId,
                 ParentConditionId     : model.ParentConditionId,
                 IsCompositeCondition  : model.IsCompositeCondition,
                 CompositionType       : model.CompositionType,
@@ -961,6 +962,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
             var condition = await ScoringCondition.findByPk(conditionId);
 
+            if (Helper.hasProperty(updates, 'TemplateId')) {
+                condition.TemplateId = updates['TemplateId'];
+            }
             if (Helper.hasProperty(updates, 'NodeId')) {
                 condition.NodeId = updates['NodeId'];
             }

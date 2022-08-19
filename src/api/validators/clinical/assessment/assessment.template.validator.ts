@@ -210,6 +210,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         this.validateRequest(request);
 
         var condition: CScoringCondition = {
+            TemplateId           : request.body.TemplateId,
             NodeId               : request.body.NodeId ?? null,
             ResolutionScore      : request.body.ResolutionScore ?? null,
             IsCompositeCondition : request.body.IsCompositeCondition ?? false,
@@ -224,6 +225,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
     }
 
     updateScoringCondition = async (request: express.Request): Promise<CScoringCondition> => {
+        await this.validateUuid(request, 'TemplateId', Where.Body, false, false);
         await this.validateUuid(request, 'NodeId', Where.Body, false, false);
         await this.validateDecimal(request, 'ResolutionScore', Where.Body, false, true);
         await this.validateBoolean(request, 'IsCompositeCondition', Where.Body, false, false);

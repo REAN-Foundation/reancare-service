@@ -397,11 +397,12 @@ export class AssessmentHelperMapper {
         }
         var conditionDto = new CScoringCondition();
 
-        conditionDto.id = condition.id;
-        conditionDto.NodeId = condition.NodeId;
-        conditionDto.DisplayCode = condition.DisplayCode;
+        conditionDto.id                = condition.id;
+        conditionDto.TemplateId        = condition.TemplateId;
+        conditionDto.NodeId            = condition.NodeId;
+        conditionDto.DisplayCode       = condition.DisplayCode;
         conditionDto.ParentConditionId = condition.ParentConditionId;
-        conditionDto.ResolutionScore = condition.ResolutionScore;
+        conditionDto.ResolutionScore   = condition.ResolutionScore;
 
         conditionDto.OperatorType = condition.OperatorType as ConditionOperatorType;
 

@@ -22,6 +22,7 @@ import {
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { v4 } from 'uuid';
 import AssessmentNode from './assessment.model';
+import AssessmentTemplate from './assessment.template.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -56,10 +57,21 @@ export default class ScoringCondition extends Model {
     DisplayCode: string;
 
     @IsUUID(4)
-    @ForeignKey(() => AssessmentNode)
+    @ForeignKey(() => AssessmentTemplate)
     @Column({
         type      : DataType.UUID,
         allowNull : false,
+    })
+    TemplateId: string;
+
+    @BelongsTo(() => AssessmentTemplate)
+    Template: AssessmentTemplate;
+
+    @IsUUID(4)
+    @ForeignKey(() => AssessmentNode)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
     })
     NodeId: string; //Node to which this condition belongs
 

@@ -195,9 +195,10 @@ export class AssessmentTemplateValidator extends BaseValidator {
     };
 
     addScoringCondition = async (request: express.Request): Promise<CScoringCondition> => {
-        await this.validateUuid(request, 'NodeId', Where.Body, true, false);
+
+        await this.validateUuid(request, 'NodeId', Where.Body, false, false);
         await this.validateDecimal(request, 'ResolutionScore', Where.Body, false, true);
-        await this.validateBoolean(request, 'IsCompositeCondition', Where.Body, true, false);
+        await this.validateBoolean(request, 'IsCompositeCondition', Where.Body, false, false);
         await this.validateString(request, 'CompositionType', Where.Body, false, true);
         await this.validateUuid(request, 'ParentConditionId', Where.Body, false, false);
         await this.validateString(request, 'OperatorType', Where.Body, false, false);

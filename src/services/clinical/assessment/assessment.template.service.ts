@@ -14,22 +14,6 @@ import { AssessmentTemplateFileConverter } from "./assessment.template.file.conv
 @injectable()
 export class AssessmentTemplateService {
 
-    addScoringCondition(model: CScoringCondition): Promise<CScoringCondition> {
-        throw new Error('Method not implemented.');
-    }
-
-    getScoringCondition(conditionId: string): Promise<CScoringCondition> {
-        throw new Error('Method not implemented.');
-    }
-
-    updateScoringCondition(nodeId: string, updates: any) {
-        throw new Error('Method not implemented.');
-    }
-
-    deleteScoringCondition(nodeId: string): Promise<boolean> {
-        throw new Error('Method not implemented.');
-    }
-
     constructor(
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
@@ -134,5 +118,21 @@ export class AssessmentTemplateService {
 
         return template;
     };
+
+    addScoringCondition = async(model: CScoringCondition): Promise<CScoringCondition> => {
+        return await this._assessmentHelperRepo.addScoringCondition(model);
+    }
+
+    getScoringCondition = async(conditionId: uuid): Promise<CScoringCondition> => {
+        return await this._assessmentHelperRepo.getScoringCondition(conditionId);
+    }
+
+    updateScoringCondition = async(conditionId: uuid, updates: any): Promise<CScoringCondition> => {
+        return await this._assessmentHelperRepo.updateScoringCondition(conditionId, updates);
+    }
+
+    deleteScoringCondition = async(conditionId: uuid): Promise<boolean> => {
+        return await this._assessmentHelperRepo.deleteScoringCondition(conditionId);
+    }
 
 }

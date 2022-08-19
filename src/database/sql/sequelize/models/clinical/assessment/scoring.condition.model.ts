@@ -162,7 +162,7 @@ export default class ScoringCondition extends Model {
         defaultValue : 0.0,
         allowNull    : true,
     })
-    ResolutionPoints: number;
+    ResolutionScore: number;
 
     @Column
     @CreatedAt

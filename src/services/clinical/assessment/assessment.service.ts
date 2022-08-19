@@ -29,8 +29,7 @@ import {
     DateQueryAnswer,
     FileQueryAnswer,
     BooleanQueryAnswer,
-    CAssessmentListNode
-} from '../../../domain.types/clinical/assessment/assessment.types';
+    CAssessmentListNode } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { Loader } from '../../../startup/loader';
 import { AssessmentBiometricsHelper } from './assessment.biometrics.helper';
@@ -265,33 +264,59 @@ export class AssessmentService {
 
     //#region Privates
 
-    private async traverseUpstream(currentNode: CAssessmentNode): Promise<CAssessmentNode> {
+    private async traverseUpstream(assessmentId: uuid, currentNode: CAssessmentNode): Promise<CAssessmentNode> {
         const parentNode = await this._assessmentHelperRepo.getNodeById(currentNode.ParentNodeId);
         if (parentNode === null) {
             //We have reached the root node of the assessment
             return null; //Check for this null which means the assessment is over...
         }
+        if (parentNode.NodeType !== AssessmentNodeType.NodeList) {
+            return await this.traverseUpstream(assessmentId, parentNode);
+        }
         var siblingNodes = await this._assessmentHelperRepo.getNodeListChildren(currentNode.ParentNodeId);
         if (siblingNodes.length === 0) {
             //The parent node is either a question node or message node
             //In this case, check the siblings of its parent.
-            return this.traverseUpstream(parentNode);
+            return await this.traverseUpstream(assessmentId, parentNode);
         }
-        const currentSequence = currentNode.Sequence;
-        for await (var sibling of siblingNodes) {
-            if (sibling.Sequence === currentSequence + 1) {
-                return sibling;
-            }
+        const sibling = await this.getNextUnansweredSibling(assessmentId, currentNode, siblingNodes);
+        if (sibling) {
+            return sibling;
         }
         //Since we no longer can find the next sibling, retract tracing by one step, move onto the parent
-        return this.traverseUpstream(parentNode);
+        return await this.traverseUpstream(assessmentId, parentNode);
+    }
+
+    private async getNextUnansweredSibling(
+        assessmentId: uuid, currentNode: CAssessmentNode, siblingNodes: CAssessmentNode[]) {
+
+        var sequence = currentNode.Sequence;
+        var sequences = siblingNodes.map(x => x.Sequence);
+        var maxSequenceValue = Math.max(...sequences);
+        sequence = sequence + 1;
+
+        while (sequence <= maxSequenceValue) {
+            for await (var sibling of siblingNodes) {
+                if (sibling.Sequence === sequence && currentNode.id !== sibling.id) {
+                    const isAnswered = await this.isAnswered(assessmentId, sibling.id);
+                    if (isAnswered) {
+                        break;
+                    }
+                    else {
+                        return sibling;
+                    }
+                }
+            }
+            sequence = sequence + 1;
+        }
+        return null;
     }
 
     private async iterateListNodeChildren(assessment: AssessmentDto, currentNodeId: uuid)
         : Promise<any> {
         var childrenNodes = await this._assessmentHelperRepo.getNodeListChildren(currentNodeId);
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
-        
+
         for await (var childNode of childrenNodes) {
             if (currentNode.DisplayCode.startsWith('RNode#')) {
                 const nextNode = await this.traverse(assessment, childNode.id);
@@ -309,7 +334,8 @@ export class AssessmentService {
         return null;
     }
 
-    private async traverseUpstreamInChildrenNode(currentNode: CAssessmentNode): Promise<CAssessmentNode> {
+    private async traverseUpstreamInChildrenNode(
+        assessmentId: string, currentNode: CAssessmentNode): Promise<CAssessmentNode> {
         const parentNode = await this._assessmentHelperRepo.getNodeById(currentNode.ParentNodeId);
         if (parentNode === null) {
             //We have reached the root node of the assessment
@@ -319,7 +345,7 @@ export class AssessmentService {
         if (siblingNodes.length === 0) {
             //The parent node is either a question node or message node
             //In this case, check the siblings of its parent.
-            return this.traverseUpstream(parentNode);
+            return this.traverseUpstream(assessmentId, parentNode);
         }
         const currentSequence = currentNode.Sequence;
         for await (var sibling of siblingNodes) {
@@ -328,7 +354,7 @@ export class AssessmentService {
             }
         }
         //Since we no longer can find the next sibling, retract tracing by one step, move onto the parent
-        return this.traverseUpstream(parentNode);
+        return this.traverseUpstream(assessmentId, parentNode);
     }
 
     private async traverseQuestionNode(assessment: AssessmentDto, currentNode: CAssessmentNode)
@@ -344,7 +370,7 @@ export class AssessmentService {
             return await this.traverseQuestionNodePaths(assessment, questionNode);
         }
         else {
-            const nextSiblingNode = await this.traverseUpstream(currentNode);
+            const nextSiblingNode = await this.traverseUpstream(assessment.id, currentNode);
             if (nextSiblingNode === null) {
                 //Assessment has finished
                 return null;
@@ -369,7 +395,7 @@ export class AssessmentService {
         assessmentId: uuid,
         currentQuestionNode: CAssessmentQuestionNode,
         answerModel) {
-            
+
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         var { answerDto, paths, chosenOptionSequences, nodeId } =
         await this.getMultipleChoiceQueryAnswer(assessmentId, currentQuestionNode, answerModel);
@@ -386,7 +412,7 @@ export class AssessmentService {
 
         const currentNodeId = currentQuestionNode.id;
         const assessmentId = assessment.id;
-        
+
         //Now check if all paths have been answered
         var nextAnsweredNode = null;
         const currentNodePaths = currentQuestionNode.Paths;
@@ -410,7 +436,7 @@ export class AssessmentService {
             incomingResponseType === QueryResponseType.MultiChoiceSelection) {
 
             var chosenPath = null;
-            
+
             if (incomingResponseType === QueryResponseType.SingleChoiceSelection) {
                 chosenPath = await this.getChosenPathForSingleChoice(assessmentId, currentQuestionNode, answerModel);
             }
@@ -436,7 +462,7 @@ export class AssessmentService {
                 }
             }
         }
-        const nextSiblingNode = await this.traverseUpstream(currentQuestionNode);
+        const nextSiblingNode = await this.traverseUpstream(assessment.id, currentQuestionNode);
         if (nextSiblingNode === null) {
             //Assessment has finished
             return null;
@@ -472,7 +498,7 @@ export class AssessmentService {
         if (!isAnswered) {
             return await this.returnAsCurrentMessageNode(assessment, currentNode as CAssessmentMessageNode);
         } else {
-            const nextSiblingNode = await this.traverseUpstream(currentNode);
+            const nextSiblingNode = await this.traverseUpstream(assessment.id, currentNode);
             if (nextSiblingNode === null) {
             //Assessment has finished
                 return null;
@@ -483,7 +509,7 @@ export class AssessmentService {
 
     // eslint-disable-next-line max-len
     private async traverse(assessment: AssessmentDto, currentNodeId: uuid): Promise<AssessmentQueryDto | AssessmentQueryListDto> {
-        
+
         const currentNode = await this._assessmentHelperRepo.getNodeById(currentNodeId);
         if (!currentNode) {
             throw new Error(`Error while executing assessment. Cannot find the node!`);
@@ -495,7 +521,7 @@ export class AssessmentService {
             if (serveListNodeChildrenAtOnce) {
                 const isListAnswered = await this.isListAnswered(assessment.id, currentListNode);
                 if (isListAnswered) {
-                    const nextSiblingNode = await this.traverseUpstream(currentNode);
+                    const nextSiblingNode = await this.traverseUpstream(assessment.id, currentNode);
                     if (nextSiblingNode === null) {
                         //Assessment has finished
                         return null;
@@ -592,6 +618,11 @@ export class AssessmentService {
         return chosenPath;
     }
 
+    private isAnyPathExitPath(paths: CAssessmentNodePath[]) {
+        var path = paths.find(x => x.IsExitPath === true);
+        return path ? true : false;
+    }
+
     private async processPathConditions(
         assessment: AssessmentDto,
         nodeId: uuid,
@@ -607,6 +638,7 @@ export class AssessmentService {
         chosenOptions: any) {
 
         const chosenPath = await this.getChosenPath(nodeId, paths, chosenOptions);
+        const exitPathFound = this.isAnyPathExitPath(paths);
 
         if (chosenPath !== null) {
             const nextNodeId = chosenPath.NextNodeId;
@@ -629,6 +661,18 @@ export class AssessmentService {
                 Answer       : answerDto,
                 Next         : next,
             };
+            return response;
+        }
+        else if (exitPathFound) {
+            //IMPORTANT: When no chosen node found and one of the path is exit path, exit the assessment
+            //Please note that - Assessment will be completed right here...
+            const response: AssessmentQuestionResponseDto = {
+                AssessmentId : assessment.id,
+                Parent       : currentQueryDto,
+                Answer       : answerDto,
+                Next         : null,
+            };
+            await this.completeAssessment(assessment.id);
             return response;
         }
         else {
@@ -702,7 +746,7 @@ export class AssessmentService {
             //This question node is a leaf node and should use traverseUp to find the next stop...
             return await this.respondToUserAnswer(assessment, nodeId, currentQueryDto, answerDto);
         }
-        
+
         return await this.processPathConditions(
             assessment, nodeId, currentQueryDto, paths, answerDto, chosenOptionSequence);
     }
@@ -785,7 +829,7 @@ export class AssessmentService {
         questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel
     ): Promise<AssessmentQuestionResponseDto> {
-        
+
         const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
         const answerDto = AssessmentHelperMapper.toTextAnswerDto(
             assessment.id,
@@ -817,14 +861,14 @@ export class AssessmentService {
         assessment: AssessmentDto,
         questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
-        
+
         const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
         const answerDto = AssessmentHelperMapper.toDateAnswerDto(
             assessment.id,
             questionNode,
             answerModel.DateValue
         );
-    
+
         await this._assessmentHelperRepo.createQueryResponse(answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
@@ -833,7 +877,7 @@ export class AssessmentService {
         assessment: AssessmentDto,
         questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
-        
+
         const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
         const answerDto = AssessmentHelperMapper.toIntegerAnswerDto(
             assessment.id,
@@ -841,7 +885,7 @@ export class AssessmentService {
             answerModel.FieldName,
             answerModel.IntegerValue
         );
-        
+
         await this._assessmentHelperRepo.createQueryResponse(answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
@@ -850,7 +894,7 @@ export class AssessmentService {
         assessment: AssessmentDto,
         questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
-        
+
         const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
         const answerDto = AssessmentHelperMapper.toBooleanAnswerDto(
             assessment.id,
@@ -858,7 +902,7 @@ export class AssessmentService {
             answerModel.FieldName,
             answerModel.BooleanValue
         );
-        
+
         await this._assessmentHelperRepo.createQueryResponse(answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
@@ -867,7 +911,7 @@ export class AssessmentService {
         assessment: AssessmentDto,
         questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
-        
+
         const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
         const answerDto = AssessmentHelperMapper.toFloatAnswerDto(
             assessment.id,
@@ -875,7 +919,7 @@ export class AssessmentService {
             answerModel.FieldName,
             answerModel.FloatValue
         );
-            
+
         await this._assessmentHelperRepo.createQueryResponse(answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
@@ -884,7 +928,7 @@ export class AssessmentService {
         assessment: AssessmentDto,
         questionNode: CAssessmentQuestionNode,
         answerModel: AssessmentAnswerDomainModel): Promise<AssessmentQuestionResponseDto> {
-        
+
         const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
         const answerDto = AssessmentHelperMapper.toFileAnswerDto(
             assessment.id,
@@ -893,7 +937,7 @@ export class AssessmentService {
             answerModel.Url,
             answerModel.ResourceId
         );
-        
+
         await this._assessmentHelperRepo.createQueryResponse(answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
@@ -1027,7 +1071,7 @@ export class AssessmentService {
         if (incomingResponseType !== expectedResponseType) {
             throw new Error(`Provided response type is different than expected response type.`);
         }
-        
+
         if (incomingResponseType === QueryResponseType.SingleChoiceSelection) {
             return await this.handleSingleChoiceSelectionAnswer(assessment, questionNode, answerModel);
         }

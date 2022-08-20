@@ -12,25 +12,27 @@
     ],
     "name": [
         {
-            "use": "official",
-            "given": ["pharmacist_first_name", "pharmacist_middle_name"],
-            "family": "pharmacist_last_name",
-            "prefix": ["pharmacist_prefix"]
-            
+          "family": "Practitioner_LastName",
+          "given": [
+            "Practitioner_FirstName"
+          ],
+          "prefix": [
+            "Miss."
+          ]
         }
-    ],
-    "gender": "unknown",
+      ],
+    "gender": "female",
     "birthDate": "1234-12-12",
     "telecom": [
         {
             "system": "phone",
             "use": "work",
-            "value": "pharmacist_phone_number"
+            "value": "8265596983"
         },
         {
             "system": "email",
             "use": "work",
-            "value": "pharmacist_email"
+            "value": "Sarah.53252.Robinson@gmail.com"
         },
         {
             "system": "fax",

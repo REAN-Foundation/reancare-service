@@ -13,9 +13,10 @@ import CareplanActivity from "../../../models/clinical/careplan/careplan.activit
 import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityMapper } from '../../../mappers/clinical/careplan/activity.mapper';
 import { Op } from 'sequelize';
-import { HealthPriorityDto } from '../../../../../../domain.types/health.priority/health.priority.dto';
-import HealthPriority from '../../../models/health.priority/health.priority.model';
-import { HealthPriorityMapper } from '../../../mappers/health.priority/health.priority.mapper';
+import { HealthPriorityDto } from '../../../../../../domain.types/patient/health.priority/health.priority.dto';
+import HealthPriority from '../../../models/patient/health.priority/health.priority.model';
+import { HealthPriorityMapper } from '../../../mappers/patient/health.priority/health.priority.mapper';
+import { Helper } from '../../../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -279,12 +280,39 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    public updateActivityDetails = async (activityId: uuid, rawContent: any ): Promise<CareplanActivityDto> => {
+    public updateActivityDetails = async (activityId: uuid, activityDetails: any)
+        : Promise<CareplanActivityDto> => {
         try {
             var record = await CareplanActivity.findByPk(activityId);
-            record.RawContent = JSON.stringify(rawContent);
-            await record.save();
-            return CareplanActivityMapper.toDto(record);
+            
+            record.RawContent = JSON.stringify(activityDetails.RawContent);
+            if (!record.Title) {
+                record.Title = activityDetails.Title;
+            }
+            if (!record.Type) {
+                record.Type = activityDetails.Type;
+            }
+            if (!record.Category || record.Category !== activityDetails.Category) {
+                record.Category = activityDetails.Category;
+            }
+            if (!record.Title) {
+                record.Title = activityDetails.Title;
+            }
+            if (!record.Description) {
+                record.Description = activityDetails.Description;
+            }
+            if (!Helper.isUrl(record.Url)) {
+                if (record.Url !== activityDetails.Url && Helper.isUrl(activityDetails.Url)) {
+                    record.Url = activityDetails.Url;
+                }
+                else {
+                    record.Url = null;
+                }
+            }
+
+            var updatedRecord = await record.save();
+            return CareplanActivityMapper.toDto(updatedRecord);
+
         } catch (error) {
             Logger.instance().log(error.message);
         }
@@ -327,6 +355,23 @@ export class CareplanRepo implements ICareplanRepo {
         try {
             const record = await HealthPriority.findByPk(id);
             return HealthPriorityMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public updateActivityUserResponse = async (activityId: uuid, userResponse: string )
+        : Promise<CareplanActivityDto> => {
+        try {
+            var record = await CareplanActivity.findByPk(activityId);
+
+            if (userResponse != null) {
+                record.UserResponse = userResponse;
+            }
+
+            await record.save();
+
+            return CareplanActivityMapper.toDto(record);
         } catch (error) {
             Logger.instance().log(error.message);
         }

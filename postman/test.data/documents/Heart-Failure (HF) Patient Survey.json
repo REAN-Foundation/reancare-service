@@ -1,0 +1,36 @@
+{
+  "DisplayCode": "AssessmtTmpl#2hnddyza9pat42lv4u2zjyjd",
+  "Version": "1.0",
+  "Type": "Survey",
+  "Title": "Heart Failure (HF) Patient AHA Survey",
+  "Description": "To understand the impact of AHA resources on heart failure patients.",
+  "Provider": "REAN",
+  "ProviderAssessmentCode": "1",
+  "RootNodeDisplayCode": "RNode#qd1xf4m9t7ge0at5xtsg9yo8",
+  "Nodes": [
+    {
+      "DisplayCode": "MNode#93xudevbfhqwwktw3j8kct96",
+      "NodeType": "Message",
+      "ProviderGivenId": null,
+      "ProviderGivenCode": null,
+      "Title": "Heart Failure (HF) Patient Survey form link",
+      "Description": "Click on the given link and fill the survey.",
+      "Sequence": 1,
+      "Score": 0,
+      "Message": "https://americanheart.co1.qualtrics.com/jfe/form/SV_b1anZr9DUmEOsce"
+    },
+    {
+      "DisplayCode": "RNode#qd1xf4m9t7ge0at5xtsg9yo8",
+      "NodeType": "Node list",
+      "ProviderGivenId": null,
+      "ProviderGivenCode": null,
+      "Title": "Assessment root node",
+      "Description": null,
+      "Sequence": 0,
+      "Score": 0,
+      "ChildrenNodeDisplayCodes": [
+        "MNode#93xudevbfhqwwktw3j8kct96"
+      ]
+    }
+  ]
+}

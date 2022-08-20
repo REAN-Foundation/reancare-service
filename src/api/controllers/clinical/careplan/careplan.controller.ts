@@ -35,7 +35,7 @@ export class CareplanController extends BaseController {
         try {
             await this.setContext('Careplan.GetAvailableCareplans', request, response);
 
-            var plans = this._service.getAvailableCarePlans(request.params.provider);
+            var plans = this._service.getAvailableCarePlans(request.query.provider as string);
 
             ResponseHandler.success(request, response, 'Available careplans retrieved successfully!', 200, {
                 AvailablePlans : plans,
@@ -57,12 +57,23 @@ export class CareplanController extends BaseController {
             Logger.instance().log(`Start Date: ${JSON.stringify(startDate)}`);
 
             var endDate: Date = null;
-            if (model.EndDateStr) {
-                endDate = new Date(model.EndDateStr);
-                endDate = TimeHelper.addDuration(endDate, 1, DurationType.Day);
-            }
-            else {
-                endDate = TimeHelper.addDuration(startDate, 84, DurationType.Day);
+            if (model.PlanCode === 'Cholesterol') {
+                if (model.EndDateStr) {
+                    endDate = new Date(model.EndDateStr);
+                    endDate = TimeHelper.addDuration(endDate, 1, DurationType.Day);
+                }
+                else {
+                    endDate = TimeHelper.addDuration(startDate, 91, DurationType.Day);
+                }
+            } else {
+                if (model.EndDateStr) {
+                    endDate = new Date(model.EndDateStr);
+                    endDate = TimeHelper.addDuration(endDate, 1, DurationType.Day);
+                }
+                else {
+                    endDate = TimeHelper.addDuration(startDate, 84, DurationType.Day);
+                }
+
             }
 
             Logger.instance().log(`End Date: ${JSON.stringify(endDate)}`);
@@ -79,6 +90,24 @@ export class CareplanController extends BaseController {
                 Enrollment : enrollment,
             });
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getPatientEligibility = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Careplan.GetPatientEligibility', request, response);
+
+            const patientUserId = request.params.patientUserId;
+            const provider = request.params.provider;
+            const careplanCode = request.params.careplanCode;
+            
+            const patient = await this._userService.getById(patientUserId);
+            const eligibility = await this._service.getPatientEligibility(patient, provider, careplanCode);
+            ResponseHandler.success(request, response, 'Patient eligibility for careplan retrieved successfully!', 200, {
+                Eligibility : eligibility,
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -111,6 +140,21 @@ export class CareplanController extends BaseController {
             }
             ResponseHandler.success(request, response, 'Careplan tasks fetched successfully!', 200, {
                 Fetched : fetched,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getWeeklyStatus = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Careplan.GetWeeklyStatus', request, response);
+
+            const careplanId = request.params.id; // careplan id
+            var careplanStatus = await this._service.getWeeklyStatus(careplanId);
+            ResponseHandler.success(request, response, 'Careplan weekly status fetched successfully!', 200, {
+                CareplanStatus : careplanStatus
             });
 
         } catch (error) {

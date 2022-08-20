@@ -103,11 +103,14 @@ export class AssessmentTemplateFileConverter {
         const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
         const sourceFolder = path.join(tempDownloadFolder, dateFolder, timestamp);
         const sourceFileLocation = path.join(sourceFolder, filename);
+
         await fs.promises.mkdir(sourceFolder, { recursive: true });
-    
+
         const jsonObj = AssessmentTemplateFileConverter.convertToJson(templateObj);
         const jsonStr = JSON.stringify(jsonObj, null, 2);
         fs.writeFileSync(sourceFileLocation, jsonStr);
+        await Helper.sleep(500);
+
         return { dateFolder, filename, sourceFileLocation };
     };
 
@@ -159,7 +162,7 @@ export class AssessmentTemplateFileConverter {
             }
 
             //Add paths
-            
+
             if (questionNode.Paths && questionNode.Paths.length > 0) {
                 const pathObjects: CAssessmentNodePath[] = questionNode.Paths;
                 var paths = [];
@@ -168,6 +171,7 @@ export class AssessmentTemplateFileConverter {
                         DisplayCode           : pathObj.DisplayCode,
                         ParentNodeDisplayCode : nodeObj.DisplayCode,
                         NextNodeDisplayCode   : pathObj.NextNodeDisplayCode,
+                        IsExitPath            : pathObj.IsExitPath,
                         Condition             : AssessmentTemplateFileConverter.conditionToJson(pathObj.Condition)
                     };
                     paths.push(nodePath);
@@ -194,6 +198,11 @@ export class AssessmentTemplateFileConverter {
                 children.push(child);
             }
             condition['Children'] = children;
+        }
+        else if (conditionObj.OperatorType === ConditionOperatorType.None) {
+            condition['FirstOperand'] = null;
+            condition['SecondOperand'] = null;
+            condition['ThirdOperand'] = null;
         }
         else {
             condition['OperatorType'] = conditionObj.OperatorType;
@@ -231,15 +240,16 @@ export class AssessmentTemplateFileConverter {
 
             var listNode: CAssessmentListNode = new CAssessmentListNode();
 
-            listNode.DisplayCode              = nodeObj.DisplayCode;
-            listNode.NodeType                 = nodeObj.NodeType;
-            listNode.ProviderGivenId          = nodeObj.ProviderGivenId;
-            listNode.ProviderGivenCode        = nodeObj.ProviderGivenCode;
-            listNode.Title                    = nodeObj.Title;
-            listNode.Description              = nodeObj.Description;
-            listNode.Sequence                 = nodeObj.Sequence;
-            listNode.Score                    = nodeObj.Score;
-            listNode.ChildrenNodeDisplayCodes = nodeObj.ChildrenNodeDisplayCodes;
+            listNode.DisplayCode                 = nodeObj.DisplayCode;
+            listNode.NodeType                    = nodeObj.NodeType;
+            listNode.ProviderGivenId             = nodeObj.ProviderGivenId;
+            listNode.ProviderGivenCode           = nodeObj.ProviderGivenCode;
+            listNode.Title                       = nodeObj.Title;
+            listNode.Description                 = nodeObj.Description;
+            listNode.Sequence                    = nodeObj.Sequence;
+            listNode.Score                       = nodeObj.Score;
+            listNode.ChildrenNodeDisplayCodes    = nodeObj.ChildrenNodeDisplayCodes;
+            listNode.ServeListNodeChildrenAtOnce = nodeObj.ServeListNodeChildrenAtOnce;
 
             return listNode;
         }
@@ -280,6 +290,7 @@ export class AssessmentTemplateFileConverter {
                     nodePath.DisplayCode = pathObj.DisplayCode;
                     nodePath.ParentNodeDisplayCode = nodeObj.DisplayCode;
                     nodePath.NextNodeDisplayCode = pathObj.NextNodeDisplayCode;
+                    nodePath.IsExitPath = pathObj.IsExitPath;
                     nodePath.Condition = AssessmentTemplateFileConverter.conditionFromJson(pathObj.Condition);
                     paths.push(nodePath);
                 }

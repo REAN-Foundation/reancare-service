@@ -33,6 +33,10 @@ export class UserTaskService {
         return dto;
     };
 
+    getByActionId = async (actionId: string): Promise<UserTaskDto> => {
+        return await this._userTaskRepo.getByActionId(actionId);
+    };
+
     getByDisplayId = async (id: string): Promise<UserTaskDto> => {
         var dto = await this._userTaskRepo.getByDisplayId(id);
         return dto;

@@ -11,6 +11,9 @@ import { Loader } from '../../../startup/loader';
 import { PatientValidator } from '../../validators/patient/patient.validator';
 import { BaseUserController } from '../base.user.controller';
 import { UserHelper } from '../../helpers/user.helper';
+import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
+import { PersonService } from '../../../services/person.service';
+import { UserService } from '../../../services/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +23,13 @@ export class PatientController extends BaseUserController {
 
     _service: PatientService = null;
 
+    _userService: UserService = null;
+
     _patientHealthProfileService: HealthProfileService = null;
+
+    _personService: PersonService = null;
+
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
 
     _userHelper: UserHelper = new UserHelper();
 
@@ -29,6 +38,9 @@ export class PatientController extends BaseUserController {
     constructor() {
         super();
         this._service = Loader.container.resolve(PatientService);
+        this._userService = Loader.container.resolve(UserService);
+        this._personService = Loader.container.resolve(PersonService);
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
     }
 
@@ -42,6 +54,8 @@ export class PatientController extends BaseUserController {
 
             const createModel = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
+
+            await this._userHelper.performCustomActions(patient);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -145,19 +159,51 @@ export class PatientController extends BaseUserController {
         }
     };
 
-    delete = async (request: express.Request, response: express.Response): Promise<void> => {
+    deleteByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Patient.DeleteByUserId', request, response);
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const currentUserId = request.currentUser.UserId;
+            const patientUserId = userId;
+            const patient = await this._service.getByUserId(userId);
+            if (!patient) {
+                throw new ApiError(404, 'Patient account does not exist!');
+            }
+            const personId = patient.User.PersonId;
+            if (currentUserId !== patientUserId) {
+                throw new ApiError(403, 'You do not have permissions to delete this patient account.');
+            }
             const existingUser = await this._userService.getById(userId);
             if (existingUser == null) {
                 throw new ApiError(404, 'User not found.');
             }
-
-            const deleted = await this._personService.delete(userId);
+            var deleted = await this._userDeviceDetailsService.deleteByUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
+            }
+            deleted = await this._patientHealthProfileService.deleteByPatientUserId(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
+            deleted = await this._userService.delete(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
+            deleted = await this._service.deleteByUserId(userId);
+            if (!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
+            //TODO: Please add check here whether the patient-person
+            //has other roles in the system
+            deleted = await this._personService.delete(personId);
+            if (!deleted) {
+                throw new ApiError(400, 'User cannot be deleted.');
+            }
+            // invalidate all sessions
+            var invalidatedAllSessions = await this._userService.invalidateAllSessions(request.currentUser.UserId);
+            if (!invalidatedAllSessions) {
+                throw new ApiError(400, 'User sessions cannot be deleted.');
             }
 
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {

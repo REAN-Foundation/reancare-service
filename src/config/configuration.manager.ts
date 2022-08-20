@@ -51,7 +51,8 @@ export class ConfigurationManager {
             },
             FormServiceProviders : configuration.FormServiceProviders,
             MaxUploadFileSize    : configuration.MaxUploadFileSize,
-            JwtExpiresIn         : configuration.JwtExpiresIn
+            JwtExpiresIn         : configuration.JwtExpiresIn,
+            SessionExpiresIn     : configuration.SessionExpiresIn,
         };
 
         ConfigurationManager.checkConfigSanity();
@@ -143,6 +144,10 @@ export class ConfigurationManager {
     public static formServiceProviders = (): { Provider: string; Code: string; } [] => {
         return ConfigurationManager._config.FormServiceProviders;
     };
+
+    public static SessionExpiresIn = (): number => {
+        return ConfigurationManager._config.SessionExpiresIn;
+    }
 
     private static checkConfigSanity() {
 

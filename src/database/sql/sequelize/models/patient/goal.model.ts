@@ -13,7 +13,7 @@ import {
 
 import { v4 } from 'uuid';
 import User from '../user/user.model';
-import HealthPriority from '../health.priority/health.priority.model';
+import HealthPriority from '../patient/health.priority/health.priority.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -115,6 +115,12 @@ export default class Goal extends Model {
         allowNull : true,
     })
     StartedAt: Date;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    CompletedAt: Date;
 
     @Column({
         type      : DataType.DATE,

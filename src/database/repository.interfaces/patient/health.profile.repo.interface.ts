@@ -11,6 +11,6 @@ export interface IHealthProfileRepo {
     updateByPatientUserId(userId: string, updateModel: HealthProfileDomainModel)
         : Promise<HealthProfileDto>;
 
-    delete(id: string): Promise<boolean>;
+    deleteByPatientUserId(id: string): Promise<boolean>;
 
 }

@@ -9,7 +9,8 @@ import { ConfigurationManager } from "../../config/configuration.manager";
 import { CareplanConfig } from "../../config/configuration.types";
 import { CAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import { GoalDto } from "../../domain.types/patient/goal/goal.dto";
-import { ActionPlanDto } from "../../domain.types/goal.action.plan/goal.action.plan.dto";
+import { ActionPlanDto } from "../../domain.types/action.plan/action.plan.dto";
+import { HealthPriorityDto } from "../../domain.types/patient/health.priority/health.priority.dto";
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -26,6 +27,17 @@ export class CareplanHandler {
             await service.init();
         }
         return true;
+    };
+
+    public getPatientEligibility = async (patient: any, provider: string, careplanCode: string) => {
+        if (this.isEnabledProvider(provider)) {
+            var service = CareplanHandler._services.getItem(provider);
+            return await service.getPatientEligibility(patient, careplanCode);
+        }
+        return {
+            Eligible : false,
+            Reason   : `The careplan by the provider is not available currently!`
+        };
     };
 
     public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
@@ -154,6 +166,39 @@ export class CareplanHandler {
     ): Promise<ActionPlanDto[]> => {
         var service = CareplanHandler._services.getItem(provider);
         return await service.getActionPlans(patientUserId, enrollmentId, category);
+    };
+
+    public updateActionPlan = async (
+        patientUserId: uuid,
+        provider: string,
+        careplanCode: string,
+        enrollmentId: string,
+        actionName: string,
+    ): Promise<ActionPlanDto> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.updateActionPlan(enrollmentId, actionName);
+    };
+
+    public updateGoal = async (
+        patientUserId: uuid,
+        provider: string,
+        careplanCode: string,
+        enrollmentId: string,
+        goalName: string,
+    ): Promise<GoalDto> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.updateGoal(enrollmentId, goalName);
+    };
+
+    public updateHealthPriority = async (
+        patientUserId: uuid,
+        provider: string,
+        careplanCode: string,
+        enrollmentId: string,
+        healthPriorityType: string,
+    ): Promise<HealthPriorityDto> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.updateHealthPriority(patientUserId, enrollmentId, healthPriorityType);
     };
 
     private isEnabledProvider(provider: string) {

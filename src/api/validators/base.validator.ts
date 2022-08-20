@@ -158,7 +158,7 @@ export class BaseValidator {
 
         chain = chain.customSanitizer((value) => {
             if (value !== null && value !== undefined) {
-                value = value.trim();
+                //value = value.trim();
                 var x = Date.parse(value);
                 value = new Date(x);
                 return value;
@@ -167,6 +167,22 @@ export class BaseValidator {
 
         await chain.run(request);
     };
+
+    validateObject = async(
+        request: express.Request,
+        field: string,
+        where: Where,
+        required: boolean,
+        nullable: boolean) => {
+
+        var chain: ValidationChain = this.getValidationChain(field, where);
+        chain = this.checkRequired(required, chain, nullable);
+        if (required) {
+            chain = chain.notEmpty();
+        }
+        
+        await chain.run(request);
+    }
 
     validateEmail = async(
         request: express.Request,

@@ -22,6 +22,7 @@ export class HealthProfileRepo implements IHealthProfileRepo {
                 HasHeartAilment    : patientHealthProfileDomainModel.HasHeartAilment ?? false,
                 MaritalStatus      : patientHealthProfileDomainModel.MaritalStatus ?? 'Unknown',
                 Ethnicity          : patientHealthProfileDomainModel.Ethnicity ?? '',
+                Race               : patientHealthProfileDomainModel.Race ?? '',
                 Nationality        : patientHealthProfileDomainModel.Nationality ?? '',
                 Occupation         : patientHealthProfileDomainModel.Occupation ?? '',
                 SedentaryLifestyle : patientHealthProfileDomainModel.SedentaryLifestyle ?? false,
@@ -94,6 +95,9 @@ export class HealthProfileRepo implements IHealthProfileRepo {
             if (patientHealthProfileDomainModel.Ethnicity !== undefined) {
                 patientHealthProfile.Ethnicity = patientHealthProfileDomainModel.Ethnicity;
             }
+            if (patientHealthProfileDomainModel.Race !== undefined) {
+                patientHealthProfile.Race = patientHealthProfileDomainModel.Race;
+            }
             if (patientHealthProfileDomainModel.Nationality !== undefined) {
                 patientHealthProfile.Nationality = patientHealthProfileDomainModel.Nationality;
             }
@@ -144,9 +148,9 @@ export class HealthProfileRepo implements IHealthProfileRepo {
         }
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    deleteByPatientUserId = async (patientUserId: string): Promise<boolean> => {
         try {
-            var result = await HealthProfile.destroy({ where: { id: id } });
+            var result = await HealthProfile.destroy({ where: { PatientUserId: patientUserId } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);

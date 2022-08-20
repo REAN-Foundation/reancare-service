@@ -1,6 +1,7 @@
+import { BaseSearchFilters, BaseSearchResults } from "../../../domain.types/miscellaneous/base.search.types";
 import { GoalDto } from "../goal/goal.dto";
 
-export interface GoalSearchFilters {
+export interface GoalSearchFilters extends BaseSearchFilters {
     PatientUserId        : string;
     Provider?            : string;
     ProviderEnrollmentId?: string;
@@ -15,20 +16,8 @@ export interface GoalSearchFilters {
     GoalAbandoned?       : boolean;
     StartedAt?           : Date;
     ScheduledEndDate?    : Date;
-    CreatedDateFrom?     : Date;
-    CreatedDateTo?       : Date;
-    Order?               : string;
-    OrderBy?             : string;
-    PageIndex?           : number;
-    ItemsPerPage?        : number;
 }
 
-export interface GoalSearchResults {
-    TotalCount    : number;
-    RetrievedCount: number;
-    PageIndex     : number;
-    ItemsPerPage  : number;
-    Order         : string;
-    OrderedBy     : string;
+export interface GoalSearchResults extends BaseSearchResults {
     Items         : GoalDto[];
 }

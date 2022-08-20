@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import { Logger } from '../../../../common/logger';
 import { INotificationService } from '../notification.service.interface';
+import fs from 'fs';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -8,8 +9,10 @@ export class FirebaseNotificationService implements INotificationService {
     
     init = () => {
         try {
+            const accountCreds = fs.readFileSync(process.env.FCM_GOOGLE_APPLICATION_CREDENTIALS).toString();
+            const serviceAccount = JSON.parse(accountCreds);
             admin.initializeApp({
-                credential : admin.credential.applicationDefault(),
+                credential : admin.credential.cert(serviceAccount),
             });
         } catch (error) {
             Logger.instance().log(error.message);

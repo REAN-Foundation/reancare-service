@@ -2,6 +2,7 @@ import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system
 import { UserActionType, UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task.types';
 import { UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
 import UserTask from '../../models/user/user.task.model';
+import { getTaskStatus } from './task.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -13,24 +14,7 @@ export class UserTaskMapper {
             return null;
         }
 
-        var status: ProgressStatus = ProgressStatus.Unknown;
-        if (task.Started === true && task.Finished === true) {
-            status = ProgressStatus.Completed;
-        }
-        if (task.Started === false && task.Finished === false && task.Cancelled === false) {
-            if (task.ScheduledEndTime < new Date()) {
-                status = ProgressStatus.Delayed;
-            }
-            else {
-                status = ProgressStatus.Pending;
-            }
-        }
-        if (task.Started === true && task.Finished === false) {
-            status = ProgressStatus.InProgress;
-        }
-        if (task.Cancelled === true) {
-            status = ProgressStatus.Cancelled;
-        }
+        var status: ProgressStatus = getTaskStatus(task);
 
         const dto: UserTaskDto = {
             id                   : task.id,
@@ -53,6 +37,7 @@ export class UserTaskMapper {
             CancellationReason   : task.CancellationReason,
             IsRecurrent          : task.IsRecurrent,
             RecurrenceScheduleId : task.RecurrenceScheduleId,
+            CreatedAt            : task.CreatedAt
         };
         return dto;
     };

@@ -340,4 +340,17 @@ export class TimeHelper {
         return dayjs(date).daysInMonth();
     };
 
+    static getDateWithTimezone = (dateStr: string, timezoneOffset: string) => {
+        var todayStr = new Date().toISOString();
+        var str = dateStr ? dateStr.split('T')[0] : todayStr.split('T')[0];
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
+        return TimeHelper.strToUtc(str, offsetMinutes);
+    };
+
+    static dayDiff = (first: Date, second: Date) => {
+        const diff = first.getTime() - second.getTime();
+        var dayDiff = diff / (1000 * 60 * 60 * 24);
+        return dayDiff;
+    }
+
 }

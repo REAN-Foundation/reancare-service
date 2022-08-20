@@ -1,26 +1,36 @@
 
 export enum UserTaskCategory {
-    Medication         = 'Medication',
-    Appointment        = 'Appointment',
-    Educational        = 'Educational',
-    Exercise           = 'Exercise',
-    Nutrition          = 'Nutrition',
-    Biometrics         = 'Biometrics',
-    FitnessRecord      = 'Fitness record',
-    Assessment         = 'Assessment',
-    StressManagement   = 'Stress management',
-    Challenge          = 'Challenge',
-    Goal               = 'Goal',
-    Consultation       = 'Consultation', //Call, message or tele-visit
-    PersonalReflection = 'Personal reflection',
-    Message            = 'Message',
-    Custom             = 'Custom',
+    Medication              = 'Medication',
+    Appointment             = 'Appointment',
+    EducationalVideo        = 'Educational-Video',
+    EducationalAudio        = 'Educational-Audio',
+    EducationalAnimation    = 'Educational-Animation',
+    EducationalLink         = 'Educational-Link',
+    EducationalInfographics = 'Educational-Infographics',
+    EducationalNewsFeed     = 'Educational-NewsFeed',
+    Exercise                = 'Exercise',
+    Nutrition               = 'Nutrition',
+    Biometrics              = 'Biometrics',
+    FitnessRecord           = 'Fitness record',
+    Assessment              = 'Assessment',
+    StressManagement        = 'Stress management',
+    Challenge               = 'Challenge',
+    Goal                    = 'Goal',
+    Consultation            = 'Consultation',               //Call, message or tele-visit
+    PersonalReflection      = 'Personal reflection',
+    Message                 = 'Message',
+    Custom                  = 'Custom',
 }
 
 export const UserTaskCategoryList: UserTaskCategory [] = [
     UserTaskCategory.Medication,
     UserTaskCategory.Appointment,
-    UserTaskCategory.Educational,
+    UserTaskCategory.EducationalVideo,
+    UserTaskCategory.EducationalAudio,
+    UserTaskCategory.EducationalAnimation,
+    UserTaskCategory.EducationalLink,
+    UserTaskCategory.EducationalInfographics,
+    UserTaskCategory.EducationalNewsFeed,
     UserTaskCategory.Exercise,
     UserTaskCategory.Nutrition,
     UserTaskCategory.Biometrics,
@@ -38,7 +48,8 @@ export const UserTaskCategoryList: UserTaskCategory [] = [
 export enum UserActionType {
     Medication  = 'Medication',
     Appointment = 'Appointment',
-    Careplan = "Careplan"
+    Careplan = "Careplan",
+    Custom   = "Custom"
 }
 
 export const UserActionTypeList: UserActionType [] = [

@@ -54,6 +54,7 @@ export interface CareplanConfig {
     Code                : string;
     DisplayName         : string;
     DefaultDurationDays?: number;
+    Description         : string;
 }
 
 export interface FormServiceProvider {
@@ -79,4 +80,5 @@ export interface Configurations {
     MaxUploadFileSize   : number;
     JwtExpiresIn        : number;
     FormServiceProviders: FormServiceProvider[];
+    SessionExpiresIn    : number;
 }

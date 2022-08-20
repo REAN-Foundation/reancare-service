@@ -29,7 +29,7 @@ export class CareplanActivityMapper {
             ScheduledAt      : activity.ScheduledAt,
             StartedAt        : activity.StartedAt,
             CompletedAt      : activity.CompletedAt,
-            Comments         : activity.Comments,
+            UserResponse     : activity.UserResponse,
             Sequence         : activity.Sequence,
             Frequency        : activity.Frequency,
             Status           : activity.Status,

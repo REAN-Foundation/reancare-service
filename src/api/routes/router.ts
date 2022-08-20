@@ -51,9 +51,13 @@ import { register as registerWaterConsumptionRoutes } from './wellness/nutrition
 import { register as registerCareplanRoutes } from './clinical/careplan/careplan.routes';
 import { register as registerAssessmentRoutes } from './clinical/assessment/assessment.routes';
 import { register as registerAssessmentTemplateRoutes } from './clinical/assessment/assessment.template.routes';
-import { register as registerHealthPriorityRoutes } from './health.priority/health.priority.routes';
-import { register as registerActionPlanRoutes } from './goal.action.plan/goal.action.plan.routes';
+import { register as registerHealthPriorityRoutes } from './patient/health.priority/health.priority.routes';
+import { register as registerActionPlanRoutes } from './action.plan/action.plan.routes';
 import { register as registerFormsRoutes } from './clinical/assessment/forms.routes';
+import { register as registerCustomTaskRoutes } from './user/custom.task.routes';
+import { register as registerBloodCholesterolRoutes } from './clinical/biometrics/blood.cholesterol.routes';
+import { register as registerStandRoutes } from './wellness/daily.records/stand.routes';
+import { register as registerFoodComponentMonitoringRoutes } from './wellness/food.component.monitoring/food.component.monitoring.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -132,6 +136,10 @@ export class Router {
                 registerHealthPriorityRoutes(this._app);
                 registerActionPlanRoutes(this._app);
                 registerFormsRoutes(this._app);
+                registerCustomTaskRoutes(this._app);
+                registerBloodCholesterolRoutes(this._app);
+                registerStandRoutes(this._app);
+                registerFoodComponentMonitoringRoutes(this._app);
 
                 resolve(true);
 

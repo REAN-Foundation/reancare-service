@@ -21,12 +21,13 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
     public create = async (model: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto> => {
         try {
             const entity = {
-                DisplayCode            : model.DisplayCode ?? null,
-                Type                   : model.Type ?? null,
-                Title                  : model.Title ?? model.Title,
-                Description            : model.Description ?? null,
-                ProviderAssessmentCode : model.ProviderAssessmentCode ?? null,
-                Provider               : model.Provider ?? null,
+                DisplayCode                 : model.DisplayCode ?? null,
+                Type                        : model.Type ?? null,
+                Title                       : model.Title ?? model.Title,
+                Description                 : model.Description ?? null,
+                ProviderAssessmentCode      : model.ProviderAssessmentCode ?? null,
+                Provider                    : model.Provider ?? null,
+                ServeListNodeChildrenAtOnce : model.ServeListNodeChildrenAtOnce ?? null
             };
             const assessmentTemplate = await AssessmentTemplate.create(entity);
             return AssessmentTemplateMapper.toDto(assessmentTemplate);
@@ -72,7 +73,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             if (filters.Type != null) {
                 search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
             }
-
+            if (filters.DisplayCode != null) {
+                search.where['DisplayCode'] = filters.DisplayCode;
+            }
             let orderByColum = 'Title';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
@@ -131,6 +134,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             if (updateModel.Title != null) {
                 assessmentTemplate.Title = updateModel.Title;
             }
+            if (updateModel.DisplayCode != null) {
+                assessmentTemplate.DisplayCode = updateModel.DisplayCode;
+            }
             if (updateModel.Description != null) {
                 assessmentTemplate.Description = updateModel.Description;
             }
@@ -139,6 +145,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             }
             if (updateModel.Provider != null) {
                 assessmentTemplate.Provider = updateModel.Provider;
+            }
+            if (updateModel.ServeListNodeChildrenAtOnce != null) {
+                assessmentTemplate.ServeListNodeChildrenAtOnce = updateModel.ServeListNodeChildrenAtOnce;
             }
             await assessmentTemplate.save();
 

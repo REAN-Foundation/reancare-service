@@ -22,6 +22,10 @@ export class UserDeviceDetailsService {
         return await this._userDeviceDetailsRepo.getById(id);
     };
 
+    getByUserId = async (userId: string): Promise<UserDeviceDetailsDto[]> => {
+        return await this._userDeviceDetailsRepo.getByUserId(userId);
+    };
+
     search = async (filters: UserDeviceDetailsSearchFilters): Promise<UserDeviceDetailsSearchResults> => {
         return await this._userDeviceDetailsRepo.search(filters);
     };
@@ -35,4 +39,14 @@ export class UserDeviceDetailsService {
         return await this._userDeviceDetailsRepo.delete(id);
     };
 
+    deleteByUserId = async (userId: string): Promise<boolean> => {
+        const details = await this.getByUserId(userId);
+        if (details.length > 0) {
+            for await (var d of details) {
+                return await this._userDeviceDetailsRepo.delete(d.id);
+            }
+        }
+        return true;
+    };
+    
 }

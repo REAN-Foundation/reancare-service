@@ -48,6 +48,20 @@ export class UserTaskRepo implements IUserTaskRepo {
         }
     };
 
+    getByActionId = async (actionId: string): Promise<UserTaskDto> => {
+        try {
+            const userTask = await UserTask.findOne({
+                where : {
+                    ActionId : actionId
+                }
+            });
+            return UserTaskMapper.toDto(userTask);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     getByDisplayId = async (displayId: string): Promise<UserTaskDto> => {
         try {
             const userTask = await UserTask.findOne({
@@ -66,16 +80,6 @@ export class UserTaskRepo implements IUserTaskRepo {
         try {
             const search = { where: {} };
 
-            if (filters.ScheduledFrom != null) {
-                search.where['ScheduledStartTime'] = {
-                    [Op.gte] : filters.ScheduledFrom,
-                };
-            }
-            if (filters.ScheduledTo != null) {
-                search.where['ScheduledEndTime'] = {
-                    [Op.lte] : filters.ScheduledTo,
-                };
-            }
             if (filters.UserId != null) {
                 search.where['UserId'] = filters.UserId;
             }
@@ -127,6 +131,72 @@ export class UserTaskRepo implements IUserTaskRepo {
                         [Op.lte] : new Date(),
                     };
                 }
+            }
+
+            if (filters.ScheduledFrom != null && filters.ScheduledTo != null) {
+                //Sanitization
+                if (TimeHelper.isAfter(filters.ScheduledFrom, filters.ScheduledTo)) {
+                    var temp = filters.ScheduledFrom;
+                    filters.ScheduledFrom = filters.ScheduledTo;
+                    filters.ScheduledTo = temp;
+                }
+
+                const x = {
+                    [Op.or] : [
+                        {
+                            ScheduledStartTime : {
+                                [Op.gte] : filters.ScheduledFrom,
+                                [Op.lte] : filters.ScheduledTo
+                            }
+                        },
+                        {
+                            ScheduledEndTime : {
+                                [Op.gte] : filters.ScheduledFrom,
+                                [Op.lte] : filters.ScheduledTo
+                            }
+                        },
+                        {
+                            [Op.and] : [
+                                {
+                                    ScheduledStartTime : {
+                                        [Op.lte] : filters.ScheduledFrom,
+                                    }
+                                },
+                                {
+                                    ScheduledEndTime : {
+                                        [Op.gte] : filters.ScheduledTo,
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            [Op.and] : [
+                                {
+                                    ScheduledStartTime : {
+                                        [Op.gte] : filters.ScheduledFrom,
+                                    }
+                                },
+                                {
+                                    ScheduledEndTime : {
+                                        [Op.lte] : filters.ScheduledTo,
+                                    }
+                                }
+                            ]
+                        },
+                    ]
+                };
+
+                search.where = Object.assign(search.where, x);
+            }
+            else if (filters.ScheduledTo != null) {
+                search.where['ScheduledStartTime'] = {
+                    [Op.lte] : filters.ScheduledTo,
+                };
+            }
+            else if (filters.ScheduledFrom != null) {
+                search.where['ScheduledEndTime'] = {
+                    [Op.gte] : filters.ScheduledFrom,
+                };
             }
             
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {

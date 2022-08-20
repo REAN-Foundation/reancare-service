@@ -33,6 +33,18 @@ export class Helper {
         return Object.prototype.hasOwnProperty.call(obj, prop);
     }
     
+    static isUrl = (str) => {
+        if (!str) {
+            return false;
+        }
+        try {
+            new URL(str);
+            return true;
+        } catch (err) {
+            return false;
+        }
+    }
+
     static dumpJson(obj, filename) {
         const txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);
@@ -307,7 +319,7 @@ export class Helper {
         if (!validCountryCode) {
             return Promise.reject('Invalid country code');
         }
-        const validPhoneNumber = Helper.isStr(phoneNumber) && phoneNumber.length > 9;
+        const validPhoneNumber = Helper.isStr(phoneNumber) && phoneNumber.length >= 9;
         if (!validPhoneNumber) {
 
             //throw new InputValidationError(['Invalid phone number']);
@@ -502,6 +514,11 @@ export class Helper {
             }
         }
         return null;
+    };
+
+    public static getEnumKeyFromValue = (obj: any, value: string): string => {
+        var key = Object.keys(obj).find(key => obj[key] === value);
+        return key || null;
     };
 
 }

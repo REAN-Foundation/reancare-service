@@ -71,6 +71,20 @@ export class PatientRepo implements IPatientRepo {
         }
     };
 
+    deleteByUserId = async (userId: string): Promise<boolean> => {
+        try {
+            const count = await Patient.destroy({
+                where : {
+                    UserId : userId
+                }
+            });
+            return count === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
     search = async (filters: PatientSearchFilters): Promise<PatientSearchResults> => {
         try {
 
@@ -190,6 +204,21 @@ export class PatientRepo implements IPatientRepo {
             
             return searchResults;
 
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllPatientUserIds = async (): Promise<any[]> => {
+        try {
+            const patients = await Patient.findAll({ attributes: ["UserId"] });
+            var patientUserIds = [];
+            patients.forEach(p => {
+                patientUserIds.push(p.UserId);
+            });
+
+            return patientUserIds;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

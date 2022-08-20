@@ -25,6 +25,7 @@ export class GoalRepo implements IGoalRepo {
                 Sequence             : goalModel.Sequence ?? null,
                 HealthPriorityId     : goalModel.HealthPriorityId ?? null,
                 StartedAt            : goalModel.StartedAt ?? null,
+                CompletedAt          : goalModel.CompletedAt ?? null,
                 ScheduledEndDate     : goalModel.ScheduledEndDate ?? null,
                 GoalAchieved         : goalModel.GoalAchieved ?? null,
                 GoalAbandoned        : goalModel.GoalAbandoned ?? null,
@@ -50,7 +51,7 @@ export class GoalRepo implements IGoalRepo {
         }
     };
 
-    getSelectedGoals = async (patientUserId: string): Promise<GoalDto[]> => {
+    getPatientGoals = async (patientUserId: string): Promise<GoalDto[]> => {
         try {
 
             Logger.instance().log(`Patient User id: ${JSON.stringify(patientUserId)}`);
@@ -148,8 +149,35 @@ export class GoalRepo implements IGoalRepo {
             if (goalModel.PatientUserId != null) {
                 goal.PatientUserId = goalModel.PatientUserId;
             }
+            if (goalModel.Provider != null) {
+                goal.Provider = goalModel.Provider;
+            }
+            if (goalModel.ProviderCareplanCode != null) {
+                goal.ProviderCareplanCode = goalModel.ProviderCareplanCode;
+            }
+            if (goalModel.ProviderCareplanName != null) {
+                goal.ProviderCareplanName = goalModel.ProviderCareplanName;
+            }
+            if (goalModel.ProviderEnrollmentId != null) {
+                goal.ProviderEnrollmentId = goalModel.ProviderEnrollmentId;
+            }
+            if (goalModel.ProviderGoalCode != null) {
+                goal.ProviderGoalCode = goalModel.ProviderGoalCode;
+            }
             if (goalModel.Title != null) {
                 goal.Title = goalModel.Title;
+            }
+            if (goalModel.HealthPriorityId != null) {
+                goal.HealthPriorityId = goalModel.HealthPriorityId;
+            }
+            if (goalModel.StartedAt != null) {
+                goal.StartedAt = goalModel.StartedAt;
+            }
+            if (goalModel.CompletedAt != null) {
+                goal.CompletedAt = goalModel.CompletedAt;
+            }
+            if (goalModel.ScheduledEndDate != null) {
+                goal.ScheduledEndDate = goalModel.ScheduledEndDate;
             }
             if (goalModel.GoalAchieved != null) {
                 goal.GoalAchieved = goalModel.GoalAchieved;

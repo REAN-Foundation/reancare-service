@@ -69,7 +69,7 @@ export class AssessmentValidator extends BaseValidator {
         if (responseType === QueryResponseType.SingleChoiceSelection ||
             responseType === QueryResponseType.Integer) {
             await this.validateInt(request, 'Answer', Where.Body, true, false);
-            answerModel['IntegerValue'] = request.body.Answer;
+            answerModel['IntegerValue'] = parseInt(request.body.Answer);
         }
         else if (responseType === QueryResponseType.MultiChoiceSelection) {
             await this.validateArray(request, 'Answer', Where.Body, true, false);
@@ -91,7 +91,7 @@ export class AssessmentValidator extends BaseValidator {
         }
         else if (responseType === QueryResponseType.Float) {
             await this.validateDecimal(request, 'Answer', Where.Body, true, false);
-            answerModel['FloatValue'] = request.body.Answer;
+            answerModel['FloatValue'] = parseFloat(request.body.Answer);
         }
         else if (responseType === QueryResponseType.Boolean) {
             await this.validateBoolean(request, 'Answer', Where.Body, true, false);
@@ -103,6 +103,64 @@ export class AssessmentValidator extends BaseValidator {
         }
 
         return answerModel;
+    };
+
+    answerQuestionList = async (request: express.Request)
+        :  Promise<AssessmentAnswerDomainModel[]> => {
+
+        await this.validateArray(request, 'Answers', Where.Body, true, false);
+
+        var answerModelList: AssessmentAnswerDomainModel[] = [];
+
+        for (let i = 0; i < request.body.Answers.length; i++) {
+
+            var answerModel: AssessmentAnswerDomainModel = {
+                AssessmentId   : request.params.id,
+                QuestionNodeId : request.body.Answers[i].QuestionId,
+                ResponseType   : request.body.Answers[i].ResponseType,
+            };
+        
+            const responseType = request.body.Answers[i].ResponseType;
+
+            if (responseType === QueryResponseType.SingleChoiceSelection ||
+            responseType === QueryResponseType.Integer) {
+                await this.validateInt(request, 'Answers.Answer', Where.Body, true, false);
+                answerModel['IntegerValue'] = parseInt(request.body.Answers[i].Answer);
+            }
+            else if (responseType === QueryResponseType.MultiChoiceSelection) {
+                await this.validateArray(request, 'Answer', Where.Body, true, false);
+                answerModel['IntegerArray'] = request.body.Answers[i].Answer;
+            }
+            else if (responseType === QueryResponseType.Text ||
+            responseType === QueryResponseType.Ok) {
+                await this.validateString(request, 'Answer', Where.Body, true, false);
+                answerModel['TextValue'] = request.body.Answers[i].Answer;
+            }
+            else if (responseType === QueryResponseType.Date) {
+                await this.validateDateString(request, 'Answer', Where.Body, true, false);
+                answerModel['DateValue'] = new Date(request.body.Answers[i].Answer);
+            }
+            else if (responseType === QueryResponseType.File) {
+                answerModel['FieldName'] = request.body.Answers[i].Answer.FileName ?? null;
+                answerModel['Url'] = request.body.Answers[i].Answer.Url ?? null;
+                answerModel['ResourceId'] = request.body.Answers[i].Answer.ResourceId ?? null;
+            }
+            else if (responseType === QueryResponseType.Float) {
+                await this.validateDecimal(request, 'Answer', Where.Body, true, false);
+                answerModel['FloatValue'] = parseFloat(request.body.Answers[i].Answer);
+            }
+            else if (responseType === QueryResponseType.Boolean) {
+                await this.validateBoolean(request, 'Answer', Where.Body, true, false);
+                answerModel['BooleanValue'] = request.body.Answers[i].Answer;
+            }
+            else if (responseType === QueryResponseType.Biometrics) {
+                await this.validateArray(request, 'Answer', Where.Body, true, false);
+                answerModel['Biometrics'] = request.body.Answers[i].Answer;
+            }
+
+            answerModelList.push(answerModel);
+        }
+        return answerModelList;
     };
 
     private getFilter(request): AssessmentSearchFilters {

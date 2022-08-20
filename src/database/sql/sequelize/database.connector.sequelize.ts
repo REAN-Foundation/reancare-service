@@ -21,6 +21,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
             const dialect: Dialect = this.getDialect();
             const modelsPath = [
                 __dirname + '/models',
+                __dirname + '/models/action.plan',
                 __dirname + '/models/clinical',
                 __dirname + '/models/clinical/biometrics',
                 __dirname + '/models/clinical/daily.assessment',
@@ -30,13 +31,13 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
                 __dirname + '/models/clinical/assessment',
                 __dirname + '/models/educational',
                 __dirname + '/models/file.resource',
-                __dirname + '/models/goal.action.plan',
-                __dirname + '/models/health.priority',
                 __dirname + '/models/patient',
+                __dirname + '/models/patient/health.priority',
                 __dirname + '/models/user',
                 __dirname + '/models/wellness/daily.records',
                 __dirname + '/models/wellness/exercise',
                 __dirname + '/models/wellness/nutrition',
+                __dirname + '/models/wellness/food.component.monitoring',
                 __dirname + '/models/thirdparty',
             ];
             const options = {
@@ -77,7 +78,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
     //Creates DB if does not exist
     public sync = async () => {
         try {
-            await this._sequelize.sync({ force: true });
+            await this._sequelize.sync({ alter: true });
             return true;
         } catch (error) {
             Logger.instance().log(error.message);

@@ -10,12 +10,12 @@ import {
     SingleChoiceQueryAnswer,
     TextQueryAnswer,
 } from './assessment.types';
-import { AssessmentQueryDto } from "./assessment.query.dto";
+import { AssessmentQueryDto, AssessmentQueryListDto } from "./assessment.query.dto";
 
 export interface AssessmentQuestionResponseDto {
     AssessmentId?: uuid;
     Parent?      : AssessmentQueryDto;
-    Next?        : AssessmentQueryDto;
+    Next?        : AssessmentQueryDto | AssessmentQueryListDto;
     Answer?      :
         | SingleChoiceQueryAnswer
         | MultipleChoiceQueryAnswer

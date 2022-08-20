@@ -146,9 +146,20 @@ export class UserRepo implements IUserRepo {
         }
     };
 
+    updateLastLogin = async (id: string): Promise<void> => {
+        try {
+            var user = await User.findByPk(id);
+            user.LastLogin = new Date();
+            await user.save();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     update = async (id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
-            const user = await User.findByPk(id);
+            var user = await User.findByPk(id);
 
             if (userDomainModel.DefaultTimeZone !== undefined &&
                 userDomainModel.DefaultTimeZone !== null &&
@@ -182,6 +193,20 @@ export class UserRepo implements IUserRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    delete = async (id: string): Promise<boolean> => {
+        try {
+            const count = await User.destroy({
+                where : {
+                    id : id
+                }
+            });
+            return count === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
 
     getUserHashedPassword = async (id: string): Promise<string> => {
         const user = await User.findByPk(id);

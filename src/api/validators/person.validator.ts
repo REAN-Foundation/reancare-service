@@ -53,8 +53,7 @@ export class PersonValidator {
         : Promise<{ phone: string; roleId: number }> => {
 
         await param('phone').trim()
-            .unescape()
-            .isUUID()
+            .escape()
             .run(request);
 
         await param('roleId').trim()

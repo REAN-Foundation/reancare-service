@@ -350,6 +350,7 @@ export class AssessmentTemplateController extends BaseController{
 
             await this.setContext('AssessmentTemplate.UpdateScoringCondition', request, response);
 
+            const templateId: uuid = await this._validator.getParamUuid(request, 'id');
             const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
             var updates = await this._validator.updateScoringCondition(request);
 

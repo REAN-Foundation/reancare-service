@@ -17,6 +17,9 @@
     "FileStorage" : {
         "Provider": "AWS-S3"
     },
+    "FeatureFlags" : {
+        "Provider": "Firebase-Remote-Config"
+    },
     "Communication" : {
         "SMS": {
             "Provider": "Twilio"
@@ -34,7 +37,7 @@
         "CleanupFolderBeforeMinutes": 10
     },
     "Careplans" : [
-        { 
+        {
             "Enabled": true,
             "Provider": "AHA",
             "Service": "AhaCarePlanService",
@@ -67,11 +70,11 @@
         }
     ],
     "FormServiceProviders" : [
-        { 
+        {
             "Provider": "KoboToolbox",
             "Code": "KoboToolbox"
         },
-        { 
+        {
             "Provider": "GoogleForms",
             "Code": "GoogleForms"
         }

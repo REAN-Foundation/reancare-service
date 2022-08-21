@@ -3,8 +3,19 @@ import * as defaultConfiguration from '../../reancare.config.json';
 import * as localConfiguration from '../../reancare.config.local.json';
 import {
     AuthenticationType,
-    AuthorizationType, CareplanConfig, Configurations, DatabaseFlavour, DatabaseORM, DatabaseType, EHRProvider,
-    EHRSpecification, EmailServiceProvider, FileStorageProvider, InAppNotificationServiceProvider, SMSServiceProvider
+    AuthorizationType,
+    CareplanConfig,
+    Configurations,
+    DatabaseFlavour,
+    DatabaseORM,
+    DatabaseType,
+    EHRProvider,
+    EHRSpecification,
+    EmailServiceProvider,
+    FeatureFlagsProvider,
+    FileStorageProvider,
+    InAppNotificationServiceProvider,
+    SMSServiceProvider
 } from './configuration.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +47,9 @@ export class ConfigurationManager {
             },
             FileStorage : {
                 Provider : configuration.FileStorage.Provider as FileStorageProvider,
+            },
+            FeatureFlags : {
+                Provider : configuration.FeatureFlags.Provider as FeatureFlagsProvider,
             },
             Communication : {
                 SMSProvider               : configuration.Communication.SMS.Provider as SMSServiceProvider,
@@ -85,7 +99,7 @@ export class ConfigurationManager {
     public static DatabaseFlavour = (): DatabaseFlavour => {
         return ConfigurationManager._config.Database.Flavour;
     };
-    
+
     public static EhrEnabled = (): boolean => {
         return ConfigurationManager._config.Ehr.Enabled;
     };
@@ -109,29 +123,33 @@ export class ConfigurationManager {
     public static FileStorageProvider = (): FileStorageProvider => {
         return ConfigurationManager._config.FileStorage.Provider;
     };
-    
+
+    public static FeatureFlagsProvider = (): FeatureFlagsProvider => {
+        return ConfigurationManager._config.FeatureFlags.Provider;
+    };
+
     public static SMSServiceProvider = (): SMSServiceProvider => {
         return ConfigurationManager._config.Communication.SMSProvider;
     };
-    
+
     public static EmailServiceProvider = (): EmailServiceProvider => {
         return ConfigurationManager._config.Communication.EmailProvider;
     };
-    
+
     public static UploadTemporaryFolder = (): string => {
         var location = ConfigurationManager._config.TemporaryFolders.Upload;
         return path.join(process.cwd(), location);
     };
-    
+
     public static DownloadTemporaryFolder = (): string => {
         var location = ConfigurationManager._config.TemporaryFolders.Download;
         return path.join(process.cwd(), location);
     };
-    
+
     public static TemporaryFolderCleanupBefore = (): number => {
         return ConfigurationManager._config.TemporaryFolders.CleanupFolderBeforeMinutes;
     };
-    
+
     public static InAppNotificationServiceProvider = (): InAppNotificationServiceProvider => {
         return ConfigurationManager._config.Communication.InAppNotificationProvider;
     };
@@ -140,7 +158,7 @@ export class ConfigurationManager {
         : { Enabled: boolean, Provider: string; Service: string; Plans: CareplanConfig[] } [] => {
         return ConfigurationManager._config.Careplans;
     };
-    
+
     public static formServiceProviders = (): { Provider: string; Code: string; } [] => {
         return ConfigurationManager._config.FormServiceProviders;
     };

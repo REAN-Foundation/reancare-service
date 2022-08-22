@@ -24,6 +24,7 @@ export class AddressRepo implements IAddressRepo {
                 PostalCode  : addressDomainModel.PostalCode ?? null,
                 Longitude   : addressDomainModel.Longitude ?? null,
                 Lattitude   : addressDomainModel.Lattitude ?? null,
+                Location    : addressDomainModel.Location ?? null,
             };
             const address = await Address.create(entity);
             const dto = await AddressMapper.toDto(address);

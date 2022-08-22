@@ -91,7 +91,12 @@
             "General.Notice.Search",
             "General.Notice.Delete",
             "General.Notice.CreateAction",
-            "General.Notice.GetActionById"
+            "General.Notice.GetActionById",
+            "Course.Create",
+            "Course.GetById",
+            "Course.Update",
+            "Course.Search",
+            "Course.Delete"
         ]
     },
     {

@@ -39,6 +39,7 @@ export class HealthProfileValidator extends BaseValidator {
             ProcedureHistory   : request.body.ProcedureHistory ?? undefined,
             ObstetricHistory   : request.body.ObstetricHistory ?? undefined,
             OtherInformation   : request.body.OtherInformation ?? undefined,
+            TobaccoQuestionAns : request.body.TobaccoQuestionAns ?? undefined,
         };
 
         return model;
@@ -74,6 +75,7 @@ export class HealthProfileValidator extends BaseValidator {
         await this.validateString(request, 'ProcedureHistory', Where.Body, false, true);
         await this.validateString(request, 'ObstetricHistory', Where.Body, false, true);
         await this.validateString(request, 'OtherInformation', Where.Body, false, true);
+        await this.validateBoolean(request, 'TobaccoQuestionAns', Where.Body, false, true);
 
         this.validateRequest(request);
         

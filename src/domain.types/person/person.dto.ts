@@ -15,6 +15,7 @@ export interface PersonDetailsDto {
     Email                 : string;
     Gender                : Gender;
     SelfIdentifiedGender? : string;
+    MaritalStatus?        : string;
     BirthDate             : Date;
     Age                   : string;
     ImageResourceId       : string;

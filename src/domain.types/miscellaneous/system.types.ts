@@ -3,6 +3,8 @@ export type NotThere    = null | undefined | '';
 export type Optional<T> = T | NotThere;
 
 export type BloodGroup    = 'A+'| 'B+' | 'O+' | 'AB+' | 'A-' | 'B-' |'O-' | 'AB-' | null;
+export type RaceType    = 'American Indian/Alaskan Native' | 'Black/African American' | 'Native Hawaiian or Other Pacific Islander' | 'White' | null;
+export type EthnicityType    = 'Hispanic/Latino'| 'Not Hispanic/Latino' | 'Prefer not to say' | null;
 export type MaritalStatus = 'Single'| 'Married' | 'Widowed' | 'Divorcee' | 'Live-in' | 'Other' | 'Unknown' | 'Unmarried' | null;
 
 export type uuid    = string | undefined | null;
@@ -18,6 +20,19 @@ export const BloodGroupList: BloodGroup[] = [
     'B-',
     'O-',
     'AB-'
+];
+
+export const RaceTypeList: RaceType[] = [
+    'American Indian/Alaskan Native',
+    'Black/African American',
+    'Native Hawaiian or Other Pacific Islander',
+    'White'
+];
+
+export const EthnicityTypeList: EthnicityType[] = [
+    'Hispanic/Latino',
+    'Not Hispanic/Latino',
+    'Prefer not to say'
 ];
 
 export enum Gender {

@@ -93,9 +93,10 @@ export class AssessmentHelperMapper {
         var pathDto = new CAssessmentNodePath();
         pathDto.id = path.id;
         pathDto.ParentNodeId = path.ParentNodeId;
-        pathDto.DisplayCode = path.DisplayCode;
-        pathDto.ConditionId = path.ConditionId;
-        pathDto.NextNodeId = path.NextNodeId;
+        pathDto.DisplayCode  = path.DisplayCode;
+        pathDto.ConditionId  = path.ConditionId;
+        pathDto.NextNodeId   = path.NextNodeId;
+        pathDto.IsExitPath   = path.IsExitPath;
         pathDto.NextNodeDisplayCode = path.NextNodeDisplayCode;
         return pathDto;
     }

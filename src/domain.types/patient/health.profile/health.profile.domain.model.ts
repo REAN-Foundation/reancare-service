@@ -24,4 +24,6 @@ export interface HealthProfileDomainModel {
     ProcedureHistory?  : string;
     ObstetricHistory?  : string;
     OtherInformation?  : string;
+    TobaccoQuestion?   : string;
+    TobaccoQuestionAns?: boolean;
 }

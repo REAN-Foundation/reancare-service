@@ -68,6 +68,7 @@ import { BloodCholesterolRepo } from './repositories/clinical/biometrics/blood.c
 import { StandRepo } from './repositories/wellness/daily.records/stand.repo';
 import { NoticeRepo } from './repositories/general/notice.repo';
 import { CourseRepo } from './repositories/educational/course/course.repo';
+import { CourseModuleRepo } from './repositories/educational/course.module/course.module.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -145,6 +146,7 @@ export class SequelizeInjector {
         container.register('IStandRepo', StandRepo);
         container.register('INoticeRepo', NoticeRepo);
         container.register('ICourseRepo', CourseRepo);
+        container.register('ICourseModuleRepo', CourseModuleRepo);
         
     }
 

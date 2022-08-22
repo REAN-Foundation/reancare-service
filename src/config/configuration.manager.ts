@@ -46,10 +46,10 @@ export class ConfigurationManager {
                 Provider      : configuration.Ehr.Provider as EHRProvider,
             },
             FileStorage : {
-                Provider : configuration.FileStorage.Provider as FileStorageProvider,
+                Provider : configuration?.FileStorage?.Provider as FileStorageProvider ?? 'Custom',
             },
             FeatureFlags : {
-                Provider : configuration.FeatureFlags.Provider as FeatureFlagsProvider,
+                Provider : configuration?.FeatureFlags?.Provider as FeatureFlagsProvider ?? 'Custom',
             },
             Communication : {
                 SMSProvider               : configuration.Communication.SMS.Provider as SMSServiceProvider,

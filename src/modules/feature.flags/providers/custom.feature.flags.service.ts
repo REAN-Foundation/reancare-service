@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Logger } from '../../../common/logger';
 import { IFeatureFlagsService } from '../interfaces/feature.flags.service.interface';
 

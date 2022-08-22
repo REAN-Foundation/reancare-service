@@ -11,6 +11,7 @@ import { BaseController } from '../../base.controller';
 import { AssessmentQuestionResponseDto } from '../../../../domain.types/clinical/assessment/assessment.question.response.dto';
 import { AssessmentNodeType, AssessmentType, CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentHelperRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.helper.repo';
+import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@ export class AssessmentController extends BaseController{
     //#region member variables and constructors
 
     _service: AssessmentService = null;
-    
+
     _serviceHelperRepo: AssessmentHelperRepo = null;
 
     _careplanService: CareplanService = null;
@@ -42,7 +43,7 @@ export class AssessmentController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Assessment.Create', request, response);
 
             const model = await this._validator.create(request);
@@ -61,7 +62,7 @@ export class AssessmentController extends BaseController{
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Assessment.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -80,7 +81,7 @@ export class AssessmentController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Assessment.Search', request, response);
 
             const filters = await this._validator.search(request);
@@ -92,7 +93,7 @@ export class AssessmentController extends BaseController{
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} assessment records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
                 AssessmentRecords : searchResults });
 
@@ -103,7 +104,7 @@ export class AssessmentController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Assessment.Update', request, response);
 
             const domainModel = await this._validator.update(request);
@@ -128,7 +129,7 @@ export class AssessmentController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Assessment.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -152,7 +153,7 @@ export class AssessmentController extends BaseController{
 
     startAssessment = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Assessment.StartAssessment', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -161,7 +162,7 @@ export class AssessmentController extends BaseController{
                 throw new ApiError(404, 'Assessment record not found.');
             }
             const next = await this._service.startAssessment(id);
-            
+
             ResponseHandler.success(request, response, 'Assessment started successfully!', 200, {
                 Next : next,
             });
@@ -172,7 +173,7 @@ export class AssessmentController extends BaseController{
 
     getNextQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Assessment.GetNextQuestion', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -207,7 +208,7 @@ export class AssessmentController extends BaseController{
             else {
                 ResponseHandler.failure(request, response, 'The assessment is in invalid state!', 404);
             }
-            
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -215,7 +216,7 @@ export class AssessmentController extends BaseController{
 
     getQuestionById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Assessment.GetQuestionById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -238,7 +239,7 @@ export class AssessmentController extends BaseController{
 
     answerQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Assessment.AnswerQuestion', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -259,14 +260,25 @@ export class AssessmentController extends BaseController{
             if (isAnswered) {
                 throw new ApiError(400, `The question has already been answered!`);
             }
-            
-            const answerResponse: AssessmentQuestionResponseDto =
+
+            var answerResponse: AssessmentQuestionResponseDto =
                 await this._service.answerQuestion(answerModel);
 
             const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
             if ( isAssessmentCompleted) {
                 //Assessment has no more questions left and is completed successfully!
                 await this.completeAssessmentTask(id);
+
+                //If the assessment has scoring enabled, score the assessment
+                if (assessment.ScoringApplicable) {
+                    var customActions = new CustomActionsHandler();
+                    var score = await customActions.performActions_PostAssessmentScoring(
+                        assessment.PatientUserId, assessment.id);
+                    if (score) {
+                        answerResponse['AssessmentScore'] = score;
+                    }
+                }
+
                 ResponseHandler.success(request, response, 'Assessment has completed successfully!', 200, {
                     AnswerResponse : answerResponse,
                 });
@@ -283,7 +295,7 @@ export class AssessmentController extends BaseController{
 
     answerQuestionList = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Assessment.AnswerQuestionList', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -316,9 +328,9 @@ export class AssessmentController extends BaseController{
             if (assessment == null) {
                 throw new ApiError(404, 'Assessment record not found.');
             }
-            
+
             const answerResponse = await this._service.answerQuestionList(assessment.id, listNode, answerModels);
-            
+
             const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
             if ( isAssessmentCompleted) {
                 //Assessment has no more questions left and is completed successfully!
@@ -336,9 +348,9 @@ export class AssessmentController extends BaseController{
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
-    
+
     }
-    
+
     //#endregion
 
     //#region Privates

@@ -1,5 +1,6 @@
 import express from 'express';
 import fs from 'fs';
+import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
 import { Helper } from '../../../../common/helper';
 import { ResponseHandler } from '../../../../common/response.handler';
@@ -351,6 +352,8 @@ export class AssessmentTemplateController extends BaseController{
             await this.setContext('AssessmentTemplate.UpdateScoringCondition', request, response);
 
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
+            Logger.instance().log(`Updating scoring condition for assessment template - ${templateId}`);
+
             const conditionId: uuid = await this._validator.getParamUuid(request, 'conditionId');
             var updates = await this._validator.updateScoringCondition(request);
 

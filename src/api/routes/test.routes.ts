@@ -1,6 +1,6 @@
 import express from 'express';
 import { Loader } from '../../startup/loader';
-import { TestController } from './test.controller';
+import { TestController } from '../controllers/test.controller';
 
 export const register = (app: express.Application): void => {
 

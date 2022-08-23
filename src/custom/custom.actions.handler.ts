@@ -50,7 +50,7 @@ export class CustomActionsHandler {
     public performActions_PostAssessmentScoring = async (patientUserId: uuid, assessmentId: uuid): Promise<any> => {
         try {
             if (this.isForAHA()) {
-                await this._ahaActions.performActions_PostAssessmentScoring(patientUserId, assessmentId);
+                return await this._ahaActions.performActions_PostAssessmentScoring(patientUserId, assessmentId);
             }
         }
         catch (error) {

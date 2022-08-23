@@ -171,6 +171,35 @@ export class AssessmentController extends BaseController{
         }
     };
 
+    scoreAssessment = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Assessment.StartAssessment', request, response);
+
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const assessment = await this._service.getById(id);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment record not found.');
+            }
+            if (assessment.ScoringApplicable) {
+
+                var customActions = new CustomActionsHandler();
+                var score = await customActions.performActions_PostAssessmentScoring(
+                    assessment.PatientUserId, assessment.id);
+
+                ResponseHandler.success(request, response, 'Assessment started successfully!', 200, {
+                    AssessmentId : assessment.id,
+                    Score        : score,
+                });
+            }
+            else {
+                ResponseHandler.failure(request, response, `This assessment does not have scoring!`, 400);
+            }
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     getNextQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
@@ -329,7 +358,8 @@ export class AssessmentController extends BaseController{
                 throw new ApiError(404, 'Assessment record not found.');
             }
 
-            const answerResponse = await this._service.answerQuestionList(assessment.id, listNode, answerModels);
+            var answerResponse = await this._service.answerQuestionList(assessment.id, listNode, answerModels);
+            answerResponse['AssessmentScore'] = null;
 
             const isAssessmentCompleted = answerResponse === null || answerResponse?.Next === null;
             if ( isAssessmentCompleted) {
@@ -380,7 +410,9 @@ export class AssessmentController extends BaseController{
             }
             else {
                 var task = await this._userTaskService.getByActionId(assessmentId);
-                await this._userTaskService.finishTask(task.id);
+                if (task) {
+                    await this._userTaskService.finishTask(task.id);
+                }
             }
         }
     }

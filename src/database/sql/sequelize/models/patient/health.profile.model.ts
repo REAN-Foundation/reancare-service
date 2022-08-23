@@ -188,6 +188,19 @@ export default class HealthProfile extends Model {
     })
     OtherInformation: string;
 
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    TobaccoQuestion: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : true,
+        defaultValue : false,
+    })
+    TobaccoQuestionAns: boolean;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

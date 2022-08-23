@@ -335,6 +335,17 @@ export class AssessmentController extends BaseController{
             if ( isAssessmentCompleted) {
                 //Assessment has no more questions left and is completed successfully!
                 await this.completeAssessmentTask(id);
+
+                //If the assessment has scoring enabled, score the assessment
+                if (assessment.ScoringApplicable) {
+                    var customActions = new CustomActionsHandler();
+                    var score = await customActions.performActions_PostAssessmentScoring(
+                        assessment.PatientUserId, assessment.id);
+                    if (score) {
+                        answerResponse['AssessmentScore'] = score;
+                    }
+                }
+
                 ResponseHandler.success(request, response, 'Assessment has completed successfully!', 200, {
                     AnswerResponse : answerResponse,
                 });

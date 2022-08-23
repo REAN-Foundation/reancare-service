@@ -17,7 +17,7 @@ import { ApiError } from '../common/api.error';
 
 export class CommonActions {
 
-    _service: CustomTaskService = null;
+    _customTaskService: CustomTaskService = null;
 
     _assessmentService: AssessmentService = null;
 
@@ -26,6 +26,7 @@ export class CommonActions {
     _assessmentTemplateService: AssessmentTemplateService = null;
 
     constructor() {
+        this._customTaskService = Loader.container.resolve(CustomTaskService);
         this._assessmentService = Loader.container.resolve(AssessmentService);
         this._userTaskService = Loader.container.resolve(UserTaskService);
         this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
@@ -75,7 +76,7 @@ export class CommonActions {
     };
 
     createCustomTask = async (domainModel: CustomTaskDomainModel) => {
-        const customTask = await this._service.create(domainModel);
+        const customTask = await this._customTaskService.create(domainModel);
         if (customTask == null) {
             throw new ApiError(400, 'Cannot create custom task!');
         }

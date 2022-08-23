@@ -11,7 +11,7 @@ export const register = (app: express.Application): void => {
     const controller = new AssessmentController();
 
     router.post('/:id/start', authenticator.authenticateClient, authenticator.authenticateUser, controller.startAssessment);
-    router.post('/:id/score', authenticator.authenticateClient, authenticator.authenticateUser, controller.scoreAssessment);
+    router.get('/:id/score', authenticator.authenticateClient, authenticator.authenticateUser, controller.scoreAssessment);
 
     router.get('/:id/questions/next', authenticator.authenticateClient, authenticator.authenticateUser, controller.getNextQuestion);
     router.get('/:id/questions/:questionId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getQuestionById);

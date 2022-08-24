@@ -17,7 +17,7 @@ export class SleepValidator extends BaseValidator{
             PatientUserId : request.body.PatientUserId ?? null,
             SleepDuration : request.body.SleepDuration ?? null,
             RecordDate    : request.body.RecordDate ?? new Date(),
-            Unit          : request.body.Unit,
+            Unit          : request.body.Unit
         };
 
         return sleepModel;

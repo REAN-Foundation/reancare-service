@@ -8,7 +8,7 @@ export interface HealthProfileDto {
     HasHeartAilment?    : boolean;
     MaritalStatus?      : string;
     Ethnicity?          : string;
-    Race?               : string;             
+    Race?               : string;
     Nationality?        : string;
     Occupation?         : string;
     SedentaryLifestyle? : boolean;
@@ -22,4 +22,6 @@ export interface HealthProfileDto {
     ProcedureHistory?   : string;
     ObstetricHistory?   : string;
     OtherInformation?   : string;
+    TobaccoQuestion?    : string;
+    TobaccoQuestionAns? : boolean;
 }

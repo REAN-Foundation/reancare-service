@@ -14,6 +14,7 @@ import { UserHelper } from '../../helpers/user.helper';
 import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
 import { PersonService } from '../../../services/person.service';
 import { UserService } from '../../../services/user/user.service';
+import { CustomActionsHandler } from '../../../custom/custom.actions.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +33,8 @@ export class PatientController extends BaseUserController {
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
     _userHelper: UserHelper = new UserHelper();
+
+    _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
     _validator = new PatientValidator();
 
@@ -55,7 +58,7 @@ export class PatientController extends BaseUserController {
             const createModel = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
 
-            await this._userHelper.performCustomActions(patient);
+            await this._customActionHandler.performActions_PostRegistration(patient);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -106,7 +109,7 @@ export class PatientController extends BaseUserController {
             const count = searchResults.Items.length;
             const message =
                 count === 0 ? 'No records found!' : `Total ${count} patient records retrieved successfully!`;
-                
+
             ResponseHandler.success(request, response, message, 200, {
                 Patients : searchResults,
             });
@@ -153,7 +156,7 @@ export class PatientController extends BaseUserController {
             ResponseHandler.success(request, response, 'Patient records updated successfully!', 200, {
                 Patient : patient,
             });
-            
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

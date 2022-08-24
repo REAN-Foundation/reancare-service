@@ -61,6 +61,7 @@ import { register as registerFoodComponentMonitoringRoutes } from './wellness/fo
 import { register as registerNoticeRoutes } from './general/notice.routes';
 import { register as registerCourseRoutes } from './educational/course/course.routes';
 import { register as registerCourseModuleRoutes } from './educational/course.module/course.module.routes';
+import { register as registerCourseContentRoutes } from './educational/course.content/course.content.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -146,6 +147,7 @@ export class Router {
                 registerNoticeRoutes(this._app);
                 registerCourseRoutes(this._app);
                 registerCourseModuleRoutes(this._app);
+                registerCourseContentRoutes(this._app);
 
                 resolve(true);
 

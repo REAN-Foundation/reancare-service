@@ -101,7 +101,12 @@
             "CourseModule.GetById",
             "CourseModule.Update",
             "CourseModule.Search",
-            "CourseModule.Delete"
+            "CourseModule.Delete",
+            "CourseContent.Create",
+            "CourseContent.GetById",
+            "CourseContent.Update",
+            "CourseContent.Search",
+            "CourseContent.Delete"
         ]
     },
     {

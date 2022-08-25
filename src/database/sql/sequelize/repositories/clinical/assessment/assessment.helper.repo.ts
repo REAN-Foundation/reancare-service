@@ -27,6 +27,7 @@ import {
     FileQueryAnswer,
     DateQueryAnswer,
     AssessmentType,
+    CScoringCondition,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -38,6 +39,7 @@ import AssessmentPathCondition from '../../../models/clinical/assessment/assessm
 import { AssessmentHelperMapper } from '../../../mappers/clinical/assessment/assessment.helper.mapper';
 import AssessmentQueryResponse from '../../../models/clinical/assessment/assessment.query.response.model';
 import { Helper } from '../../../../../../common/helper';
+import ScoringCondition from '../../../models/clinical/assessment/scoring.condition.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -911,6 +913,144 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             return Helper.generateDisplayCode('LNode');
         }
     };
+
+    public addScoringCondition = async (model: CScoringCondition): Promise<CScoringCondition> => {
+
+        try {
+
+            const entity = {
+                DisplayCode           : model.DisplayCode ?? Helper.generateDisplayCode('ScCondition'),
+                NodeId                : model.NodeId,
+                TemplateId            : model.TemplateId,
+                ParentConditionId     : model.ParentConditionId,
+                IsCompositeCondition  : model.IsCompositeCondition,
+                CompositionType       : model.CompositionType,
+                OperatorType          : model.OperatorType,
+                FirstOperandName      : model.FirstOperand.Name,
+                FirstOperandValue     : model.FirstOperand.Value.toString(),
+                FirstOperandDataType  : model.FirstOperand.DataType,
+                SecondOperandName     : model.SecondOperand.Name,
+                SecondOperandValue    : model.SecondOperand.Value.toString(),
+                SecondOperandDataType : model.SecondOperand.DataType,
+                ThirdOperandName      : model.ThirdOperand.Name,
+                ThirdOperandValue     : model.ThirdOperand.Value.toString(),
+                ThirdOperandDataType  : model.ThirdOperand.DataType,
+                ResolutionScore       : model.ResolutionScore
+            };
+
+            var condition = await ScoringCondition.create(entity);
+            return await AssessmentHelperMapper.toScoringConditionDto(condition);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    getScoringCondition = async (conditionId: uuid): Promise<CScoringCondition> => {
+        try {
+            const condition = await ScoringCondition.findByPk(conditionId);
+            return AssessmentHelperMapper.toScoringConditionDto(condition);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    updateScoringCondition = async (conditionId: string, updates: any): Promise<CScoringCondition> => {
+        try {
+
+            var condition = await ScoringCondition.findByPk(conditionId);
+
+            if (Helper.hasProperty(updates, 'TemplateId')) {
+                condition.TemplateId = updates['TemplateId'];
+            }
+            if (Helper.hasProperty(updates, 'NodeId')) {
+                condition.NodeId = updates['NodeId'];
+            }
+            if (Helper.hasProperty(updates, 'IsCompositeCondition')) {
+                condition.IsCompositeCondition = updates['IsCompositeCondition'];
+            }
+            if (Helper.hasProperty(updates, 'CompositionType')) {
+                condition.CompositionType = updates['CompositionType'];
+            }
+            if (Helper.hasProperty(updates, 'ParentConditionId')) {
+                condition.ParentConditionId = updates['ParentConditionId'];
+            }
+            if (Helper.hasProperty(updates, 'OperatorType')) {
+                condition.OperatorType = updates['OperatorType'];
+            }
+            if (Helper.hasProperty(updates, 'ResolutionScore')) {
+                condition.ResolutionScore = updates['ResolutionScore'];
+            }
+            if (Helper.hasProperty(updates, 'FirstOperandName')) {
+                condition.FirstOperandName = updates['FirstOperandName'];
+            }
+            if (Helper.hasProperty(updates, 'FirstOperandValue')) {
+                condition.FirstOperandValue = updates['FirstOperandValue'];
+            }
+            if (Helper.hasProperty(updates, 'FirstOperandDataType')) {
+                condition.FirstOperandDataType = updates['FirstOperandDataType'];
+            }
+            if (Helper.hasProperty(updates, 'SecondOperandName')) {
+                condition.SecondOperandName = updates['SecondOperandName'];
+            }
+            if (Helper.hasProperty(updates, 'SecondOperandValue')) {
+                condition.SecondOperandValue = updates['SecondOperandValue'];
+            }
+            if (Helper.hasProperty(updates, 'SecondOperandDataType')) {
+                condition.SecondOperandDataType = updates['SecondOperandDataType'];
+            }
+            if (Helper.hasProperty(updates, 'ThirdOperandName')) {
+                condition.ThirdOperandName = updates['ThirdOperandName'];
+            }
+            if (Helper.hasProperty(updates, 'ThirdOperandValue')) {
+                condition.ThirdOperandValue = updates['ThirdOperandValue'];
+            }
+            if (Helper.hasProperty(updates, 'ThirdOperandDataType')) {
+                condition.ThirdOperandDataType = updates['ThirdOperandDataType'];
+            }
+            condition = await condition.save();
+            return AssessmentHelperMapper.toScoringConditionDto(condition);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    deleteScoringCondition = async (conditionId: string): Promise<boolean> => {
+        try {
+
+            var condition = await ScoringCondition.findByPk(conditionId);
+            if (!condition) {
+                throw new ApiError(404, `Node not found!`);
+            }
+
+            //Check if this is the root node,...
+            var childrenConditions = await ScoringCondition.findAll({
+                where : {
+                    ParentConditionId : conditionId
+                }
+            });
+            if (childrenConditions.length > 0) {
+                var ids = childrenConditions.map(x => x.id);
+                var list = ids.join(', ');
+                throw new ApiError(400, `Cannot delete this parent condition. Please delete following children conditions: ${list}!`);
+            }
+
+            const count = await ScoringCondition.destroy({
+                where : {
+                    id : conditionId
+                }
+            });
+            return count === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+
+    }
 
     //#endregion
 

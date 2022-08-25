@@ -59,6 +59,7 @@ import { register as registerBloodCholesterolRoutes } from './clinical/biometric
 import { register as registerStandRoutes } from './wellness/daily.records/stand.routes';
 import { register as registerFoodComponentMonitoringRoutes } from './wellness/food.component.monitoring/food.component.monitoring.routes';
 import { register as registerLabRecordRoutes } from './clinical/lab.record.routes';
+import { register as registerTestRoutes } from './test.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -142,6 +143,7 @@ export class Router {
                 registerStandRoutes(this._app);
                 registerFoodComponentMonitoringRoutes(this._app);
                 registerLabRecordRoutes(this._app);
+                registerTestRoutes(this._app);
 
                 resolve(true);
 

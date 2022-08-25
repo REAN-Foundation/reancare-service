@@ -10,7 +10,7 @@ import { v4 } from 'uuid';
 @Table({
     timestamps      : true,
     modelName       : 'LabRecordType',
-    tableName       : 'lab_record_type',
+    tableName       : 'lab_record_types',
     paranoid        : true,
     freezeTableName : true,
 })

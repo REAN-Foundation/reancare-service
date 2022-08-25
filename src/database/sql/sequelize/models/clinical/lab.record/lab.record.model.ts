@@ -12,7 +12,7 @@ import { LabRecordTypeList } from '../../../../../../domain.types/clinical/lab.r
 @Table({
     timestamps      : true,
     modelName       : 'LabRecord',
-    tableName       : 'lab_record',
+    tableName       : 'lab_records',
     paranoid        : true,
     freezeTableName : true,
 })

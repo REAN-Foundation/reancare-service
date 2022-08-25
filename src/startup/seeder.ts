@@ -47,6 +47,10 @@ import { PersonService } from "../services/person.service";
 import { RoleService } from "../services/role.service";
 import { UserService } from "../services/user/user.service";
 import { Loader } from "./loader";
+import { ILabRecordRepo } from "../database/repository.interfaces/clinical/lab.record/lab.record.interface";
+import { LabRecordService } from "../services/clinical/lab.record/lab.record.service";
+import { LabRecordTypeDomainModel } from "../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.domain.model";
+import { LabRecordType } from "../domain.types/clinical/lab.records/lab.record/lab.record.types";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -77,6 +81,8 @@ export class Seeder {
 
     _healthPriorityService: HealthPriorityService = null;
 
+    _labRecordService: LabRecordService = null;
+
     _userHelper = new UserHelper();
 
     constructor(
@@ -93,6 +99,7 @@ export class Seeder {
         @inject('IKnowledgeNuggetRepo') private _knowledgeNuggetRepo: IKnowledgeNuggetRepo,
         @inject('IDrugRepo') private _drugRepo: IDrugRepo,
         @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
+        @inject('ILabRecordRepo') private _labRecordRepo: ILabRecordRepo,
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -106,6 +113,7 @@ export class Seeder {
         this._knowledgeNuggetsService = Loader.container.resolve(KnowledgeNuggetService);
         this._drugService = Loader.container.resolve(DrugService);
         this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
+        this._labRecordService = Loader.container.resolve(LabRecordService);
     }
 
     public init = async (): Promise<void> => {
@@ -122,6 +130,7 @@ export class Seeder {
             await this.seedKnowledgeNuggets();
             await this.seedDrugs();
             await this.seedHealthPriorityTypes();
+            await this.seedLabReportTypes();
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -503,6 +512,38 @@ export class Seeder {
                 Tags : ["HeartFailure"]
             };
             await this._healthPriorityService.createType(model);
+        }
+    };
+
+    public seedLabReportTypes = async () => {
+        
+        const count = await this._labRecordRepo.totalTypesCount();
+        if (count > 0) {
+            Logger.instance().log("Lab record types have already been seeded!");
+            return;
+        }
+
+        Logger.instance().log('Seeding lab record types...');
+
+        const arr = this.loadJSONSeedFile('lab.record.types.seed.json');
+
+        for (let i = 0; i < arr.length; i++) {
+            var c = arr[i];
+            let recordType = await this._labRecordService.getTypeByDisplayName(c.DisplayName);
+            if (recordType == null) {
+                const model: LabRecordTypeDomainModel = {
+                    TypeName       : c['TypeName'],
+                    DisplayName    : c['DisplayName'] as LabRecordType,
+                    SnowmedCode    : c['SnowmedCode'],
+                    LoincCode      : c['LoincCode'],
+                    NormalRangeMin : c['NormalRangeMin'],
+                    NormalRangeMax : c['NormalRangeMax'],
+                    Unit           : c['Unit'],
+                };
+                recordType = await this._labRecordService.createType(model);
+                var str = JSON.stringify(recordType, null, '  ');
+                Logger.instance().log(str);
+            }
         }
     };
 

@@ -201,7 +201,8 @@ export class AhaCareplanService implements ICareplanService {
         }
 
         if (model.PlanCode === 'Cholesterol') {
-            var displayCodes = ['AssessmtTmpl#choldemo', 'AssessmtTmpl#cholNutri','AssessmtTmpl#cholMed'];
+            //var displayCodes = ['AssessmtTmpl#choldemo', 'AssessmtTmpl#cholNutri','AssessmtTmpl#cholMed'];
+            var displayCodes = ['AssessmtTmpl#choldemo', 'AssessmtTmpl#cholMed'];
             var index = 0;
             for await (var displayCode of displayCodes) {
                 const actionId = await this.createInitialAssessmentTask(model, index, displayCode);

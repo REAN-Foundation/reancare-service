@@ -21,6 +21,7 @@ export class AssessmentMapper {
             Description            : assessment.Description,
             PatientUserId          : assessment.PatientUserId,
             AssessmentTemplateId   : assessment.AssessmentTemplateId,
+            ScoringApplicable      : assessment.ScoringApplicable,
             Provider               : assessment.Provider,
             ProviderEnrollmentId   : assessment.ProviderEnrollmentId,
             ProviderAssessmentCode : assessment.ProviderAssessmentCode,
@@ -34,7 +35,7 @@ export class AssessmentMapper {
             UserTaskId             : assessment.UserTaskId,
             CurrentNodeId          : assessment.CurrentNodeId,
         };
-        
+
         return dto;
     };
 

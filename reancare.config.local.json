@@ -17,6 +17,9 @@
     "FileStorage" : {
         "Provider": "Custom"
     },
+    "FeatureFlags" : {
+        "Provider": "Custom"
+    },
     "Communication" : {
         "SMS": {
             "Provider": "Mock"
@@ -34,7 +37,7 @@
         "CleanupFolderBeforeMinutes": 10
     },
     "Careplans" : [
-        { 
+        {
             "Enabled" : true,
             "Provider": "AHA",
             "Service": "AhaCarePlanService",
@@ -67,16 +70,16 @@
         }
     ],
     "FormServiceProviders" : [
-        { 
+        {
             "Provider": "KoboToolbox",
             "Code": "KoboToolbox"
         },
-        { 
+        {
             "Provider": "GoogleForms",
             "Code": "GoogleForms"
         }
     ],
     "MaxUploadFileSize": 104857600,
     "JwtExpiresIn": 2592000,
-    "SessionExpiresIn": 2592000 
+    "SessionExpiresIn": 2592000
 }

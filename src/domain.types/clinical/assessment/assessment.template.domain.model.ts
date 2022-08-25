@@ -7,6 +7,7 @@ export interface AssessmentTemplateDomainModel {
     Description?                : string;
     ProviderAssessmentCode?     : string;
     Provider?                   : string;
+    ScoringApplicable?          : boolean;
     FileResourceId?             : uuid;
     ServeListNodeChildrenAtOnce : boolean;
 }

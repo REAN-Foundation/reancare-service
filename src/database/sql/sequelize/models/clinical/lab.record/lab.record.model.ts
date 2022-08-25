@@ -1,4 +1,5 @@
 import {
+    BelongsTo,
     Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsUUID,
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
@@ -33,9 +34,12 @@ export default class LabRecord extends Model {
     @ForeignKey(() => User)
     @Column({
         type      : DataType.UUID,
-        allowNull : true,
+        allowNull : false,
     })
     PatientUserId: string;
+
+    @BelongsTo(() => User)
+    User: User;
 
     @Length({ min: 2, max: 128 })
     @Column({
@@ -48,9 +52,12 @@ export default class LabRecord extends Model {
     @ForeignKey(() => LabRecordType)
     @Column({
         type      : DataType.UUID,
-        allowNull : true,
+        allowNull : false,
     })
     TypeId: string;
+
+    @BelongsTo(() => LabRecordType)
+    LabRecordType: LabRecordType;
 
     @Column({
         type      : DataType.STRING(128),

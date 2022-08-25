@@ -108,6 +108,24 @@ export class FoodConsumptionController extends BaseController {
         }
     };
 
+    getNutritionQuestionnaire = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Nutrition.GetNutritionQuestionnaire', request, response, false);
+
+            const questionnaire = await this._service.getNutritionQuestionnaire();
+            if (questionnaire.length === 0) {
+                throw new ApiError(400, 'Cannot fetch nutrition questionnaire!');
+            }
+
+            ResponseHandler.success(request, response, 'Fetched nutrition questionnaire successfully!', 201, {
+                NutritionQuestionnaire : questionnaire,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 

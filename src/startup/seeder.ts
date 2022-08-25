@@ -7,6 +7,7 @@ import * as SeededKnowledgeNuggets from '../../seed.data/knowledge.nuggets.seed.
 import * as RolePrivilegesList from '../../seed.data/role.privileges.json';
 import * as SeededAssessmentTemplates from '../../seed.data/symptom.assessment.templates.json';
 import * as SeededSymptomTypes from '../../seed.data/symptom.types.json';
+import * as SeededNutritionQuestionnaire from '../../seed.data/nutrition.questionnaire.json';
 import { Helper } from "../common/helper";
 import { Logger } from "../common/logger";
 import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
@@ -46,7 +47,12 @@ import { PatientService } from "../services/patient/patient.service";
 import { PersonService } from "../services/person.service";
 import { RoleService } from "../services/role.service";
 import { UserService } from "../services/user/user.service";
+import { FoodConsumptionService } from "../services/wellness/nutrition/food.consumption.service";
 import { Loader } from "./loader";
+import { IFoodConsumptionRepo }
+    from "../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
+import { NutritionQuestionnaireDomainModel }
+    from "../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.domain.model";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -77,6 +83,8 @@ export class Seeder {
 
     _healthPriorityService: HealthPriorityService = null;
 
+    _foodConsumptionService: FoodConsumptionService = null;
+
     _userHelper = new UserHelper();
 
     constructor(
@@ -93,6 +101,7 @@ export class Seeder {
         @inject('IKnowledgeNuggetRepo') private _knowledgeNuggetRepo: IKnowledgeNuggetRepo,
         @inject('IDrugRepo') private _drugRepo: IDrugRepo,
         @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
+        @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -106,6 +115,7 @@ export class Seeder {
         this._knowledgeNuggetsService = Loader.container.resolve(KnowledgeNuggetService);
         this._drugService = Loader.container.resolve(DrugService);
         this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
+        this._foodConsumptionService = Loader.container.resolve(FoodConsumptionService);
     }
 
     public init = async (): Promise<void> => {
@@ -122,6 +132,7 @@ export class Seeder {
             await this.seedKnowledgeNuggets();
             await this.seedDrugs();
             await this.seedHealthPriorityTypes();
+            await this.seedNutritionQuestionnaire();
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -401,6 +412,21 @@ export class Seeder {
         return uploaded.id;
     };
 
+    getImageResourceIdForNutritionQuestion = async (fileName) => {
+        if (fileName === null) {
+            return null;
+        }
+        var storagePath = 'assets/images/nutrition.images/' + fileName;
+        var sourceFileLocation = path.join(process.cwd(), "./assets/images/nutrition.images/", fileName);
+        
+        var uploaded = await this._fileResourceService.uploadLocal(
+            sourceFileLocation,
+            storagePath,
+            true);
+
+        return uploaded.id;
+    };
+
     public seedSymptomAsseessmentTemplates = async () => {
     
         const count = await this._symptomAssessmentTemplateRepo.totalCount();
@@ -503,6 +529,42 @@ export class Seeder {
                 Tags : ["HeartFailure"]
             };
             await this._healthPriorityService.createType(model);
+        }
+    };
+
+    public seedNutritionQuestionnaire = async () => {
+
+        const count = await this._foodConsumptionRepo.totalCount();
+        if (count > 0) {
+            Logger.instance().log("Nutrition questionnaire have already been seeded!");
+            return;
+        }
+
+        Logger.instance().log('Seeding nutrition questionnaire...');
+
+        const arr = SeededNutritionQuestionnaire['default'];
+
+        for (let i = 0; i < arr.length; i++) {
+
+            var t = arr[i];
+            const tokens = t['Tags'];
+            const temp = t['AssociatedFoodTypes'];
+            var imageName = t['Image'] ? t['Image'] : null;
+            var resourceId = await this.getImageResourceIdForNutritionQuestion(imageName);
+
+            var tags: string[] = tokens.map(x => x);
+            var associatedFoodTypes: string[] = temp.map(x => x);
+
+            const model: NutritionQuestionnaireDomainModel = {
+                Question            : t['Question'],
+                QuestionType        : t['QuestionType'],
+                ServingUnit         : t['ServingUnit'], 
+                Tags                : tags,
+                AssociatedFoodTypes : associatedFoodTypes,
+                ImageResourceId     : resourceId,
+                QuestionInfo        : t['QuestionInfo']
+            };
+            await this._foodConsumptionService.createNutritionQuestionnaire(model);
         }
     };
 

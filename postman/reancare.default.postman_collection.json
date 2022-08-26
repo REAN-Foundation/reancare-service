@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "6c85daee-81c6-4afe-9153-759c64e695ed",
+		"_postman_id": "d65113af-1cc6-438d-bc22-80334732a86e",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "5510218"
+		"_exporter_id": "15905052"
 	},
 	"item": [
 		{
@@ -827,6 +827,75 @@
 							"path": [
 								"types",
 								"genders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get lab record types",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    var labRecordsTypes = jsonRes.Data.LabRecordTypes;\r",
+									"    for(var i = 0; i < labRecordsTypes.length; i++) {\r",
+									"        var r = labRecordsTypes[i];\r",
+									"        var name = r.DisplayName;\r",
+									"        var id = r.id;\r",
+									"        var str = \"LAB_RECORD_\" + name.toUpperCase();\r",
+									"        pm.environment.set(str, id);\r",
+									"    }\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Gender types are retrieved\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('LabRecordTypes');\r",
+									"    pm.expect(jsonRes.Data.LabRecordTypes).to.not.be.empty;\r",
+									"    var count = jsonRes.Data.LabRecordTypes.length;\r",
+									"    pm.expect(count).greaterThan(0);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/types/lab-records",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"types",
+								"lab-records"
 							]
 						}
 					},
@@ -27518,6 +27587,436 @@
 									"response": []
 								}
 							]
+						}
+					]
+				},
+				{
+					"name": "Lab Record",
+					"item": [
+						{
+							"name": "Add lab record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"LAB_RECORD_ID\", jsonRes.Data.LabRecord.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New lab record is created\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('LabRecord');\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.have.property('DisplayName');\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.have.property('PatientUserId');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.LabRecord.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"TypeName\": \"Cholesterol\",\r\n    \"DisplayName\": \"A1C Level\",\r\n    \"PrimaryValue\": 5,\r\n    \"Unit\": \"%\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/lab-records",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"lab-records"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get lab record by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Lab record is returned\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('LabRecord');\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.have.property('DisplayName');\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.have.property('PatientUserId');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.LabRecord.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/lab-records/{{LAB_RECORD_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"lab-records",
+										"{{LAB_RECORD_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update lab record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"LAB_RECORD_ID\", jsonRes.Data.LabRecord.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated lab record is returned\", function () {\r",
+											"\r",
+											"    var expectedPatientUserId = pm.environment.get(\"PATIENT_USER_ID\");\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('LabRecord');\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.have.property('DisplayName');\r",
+											"    pm.expect(jsonRes.Data.LabRecord).to.have.property('PatientUserId');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.LabRecord.PatientUserId).equals(expectedPatientUserId);\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"TypeName\": \"Cholesterol\",\r\n    \"DisplayName\": \"LDL\",\r\n    \"PrimaryValue\": 122,\r\n    \"SecondaryValue\": 150,\r\n    \"Unit\": \"mg/dL\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/lab-records/{{LAB_RECORD_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"lab-records",
+										"{{LAB_RECORD_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "search lab record",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Lab record is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('LabRecordRecords');\r",
+											"    pm.expect(jsonRes.Data.LabRecordRecords.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/lab-records/search?displayName=Total Cholesterol&itemsPerPage=25&patientUserId={{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"lab-records",
+										"search"
+									],
+									"query": [
+										{
+											"key": "dateFrom",
+											"value": "2021-09-01",
+											"disabled": true
+										},
+										{
+											"key": "dateTo",
+											"value": "2021-10-14",
+											"disabled": true
+										},
+										{
+											"key": "displayName",
+											"value": "Total Cholesterol"
+										},
+										{
+											"key": "typeName",
+											"value": "Cholesterol",
+											"disabled": true
+										},
+										{
+											"key": "typeId",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "orderBy",
+											"value": "RecordedAt",
+											"disabled": true
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"disabled": true
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"disabled": true
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25"
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete lab record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Lab record is deleted\", function () {\r",
+											"\r",
+											"    var expectedValue = true;\r",
+											"    var jsonRes = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/lab-records/{{LAB_RECORD_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"lab-records",
+										"{{LAB_RECORD_ID}}"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},

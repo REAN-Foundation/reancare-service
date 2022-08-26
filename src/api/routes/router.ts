@@ -62,7 +62,7 @@ import { register as registerNoticeRoutes } from './general/notice.routes';
 import { register as registerCourseRoutes } from './educational/course/course.routes';
 import { register as registerCourseModuleRoutes } from './educational/course.module/course.module.routes';
 import { register as registerCourseContentRoutes } from './educational/course.content/course.content.routes';
-
+import { register as registerCourseEnrollmentRoutes } from './educational/course.enrollment/course.enrollment.routes';
 ////////////////////////////////////////////////////////////////////////////////////
 
 export class Router {
@@ -148,6 +148,7 @@ export class Router {
                 registerCourseRoutes(this._app);
                 registerCourseModuleRoutes(this._app);
                 registerCourseContentRoutes(this._app);
+                registerCourseEnrollmentRoutes(this._app);
 
                 resolve(true);
 

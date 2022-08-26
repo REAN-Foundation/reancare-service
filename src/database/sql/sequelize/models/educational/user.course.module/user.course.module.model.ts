@@ -76,10 +76,7 @@ export default class UserCourseModule extends Model {
     ModuleId: string;
 
     @Column({
-        type         : DataType.UUID,
-        defaultValue : () => {
-            return v4();
-        },
+        type      : DataType.UUID,
         allowNull : true,
     })
     ParentNodeId: string;

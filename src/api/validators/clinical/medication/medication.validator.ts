@@ -27,13 +27,13 @@ export class MedicationValidator {
             DrugId                    : request.body.DrugId,
             Dose                      : parseFloat(request.body.Dose),
             DosageUnit                : request.body.DosageUnit,
-            TimeSchedules             : request.body.TimeSchedules,
+            TimeSchedules             : request.body.TimeSchedules ? request.body.TimeSchedules : [],
             Frequency                 : parseInt(request.body.Frequency),
             FrequencyUnit             : request.body.FrequencyUnit,
             Route                     : request.body.Route ?? MedicationAdministrationRoutes.Oral,
             Duration                  : request.body.Duration ? parseInt(request.body.Duration) : 1,
             DurationUnit              : request.body.DurationUnit ?? MedicationDurationUnits.Weeks,
-            StartDate                 : startDate ?? new Date(),
+            StartDate                 : request.body.StartDate ? startDate : null,
             EndDate                   : request.body.EndDate ?? null,
             RefillNeeded              : request.body.RefillNeeded ?? false,
             RefillCount               : request.body.RefillCount ?? 0,
@@ -137,7 +137,7 @@ export class MedicationValidator {
             .trim()
             .run(request);
 
-        await body('TimeSchedules').exists()
+        await body('TimeSchedules').optional()
             .isArray()
             .run(request);
 

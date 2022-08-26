@@ -6,6 +6,8 @@ import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface
 import { Gender, GenderList } from "../domain.types/miscellaneous/system.types";
 import { OrganizationTypeList } from "../domain.types/organization/organization.types";
 import { RoleDto } from "../domain.types/role/role.dto";
+import { LabRecordTypeDto } from "../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.dto";
+import { ILabRecordRepo } from "../database/repository.interfaces/clinical/lab.record/lab.record.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,6 +17,7 @@ export class TypesService {
     constructor(
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
+        @inject('ILabRecordRepo') private _labRecordTypeRepo: ILabRecordRepo,
     ) {}
 
     getPersonRoleTypes = async (): Promise<RoleDto[]> => {
@@ -45,6 +48,16 @@ export class TypesService {
         }
 
         return priorityTypes;
+    };
+
+    getLabRecordTypes = async (displayName?: string): Promise<LabRecordTypeDto[]> => {
+        var labRecordTypes = await this._labRecordTypeRepo.getLabRecordTypes(displayName);
+
+        if (!labRecordTypes || labRecordTypes.length === 0) {
+            throw new ApiError(500, 'Error while fetching lab record types.');
+        }
+
+        return labRecordTypes;
     };
 
 }

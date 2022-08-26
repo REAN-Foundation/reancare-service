@@ -19,6 +19,7 @@ export const register = (app: express.Application): void => {
     router.get('/marital-statuses', authenticator.authenticateClient, controller.getMaritalStatuses);
     router.get('/severities', authenticator.authenticateClient, controller.getSeverities);
     router.get('/priorities', authenticator.authenticateClient, controller.getPriorityTypes);
+    router.get('/lab-records', authenticator.authenticateClient, controller.getLabRecordTypes);
 
     app.use('/api/v1/types', router);
 };

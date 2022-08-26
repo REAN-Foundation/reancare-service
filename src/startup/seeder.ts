@@ -8,6 +8,7 @@ import * as RolePrivilegesList from '../../seed.data/role.privileges.json';
 import * as SeededAssessmentTemplates from '../../seed.data/symptom.assessment.templates.json';
 import * as SeededSymptomTypes from '../../seed.data/symptom.types.json';
 import * as SeededNutritionQuestionnaire from '../../seed.data/nutrition.questionnaire.json';
+import * as SeededLabRecordTypes from '../../seed.data/lab.record.types.seed.json';
 import { Helper } from "../common/helper";
 import { Logger } from "../common/logger";
 import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
@@ -49,6 +50,10 @@ import { RoleService } from "../services/role.service";
 import { UserService } from "../services/user/user.service";
 import { FoodConsumptionService } from "../services/wellness/nutrition/food.consumption.service";
 import { Loader } from "./loader";
+import { ILabRecordRepo } from "../database/repository.interfaces/clinical/lab.record/lab.record.interface";
+import { LabRecordService } from "../services/clinical/lab.record/lab.record.service";
+import { LabRecordTypeDomainModel } from "../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.domain.model";
+import { LabRecordType } from "../domain.types/clinical/lab.records/lab.record/lab.record.types";
 import { IFoodConsumptionRepo }
     from "../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
 import { NutritionQuestionnaireDomainModel }
@@ -83,6 +88,8 @@ export class Seeder {
 
     _healthPriorityService: HealthPriorityService = null;
 
+    _labRecordService: LabRecordService = null;
+
     _foodConsumptionService: FoodConsumptionService = null;
 
     _userHelper = new UserHelper();
@@ -101,6 +108,7 @@ export class Seeder {
         @inject('IKnowledgeNuggetRepo') private _knowledgeNuggetRepo: IKnowledgeNuggetRepo,
         @inject('IDrugRepo') private _drugRepo: IDrugRepo,
         @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
+        @inject('ILabRecordRepo') private _labRecordRepo: ILabRecordRepo,
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
@@ -115,6 +123,7 @@ export class Seeder {
         this._knowledgeNuggetsService = Loader.container.resolve(KnowledgeNuggetService);
         this._drugService = Loader.container.resolve(DrugService);
         this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
+        this._labRecordService = Loader.container.resolve(LabRecordService);
         this._foodConsumptionService = Loader.container.resolve(FoodConsumptionService);
     }
 
@@ -132,6 +141,7 @@ export class Seeder {
             await this.seedKnowledgeNuggets();
             await this.seedDrugs();
             await this.seedHealthPriorityTypes();
+            await this.seedLabReportTypes();
             await this.seedNutritionQuestionnaire();
 
         } catch (error) {
@@ -532,6 +542,38 @@ export class Seeder {
         }
     };
 
+    public seedLabReportTypes = async () => {
+        
+        const count = await this._labRecordRepo.totalTypesCount();
+        if (count > 0) {
+            Logger.instance().log("Lab record types have already been seeded!");
+            return;
+        }
+
+        Logger.instance().log('Seeding lab record types...');
+
+        const arr = SeededLabRecordTypes['default'];
+
+        for (let i = 0; i < arr.length; i++) {
+            var c = arr[i];
+            let recordType = await this._labRecordService.getTypeByDisplayName(c.DisplayName);
+            if (recordType == null) {
+                const model: LabRecordTypeDomainModel = {
+                    TypeName       : c['TypeName'],
+                    DisplayName    : c['DisplayName'] as LabRecordType,
+                    SnowmedCode    : c['SnowmedCode'],
+                    LoincCode      : c['LoincCode'],
+                    NormalRangeMin : c['NormalRangeMin'],
+                    NormalRangeMax : c['NormalRangeMax'],
+                    Unit           : c['Unit'],
+                };
+                recordType = await this._labRecordService.createType(model);
+                var str = JSON.stringify(recordType, null, '  ');
+                Logger.instance().log(str);
+            }
+        }
+    };
+
     public seedNutritionQuestionnaire = async () => {
 
         const count = await this._foodConsumptionRepo.totalCount();
@@ -558,7 +600,7 @@ export class Seeder {
             const model: NutritionQuestionnaireDomainModel = {
                 Question            : t['Question'],
                 QuestionType        : t['QuestionType'],
-                ServingUnit         : t['ServingUnit'], 
+                ServingUnit         : t['ServingUnit'],
                 Tags                : tags,
                 AssociatedFoodTypes : associatedFoodTypes,
                 ImageResourceId     : resourceId,

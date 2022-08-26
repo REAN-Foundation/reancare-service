@@ -167,11 +167,13 @@ export const MedicationAdministrationRoutesList: MedicationAdministrationRoutes 
 export enum MedicationFrequencyUnits {
     Daily   = 'Daily',
     Weekly  = 'Weekly',
-    Monthly = 'Monthly'
+    Monthly = 'Monthly',
+    Other   = 'Other'
 }
 
 export const MedicationFrequencyUnitsList: MedicationFrequencyUnits [] = [
     MedicationFrequencyUnits.Daily,
     MedicationFrequencyUnits.Weekly,
-    MedicationFrequencyUnits.Monthly
+    MedicationFrequencyUnits.Monthly,
+    MedicationFrequencyUnits.Other
 ];

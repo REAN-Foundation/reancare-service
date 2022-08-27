@@ -106,7 +106,14 @@
             "CourseContent.GetById",
             "CourseContent.Update",
             "CourseContent.Search",
-            "CourseContent.Delete"
+            "CourseContent.Delete",
+            "CourseEnrollment.Enroll",
+            "CourseEnrollment.StartCourseModule",
+            "CourseEnrollment.StartCourseContent",
+            "CourseEnrollment.GetCourseProgress",
+            "CourseEnrollment.GetModuleProgress",
+            "CourseEnrollment.GetContentProgress"
+            
         ]
     },
     {

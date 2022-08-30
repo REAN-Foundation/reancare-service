@@ -10,6 +10,7 @@ import { IPersonRepo } from "../../../repository.interfaces/person.repo.interfac
 import { AddressMapper } from "../mappers/address.mapper";
 import { OrganizationMapper } from "../mappers/organization.mapper";
 import { PersonMapper } from "../mappers/person.mapper";
+import { Gender } from "../../../../domain.types/miscellaneous/system.types";
 import Address from "../models/address.model";
 import Organization from "../models/organization.model";
 import OrganizationPersons from "../models/organization.persons.model";
@@ -110,15 +111,17 @@ export class PersonRepo implements IPersonRepo {
     create = async (personDomainModel: PersonDomainModel): Promise<PersonDetailsDto> => {
         try {
             const entity = {
-                Prefix          : personDomainModel.Prefix ?? '',
-                FirstName       : personDomainModel.FirstName,
-                MiddleName      : personDomainModel.MiddleName ?? null,
-                LastName        : personDomainModel.LastName,
-                Phone           : personDomainModel.Phone,
-                Email           : personDomainModel.Email ?? null,
-                Gender          : personDomainModel.Gender ?? 'Unknown',
-                BirthDate       : personDomainModel.BirthDate ?? null,
-                ImageResourceId : personDomainModel.ImageResourceId ?? null,
+                Prefix               : personDomainModel.Prefix ?? '',
+                FirstName            : personDomainModel.FirstName,
+                MiddleName           : personDomainModel.MiddleName ?? null,
+                LastName             : personDomainModel.LastName,
+                Phone                : personDomainModel.Phone,
+                Email                : personDomainModel.Email ?? null,
+                Gender               : personDomainModel.Gender ?? 'Unknown',
+                SelfIdentifiedGender : personDomainModel.SelfIdentifiedGender ?? null,
+                MaritalStatus        : personDomainModel.MaritalStatus ?? null,
+                BirthDate            : personDomainModel.BirthDate ?? null,
+                ImageResourceId      : personDomainModel.ImageResourceId ?? null,
             };
             const person = await Person.create(entity);
             const dto = await PersonMapper.toDetailsDto(person);
@@ -170,7 +173,13 @@ export class PersonRepo implements IPersonRepo {
                 person.Email = personDomainModel.Email;
             }
             if (personDomainModel.Gender !== undefined) {
-                person.Gender = personDomainModel.Gender;
+                person.Gender = Helper.getEnumKeyFromValue(Gender, personDomainModel.Gender) || 'Unknown';
+            }
+            if (personDomainModel.SelfIdentifiedGender !== undefined) {
+                person.SelfIdentifiedGender = personDomainModel.SelfIdentifiedGender;
+            }
+            if (personDomainModel.MaritalStatus !== undefined) {
+                person.MaritalStatus = personDomainModel.MaritalStatus;
             }
             if (personDomainModel.BirthDate !== undefined) {
                 person.BirthDate = personDomainModel.BirthDate;
@@ -178,6 +187,7 @@ export class PersonRepo implements IPersonRepo {
             if (personDomainModel.ImageResourceId !== undefined) {
                 person.ImageResourceId = personDomainModel.ImageResourceId;
             }
+
             await person.save();
 
             const dto = await PersonMapper.toDetailsDto(person);

@@ -88,6 +88,13 @@ export default class HealthProfile extends Model {
     })
     Ethnicity: string;
 
+    @Column({
+        type         : DataType.STRING(128),
+        allowNull    : true,
+        defaultValue : ''
+    })
+    Race: string;
+
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),
@@ -180,6 +187,19 @@ export default class HealthProfile extends Model {
         allowNull : true,
     })
     OtherInformation: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    TobaccoQuestion: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : true,
+        defaultValue : false,
+    })
+    TobaccoQuestionAns: boolean;
 
     @Column
     @CreatedAt

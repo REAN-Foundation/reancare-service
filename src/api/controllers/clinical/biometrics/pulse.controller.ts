@@ -37,7 +37,7 @@ export class PulseController extends BaseController{
                 throw new ApiError(400, 'Cannot create record for pulse!');
             }
 
-            ResponseHandler.success(request, response, 'Pulse record created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Pulse rate record created successfully!', 201, {
                 Pulse : pulse,
             });
         } catch (error) {
@@ -56,7 +56,7 @@ export class PulseController extends BaseController{
                 throw new ApiError(404, 'Pulse record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Pulse record retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Pulse rate record retrieved successfully!', 200, {
                 Pulse : pulse,
             });
         } catch (error) {
@@ -77,7 +77,7 @@ export class PulseController extends BaseController{
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} pulse records retrieved successfully!`;
+                    : `Total ${count} pulse rate records retrieved successfully!`;
                     
             ResponseHandler.success(request, response, message, 200, {
                 PulseRecords : searchResults });
@@ -104,7 +104,7 @@ export class PulseController extends BaseController{
                 throw new ApiError(400, 'Unable to update pulse record!');
             }
 
-            ResponseHandler.success(request, response, 'Pulse record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Pulse rate record updated successfully!', 200, {
                 Pulse : updated,
             });
         } catch (error) {
@@ -128,7 +128,7 @@ export class PulseController extends BaseController{
                 throw new ApiError(400, 'Pulse record cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'Pulse record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Pulse rate record deleted successfully!', 200, {
                 Deleted : true,
             });
         } catch (error) {

@@ -77,6 +77,13 @@ export default class AssessmentNodePath extends Model {
     })
     NextNodeDisplayCode: string;
 
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false
+    })
+    IsExitPath: boolean;
+
     //The condition based on which this path will be chosen
     @IsUUID(4)
     @ForeignKey(() => AssessmentPathCondition)

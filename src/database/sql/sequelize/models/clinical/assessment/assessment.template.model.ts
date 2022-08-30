@@ -82,13 +82,20 @@ export default class AssessmentTemplate extends Model {
         allowNull : true,
     })
     ProviderAssessmentCode: string;
-    
+
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
         allowNull : true,
     })
     Provider: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    ScoringApplicable: boolean;
 
     @IsUUID(4)
     @ForeignKey(() => AssessmentNode)
@@ -104,7 +111,7 @@ export default class AssessmentTemplate extends Model {
         defaultValue : false,
     })
     ServeListNodeChildrenAtOnce: boolean;
-    
+
     @IsUUID(4)
     @ForeignKey(() => FileResource)
     @Column({

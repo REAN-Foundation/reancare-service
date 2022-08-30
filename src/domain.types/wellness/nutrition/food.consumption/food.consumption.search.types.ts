@@ -6,11 +6,16 @@ import { FoodConsumptionEvents } from "./food.consumption.types";
 //////////////////////////////////////////////////////////////////////
 
 export interface FoodConsumptionSearchFilters extends BaseSearchFilters{
-    PatientUserId?: uuid;
-    Food?         : string;
-    ConsumedAs?   : FoodConsumptionEvents;
-    DateFrom      : Date;
-    DateTo        : Date;
+    PatientUserId? : uuid;
+    Food?          : string;
+    FoodTypes?     : string;
+    Servings?      : number;
+    ServingUnit?   : string;
+    UserResponse?  : boolean;
+    Tags?          : string[];
+    ConsumedAs?    : FoodConsumptionEvents;
+    DateFrom       : Date;
+    DateTo         : Date;
 }
 
 export interface FoodConsumptionSearchResults extends BaseSearchResults{

@@ -170,18 +170,25 @@ export class CareplanService implements IUserActionService {
     
         const activities = await this._careplanRepo.getAllReanActivities();
 
-        activities.forEach(async activity => {
-            const todayDate = new Date().toISOString().split('T')[0];
-            const activityDate = activity.ScheduledAt.toISOString().split('T')[0];
+        if (activities.length !== 0) {
+            activities.forEach(async activity => {
+                const todayDate = new Date().toISOString().split('T')[0];
+                const activityDate = activity.ScheduledAt.toISOString().split('T')[0];
 
-            if (todayDate === activityDate) {
-                const message = activity.Description;
-                const patient = await this.getPatient(activity.PatientUserId);
-                const phoneNumber = patient.User.Person.Phone;
-                await Loader.messagingService.sendWhatsappMessage(phoneNumber, message);
-                Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
-            }
-        });
+                if (todayDate === activityDate) {
+                    const message = activity.Description;
+                    const patient = await this.getPatient(activity.PatientUserId);
+                    const phoneNumber = patient.User.Person.Phone;
+                    await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message);
+                   
+                    Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
+                
+                }
+            });
+        } else {
+            Logger.instance().log(`No activities fetched from careplan task.`);
+        }
+            
     };
 
     public getPatientEligibility = async (patient: any, provider: string, careplanCode: string) => {

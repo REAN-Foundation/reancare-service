@@ -101,7 +101,6 @@ export class ReanCareplanService implements ICareplanService {
             Gender                 : patientDetails.Gender,
             CountryCode            : patientDetails.Phone.split('-')[0],
             Phone                  : patientDetails.Phone.split('-')[1],
-            Email                  : patientDetails.Email
         };
 
         var url = process.env.REAN_API_BASE_URL + '/participants';
@@ -122,7 +121,7 @@ export class ReanCareplanService implements ICareplanService {
             ParticipantId  : model.ParticipantId,
             CareplanId     : parseInt(model.PlanCode),
             StartDate      : new Date(model.StartDateStr),
-            EndDate        : new Date(model.EndDateStr),
+            EndDate        : TimeHelper.addDuration(model.StartDate,240,DurationType.Day),
             EnrollmentDate : new Date(),
             WeekOffset     : model.WeekOffset,
             DayOffset      : model.DayOffset

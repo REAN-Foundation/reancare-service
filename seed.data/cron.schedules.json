@@ -5,7 +5,7 @@
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleMaternityCareplan": "*/2 * * * *"
+        "ScheduleMaternityCareplan": "0 8 * * *"
 
     },
     "development": {
@@ -14,7 +14,7 @@
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleMaternityCareplan": "*/2 * * * *"
+        "ScheduleMaternityCareplan": "0 8 * * *"
 
     },
     "uat": {

@@ -386,7 +386,7 @@ export class CareplanRepo implements ICareplanRepo {
     public getAllReanActivities = async ()
         : Promise<CareplanActivityDto[]> => {
         try {
-            const orderByColum = 'ScheduledAt';
+            const orderByColum = 'Sequence';
             const order = 'ASC';
 
             const foundResults = await CareplanActivity.findAndCountAll({

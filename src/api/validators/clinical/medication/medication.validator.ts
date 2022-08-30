@@ -33,7 +33,7 @@ export class MedicationValidator {
             Route                     : request.body.Route ?? MedicationAdministrationRoutes.Oral,
             Duration                  : request.body.Duration ? parseInt(request.body.Duration) : 1,
             DurationUnit              : request.body.DurationUnit ?? MedicationDurationUnits.Weeks,
-            StartDate                 : request.body.StartDate ? startDate : null,
+            StartDate                 : startDate,
             EndDate                   : request.body.EndDate ?? null,
             RefillNeeded              : request.body.RefillNeeded ?? false,
             RefillCount               : request.body.RefillCount ?? 0,

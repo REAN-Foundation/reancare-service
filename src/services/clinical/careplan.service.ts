@@ -166,7 +166,7 @@ export class CareplanService implements IUserActionService {
         return dto;
     };
 
-    public getActivitiesAndSendWhatsapp = async (): Promise<void> => {
+    public scheduleDailyCareplanPushTasks = async (): Promise<void> => {
     
         const activities = await this._careplanRepo.getAllReanActivities();
 

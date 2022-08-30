@@ -39,7 +39,7 @@ export class Scheduler {
                 this.scheduleMedicationReminders();
                 this.scheduleCreateMedicationTasks();
                 this.scheduleMonthlyCustomTasks();
-                this.sendWhatsappMaternityCraeplan();
+                this.scheduleDailyCareplanPushTasks();
 
                 //this.scheduleDaillyPatientTasks();
                 
@@ -99,12 +99,12 @@ export class Scheduler {
         });
     };
 
-    private sendWhatsappMaternityCraeplan = () => {
-        cron.schedule(Scheduler._schedules['ScheduleMaternityCareplan'], () => {
+    private scheduleDailyCareplanPushTasks = () => {
+        cron.schedule(Scheduler._schedules['ScheduleDailyCareplanPushTasks'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
                 const careplanService = Loader.container.resolve(CareplanService);
-                await careplanService.getActivitiesAndSendWhatsapp();
+                await careplanService.scheduleDailyCareplanPushTasks();
             })();
         });
     };

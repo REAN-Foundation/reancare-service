@@ -27,7 +27,7 @@ export class ReanCareplanService implements ICareplanService {
 
     _assessmentService: AssessmentService = null;
 
-    _userTaskService: UserTaskService = null; 
+    _userTaskService: UserTaskService = null;
 
     _assessmentTemplateRepo: AssessmentTemplateRepo = null;
 
@@ -47,7 +47,7 @@ export class ReanCareplanService implements ICareplanService {
 
         var headers = {
             'Content-Type'    : 'application/json',
-            'x-api-key'       : process.env.REAN_CAREPLAN_API_KEY,
+            'x-api-key'       : process.env.CAREPLAN_API_KEY,
             Accept            : '*/*',
             'Cache-Control'   : 'no-cache',
             'Accept-Encoding' : 'gzip, deflate, br',
@@ -58,7 +58,7 @@ export class ReanCareplanService implements ICareplanService {
             headers : headers
         };
 
-        var url = process.env.REAN_API_BASE_URL;
+        var url = process.env.CAREPLAN_API_BASE_URL;
 
         var response = await needle('get', url, options);
         if (response.statusCode === 200) {
@@ -103,7 +103,7 @@ export class ReanCareplanService implements ICareplanService {
             Phone                  : patientDetails.Phone.split('-')[1],
         };
 
-        var url = process.env.REAN_API_BASE_URL + '/participants';
+        var url = process.env.CAREPLAN_API_BASE_URL + '/participants';
         var headerOptions = await this.getHeaderOptions();
         var response = await needle('post', url, entity, headerOptions);
 
@@ -127,7 +127,7 @@ export class ReanCareplanService implements ICareplanService {
             DayOffset      : model.DayOffset
         };
 
-        var url = process.env.REAN_API_BASE_URL + '/enrollments';
+        var url = process.env.CAREPLAN_API_BASE_URL + '/enrollments';
         var headerOptions = await this.getHeaderOptions();
         var response = await needle('post', url, enrollmentData, headerOptions);
 
@@ -148,8 +148,8 @@ export class ReanCareplanService implements ICareplanService {
         careplanCode: string, enrollmentId: string,
         participantId: string ): Promise<CareplanActivity[]> => {
     
-        const REAN_API_BASE_URL = process.env.REAN_API_BASE_URL;
-        const url = `${REAN_API_BASE_URL}/enrollment-tasks/search?careplanId=${careplanCode}&participantId=${participantId}`;
+        const careplanApiBaseUrl = process.env.CAREPLAN_API_BASE_URL;
+        const url = `${careplanApiBaseUrl}/enrollment-tasks/search?careplanId=${careplanCode}&participantId=${participantId}`;
         const headerOptions = await this.getHeaderOptions();
         var response = await needle("get", url, headerOptions);
     
@@ -196,7 +196,7 @@ export class ReanCareplanService implements ICareplanService {
         
         var headers = {
             'Content-Type' : 'application/json',
-            'x-api-key'    : process.env.REAN_CAREPLAN_API_KEY,
+            'x-api-key'    : process.env.CAREPLAN_API_KEY,
             accept         : 'application/json'
         };
 

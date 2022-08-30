@@ -5,7 +5,7 @@
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleMaternityCareplan": "0 8 * * *"
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
 
     },
     "development": {
@@ -14,7 +14,7 @@
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleMaternityCareplan": "0 8 * * *"
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
 
     },
     "uat": {
@@ -22,7 +22,8 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
-        "ScheduleCustomTasks": "0 11 * * *"
+        "ScheduleCustomTasks": "0 11 * * *",
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
 
     },
     "production": {
@@ -30,7 +31,8 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "5 0 * * *",
-        "ScheduleCustomTasks": "0 11 * * *"
+        "ScheduleCustomTasks": "0 11 * * *",
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
         
     }
 }

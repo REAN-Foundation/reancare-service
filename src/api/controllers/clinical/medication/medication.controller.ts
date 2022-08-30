@@ -125,7 +125,7 @@ export class MedicationController {
             if (medication == null) {
                 throw new ApiError(400, 'Cannot create medication!');
             }
-
+            if (medication.FrequencyUnit !== 'Other') {
             var stats = await this._medicationConsumptionService.create(medication);
 
             var consumptionSummary: ConsumptionSummaryDto = {
@@ -136,7 +136,7 @@ export class MedicationController {
             };
 
             medication.ConsumptionSummary = consumptionSummary;
-            
+        }
             ResponseHandler.success(request, response, 'Medication created successfully!', 201, {
                 Medication : medication,
             });

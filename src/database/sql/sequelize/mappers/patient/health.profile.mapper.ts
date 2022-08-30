@@ -21,6 +21,7 @@ export class HealthProfileMapper {
             HasHeartAilment    : patientHealthProfile.HasHeartAilment,
             MaritalStatus      : patientHealthProfile.MaritalStatus,
             Ethnicity          : patientHealthProfile.Ethnicity,
+            Race               : patientHealthProfile.Race,
             Nationality        : patientHealthProfile.Nationality,
             Occupation         : patientHealthProfile.Occupation,
             SedentaryLifestyle : patientHealthProfile.SedentaryLifestyle,
@@ -34,6 +35,8 @@ export class HealthProfileMapper {
             ProcedureHistory   : patientHealthProfile.ProcedureHistory,
             ObstetricHistory   : patientHealthProfile.ObstetricHistory,
             OtherInformation   : patientHealthProfile.OtherInformation,
+            TobaccoQuestion    : patientHealthProfile.TobaccoQuestion,
+            TobaccoQuestionAns : patientHealthProfile.TobaccoQuestionAns
         };
 
         return dto;

@@ -17,12 +17,13 @@ export class AssessmentValidator extends BaseValidator {
 
         var dateStr = request.body.ScheduledDate ? new Date(request.body.ScheduledDate).toISOString()
             .split('T')[0] : null;
-            
+
         const patientAssessmentModel: AssessmentDomainModel = {
             PatientUserId          : request.body.PatientUserId ?? null,
             Title                  : request.body.Title ?? null,
             Type                   : request.body.Type ?? null,
             AssessmentTemplateId   : request.body.AssessmentTemplateId ?? null,
+            ScoringApplicable      : request.body.ScoringApplicable ?? false,
             ProviderEnrollmentId   : request.body.ProviderEnrollmentId ?? null,
             ProviderAssessmentCode : request.body.ProviderAssessmentCode ?? null,
             Provider               : request.body.Provider ?? null,
@@ -47,13 +48,13 @@ export class AssessmentValidator extends BaseValidator {
         await this.validateString(request, 'type', Where.Query, false, false, true);
 
         await this.validateBaseSearchFilters(request);
-        
+
         this.validateRequest(request);
 
         return this.getFilter(request);
 
     };
-        
+
     answerQuestion = async (request: express.Request) => {
 
         await this.validateString(request, 'ResponseType', Where.Body, true, false, false);
@@ -63,7 +64,7 @@ export class AssessmentValidator extends BaseValidator {
             QuestionNodeId : request.params.questionId,
             ResponseType   : request.body.ResponseType,
         };
-        
+
         const responseType = request.body.ResponseType;
 
         if (responseType === QueryResponseType.SingleChoiceSelection ||
@@ -119,7 +120,7 @@ export class AssessmentValidator extends BaseValidator {
                 QuestionNodeId : request.body.Answers[i].QuestionId,
                 ResponseType   : request.body.Answers[i].ResponseType,
             };
-        
+
             const responseType = request.body.Answers[i].ResponseType;
 
             if (responseType === QueryResponseType.SingleChoiceSelection ||
@@ -189,6 +190,7 @@ export class AssessmentValidator extends BaseValidator {
         await this.validateString(request, 'Title', Where.Body, true, false);
         await this.validateString(request, 'Type', Where.Body, true, false);
         await this.validateString(request, 'AssessmentTemplateId', Where.Body, true, false);
+        await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, false);
         await this.validateString(request, 'ProviderEnrollmentId', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateString(request, 'Provider', Where.Body, false, false);
@@ -204,13 +206,14 @@ export class AssessmentValidator extends BaseValidator {
         await this.validateString(request, 'Title', Where.Body, false, false);
         await this.validateString(request, 'Type', Where.Body, false, false);
         await this.validateString(request, 'AssessmentTemplateId', Where.Body, false, false);
+        await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, false);
         await this.validateString(request, 'ProviderEnrollmentId', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateString(request, 'Provider', Where.Body, false, false);
         await this.validateDate(request, 'ScheduledDate', Where.Body, false, false);
 
         this.validateRequest(request);
-        
+
     }
 
 }

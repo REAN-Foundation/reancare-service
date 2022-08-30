@@ -6,6 +6,7 @@ import { FileResourceService } from '../services/file.resource.service';
 import { Loader } from './loader';
 import { UserHelper } from '../api/helpers/user.helper';
 import { CareplanService } from '../services/clinical/careplan.service';
+import { CustomActionsHandler } from '../custom/custom.actions.handler';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -42,7 +43,7 @@ export class Scheduler {
                 this.sendWhatsappMaternityCraeplan();
 
                 //this.scheduleDaillyPatientTasks();
-                
+
                 resolve(true);
             } catch (error) {
                 Logger.instance().log('Error initializing the scheduler.: ' + error.message);
@@ -93,8 +94,8 @@ export class Scheduler {
         cron.schedule(Scheduler._schedules['ScheduleCustomTasks'], () => {
             (async () => {
                 Logger.instance().log('Running scheduled jobs: Schedule Custom Tasks...');
-                var userHelper = new UserHelper();
-                await userHelper.scheduleMonthlyCustomTasks();
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.scheduledMonthlyRecurrentTasks();
             })();
         });
     };
@@ -119,7 +120,7 @@ export class Scheduler {
     //         })();
     //     });
     // };
-    
+
     //#endregion
 
 }

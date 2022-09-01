@@ -55,6 +55,18 @@ export class TwilioMessagingService implements IMessagingService {
         try {
             Logger.instance().log(`To phone: '${toPhone}', Message: '${message}'`);
 
+            var from_phone_tmp = process.env.SYSTEM_INTERNATIONAL_WHATSAPP_NUMBER;
+
+            //If we are sending to US, use the US phone number to send
+            
+            const smsResponse = await this._client.messages.create({
+                to   : `whatsapp:${toPhone}`,
+                body : message,
+                from : `whatsapp:${from_phone_tmp}`
+            });
+
+            Logger.instance().log(`SMS sent response: ${JSON.stringify(smsResponse, null, 2)}`);
+
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             return new Promise((resolve, reject) => {
                 Logger.instance().log('Twilio access details not available');

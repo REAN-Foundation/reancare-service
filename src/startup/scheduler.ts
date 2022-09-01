@@ -4,6 +4,8 @@ import { Logger } from '../common/logger';
 import { MedicationConsumptionService } from '../services/clinical/medication/medication.consumption.service';
 import { FileResourceService } from '../services/file.resource.service';
 import { Loader } from './loader';
+import { UserHelper } from '../api/helpers/user.helper';
+import { CareplanService } from '../services/clinical/careplan.service';
 import { CustomActionsHandler } from '../custom/custom.actions.handler';
 
 ///////////////////////////////////////////////////////////////////////////
@@ -38,6 +40,7 @@ export class Scheduler {
                 this.scheduleMedicationReminders();
                 this.scheduleCreateMedicationTasks();
                 this.scheduleMonthlyCustomTasks();
+                this.scheduleDailyCareplanPushTasks();
 
                 //this.scheduleDaillyPatientTasks();
 
@@ -96,6 +99,27 @@ export class Scheduler {
             })();
         });
     };
+
+    private scheduleDailyCareplanPushTasks = () => {
+        cron.schedule(Scheduler._schedules['ScheduleDailyCareplanPushTasks'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
+                const careplanService = Loader.container.resolve(CareplanService);
+                await careplanService.scheduleDailyCareplanPushTasks();
+            })();
+        });
+    };
+
+    // private scheduleDaillyPatientTasks = () => {
+    //     cron.schedule(Scheduler._schedules['PatientDailyTasks'], () => {
+    //         (async () => {
+    //             Logger.instance().log('Running scheducled jobs: Patient daily tasks...');
+    //             var service = Loader.container.resolve(UserTaskService);
+
+    //             await service.sendTaskReminders();
+    //         })();
+    //     });
+    // };
 
     //#endregion
 

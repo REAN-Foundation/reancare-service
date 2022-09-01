@@ -133,7 +133,6 @@ export class CourseEnrollmentRepo implements ICourseEnrollmentRepo {
                 CourseModuleId : courseModuleId
             }
         });
-
         const noOfContentCompleted = await UserCourseContent.count( {
             where : {
                 CourseModuleId : courseModuleId,
@@ -142,26 +141,24 @@ export class CourseEnrollmentRepo implements ICourseEnrollmentRepo {
         });
         let percentageCompletion = 0;
         percentageCompletion  = (noOfContentCompleted / totalContentCount ) * 100 ;
-
         return percentageCompletion ;
     }
     
-    private  async getCoursePercentageCompletion(enrollmentId: string)
+    private  async getCoursePercentageCompletion(courseEnrollmentId: string)
     {
         const totalModuleCount = await UserCourseModule.count( {
             where : {
-                courseId : enrollmentId
+                CourseEnrollmentId : courseEnrollmentId
             }
         });
         const noOfModuleCompleted  = await UserCourseModule.count( {
             where : {
-                enrollmentId   : enrollmentId,
-                ProgressStatus : ProgressStatus.Completed,
+                CourseEnrollmentId : courseEnrollmentId,
+                ProgressStatus     : ProgressStatus.Completed,
             }
         });
         let percentageCompletion = 0;
         percentageCompletion  = (noOfModuleCompleted / totalModuleCount ) * 100 ;
-
         return percentageCompletion ;
     }
 

@@ -14,11 +14,5 @@ export interface ICourseEnrollmentRepo {
     getModuleProgress(courseModuleId: string ): Promise<UserCourseModuleDto>;
 
     getContentProgress(courseContentId: string): Promise<UserCourseContentDto>;
-
-    // getModulePercentageCompletion(courseContentIndex:number,noOfCourseContent:number,percentageCompletion)
-    // : Promise<UserCourseModuleDto>;
-
-    // getCoursePercentageCompletion(courseContentId: string)
-    // : Promise<UserCourseContentDto>;
-   
+ 
 }

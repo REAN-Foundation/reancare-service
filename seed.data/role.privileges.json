@@ -433,7 +433,13 @@
             "FoodComponentMonitoring.GetById",
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
-            "FoodComponentMonitoring.Delete"
+            "FoodComponentMonitoring.Delete",
+            "CourseEnrollment.Enroll",
+            "CourseEnrollment.StartCourseModule",
+            "CourseEnrollment.StartCourseContent",
+            "CourseEnrollment.GetCourseProgress",
+            "CourseEnrollment.GetModuleProgress",
+            "CourseEnrollment.GetContentProgress"
         ]
     },
     {

@@ -10,35 +10,38 @@ import UserCourseContentModel from '../../../models/educational/user.course.cont
 export class CourseEnrollmentMapper {
 
     static toDto = (
-        courseEnrollment: UserCourseEnrollmentModel): UserCourseEnrollmentDto => {
+        courseEnrollment: UserCourseEnrollmentModel, percentageCompletion = 0): UserCourseEnrollmentDto => {
         if (courseEnrollment == null) {
             return null;
         }
         const dto: UserCourseEnrollmentDto = {
-            id             : courseEnrollment.id,
-            CourseId       : courseEnrollment.CourseId,
-            UserId         : courseEnrollment.UserId ,
-            EnrollmentDate : courseEnrollment.EnrollmentDate,
-            ProgressStatus : courseEnrollment.ProgressStatus as ProgressStatus,
+            id                   : courseEnrollment.id,
+            CourseId             : courseEnrollment.CourseId,
+            UserId               : courseEnrollment.UserId ,
+            EnrollmentDate       : courseEnrollment.EnrollmentDate,
+            ProgressStatus       : courseEnrollment.ProgressStatus as ProgressStatus,
+            PercentageCompletion : percentageCompletion,
+
         };
         return dto;
     };
 
     static toModuleDto = (
-        courseModule: UserCourseModuleModel): UserCourseModuleDto => {
+        courseModule: UserCourseModuleModel, percentageCompletion = 0): UserCourseModuleDto => {
         if (courseModule == null) {
             return null;
         }
         const dto: UserCourseModuleDto = {
-            id                 : courseModule.id,
-            CourseId           : courseModule.CourseId,
-            UserId             : courseModule.UserId ,
-            ParentNodeId       : courseModule.ParentNodeId ,
-            CourseEnrollmentId : courseModule.CourseEnrollmentId,
-            ModuleId           : courseModule.ModuleId ,
-            StartDate          : courseModule.StartDate ,
-            EndDate            : courseModule.EndDate ,
-            ProgressStatus     : courseModule.ProgressStatus as ProgressStatus,
+            id                   : courseModule.id,
+            CourseId             : courseModule.CourseId,
+            UserId               : courseModule.UserId ,
+            ParentNodeId         : courseModule.ParentNodeId ,
+            CourseEnrollmentId   : courseModule.CourseEnrollmentId,
+            ModuleId             : courseModule.ModuleId ,
+            StartDate            : courseModule.StartDate ,
+            EndDate              : courseModule.EndDate ,
+            ProgressStatus       : courseModule.ProgressStatus as ProgressStatus,
+            PercentageCompletion : percentageCompletion,
         };
         return dto;
     };

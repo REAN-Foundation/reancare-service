@@ -107,7 +107,7 @@ export class CourseEnrollmentController extends BaseController {
 
             await this.setContext('CourseEnrollment.GetModuleProgress', request, response);
 
-            const courseModuleId: uuid = await this._validator.getParamUuid(request, 'courseModuleId');
+            const courseModuleId: uuid = await this._validator.getParamUuid(request, 'courseModuleId',);
             const courseModule = await this._service.getModuleProgress(courseModuleId);
             if (courseModule == null) {
                 throw new ApiError(404, 'Course module not found.');

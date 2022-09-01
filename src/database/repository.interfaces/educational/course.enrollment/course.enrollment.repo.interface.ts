@@ -9,10 +9,16 @@ export interface ICourseEnrollmentRepo {
 
     startCourseContent (userCourseContentDomainModel: UserCourseContentDomainModel): Promise<UserCourseContentDto>;
     
-    getCourseProgress(enrollmentId: string): Promise<UserCourseEnrollmentDto>;
+    getCourseProgress(enrollmentId: string ): Promise<UserCourseEnrollmentDto>;
 
-    getModuleProgress(courseModuleId: string): Promise<UserCourseModuleDto>;
+    getModuleProgress(courseModuleId: string ): Promise<UserCourseModuleDto>;
 
     getContentProgress(courseContentId: string): Promise<UserCourseContentDto>;
+
+    // getModulePercentageCompletion(courseContentIndex:number,noOfCourseContent:number,percentageCompletion)
+    // : Promise<UserCourseModuleDto>;
+
+    // getCoursePercentageCompletion(courseContentId: string)
+    // : Promise<UserCourseContentDto>;
    
 }

@@ -36,10 +36,13 @@ export class AHAActions {
 
     //#region Public
 
-    public performActions_PostRegistration = async (patient: PatientDetailsDto) => {
+    public performActions_PostRegistration = async (patient: PatientDetailsDto, clientCode: string) => {
         try {
-            await this.createAHAHealthSurveyTask(patient);
-            await this._commonActions.createAssessmentTask(patient.UserId, 'Quality of Life Questionnaire');
+            var skipClientList = ["HCHLSTRL"];
+            if (skipClientList.indexOf(clientCode) === -1) {
+                await this.createAHAHealthSurveyTask(patient);
+                await this._commonActions.createAssessmentTask(patient.UserId, 'Quality of Life Questionnaire');
+            }
         }
         catch (error) {
             Logger.instance().log(`Error performing post registration custom actions.`);

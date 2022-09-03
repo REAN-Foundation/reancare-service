@@ -42,7 +42,7 @@ export default class EHRRecordSet extends Model {
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),
-        allowNull : true,
+        allowNull : false,
     })
     Type: string;
 
@@ -58,7 +58,25 @@ export default class EHRRecordSet extends Model {
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    PrimaryValue: string;
+    PrimaryValueString: string;
+
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    PrimaryValueInt: number;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    PrimaryValueFloat: number;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    PrimaryValueBoolean: boolean;
 
     @Length({ max: 256 })
     @Column({
@@ -86,7 +104,25 @@ export default class EHRRecordSet extends Model {
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    SecondaryValue: string;
+    SecondaryValueString: string;
+
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    SecondaryValueInt: number;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    SecondaryValueFloat: number;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    SecondaryValueBoolean: boolean;
 
     @Length({ max: 256 })
     @Column({

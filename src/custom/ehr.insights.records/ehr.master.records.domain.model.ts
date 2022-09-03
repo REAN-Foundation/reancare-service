@@ -1,23 +1,24 @@
 import { uuid } from "../../domain.types/miscellaneous/system.types";
-import { EHRRecordTypes } from "./ehr.record.types";
+import { DataTypes, EHRRecordTypes } from "./ehr.record.types";
 
 export interface EHRMasterRecordsDomainModel {
     PatientUserId?: uuid;
-    ProviderId?   : string;
     Type          : EHRRecordTypes;
     Name          : string;
 
     PrimaryValueInt?     : number;
     PrimaryValueFloat?   : number;
     PrimaryValueString?  : string;
-    PrimaryValueDataType?: string;
+    PrimaryValueBoolean? : boolean;
+    PrimaryValueDataType?: DataTypes;
     PrimaryValueName?    : string;
     PrimaryValueUnit?    : string;
 
     SecondaryValueInt?     : number;
     SecondaryValueFloat?   : number;
     SecondaryValueString?  : string;
-    SecondaryValueDataType?: string;
+    SecondaryValueBoolean? : boolean;
+    SecondaryValueDataType?: DataTypes;
     SecondaryValueName?    : string;
     SecondaryValueUnit?    : string;
 

@@ -15,6 +15,8 @@ import { UserDeviceDetailsService } from '../../../services/user/user.device.det
 import { PersonService } from '../../../services/person.service';
 import { UserService } from '../../../services/user/user.service';
 import { CustomActionsHandler } from '../../../custom/custom.actions.handler';
+import { EHRMasterRecordsHandler } from '../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRRecordTypes } from '../../../custom/ehr.insights.records/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -59,6 +61,8 @@ export class PatientController extends BaseUserController {
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
 
             await this._customActionHandler.performActions_PostRegistration(patient);
+
+            this.addPatientToEHRRecords(patient.UserId);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -216,6 +220,27 @@ export class PatientController extends BaseUserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addPatientToEHRRecords = (patientUserId: uuid) => {
+        EHRMasterRecordsHandler.addOrUpdatePatient(patientUserId);
+    }
+
+    private addEHRRecord = (patientUserId: uuid,
+        model: PersonDomainModel) => {
+        if (model.BirthDate) {
+            EHRMasterRecordsHandler.addDateRecord(patientUserId, EHRRecordTypes.Birthdate, model.BirthDate);
+        }
+        if (model.Gender) {
+            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.Gender, model.Gender);
+        }
+        if (model.MaritalStatus) {
+            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.BloodGroup, model.MaritalStatus);
+        }
+    }
 
     //#endregion
 

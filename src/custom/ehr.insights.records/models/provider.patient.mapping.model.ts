@@ -42,9 +42,16 @@ export default class ProviderPatientMapping extends Model {
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,
-        allowNull : false,
+        allowNull : true,
     })
-    DoctorUserId: string;
+    DoctorPersonId_1: string;
+
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    DoctorPersonId_2: string;
 
     @Length({ max: 256 })
     @Column({
@@ -52,6 +59,13 @@ export default class ProviderPatientMapping extends Model {
         allowNull : true,
     })
     ProviderCode: string;
+
+    @Length({ max: 256 })
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    HealthSystem: string;
 
     @Column
     @CreatedAt

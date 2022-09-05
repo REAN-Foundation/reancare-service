@@ -25,7 +25,7 @@ export class EHRMasterRecordsHandler {
         })();
     }, EHRMasterRecordsHandler._numAsyncTasks);
 
-    static add = (model:EHRMasterRecordsDomainModel) => {
+    private static add = (model:EHRMasterRecordsDomainModel) => {
         EHRMasterRecordsHandler._q.push(model, (error, model) => {
             if (error) {
                 Logger.instance().log(`Error recording EHR record: ${error.message}`);
@@ -36,6 +36,23 @@ export class EHRMasterRecordsHandler {
             }
         });
     }
+
+    static addOrUpdatePatient = async (
+        patientUserId: uuid,
+        doctorPersonId?: uuid,
+        tobeReplacedDoctorPersonId?: uuid,
+        providerCode?: string,
+        healthSystem?: string
+    ) => {
+        await EHRMasterRecordsHandler._ehrDatasetRepo.addOrUpdatePatient(
+            patientUserId,
+            doctorPersonId,
+            tobeReplacedDoctorPersonId,
+            providerCode,
+            healthSystem);
+    }
+
+    //#region Add records
 
     static addStringRecord = (
         patientUserId: uuid,
@@ -58,6 +75,25 @@ export class EHRMasterRecordsHandler {
             SecondaryValueString : secondaryValue ?? null,
             SecondaryValueName   : secondaryName ?? null,
             SecondaryValueUnit   : secondaryUnit ?? null,
+        };
+        EHRMasterRecordsHandler.add(model);
+    }
+
+    static addDateRecord = (
+        patientUserId: uuid,
+        type: EHRRecordTypes,
+        primaryValue: Date,
+        primaryUnit?: string,
+        primaryName?: string,
+        name?: string,
+    ) => {
+        var model:EHRMasterRecordsDomainModel = {
+            PatientUserId    : patientUserId,
+            Type             : type,
+            Name             : name ?? type,
+            PrimaryValueDate : primaryValue,
+            PrimaryValueName : primaryName ?? ( name ?? type),
+            PrimaryValueUnit : primaryUnit ?? null,
         };
         EHRMasterRecordsHandler.add(model);
     }

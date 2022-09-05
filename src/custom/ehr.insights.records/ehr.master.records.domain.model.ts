@@ -10,6 +10,7 @@ export interface EHRMasterRecordsDomainModel {
     PrimaryValueFloat?   : number;
     PrimaryValueString?  : string;
     PrimaryValueBoolean? : boolean;
+    PrimaryValueDate?    : Date;
     PrimaryValueDataType?: DataTypes;
     PrimaryValueName?    : string;
     PrimaryValueUnit?    : string;

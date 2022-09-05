@@ -1,4 +1,8 @@
 import express from 'express';
+import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
+import { BodyHeightDomainModel } from '../../../../domain.types/clinical/biometrics/body.height/body.height.domain.model';
+import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
@@ -41,14 +45,14 @@ export class BodyHeightController {
         try {
             request.context = "Biometrics.BodyHeight.Create";
             await this._authorizer.authorize(request, response);
-            
-            const domainModel = await BodyHeightValidator.create(request);
 
-            const bodyHeight = await this._service.create(domainModel);
+            const model = await BodyHeightValidator.create(request);
+
+            const bodyHeight = await this._service.create(model);
             if (bodyHeight == null) {
                 throw new ApiError(400, 'Cannot create record for height!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Height record created successfully!', 201, {
                 BodyHeight : bodyHeight
             });
@@ -60,7 +64,7 @@ export class BodyHeightController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = "Biometrics.BodyHeight.GetById";
-            
+
             await this._authorizer.authorize(request, response);
 
             const id: string = await BodyHeightValidator.getById(request);
@@ -92,7 +96,7 @@ export class BodyHeightController {
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} height records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
                 BodyHeightRecords : searchResults
             });
@@ -107,7 +111,7 @@ export class BodyHeightController {
             request.context = "Biometrics.BodyHeight.Update";
             await this._authorizer.authorize(request, response);
 
-            const domainModel = await BodyHeightValidator.update(request);
+            const model = await BodyHeightValidator.update(request);
 
             const id: string = await BodyHeightValidator.getById(request);
             const existingAddress = await this._service.getById(id);
@@ -115,11 +119,11 @@ export class BodyHeightController {
                 throw new ApiError(404, 'Height record not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update height record!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Height record updated successfully!', 200, {
                 BodyHeight : updated
             });
@@ -151,6 +155,17 @@ export class BodyHeightController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addEHRRecord = (patientUserId: uuid, model: BodyHeightDomainModel) => {
+        if (model.BodyHeight) {
+            EHRMasterRecordsHandler.addFloatRecord(
+                patientUserId, EHRRecordTypes.BodyHeight, model.BodyHeight, model.Unit);
+        }
+    }
 
     //#endregion
 

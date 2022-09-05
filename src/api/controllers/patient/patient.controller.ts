@@ -145,6 +145,7 @@ export class PatientController extends BaseUserController {
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
             }
+            this.addEHRRecord(userId, personDomainModel);
             const updatedPatient = await this._service.updateByUserId(
                 updatedUser.id,
                 updateModel

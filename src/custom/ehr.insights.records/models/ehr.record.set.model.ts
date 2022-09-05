@@ -78,6 +78,12 @@ export default class EHRRecordSet extends Model {
     })
     PrimaryValueBoolean: boolean;
 
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    PrimaryValueDate: Date;
+
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),

@@ -4,8 +4,8 @@ export interface EnrollmentDto {
     Provider?    : string;
     PlanCode?    : string;
     PlanName?    : string;
-    ParticipantId: number;
-    EnrollmentId : number;
+    ParticipantId: number | string;
+    EnrollmentId : number | string;
     StartAt?     : Date;
     EndAt?       : Date;
     IsActive     : boolean;

@@ -1,4 +1,5 @@
 import express from 'express';
+import { BloodGlucoseDomainModel } from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -6,6 +7,8 @@ import { BloodGlucoseService } from '../../../../services/clinical/biometrics/bl
 import { Loader } from '../../../../startup/loader';
 import { BloodGlucoseValidator } from '../../../validators/clinical/biometrics/blood.glucose.validator';
 import { BaseController } from '../../base.controller';
+import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,13 +33,13 @@ export class BloodGlucoseController extends BaseController {
         try {
             await this.setContext('Biometrics.BloodGlucose.Create', request, response);
 
-            const bloodGlucoseDomainModel = await this._validator.create(request);
+            const model = await this._validator.create(request);
 
-            const bloodGlucose = await this._service.create(bloodGlucoseDomainModel);
+            const bloodGlucose = await this._service.create(model);
             if (bloodGlucose == null) {
                 throw new ApiError(400, 'Cannot create record for blood glucose!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Blood glucose record created successfully!', 201, {
                 BloodGlucose : bloodGlucose,
             });
@@ -73,12 +76,12 @@ export class BloodGlucoseController extends BaseController {
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
-            
+
             const message =
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} blood glucose records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
                 BloodGlucoseRecords : searchResults });
 
@@ -91,7 +94,7 @@ export class BloodGlucoseController extends BaseController {
         try {
             await this.setContext('Biometrics.BloodGlucose.Update', request, response);
 
-            const domainModel = await this._validator.update(request);
+            const model = await this._validator.update(request);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -99,11 +102,11 @@ export class BloodGlucoseController extends BaseController {
                 throw new ApiError(404, 'Blood glucose record not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood glucose record!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Blood glucose record updated successfully!', 200, {
                 BloodGlucose : updated,
             });
@@ -134,6 +137,17 @@ export class BloodGlucoseController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addEHRRecord = (patientUserId: uuid, model: BloodGlucoseDomainModel) => {
+        if (model.BloodGlucose) {
+            EHRMasterRecordsHandler.addFloatRecord(
+                patientUserId, EHRRecordTypes.BloodGlucose, model.BloodGlucose, model.Unit);
+        }
+    }
 
     //#endregion
 

@@ -252,6 +252,11 @@ export class Seeder {
         
         const existing = await this._roleRepo.search();
         if (existing.length > 0) {
+            await this._roleRepo.create({
+                RoleName    : Roles.Donor,
+                Description :
+                    'Represents blood donor as a person.',
+            });
             return;
         }
         

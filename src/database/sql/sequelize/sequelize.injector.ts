@@ -71,6 +71,7 @@ import { CourseRepo } from './repositories/educational/course/course.repo';
 import { CourseModuleRepo } from './repositories/educational/course.module/course.module.repo';
 import { CourseContentRepo } from './repositories/educational/course.content/course.content.repo';
 import { CourseEnrollmentRepo } from './repositories/educational/course.enrollment/course.enrollment.repo';
+import { LabRecordRepo } from './repositories/clinical/lab.record/lab.record.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -151,6 +152,7 @@ export class SequelizeInjector {
         container.register('ICourseModuleRepo', CourseModuleRepo);
         container.register('ICourseContentRepo', CourseContentRepo);
         container.register('ICourseEnrollmentRepo', CourseEnrollmentRepo);
+        container.register('ILabRecordRepo', LabRecordRepo);
         
     }
 

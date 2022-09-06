@@ -163,6 +163,25 @@ export class TypesController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    getLabRecordTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Types.LabRecords', request, response, false);
+
+            const displayName : string = request.query.displayName as string ?? null;
+            const labRecordTypes = await this._service.getLabRecordTypes(displayName);
+            if (labRecordTypes.length === 0) {
+                throw new ApiError(400, 'Cannot fetch lab record types!');
+            }
+
+            ResponseHandler.success(request, response, 'Fetched lab record types successfully!', 200, {
+                LabRecordTypes : labRecordTypes,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
     //#endregion
 
 }

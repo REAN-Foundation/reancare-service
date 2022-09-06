@@ -4,6 +4,8 @@ export interface ParticipantDomainModel {
     Name           : string;
     PatientUserId  : string;
     Gender?        : string;
+    Phone?         : string;
+    Email?         : string;
     IsActive?      : boolean;
     Age?           : number;
     Dob?           : Date;

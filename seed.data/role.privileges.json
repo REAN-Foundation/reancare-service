@@ -113,7 +113,11 @@
             "CourseEnrollment.GetCourseProgress",
             "CourseEnrollment.GetModuleProgress",
             "CourseEnrollment.GetContentProgress"
-            
+            "LabRecord.Create",
+            "LabRecord.GetById",
+            "LabRecord.Search",
+            "LabRecord.Update",
+            "LabRecord.Delete"
         ]
     },
     {
@@ -433,7 +437,12 @@
             "FoodComponentMonitoring.GetById",
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
-            "FoodComponentMonitoring.Delete"
+            "FoodComponentMonitoring.Delete",
+            "LabRecord.Create",
+            "LabRecord.GetById",
+            "LabRecord.Search",
+            "LabRecord.Update",
+            "LabRecord.Delete"
         ]
     },
     {
@@ -739,7 +748,12 @@
             "FoodComponentMonitoring.GetById",
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
-            "FoodComponentMonitoring.Delete"
+            "FoodComponentMonitoring.Delete",
+            "LabRecord.Create",
+            "LabRecord.GetById",
+            "LabRecord.Search",
+            "LabRecord.Update",
+            "LabRecord.Delete"
         ]
     },
     {

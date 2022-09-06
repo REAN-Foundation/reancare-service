@@ -98,7 +98,7 @@ export class AhaCareplanService implements ICareplanService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public getPatientEligibility = async (user: any, planCode: string) => {
-        
+
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         return new Promise((resolve, reject) => {
             const patientBirthDate : Date = user.Person.BirthDate;
@@ -201,7 +201,7 @@ export class AhaCareplanService implements ICareplanService {
         }
 
         if (model.PlanCode === 'Cholesterol') {
-            var displayCodes = ['AssessmtTmpl#choldemo', 'AssessmtTmpl#cholNutri','AssessmtTmpl#cholMed'];
+            const displayCodes = ['AssessmtTmpl#choldemo', 'AssessmtTmpl#cholMed'];
             var index = 0;
             for await (var displayCode of displayCodes) {
                 const actionId = await this.createInitialAssessmentTask(model, index, displayCode);
@@ -211,7 +211,7 @@ export class AhaCareplanService implements ICareplanService {
         }
 
         if (model.PlanCode === 'Stroke') {
-            var displayCodes = ['AssessmtTmpl#strokedemo', 'AssessmtTmpl#strokeMed'];
+            const displayCodes = ['AssessmtTmpl#strokedemo', 'AssessmtTmpl#strokeMed'];
             var index = 0;
             for await (var displayCode of displayCodes) {
                 const actionId = await this.createInitialAssessmentTask(model, index, displayCode);
@@ -228,26 +228,27 @@ export class AhaCareplanService implements ICareplanService {
     public fetchActivities = async (
         careplanCode: string,
         enrollmentId: string,
+        participantId: string,
         fromDate: Date,
         toDate: Date): Promise<CareplanActivity[]> => {
-        
+
         var startDate = Helper.formatDate(fromDate);
         var endDate = Helper.formatDate(toDate);
-    
+
         Logger.instance().log(`Start Date: ${(startDate)}`);
         Logger.instance().log(`End Date: ${(endDate)}`);
-    
+
         const AHA_API_BASE_URL = process.env.AHA_API_BASE_URL;
         const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/activities?fromDate=${startDate}&toDate=${endDate}&pageSize=500`;
         const headerOptions = await this.getHeaderOptions();
         var response = await needle("get", url, headerOptions);
-    
+
         if (response.statusCode !== 200) {
             Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
             Logger.instance().error('Unable to fetch tasks for given enrollment id!', response.statusCode, null);
             throw new ApiError(500, "Careplan service error: " + response.body.error.message);
         }
-        
+
         Logger.instance().log(`response body for activities: ${JSON.stringify(response.body.data.activities.length)}`);
 
         var activities = response.body.data.activities;
@@ -296,15 +297,15 @@ export class AhaCareplanService implements ICareplanService {
         if (scheduledAt) {
             url += `?scheduledAt=${scheduledAt}`;
         }
-    
+
         var headerOptions = await this.getHeaderOptions();
         var response = await needle("get", url, headerOptions);
-    
+
         if (response.statusCode !== 200) {
             Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
             throw new ApiError(500, 'Careplan service error: ' + response.body.error.message);
         }
-    
+
         var activity = response.body.data.activity;
         const tmp = activity.title ? activity.title : '';
         const title = activity.name ? activity.name : tmp;
@@ -316,7 +317,7 @@ export class AhaCareplanService implements ICareplanService {
         const description = this.getActivityDescription(activity.text, activity.description);
 
         var activityUrl = this.extractUrl(activity.url, activity);
-            
+
         var entity: CareplanActivity = {
             ProviderActionId : activity.code,
             EnrollmentId     : enrollmentId,
@@ -331,12 +332,12 @@ export class AhaCareplanService implements ICareplanService {
             // Comments        : ,
             RawContent       : activity,
         };
-    
+
         if (category === UserTaskCategory.EducationalNewsFeed) {
             var newsItems = await this.extractNewsItems(activityUrl);
             entity['RawContent'] = newsItems;
         }
-        
+
         return entity;
     };
 
@@ -447,7 +448,7 @@ export class AhaCareplanService implements ICareplanService {
 
     public getGoals = async (patientUserId: string, enrollmentId: string, category: string): Promise<GoalDto[]> => {
         try {
-        
+
             var categoryCode = null;
 
             var activityCode = this.getActivityCode();
@@ -461,13 +462,13 @@ export class AhaCareplanService implements ICareplanService {
             const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/goals/${activityCode}?categories=${categoryCode}&pageSize=500`;
             var headerOptions = await this.getHeaderOptions();
             var response = await needle("get", url, headerOptions);
-    
+
             if (response.statusCode !== 200) {
                 Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
                 Logger.instance().error('Unable to fetch goals for given enrollment id!', response.statusCode, null);
                 throw new ApiError(500, "Careplan service error: " + response.body.error.message);
             }
-    
+
             Logger.instance().log(`response body for goals: ${JSON.stringify(response.body.data.goals.length)}`);
             var goals = response.body.data.goals;
             var goalEntities: GoalDto[] = [];
@@ -483,7 +484,7 @@ export class AhaCareplanService implements ICareplanService {
             });
 
             return goalEntities;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -496,12 +497,12 @@ export class AhaCareplanService implements ICareplanService {
         category: string
     ): Promise<ActionPlanDto[]> => {
         try {
-        
+
             var activityCode = this.getActivityCode();
 
             Logger.instance().log(`Category :: ${JSON.stringify(category)}`);
             var categoryCode = null;
-            
+
             for (const key in HealthPriorityType) {
                 if (HealthPriorityType[key] === category) {
                     categoryCode = key;
@@ -514,13 +515,13 @@ export class AhaCareplanService implements ICareplanService {
             const url = `${AHA_API_BASE_URL}/enrollments/${enrollmentId}/actionPlans/${activityCode}?categories=${categoryCode}&pageSize=500`;
             var headerOptions = await this.getHeaderOptions();
             var response = await needle("get", url, headerOptions);
-    
+
             if (response.statusCode !== 200) {
                 Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
                 Logger.instance().error('Unable to fetch action plans for given enrollment id!', response.statusCode, null);
                 throw new ApiError(500, "Careplan service error: " + response.body.error.message);
             }
-    
+
             Logger.instance().log(`response body for action plans: ${JSON.stringify(response.body.data.actionPlans.length)}`);
             var actionPlans = response.body.data.actionPlans;
             var actionPlanEntities: ActionPlanDto[] = [];
@@ -534,7 +535,7 @@ export class AhaCareplanService implements ICareplanService {
             });
 
             return actionPlanEntities;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -693,7 +694,7 @@ export class AhaCareplanService implements ICareplanService {
             completedAt : Helper.formatDate(new Date()),
             status      : 'COMPLETED',
         };
-        
+
         const taskCategory = activity.Category;
 
         if (taskCategory !== UserTaskCategory.Assessment) {
@@ -874,7 +875,7 @@ export class AhaCareplanService implements ICareplanService {
     }
 
     private getUserTaskCategory(activityType: string, title?: string, contentTypeCode?: string): UserTaskCategory {
-        
+
         if (activityType === 'Questionnaire' || activityType === 'Assessment') {
             return UserTaskCategory.Assessment;
         }
@@ -900,9 +901,6 @@ export class AhaCareplanService implements ICareplanService {
         {
             return UserTaskCategory.EducationalInfographics;
         }
-        /*if (type === 'Web') {
-            return UserTaskCategory.EducationalNewsFeed;
-        }*/
         if (type === 'Message') {
             return UserTaskCategory.Message;
         }
@@ -937,9 +935,9 @@ export class AhaCareplanService implements ICareplanService {
         index: number,
         displayCode?: string
     ): Promise<any> => {
-        
+
         var searchResult = await this._assessmentTemplateRepo.search({ DisplayCode: displayCode });
-    
+
         if (searchResult.Items.length === 0) {
             return null;
         }
@@ -964,6 +962,7 @@ export class AhaCareplanService implements ICareplanService {
             ActionType         : UserActionType.Careplan,
             ActionId           : assessmentId,
             ScheduledStartTime : (TimeHelper.addDuration(model.StartDate, index, DurationType.Minute)),
+            ScheduledEndTime   : (TimeHelper.addDuration(model.StartDate, 84, DurationType.Day)),
             IsRecurrent        : false
         };
 

@@ -5,10 +5,10 @@ export interface CareplanActivity {
     id?             : uuid;
     PatientUserId?  : uuid;
     ProviderActionId: string;
-    EnrollmentId?   : string;
+    EnrollmentId?   : number | string;
     UserTaskId?      : uuid;
     Provider        : string;
-    ParticipantId?  : string;
+    ParticipantId?  : number | string;
     PlanName?       : string;
     PlanCode?       : string;
     Type?           : string;
@@ -18,10 +18,12 @@ export interface CareplanActivity {
     Url?            : string;
     Language?       : string;
     ScheduledAt?    : Date;
+    TimeSlot?       : string;
     CompletedAt?    : Date;
     Sequence?       : number;
     Frequency?      : number;
     Status?         : string;
     Comments?       : string;
     RawContent?     : any;
+    IsRegistrationActivity?     : boolean;
 }

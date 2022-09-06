@@ -62,6 +62,27 @@ export class ApiClientController {
         }
     };
 
+    search = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Client.Search';
+            await this._authorizer.authorize(request, response);
+
+            const filters = await ApiClientValidator.search(request);
+
+            const searchResults = await this._service.search(filters);
+            const count = searchResults.Items.length;
+            const message =
+                count === 0 ? 'No records found!' : `Total ${count} api client records retrieved successfully!`;
+                
+            ResponseHandler.success(request, response, message, 200, {
+                ApiClientRecords : searchResults,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Client.Update';

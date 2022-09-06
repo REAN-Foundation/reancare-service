@@ -6,6 +6,9 @@ import { PulseService } from '../../../../services/clinical/biometrics/pulse.ser
 import { Loader } from '../../../../startup/loader';
 import { PulseValidator } from '../../../validators/clinical/biometrics/pulse.validator';
 import { BaseController } from '../../base.controller';
+import { PulseDomainModel } from '../../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
+import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +31,7 @@ export class PulseController extends BaseController{
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.Pulse.Create', request, response);
 
             const model = await this._validator.create(request);
@@ -36,7 +39,7 @@ export class PulseController extends BaseController{
             if (pulse == null) {
                 throw new ApiError(400, 'Cannot create record for pulse!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Pulse rate record created successfully!', 201, {
                 Pulse : pulse,
             });
@@ -47,7 +50,7 @@ export class PulseController extends BaseController{
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.Pulse.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -66,7 +69,7 @@ export class PulseController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.Pulse.Search', request, response);
 
             const filters = await this._validator.search(request);
@@ -78,7 +81,7 @@ export class PulseController extends BaseController{
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} pulse rate records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
                 PulseRecords : searchResults });
 
@@ -89,21 +92,21 @@ export class PulseController extends BaseController{
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.Pulse.Update', request, response);
 
-            const domainModel = await this._validator.update(request);
+            const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Pulse record not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update pulse record!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Pulse rate record updated successfully!', 200, {
                 Pulse : updated,
             });
@@ -114,7 +117,7 @@ export class PulseController extends BaseController{
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.Pulse.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -135,6 +138,17 @@ export class PulseController extends BaseController{
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addEHRRecord = (patientUserId: uuid, model: PulseDomainModel) => {
+        if (model.Pulse) {
+            EHRMasterRecordsHandler.addFloatRecord(
+                patientUserId, EHRRecordTypes.Pulse, model.Pulse, model.Unit);
+        }
+    }
 
     //#endregion
 

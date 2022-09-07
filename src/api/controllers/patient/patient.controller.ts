@@ -58,7 +58,8 @@ export class PatientController extends BaseUserController {
             const createModel = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
 
-            await this._customActionHandler.performActions_PostRegistration(patient);
+            const clientCode = request.currentClient.ClientCode;
+            await this._customActionHandler.performActions_PostRegistration(patient, clientCode);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {

@@ -6,6 +6,7 @@ export interface UserCourseEnrollmentDto {
     UserId?         : uuid;
     EnrollmentDate? : Date;
     ProgressStatus? : ProgressStatus;
+    PercentageCompletion?: number;
 }
 
 export interface UserCourseModuleDto {
@@ -18,6 +19,7 @@ export interface UserCourseModuleDto {
     StartDate?          : Date;
     EndDate?            : Date;
     ProgressStatus?     : ProgressStatus;
+    PercentageCompletion?: number;
 }
 
 export interface UserCourseContentDto {

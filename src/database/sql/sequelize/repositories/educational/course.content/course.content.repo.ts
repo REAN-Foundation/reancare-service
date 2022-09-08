@@ -153,7 +153,6 @@ export class CourseContentRepo implements ICourseContentRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-
             const result = await CourseContent.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {

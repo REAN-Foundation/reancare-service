@@ -36,7 +36,7 @@ export class CourseEnrollmentService {
     };
 
     getModuleProgress = async (courseModuleId: uuid): Promise<UserCourseModuleDto> => {
-        return await this._courseEnrollmentRepo.getModuleProgress(courseModuleId);
+        return await this._courseEnrollmentRepo.getModuleProgress(courseModuleId );
     };
 
     getContentProgress = async (courseContentId: uuid): Promise<UserCourseContentDto> => {

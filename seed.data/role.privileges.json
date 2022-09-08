@@ -4,6 +4,7 @@
         "Privileges": [
             "Client.Create",
             "Client.GetById",
+            "Client.Search",
             "Client.Update",
             "Client.Delete",
             "Client.GetApiKey",

@@ -8,7 +8,6 @@ import { UserService } from '../../../services/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { UserValidator } from '../../validators/user/user.validator';
 import { Logger } from '../../../common/logger';
-import { UserHelper } from '../../../api/helpers/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -48,7 +47,7 @@ export class UserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
     getByPhoneAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.GetByPhoneAndRole';
@@ -65,7 +64,7 @@ export class UserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
     getByEmailAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.GetByEmailAndRole';
@@ -165,7 +164,7 @@ export class UserController {
             const userId = request.currentUser.UserId;
 
             var deviceToken = await UserValidator.logoutToken(request);
-            
+
             if (!sesssionId) {
                 return true;
             }
@@ -174,12 +173,12 @@ export class UserController {
             if (invalidated) {
                 Logger.instance().log(`Session invalidated successfully!`);
             }
-            
+
             var filter = {
                 UserId : userId,
                 Token  : deviceToken
             };
-        
+
             var deviceDetails = await this._userDeviceDetailsService.search(filter);
 
             if (deviceDetails.Items.length > 0) {
@@ -194,18 +193,5 @@ export class UserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-
-    scheduleMonthlyCustomTasks = async (request: express.Request, response: express.Response): Promise<any> => {
-        try {
-            
-            Logger.instance().log('Running scheduled jobs via endpoint: Schedule Custom Tasks...');
-            var userHelper = new UserHelper();
-            await userHelper.scheduleMonthlyCustomTasks();
-            ResponseHandler.success(request, response, 'Cron completed successfully!', 200);
-
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    }
 
 }

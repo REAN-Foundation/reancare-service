@@ -10,7 +10,7 @@ export interface HealthProfileDomainModel {
     HasHeartAilment?   : boolean;
     MaritalStatus?     : MaritalStatus;
     Ethnicity?         : string;
-    Race?              : string;   
+    Race?              : string;
     Nationality?       : string;
     Occupation?        : string;
     SedentaryLifestyle?: boolean;

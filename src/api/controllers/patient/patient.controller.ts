@@ -14,6 +14,9 @@ import { UserHelper } from '../../helpers/user.helper';
 import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
 import { PersonService } from '../../../services/person.service';
 import { UserService } from '../../../services/user/user.service';
+import { CustomActionsHandler } from '../../../custom/custom.actions.handler';
+import { EHRMasterRecordsHandler } from '../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRRecordTypes } from '../../../custom/ehr.insights.records/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +35,8 @@ export class PatientController extends BaseUserController {
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
     _userHelper: UserHelper = new UserHelper();
+
+    _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
     _validator = new PatientValidator();
 
@@ -55,7 +60,9 @@ export class PatientController extends BaseUserController {
             const createModel = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
 
-            await this._userHelper.performCustomActions(patient);
+            await this._customActionHandler.performActions_PostRegistration(patient);
+
+            this.addPatientToEHRRecords(patient.UserId);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -106,7 +113,7 @@ export class PatientController extends BaseUserController {
             const count = searchResults.Items.length;
             const message =
                 count === 0 ? 'No records found!' : `Total ${count} patient records retrieved successfully!`;
-                
+
             ResponseHandler.success(request, response, message, 200, {
                 Patients : searchResults,
             });
@@ -138,6 +145,7 @@ export class PatientController extends BaseUserController {
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
             }
+            this.addEHRRecord(userId, personDomainModel);
             const updatedPatient = await this._service.updateByUserId(
                 updatedUser.id,
                 updateModel
@@ -153,7 +161,7 @@ export class PatientController extends BaseUserController {
             ResponseHandler.success(request, response, 'Patient records updated successfully!', 200, {
                 Patient : patient,
             });
-            
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -213,6 +221,27 @@ export class PatientController extends BaseUserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addPatientToEHRRecords = (patientUserId: uuid) => {
+        EHRMasterRecordsHandler.addOrUpdatePatient(patientUserId);
+    }
+
+    private addEHRRecord = (patientUserId: uuid,
+        model: PersonDomainModel) => {
+        if (model.BirthDate) {
+            EHRMasterRecordsHandler.addDateRecord(patientUserId, EHRRecordTypes.Birthdate, model.BirthDate);
+        }
+        if (model.Gender) {
+            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.Gender, model.Gender);
+        }
+        if (model.MaritalStatus) {
+            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.BloodGroup, model.MaritalStatus);
+        }
+    }
 
     //#endregion
 

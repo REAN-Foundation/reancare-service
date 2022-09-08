@@ -9,6 +9,7 @@ export interface AssessmentDto {
     Type                   : AssessmentType;
     PatientUserId          : uuid;
     AssessmentTemplateId   : uuid;
+    ScoringApplicable?     : boolean;
     ProviderEnrollmentId?  : string;
     ProviderAssessmentCode?: string;
     ProviderAssessmentId?  : string;

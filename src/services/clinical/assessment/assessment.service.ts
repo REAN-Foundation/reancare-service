@@ -59,6 +59,7 @@ export class AssessmentService {
         var code = template.DisplayCode ? template.DisplayCode.split('#')[1] : '';
         var datestr = (new Date()).toISOString()
             .split('T')[0];
+
         const displayCode = 'Assessment#' + code + ':' + datestr;
         model.DisplayCode = displayCode;
         model.Description = template.Description;

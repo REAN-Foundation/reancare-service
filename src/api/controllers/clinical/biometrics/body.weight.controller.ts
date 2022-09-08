@@ -1,4 +1,7 @@
 import express from 'express';
+import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
+import { BodyWeightDomainModel } from '../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -27,7 +30,7 @@ export class BodyWeightController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BodyWeight.Create', request, response);
 
             const model = await this._validator.create(request);
@@ -35,7 +38,7 @@ export class BodyWeightController extends BaseController {
             if (bodyWeight == null) {
                 throw new ApiError(400, 'Cannot create weight record!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Weight record created successfully!', 201, {
                 BodyWeight : bodyWeight,
             });
@@ -46,7 +49,7 @@ export class BodyWeightController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BodyWeight.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -65,7 +68,7 @@ export class BodyWeightController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BodyWeight.Search', request, response);
 
             const filters = await this._validator.search(request);
@@ -76,7 +79,7 @@ export class BodyWeightController extends BaseController {
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} weight records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, { BodyWeightRecords: searchResults });
 
         } catch (error) {
@@ -86,21 +89,21 @@ export class BodyWeightController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BodyWeight.Update', request, response);
 
-            const domainModel = await this._validator.update(request);
+            const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Weight record not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update weight record!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Weight record updated successfully!', 200, {
                 BodyWeight : updated,
             });
@@ -111,7 +114,7 @@ export class BodyWeightController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BodyWeight.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -132,7 +135,18 @@ export class BodyWeightController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
+    //#endregion
+
+    //#region Privates
+
+    private addEHRRecord = (patientUserId: uuid, model: BodyWeightDomainModel) => {
+        if (model.BodyWeight) {
+            EHRMasterRecordsHandler.addFloatRecord(
+                patientUserId, EHRRecordTypes.BodyWeight, model.BodyWeight, model.Unit);
+        }
+    }
+
     //#endregion
 
 }

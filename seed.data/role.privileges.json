@@ -444,7 +444,7 @@
             "CourseEnrollment.StartCourseContent",
             "CourseEnrollment.GetCourseProgress",
             "CourseEnrollment.GetModuleProgress",
-            "CourseEnrollment.GetContentProgress"
+            "CourseEnrollment.GetContentProgress",
             "LabRecord.Create",
             "LabRecord.GetById",
             "LabRecord.Search",

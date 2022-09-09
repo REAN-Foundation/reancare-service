@@ -1,5 +1,6 @@
 import express from 'express';
-import { body, validationResult, param } from 'express-validator';
+import { body, validationResult, param, query } from 'express-validator';
+import { ApiClientSearchFilters } from '../../domain.types/api.client/api.client.search.types';
 import { Helper } from '../../common/helper';
 import { ApiClientDomainModel, ApiClientVerificationDomainModel } from '../../domain.types/api.client/api.client.domain.model';
 
@@ -66,6 +67,80 @@ export class ApiClientValidator {
             Helper.handleValidationError(result);
         }
         return ApiClientValidator.getDomainModel(request.body);
+    };
+
+    static search = async (
+        request: express.Request
+    ): Promise<ApiClientSearchFilters> => {
+
+        await query('clientName').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await query('clientCode').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await query('phone').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await query('email').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await query('validFrom')
+            .optional()
+            .isDate()
+            .trim()
+            .escape()
+            .run(request);
+
+        await query('validTill')
+            .optional()
+            .isDate()
+            .trim()
+            .escape()
+            .run(request);
+
+        await query('orderBy').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await query('order').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await query('pageIndex')
+            .optional()
+            .isInt()
+            .trim()
+            .escape()
+            .run(request);
+
+        await query('itemsPerPage')
+            .optional()
+            .isInt()
+            .trim()
+            .escape()
+            .run(request);
+
+        await query('fullDetails').optional()
+            .isBoolean()
+            .run(request);
+
+        const result = validationResult(request);
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        return ApiClientValidator.getFilter(request);
     };
 
     static getOrRenewApiKey = async (
@@ -163,5 +238,33 @@ export class ApiClientValidator {
         }
         return ApiClientValidator.getDomainModel(request.body);
     };
+
+    private static getFilter(request): ApiClientSearchFilters {
+
+        const pageIndex =
+            request.query.pageIndex !== 'undefined'
+                ? parseInt(request.query.pageIndex as string, 10)
+                : 0;
+
+        const itemsPerPage =
+            request.query.itemsPerPage !== 'undefined'
+                ? parseInt(request.query.itemsPerPage as string, 10)
+                : 25;
+
+        const filters: ApiClientSearchFilters = {
+            ClientName   : request.query.clientName ?? null,
+            ClientCode   : request.query.clientCode ?? null,
+            Phone        : request.query.phone ?? null,
+            Email        : request.query.email ?? null,
+            ValidFrom    : request.query.validFrom ?? null,
+            ValidTill    : request.query.validTill ?? null,
+            OrderBy      : request.query.orderBy ?? 'CreatedAt',
+            Order        : request.query.order ?? 'descending',
+            PageIndex    : pageIndex,
+            ItemsPerPage : itemsPerPage,
+        };
+
+        return filters;
+    }
 
 }

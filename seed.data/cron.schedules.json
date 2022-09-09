@@ -4,7 +4,7 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
-        "ScheduleCustomTasks": "0 11 * * *",
+        "ScheduleCustomTasks": "0 4 * * *",
         "ScheduleDailyCareplanPushTasks": "0 8 * * *"
 
     },
@@ -13,7 +13,7 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
-        "ScheduleCustomTasks": "0 11 * * *",
+        "ScheduleCustomTasks": "0 4 * * *",
         "ScheduleDailyCareplanPushTasks": "0 8 * * *"
 
     },

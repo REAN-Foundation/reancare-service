@@ -6,6 +6,7 @@ export interface UserCourseEnrollmentDomainModel {
     UserId?         : uuid;
     EnrollmentDate? : Date;
     ProgressStatus? : ProgressStatus;
+   PercentageCompletion?: number;
 }
 
 export interface UserCourseModuleDomainModel {
@@ -18,6 +19,7 @@ export interface UserCourseModuleDomainModel {
     StartDate?          : Date;
     EndDate?           : Date;
     ProgressStatus?     : ProgressStatus;
+    PercentageCompletion?: number;
 }
 
 export interface UserCourseContentDomainModel {

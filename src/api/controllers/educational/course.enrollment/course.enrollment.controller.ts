@@ -91,10 +91,10 @@ export class CourseEnrollmentController extends BaseController {
             const enrollmentId: uuid = await this._validator.getParamUuid(request, 'enrollmentId');
             const courseEnrollment = await this._service.getCourseProgress(enrollmentId);
             if (courseEnrollment == null) {
-                throw new ApiError(404, 'Course enrollment not found.');
+                throw new ApiError(404, 'Course progress not found.');
             }
 
-            ResponseHandler.success(request, response, 'Course enrollment retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Course progress retrieved successfully!', 200, {
                 CourseEnrollment : courseEnrollment,
             });
         } catch (error) {
@@ -107,13 +107,13 @@ export class CourseEnrollmentController extends BaseController {
 
             await this.setContext('CourseEnrollment.GetModuleProgress', request, response);
 
-            const courseModuleId: uuid = await this._validator.getParamUuid(request, 'courseModuleId');
+            const courseModuleId: uuid = await this._validator.getParamUuid(request, 'courseModuleId',);
             const courseModule = await this._service.getModuleProgress(courseModuleId);
             if (courseModule == null) {
-                throw new ApiError(404, 'Course module not found.');
+                throw new ApiError(404, 'Course module progress not found.');
             }
 
-            ResponseHandler.success(request, response, 'Course module retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Course module progress retrieved successfully!', 200, {
                 CourseModule : courseModule,
             });
         } catch (error) {
@@ -129,10 +129,10 @@ export class CourseEnrollmentController extends BaseController {
             const courseContentId: uuid = await this._validator.getParamUuid(request, 'courseContentId');
             const courseContent = await this._service.getContentProgress(courseContentId);
             if (courseContent == null) {
-                throw new ApiError(404, 'Course content not found.');
+                throw new ApiError(404, 'Course content progress not found.');
             }
 
-            ResponseHandler.success(request, response, 'Course content retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Course content progress retrieved successfully!', 200, {
                 CourseContent : courseContent,
             });
         } catch (error) {

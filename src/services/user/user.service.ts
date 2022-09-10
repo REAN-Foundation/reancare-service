@@ -1,4 +1,5 @@
 import { generate } from 'generate-password';
+import { IUserLoginSessionRepo } from '../../database/repository.interfaces/user/user.login.session.repo.interface';
 import { inject, injectable } from 'tsyringe';
 import { ApiError } from '../../common/api.error';
 import { Helper } from '../../common/helper';
@@ -18,6 +19,14 @@ import { Roles } from '../../domain.types/role/role.types';
 import { UserDomainModel, UserLoginDetails } from '../../domain.types/user/user/user.domain.model';
 import { UserDetailsDto, UserDto } from '../../domain.types/user/user/user.dto';
 import { Loader } from '../../startup/loader';
+import { UserLoginSessionDomainModel } from '../../domain.types/user/user.login.session/user.login.session.domain.model';
+import { DurationType } from '../../domain.types/miscellaneous/time.types';
+import { uuid } from '../../domain.types/miscellaneous/system.types';
+import { IUserDeviceDetailsRepo } from '../../database/repository.interfaces/user/user.device.details.repo.interface ';
+import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
+import { IAssessmentTemplateRepo } from '../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface';
+import { IAssessmentRepo } from '../../database/repository.interfaces/clinical/assessment/assessment.repo.interface';
+import { IUserTaskRepo } from '../../database/repository.interfaces/user/user.task.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +40,13 @@ export class UserService {
         @inject('IRoleRepo') private _roleRepo: IRoleRepo,
         @inject('IOtpRepo') private _otpRepo: IOtpRepo,
         @inject('IInternalTestUserRepo') private _internalTestUserRepo: IInternalTestUserRepo,
+        @inject('IUserLoginSessionRepo') private _userLoginSessionRepo: IUserLoginSessionRepo,
+        @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
+        @inject('IPatientRepo') private _patientRepo: IPatientRepo,
+        @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
+        @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
+        @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
+
     ) {}
 
     //#region Publics
@@ -98,18 +114,37 @@ export class UserService {
             }
         }
 
+        await this._userRepo.updateLastLogin(user.id);
+
+        //Generate login session
+
+        const expiresIn: number = ConfigurationManager.SessionExpiresIn();
+        var validTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
+
+        var entity: UserLoginSessionDomainModel = {
+            UserId    : user.id,
+            IsActive  : true,
+            StartedAt : new Date(),
+            ValidTill : validTill
+        };
+        
+        const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
+
         //The following user data is immutable. Don't include any mutable data
-        const currentUser: CurrentUser = {
+
+        var currentUser: CurrentUser = {
             UserId        : user.id,
             DisplayName   : user.Person.DisplayName,
             Phone         : user.Person.Phone,
             Email         : user.Person.Email,
             UserName      : user.UserName,
             CurrentRoleId : loginModel.LoginRoleId,
+            SessionId     : loginSessionDetails.id,
         };
+
         const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
 
-        return { user: user, accessToken: accessToken };
+        return { user: user, accessToken: accessToken, sessionId: currentUser.SessionId };
     };
 
     public generateOtp = async (otpDetails: any): Promise<boolean> => {
@@ -194,18 +229,49 @@ export class UserService {
             }
         }
 
+        await this._userRepo.updateLastLogin(user.id);
+
+        //Generate login session
+
+        const expiresIn: number = ConfigurationManager.SessionExpiresIn();
+        var validTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
+
+        var entity: UserLoginSessionDomainModel = {
+            UserId    : user.id,
+            IsActive  : true,
+            StartedAt : new Date(),
+            ValidTill : validTill
+        };
+        
+        const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
+
         //The following user data is immutable. Don't include any mutable data
-        const currentUser: CurrentUser = {
+
+        var currentUser: CurrentUser = {
             UserId        : user.id,
             DisplayName   : user.Person.DisplayName,
             Phone         : user.Person.Phone,
             Email         : user.Person.Email,
             UserName      : user.UserName,
             CurrentRoleId : loginModel.LoginRoleId,
+            SessionId     : loginSessionDetails.id
         };
+
         const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
 
-        return { user: user, accessToken: accessToken };
+        return { user: user, accessToken: accessToken, sessionId: currentUser.SessionId  };
+    };
+
+    public invalidateSession = async (sesssionId: uuid): Promise<boolean> => {
+
+        var invalidated = await this._userLoginSessionRepo.invalidateSession(sesssionId);
+        return invalidated;
+    };
+
+    public invalidateAllSessions = async (userId: uuid): Promise<boolean> => {
+
+        var invalidatedAllSessions = await this._userLoginSessionRepo.invalidateAllSessions(userId);
+        return invalidatedAllSessions;
     };
 
     public generateUserName = async (firstName, lastName):Promise<string> => {
@@ -281,6 +347,12 @@ export class UserService {
             timezoneOffset = user.DefaultTimeZone;
         }
         return TimeHelper.getDateWithTimezone(dateStr, timezoneOffset);
+    };
+
+    public isValidUserLoginSession = async (sessionId: uuid): Promise<boolean> => {
+
+        const isValidLoginSession = await this._userLoginSessionRepo.isValidUserLoginSession(sessionId);
+        return isValidLoginSession;
     };
 
     //#endregion
@@ -390,7 +462,7 @@ export class UserService {
         var isInternalTestUser = false;
         if (phoneNumber >= startingRange && phoneNumber <= endingRange) {
             isInternalTestUser = true;
-        }  
+        }
         return isInternalTestUser;
     }
 

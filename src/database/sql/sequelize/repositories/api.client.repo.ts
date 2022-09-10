@@ -7,6 +7,7 @@ import { Logger } from '../../../../common/logger';
 import { ApiError } from '../../../../common/api.error';
 import { CurrentClient } from '../../../../domain.types/miscellaneous/current.client';
 import { ApiClientDto, ClientApiKeyDto } from '../../../../domain.types/api.client/api.client.dto';
+import { ApiClientSearchFilters, ApiClientSearchResults } from '../../../../domain.types/api.client/api.client.search.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -39,6 +40,79 @@ export class ApiClientRepo implements IApiClientRepo {
             const client = await ApiClient.findByPk(id);
             const dto = await ClientMapper.toDto(client);
             return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    search = async (filters: ApiClientSearchFilters): Promise<ApiClientSearchResults> => {
+        try {
+
+            const search = { where: {} };
+
+            if (filters.ClientCode != null) {
+                search.where['ClientCode'] = filters.ClientCode;
+            }
+            if (filters.ClientName != null) {
+                search.where['ClientName'] = filters.ClientName;
+            }
+            if (filters.Phone != null) {
+                search.where['Phone'] = { [Op.like]: '%' + filters.Phone + '%' };
+            }
+            if (filters.Email != null) {
+                search.where['Email'] = filters.Email;
+            }
+            if (filters.ValidFrom != null) {
+                search.where['ValidFrom'] = filters.ValidFrom;
+            }
+            if (filters.ValidTill != null) {
+                search.where['ValidTill'] = filters.ValidTill;
+            }
+
+            const orderByColum = 'CreatedAt';
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = [[orderByColum, order]];
+        
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['limit'] = limit;
+            search['offset'] = offset;
+
+            const foundResults = await ApiClient.findAndCountAll(search);
+            
+            const dtos: ApiClientDto[] = [];
+            for (const apiclient of foundResults.rows) {
+                const dto = await ClientMapper.toDto(apiclient);
+                dtos.push(dto);
+            }
+            
+            const count = foundResults.count;
+            const totalCount = typeof count === "number" ? count : count[0];
+
+            const searchResults: ApiClientSearchResults = {
+                TotalCount     : totalCount,
+                RetrievedCount : dtos.length,
+                PageIndex      : pageIndex,
+                ItemsPerPage   : limit,
+                Order          : order === 'DESC' ? 'descending' : 'ascending',
+                OrderedBy      : orderByColum,
+                Items          : dtos
+            };
+            
+            return searchResults;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

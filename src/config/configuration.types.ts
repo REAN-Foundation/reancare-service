@@ -6,6 +6,7 @@ export type EHRSpecification = 'FHIR'| 'OpenEHR' | 'Mock';
 export type FHIRProvider = 'GCP-FHIR' | 'Azure-FHIR' | 'AWS-HealthLake' | 'Hapi-FHIR';
 export type OpenEHRProvider = 'OpenEHRBase';
 export type FileStorageProvider = 'AWS-S3' | 'GCP-FileStore' | 'Custom';
+export type FeatureFlagsProvider = 'Firebase-Remote-Config' | 'Custom';
 export type SMSServiceProvider = 'Twilio' | 'Mock';
 export type EmailServiceProvider = 'SendGrid' | 'Mock';
 export type InAppNotificationServiceProvider = 'Firebase' | 'Mock';
@@ -34,6 +35,10 @@ export interface EHRConfig {
 
 export interface FileStorageConfig {
     Provider: FileStorageProvider;
+}
+
+export interface FeatureFlagsConfig {
+    Provider: FeatureFlagsProvider;
 }
 
 export interface CommunicationConfig {
@@ -69,6 +74,7 @@ export interface Configurations {
     Database            : DatabaseConfig;
     Ehr                 : EHRConfig;
     FileStorage         : FileStorageConfig;
+    FeatureFlags        : FeatureFlagsConfig;
     Communication       : CommunicationConfig;
     TemporaryFolders    : TemporaryFoldersConfig;
     Careplans           : {
@@ -80,4 +86,5 @@ export interface Configurations {
     MaxUploadFileSize   : number;
     JwtExpiresIn        : number;
     FormServiceProviders: FormServiceProvider[];
+    SessionExpiresIn    : number;
 }

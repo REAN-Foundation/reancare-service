@@ -22,21 +22,23 @@ export class PersonMapper {
         const age = Helper.getAgeFromBirthDate(person.BirthDate);
 
         const dto: PersonDetailsDto = {
-            id              : person.id,
-            Prefix          : person.Prefix,
-            FirstName       : person.FirstName,
-            MiddleName      : person.MiddleName,
-            LastName        : person.LastName,
-            DisplayName     : displayName,
-            Gender          : person.Gender as Gender,
-            BirthDate       : person.BirthDate,
-            Age             : age,
-            Phone           : person.Phone,
-            Email           : person.Email,
-            ImageResourceId : person.ImageResourceId,
-            ActiveSince     : person.CreatedAt,
-            Roles           : [],
-            Addresses       : []
+            id                   : person.id,
+            Prefix               : person.Prefix,
+            FirstName            : person.FirstName,
+            MiddleName           : person.MiddleName,
+            LastName             : person.LastName,
+            DisplayName          : displayName,
+            Gender               : Gender[person.Gender],
+            SelfIdentifiedGender : person.SelfIdentifiedGender,
+            MaritalStatus        : person.MaritalStatus,
+            BirthDate            : person.BirthDate,
+            Age                  : age,
+            Phone                : person.Phone,
+            Email                : person.Email,
+            ImageResourceId      : person.ImageResourceId,
+            ActiveSince          : person.CreatedAt,
+            Roles                : [],
+            Addresses            : []
         };
         return dto;
     };

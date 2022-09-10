@@ -13,6 +13,8 @@ export interface IUserRepo {
 
     getById(id: string): Promise<UserDetailsDto>;
 
+    updateLastLogin(id: string): Promise<void>;
+
     delete(id: string): Promise<boolean>;
 
     getUserByPersonIdAndRole(personId: string, loginRoleId: number): Promise<UserDetailsDto>;

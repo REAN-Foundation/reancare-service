@@ -23,7 +23,8 @@ import {
     DateQueryAnswer,
     FileQueryAnswer,
     BooleanQueryAnswer,
-    ConditionOperand
+    ConditionOperand,
+    CScoringCondition
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import AssessmentNode from '../../../models/clinical/assessment/assessment.node.model';
@@ -31,6 +32,7 @@ import AssessmentNodePath from '../../../models/clinical/assessment/assessment.n
 import AssessmentPathCondition from '../../../models/clinical/assessment/assessment.path.condition.model';
 import AssessmentQueryOption from '../../../models/clinical/assessment/assessment.query.option.model';
 import AssessmentQueryResponse from '../../../models/clinical/assessment/assessment.query.response.model';
+import ScoringCondition from '../../../models/clinical/assessment/scoring.condition.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -93,9 +95,10 @@ export class AssessmentHelperMapper {
         var pathDto = new CAssessmentNodePath();
         pathDto.id = path.id;
         pathDto.ParentNodeId = path.ParentNodeId;
-        pathDto.DisplayCode = path.DisplayCode;
-        pathDto.ConditionId = path.ConditionId;
-        pathDto.NextNodeId = path.NextNodeId;
+        pathDto.DisplayCode  = path.DisplayCode;
+        pathDto.ConditionId  = path.ConditionId;
+        pathDto.NextNodeId   = path.NextNodeId;
+        pathDto.IsExitPath   = path.IsExitPath;
         pathDto.NextNodeDisplayCode = path.NextNodeDisplayCode;
         return pathDto;
     }
@@ -386,6 +389,42 @@ export class AssessmentHelperMapper {
             ResourceId       : resourceId
         };
         return dto;
+    }
+
+    static toScoringConditionDto(condition: ScoringCondition): CScoringCondition {
+        if (condition == null) {
+            return null;
+        }
+        var conditionDto = new CScoringCondition();
+
+        conditionDto.id                = condition.id;
+        conditionDto.TemplateId        = condition.TemplateId;
+        conditionDto.NodeId            = condition.NodeId;
+        conditionDto.DisplayCode       = condition.DisplayCode;
+        conditionDto.ParentConditionId = condition.ParentConditionId;
+        conditionDto.ResolutionScore   = condition.ResolutionScore;
+
+        conditionDto.OperatorType = condition.OperatorType as ConditionOperatorType;
+
+        conditionDto.IsCompositeCondition = condition.IsCompositeCondition;
+        conditionDto.CompositionType = condition.CompositionType as ConditionCompositionType;
+
+        conditionDto.FirstOperand = new ConditionOperand(
+            condition.FirstOperandDataType as ConditionOperandDataType,
+            condition.FirstOperandName,
+            condition.FirstOperandValue);
+
+        conditionDto.SecondOperand = new ConditionOperand(
+            condition.SecondOperandDataType as ConditionOperandDataType,
+            condition.SecondOperandName,
+            condition.SecondOperandValue);
+
+        conditionDto.ThirdOperand = new ConditionOperand(
+            condition.ThirdOperandDataType as ConditionOperandDataType,
+            condition.ThirdOperandName,
+            condition.ThirdOperandValue);
+
+        return conditionDto;
     }
 
 }

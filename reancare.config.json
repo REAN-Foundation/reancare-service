@@ -17,6 +17,9 @@
     "FileStorage" : {
         "Provider": "AWS-S3"
     },
+    "FeatureFlags" : {
+        "Provider": "Firebase-Remote-Config"
+    },
     "Communication" : {
         "SMS": {
             "Provider": "Twilio"
@@ -34,7 +37,7 @@
         "CleanupFolderBeforeMinutes": 10
     },
     "Careplans" : [
-        { 
+        {
             "Enabled": true,
             "Provider": "AHA",
             "Service": "AhaCarePlanService",
@@ -46,20 +49,52 @@
                     "DisplayName": "AHA-Heart Failure",
                     "DefaultDurationDays": 84,
                     "Description": "Heart Failure is a chronic condition in which the heart doesn't pump blood as well as it should. Heart failure can occur if the heart cannot pump (systolic) or fill (diastolic) adequately. Symptoms include shortness of breath, fatigue, swollen legs and rapid heartbeat.\nHeart Failure care plan helps in managing the condition."
+                },
+                {
+                    "Provider" : "AHA",
+                    "Name": "Cholesterol",
+                    "Code": "Cholesterol",
+                    "DisplayName": "AHA-Cholesterol",
+                    "DefaultDurationDays": 91,
+                    "Description": "Start your health journey to better manage your high cholesterol and reduce your risk of heart disease and stroke.\nYou'll learn about healthy lifestyle habits, goal planning, shared decision-making with your care team, cholesterol medications, self-management tips, and health behavior maintenance.\nNovartis is a proud supporter of the American Heart Association’s Integrated ASCVD Management Initiative."
+                },
+                {
+                    "Provider" : "AHA",
+                    "Name": "Stroke",
+                    "Code": "Stroke",
+                    "DisplayName": "AHA-Stroke",
+                    "DefaultDurationDays": 84,
+                    "Description": "A stroke occurs when a blood vessel that carries oxygen and nutrients to the brain is either blocked by a clot or bursts (or ruptures).\nWhen that happens, part of the brain cannot get the blood (and oxygen) it needs, so it and brain cells die.\nThe HCA Healthcare Foundation is proud to be a national supporter of the American Stroke Association’s Together to End Stroke™.\nFor more information, visit: https://www.stroke.org."
+                }
+            ]
+        },
+        { 
+            "Enabled": true,
+            "Provider": "REAN",
+            "Service": "ReanCarePlanService",
+            "Plans": [
+                {
+                    "Provider" : "REAN",
+                    "Name": "Maternity Careplan",
+                    "Code": "1",
+                    "DisplayName": "Maternity Careplan",
+                    "DefaultDurationDays": 100,
+                    "Description": "Personal care plans help you to explore, understand and record your individual choices for pregnancy, birth and early parenthood. Every woman and family is different, with individual needs, which have an influence on care and preferences."
                 }
             ]
         }
     ],
     "FormServiceProviders" : [
-        { 
+        {
             "Provider": "KoboToolbox",
             "Code": "KoboToolbox"
         },
-        { 
+        {
             "Provider": "GoogleForms",
             "Code": "GoogleForms"
         }
     ],
     "MaxUploadFileSize": 104857600,
-    "JwtExpiresIn": 2592000
+    "JwtExpiresIn": 2592000,
+    "SessionExpiresIn": 2592000
 }

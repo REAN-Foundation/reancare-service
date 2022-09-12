@@ -6,6 +6,9 @@ import { BloodCholesterolService } from '../../../../services/clinical/biometric
 import { Loader } from '../../../../startup/loader';
 import { BloodCholesterolValidator } from '../../../validators/clinical/biometrics/blood.cholesterol.validator';
 import { BaseController } from '../../base.controller';
+import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { BloodCholesterolDomainModel } from '../../../../domain.types/clinical/biometrics/blood.cholesterol/blood.cholesterol.domain.model';
+import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,7 +31,7 @@ export class BloodCholesterolController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodCholesterol.Create', request, response);
 
             const model = await this._validator.create(request);
@@ -36,7 +39,7 @@ export class BloodCholesterolController extends BaseController {
             if (bloodCholesterol == null) {
                 throw new ApiError(400, 'Cannot create record for blood cholesterol!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Blood cholesterol record created successfully!', 201, {
                 BloodCholesterol : bloodCholesterol,
             });
@@ -47,7 +50,7 @@ export class BloodCholesterolController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodCholesterol.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -66,7 +69,7 @@ export class BloodCholesterolController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodCholesterol.Search', request, response);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
@@ -88,20 +91,21 @@ export class BloodCholesterolController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodCholesterol.Update', request, response);
 
-            const domainModel = await this._validator.update(request);
+            const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Blood cholesterol record not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood cholesterol record!');
             }
+            this.addEHRRecord(model.PatientUserId, model);
 
             ResponseHandler.success(request, response, 'Blood cholesterol record updated successfully!', 200, {
                 BloodCholesterol : updated,
@@ -113,7 +117,7 @@ export class BloodCholesterolController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodCholesterol.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -134,6 +138,35 @@ export class BloodCholesterolController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addEHRRecord = (patientUserId: uuid, model: BloodCholesterolDomainModel) => {
+        if (model.A1CLevel) {
+            EHRMasterRecordsHandler.addFloatRecord(patientUserId, EHRRecordTypes.Cholesterol_A1CLevel, model.A1CLevel);
+        }
+        if (model.HDL) {
+            EHRMasterRecordsHandler.addFloatRecord(
+                patientUserId, EHRRecordTypes.Cholesterol_HDL, model.HDL, model.Unit);
+        }
+        if (model.LDL) {
+            EHRMasterRecordsHandler.addFloatRecord(
+                patientUserId, EHRRecordTypes.Cholesterol_LDL, model.LDL, model.Unit);
+        }
+        if (model.Ratio) {
+            EHRMasterRecordsHandler.addFloatRecord(patientUserId, EHRRecordTypes.Cholesterol_Ratio, model.Ratio);
+        }
+        if (model.TotalCholesterol) {
+            EHRMasterRecordsHandler.addFloatRecord(
+                patientUserId, EHRRecordTypes.Cholesterol_Total, model.TotalCholesterol, model.Unit);
+        }
+        if (model.TriglycerideLevel) {
+            EHRMasterRecordsHandler.addFloatRecord(
+                patientUserId, EHRRecordTypes.Cholesterol_TriglycerideLevel, model.TriglycerideLevel);
+        }
+    }
 
     //#endregion
 

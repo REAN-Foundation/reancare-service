@@ -4,6 +4,7 @@
         "Privileges": [
             "Client.Create",
             "Client.GetById",
+            "Client.Search",
             "Client.Update",
             "Client.Delete",
             "Client.GetApiKey",
@@ -414,7 +415,10 @@
             "LabRecord.GetById",
             "LabRecord.Search",
             "LabRecord.Update",
-            "LabRecord.Delete"
+            "LabRecord.Delete",
+            "Donor.Search",
+            "Donor.GetByUserId",
+            "Donor.UpdateByUserId"
         ]
     },
     {
@@ -725,7 +729,10 @@
             "LabRecord.GetById",
             "LabRecord.Search",
             "LabRecord.Update",
-            "LabRecord.Delete"
+            "LabRecord.Delete",
+            "Donor.Search",
+            "Donor.GetByUserId",
+            "Donor.UpdateByUserId"
         ]
     },
     {

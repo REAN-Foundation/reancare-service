@@ -60,6 +60,7 @@ import { register as registerStandRoutes } from './wellness/daily.records/stand.
 import { register as registerFoodComponentMonitoringRoutes } from './wellness/food.component.monitoring/food.component.monitoring.routes';
 import { register as registerLabRecordRoutes } from './clinical/lab.record.routes';
 import { register as registerTestRoutes } from './test.routes';
+import { register as registerDonorRoutes } from './donor.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -144,6 +145,7 @@ export class Router {
                 registerFoodComponentMonitoringRoutes(this._app);
                 registerLabRecordRoutes(this._app);
                 registerTestRoutes(this._app);
+                registerDonorRoutes(this._app);
 
                 resolve(true);
 

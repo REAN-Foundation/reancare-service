@@ -12,6 +12,7 @@ import { UserTaskSearchFilters } from '../domain.types/user/user.task/user.task.
 import { uuid } from '../domain.types/miscellaneous/system.types';
 import { CommonActions } from './common.actions';
 import { EnrollmentDomainModel } from '../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
+import { CareplanService } from '../services/clinical/careplan.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -27,11 +28,14 @@ export class AHAActions {
 
     _assessmentTemplateService: AssessmentTemplateService = null;
 
+    _careplanService: CareplanService = null;
+
     constructor() {
         this._patientService = Loader.container.resolve(PatientService);
         this._assessmentService = Loader.container.resolve(AssessmentService);
         this._userTaskService = Loader.container.resolve(UserTaskService);
         this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
+        this._careplanService = Loader.container.resolve(CareplanService);
     }
 
     //#region Public
@@ -54,8 +58,19 @@ export class AHAActions {
             const patientUserIds = await this._patientService.getAllPatientUserIds();
             Logger.instance().log(`Patients being processed for custom task: ${JSON.stringify(patientUserIds.length)}`);
             for await (var patientUserId of patientUserIds) {
-                const assessmentTemplateName = 'Quality of Life Questionnaire';
-                await this.triggerAssessmentTask_QualityOfLife(patientUserId, assessmentTemplateName);
+                var enrollments = await this._careplanService.getPatientEnrollments(patientUserId);
+                var activeEnrollments = [];
+                enrollments.forEach(enrollment => {
+                    activeEnrollments.push(enrollment.PlanCode);
+                });
+
+                if (activeEnrollments.length > 0 && activeEnrollments.indexOf('HeartFailure') !== -1) {
+                    Logger.instance().log(`Creating quality of life questionnaire task for patient:${patientUserId}`);
+                    const assessmentTemplateName = 'Quality of Life Questionnaire';
+                    await this.triggerAssessmentTask_QualityOfLife(patientUserId, assessmentTemplateName);
+                } else {
+                    Logger.instance().log(`Skip creating task for patient:${patientUserId}`);
+                }
             }
         }
         catch (error) {

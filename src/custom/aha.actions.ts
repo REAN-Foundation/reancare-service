@@ -61,10 +61,10 @@ export class AHAActions {
                 var enrollments = await this._careplanService.getPatientEnrollments(patientUserId);
                 var activeEnrollments = [];
                 enrollments.forEach(enrollment => {
-                    activeEnrollments.push(enrollment.PlanCode);      
+                    activeEnrollments.push(enrollment.PlanCode);
                 });
 
-                if(activeEnrollments.length > 0 && activeEnrollments.indexOf('HeartFailure') !== -1) {
+                if (activeEnrollments.length > 0 && activeEnrollments.indexOf('HeartFailure') !== -1) {
                     Logger.instance().log(`Creating quality of life questionnaire task for patient:${patientUserId}`);
                     const assessmentTemplateName = 'Quality of Life Questionnaire';
                     await this.triggerAssessmentTask_QualityOfLife(patientUserId, assessmentTemplateName);

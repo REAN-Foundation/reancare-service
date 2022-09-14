@@ -11,8 +11,8 @@ export interface ICourseEnrollmentRepo {
     
     getCourseProgress(enrollmentId: string ): Promise<UserCourseEnrollmentDto>;
 
-    getModuleProgress(courseModuleId: string ): Promise<UserCourseModuleDto>;
+    getModuleProgress(moduleId: string ): Promise<UserCourseModuleDto>;
 
-    getContentProgress(courseContentId: string): Promise<UserCourseContentDto>;
+    getContentProgress(contentId: string): Promise<UserCourseContentDto>;
  
 }

@@ -31,4 +31,5 @@ export interface UserCourseContentDto {
     ContentId?          :uuid;
     CourseModuleId?     : uuid;
     ProgressStatus?     : ProgressStatus;
+    PercentageCompletion?: number;
 }

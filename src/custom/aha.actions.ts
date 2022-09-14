@@ -56,7 +56,7 @@ export class AHAActions {
     public scheduledMonthlyRecurrentTasks = async () => {
         try {
             const patientUserIds = await this._patientService.getAllPatientUserIds();
-            Logger.instance().log(`Patients being processed for custom task: ${JSON.stringify(patientUserIds.length)}`);
+            Logger.instance().log(`[KCCQTask] Patients being processed for custom task: ${JSON.stringify(patientUserIds.length)}`);
             for await (var patientUserId of patientUserIds) {
                 var enrollments = await this._careplanService.getPatientEnrollments(patientUserId);
                 var activeEnrollments = [];
@@ -74,7 +74,7 @@ export class AHAActions {
             }
         }
         catch (error) {
-            Logger.instance().log(`Error performing post registration custom actions.`);
+            Logger.instance().log(`[KCCQTask] Error performing post registration custom actions.`);
         }
     };
 
@@ -266,19 +266,19 @@ export class AHAActions {
 
         const userTask = await this._userTaskService.search(filters);
         if (userTask.TotalCount === 0) {
-            Logger.instance().log(`Creating custom task as no task found. PatientUserId:
+            Logger.instance().log(`[KCCQTask] Creating custom task as no task found. PatientUserId:
                     ${JSON.stringify(patientUserId)}`);
             await this._commonActions.createAssessmentTask(patientUserId, assessmentTemplateName);
         }
         else {
             const taskCreationDate = userTask.Items[0].CreatedAt;
             const dayDiff = TimeHelper.dayDiff(new Date(), taskCreationDate);
-            if (dayDiff > 30) {
-                Logger.instance().log(`Creating custom task as 30 days have passed.
+            if (dayDiff > 1) {
+                Logger.instance().log(`[KCCQTask] Creating custom task as 1 days have passed.
                         PatientUserId: ${JSON.stringify(patientUserId)}`);
                 await this._commonActions.createAssessmentTask(patientUserId, assessmentTemplateName);
             } else {
-                Logger.instance().log(`No custom task created for patient UserId:
+                Logger.instance().log(`[KCCQTask] No custom task created for patient UserId:
                         ${JSON.stringify(patientUserId)}`);
             }
         }

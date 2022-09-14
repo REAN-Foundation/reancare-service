@@ -51,9 +51,11 @@ export interface ICareplanRepo {
 
     updateActivityDetails(activityId: uuid, activityDetails: any): Promise<CareplanActivityDto>;
 
-    activityExists(Provider: string, EnrollmentId: string,
+    activityExists(Provider: string, EnrollmentId: string | number,
         ProviderActionId: string, Sequence: number, ScheduledAt: Date): Promise<boolean>;
 
     updateActivityUserResponse(activityId: uuid, userResponse:string): Promise<CareplanActivityDto>;
+
+    getAllReanActivities(): Promise<CareplanActivityDto[]>;
 
 }

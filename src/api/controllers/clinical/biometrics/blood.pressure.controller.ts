@@ -7,6 +7,9 @@ import { Loader } from '../../../../startup/loader';
 import { BloodPressureValidator } from '../../../validators/clinical/biometrics/blood.pressure.validator';
 import { BaseController } from '../../base.controller';
 import { Logger } from '../../../../common/logger';
+import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
+import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +32,7 @@ export class BloodPressureController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodPressure.Create', request, response);
 
             const model = await this._validator.create(request);
@@ -37,7 +40,7 @@ export class BloodPressureController extends BaseController {
             if (bloodPressure == null) {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
                 BloodPressure : bloodPressure,
             });
@@ -48,7 +51,7 @@ export class BloodPressureController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodPressure.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -67,7 +70,7 @@ export class BloodPressureController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodPressure.Search', request, response);
 
             Logger.instance().log(`trying to fetch data for search...`);
@@ -93,21 +96,21 @@ export class BloodPressureController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodPressure.Update', request, response);
 
-            const domainModel = await this._validator.update(request);
+            const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Blood Pressure record not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood pressure record!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Blood pressure record updated successfully!', 200, {
                 BloodPressure : updated,
             });
@@ -118,7 +121,7 @@ export class BloodPressureController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodPressure.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -139,6 +142,25 @@ export class BloodPressureController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addEHRRecord = (patientUserId: uuid, model: BloodPressureDomainModel) => {
+        if (model.Diastolic) {
+            EHRMasterRecordsHandler.addFloatRecord(
+                patientUserId,
+                EHRRecordTypes.BloodPressure,
+                model.Systolic,
+                model.Unit,
+                'Systolic Blood Pressure',
+                'Blood Pressure',
+                model.Diastolic,
+                model.Unit,
+                'Distolic Blood Pressure');
+        }
+    }
 
     //#endregion
 

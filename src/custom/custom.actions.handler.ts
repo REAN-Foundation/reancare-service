@@ -32,7 +32,7 @@ export class CustomActionsHandler {
             }
         }
         catch (error) {
-            Logger.instance().log(`Error performing post registration custom actions.`);
+            Logger.instance().log(`[KCCQTask] Error performing post registration custom actions.`);
         }
     };
 

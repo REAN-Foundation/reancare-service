@@ -3,7 +3,7 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { AddressDomainModel } from '../../../domain.types/address/address.domain.model';
-import { EmergencyContactRoleList } from '../../../domain.types/patient/emergency.contact/emergency.contact.types';
+import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../domain.types/patient/emergency.contact/emergency.contact.types';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { AddressService } from '../../../services/address.service';
 import { OrganizationService } from '../../../services/organization.service';
@@ -14,6 +14,7 @@ import { UserService } from '../../../services/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { EmergencyContactValidator } from '../../validators/patient/emergency.contact.validator';
 import { BaseController } from '../base.controller';
+import { EHRMasterRecordsHandler } from '../../../custom/ehr.insights.records/ehr.master.records.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,7 +65,7 @@ export class EmergencyContactController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Emergency.Contact.Create', request, response);
-            
+
             const domainModel = await this._validator.create(request);
 
             const existingContactRoles = await this._service.getContactsCountWithRole(
@@ -94,7 +95,7 @@ export class EmergencyContactController extends BaseController {
                     throw new ApiError(409 , 'The contact person already exists in the contact list of the patient!');
                 }
             } else if (domainModel.ContactPerson != null) {
-                
+
                 var personDomainModel: PersonDomainModel = {
                     Prefix    : domainModel.ContactPerson.Prefix ?? null,
                     FirstName : domainModel.ContactPerson.FirstName ?? null,
@@ -102,10 +103,10 @@ export class EmergencyContactController extends BaseController {
                     Phone     : domainModel.ContactPerson.Phone,
                     Email     : domainModel.ContactPerson.Email ?? null
                 };
-                
+
                 var existingPerson = await this._personService.getPersonWithPhone(domainModel.ContactPerson.Phone);
                 if (existingPerson !== null) {
-                    
+
                     domainModel.ContactPersonId = existingPerson.id;
 
                     var alreadyExists = await this._service.checkIfContactPersonExists(
@@ -130,7 +131,7 @@ export class EmergencyContactController extends BaseController {
                     throw new ApiError(404, `Address with an id ${domainModel.AddressId} cannot be found.`);
                 }
             } else if (domainModel.Address != null) {
-                
+
                 var addressDomainModel: AddressDomainModel = {
                     Type        : "Official",
                     AddressLine : domainModel.Address.AddressLine,
@@ -154,6 +155,13 @@ export class EmergencyContactController extends BaseController {
                 throw new ApiError(400, 'Cannot create patientEmergencyContact!');
             }
 
+            if (domainModel.ContactRelation === EmergencyContactRoles.Doctor) {
+                await EHRMasterRecordsHandler.addOrUpdatePatient(
+                    domainModel.PatientUserId,
+                    patientEmergencyContact.ContactPersonId
+                );
+            }
+
             ResponseHandler.success(request, response, 'Emergency contact created successfully!', 201, {
                 EmergencyContact : patientEmergencyContact,
             });
@@ -165,7 +173,7 @@ export class EmergencyContactController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'Emergency.Contact.GetById';
-            
+
             await this._authorizer.authorize(request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -196,7 +204,7 @@ export class EmergencyContactController extends BaseController {
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} patientEmergencyContact records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, { EmergencyContacts: searchResults });
 
         } catch (error) {

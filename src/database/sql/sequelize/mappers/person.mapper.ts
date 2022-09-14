@@ -32,7 +32,7 @@ export class PersonMapper {
             SelfIdentifiedGender : person.SelfIdentifiedGender,
             MaritalStatus        : person.MaritalStatus,
             BirthDate            : person.BirthDate,
-            Age                  : age,
+            Age                  : person.Age ?? age,
             Phone                : person.Phone,
             Email                : person.Email,
             ImageResourceId      : person.ImageResourceId,

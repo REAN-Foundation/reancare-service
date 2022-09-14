@@ -180,7 +180,7 @@ export class UserTaskValidator extends BaseValidator {
             ActionType    : request.query.actionType as string ?? null,
             ActionId      : request.query.actionId as uuid ?? null,
             ScheduledFrom : scheduledFrom,
-            ScheduledTo   : scheduledTo,
+            ScheduledTo   : TimeHelper.addDuration(scheduledTo, 24, DurationType.Hour),
             Status        : status,
         };
 

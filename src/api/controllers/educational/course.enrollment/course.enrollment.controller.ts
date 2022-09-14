@@ -6,6 +6,7 @@ import { CourseEnrollmentService } from '../../../../services/educational/course
 import { Loader } from '../../../../startup/loader';
 import { CourseEnrollmentValidator } from '../../../validators/educational/course.enrollment/course.enrollment.validator';
 import { BaseController } from '../../base.controller';
+import { CourseModuleService } from '../../../../services/educational/course.module/course.module.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -15,11 +16,14 @@ export class CourseEnrollmentController extends BaseController {
 
     _service: CourseEnrollmentService = null;
 
+    _courseModuleService: CourseModuleService = null;
+
     _validator: CourseEnrollmentValidator = new CourseEnrollmentValidator();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(CourseEnrollmentService);
+        this._courseModuleService = Loader.container.resolve(CourseModuleService);
     }
 
     //#endregion
@@ -51,6 +55,7 @@ export class CourseEnrollmentController extends BaseController {
             await this.setContext('CourseEnrollment.StartCourseModule', request, response);
 
             const model = await this._validator.startCourseModule(request);
+
             const courseModule = await this._service.startCourseModule(model);
             if (courseModule == null) {
                 throw new ApiError(400, 'Can not start course module!');
@@ -107,8 +112,8 @@ export class CourseEnrollmentController extends BaseController {
 
             await this.setContext('CourseEnrollment.GetModuleProgress', request, response);
 
-            const courseModuleId: uuid = await this._validator.getParamUuid(request, 'courseModuleId',);
-            const courseModule = await this._service.getModuleProgress(courseModuleId);
+            const moduleId: uuid = await this._validator.getParamUuid(request, 'moduleId',);
+            const courseModule = await this._service.getModuleProgress(moduleId);
             if (courseModule == null) {
                 throw new ApiError(404, 'Course module progress not found.');
             }
@@ -126,8 +131,8 @@ export class CourseEnrollmentController extends BaseController {
 
             await this.setContext('CourseEnrollment.GetContentProgress', request, response);
 
-            const courseContentId: uuid = await this._validator.getParamUuid(request, 'courseContentId');
-            const courseContent = await this._service.getContentProgress(courseContentId);
+            const contentId: uuid = await this._validator.getParamUuid(request, 'contentId');
+            const courseContent = await this._service.getContentProgress(contentId);
             if (courseContent == null) {
                 throw new ApiError(404, 'Course content progress not found.');
             }

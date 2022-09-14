@@ -47,19 +47,20 @@ export class CourseEnrollmentMapper {
     };
 
     static toContentDto = (
-        courseContent: UserCourseContentModel): UserCourseContentDto => {
+        courseContent: UserCourseContentModel, percentageCompletion = 0): UserCourseContentDto => {
         if (courseContent == null) {
             return null;
         }
         const dto: UserCourseContentDto = {
-            id                 : courseContent.id,
-            CourseId           : courseContent.CourseId,
-            UserId             : courseContent.UserId ,
-            CourseEnrollmentId : courseContent.CourseEnrollmentId,
-            ModuleId           : courseContent.ModuleId ,
-            CourseModuleId     : courseContent.CourseModuleId  ,
-            ContentId          : courseContent.ContentId  ,
-            ProgressStatus     : courseContent.ProgressStatus as ProgressStatus,
+            id                   : courseContent.id,
+            CourseId             : courseContent.CourseId,
+            UserId               : courseContent.UserId ,
+            CourseEnrollmentId   : courseContent.CourseEnrollmentId,
+            ModuleId             : courseContent.ModuleId ,
+            CourseModuleId       : courseContent.CourseModuleId  ,
+            ContentId            : courseContent.ContentId  ,
+            ProgressStatus       : courseContent.ProgressStatus as ProgressStatus,
+            PercentageCompletion : percentageCompletion,
         };
         return dto;
     };

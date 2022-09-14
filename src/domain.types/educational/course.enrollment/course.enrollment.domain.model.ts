@@ -31,4 +31,5 @@ export interface UserCourseContentDomainModel {
     ContentId?          : uuid;
     CourseModuleId?     : uuid;
     ProgressStatus?     : ProgressStatus;
+    PercentageCompletion?: number;
 }

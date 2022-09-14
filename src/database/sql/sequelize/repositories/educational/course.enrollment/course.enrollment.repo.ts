@@ -9,6 +9,8 @@ import { CourseEnrollmentMapper } from '../../../mappers/educational/course.enro
 import UserCourseContent from '../../../models/educational/user.course.content/user.course.content.model';
 import UserCourseEnrollment from '../../../models/educational/user.course.enrollment/user.course.enrollment.model';
 import UserCourseModule from '../../../models/educational/user.course.module/user.course.module.model';
+import CourseContent from '../../../models/educational/course.content/course.content.model';
+import CourseModule from '../../../models/educational/course.module/course.module.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -49,7 +51,7 @@ export class CourseEnrollmentRepo implements ICourseEnrollmentRepo {
             };
 
             const courseModule = await UserCourseModule.create(entity);
-
+            courseModule.ProgressStatus = ProgressStatus.Pending;
             return await CourseEnrollmentMapper.toModuleDto(courseModule);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -61,13 +63,14 @@ export class CourseEnrollmentRepo implements ICourseEnrollmentRepo {
     Promise<UserCourseContentDto> => {
         try {
             const entity = {
-                CourseId           : createModel.CourseId,
-                UserId             : createModel.UserId ,
-                CourseEnrollmentId : createModel.CourseEnrollmentId,
-                CourseModuleId     : createModel.CourseModuleId,
-                ModuleId           : createModel.ModuleId,
-                ContentId          : createModel.ContentId   ,
-                ProgressStatus     : createModel.ProgressStatus,
+                CourseId             : createModel.CourseId,
+                UserId               : createModel.UserId ,
+                CourseEnrollmentId   : createModel.CourseEnrollmentId,
+                CourseModuleId       : createModel.CourseModuleId,
+                ModuleId             : createModel.ModuleId,
+                ContentId            : createModel.ContentId   ,
+                ProgressStatus       : createModel.ProgressStatus,
+                PercentageCompletion : createModel.PercentageCompletion,
             };
 
             const courseContent = await UserCourseContent.create(entity);
@@ -89,29 +92,38 @@ export class CourseEnrollmentRepo implements ICourseEnrollmentRepo {
         }
     };
 
-    getModuleProgress = async (courseModuleId: string):Promise<UserCourseModuleDto> => {
+    getModuleProgress = async (moduleId: string):Promise<UserCourseModuleDto> => {
         try {
-            var courseModule = await UserCourseModule.findByPk(courseModuleId);
-            return await this.getUpdatedModule(courseModuleId, courseModule);
+            var courseModule = await UserCourseModule.findOne({ where: { ModuleId: moduleId } });
+            return await this.getUpdatedModule(moduleId, courseModule);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    getContentProgress = async (courseContentId: string): Promise<UserCourseContentDto> => {
+    getContentProgress = async (contentId: string): Promise<UserCourseContentDto> => {
         try {
-            const courseContent = await UserCourseContent.findByPk(courseContentId);
-            courseContent.ProgressStatus = ProgressStatus.Completed;
-            return await CourseEnrollmentMapper.toContentDto(courseContent);
+            const courseContent = await UserCourseContent.findOne({ where: { ContentId: contentId } });
+            return await this.getUpdatedContent(contentId, courseContent);
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    private async getUpdatedModule(courseModuleId: string, courseModule: UserCourseModule) {
-        var percentageCompletion = await this.getModulePercentageCompletion(courseModuleId);
+    private async getUpdatedContent(contentId: string, courseContent: UserCourseContent) {
+        var percentageCompletion = await this.getContentPercentageCompletion(contentId);
+        courseContent.ProgressStatus =
+            percentageCompletion < 100.0 ? ProgressStatus.InProgress : ProgressStatus.Completed;
+        await courseContent.save();
+        return await CourseEnrollmentMapper.toContentDto(courseContent, percentageCompletion);
+    }
+
+    private async getUpdatedModule(moduleId: string, courseModule: UserCourseModule) {
+
+        var percentageCompletion = await this.getModulePercentageCompletion(moduleId);
         courseModule.ProgressStatus =
             percentageCompletion < 100.0 ? ProgressStatus.InProgress : ProgressStatus.Completed;
         await courseModule.save();
@@ -126,16 +138,29 @@ export class CourseEnrollmentRepo implements ICourseEnrollmentRepo {
         return await CourseEnrollmentMapper.toDto(courseEnrollment, percentageCompletion);
     }
 
-    private  async getModulePercentageCompletion(courseModuleId: string )
+    private  async getContentPercentageCompletion( contentId:string)
     {
-        const totalContentCount = await UserCourseContent.count( {
+        const noOfContentCompleted = await UserCourseContent.count( {
             where : {
-                CourseModuleId : courseModuleId
+                ContentId      : contentId,
+                ProgressStatus : ProgressStatus.Completed,
+            }
+        });
+        let percentageCompletion = 0;
+        percentageCompletion  = (noOfContentCompleted) * 100 ;
+        return percentageCompletion ;
+    }
+
+    private  async getModulePercentageCompletion( moduleId:string)
+    {
+        const totalContentCount = await CourseContent.count( {
+            where : {
+                ModuleId : moduleId
             }
         });
         const noOfContentCompleted = await UserCourseContent.count( {
             where : {
-                CourseModuleId : courseModuleId,
+                ModuleId       : moduleId,
                 ProgressStatus : ProgressStatus.Completed,
             }
         });

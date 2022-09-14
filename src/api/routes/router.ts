@@ -63,6 +63,10 @@ import { register as registerCourseRoutes } from './educational/course/course.ro
 import { register as registerCourseModuleRoutes } from './educational/course.module/course.module.routes';
 import { register as registerCourseContentRoutes } from './educational/course.content/course.content.routes';
 import { register as registerCourseEnrollmentRoutes } from './educational/course.enrollment/course.enrollment.routes';
+import { register as registerLabRecordRoutes } from './clinical/lab.record.routes';
+import { register as registerTestRoutes } from './test.routes';
+import { register as registerDonorRoutes } from './donor.routes';
+
 ////////////////////////////////////////////////////////////////////////////////////
 
 export class Router {
@@ -149,6 +153,9 @@ export class Router {
                 registerCourseModuleRoutes(this._app);
                 registerCourseContentRoutes(this._app);
                 registerCourseEnrollmentRoutes(this._app);
+                registerLabRecordRoutes(this._app);
+                registerTestRoutes(this._app);
+                registerDonorRoutes(this._app);
 
                 resolve(true);
 

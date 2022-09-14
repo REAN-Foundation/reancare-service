@@ -4,6 +4,7 @@
         "Privileges": [
             "Client.Create",
             "Client.GetById",
+            "Client.Search",
             "Client.Update",
             "Client.Delete",
             "Client.GetApiKey",
@@ -112,8 +113,12 @@
             "CourseEnrollment.StartCourseContent",
             "CourseEnrollment.GetCourseProgress",
             "CourseEnrollment.GetModuleProgress",
-            "CourseEnrollment.GetContentProgress"
-            
+            "CourseEnrollment.GetContentProgress",
+            "LabRecord.Create",
+            "LabRecord.GetById",
+            "LabRecord.Search",
+            "LabRecord.Update",
+            "LabRecord.Delete"
         ]
     },
     {
@@ -439,7 +444,15 @@
             "CourseEnrollment.StartCourseContent",
             "CourseEnrollment.GetCourseProgress",
             "CourseEnrollment.GetModuleProgress",
-            "CourseEnrollment.GetContentProgress"
+            "CourseEnrollment.GetContentProgress",
+            "LabRecord.Create",
+            "LabRecord.GetById",
+            "LabRecord.Search",
+            "LabRecord.Update",
+            "LabRecord.Delete",
+            "Donor.Search",
+            "Donor.GetByUserId",
+            "Donor.UpdateByUserId"
         ]
     },
     {
@@ -510,7 +523,7 @@
             "Order.GetById",
             "Order.Update",
             "Order.Delete",
-            "Order.Search",          
+            "Order.Search",
             "Diagnosis.Create",
             "Diagnosis.GetById",
             "Diagnosis.Search",
@@ -745,7 +758,15 @@
             "FoodComponentMonitoring.GetById",
             "FoodComponentMonitoring.Search",
             "FoodComponentMonitoring.Update",
-            "FoodComponentMonitoring.Delete"
+            "FoodComponentMonitoring.Delete",
+            "LabRecord.Create",
+            "LabRecord.GetById",
+            "LabRecord.Search",
+            "LabRecord.Update",
+            "LabRecord.Delete",
+            "Donor.Search",
+            "Donor.GetByUserId",
+            "Donor.UpdateByUserId"
         ]
     },
     {

@@ -15,12 +15,17 @@ export const register = (app: express.Application): void => {
     router.put('/:id/nodes/:nodeId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateNode);
     router.delete('/:id/nodes/:nodeId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteNode);
 
+    router.post('/:id/scoring-conditions/', authenticator.authenticateClient, authenticator.authenticateUser, controller.addScoringCondition);
+    router.put('/:id/scoring-conditions/:conditionId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateScoringCondition);
+    router.get('/:id/scoring-conditions/:conditionId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getScoringCondition);
+    router.delete('/:id/scoring-conditions/:conditionId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteScoringCondition);
+
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
-    
+
     router.get('/:id/export', authenticator.authenticateClient, authenticator.authenticateUser, controller.export);
     router.post('/import-file', authenticator.authenticateClient, authenticator.authenticateUser, controller.importFromFile);
     router.post('/import-json', authenticator.authenticateClient, authenticator.authenticateUser, controller.importFromJson);

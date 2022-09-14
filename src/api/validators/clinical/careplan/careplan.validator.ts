@@ -19,6 +19,8 @@ export class CareplanValidator extends BaseValidator {
             PlanCode      : request.body.PlanCode,
             StartDateStr  : request.body.StartDate,
             EndDateStr    : request.body.EndDate,
+            DayOffset     : request.body.DayOffset,
+            WeekOffset    : request.body.WeekOffset,
         };
 
         return model;
@@ -36,9 +38,11 @@ export class CareplanValidator extends BaseValidator {
 
         await this.validateString(request, 'Provider', Where.Body, true, false);
         await this.validateString(request, 'PlanCode', Where.Body, true, false);
-        await this.validateString(request, 'PlanName', Where.Body, true, false);
+        await this.validateString(request, 'PlanName', Where.Body, false, true);
         await this.validateString(request, 'StartDate', Where.Body, false, true);
         await this.validateString(request, 'EndDate', Where.Body, false, false);
+        await this.validateInt(request, 'DayOffset', Where.Body, false, false);
+        await this.validateInt(request, 'WeekOffset', Where.Body, false, false);
 
         this.validateRequest(request);
     }

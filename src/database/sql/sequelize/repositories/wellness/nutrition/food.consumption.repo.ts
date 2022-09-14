@@ -1,13 +1,26 @@
 import { Op } from 'sequelize';
+import { NutritionQuestionnaireDomainModel } from
+    '../../../../../../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.domain.model';
+import { NutritionQuestionnaireDto }
+    from '../../../../../../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.dto';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
-import { FoodConsumptionDomainModel } from "../../../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.domain.model";
-import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from "../../../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.dto";
-import { FoodConsumptionSearchFilters, FoodConsumptionSearchResults } from "../../../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.search.types";
-import { FoodConsumptionEvents } from '../../../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.types';
-import { IFoodConsumptionRepo } from '../../../../../repository.interfaces/wellness/nutrition/food.consumption.repo.interface';
+import { FoodConsumptionDomainModel }
+    from "../../../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.domain.model";
+import { FoodConsumptionDto,
+    FoodConsumptionEventDto,
+    FoodConsumptionForDayDto
+} from "../../../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.dto";
+import { FoodConsumptionSearchFilters,
+    FoodConsumptionSearchResults
+} from "../../../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.search.types";
+import { FoodConsumptionEvents }
+    from '../../../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.types';
+import { IFoodConsumptionRepo }
+    from '../../../../../repository.interfaces/wellness/nutrition/food.consumption.repo.interface';
 import { FoodConsumptionMapper } from '../../../mappers/wellness/nutrition/food.consumption.mapper';
 import FoodConsumptionModel from '../../../models/wellness/nutrition/food.consumption.model';
+import NutritionQuestionnaire from '../../../models/wellness/nutrition/nutrition.questionnaire.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -17,18 +30,46 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     Promise<FoodConsumptionDto> => {
         try {
             const entity = {
-                PatientUserId   : createModel.PatientUserId,
-                Food            : createModel.Food,
-                Description     : createModel.Description,
-                ConsumedAs      : createModel.ConsumedAs,
-                Calories        : createModel.Calories,
-                ImageResourceId : createModel.ImageResourceId,
-                StartTime       : createModel.StartTime,
-                EndTime         : createModel.EndTime,
+                PatientUserId     : createModel.PatientUserId,
+                Food              : createModel.Food,
+                Description       : createModel.Description,
+                ConsumedAs        : createModel.ConsumedAs,
+                Calories          : createModel.Calories,
+                ImageResourceId   : createModel.ImageResourceId,
+                StartTime         : createModel.StartTime,
+                EndTime           : createModel.EndTime,
+                FoodTypes         : createModel.FoodTypes && createModel.FoodTypes.length > 0 ? JSON.stringify(createModel.FoodTypes) : null,
+                Servings          : createModel.Servings,
+                ServingUnit       : createModel.ServingUnit,
+                UserResponse      : createModel.UserResponse,
+                Tags              : createModel.Tags && createModel.Tags.length > 0 ? JSON.stringify(createModel.Tags) : null,
             };
 
             const foodConsumption = await FoodConsumptionModel.create(entity);
             return await FoodConsumptionMapper.toDto(foodConsumption);
+            
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    createNutritionQuestionnaire = async (createModel: NutritionQuestionnaireDomainModel):
+    Promise<NutritionQuestionnaireDto> => {
+        try {
+            const entity = {
+                Question            : createModel.Question,
+                QuestionType        : createModel.QuestionType,
+                AssociatedFoodTypes : createModel.AssociatedFoodTypes && createModel.AssociatedFoodTypes.length > 0 ?
+                    JSON.stringify(createModel.AssociatedFoodTypes) : null,
+                Tags                : createModel.Tags && createModel.Tags.length > 0 ? JSON.stringify(createModel.Tags) : null,
+                ServingUnit         : createModel.ServingUnit,
+                ImageResourceId     : createModel.ImageResourceId,
+                QuestionInfo        : createModel.QuestionInfo,
+            };
+
+            const nutrition = await NutritionQuestionnaire.create(entity);
+            return await FoodConsumptionMapper.toDetailsDto(nutrition);
             
         } catch (error) {
             Logger.instance().log(error.message);
@@ -357,6 +398,33 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
 
         return duration;
+    };
+
+    totalCount = async (): Promise<number> => {
+        try {
+            return await NutritionQuestionnaire.count();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getNutritionQuestionnaire = async (): Promise<NutritionQuestionnaireDto[]> => {
+        try {
+            const filter = { where: {} };
+            
+            const questionnaire = await NutritionQuestionnaire.findAll(filter);
+            const dtos: NutritionQuestionnaireDto[] = [];
+            for (const q of questionnaire) {
+                const dto = FoodConsumptionMapper.toDetailsDto(q);
+                dtos.push(dto);
+            }
+
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
 }

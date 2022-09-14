@@ -59,9 +59,47 @@ export default class FoodConsumption extends Model {
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
-        allowNull : false,
+        allowNull : true,
     })
     Food: string;
+
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    FoodTypes: string;
+
+    @Column({
+        type      : DataType.FLOAT,
+        allowNull : true,
+    })
+    Servings: number;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    ServingUnit: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    Tags: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    NutritionQuestion: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : true,
+        defaultValue : false,
+    })
+    UserResponse: boolean;
 
     @Length({ max: 1024 })
     @Column({
@@ -73,7 +111,7 @@ export default class FoodConsumption extends Model {
     @Length({ max: 128 })
     @Column({
         type         : DataType.STRING(128),
-        allowNull    : false,
+        allowNull    : true,
         values       : FoodConsumptionEventList,
         defaultValue : FoodConsumptionEvents.Other
     })
@@ -97,7 +135,7 @@ export default class FoodConsumption extends Model {
     @IsDate
     @Column({
         type      : DataType.DATE,
-        allowNull : false,
+        allowNull : true,
     })
     StartTime: Date;
 

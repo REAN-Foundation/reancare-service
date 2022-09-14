@@ -22,6 +22,8 @@ export class EnrollmentMapper {
             StartAt       : enrollment.StartDate,
             EndAt         : enrollment.EndDate,
             IsActive      : enrollment.IsActive,
+            Complication  : enrollment.Complication,
+            HasHighRisk   : enrollment.HasHighRisk,
         };
         return dto;
     };

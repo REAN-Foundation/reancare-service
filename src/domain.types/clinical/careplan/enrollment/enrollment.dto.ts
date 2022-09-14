@@ -9,4 +9,6 @@ export interface EnrollmentDto {
     StartAt?     : Date;
     EndAt?       : Date;
     IsActive     : boolean;
+    Complication?: string;
+    HasHighRisk? : boolean;
 }

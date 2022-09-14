@@ -29,6 +29,7 @@ import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activi
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
 import { UserTaskDomainModel } from "../../domain.types/user/user.task/user.task.domain.model";
 import { Loader } from "../../startup/loader";
+import { HighRiskCareplanService } from "../../modules/careplan/providers/rean/rean.decision.making.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -110,60 +111,7 @@ export class CareplanService implements IUserActionService {
         enrollmentDetails.ParticipantId = participant.ParticipantId;
         enrollmentDetails.Gender = patient.User.Person.Gender;
 
-        var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);
-        if (!enrollmentId) {
-            throw new ApiError(500, 'Error while enrolling patient to careplan');
-        }
-        enrollmentDetails.EnrollmentId = enrollmentId;
-        
-        var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
-
-        var activities = await this._handler.fetchActivities(
-            enrollmentDetails.PatientUserId, enrollmentDetails.Provider, enrollmentDetails.PlanCode,
-            enrollmentDetails.ParticipantId, enrollmentId, enrollmentDetails.StartDate, enrollmentDetails.EndDate);
-
-        Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
-
-        const activityModels = activities.map(x => {
-
-            var a: CareplanActivityDomainModel = {
-                PatientUserId    : enrollmentDetails.PatientUserId,
-                EnrollmentId     : enrollmentId,
-                ParticipantId    : enrollmentDetails.ParticipantId,
-                Provider         : enrollmentDetails.Provider,
-                PlanName         : enrollmentDetails.PlanName,
-                PlanCode         : enrollmentDetails.PlanCode,
-                Type             : x.Type,
-                Category         : x.Category,
-                ProviderActionId : x.ProviderActionId,
-                Title            : x.Title,
-                Description      : x.Description,
-                Url              : x.Url,
-                Language         : x.Language,
-                ScheduledAt      : x.ScheduledAt,
-                Sequence         : x.Sequence,
-                Frequency        : x.Frequency,
-                Status           : x.Status
-            };
-
-            return a;
-        });
-
-        var careplanActivities = await this._careplanRepo.addActivities(
-            enrollmentDetails.Provider,
-            enrollmentDetails.PlanName,
-            enrollmentDetails.PlanCode,
-            enrollmentDetails.PatientUserId,
-            enrollmentId,
-            activityModels);
-
-        Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
-
-        //task scheduling
-
-        await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
-
-        return dto;
+        return await this.enrollAndCreateTask(enrollmentDetails);
     };
 
     public scheduleDailyCareplanPushTasks = async (): Promise<void> => {
@@ -172,10 +120,14 @@ export class CareplanService implements IUserActionService {
 
         if (activities.length !== 0) {
             activities.forEach(async activity => {
-                const todayDate = new Date().toISOString().split('T')[0];
-                const activityDate = activity.ScheduledAt.toISOString().split('T')[0];
-
-                if (todayDate === activityDate) {
+                const todayDate = new Date().toISOString().split('T')[1];
+                const num = todayDate.split('.')[0];
+                const num1 = num.split(':')[1];
+                const activityDate = activity.ScheduledAt.toISOString().split('T')[1];
+                const num2 = activityDate.split('.')[0];
+                const num3 = num2.split(':')[1];
+   
+                if (num1 === num3) {
                     const message = activity.Description;
                     const patient = await this.getPatient(activity.PatientUserId);
                     const phoneNumber = patient.User.Person.Phone;
@@ -519,6 +471,63 @@ export class CareplanService implements IUserActionService {
         }
     }
 
+    private async enrollAndCreateTask(enrollmentDetails ) {
+
+        var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);
+        if (!enrollmentId) {
+            throw new ApiError(500, 'Error while enrolling patient to careplan');
+        }
+        enrollmentDetails.EnrollmentId = enrollmentId;
+    
+        var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
+    
+        var activities = await this._handler.fetchActivities(
+            enrollmentDetails.PatientUserId, enrollmentDetails.Provider, enrollmentDetails.PlanCode,
+            enrollmentDetails.ParticipantId, enrollmentId, enrollmentDetails.StartDate, enrollmentDetails.EndDate);
+    
+        Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
+    
+        const activityModels = activities.map(x => {
+    
+            var a: CareplanActivityDomainModel = {
+                PatientUserId    : enrollmentDetails.PatientUserId,
+                EnrollmentId     : enrollmentId,
+                ParticipantId    : enrollmentDetails.ParticipantId,
+                Provider         : enrollmentDetails.Provider,
+                PlanName         : enrollmentDetails.PlanName,
+                PlanCode         : enrollmentDetails.PlanCode,
+                Type             : x.Type,
+                Category         : x.Category,
+                ProviderActionId : x.ProviderActionId,
+                Title            : x.Title,
+                Description      : x.Description,
+                Url              : x.Url,
+                Language         : x.Language,
+                ScheduledAt      : x.ScheduledAt,
+                Sequence         : x.Sequence,
+                Frequency        : x.Frequency,
+                Status           : x.Status
+            };
+    
+            return a;
+        });
+    
+        var careplanActivities = await this._careplanRepo.addActivities(
+            enrollmentDetails.Provider,
+            enrollmentDetails.PlanName,
+            enrollmentDetails.PlanCode,
+            enrollmentDetails.PatientUserId,
+            enrollmentId,
+            activityModels);
+    
+        Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
+    
+        //task scheduling
+        await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
+    
+        return dto;
+    }
+
     getWeeklyStatus = async (careplanId: uuid): Promise<any> => {
 
         var enrollment = await this._careplanRepo.getCareplanEnrollment(careplanId);
@@ -573,6 +582,65 @@ export class CareplanService implements IUserActionService {
     Promise<CareplanActivityDto> => {
 
         return await this._careplanRepo.updateActivityUserResponse(activityId, userResponse);
+    };
+
+    public updateRisk = async (updateRisk: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+
+        const filter = {
+            Phone : updateRisk.Phone
+        };
+        const patient = await this._patientRepo.search(filter);
+        if (patient.Items.length === 0) {
+            throw new Error('Patient does not exist!');
+        }
+        updateRisk.PatientUserId = patient.Items[0].UserId;
+
+        return  await this._careplanRepo.updateRisk(updateRisk);
+    };
+
+    public scheduleDailyHighRiskCareplan = async (): Promise<void> => {
+    
+        const enrollments = await this._careplanRepo.getAllCareplanEnrollment();
+        Logger.instance().log(`Number of enrollments retrived ${enrollments.length}.`);
+
+        if (enrollments.length !== 0) {
+            enrollments.forEach(async enrollment => {
+
+                if (enrollment.HasHighRisk) {
+                    const highRiskCareplanService = Loader.container.resolve(HighRiskCareplanService);
+                    const deletedCount = await highRiskCareplanService.deleteFutureCareplanTask(enrollment);
+
+                    if (deletedCount > 0) {
+                        const enrollmentData : EnrollmentDomainModel = {
+                            Provider       : "REAN",
+                            PatientUserId  : enrollment.PatientUserId,
+                            ParticipantId  : enrollment.ParticipantId,
+                            PlanName       : "Maternity-High-Risk",
+                            PlanCode       : "2",
+                            StartDateStr   : new Date(enrollment.StartAt).toString(),
+                            StartDate      : new Date(enrollment.StartAt),
+                            EndDate        : TimeHelper.addDuration(new Date(enrollment.StartAt),240, DurationType.Day),
+                            EnrollmentDate : new Date(),
+                            WeekOffset     : 0,
+                            DayOffset      : 0
+                        };
+            
+                        const enrollmentDto = await this.enrollAndCreateTask(enrollmentData);
+                        Logger.instance().log(`Enrollment for high risk careplan: ${enrollmentDto}`);
+
+                        enrollment.HasHighRisk = false ;
+                        await this._careplanRepo.updateRisk( enrollment);
+                        
+                    } else {
+                        Logger.instance().log(`Not able to switch from normal to high risk careplan`);
+                    }
+                
+                }
+            });
+        } else {
+            Logger.instance().log(`No enrollments fetched from careplan task.`);
+        }
+            
     };
 
     //#endregion

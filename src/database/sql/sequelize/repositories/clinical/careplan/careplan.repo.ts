@@ -17,6 +17,7 @@ import { HealthPriorityDto } from '../../../../../../domain.types/patient/health
 import HealthPriority from '../../../models/patient/health.priority/health.priority.model';
 import { HealthPriorityMapper } from '../../../mappers/patient/health.priority/health.priority.mapper';
 import { Helper } from '../../../../../../common/helper';
+import UserTask from '../../../models/user/user.task.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -82,6 +83,20 @@ export class CareplanRepo implements ICareplanRepo {
                 }
             });
             return EnrollmentMapper.toDto(enrollment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public getAllCareplanEnrollment = async (): Promise<EnrollmentDto[]> => {
+        try {
+            const enrollment = await CareplanEnrollment.findAll({
+                where : {}
+            });
+            return enrollment.map(x => {
+                return EnrollmentMapper.toDto(x);
+            });
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -391,8 +406,7 @@ export class CareplanRepo implements ICareplanRepo {
 
             const foundResults = await CareplanActivity.findAndCountAll({
                 where : {
-                    Provider : "REAN",
-                    PlanName : "Maternity Careplan"
+                    Provider : "REAN"
                 },
                 order : [[orderByColum, order]]
             });
@@ -405,6 +419,63 @@ export class CareplanRepo implements ICareplanRepo {
 
         } catch (error) {
             Logger.instance().log(error.message);
+        }
+    };
+
+    public updateRisk = async (model: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+        try {
+            const updateRisk = await CareplanEnrollment.findOne({
+                where : {
+                    PatientUserId : model.PatientUserId,
+                    Provider      : model.Provider,
+                    PlanCode      : model.PlanCode,
+                },
+            });
+
+            if (model.Complication != null) {
+                updateRisk.Complication = model.Complication;
+            }
+            if (model.HasHighRisk != null) {
+                updateRisk.HasHighRisk = model.HasHighRisk;
+            }
+    
+            await updateRisk.save();
+
+            return EnrollmentMapper.toDto(updateRisk);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public deleteFutureCareplanTask = async (enrollment: EnrollmentDomainModel): Promise<number> => {
+        try {
+            var selector = {
+                where : {
+                    Provider      : enrollment.Provider,
+                    PlanCode      : enrollment.PlanCode,
+                    PatientUserId : enrollment.PatientUserId,
+                    ScheduledAt   : { [Op.gte]: new Date() }
+                }
+            };
+            
+            const ids = (await CareplanActivity.findAll(selector)).map(x => x.id);
+            const deletedCount = await CareplanActivity.destroy(selector);
+            Logger.instance().log(`Deleted ${deletedCount} careplan task.`);
+
+            if (deletedCount > 0) {
+                var deletedTaskCount = await UserTask.destroy({
+                    where : {
+                        ActionId : ids, //ActionType : UserTaskActionType.Medication
+                    }
+                });
+                Logger.instance().log(`Deleted ${deletedTaskCount} careplan associated user tasks.`);
+                
+            }
+            return deletedCount;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
         }
     };
 

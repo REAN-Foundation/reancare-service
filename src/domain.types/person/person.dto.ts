@@ -17,7 +17,7 @@ export interface PersonDetailsDto {
     SelfIdentifiedGender? : string;
     MaritalStatus?        : string;
     BirthDate             : Date;
-    Age                   : string;
+    Age?                  : string;
     ImageResourceId       : string;
     Roles                 : PersonRoleDto[];
     ActiveSince           : Date;

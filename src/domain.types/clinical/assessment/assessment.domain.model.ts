@@ -11,7 +11,7 @@ export interface AssessmentDomainModel {
     AssessmentTemplateId   : uuid;
     ScoringApplicable?     : boolean;
     Provider?              : string;
-    ProviderEnrollmentId?  : string;
+    ProviderEnrollmentId?  : string | number;
     ProviderAssessmentCode?: string;
     ProviderAssessmentId?  : string;
     CurrentNodeId?         : uuid;

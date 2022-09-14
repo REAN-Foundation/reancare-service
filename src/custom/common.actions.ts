@@ -65,12 +65,12 @@ export class CommonActions {
             ActionType         : UserActionType.Careplan,
             ActionId           : assessmentId,
             ScheduledStartTime : new Date(),
-            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 9, DurationType.Day),
+            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 1, DurationType.Day),
             IsRecurrent        : false
         };
 
         const userTask = await this._userTaskService.create(userTaskBody);
-        Logger.instance().log(`Action id for Quality of Life Questionnaire is ${userTask.ActionId}`);
+        Logger.instance().log(`[KCCQTask] Action id for Quality of Life Questionnaire is ${userTask.ActionId}`);
 
         return userTask.ActionId;
     };

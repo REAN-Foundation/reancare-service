@@ -72,6 +72,12 @@ export default class Address extends Model {
     })
     City: string;
 
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true
+    })
+    Location: string;
+
     @Length({ max: 32 })
     @Column({
         type      : DataType.STRING(32),

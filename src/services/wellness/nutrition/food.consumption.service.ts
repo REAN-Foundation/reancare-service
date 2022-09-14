@@ -1,9 +1,14 @@
+import { NutritionQuestionnaireDomainModel }
+    from "../../../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.domain.model";
+import { NutritionQuestionnaireDto }
+    from "../../../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.dto";
 import { inject, injectable } from "tsyringe";
 import { IFoodConsumptionRepo } from "../../../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
 import { FoodConsumptionDomainModel } from '../../../domain.types/wellness/nutrition/food.consumption/food.consumption.domain.model';
 import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from '../../../domain.types/wellness/nutrition/food.consumption/food.consumption.dto';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FoodConsumptionSearchResults, FoodConsumptionSearchFilters } from '../../../domain.types/wellness/nutrition/food.consumption/food.consumption.search.types';
+import { FoodConsumptionSearchResults,
+    FoodConsumptionSearchFilters
+} from '../../../domain.types/wellness/nutrition/food.consumption/food.consumption.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +22,15 @@ export class FoodConsumptionService {
     create = async (foodConsumptionDomainModel: FoodConsumptionDomainModel):
         Promise<FoodConsumptionDto> => {
         return await this._foodConsumptionRepo.create(foodConsumptionDomainModel);
+    };
+
+    createNutritionQuestionnaire = async (nutritionQuestionnaireDomainModel: NutritionQuestionnaireDomainModel):
+        Promise<NutritionQuestionnaireDto> => {
+        return await this._foodConsumptionRepo.createNutritionQuestionnaire(nutritionQuestionnaireDomainModel);
+    };
+
+    getNutritionQuestionnaire = async (): Promise<NutritionQuestionnaireDto[]> => {
+        return await this._foodConsumptionRepo.getNutritionQuestionnaire();
     };
 
     getById = async (id: string): Promise<FoodConsumptionDto> => {

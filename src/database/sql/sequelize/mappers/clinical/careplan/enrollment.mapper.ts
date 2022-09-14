@@ -17,7 +17,7 @@ export class EnrollmentMapper {
             EnrollmentId  : enrollment.EnrollmentId,
             ParticipantId : enrollment.ParticipantId,
             PlanCode      : enrollment.PlanCode,
-            Provider      : "AHA",
+            Provider      : enrollment.Provider,
             PlanName      : enrollment.PlanName,
             StartAt       : enrollment.StartDate,
             EndAt         : enrollment.EndDate,

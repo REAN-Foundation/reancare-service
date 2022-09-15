@@ -43,4 +43,8 @@ export class CourseEnrollmentService {
         return await this._courseEnrollmentRepo.getContentProgress(contentId);
     };
 
+    getUserEnrollments = async (userId: uuid): Promise<any[]> => {
+        return await this._courseEnrollmentRepo.getUserEnrollments(userId);
+    };
+
 }

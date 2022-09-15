@@ -32,7 +32,7 @@ export class CourseEnrollmentController extends BaseController {
 
     enroll = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('CourseEnrollment.Enroll', request, response);
 
             const model = await this._validator.enroll(request);
@@ -51,7 +51,7 @@ export class CourseEnrollmentController extends BaseController {
 
     startCourseModule = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('CourseEnrollment.StartCourseModule', request, response);
 
             const model = await this._validator.startCourseModule(request);
@@ -71,7 +71,7 @@ export class CourseEnrollmentController extends BaseController {
 
     startCourseContent = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('CourseEnrollment.StartCourseContent', request, response);
 
             const model = await this._validator.startCourseContent(request);

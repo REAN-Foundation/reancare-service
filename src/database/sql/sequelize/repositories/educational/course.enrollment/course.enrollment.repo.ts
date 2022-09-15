@@ -138,7 +138,7 @@ export class CourseEnrollmentRepo implements ICourseEnrollmentRepo {
                     courseModuleDto['Contents'] = [];
                     for await (var courseModuleContent of courseModuleContents) {
                         var courseContentDto = CourseContentMapper.toDto(courseModuleContent);
-                        courseModuleDto['Contents'].push(courseContentDto)
+                        courseModuleDto['Contents'].push(courseContentDto);
                     }
                     enrollmentDto['Course']['Modules'].push(courseModuleDto);
                 }

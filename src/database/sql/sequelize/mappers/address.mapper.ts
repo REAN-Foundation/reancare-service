@@ -19,6 +19,7 @@ export class AddressMapper {
             City        : address.City,
             District    : address.District,
             State       : address.State,
+            Location    : address.Location,
             Country     : address.Country,
             PostalCode  : address.PostalCode,
             Longitude   : longitude ? parseFloat(longitude) : null,

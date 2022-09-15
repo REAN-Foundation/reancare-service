@@ -95,10 +95,20 @@ export class UserController {
 
             const user: UserDetailsDto = userDetails.user;
             const accessToken = userDetails.accessToken;
+
+            const isProfileComplete = user.Person.FirstName &&
+            user.Person.LastName &&
+            user.Person.Gender &&
+            user.Person.BirthDate ? true : false;
+
             const message = `User '${user.Person.DisplayName}' logged in successfully!`;
             const data = {
-                AccessToken : accessToken,
-                User        : user,
+                AccessToken       : accessToken,
+                User              : user,
+                RoleId            : user.RoleId,
+                IsProfileComplete : isProfileComplete,
+                SessionId         : userDetails.sessionId,
+                SessionValidTill  : userDetails.sessionValidTill
             };
 
             ResponseHandler.success(request, response, message, 200, data, true);
@@ -144,7 +154,9 @@ export class UserController {
                 AccessToken       : accessToken,
                 User              : user,
                 RoleId            : user.RoleId,
-                IsProfileComplete : isProfileComplete
+                IsProfileComplete : isProfileComplete,
+                SessionId         : userDetails.sessionId,
+                SessionValidTill  : userDetails.sessionValidTill
             };
 
             const message = `User '${user.Person.DisplayName}' logged in successfully!`;

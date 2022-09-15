@@ -145,6 +145,25 @@ export class CourseEnrollmentController extends BaseController {
         }
     };
 
+    getUserEnrollments = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('CourseEnrollment.GetUserEnrollments', request, response);
+
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const userEnrollments = await this._service.getUserEnrollments(userId);
+            if (userEnrollments == null) {
+                throw new ApiError(404, 'User enrollments not found.');
+            }
+
+            ResponseHandler.success(request, response, 'User enrollments retrieved successfully!', 200, {
+                UserEnrollments : userEnrollments,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

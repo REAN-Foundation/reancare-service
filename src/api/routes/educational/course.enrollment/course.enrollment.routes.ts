@@ -16,6 +16,7 @@ export const register = (app: express.Application): void => {
     router.get('/:enrollmentId/progress', authenticator.authenticateClient, authenticator.authenticateUser, controller.getCourseProgress);
     router.get('/:enrollmentId/modules/:moduleId/progress', authenticator.authenticateClient, authenticator.authenticateUser, controller.getModuleProgress);
     router.get('/:enrollmentId/modules/:moduleId/content/:contentId/progress', authenticator.authenticateClient, authenticator.authenticateUser, controller.getContentProgress);
+    router.get('/:userId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getUserEnrollments);
 
     app.use('/api/v1/educational/course-enrollments', router);
 

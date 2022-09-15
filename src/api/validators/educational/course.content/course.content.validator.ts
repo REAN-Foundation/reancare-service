@@ -35,7 +35,8 @@ export class CourseContentValidator extends BaseValidator {
         await this.validateUuid(request, 'moduleId ', Where.Query, false, false);
         await this.validateDecimal(request, 'durationForm', Where.Query, false, false);
         await this.validateDecimal(request, 'durationTo', Where.Query, false, false);
-
+        await this.validateUuid(request, 'courseId', Where.Query, false, false);
+        await this.validateUuid(request, 'moduleId', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
 
         this.validateRequest(request);
@@ -82,6 +83,7 @@ export class CourseContentValidator extends BaseValidator {
             ModuleId     : request.query.moduleId ?? null,
             DurationFrom : request.query.DurationFrom ?? null,
             DurationTo   : request.query.DurationTo ?? null,
+            CourseId     : request.query.courseId ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);

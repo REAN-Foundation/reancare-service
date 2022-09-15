@@ -6,6 +6,9 @@ import { BodyTemperatureService } from '../../../../services/clinical/biometrics
 import { Loader } from '../../../../startup/loader';
 import { BodyTemperatureValidator } from '../../../validators/clinical/biometrics/body.temperature.validator';
 import { BaseController } from '../../base.controller';
+import { BodyTemperatureDomainModel } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
+import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +40,7 @@ export class BodyTemperatureController extends BaseController {
             if (bodyTemperature == null) {
                 throw new ApiError(400, 'Cannot create record for body temperature!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Body temperature record created successfully!', 201, {
                 BodyTemperature : bodyTemperature,
             });
@@ -48,7 +51,7 @@ export class BodyTemperatureController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BodyTemperature.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -67,7 +70,7 @@ export class BodyTemperatureController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BodyTemperature.Search', request, response);
 
             const filters = await this._validator.search(request);
@@ -77,7 +80,7 @@ export class BodyTemperatureController extends BaseController {
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} body temperature records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
                 BodyTemperatureRecords : searchResults });
 
@@ -88,21 +91,21 @@ export class BodyTemperatureController extends BaseController {
 
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BodyTemperature.Update', request, response);
 
-            const domainModel = await this._validator.update(request);
+            const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Body temperature record not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update body temperature record!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Body temperature record updated successfully!', 200, {
                 BodyTemperature : updated,
             });
@@ -113,7 +116,7 @@ export class BodyTemperatureController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BodyTemperature.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -134,6 +137,17 @@ export class BodyTemperatureController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addEHRRecord = (patientUserId: uuid, model: BodyTemperatureDomainModel) => {
+        if (model.BodyTemperature) {
+            EHRMasterRecordsHandler.addFloatRecord(
+                patientUserId, EHRRecordTypes.BodyTemperature, model.BodyTemperature, model.Unit);
+        }
+    }
 
     //#endregion
 

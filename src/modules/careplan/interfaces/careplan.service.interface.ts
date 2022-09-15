@@ -24,13 +24,14 @@ export interface ICareplanService {
     fetchActivities(
         careplanCode: string,
         enrollmentId: string,
-        fromDate: Date,
-        toDate: Date): Promise<CareplanActivity[]>;
+        participantId?: string,
+        fromDate?: Date,
+        toDate?: Date): Promise<CareplanActivity[]>;
     
     getActivity(
             patientUserId: uuid,
             careplanCode: string,
-            enrollmentId: string,
+            enrollmentId: string | number,
             activityId: string,
             scheduledAt?:string
         ): Promise<CareplanActivity>;
@@ -38,7 +39,7 @@ export interface ICareplanService {
     completeActivity(
             patientUserId: uuid,
             careplanCode: string,
-            enrollmentId: string,
+            enrollmentId: string | number,
             activityId: string,
             updates: any
         ): Promise<CareplanActivity>;

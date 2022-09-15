@@ -1,0 +1,74 @@
+[
+    {
+        "Question": "Were most of your food choices healthy today?",
+        "QuestionType": "Boolean",
+        "AssociatedFoodTypes": ["GenericNutrition"],
+        "Tags": [],
+        "ServingUnit": "",
+        "QuestionInfo": "",
+        "Image": ""
+    },
+    {
+        "Question": "How many servings of vegetables did you eat today?",
+        "QuestionType": "Text",
+        "AssociatedFoodTypes": ["Vegetables"],
+        "Tags": ["Vegetables"],
+        "ServingUnit": "1 serving is 1/2 cup",
+        "QuestionInfo": "1 serving = 1/2 cup",
+        "Image": ""
+    },
+    {
+        "Question": "How many servings of fruit did you eat today",
+        "QuestionType": "Text",
+        "AssociatedFoodTypes": ["Fruits"],
+        "Tags": ["Fruits"],
+        "ServingUnit": "1 serving = 1/2 cup",
+        "QuestionInfo": "1 serving = 1/2 cup",
+        "Image": ""
+    },
+    {
+        "Question": "How many servings of whole grains do you consume per day?",
+        "QuestionType": "Text",
+        "AssociatedFoodTypes": ["Grains"],
+        "Tags": ["Bread", "Pasta"],
+        "ServingUnit": "1 serving = 1 slice whole-grain bread or 3/4 cup whole-grain pasta or cereal",
+        "QuestionInfo": "1 serving = 1 slice whole-grain bread or 3/4 cup whole-grain pasta or cereal",
+        "Image": ""
+    },
+    {
+        "Question": "How many servings of fish or shellfish/seafood did you eat today?",
+        "QuestionType": "Text",
+        "AssociatedFoodTypes": ["Sea food"],
+        "Tags": ["Sea food"],
+        "ServingUnit": "1 serving = 3 oz cooked, not fried",
+        "QuestionInfo": "1 serving = 3 oz cooked, not fried",
+        "Image": ""
+    },
+    {
+        "Question": "Did you select healthy sources of protein today?",
+        "QuestionType": "Boolean",
+        "AssociatedFoodTypes": ["Protein"],
+        "Tags": ["Protein"],
+        "ServingUnit": "",
+        "QuestionInfo": "Legumes and nuts; fish and seafood; low-fat or nonfat dairy; unprocessed and lean poultry or meat",
+        "Image": ""
+    },
+    {
+        "Question": "Did you choose or prepare foods with little or no salt today?",
+        "QuestionType": "Boolean",
+        "AssociatedFoodTypes": ["Salt"],
+        "Tags": ["salt"],
+        "ServingUnit": "",
+        "QuestionInfo": "",
+        "Image": ""
+    },
+    {
+        "Question": "How many servings of sugary drinks did you drink today",
+        "QuestionType": "Text",
+        "AssociatedFoodTypes": ["Sugary drinks"],
+        "Tags": ["Sugary drinks"],
+        "ServingUnit": "1 serving = 12 oz; includes sports drinks, lemonade, fruit drinks with added sugar, energy drinks and soda, drinks with added suga",
+        "QuestionInfo": "1 serving = 12 oz; includes sports drinks, lemonade, fruit drinks with added sugar, energy drinks and soda, drinks with added suga",
+        "Image": ""
+    }
+]

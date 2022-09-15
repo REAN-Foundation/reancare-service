@@ -6,6 +6,9 @@ import { BloodOxygenSaturationService } from '../../../../services/clinical/biom
 import { Loader } from '../../../../startup/loader';
 import { BloodOxygenSaturationValidator } from '../../../validators/clinical/biometrics/blood.oxygen.saturation.validator';
 import { BaseController } from '../../base.controller';
+import { BloodOxygenSaturationDomainModel } from '../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
+import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
+import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +39,7 @@ export class BloodOxygenSaturationController extends BaseController {
             if (bloodOxygenSaturation == null) {
                 throw new ApiError(400, 'Cannot create record for blood oxygen saturation!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Blood oxygen saturation record created successfully!', 201, {
                 BloodOxygenSaturation : bloodOxygenSaturation,
             });
@@ -47,7 +50,7 @@ export class BloodOxygenSaturationController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodOxygenSaturation.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -66,19 +69,19 @@ export class BloodOxygenSaturationController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodOxygenSaturation.Search', request, response);
 
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
             const count = searchResults.Items.length;
-            
+
             const message =
                 count === 0
                     ? 'No records found!'
                     : `Total ${count} blood oxygen saturation records retrieved successfully!`;
-                    
+
             ResponseHandler.success(request, response, message, 200, {
                 BloodOxygenSaturationRecords : searchResults });
 
@@ -92,7 +95,7 @@ export class BloodOxygenSaturationController extends BaseController {
 
             await this.setContext('Biometrics.BloodOxygenSaturation.Update', request, response);
 
-            const domainModel = await this._validator.update(request);
+            const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
 
@@ -100,11 +103,11 @@ export class BloodOxygenSaturationController extends BaseController {
                 throw new ApiError(404, 'Blood oxygen saturation record not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood oxygen saturation record!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, 'Blood oxygen saturation record updated successfully!', 200, {
                 BloodOxygenSaturation : updated,
             });
@@ -115,7 +118,7 @@ export class BloodOxygenSaturationController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('Biometrics.BloodOxygenSaturation.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -136,6 +139,17 @@ export class BloodOxygenSaturationController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addEHRRecord = (patientUserId: uuid, model: BloodOxygenSaturationDomainModel) => {
+        if (model.BloodOxygenSaturation) {
+            EHRMasterRecordsHandler.addFloatRecord(
+                patientUserId, EHRRecordTypes.BloodOxygenSaturation, model.BloodOxygenSaturation, model.Unit);
+        }
+    }
 
     //#endregion
 

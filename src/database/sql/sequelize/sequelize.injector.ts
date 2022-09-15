@@ -66,6 +66,13 @@ import { FoodComponentMonitoringRepo } from './repositories/wellness/food.compon
 import { UserLoginSessionRepo } from './repositories/user/user.login.session.repo';
 import { BloodCholesterolRepo } from './repositories/clinical/biometrics/blood.cholesterol.repo';
 import { StandRepo } from './repositories/wellness/daily.records/stand.repo';
+import { NoticeRepo } from './repositories/general/notice.repo';
+import { CourseRepo } from './repositories/educational/course/course.repo';
+import { CourseModuleRepo } from './repositories/educational/course.module/course.module.repo';
+import { CourseContentRepo } from './repositories/educational/course.content/course.content.repo';
+import { CourseEnrollmentRepo } from './repositories/educational/course.enrollment/course.enrollment.repo';
+import { LabRecordRepo } from './repositories/clinical/lab.record/lab.record.repo';
+import { DonorRepo } from './repositories/donor.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -141,6 +148,13 @@ export class SequelizeInjector {
         container.register('IUserLoginSessionRepo', UserLoginSessionRepo);
         container.register('IBloodCholesterolRepo', BloodCholesterolRepo);
         container.register('IStandRepo', StandRepo);
+        container.register('INoticeRepo', NoticeRepo);
+        container.register('ICourseRepo', CourseRepo);
+        container.register('ICourseModuleRepo', CourseModuleRepo);
+        container.register('ICourseContentRepo', CourseContentRepo);
+        container.register('ICourseEnrollmentRepo', CourseEnrollmentRepo);
+        container.register('ILabRecordRepo', LabRecordRepo);
+        container.register('IDonorRepo', DonorRepo);
         
     }
 

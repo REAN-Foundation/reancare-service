@@ -8,6 +8,8 @@ import { HealthProfileService } from '../../../services/patient/health.profile.s
 import { Loader } from '../../../startup/loader';
 import { HealthProfileValidator } from '../../validators/patient/health.profile.validator';
 import { BaseController } from '../base.controller';
+import { EHRMasterRecordsHandler } from '../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRRecordTypes } from '../../../custom/ehr.insights.records/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -67,6 +69,8 @@ export class HealthProfileController extends BaseController{
                 throw new ApiError(400, 'Unable to update Patient health profile record!');
             }
 
+            this.addEHRRecord(patientUserId, domainModel);
+
             ResponseHandler.success(request, response, 'Patient health profile record updated successfully!', 200, {
                 HealthProfile : updated,
             });
@@ -75,6 +79,28 @@ export class HealthProfileController extends BaseController{
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addEHRRecord = (patientUserId: uuid, model: HealthProfileDomainModel) => {
+        if (model.Race) {
+            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.Race, model.Race);
+        }
+        if (model.Ethnicity) {
+            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.Ethnicity, model.Ethnicity);
+        }
+        if (model.BloodGroup) {
+            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.BloodGroup, model.BloodGroup);
+        }
+        if (model.IsDiabetic) {
+            EHRMasterRecordsHandler.addBooleanRecord(patientUserId, EHRRecordTypes.Diabetic, model.IsDiabetic);
+        }
+        if (model.IsSmoker) {
+            EHRMasterRecordsHandler.addBooleanRecord(patientUserId, EHRRecordTypes.Smoker, model.IsSmoker);
+        }
+    }
 
     //#endregion
 

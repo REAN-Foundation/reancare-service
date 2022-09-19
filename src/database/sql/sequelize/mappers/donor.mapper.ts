@@ -23,6 +23,7 @@ export class DonorMapper {
             DisplayId         : donor.DisplayId,
             EhrId             : donor.EhrId,
             BloodGroup        : donor.BloodGroup,
+            AcceptorUserId    : donor.AcceptorUserId,
             IsAvailable       : donor.IsAvailable,
             MedIssues         : medIssues,
             HasDonatedEarlier : donor.HasDonatedEarlier,

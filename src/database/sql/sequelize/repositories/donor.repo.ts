@@ -25,6 +25,7 @@ export class DonorRepo implements IDonorRepo {
                 DisplayId         : donorDomainModel.DisplayId,
                 EhrId             : donorDomainModel.EhrId,
                 BloodGroup        : donorDomainModel.BloodGroup,
+                AcceptorUserId    : donorDomainModel.AcceptorUserId,
                 IsAvailable       : donorDomainModel.IsAvailable,
                 HasDonatedEarlier : donorDomainModel.HasDonatedEarlier,
                 MedIssues         : medIssues
@@ -62,6 +63,9 @@ export class DonorRepo implements IDonorRepo {
             }
             if (model.BloodGroup != null) {
                 donor.BloodGroup = model.BloodGroup;
+            }
+            if (model.AcceptorUserId != null) {
+                donor.AcceptorUserId = model.AcceptorUserId;
             }
             if (model.IsAvailable != null) {
                 donor.IsAvailable = model.IsAvailable;

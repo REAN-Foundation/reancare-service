@@ -9,6 +9,7 @@ export interface DonorDomainModel {
     PersonId?         : string;
     DisplayId?        : string,
     EhrId?            : string;
+    AcceptorUserId?   : string;
     User?             : UserDomainModel;
     BloodGroup?       : string,
     MedIssues?        : string[];

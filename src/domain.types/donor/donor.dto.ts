@@ -12,6 +12,7 @@ export interface DonorDetailsDto {
     EhrId?             : string;
     User               : UserDto;
     BloodGroup?        : string,
+    AcceptorUserId?    : string,
     MedIssues?         : string[];
     IsAvailable?       : boolean;
     HasDonatedEarlier? : boolean;

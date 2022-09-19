@@ -36,6 +36,7 @@ export class DonorValidator {
             },
             MedIssues         : request.body.MedIssues ?? null,
             BloodGroup        : request.body.BloodGroup ?? null,
+            AcceptorUserId    : request.body.AcceptorUserId ?? null,
             IsAvailable       : request.body.IsAvailable ?? false,
             HasDonatedEarlier : request.body.HasDonatedEarlier ?? false,
             AddressId         : request.body.AddressId,
@@ -117,6 +118,11 @@ export class DonorValidator {
             .run(request);
 
         await body('BloodGroup').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('AcceptorUserId').optional()
             .trim()
             .escape()
             .run(request);

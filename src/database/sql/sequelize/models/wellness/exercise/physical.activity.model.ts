@@ -66,14 +66,14 @@ export default class PhysicalActivity extends Model {
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
-        allowNull : false,
+        allowNull : true,
     })
     Exercise: string;
 
     @Length({ max: 1024 })
     @Column({
         type      : DataType.STRING(1024),
-        allowNull : false,
+        allowNull : true,
     })
     Description: string;
 
@@ -89,7 +89,7 @@ export default class PhysicalActivity extends Model {
     @IsDecimal
     @Column({
         type         : DataType.FLOAT,
-        allowNull    : false,
+        allowNull    : true,
         defaultValue : 0
     })
     CaloriesBurned: number;
@@ -97,7 +97,7 @@ export default class PhysicalActivity extends Model {
     @Length({ max: 128 })
     @Column({
         type         : DataType.STRING(128),
-        allowNull    : false,
+        allowNull    : true,
         values       : IntensityList,
         defaultValue : Intensity.Low
     })
@@ -114,7 +114,7 @@ export default class PhysicalActivity extends Model {
     @IsDate
     @Column({
         type      : DataType.DATE,
-        allowNull : false,
+        allowNull : true,
     })
     StartTime: Date;
 
@@ -128,9 +128,22 @@ export default class PhysicalActivity extends Model {
     @IsInt
     @Column({
         type      : DataType.INTEGER,
-        allowNull : false,
+        allowNull : true,
     })
     DurationInMin: number;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    PhysicalActivityQuestion: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : true,
+        defaultValue : false,
+    })
+    PhysicalActivityQuestionAns: boolean;
 
     @Column
     @CreatedAt

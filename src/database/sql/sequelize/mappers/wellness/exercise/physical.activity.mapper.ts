@@ -12,16 +12,18 @@ export class PhysicalActivityMapper {
         }
 
         const dto: PhysicalActivityDto = {
-            id             : physicalActivity.id,
-            PatientUserId  : physicalActivity.PatientUserId,
-            Exercise       : physicalActivity.Exercise,
-            Description    : physicalActivity.Description,
-            Category       : physicalActivity.Category as PhysicalActivityCategories,
-            Intensity      : physicalActivity.Intensity as Intensity,
-            CaloriesBurned : physicalActivity.CaloriesBurned,
-            StartTime      : physicalActivity.StartTime,
-            EndTime        : physicalActivity.EndTime,
-            DurationInMin  : physicalActivity.DurationInMin,
+            id                          : physicalActivity.id,
+            PatientUserId               : physicalActivity.PatientUserId,
+            Exercise                    : physicalActivity.Exercise,
+            Description                 : physicalActivity.Description,
+            Category                    : physicalActivity.Category as PhysicalActivityCategories,
+            Intensity                   : physicalActivity.Intensity as Intensity,
+            CaloriesBurned              : physicalActivity.CaloriesBurned,
+            StartTime                   : physicalActivity.StartTime,
+            EndTime                     : physicalActivity.EndTime,
+            DurationInMin               : physicalActivity.DurationInMin,
+            PhysicalActivityQuestion    : physicalActivity.PhysicalActivityQuestion,
+            PhysicalActivityQuestionAns : physicalActivity.PhysicalActivityQuestionAns,
         };
         return dto;
     };

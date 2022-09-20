@@ -45,10 +45,10 @@ export class PhysicalActivityController extends BaseController {
 
             const physicalActivity = await this._service.create(domainModel);
             if (physicalActivity == null) {
-                throw new ApiError(400, 'Cannot create physical activity!');
+                throw new ApiError(400, 'Cannot create physical activity record!');
             }
 
-            ResponseHandler.success(request, response, 'physical activity created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Physical activity record created successfully!', 201, {
                 PhysicalActivity : physicalActivity,
             });
         } catch (error) {
@@ -64,10 +64,10 @@ export class PhysicalActivityController extends BaseController {
 
             const physicalActivity = await this._service.getById(id);
             if (physicalActivity == null) {
-                throw new ApiError(404, 'Physical activity not found.');
+                throw new ApiError(404, 'Physical activity record not found.');
             }
 
-            ResponseHandler.success(request, response, 'Physical activity retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Physical activity record retrieved successfully!', 200, {
                 PhysicalActivity : physicalActivity,
             });
         } catch (error) {
@@ -105,7 +105,7 @@ export class PhysicalActivityController extends BaseController {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const physicalActivity = await this._service.getById(id);
             if (physicalActivity == null) {
-                throw new ApiError(404, 'Physical activity not found.');
+                throw new ApiError(404, 'Physical activity record not found.');
             }
 
             const updated = await this._service.update(domainModel.id, domainModel);
@@ -113,7 +113,7 @@ export class PhysicalActivityController extends BaseController {
                 throw new ApiError(400, 'Unable to update physical activity record!');
             }
 
-            ResponseHandler.success(request, response, 'physical activity record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Physical activity record updated successfully!', 200, {
                 PhysicalActivity : updated,
             });
         } catch (error) {
@@ -128,12 +128,12 @@ export class PhysicalActivityController extends BaseController {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const physicalActivity = await this._service.getById(id);
             if (physicalActivity == null) {
-                throw new ApiError(404, 'Physical activity not found.');
+                throw new ApiError(404, 'Physical activity record not found.');
             }
 
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'Physical activity cannot be deleted.');
+                throw new ApiError(400, 'Physical activity record cannot be deleted.');
             }
 
             ResponseHandler.success(request, response, 'Physical activity record deleted successfully!', 200, {

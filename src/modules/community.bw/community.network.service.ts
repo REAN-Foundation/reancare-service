@@ -1,0 +1,274 @@
+import { inject, injectable } from "tsyringe";
+import { ICareplanRepo } from "../../database/repository.interfaces/clinical/careplan.repo.interface";
+import { IPatientRepo } from "../../database/repository.interfaces/patient/patient.repo.interface";
+import { IPersonRepo } from "../../database/repository.interfaces/person.repo.interface";
+import { IUserRepo } from "../../database/repository.interfaces/user/user.repo.interface";
+import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
+import { EnrollmentDomainModel } from '../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
+import { EnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/enrollment.dto';
+import { CareplanActivityDomainModel } from "../../domain.types/clinical/careplan/activity/careplan.activity.domain.model";
+import { UserActionType } from "../../domain.types/user/user.task/user.task.types";
+import { TimeHelper } from "../../common/time.helper";
+import { DurationType } from "../../domain.types/miscellaneous/time.types";
+import { Logger } from "../../common/logger";
+import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
+import { UserTaskDomainModel } from "../../domain.types/user/user.task/user.task.domain.model";
+import { PatientNetworkService } from "./patient.management/patient.network.service";
+import { uuid } from "../../domain.types/miscellaneous/system.types";
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@injectable()
+export class CommunityNetworkService {
+
+    _patientNetworkService: PatientNetworkService = new PatientNetworkService();
+
+    constructor(
+        @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
+        @inject('IPatientRepo') private _patientRepo: IPatientRepo,
+        @inject('IUserRepo') private _userRepo: IUserRepo,
+        @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
+        @inject('IPersonRepo') private _personRepo: IPersonRepo,
+    ) {}
+
+    public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+
+        var patient = await this.getPatient(enrollmentDetails.PatientUserId);
+        if (!patient) {
+            throw new Error('Patient does not exist!');
+        }
+
+        const provider = enrollmentDetails.Provider;
+        const planCode = enrollmentDetails.PlanCode;
+
+        const planDetails = this._patientNetworkService.getPlanDetails(provider, planCode);
+        if (!planDetails) {
+            throw new Error(`Specified care plan '${provider}-${planCode}' is not available.`);
+        }
+        const planName = planDetails.DisplayName;
+        enrollmentDetails.PlanName = planName;
+        var participantId = `${provider}${patient.User.Person.Phone}`;
+
+        //Check if the participant is already registered with the care plan provider
+        var participant = await this._careplanRepo.getPatientRegistrationDetails(
+            patient.UserId, provider);
+
+        if (!participant) {
+
+            if (!patient.User.Person.Gender || !patient.User.Person.BirthDate) {
+                throw new Error('Gender and date of birth need to be specified before enrollment to care plan.');
+            }
+
+            //Since not registered with provider, register
+
+            participant = await this._careplanRepo.addPatientWithProvider(
+                enrollmentDetails.PatientUserId, provider, participantId);
+
+            if (!participant) {
+                throw new Error('Error while adding care plan participant details to database.');
+            }
+        }
+
+        enrollmentDetails.ParticipantId = participant.ParticipantId;
+        enrollmentDetails.Gender = patient.User.Person.Gender;
+        enrollmentDetails.EnrollmentId = participant.ParticipantId;
+        
+        var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
+
+        var activities = await this._patientNetworkService.fetchActivities(
+            enrollmentDetails.PlanCode, enrollmentDetails.ParticipantId, enrollmentDetails.EnrollmentId,
+            enrollmentDetails.StartDate, enrollmentDetails.EndDate);
+
+        Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
+
+        const activityModels = activities.map(x => {
+
+            var a: CareplanActivityDomainModel = {
+                PatientUserId    : enrollmentDetails.PatientUserId,
+                EnrollmentId     : enrollmentDetails.EnrollmentId,
+                ParticipantId    : enrollmentDetails.ParticipantId,
+                Provider         : enrollmentDetails.Provider,
+                PlanName         : enrollmentDetails.PlanName,
+                PlanCode         : enrollmentDetails.PlanCode,
+                Type             : x.Type ?? "message",
+                Category         : x.Category,
+                ProviderActionId : x.ProviderActionId,
+                Title            : x.Title,
+                Description      : x.Description,
+                Url              : x.Url,
+                Language         : x.Language,
+                ScheduledAt      : x.ScheduledAt,
+                Sequence         : x.Sequence,
+                Frequency        : x.Frequency,
+                Status           : x.Status
+            };
+
+            return a;
+        });
+
+        var careplanActivities = await this._careplanRepo.addActivities(
+            enrollmentDetails.Provider,
+            enrollmentDetails.PlanName,
+            enrollmentDetails.PlanCode,
+            enrollmentDetails.PatientUserId,
+            enrollmentDetails.EnrollmentId,
+            activityModels);
+
+        Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
+
+        //task scheduling
+
+        await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
+
+        return dto;
+    };
+    
+    public fetchTasks = async (careplanId: uuid): Promise<boolean> => {
+
+        var enrollment = await this._careplanRepo.getCareplanEnrollment(careplanId);
+
+        const enrollmentId = enrollment.EnrollmentId.toString();
+        const participantId = enrollment.ParticipantId.toString();
+
+        var activities = await this._patientNetworkService.fetchActivities(
+            enrollment.PlanCode, participantId, enrollmentId, enrollment.StartAt, enrollment.EndAt);
+
+        Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
+
+        var careplanActivities: CareplanActivityDto[] = [];
+
+        for await (var x of activities) {
+
+            var existing: boolean = await this._careplanRepo.activityExists(
+                x.Provider, x.EnrollmentId, x.ProviderActionId, x.Sequence, x.ScheduledAt);
+            
+            if (existing) {
+                continue;
+            }
+
+            var activityModel: CareplanActivityDomainModel = {
+                PatientUserId    : enrollment.PatientUserId,
+                EnrollmentId     : enrollmentId,
+                ParticipantId    : enrollment.ParticipantId.toString(),
+                Provider         : enrollment.Provider,
+                PlanName         : enrollment.PlanName,
+                PlanCode         : enrollment.PlanCode,
+                Type             : x.Type,
+                Category         : x.Category,
+                ProviderActionId : x.ProviderActionId,
+                Title            : x.Title,
+                Description      : x.Description,
+                Url              : x.Url,
+                Language         : x.Language,
+                ScheduledAt      : x.ScheduledAt,
+                Sequence         : x.Sequence,
+                Frequency        : x.Frequency,
+                Status           : x.Status
+            };
+
+            var careplanActivity = await this._careplanRepo.addActivity(
+                enrollment.Provider,
+                enrollment.PlanName,
+                enrollment.PlanCode,
+                enrollment.PatientUserId,
+                enrollmentId,
+                activityModel);
+    
+            careplanActivities.push(careplanActivity);
+
+        }
+
+        await this.createScheduledUserTasks(enrollment.PatientUserId, careplanActivities);
+    
+        return true;
+    };
+
+    public getActivity = async (activityId: uuid): Promise<CareplanActivityDto> => {
+        return await this._careplanRepo.getActivity(activityId);
+    };
+
+
+    //#region Privates
+
+    private async getPatient(patientUserId: uuid) {
+
+        var patientDto = await this._patientRepo.getByUserId(patientUserId);
+
+        var user = await this._userRepo.getById(patientDto.UserId);
+        if (user.Person == null) {
+            user.Person = await this._personRepo.getById(user.PersonId);
+        }
+        patientDto.User = user;
+        return patientDto;
+    }
+
+    private async createScheduledUserTasks(patientUserId, careplanActivities) {
+
+        // create user tasks based on activities
+
+        var userDto = await this._userRepo.getById(patientUserId);
+        var timezoneOffset = '+05:30';
+        if (userDto.DefaultTimeZone !== null) {
+            timezoneOffset = userDto.DefaultTimeZone;
+        }
+
+        var activitiesGroupedByDate = {};
+        for (const activity of careplanActivities) {
+
+            var scheduledDate = TimeHelper.timestamp(activity.ScheduledAt);
+            if (!activitiesGroupedByDate[scheduledDate]) {
+                activitiesGroupedByDate[scheduledDate] = [];
+            }
+
+            activitiesGroupedByDate[scheduledDate].push(activity);
+        }
+
+        for (const scheduledDateKey in activitiesGroupedByDate) {
+
+            var activities = activitiesGroupedByDate[scheduledDateKey];
+
+            Logger.instance().log(`Creating user tasks for: ${scheduledDateKey}, total tasks: ${activities.length}`);
+
+            activities.sort((a, b) => {
+                return a.Sequence - b.Sequence;
+            });
+
+            activities.forEach( async (activity) => {
+                var dayStartStr = activity.ScheduledAt.toISOString();
+                var dayStart = TimeHelper.getDateWithTimezone(dayStartStr, timezoneOffset);
+                dayStart = TimeHelper.addDuration(dayStart, 7, DurationType.Hour); // Start at 7:00 AM
+                var scheduleDelay = (activity.Sequence - 1) * 1;
+                var startTime = TimeHelper.addDuration(dayStart, scheduleDelay, DurationType.Second);   // Scheduled at every 1 sec
+                var endTime = TimeHelper.addDuration(dayStart, 16, DurationType.Hour);       // End at 11:00 PM
+
+                var userTaskModel: UserTaskDomainModel = {
+                    UserId             : activity.PatientUserId,
+                    DisplayId          : activity.PlanName + '-' + activity.ProviderActionId,
+                    Task               : activity.Title,
+                    Category           : activity.Category,
+                    Description        : activity.Description,
+                    ActionType         : UserActionType.Careplan,
+                    ActionId           : activity.id,
+                    ScheduledStartTime : startTime,
+                    ScheduledEndTime   : endTime
+                };
+
+                var userTask = await this._userTaskRepo.create(userTaskModel);
+
+                await this._careplanRepo.setUserTaskToActivity(activity.id, userTask.id);
+
+                Logger.instance().log(`User task dto: ${JSON.stringify(userTask)}`);
+                Logger.instance().log(`New user task created for Blood Warrior with id: ${userTask.id}`);
+            });
+        }
+    }
+
+    public updateActivityUserResponse = async (activityId: uuid, userResponse: string):
+    Promise<CareplanActivityDto> => {
+
+        return await this._careplanRepo.updateActivityUserResponse(activityId, userResponse);
+    };
+
+    //#endregion
+
+}

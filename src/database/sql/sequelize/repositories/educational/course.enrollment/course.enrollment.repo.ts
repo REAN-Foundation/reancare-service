@@ -11,6 +11,10 @@ import UserCourseEnrollment from '../../../models/educational/user.course.enroll
 import UserCourseModule from '../../../models/educational/user.course.module/user.course.module.model';
 import CourseContent from '../../../models/educational/course.content/course.content.model';
 import CourseModule from '../../../models/educational/course.module/course.module.model';
+import Course from '../../../models/educational/course/course.model';
+import { CourseMapper } from '../../../mappers/educational/course/course.mapper';
+import { CourseModuleMapper } from '../../../mappers/educational/course.module/course.module.mapper';
+import { CourseContentMapper } from '../../../mappers/educational/course.content/course.content.mapper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -106,6 +110,41 @@ export class CourseEnrollmentRepo implements ICourseEnrollmentRepo {
         try {
             const courseContent = await UserCourseContent.findOne({ where: { ContentId: contentId } });
             return await this.getUpdatedContent(contentId, courseContent);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getUserEnrollments = async (userId: string):Promise<any[]> => {
+        try {
+            var userEnrollments = await UserCourseEnrollment.findAll({ where: { UserId: userId } });
+            var enrollments = [];
+
+            for await (var userEnrollment of userEnrollments) {
+                var enrollmentDto = CourseEnrollmentMapper.toDto(userEnrollment);
+                var course = await Course.findByPk(userEnrollment.CourseId);
+                enrollmentDto['Course'] = CourseMapper.toDto(course);
+ 
+                // getting course modules
+                var courseModules = await CourseModule.findAll({ where: { CourseId: enrollmentDto.CourseId } });
+                enrollmentDto['Course']['Modules'] = [];
+                for await (var courseModule of courseModules) {
+                    var courseModuleDto = CourseModuleMapper.toDto(courseModule);
+
+                    // getting module contents
+                    var courseModuleContents = await CourseContent.findAll({ where: { ModuleId: courseModule.id } });
+                    courseModuleDto['Contents'] = [];
+                    for await (var courseModuleContent of courseModuleContents) {
+                        var courseContentDto = CourseContentMapper.toDto(courseModuleContent);
+                        courseModuleDto['Contents'].push(courseContentDto);
+                    }
+                    enrollmentDto['Course']['Modules'].push(courseModuleDto);
+                }
+                enrollments.push(enrollmentDto);
+            }
+            return enrollments;
 
         } catch (error) {
             Logger.instance().log(error.message);

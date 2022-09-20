@@ -5,6 +5,7 @@ import { CourseContentDto } from "./course.content.dto";
 export interface CourseContentSearchFilters extends BaseSearchFilters{
     Title?          : string;
     ModuleId?       : uuid;
+    CourseId?       : uuid;
     DurationFrom?   : number;
     DurationTo?     : number;
     ContentType?    : string;

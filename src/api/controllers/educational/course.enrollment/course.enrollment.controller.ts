@@ -32,7 +32,7 @@ export class CourseEnrollmentController extends BaseController {
 
     enroll = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('CourseEnrollment.Enroll', request, response);
 
             const model = await this._validator.enroll(request);
@@ -51,7 +51,7 @@ export class CourseEnrollmentController extends BaseController {
 
     startCourseModule = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('CourseEnrollment.StartCourseModule', request, response);
 
             const model = await this._validator.startCourseModule(request);
@@ -71,7 +71,7 @@ export class CourseEnrollmentController extends BaseController {
 
     startCourseContent = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
+
             await this.setContext('CourseEnrollment.StartCourseContent', request, response);
 
             const model = await this._validator.startCourseContent(request);
@@ -139,6 +139,25 @@ export class CourseEnrollmentController extends BaseController {
 
             ResponseHandler.success(request, response, 'Course content progress retrieved successfully!', 200, {
                 CourseContent : courseContent,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getUserEnrollments = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('CourseEnrollment.GetUserEnrollments', request, response);
+
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const userEnrollments = await this._service.getUserEnrollments(userId);
+            if (userEnrollments == null) {
+                throw new ApiError(404, 'User enrollments not found.');
+            }
+
+            ResponseHandler.success(request, response, 'User enrollments retrieved successfully!', 200, {
+                UserEnrollments : userEnrollments,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

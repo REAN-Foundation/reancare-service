@@ -1,9 +1,9 @@
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
 import { ICourseRepo } from "../../../database/repository.interfaces/educational/course/course.repo.interface";
-import { CourseDomainModel } from '../../../domain.types/educational/course/course.domain.model';
-import { CourseDto } from '../../../domain.types/educational/course/course.dto';
-import { CourseSearchFilters, CourseSearchResults } from '../../../domain.types/educational/course/course.search.types';
+import { CourseDomainModel } from '../../../domain.types/educational/course/course/course.domain.model';
+import { CourseDto } from '../../../domain.types/educational/course/course/course.dto';
+import { CourseSearchFilters, CourseSearchResults } from '../../../domain.types/educational/course/course/course.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

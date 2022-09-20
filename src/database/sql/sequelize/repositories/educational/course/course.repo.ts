@@ -1,11 +1,11 @@
 import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
-import { CourseDomainModel } from "../../../../../../domain.types/educational/course/course.domain.model";
-import { CourseDto } from "../../../../../../domain.types/educational/course/course.dto";
+import { CourseDomainModel } from "../../../../../../domain.types/educational/course/course/course.domain.model";
+import { CourseDto } from "../../../../../../domain.types/educational/course/course/course.dto";
 import { CourseSearchFilters,
     CourseSearchResults
-} from "../../../../../../domain.types/educational/course/course.search.types";
+} from "../../../../../../domain.types/educational/course/course/course.search.types";
 import { ICourseRepo } from '../../../../../repository.interfaces/educational/course/course.repo.interface';
 import { CourseMapper } from '../../../mappers/educational/course/course.mapper';
 import Course from '../../../models/educational/course/course.model';
@@ -123,7 +123,7 @@ export class CourseRepo implements ICourseRepo {
             if (updateModel.EndDate != null) {
                 course.EndDate = updateModel.EndDate;
             }
-            
+
             await course.save();
 
             return await CourseMapper.toDto(course);

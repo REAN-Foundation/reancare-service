@@ -17,7 +17,7 @@ import { v4 } from 'uuid';
 @Table({
     timestamps      : true,
     modelName       : 'Course',
-    tableName       : 'courses',
+    tableName       : 'educational_courses',
     paranoid        : true,
     freezeTableName : true,
 })
@@ -63,7 +63,7 @@ export default class Course extends Model {
         allowNull : true,
     })
     StartDate: Date;
-   
+
     @Column({
         type      : DataType.DATE,
         allowNull : true,

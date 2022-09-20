@@ -1,4 +1,4 @@
-import { CourseDto } from '../../../../../../domain.types/educational/course/course.dto';
+import { CourseDto } from '../../../../../../domain.types/educational/course/course/course.dto';
 import CourseModel from '../../../models/educational/course/course.model';
 
 ///////////////////////////////////////////////////////////////////////////////////

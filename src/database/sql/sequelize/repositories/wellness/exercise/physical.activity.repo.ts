@@ -15,16 +15,18 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
     create = async (createModel: PhysicalActivityDomainModel): Promise<PhysicalActivityDto> => {
         try {
             const entity = {
-                id             : createModel.id,
-                PatientUserId  : createModel.PatientUserId,
-                Exercise       : createModel.Exercise ?? null,
-                Description    : createModel.Description ?? null,
-                Category       : createModel.Category,
-                Intensity      : createModel.Intensity ?? null,
-                CaloriesBurned : createModel.CaloriesBurned ?? null,
-                StartTime      : createModel.StartTime ?? null,
-                EndTime        : createModel.EndTime ?? null,
-                DurationInMin  : createModel.DurationInMin ?? null,
+                id                          : createModel.id,
+                PatientUserId               : createModel.PatientUserId,
+                Exercise                    : createModel.Exercise ?? null,
+                Description                 : createModel.Description ?? null,
+                Category                    : createModel.Category,
+                Intensity                   : createModel.Intensity ?? null,
+                CaloriesBurned              : createModel.CaloriesBurned ?? null,
+                StartTime                   : createModel.StartTime ?? null,
+                EndTime                     : createModel.EndTime ?? null,
+                DurationInMin               : createModel.DurationInMin ?? null,
+                PhysicalActivityQuestion    : "Did you add movement to your day today?",
+                PhysicalActivityQuestionAns : createModel.PhysicalActivityQuestionAns ?? null,
             };
             const physicalActivity = await PhysicalActivity.create(entity);
             return await PhysicalActivityMapper.toDto(physicalActivity);

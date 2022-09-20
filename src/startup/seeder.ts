@@ -488,7 +488,7 @@ export class Seeder {
             var t = arr[i];
             const filters = {
                 TopicName : t['TopicName']
-            }
+            };
             const existingRecord = await this._knowledgeNuggetRepo.search(filters);
             if (existingRecord.Items.length > 0) {
                 Logger.instance().log(`Knowledge nugget has already been exist ${t['TopicName']}!`);

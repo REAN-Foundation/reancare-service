@@ -117,12 +117,6 @@ export class LearningPathRepo implements ILearningPathRepo {
             if (updateModel.DurationInDays != null) {
                 course.DurationInDays = updateModel.DurationInDays;
             }
-            if (updateModel.StartDate != null) {
-                course.StartDate = updateModel.StartDate;
-            }
-            if (updateModel.EndDate != null) {
-                course.EndDate = updateModel.EndDate;
-            }
 
             await course.save();
 

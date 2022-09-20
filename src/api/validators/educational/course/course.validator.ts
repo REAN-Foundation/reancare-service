@@ -13,12 +13,11 @@ export class CourseValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): CourseDomainModel => {
         const model: CourseDomainModel = {
+            LearningPathId : request.body.LearningPathId,
             Name           : request.body.Name,
             Description    : request.body.Description,
             ImageUrl       : request.body.ImageUrl,
             DurationInDays : request.body.DurationInDays,
-            StartDate      : request.body.StartDate,
-            EndDate        : request.body.EndDate,
         };
         return model;
     };
@@ -43,28 +42,27 @@ export class CourseValidator extends BaseValidator {
     };
 
     private  async validateCreateBody(request) {
+        await this.validateUuid(request, 'LearningPathId', Where.Body, false, false);
         await this.validateString(request, 'Name', Where.Body, true, false);
         await this.validateString(request, 'Description', Where.Body, false, true);
         await this.validateString(request, 'ImageUrl', Where.Body, false, true);
         await this.validateDecimal(request, 'DurationInDays', Where.Body, false, true);
-        await this.validateDate(request, 'StartDate', Where.Body, false, true);
-        await this.validateDate(request, 'EndDate', Where.Body, false, true);
         this.validateRequest(request);
     }
 
     private  async validateUpdateBody(request) {
+        await this.validateUuid(request, 'LearningPathId', Where.Body, false, false);
         await this.validateString(request, 'Name', Where.Body, false, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
         await this.validateString(request, 'ImageUrl', Where.Body, false, false);
         await this.validateDecimal(request, 'DurationInDays', Where.Body, false, false);
-        await this.validateDate(request, 'StartDate', Where.Body, false, false);
-        await this.validateDate(request, 'EndDate', Where.Body, false, false);
         this.validateRequest(request);
     }
 
     private getFilter(request): CourseSearchFilters {
         var filters: CourseSearchFilters = {
-            Name : request.query.name ?? null,
+            Name           : request.query.name ?? null,
+            LearningPathId : request.query.learningPathId ?? null,
         };
         return this.updateBaseSearchFilters(request, filters);
     }

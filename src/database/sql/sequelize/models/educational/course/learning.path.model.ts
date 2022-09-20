@@ -58,18 +58,6 @@ export default class LearningPath extends Model {
     })
     DurationInDays: number;
 
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    StartDate: Date;
-
-    @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    EndDate: Date;
-
     @Column
     @CreatedAt
     CreatedAt: Date;

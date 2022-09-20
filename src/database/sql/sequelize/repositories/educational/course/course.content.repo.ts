@@ -161,4 +161,8 @@ export class CourseContentRepo implements ICourseContentRepo {
         }
     };
 
+    GetContentsForCourseModule = async (moduleId: string): Promise<any> => {
+        throw new Error('Method not implemented.');
+    }
+
 }

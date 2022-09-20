@@ -6,6 +6,5 @@ export interface LearningPathDto {
     Description?    : string;
     ImageUrl?       : string;
     DurationInDays? : number;
-    StartDate?      : Date;
-    EndDate?        : Date;
+    Courses?        : any[];
 }

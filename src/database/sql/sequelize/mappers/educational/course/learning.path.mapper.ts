@@ -17,8 +17,7 @@ export class LearningPathMapper {
             Description    : course.Description,
             ImageUrl       : course.ImageUrl,
             DurationInDays : course.DurationInDays,
-            StartDate      : course.StartDate,
-            EndDate        : course.EndDate,
+            Courses        : []
         };
         return dto;
     };

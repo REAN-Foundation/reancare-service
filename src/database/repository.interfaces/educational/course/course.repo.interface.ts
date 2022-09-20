@@ -16,4 +16,6 @@ export interface ICourseRepo {
 
     delete(id: string): Promise<boolean>;
 
+    getCoursesForLearningPath(learningPathId: string): Promise<any>;
+
 }

@@ -147,4 +147,8 @@ export class CourseModuleRepo implements ICourseModuleRepo {
         }
     };
 
+    getModulesForCourse = (courseId: string): Promise<any> => {
+        throw new Error('Method not implemented.');
+    }
+
 }

@@ -15,4 +15,6 @@ export interface ICourseContentRepo {
     update(id: string, courseContentDomainModel: CourseContentDomainModel): Promise<CourseContentDto>;
 
     delete(id: string): Promise<boolean>;
+
+    GetContentsForCourseModule(moduleId: string): Promise<any>;
 }

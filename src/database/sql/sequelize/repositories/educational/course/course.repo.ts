@@ -18,12 +18,11 @@ export class CourseRepo implements ICourseRepo {
     Promise<CourseDto> => {
         try {
             const entity = {
+                LearningPathId : createModel.LearningPathId,
                 Name           : createModel.Name,
                 Description    : createModel.Description,
                 ImageUrl       : createModel.ImageUrl,
                 DurationInDays : createModel.DurationInDays,
-                StartDate      : createModel.StartDate,
-                EndDate        : createModel.EndDate,
             };
 
             const course = await Course.create(entity);
@@ -51,6 +50,9 @@ export class CourseRepo implements ICourseRepo {
 
             if (filters.Name != null) {
                 search.where['Name'] = { [Op.like]: '%' + filters.Name + '%' };
+            }
+            if (filters.LearningPathId != null) {
+                search.where['LearningPathId'] = filters.LearningPathId;
             }
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
@@ -105,6 +107,9 @@ export class CourseRepo implements ICourseRepo {
         try {
             const course = await Course.findByPk(id);
 
+            if (updateModel.LearningPathId != null) {
+                course.LearningPathId = updateModel.LearningPathId;
+            }
             if (updateModel.Name != null) {
                 course.Name = updateModel.Name;
             }
@@ -116,12 +121,6 @@ export class CourseRepo implements ICourseRepo {
             }
             if (updateModel.DurationInDays != null) {
                 course.DurationInDays = updateModel.DurationInDays;
-            }
-            if (updateModel.StartDate != null) {
-                course.StartDate = updateModel.StartDate;
-            }
-            if (updateModel.EndDate != null) {
-                course.EndDate = updateModel.EndDate;
             }
 
             await course.save();
@@ -144,5 +143,9 @@ export class CourseRepo implements ICourseRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    getCoursesForLearningPath = async (learningPathId: string): Promise<any> => {
+        throw new Error('Method not implemented.');
+    }
 
 }

@@ -27,7 +27,7 @@ import LearningPath from './learning.path.model';
 @Table({
     timestamps      : true,
     modelName       : 'UserLearning',
-    tableName       : 'user_learnings',
+    tableName       : 'educational_user_learnings',
     paranoid        : true,
     freezeTableName : true,
 })

@@ -12,6 +12,7 @@ import { uuid } from '../domain.types/miscellaneous/system.types';
 import { CustomTaskService } from '../services/user/custom.task.service';
 import { CustomTaskDomainModel } from '../domain.types/user/custom.task/custom.task.domain.model';
 import { ApiError } from '../common/api.error';
+import { UserTaskSearchFilters } from '../domain.types/user/user.task/user.task.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,7 +66,7 @@ export class CommonActions {
             ActionType         : UserActionType.Careplan,
             ActionId           : assessmentId,
             ScheduledStartTime : new Date(),
-            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 1, DurationType.Day),
+            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 9, DurationType.Day),
             IsRecurrent        : false
         };
 
@@ -96,6 +97,27 @@ export class CommonActions {
         var userTask = await this._userTaskService.create(userTaskModel);
         userTask['Action'] = customTask;
         return userTask;
+    };
+
+    destroyOldAssessmentTask = async (
+        patientUserId: uuid,
+        templateName: string): Promise<any> => {
+            
+            const filters: UserTaskSearchFilters = {
+                UserId       : patientUserId,
+                Task         : templateName,
+            };
+    
+            const userTasks = await this._userTaskService.search(filters);
+            if (userTasks.TotalCount > 0) {
+                Logger.instance().log(`[KCCQTask] Deleting old tasks for PatientUserId: ${JSON.stringify(patientUserId)}`);
+                for await (var userTask of userTasks.Items) {
+                    Logger.instance().log(`[KCCQTask] Deleting task id: ${JSON.stringify(userTask.id)}`);
+                    await this._userTaskService.delete(userTask.id);
+                }
+            }
+        
+        return true;
     };
 
     //#endregion

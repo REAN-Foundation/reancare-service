@@ -59,11 +59,11 @@ import { register as registerBloodCholesterolRoutes } from './clinical/biometric
 import { register as registerStandRoutes } from './wellness/daily.records/stand.routes';
 import { register as registerFoodComponentMonitoringRoutes } from './wellness/food.component.monitoring/food.component.monitoring.routes';
 import { register as registerNoticeRoutes } from './general/notice.routes';
-import { register as registerLearningPathRoutes } from './educational/course/learning.path.routes';
-import { register as registerCourseRoutes } from './educational/course/course.routes';
-import { register as registerCourseModuleRoutes } from './educational/course/course.module.routes';
-import { register as registerCourseContentRoutes } from './educational/course/course.content.routes';
-import { register as registerCourseEnrollmentRoutes } from './educational/course/course.enrollment.routes';
+import { register as registerLearningPathRoutes } from './educational/learning/learning.path.routes';
+import { register as registerCourseRoutes } from './educational/learning/course.routes';
+import { register as registerCourseModuleRoutes } from './educational/learning/course.module.routes';
+import { register as registerCourseContentRoutes } from './educational/learning/course.content.routes';
+import { register as registerUserLearningRoutes } from './educational/learning/user.learning.routes';
 import { register as registerLabRecordRoutes } from './clinical/lab.record.routes';
 import { register as registerTestRoutes } from './test.routes';
 import { register as registerDonorRoutes } from './donor.routes';
@@ -154,7 +154,7 @@ export class Router {
                 registerCourseRoutes(this._app);
                 registerCourseModuleRoutes(this._app);
                 registerCourseContentRoutes(this._app);
-                registerCourseEnrollmentRoutes(this._app);
+                registerUserLearningRoutes(this._app);
                 registerLabRecordRoutes(this._app);
                 registerTestRoutes(this._app);
                 registerDonorRoutes(this._app);

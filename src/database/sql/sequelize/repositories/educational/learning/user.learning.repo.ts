@@ -71,6 +71,20 @@ export class UserLearningRepo implements IUserLearningRepo {
         }
     }
 
+    searchUserLearnings = async (userId: string): Promise<any[]> => {
+        try {
+            var learnings = await UserLearning.findAll({
+                where : {
+                    UserId : userId,
+                }
+            });
+            return learnings;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
     searchUserLearningsForLearningPath = async (userId: string, learningPathId: string): Promise<UserLearningDto[]> => {
         try {
             var learnings = await UserLearning.findAll({

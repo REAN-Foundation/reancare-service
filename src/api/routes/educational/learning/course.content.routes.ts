@@ -11,6 +11,8 @@ export const register = (app: express.Application): void => {
     const controller = new CourseContentController();
 
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
+    router.get('/by-course/:courseId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getContentsForCourse);
+    router.get('/by-learning-path/:learningPathId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getContentsForLearningPath);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);

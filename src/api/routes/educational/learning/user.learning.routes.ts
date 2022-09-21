@@ -12,6 +12,9 @@ export const register = (app: express.Application): void => {
 
     router.post('/:userId/contents/:contentId/update-learning', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateUserLearning);
 
+    router.get('/:userId/learning-paths', authenticator.authenticateClient, authenticator.authenticateUser, controller.getUserLearningPaths);
+    router.get('/:userId/course-contents', authenticator.authenticateClient, authenticator.authenticateUser, controller.getUserCourseContents);
+
     router.get('/:userId/learning-paths/:learningPathId/progress', authenticator.authenticateClient, authenticator.authenticateUser, controller.getLearningPathProgress);
     router.get('/:userId/courses/:courseId/progress', authenticator.authenticateClient, authenticator.authenticateUser, controller.getCourseProgress);
     router.get('/:userId/modules/:moduleId/progress', authenticator.authenticateClient, authenticator.authenticateUser, controller.getModuleProgress);

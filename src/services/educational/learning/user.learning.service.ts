@@ -115,4 +115,40 @@ export class UserLearningService {
         return 0;
     };
 
+    getUserCourseContents = async (userId: string): Promise<any[]> => {
+        const userLearnings = await this._userLearningRepo.searchUserLearnings(userId);
+        if (userLearnings.length === 0) {
+            return [];
+        }
+        const userCourseContents = userLearnings.map(x => {
+            return {
+                UserId               : x.UserId,
+                CourseContentId      : x.ContentId,
+                CourseId             : x.CourseId,
+                ModuleId             : x.ModuleId,
+                LearningPathId       : x.LearningPathId,
+                Content              : x.Content,
+                StartedAt            : x.CreatedAt,
+                LastAccessedAt       : x.UpdatedAt,
+                ProgressStatus       : x.ProgressStatus,
+                PercentageCompletion : x.PercentageCompletion,
+            };
+        });
+        return userCourseContents;
+    }
+
+    getUserLearningPaths = async (userId: string): Promise<any[]> => {
+        const userLearnings = await this._userLearningRepo.searchUserLearnings(userId);
+        if (userLearnings.length === 0) {
+            return [];
+        }
+        const uniqueLearningPaths = [...new Set(userLearnings.map(x => x.LearningPathId))];
+        const userLearningPaths = [];
+        for await (const lpId of uniqueLearningPaths) {
+            const learningPath = await this._learningPathRepo.getById(lpId);
+            userLearningPaths.push(learningPath);
+        }
+        return userLearningPaths;
+    }
+
 }

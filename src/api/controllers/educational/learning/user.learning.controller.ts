@@ -118,6 +118,46 @@ export class UserLearningController extends BaseController {
         }
     };
 
+    getUserLearningPaths = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('UserLearning.GetUserLearningPaths', request, response);
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const paths = await this._service.getUserLearningPaths(userId);
+            if (paths == null) {
+                throw new ApiError(404, 'User learning paths cannot be retrieved.');
+            }
+            for await (var path of paths) {
+                const percentageCompletion = await this._service.getLearningPathProgress(userId, path.id);
+                path['PercentageCompletion'] = percentageCompletion;
+            }
+            ResponseHandler.success(request, response, 'User learning paths retrieved successfully!', 200, {
+                UserLearningPaths : paths,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getUserCourseContents = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('UserLearning.GetUserCourseContents', request, response);
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const contents = await this._service.getUserCourseContents(userId);
+            if (contents == null) {
+                throw new ApiError(404, 'User course contents cannot be retrieved.');
+            }
+            for await (var content of contents) {
+                const percentageCompletion = await this._service.getContentProgress(userId, content.id);
+                content['PercentageCompletion'] = percentageCompletion;
+            }
+            ResponseHandler.success(request, response, 'User course contents retrieved successfully!', 200, {
+                UserCourseContents : contents,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

@@ -34,4 +34,12 @@ export class CourseContentService {
         return await this._courseContentRepo.delete(id);
     };
 
+    getContentsForCourse = async (courseId: uuid): Promise<CourseContentDto[]> => {
+        return await this._courseContentRepo.getContentsForCourse(courseId);
+    };
+
+    getContentsForLearningPath = async (learningPathId: uuid): Promise<CourseContentDto[]> => {
+        return await this._courseContentRepo.getContentsForLearningPath(learningPathId);
+    };
+
 }

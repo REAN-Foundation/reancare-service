@@ -43,6 +43,19 @@ export default class HealthProfile extends Model {
     })
     BloodGroup: string;
 
+    @IsDate
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    BloodTransfusionDate: Date;
+
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true
+    })
+    BloodDonationCycle: number;
+
     @Length({ max: 128 })
     @Column({
         type         : DataType.STRING(128),

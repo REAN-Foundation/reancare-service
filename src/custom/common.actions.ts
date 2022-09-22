@@ -99,27 +99,6 @@ export class CommonActions {
         return userTask;
     };
 
-    destroyOldAssessmentTask = async (
-        patientUserId: uuid,
-        templateName: string): Promise<any> => {
-            
-            const filters: UserTaskSearchFilters = {
-                UserId       : patientUserId,
-                Task         : templateName,
-            };
-    
-            const userTasks = await this._userTaskService.search(filters);
-            if (userTasks.TotalCount > 0) {
-                Logger.instance().log(`[KCCQTask] Deleting old tasks for PatientUserId: ${JSON.stringify(patientUserId)}`);
-                for await (var userTask of userTasks.Items) {
-                    Logger.instance().log(`[KCCQTask] Deleting task id: ${JSON.stringify(userTask.id)}`);
-                    await this._userTaskService.delete(userTask.id);
-                }
-            }
-        
-        return true;
-    };
-
     //#endregion
 
 }

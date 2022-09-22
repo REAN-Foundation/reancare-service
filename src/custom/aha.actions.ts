@@ -280,7 +280,6 @@ export class AHAActions {
             if (dayDiff > 30) {
                 Logger.instance().log(`[KCCQTask] Creating custom task as 30 days have passed.
                         PatientUserId: ${JSON.stringify(patientUserId)}`);
-                //await this._commonActions.destroyOldAssessmentTask(patientUserId, assessmentTemplateName);
                 await this._commonActions.createAssessmentTask(patientUserId, assessmentTemplateName);
             } else {
                 Logger.instance().log(`[KCCQTask] No custom task created for patient UserId:

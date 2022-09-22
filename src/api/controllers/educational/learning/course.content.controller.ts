@@ -140,7 +140,7 @@ export class CourseContentController extends BaseController {
             await this.setContext('CourseContent.GetContentsForCourse', request, response);
             const courseId: uuid = await this._validator.getParamUuid(request, 'courseId');
             const courseContents = await this._service.getContentsForCourse(courseId);
-            if (courseContents == null || courseContents.length === 0) {
+            if (courseContents == null) {
                 throw new ApiError(404, 'Course contents not found.');
             }
             ResponseHandler.success(request, response, 'Course contents for course retrieved successfully!', 200, {
@@ -156,7 +156,7 @@ export class CourseContentController extends BaseController {
             await this.setContext('CourseContent.GetContentsForLearningPath', request, response);
             const learningPathId: uuid = await this._validator.getParamUuid(request, 'learningPathId');
             const courseContents = await this._service.getContentsForLearningPath(learningPathId);
-            if (courseContents == null || courseContents.length === 0) {
+            if (courseContents == null) {
                 throw new ApiError(404, 'Course contents not found.');
             }
             ResponseHandler.success(request, response, 'Course contents for learning path retrieved successfully!', 200, {

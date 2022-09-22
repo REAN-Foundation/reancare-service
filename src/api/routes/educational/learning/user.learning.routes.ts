@@ -10,7 +10,7 @@ export const register = (app: express.Application): void => {
     const authenticator = Loader.authenticator;
     const controller = new UserLearningController();
 
-    router.post('/:userId/contents/:contentId/update-learning', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateUserLearning);
+    router.put('/:userId/contents/:contentId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateUserLearning);
 
     router.get('/:userId/learning-paths', authenticator.authenticateClient, authenticator.authenticateUser, controller.getUserLearningPaths);
     router.get('/:userId/course-contents', authenticator.authenticateClient, authenticator.authenticateUser, controller.getUserCourseContents);

@@ -14,7 +14,7 @@ export class UserLearningValidator extends BaseValidator {
 
         const model: UserLearningDomainModel = {
             UserId               : request.params.userId,
-            ContentId            : request.body.ContentId,
+            ContentId            : request.params.contentId,
             ProgressStatus       : request.body.ProgressStatus,
             PercentageCompletion : request.body.PercentageCompletion,
         };

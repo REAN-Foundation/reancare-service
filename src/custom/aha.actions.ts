@@ -63,12 +63,12 @@ export class AHAActions {
             Logger.instance().log(`[KCCQTask] Patients being processed for custom task: ${JSON.stringify(patientUserIds.length)}`);
             for await (var patientUserId of patientUserIds) {
                 var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
-                var devices = [];
+                var userAppRegistrations = [];
                 userDevices.forEach(userDevice => {
-                    devices.push(userDevice.AppName);
+                    userAppRegistrations.push(userDevice.AppName);
                 });
 
-                if (devices.length > 0 && devices.indexOf('HF Helper') >= 0) {
+                if (userAppRegistrations.length > 0 && this.eligibleForKCCQTask(userAppRegistrations)) {
                     Logger.instance().log(`Creating quality of life questionnaire task for patient:${patientUserId}`);
                     const assessmentTemplateName = 'Quality of Life Questionnaire';
                     await this.triggerAssessmentTask_QualityOfLife(patientUserId, assessmentTemplateName);
@@ -287,6 +287,15 @@ export class AHAActions {
             }
         }
     };
+
+    private eligibleForKCCQTask = (userAppRegistrations) => {
+
+        const eligibleForKCCQTask =
+        userAppRegistrations.indexOf('HF Helper') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0;
+        
+        return eligibleForKCCQTask;
+    }
 
     //#endregion
 

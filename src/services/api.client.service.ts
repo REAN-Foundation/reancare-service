@@ -7,6 +7,7 @@ import { generate } from 'generate-password';
 import { Helper } from "../common/helper";
 import { CurrentClient } from "../domain.types/miscellaneous/current.client";
 import * as apikeyGenerator from 'uuid-apikey';
+import { ApiClientSearchFilters, ApiClientSearchResults } from "../domain.types/api.client/api.client.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -90,6 +91,10 @@ export class ApiClientService {
 
     update = async (id: string, clientDomainModel: ApiClientDomainModel): Promise<ApiClientDto> => {
         return await this._clientRepo.update(id, clientDomainModel);
+    };
+
+    public search = async (filters: ApiClientSearchFilters): Promise<ApiClientSearchResults> => {
+        return await this._clientRepo.search(filters);
     };
 
     delete = async (id: string): Promise<boolean> => {

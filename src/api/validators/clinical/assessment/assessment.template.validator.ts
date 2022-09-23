@@ -1,5 +1,5 @@
 import express from 'express';
-import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQueryOption, CAssessmentQuestionNode } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQueryOption, CAssessmentQuestionNode, CScoringCondition } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.template.search.types';
 import { BaseValidator, Where } from '../../base.validator';
@@ -19,6 +19,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             Type                        : request.body.Type ?? null,
             Title                       : request.body.Title ?? null,
             Description                 : request.body.Description,
+            DisplayCode                 : request.body.DisplayCode ?? null,
             ProviderAssessmentCode      : request.body.ProviderAssessmentCode ?? null,
             Provider                    : request.body.Provider ?? null,
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
@@ -40,7 +41,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'type', Where.Query, false, false, true);
 
         await this.validateBaseSearchFilters(request);
-        
+
         this.validateRequest(request);
 
         return this.getFilter(request);
@@ -50,8 +51,9 @@ export class AssessmentTemplateValidator extends BaseValidator {
     private getFilter(request): AssessmentTemplateSearchFilters {
 
         var filters: AssessmentTemplateSearchFilters = {
-            Title : request.query.title ?? null,
-            Type  : request.query.type ?? null,
+            Title       : request.query.title ?? null,
+            Type        : request.query.type ?? null,
+            DisplayCode : request.query.displayCode ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -73,7 +75,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'Description', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, false);
-        
+        await this.validateString(request, 'DisplayCode', Where.Body, false, false);
+
         this.validateRequest(request);
 
     }
@@ -87,7 +90,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, false);
 
         this.validateRequest(request);
-        
+
     }
 
     importFromJson = async (request: express.Request): Promise<AssessmentTemplateDomainModel> => {
@@ -97,7 +100,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     addNode = async (request: express.Request):
         Promise<CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode> => {
-        
+
         var templateId = await this.getParamUuid(request, 'id');
         await this.validateUuid(request, 'ParentNodeId', Where.Body, false, true);
         await this.validateString(request, 'NodeType', Where.Body, true, false);
@@ -106,14 +109,14 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'QueryResponseType', Where.Body, false, false);
         await this.validateArray(request, 'Options', Where.Body, false, false);
         await this.validateDecimal(request, 'Score', Where.Body, false, false);
-    
+
         this.validateRequest(request);
-        
+
         if (request.body.NodeType === AssessmentNodeType.Question) {
             var questionNode : CAssessmentQuestionNode = {
                 ParentNodeId      : request.body.ParentNodeId,
                 NodeType          : AssessmentNodeType.Question,
-                DisplayCode       : Helper.generateDisplayCode('QNode'),
+                DisplayCode       : request.body.DisplayCode ?? Helper.generateDisplayCode('QNode'),
                 QueryResponseType : request.body.QueryResponseType,
                 Required          : true,
                 ProviderGivenId   : request.body.ProviderGivenId ?? null,
@@ -177,7 +180,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     updateNode = async (request: express.Request):
     Promise<CAssessmentNode | CAssessmentListNode | CAssessmentQuestionNode | CAssessmentMessageNode> => {
-    
+
         await this.validateString(request, 'Title', Where.Body, false, false);
         await this.validateString(request, 'ProviderGivenCode', Where.Body, false, false);
         await this.validateString(request, 'ProviderGivenId', Where.Body, false, false);
@@ -187,8 +190,55 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateDecimal(request, 'Sequence', Where.Body, false, false);
 
         this.validateRequest(request);
-    
+
         return request.body;
     };
+
+    addScoringCondition = async (request: express.Request): Promise<CScoringCondition> => {
+
+        await this.validateUuid(request, 'NodeId', Where.Body, false, false);
+        await this.validateDecimal(request, 'ResolutionScore', Where.Body, false, true);
+        await this.validateBoolean(request, 'IsCompositeCondition', Where.Body, false, false);
+        await this.validateString(request, 'CompositionType', Where.Body, false, true);
+        await this.validateUuid(request, 'ParentConditionId', Where.Body, false, false);
+        await this.validateString(request, 'OperatorType', Where.Body, false, false);
+
+        await this.validateObject(request, 'FirstOperand', Where.Body, false, true);
+        await this.validateObject(request, 'SecondOperand', Where.Body, false, true);
+        await this.validateObject(request, 'ThirdOperand', Where.Body, false, true);
+
+        this.validateRequest(request);
+
+        var condition: CScoringCondition = {
+            TemplateId           : request.params.id,
+            NodeId               : request.body.NodeId ?? null,
+            ResolutionScore      : request.body.ResolutionScore ?? null,
+            IsCompositeCondition : request.body.IsCompositeCondition ?? false,
+            CompositionType      : request.body.CompositionType ?? null,
+            ParentConditionId    : request.body.ParentConditionId ?? null,
+            OperatorType         : request.body.OperatorType ?? null,
+            FirstOperand         : request.body.FirstOperand,
+            SecondOperand        : request.body.SecondOperand,
+            ThirdOperand         : request.body.ThirdOperand,
+        };
+        return condition;
+    }
+
+    updateScoringCondition = async (request: express.Request): Promise<CScoringCondition> => {
+
+        await this.validateUuid(request, 'NodeId', Where.Body, false, false);
+        await this.validateDecimal(request, 'ResolutionScore', Where.Body, false, true);
+        await this.validateBoolean(request, 'IsCompositeCondition', Where.Body, false, false);
+        await this.validateString(request, 'CompositionType', Where.Body, false, true);
+        await this.validateUuid(request, 'ParentConditionId', Where.Body, false, false);
+        await this.validateString(request, 'OperatorType', Where.Body, false, false);
+        await this.validateObject(request, 'FirstOperand', Where.Body, false, true);
+        await this.validateObject(request, 'SecondOperand', Where.Body, false, true);
+        await this.validateObject(request, 'ThirdOperand', Where.Body, false, true);
+
+        this.validateRequest(request);
+
+        return request.body;
+    }
 
 }

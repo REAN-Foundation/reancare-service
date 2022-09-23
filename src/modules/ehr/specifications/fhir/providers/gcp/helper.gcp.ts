@@ -25,21 +25,21 @@ export class GcpHelper {
         if (!fs.existsSync(process.env.GCP_FHIR_CREDENTIALS_PATH)) {
             throw new ApiError(400, 'GCP FHIR credentials file does not exist!');
         }
-        
+
         const auth = await google.auth.getClient({
             keyFilename : process.env.GCP_FHIR_CREDENTIALS_PATH,
             scopes      : ['https://www.googleapis.com/auth/cloud-platform'],
         });
 
         // temporary logs for debugging.
-        Logger.instance().log(`Path of GCP credential file:: ${process.env.GCP_FHIR_CREDENTIALS_PATH}`);
-        const fileContent = fs.readFileSync(process.env.GCP_FHIR_CREDENTIALS_PATH).toString();
-        Logger.instance().log(`File content of GCP credential file:: ${JSON.stringify(fileContent)}`);
+        // Logger.instance().log(`Path of GCP credential file:: ${process.env.GCP_FHIR_CREDENTIALS_PATH}`);
+        // const fileContent = fs.readFileSync(process.env.GCP_FHIR_CREDENTIALS_PATH).toString();
+        // Logger.instance().log(`File content of GCP credential file:: ${JSON.stringify(fileContent)}`);
 
         google.options({ auth });
         return healthcare;
     };
-    
+
     public static getGcpFhirConfig(): GcpFhirConfiguration  {
 
         const c: GcpFhirConfiguration = {
@@ -50,12 +50,12 @@ export class GcpHelper {
             DicomStoreId : process.env.DICOM_STORE_NAME,
             FhirVersion  : process.env.FHIR_CURRENT_VERSION,
         };
-        
+
         return c;
     }
 
     public static addResource = async (entity: any, resourceType: string): Promise<any> => {
-        
+
         try {
             var g = await GcpHelper.getGcpClient();
             const c = GcpHelper.getGcpFhirConfig();
@@ -73,7 +73,7 @@ export class GcpHelper {
     };
 
     public static getResourceById = async (resourceId: string, resourceType: string): Promise<any> => {
-        
+
         try {
             var g = await GcpHelper.getGcpClient();
             const c = GcpHelper.getGcpFhirConfig();
@@ -83,9 +83,7 @@ export class GcpHelper {
             );
             var data: any = resource.data;
             return data;
-
         } catch (error) {
-
             if (error.message != null) {
                 // eslint-disable-next-line no-prototype-builtins
                 if (error.message.hasOwnProperty('issue')) {

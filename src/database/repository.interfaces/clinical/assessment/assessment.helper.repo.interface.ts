@@ -19,6 +19,7 @@ import {
     FileQueryAnswer,
     BooleanQueryAnswer,
     DateQueryAnswer,
+    CScoringCondition,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -28,7 +29,7 @@ import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 export interface IAssessmentHelperRepo {
 
     getChildrenConditions(id: string): CAssessmentPathCondition[] | PromiseLike<CAssessmentPathCondition[]>;
-    
+
     getNodeListChildren(nodeId: string): Promise<CAssessmentNode[]>;
 
     addTemplate(template: CAssessmentTemplate): Promise<AssessmentTemplateDto>;
@@ -73,5 +74,13 @@ export interface IAssessmentHelperRepo {
 
     updateNode(nodeId: uuid, updates: any)
         : Promise<CAssessmentNode | CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode>;
+
+    addScoringCondition(model: CScoringCondition): Promise<CScoringCondition>;
+
+    getScoringCondition(conditionId: string): Promise<CScoringCondition>;
+
+    updateScoringCondition(conditionId: string, updates: any): Promise<CScoringCondition>;
+
+    deleteScoringCondition(conditionId: string): Promise<boolean>;
 
 }

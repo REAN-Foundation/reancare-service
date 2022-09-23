@@ -51,10 +51,10 @@ export class UserHelper {
         }
 
         person = await this._patientService.checkforExistingPersonWithRole(createModel, role.id);
-        
+
         //NOTE: Currently we are not allowing multiple patients to share same phone number,
         // but in future, we will be. For example, family members sharing the same phone number.
-        
+
         if (person) {
             //Person with a patient role exists
             patient = await this._patientService.getByPersonId(person.id);

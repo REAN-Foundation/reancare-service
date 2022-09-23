@@ -345,6 +345,12 @@ export class TimeHelper {
         var str = dateStr ? dateStr.split('T')[0] : todayStr.split('T')[0];
         var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
         return TimeHelper.strToUtc(str, offsetMinutes);
+    };
+
+    static dayDiff = (first: Date, second: Date) => {
+        const diff = first.getTime() - second.getTime();
+        var dayDiff = diff / (1000 * 60 * 60 * 24);
+        return dayDiff;
     }
 
 }

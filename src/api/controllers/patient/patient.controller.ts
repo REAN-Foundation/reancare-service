@@ -14,16 +14,9 @@ import { UserHelper } from '../../helpers/user.helper';
 import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
 import { PersonService } from '../../../services/person.service';
 import { UserService } from '../../../services/user/user.service';
-import { PatientDetailsDto } from '../../../domain.types/patient/patient/patient.dto';
-import { ConfigurationManager } from '../../../config/configuration.manager';
-import { CustomTaskHelper } from '../../helpers/custom.task.helper';
-import { CustomTaskDomainModel } from '../../../domain.types/user/custom.task/custom.task.domain.model';
-import { UserActionType, UserTaskCategory } from '../../../domain.types/user/user.task/user.task.types';
-import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
-import { AssessmentDomainModel } from '../../../domain.types/clinical/assessment/assessment.domain.model';
-import { UserTaskDomainModel } from '../../../domain.types/user/user.task/user.task.domain.model';
-import { AssessmentService } from '../../../services/clinical/assessment/assessment.service';
-import { UserTaskService } from '../../../services/user/user.task.service';
+import { CustomActionsHandler } from '../../../custom/custom.actions.handler';
+import { EHRMasterRecordsHandler } from '../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRRecordTypes } from '../../../custom/ehr.insights.records/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -41,15 +34,9 @@ export class PatientController extends BaseUserController {
 
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
-    _assessmentTemplateService: AssessmentTemplateService = null;
-
-    _assessmentService: AssessmentService = null;
-
-    _userTaskService: UserTaskService = null;
-
     _userHelper: UserHelper = new UserHelper();
-    
-    _customTaskHelper: CustomTaskHelper = new CustomTaskHelper();
+
+    _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
     _validator = new PatientValidator();
 
@@ -59,9 +46,6 @@ export class PatientController extends BaseUserController {
         this._userService = Loader.container.resolve(UserService);
         this._personService = Loader.container.resolve(PersonService);
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
-        this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
-        this._assessmentService = Loader.container.resolve(AssessmentService);
-        this._userTaskService = Loader.container.resolve(UserTaskService);
         this._patientHealthProfileService = Loader.container.resolve(HealthProfileService);
     }
 
@@ -76,10 +60,10 @@ export class PatientController extends BaseUserController {
             const createModel = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(createModel);
 
-            //await this.performCustomActions(patient);
+            const clientCode = request.currentClient.ClientCode;
+            await this._customActionHandler.performActions_PostRegistration(patient, clientCode);
 
-            //const actionIdKCCQ = await this.createInitialAssessmentTask(patient.UserId, 'KCCQ');
-            //Logger.instance().log(`Action id for KCCQ is ${actionIdKCCQ}`);
+            this.addPatientToEHRRecords(patient.UserId);
 
             if (createdNew) {
                 ResponseHandler.success(request, response, 'Patient created successfully!', 201, {
@@ -130,7 +114,7 @@ export class PatientController extends BaseUserController {
             const count = searchResults.Items.length;
             const message =
                 count === 0 ? 'No records found!' : `Total ${count} patient records retrieved successfully!`;
-                
+
             ResponseHandler.success(request, response, message, 200, {
                 Patients : searchResults,
             });
@@ -162,6 +146,7 @@ export class PatientController extends BaseUserController {
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');
             }
+            this.addEHRRecord(userId, personDomainModel);
             const updatedPatient = await this._service.updateByUserId(
                 updatedUser.id,
                 updateModel
@@ -177,7 +162,7 @@ export class PatientController extends BaseUserController {
             ResponseHandler.success(request, response, 'Patient records updated successfully!', 200, {
                 Patient : patient,
             });
-            
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -238,73 +223,27 @@ export class PatientController extends BaseUserController {
         }
     };
 
-    ///////////////////////////////////////////////////////////////
-    //TODO: Move this method to separate customization module later
-    ///////////////////////////////////////////////////////////////
+    //#endregion
 
-    performCustomActions = async (patient: PatientDetailsDto) => {
+    //#region Privates
 
-        const systemIdentifier = ConfigurationManager.SystemIdentifier();
+    private addPatientToEHRRecords = (patientUserId: uuid) => {
+        EHRMasterRecordsHandler.addOrUpdatePatient(patientUserId);
+    }
 
-        const shouldAddSurveyTask = systemIdentifier.includes('AHA') ||
-            process.env.NODE_ENV === 'development' ||
-            process.env.NODE_ENV === 'uat';
-
-        if (shouldAddSurveyTask) {
-
-            //Add AHA specific tasks, events and handlers here...
-            const userId = patient.User.id;
-
-            //Adding survey task for AHA patients
-            const domainModel: CustomTaskDomainModel = {
-                UserId      : userId,
-                Task        : "Survey",
-                Description : "Take a survey to help us understand you better!",
-                Category    : UserTaskCategory.Custom,
-                Details     : {
-                    Link : "https://americanheart.co1.qualtrics.com/jfe/form/SV_b1anZr9DUmEOsce",
-                },
-                ScheduledStartTime : new Date(),
-            };
-
-            const task = await this._customTaskHelper.createCustomTask(domainModel);
-            if (task == null) {
-                Logger.instance().log('Unable to create AHA survey task!');
-            }
+    private addEHRRecord = (patientUserId: uuid,
+        model: PersonDomainModel) => {
+        if (model.BirthDate) {
+            EHRMasterRecordsHandler.addDateRecord(patientUserId, EHRRecordTypes.Birthdate, model.BirthDate);
+        }
+        if (model.Gender) {
+            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.Gender, model.Gender);
+        }
+        if (model.MaritalStatus) {
+            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.BloodGroup, model.MaritalStatus);
         }
     }
 
-    private createInitialAssessmentTask = async (
-        patientUserId: string,
-        templateName: string): Promise<any> => {
-
-        const template = await this._assessmentTemplateService.search({ Title: templateName });
-        const templateId: string = template.Items[0].id;
-        const assessmentBody : AssessmentDomainModel = {
-            PatientUserId        : patientUserId,
-            Title                : template.Items[0].Title,
-            Type                 : template.Items[0].Type,
-            AssessmentTemplateId : templateId,
-            ScheduledDateString  : new Date().toISOString().split('T')[0]
-        };
-
-        const assessment = await this._assessmentService.create(assessmentBody);
-        const assessmentId = assessment.id;
-
-        const userTaskBody : UserTaskDomainModel = {
-            UserId             : patientUserId,
-            Task               : templateName,
-            Category           : UserTaskCategory.Assessment,
-            ActionType         : UserActionType.Careplan,
-            ActionId           : assessmentId,
-            ScheduledStartTime : new Date(),
-            IsRecurrent        : false
-        };
-
-        const userTask = await this._userTaskService.create(userTaskBody);
-
-        return userTask.ActionId;
-    }
     //#endregion
 
 }

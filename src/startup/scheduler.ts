@@ -4,6 +4,9 @@ import { Logger } from '../common/logger';
 import { MedicationConsumptionService } from '../services/clinical/medication/medication.consumption.service';
 import { FileResourceService } from '../services/file.resource.service';
 import { Loader } from './loader';
+import { UserHelper } from '../api/helpers/user.helper';
+import { CareplanService } from '../services/clinical/careplan.service';
+import { CustomActionsHandler } from '../custom/custom.actions.handler';
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -36,9 +39,11 @@ export class Scheduler {
                 this.scheduleFileCleanup();
                 this.scheduleMedicationReminders();
                 this.scheduleCreateMedicationTasks();
+                this.scheduleMonthlyCustomTasks();
+                this.scheduleDailyCareplanPushTasks();
 
                 //this.scheduleDaillyPatientTasks();
-                
+
                 resolve(true);
             } catch (error) {
                 Logger.instance().log('Error initializing the scheduler.: ' + error.message);
@@ -85,6 +90,26 @@ export class Scheduler {
         });
     };
 
+    private scheduleMonthlyCustomTasks = () => {
+        cron.schedule(Scheduler._schedules['ScheduleCustomTasks'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Custom Tasks...');
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.scheduledMonthlyRecurrentTasks();
+            })();
+        });
+    };
+
+    private scheduleDailyCareplanPushTasks = () => {
+        cron.schedule(Scheduler._schedules['ScheduleDailyCareplanPushTasks'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
+                const careplanService = Loader.container.resolve(CareplanService);
+                await careplanService.scheduleDailyCareplanPushTasks();
+            })();
+        });
+    };
+
     // private scheduleDaillyPatientTasks = () => {
     //     cron.schedule(Scheduler._schedules['PatientDailyTasks'], () => {
     //         (async () => {
@@ -95,7 +120,7 @@ export class Scheduler {
     //         })();
     //     });
     // };
-    
+
     //#endregion
 
 }

@@ -4,11 +4,11 @@ import { KnowledgeNuggetDto } from "./knowledge.nugget.dto";
 //////////////////////////////////////////////////////////////////////
 
 export interface KnowledgeNuggetSearchFilters extends BaseSearchFilters{
-    TopicName?: string;
-    Tag?      : string;
+    TopicName? : string;
+    Tags?      : string;
 
 }
 
 export interface KnowledgeNuggetSearchResults extends BaseSearchResults{
-    Items: KnowledgeNuggetDto[];
+    Items? : KnowledgeNuggetDto[];
 }

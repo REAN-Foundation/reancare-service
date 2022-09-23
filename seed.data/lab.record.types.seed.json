@@ -1,0 +1,56 @@
+[
+    {
+        "TypeName": "Cholesterol",
+        "DisplayName": "Total Cholesterol",
+        "SnowmedCode": "iSopqr",
+        "LoincCode": "iSPqAb0A",
+        "NormalRangeMin": 150,
+        "NormalRangeMax": 250,
+        "Unit": "mg/dL"
+    },
+    {
+        "TypeName": "Cholesterol",
+        "DisplayName": "HDL",
+        "SnowmedCode": "iSopqr",
+        "LoincCode": "iSPqAb0A",
+        "NormalRangeMin": 30,
+        "NormalRangeMax": 70,
+        "Unit": "mg/dL"
+    },
+    {
+        "TypeName": "Cholesterol",
+        "DisplayName": "LDL",
+        "SnowmedCode": "iSopqr",
+        "LoincCode": "iSPqAb0A",
+        "NormalRangeMin": 80,
+        "NormalRangeMax": 180,
+        "Unit": "mg/dL"
+    },
+    {
+        "TypeName": "Cholesterol",
+        "DisplayName": "Triglyceride Level",
+        "SnowmedCode": "iSopqr",
+        "LoincCode": "iSPqAb0A",
+        "NormalRangeMin": 120,
+        "NormalRangeMax": 550,
+        "Unit": "mg/dL"
+    },
+    {
+        "TypeName": "Cholesterol",
+        "DisplayName": "Cholesterol Ratio",
+        "SnowmedCode": "iSopqr",
+        "LoincCode": "iSPqAb0A",
+        "NormalRangeMin": 1,
+        "NormalRangeMax": 8,
+        "Unit": ""
+    },
+    {
+        "TypeName": "Cholesterol",
+        "DisplayName": "A1C Level",
+        "SnowmedCode": "iSopqr",
+        "LoincCode": "iSPqAb0A",
+        "NormalRangeMin": 3,
+        "NormalRangeMax": 9,
+        "Unit": "%"
+    }
+]

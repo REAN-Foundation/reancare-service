@@ -25,6 +25,7 @@ export class AssessmentRepo implements IAssessmentRepo {
                 Type                   : model.Type ?? AssessmentType.Custom,
                 PatientUserId          : model.PatientUserId ?? null,
                 AssessmentTemplateId   : model.AssessmentTemplateId ?? null,
+                ScoringApplicable      : model.ScoringApplicable ?? false,
                 Provider               : model.Provider ?? null,
                 ProviderAssessmentCode : model.ProviderAssessmentCode ?? null,
                 ProviderAssessmentId   : model.ProviderAssessmentId ?? null,
@@ -48,7 +49,7 @@ export class AssessmentRepo implements IAssessmentRepo {
         try {
             const assessment = await Assessment.findByPk(id);
             return AssessmentMapper.toDto(assessment);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -107,13 +108,13 @@ export class AssessmentRepo implements IAssessmentRepo {
             await assessment.save();
 
             return AssessmentMapper.toDto(assessment);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
-    
+
     public search = async (filters: AssessmentSearchFilters): Promise<AssessmentSearchResults> => {
 
         try {
@@ -131,7 +132,7 @@ export class AssessmentRepo implements IAssessmentRepo {
             if (filters.AssessmentTemplateId != null) {
                 search.where['AssessmentTemplateId'] = { [Op.like]: '%' + filters.AssessmentTemplateId + '%' };
             }
-            
+
             let orderByColum = 'Title';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
@@ -173,7 +174,7 @@ export class AssessmentRepo implements IAssessmentRepo {
                 Items          : dtos
             };
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

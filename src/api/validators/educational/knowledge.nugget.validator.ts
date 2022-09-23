@@ -31,8 +31,8 @@ export class KnowledgeNuggetValidator extends BaseValidator {
 
     search = async (request: express.Request): Promise<KnowledgeNuggetSearchFilters> => {
 
-        await this.validateString(request, 'topicName', Where.Query, false, false, true);
-        await this.validateString(request, 'tag', Where.Query, false, false, true);
+        await this.validateString(request, 'topicName', Where.Query, false, false);
+        await this.validateString(request, 'tags', Where.Query, false, false);
         
         await this.validateBaseSearchFilters(request);
         
@@ -76,7 +76,7 @@ export class KnowledgeNuggetValidator extends BaseValidator {
 
         var filters: KnowledgeNuggetSearchFilters = {
             TopicName : request.query.topicName ?? null,
-            Tag       : request.query.tag ?? null,
+            Tags      : request.query.tags ?? null,
 
         };
         return this.updateBaseSearchFilters(request, filters);

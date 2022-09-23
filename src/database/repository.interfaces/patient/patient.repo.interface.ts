@@ -16,5 +16,7 @@ export interface IPatientRepo {
 
     deleteByUserId(userId: string): Promise<boolean>;
 
+    getAllPatientUserIds(): Promise<any[]>;
+
     // searchFull(filters: PatientSearchFilters): Promise<PatientDetailsSearchResults>;
 }

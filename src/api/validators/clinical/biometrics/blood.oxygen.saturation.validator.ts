@@ -33,8 +33,8 @@ export class BloodOxygenSaturationValidator extends BaseValidator {
 
         await this.validateUuid(request, 'personId', Where.Query, false, false);
         await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
-        await this.validateInt(request, 'minValue', Where.Query, false, false);
-        await this.validateInt(request, 'maxValue', Where.Query, false, false);
+        await this.validateDecimal(request, 'minValue', Where.Query, false, false);
+        await this.validateDecimal(request, 'maxValue', Where.Query, false, false);
         await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
         await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
         await this.validateUuid(request, 'RecordedByUserId', Where.Query, false, false);
@@ -58,7 +58,7 @@ export class BloodOxygenSaturationValidator extends BaseValidator {
     private  async validateCreateBody(request) {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
-        await this.validateInt(request, 'BloodOxygenSaturation', Where.Body, true, true);
+        await this.validateDecimal(request, 'BloodOxygenSaturation', Where.Body, true, true);
         await this.validateString(request, 'Unit', Where.Body, false, true);
         await this.validateDate(request, 'RecordDate', Where.Body, false, false);
         await this.validateUuid(request, 'RecordedByUserId', Where.Body, false, true);
@@ -69,7 +69,7 @@ export class BloodOxygenSaturationValidator extends BaseValidator {
     private  async validateUpdateBody(request) {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
-        await this.validateInt(request, 'BloodOxygenSaturation', Where.Body, false, true);
+        await this.validateDecimal(request, 'BloodOxygenSaturation', Where.Body, false, true);
         await this.validateString(request, 'Unit', Where.Body, false, false);
         await this.validateDate(request, 'RecordDate', Where.Body, false, false);
         await this.validateUuid(request, 'RecordedByUserId', Where.Body, false, true);

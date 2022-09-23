@@ -28,6 +28,7 @@ import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/as
 import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
 import { UserTaskDomainModel } from "../../domain.types/user/user.task/user.task.domain.model";
+import { Loader } from "../../startup/loader";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -82,6 +83,8 @@ export class CareplanService implements IUserActionService {
             //Since not registered with provider, register
             var participantDetails: ParticipantDomainModel = {
                 Name           : patient.User.Person.DisplayName,
+                Phone          : patient.User.Person.Phone,
+                Email          : patient.User.Person.Email,
                 PatientUserId  : enrollmentDetails.PatientUserId,
                 Provider       : provider,
                 Gender         : patient.User.Person.Gender,
@@ -116,8 +119,8 @@ export class CareplanService implements IUserActionService {
         var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
 
         var activities = await this._handler.fetchActivities(
-            enrollmentDetails.PatientUserId, enrollmentDetails.Provider, enrollmentDetails.PlanCode, enrollmentId,
-            enrollmentDetails.StartDate, enrollmentDetails.EndDate);
+            enrollmentDetails.PatientUserId, enrollmentDetails.Provider, enrollmentDetails.PlanCode,
+            enrollmentDetails.ParticipantId, enrollmentId, enrollmentDetails.StartDate, enrollmentDetails.EndDate);
 
         Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
 
@@ -142,6 +145,7 @@ export class CareplanService implements IUserActionService {
                 Frequency        : x.Frequency,
                 Status           : x.Status
             };
+
             return a;
         });
 
@@ -162,19 +166,49 @@ export class CareplanService implements IUserActionService {
         return dto;
     };
 
-    getPatientEnrollments = async (patientUserId: string) => {
+    public scheduleDailyCareplanPushTasks = async (): Promise<void> => {
+    
+        const activities = await this._careplanRepo.getAllReanActivities();
+
+        if (activities.length !== 0) {
+            activities.forEach(async activity => {
+                const todayDate = new Date().toISOString().split('T')[0];
+                const activityDate = activity.ScheduledAt.toISOString().split('T')[0];
+
+                if (todayDate === activityDate) {
+                    const message = activity.Description;
+                    const patient = await this.getPatient(activity.PatientUserId);
+                    const phoneNumber = patient.User.Person.Phone;
+                    await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message);
+                   
+                    Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
+                
+                }
+            });
+        } else {
+            Logger.instance().log(`No activities fetched from careplan task.`);
+        }
+            
+    };
+
+    public getPatientEligibility = async (patient: any, provider: string, careplanCode: string) => {
+        return await this._handler.getPatientEligibility(patient, provider, careplanCode);
+    };
+
+    public getPatientEnrollments = async (patientUserId: string) => {
         return await this._careplanRepo.getPatientEnrollments(patientUserId);
     };
     
-    fetchTasks = async (careplanId: uuid): Promise<boolean> => {
+    public fetchTasks = async (careplanId: uuid): Promise<boolean> => {
 
         var enrollment = await this._careplanRepo.getCareplanEnrollment(careplanId);
 
         const enrollmentId = enrollment.EnrollmentId.toString();
+        const participantId = enrollment.ParticipantId.toString();
 
         var activities = await this._handler.fetchActivities(
-            enrollment.PatientUserId, enrollment.Provider, enrollment.PlanCode, enrollmentId,
-            enrollment.StartAt, enrollment.EndAt);
+            enrollment.PatientUserId, enrollment.Provider, enrollment.PlanCode,
+            participantId, enrollmentId, enrollment.StartAt, enrollment.EndAt);
 
         Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
 

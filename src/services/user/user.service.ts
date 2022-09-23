@@ -24,12 +24,15 @@ import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { IUserDeviceDetailsRepo } from '../../database/repository.interfaces/user/user.device.details.repo.interface ';
 import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
+import { IAssessmentTemplateRepo } from '../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface';
+import { IAssessmentRepo } from '../../database/repository.interfaces/clinical/assessment/assessment.repo.interface';
+import { IUserTaskRepo } from '../../database/repository.interfaces/user/user.task.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class UserService {
-    
+
     constructor(
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
@@ -40,6 +43,9 @@ export class UserService {
         @inject('IUserLoginSessionRepo') private _userLoginSessionRepo: IUserLoginSessionRepo,
         @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
+        @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
+        @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
+        @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
 
     ) {}
 
@@ -89,7 +95,7 @@ export class UserService {
         dto = await this.updateDetailsDto(dto);
         return dto;
     };
-    
+
     public delete = async (id: string): Promise<boolean> => {
         return await this._userRepo.delete(id);
     };
@@ -108,7 +114,24 @@ export class UserService {
             }
         }
 
+        await this._userRepo.updateLastLogin(user.id);
+
+        //Generate login session
+
+        const expiresIn: number = ConfigurationManager.SessionExpiresIn();
+        var validTill = TimeHelper.addDuration(new Date(), expiresIn, DurationType.Second);
+
+        var entity: UserLoginSessionDomainModel = {
+            UserId    : user.id,
+            IsActive  : true,
+            StartedAt : new Date(),
+            ValidTill : validTill
+        };
+
+        const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
+
         //The following user data is immutable. Don't include any mutable data
+
         var currentUser: CurrentUser = {
             UserId        : user.id,
             DisplayName   : user.Person.DisplayName,
@@ -116,11 +139,12 @@ export class UserService {
             Email         : user.Person.Email,
             UserName      : user.UserName,
             CurrentRoleId : loginModel.LoginRoleId,
-            SessionId     : currentUser.SessionId,
+            SessionId     : loginSessionDetails.id,
         };
+
         const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
 
-        return { user: user, accessToken: accessToken };
+        return { user: user, accessToken: accessToken, sessionId: currentUser.SessionId, sessionValidTill: validTill };
     };
 
     public generateOtp = async (otpDetails: any): Promise<boolean> => {
@@ -156,7 +180,7 @@ export class UserService {
         if (person == null) {
             throw new ApiError(404, 'Cannot find user with the given role.');
         }
-        
+
         var str = JSON.stringify(user, null, 2);
         Logger.instance().log(str);
 
@@ -174,7 +198,7 @@ export class UserService {
 
         const otpDto = await this._otpRepo.create(otpEntity);
         const systemIdentifier = ConfigurationManager.SystemIdentifier();
-        
+
         var userFirstName = 'user';
         if (user.Person && user.Person.FirstName) {
             userFirstName = user.Person.FirstName;
@@ -189,9 +213,9 @@ export class UserService {
     };
 
     public loginWithOtp = async (loginModel: UserLoginDetails): Promise<any> => {
-        
+
         var isInternalTestUser = await this.isInternalTestUser(loginModel.Phone);
-        
+
         const user: UserDetailsDto = await this.checkUserDetails(loginModel);
 
         if (!isInternalTestUser) {
@@ -205,7 +229,8 @@ export class UserService {
             }
         }
 
-        //The following user data is immutable. Don't include any mutable data
+        await this._userRepo.updateLastLogin(user.id);
+
         //Generate login session
 
         const expiresIn: number = ConfigurationManager.SessionExpiresIn();
@@ -217,8 +242,10 @@ export class UserService {
             StartedAt : new Date(),
             ValidTill : validTill
         };
-        
+
         const loginSessionDetails = await this._userLoginSessionRepo.create(entity);
+
+        //The following user data is immutable. Don't include any mutable data
 
         var currentUser: CurrentUser = {
             UserId        : user.id,
@@ -232,7 +259,7 @@ export class UserService {
 
         const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
 
-        return { user: user, accessToken: accessToken, sessionId: currentUser.SessionId  };
+        return { user: user, accessToken: accessToken, sessionId: currentUser.SessionId, sessionValidTill: validTill };
     };
 
     public invalidateSession = async (sesssionId: uuid): Promise<boolean> => {
@@ -262,11 +289,11 @@ export class UserService {
         }
         return userName;
     };
-    
+
     public generateUserDisplayId = async (role:Roles, phone, phoneCount = 0) => {
 
         let prefix = '';
-    
+
         if (role === Roles.Doctor){
             prefix = 'DR#';
         } else if (role === Roles.Patient){
@@ -276,10 +303,10 @@ export class UserService {
         } else if (role === Roles.PharmacyUser){
             prefix = 'PU#';
         }
-    
+
         let str = '';
         if (phone != null && typeof phone !== 'undefined') {
-    
+
             const phoneTemp = phone.toString();
             const tokens = phoneTemp.split('+');
             let s = tokens.length > 1 ? tokens[1] : phoneTemp;
@@ -288,7 +315,7 @@ export class UserService {
             s = s.replace('+', '');
             s = s.replace(' ', '');
             s = s.replace('-', '');
-    
+
             if (role === Roles.Patient) {
                 const idx = (phoneCount + 1).toString();
                 str = str + idx + '-' + s;
@@ -301,7 +328,7 @@ export class UserService {
             str = tmp.substring(-10);
         }
         str = str.substring(0, 20);
-    
+
         const displayId = prefix + str;
         return displayId;
     };

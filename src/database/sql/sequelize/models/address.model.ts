@@ -92,9 +92,9 @@ export default class Address extends Model {
     })
     State: string;
 
-    @Length({ max: 32 })
+    @Length({ max: 128 })
     @Column({
-        type      : DataType.STRING(32),
+        type      : DataType.STRING(128),
         allowNull : true
     })
     Country: string;

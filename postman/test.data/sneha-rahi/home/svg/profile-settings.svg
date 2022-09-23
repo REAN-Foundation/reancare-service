@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 74 74">
+    <defs>
+        <filter id="Ellipse_293" x="0" y="0" width="74" height="74" filterUnits="userSpaceOnUse">
+            <feOffset dx="5" dy="5"/>
+            <feGaussianBlur stdDeviation="5" result="blur"/>
+            <feFlood flood-opacity=".161"/>
+            <feComposite operator="in" in2="blur"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <filter id="Ellipse_292" x="0" y="0" width="74" height="74" filterUnits="userSpaceOnUse">
+            <feOffset dx="5" dy="5"/>
+            <feGaussianBlur stdDeviation="5" result="blur-2"/>
+            <feFlood flood-opacity=".161"/>
+            <feComposite operator="in" in2="blur-2"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <filter id="Ellipse_294" x="0" y="0" width="74" height="74" filterUnits="userSpaceOnUse">
+            <feOffset dx="5" dy="5"/>
+            <feGaussianBlur stdDeviation="5" result="blur-3"/>
+            <feFlood flood-opacity=".161"/>
+            <feComposite operator="in" in2="blur-3"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <clipPath id="clip-path">
+            <circle id="Ellipse_291" data-name="Ellipse 291" cx="20" cy="20" r="20" transform="translate(.458 .302)" style="fill:#fff"/>
+        </clipPath>
+        <clipPath id="clip-path-2"/>
+        <style>
+            
+        </style>
+    </defs>
+    <g id="Group_1959" data-name="Group 1959" transform="translate(-287.099 -722.942)">
+        <g transform="translate(287.1 722.94)" style="filter:url(#Ellipse_292)">
+            <circle id="Ellipse_292-2" data-name="Ellipse 292" cx="22" cy="22" r="22" transform="translate(10 10)" style="fill:#e0e7fb"/>
+        </g>
+        <g id="Mask_Group_32" data-name="Mask Group 32" transform="translate(296.942 732.942)" style="clip-path:url(#clip-path-2)">
+            <g id="Group_1959-2" data-name="Group 1959" transform="rotate(-4.01 90.93 299.342)">
+                <path id="Head" d="M0 17.364 1.966 8.2A6.443 6.443 0 0 1 .251 3.574C.609-1.516 7.7-.4 9.077 2.173s1.215 9.086-.567 9.545c-.711.183-2.225-.265-3.766-1.194l.967 6.84z" transform="rotate(14.98 -1.182 150.468)" style="fill:#d4a181"/>
+                <path id="Union_2" data-name="Union 2" d="M9.281 7.69q0-.141.006-.28C7.32 8.759 5.8 11.417 3.2 11.417c-3.539 0-4.945-7.136 0-7.136 3.363 0 5.017.49 6.443 1.215a4.628 4.628 0 0 1 1.235-1.924 1.918 1.918 0 0 1 .568-.4 2.638 2.638 0 0 1 .475-.2 11.862 11.862 0 0 1 3.5-.587c.26-.009.515-.012.764-.008a2.38 2.38 0 1 1 2.505 2.377 12.014 12.014 0 0 1-2.662.452 4.958 4.958 0 0 1 .153 1.276c0 2.671-1.862 6.362-3.721 6.362S9.281 10.361 9.281 7.69z" transform="rotate(14.98 14.352 109.332)"/>
+                <path id="Ear" d="M1.428 3.092c.6 0 1.19-.692 1.19-1.665A1.4 1.4 0 0 0 1.428 0 1.427 1.427 0 0 0 0 1.427a1.5 1.5 0 0 0 1.428 1.665z" transform="rotate(14.98 -20.55 158.018)"/>
+                <path id="Leg" d="m0 0 17.682 29.549L30.939 54.53h2.855L11.583 0z" transform="translate(30.623 43.221)" style="fill:#ba8b72"/>
+                <path id="shoe" d="M1.065 1.118a.476.476 0 0 0-.61.321L0 3.038a15.275 15.275 0 0 0 .214 1.878h13.422s.523-1.729-.6-1.867-1.877-.249-1.877-.249L4.921.021A.238.238 0 0 0 4.6.147l-.4.972a5.4 5.4 0 0 1-1.7.487z" transform="translate(59.417 95.154)" style="fill:#fff"/>
+                <path id="Pant" d="m30.2 50.53 5.5-1.665s-3.619-10.814-8.871-23.8S15.552 0 15.552 0H0a286.369 286.369 0 0 0 14.212 27.765A212.172 212.172 0 0 0 30.2 50.53z" transform="translate(27.683 43.221)" style="fill:#fff"/>
+                <path id="Leg-2" data-name="Leg" d="M27.063 0c-1.669 10.384-4.888 23.65-5.191 24.06q-.3.409-21.871 7.326L.617 33.9q25.719-3.709 27.1-5.756C29.105 26.1 36.018 9.934 38.7 0z" transform="translate(2.399 43.221)" style="fill:#d4a181"/>
+                <path id="Pant-2" data-name="Pant" d="m0 29.21 1.086 4.054q19.237 1.686 23.574-2.438T34.545 0h-14.83Q16.2 21.866 15.784 22.784T0 29.21z" transform="translate(7.453 43.221)" style="fill:#fff"/>
+                <path id="shoe-2" data-name="shoe" d="M1.02 1.072a.456.456 0 0 0-.585.308L0 2.913a14.652 14.652 0 0 0 .206 1.8H13.07s.5-1.658-.579-1.79-1.791-.238-1.791-.238L4.717.02a.228.228 0 0 0-.3.121l-.384.932A5.169 5.169 0 0 1 2.4 1.54z" transform="rotate(79.98 -41.105 39.193)" style="fill:#fff"/>
+                <path id="Arm" d="m1.893 0 7.288 5.961A20.437 20.437 0 0 1 14.226 8.3c.31.314.673.936-.673.761s-2.769-.3-2.98.153.578 1.045.169 1.647q-.409.6-3.4-3.3L0 4.053z" transform="rotate(-2 1153.022 -1485.454)" style="fill:#d4a181"/>
+                <path id="Arm-2" data-name="Arm" d="M13 0S6.909 13.468 5.933 14.706c-.477.605-3.382 2.135-5.344 2.945-.788.325-.631.988-.406 1.2 1.835 1.751 3.553.506 5.561.045 2.2-.506 1.472 2.088 3.211 1.715-.255-1.2-.963-3.47-.141-4.689C9.363 15.113 17.159.9 17.159.9z" transform="rotate(8 -220.927 53.833)" style="fill:#d4a181"/>
+                <path id="Clothes_Back" data-name="Clothes Back" d="M0 1.088 2.526 0a59.339 59.339 0 0 0 19.735 23l-1.846 3.94C12.287 23.069 4.662 20.173 1.1 13.6-.1 11.4.159 3.835 0 1.088z" transform="rotate(2 -530.138 1113.71)" style="fill:#465d7c"/>
+                <path id="Shirt" d="M0 26.69s11.222 1.232 17.666 0c.532-.1.509-2.4.262-3.021C14.084 13.915 11.556 6.775 11.556 0c-1.058.552-3.7.166-3.7.166C3.114 7.147.936 15.158 0 26.69z" transform="rotate(10.02 -84.175 181.337)" style="fill:#191847"/>
+                <path id="Clothes_Front" data-name="Clothes Front" d="M15.7.223S2.005 12.351 0 34.95l4.656.521C8.33 16.18 17.611 12.785 17.611 12.785L16.966 0z" transform="rotate(20 -24.588 67.244)" style="fill:#5b7aa3"/>
+                <path id="Clothes_Body" data-name="Clothes Body" d="M0 51.41c9.816-3.919 28.229-4.646 35.293-6.223C26.62 25.653 14.477 10.719 15.274.186L9.791 0c-1.312 3.141-4.806 7.864-6.52 12.609-1.412 3.909.418 7.914-.248 12.03a19.745 19.745 0 0 1-.449 2.039C.232 35.321.389 42.978 0 51.41z" transform="rotate(10.02 -80.132 161.707)" style="fill:#5b7aa3"/>
+                <path id="Path_108" data-name="Path 108" d="M11.227 3.965c11.122 5.248 15.941 9.381 15.941 9.381s4.6 3.7 6.746 1.649 1.726 2.733 1.726 2.733a6.746 6.746 0 0 1-8.059.582c-4.625-2.71-3.447-5.056-7.581-6.327s-8.728-1.855-10.061-3.745S3.762 4.17.995 3.652 2.113 0 2.113 0" transform="translate(7.269 5.65)" style="fill:#191847"/>
+            </g>
+        </g>
+        <g transform="translate(287.1 722.94)" style="filter:url(#Ellipse_294)">
+            <g id="Ellipse_294-2" data-name="Ellipse 294" transform="translate(10 10)" style="stroke-width:2px;fill:none;stroke:#5b7aa3">
+                <circle cx="22" cy="22" r="22" style="stroke:none"/>
+                <circle cx="22" cy="22" r="21" style="fill:none"/>
+            </g>
+        </g>
+        <path id="np_question_1679760_000000" d="M0 3.829c0-4.917 9.2-5.235 9.2-.159 0 3.014-3.014 2.855-3.648 5.71a1.122 1.122 0 1 1-2.221-.317c0-2.7 2.221-2.855 3.172-4.6a1.811 1.811 0 0 0-1.745-2.538c-2.7 0-1.745 3.014-3.49 3.014A1.226 1.226 0 0 1 0 3.829zM4.441 13.98c-1.9 0-1.745-2.855 0-2.855a1.427 1.427 0 1 1 0 2.855z" transform="rotate(10.02 -4111.15 2235.212)" style="fill-rule:evenodd;fill:#191847"/>
+    </g>
+</svg>

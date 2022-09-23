@@ -77,6 +77,27 @@ export class UserDeviceDetailsController {
         }
     };
 
+    getByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'UserDeviceDetails.GetByUserId';
+            
+            await this._authorizer.authorize(request, response);
+
+            const id: string = await UserDeviceDetailsValidator.getById(request);
+
+            const UserDeviceDetails = await this._service.getByUserId(id);
+            if (UserDeviceDetails == null) {
+                throw new ApiError(404, 'User device details record not found.');
+            }
+
+            ResponseHandler.success(request, response, 'User device details record retrieved successfully!', 200, {
+                UserDeviceDetails : UserDeviceDetails,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'UserDeviceDetails.Search';

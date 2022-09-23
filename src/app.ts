@@ -6,6 +6,7 @@ import "reflect-metadata";
 import { Router } from './api/routes/router';
 import { Logger } from './common/logger';
 import { ConfigurationManager } from "./config/configuration.manager";
+import { EHRDbConnector } from './custom/ehr.insights.records/ehr.db.connector';
 import { Loader } from './startup/loader';
 
 /////////////////////////////////////////////////////////////////////////
@@ -26,7 +27,7 @@ export default class Application {
     public static instance(): Application {
         return this._instance || (this._instance = new this());
     }
-    
+
     public app(): express.Application {
         return this._app;
     }
@@ -43,9 +44,12 @@ export default class Application {
             if (process.env.NODE_ENV === 'test') {
                 await Loader.databaseConnector.dropDatabase();
             }
-            
+
             //Connect with database
             await Loader.databaseConnector.init();
+
+            //Connect with EHR insights database
+            await EHRDbConnector.connect();
 
             //Set-up middlewares
             await this.setupMiddlewares();
@@ -58,14 +62,14 @@ export default class Application {
 
             //Set-up cron jobs
             await Loader.scheduler.schedule();
-            
+
             process.on('exit', code => {
                 Logger.instance().log(`Process exited with code: ${code}`);
             });
 
             //Start listening
             await this.listen();
-            
+
         }
         catch (error){
             Logger.instance().log('An error occurred while starting reancare-api service.' + error.message);
@@ -82,7 +86,7 @@ export default class Application {
                 this._app.use(cors());
 
                 const MAX_UPLOAD_FILE_SIZE = ConfigurationManager.MaxUploadFileSize();
-            
+
                 this._app.use(fileUpload({
                     limits            : { fileSize: MAX_UPLOAD_FILE_SIZE },
                     preserveExtension : true,

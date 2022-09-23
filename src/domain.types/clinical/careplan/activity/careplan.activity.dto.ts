@@ -5,8 +5,8 @@ export interface CareplanActivityDto {
     id?              : uuid;
     PatientUserId    : uuid;
     Provider         : string;
-    ParticipantIdId? : string;
-    EnrollmentId?    : string;
+    ParticipantId?   : number | string;
+    EnrollmentId?    : number | string;
     UserTaskId?      : uuid;
     PlanName?        : string;
     PlanCode?        : string;

@@ -16,6 +16,11 @@ export class FoodConsumptionValidator extends BaseValidator {
         const FoodConsumptionModel: FoodConsumptionDomainModel = {
             PatientUserId   : request.body.PatientUserId ?? null,
             Food            : request.body.Food ?? null,
+            FoodTypes       : request.body.FoodTypes ?? [],
+            Servings        : request.body.Servings ?? null,
+            ServingUnit     : request.body.ServingUnit ?? null,
+            Tags            : request.body.Tags ?? [],
+            UserResponse    : request.body.UserResponse ?? false,
             Description     : request.body.Description ?? null,
             ConsumedAs      : request.body.ConsumedAs ?? null,
             Calories        : request.body.Calories ?? null,
@@ -36,6 +41,11 @@ export class FoodConsumptionValidator extends BaseValidator {
 
         await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
         await this.validateString(request, 'food', Where.Query, false, false, true);
+        await this.validateArray(request, 'foodTypes', Where.Query, false, false);
+        await this.validateDecimal(request, 'servings', Where.Query, false, false);
+        await this.validateString(request, 'servingUnit', Where.Query, false, false);
+        await this.validateArray(request, 'tags', Where.Query, false, false);
+        await this.validateBoolean(request, 'userResponse', Where.Query, false, false);
         await this.validateString(request, 'consumedAs', Where.Query, false, false, true);
         await this.validateDate(request, 'dateFrom', Where.Query, false, false);
         await this.validateDate(request, 'dateTo', Where.Query, false, false);
@@ -57,11 +67,16 @@ export class FoodConsumptionValidator extends BaseValidator {
     private  async validateCreateBody(request) {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, true, false);
-        await this.validateString(request, 'Food', Where.Body, true, false);
+        await this.validateString(request, 'Food', Where.Body, false, true);
+        await this.validateArray(request, 'FoodTypes', Where.Body, false, true);
+        await this.validateDecimal(request, 'Servings', Where.Body, false, true);
+        await this.validateString(request, 'ServingUnit', Where.Body, false, true);
+        await this.validateArray(request, 'Tags', Where.Body, false, true);
+        await this.validateBoolean(request, 'UserResponse', Where.Query, false, true);
         await this.validateString(request, 'Description', Where.Body, false, true);
-        await this.validateString(request, 'ConsumedAs', Where.Body, true, false);
+        await this.validateString(request, 'ConsumedAs', Where.Body, false, true);
         await this.validateDecimal(request, 'Calories', Where.Body, false, true);
-        await this.validateDate(request, 'StartTime', Where.Body, true, false);
+        await this.validateDate(request, 'StartTime', Where.Body, false, true);
         await this.validateDate(request, 'EndTime', Where.Body, false, true);
 
         this.validateRequest(request);
@@ -71,9 +86,14 @@ export class FoodConsumptionValidator extends BaseValidator {
 
         await this.validateUuid(request, 'PatientUserId', Where.Body, false, false);
         await this.validateString(request, 'Food', Where.Body, false, false);
+        await this.validateArray(request, 'FoodTypes', Where.Body, false, false);
+        await this.validateDecimal(request, 'Servings', Where.Body, false, false);
+        await this.validateString(request, 'ServingUnit', Where.Body, false, false);
+        await this.validateArray(request, 'Tags', Where.Body, false, false);
+        await this.validateBoolean(request, 'UserResponse', Where.Query, false, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
         await this.validateString(request, 'ConsumedAs', Where.Body, false, false);
-        await this.validateDecimal(request, 'Calories', Where.Body, false, true);
+        await this.validateDecimal(request, 'Calories', Where.Body, false, false);
         await this.validateDate(request, 'StartTime', Where.Body, false, false);
         await this.validateDate(request, 'EndTime', Where.Body, false, false);
 
@@ -85,6 +105,11 @@ export class FoodConsumptionValidator extends BaseValidator {
         var filters: FoodConsumptionSearchFilters = {
             PatientUserId : request.query.patientUserId ?? null,
             Food          : request.query.food ?? null,
+            FoodTypes     : request.query.foodTypes ?? null,
+            Servings      : request.query.servings ?? null,
+            ServingUnit   : request.query.servingUnit ?? null,
+            Tags          : request.query.tags ?? null,
+            UserResponse  : request.query.userResponse ?? null,
             ConsumedAs    : request.query.consumedAs ?? null,
             DateFrom      : request.query.dateFrom ?? null,
             DateTo        : request.query.dateTo ?? null,

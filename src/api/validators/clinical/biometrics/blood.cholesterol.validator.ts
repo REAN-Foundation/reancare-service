@@ -20,6 +20,7 @@ export class BloodCholesterolValidator extends BaseValidator {
             LDL               : request.body.LDL,
             TriglycerideLevel : request.body.TriglycerideLevel,
             Ratio             : request.body.Ratio,
+            A1CLevel          : request.body.A1CLevel,
             Unit              : request.body.Unit,
             RecordDate        : request.body.RecordDate ?? new Date(),
             RecordedByUserId  : request.body.RecordedByUserId ?? request.currentUser.UserId,
@@ -44,6 +45,8 @@ export class BloodCholesterolValidator extends BaseValidator {
         await this.validateDecimal(request, 'maxHDL', Where.Query, false, false);
         await this.validateDecimal(request, 'minLDL', Where.Query, false, false);
         await this.validateDecimal(request, 'maxLDL', Where.Query, false, false);
+        await this.validateDecimal(request, 'minA1CLevel', Where.Query, false, false);
+        await this.validateDecimal(request, 'maxA1CLevel', Where.Query, false, false);
         await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);
         await this.validateDate(request, 'createdDateTo', Where.Query, false, false);
         await this.validateUuid(request, 'recordedByUserId', Where.Query, false, false);
@@ -71,6 +74,7 @@ export class BloodCholesterolValidator extends BaseValidator {
         await this.validateDecimal(request, 'LDL', Where.Body, false, true);
         await this.validateDecimal(request, 'TriglycerideLevel', Where.Body, false, true);
         await this.validateDecimal(request, 'Ratio', Where.Body, false, true);
+        await this.validateDecimal(request, 'A1CLevel', Where.Body, false, true);
         await this.validateString(request, 'Unit', Where.Body, false, true);
         await this.validateDate(request, 'RecordDate', Where.Body, false, true);
         await this.validateUuid(request, 'RecordedByUserId', Where.Body, false, true);
@@ -86,6 +90,7 @@ export class BloodCholesterolValidator extends BaseValidator {
         await this.validateDecimal(request, 'LDL', Where.Body, false, false);
         await this.validateDecimal(request, 'TriglycerideLevel', Where.Body, false, false);
         await this.validateDecimal(request, 'Ratio', Where.Body, false, false);
+        await this.validateDecimal(request, 'A1CLevel', Where.Body, false, false);
         await this.validateString(request, 'Unit', Where.Body, false, false);
         await this.validateDate(request, 'RecordDate', Where.Body, false, false);
         await this.validateUuid(request, 'RecordedByUserId', Where.Body, false, false);
@@ -105,6 +110,8 @@ export class BloodCholesterolValidator extends BaseValidator {
             MaxHDL              : request.query.maxHDL ?? null,
             MinLDL              : request.query.minLDL ?? null,
             MaxLDL              : request.query.maxLDL ?? null,
+            MinA1CLevel         : request.query.minA1CLevel ?? null,
+            MaxA1CLevel         : request.query.maxA1CLevel ?? null,
             CreatedDateFrom     : request.query.createdDateFrom ?? null,
             CreatedDateTo       : request.query.createdDateTo ?? null,
             RecordedByUserId    : request.query.recordedByUserId ?? null,

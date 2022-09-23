@@ -1,4 +1,4 @@
-import { Utils } from 'sequelize';
+import { Op, Utils } from 'sequelize';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { KnowledgeNuggetDomainModel } from "../../../../../domain.types/educational/knowledge.nugget/knowledge.nugget.domain.model";
@@ -81,10 +81,10 @@ export class KnowledgeNuggetRepo implements IKnowledgeNuggetRepo {
             const search = { where: {} };
 
             if (filters.TopicName != null) {
-                search.where['TopicName'] = filters.TopicName;
+                search.where['TopicName'] = { [Op.like]: '%' + filters.TopicName + '%' };
             }
-            if (filters.Tag !== null) {
-                search.where['Tag'] = filters.Tag;
+            if (filters.Tags != null) {
+                search.where['Tags'] = filters.Tags;
             }
 
             let orderByColum = 'CreatedAt';

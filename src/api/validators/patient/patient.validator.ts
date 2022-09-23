@@ -23,14 +23,17 @@ export class PatientValidator extends BaseValidator {
         const entity: PatientDomainModel = {
             User : {
                 Person : {
-                    FirstName       : request.body.FirstName ?? null,
-                    LastName        : request.body.LastName ?? null,
-                    Prefix          : request.body.Prefix ?? null,
-                    Phone           : phone,
-                    Email           : request.body.Email ?? null,
-                    Gender          : request.body.Gender ?? null,
-                    BirthDate       : birthdate,
-                    ImageResourceId : request.body.ImageResourceId ?? null,
+                    FirstName            : request.body.FirstName ?? null,
+                    LastName             : request.body.LastName ?? null,
+                    Prefix               : request.body.Prefix ?? null,
+                    Phone                : phone,
+                    Email                : request.body.Email ?? null,
+                    Gender               : request.body.Gender ?? null,
+                    SelfIdentifiedGender : request.body.SelfIdentifiedGender ?? null,
+                    MaritalStatus        : request.body.MaritalStatus ?? null,
+                    BirthDate            : birthdate,
+                    Age                  : request.body.Age ?? null,
+                    ImageResourceId      : request.body.ImageResourceId ?? null,
                 },
                 id              : request.params.userId,
                 Password        : request.body.Password ?? null,
@@ -57,7 +60,12 @@ export class PatientValidator extends BaseValidator {
                     Prefix          : request.body.Prefix !== undefined ? request.body.Prefix : undefined,
                     Email           : request.body.Email !== undefined ? request.body.Email : undefined,
                     Gender          : request.body.Gender !== undefined ? request.body.Gender : undefined,
+                    SelfIdentifiedGender : request.body.SelfIdentifiedGender !== undefined ?
+                        request.body.SelfIdentifiedGender : undefined,
+                    MaritalStatus : request.body.MaritalStatus !== undefined ?
+                        request.body.MaritalStatus : undefined,
                     BirthDate       : birthdate,
+                    Age             : request.body.Age !== undefined ? request.body.Age : undefined,
                     ImageResourceId : request.body.ImageResourceId !== undefined ?
                         request.body.ImageResourceId : undefined,
                 },
@@ -118,7 +126,10 @@ export class PatientValidator extends BaseValidator {
         await this.validateString(request, 'FirstName', Where.Body, false, true);
         await this.validateString(request, 'LastName', Where.Body, false, true);
         await this.validateString(request, 'Gender', Where.Body, false, true);
+        await this.validateString(request, 'SelfIdentifiedGender', Where.Body, false, true);
+        await this.validateString(request, 'MaritalStatus', Where.Body, false, true);
         await this.validateDate(request, 'BirthDate', Where.Body, false, true);
+        await this.validateString(request, 'Age', Where.Body, false, true);
         await this.validateUuid(request, 'ImageResourceId', Where.Body, false, true);
 
         await body('AddressIds').optional()

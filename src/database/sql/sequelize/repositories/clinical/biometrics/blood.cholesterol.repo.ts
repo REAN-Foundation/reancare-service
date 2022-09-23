@@ -25,6 +25,7 @@ export class BloodCholesterolRepo implements IBloodCholesterolRepo {
                 LDL               : createModel.LDL,
                 TriglycerideLevel : createModel.TriglycerideLevel,
                 Ratio             : createModel.Ratio,
+                A1CLevel          : createModel.A1CLevel,
                 Unit              : createModel.Unit,
                 RecordDate        : createModel.RecordDate,
                 RecordedByUserId  : createModel.RecordedByUserId
@@ -110,6 +111,20 @@ export class BloodCholesterolRepo implements IBloodCholesterolRepo {
             } else if (filters.MinLDL !== null && filters.MaxLDL === null) {
                 search.where['LDL'] = {
                     [Op.gte] : filters.MinLDL,
+                };
+            }
+            if (filters.MinA1CLevel != null && filters.MaxA1CLevel != null) {
+                search.where['A1CLevel'] = {
+                    [Op.gte] : filters.MinA1CLevel,
+                    [Op.lte] : filters.MaxA1CLevel,
+                };
+            } else if (filters.MinA1CLevel === null && filters.MaxA1CLevel !== null) {
+                search.where['A1CLevel'] = {
+                    [Op.lte] : filters.MaxA1CLevel,
+                };
+            } else if (filters.MinA1CLevel !== null && filters.MaxA1CLevel === null) {
+                search.where['A1CLevel'] = {
+                    [Op.gte] : filters.MinA1CLevel,
                 };
             }
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
@@ -200,6 +215,9 @@ export class BloodCholesterolRepo implements IBloodCholesterolRepo {
             }
             if (updateModel.Ratio != null) {
                 bloodCholesterol.Ratio = updateModel.Ratio;
+            }
+            if (updateModel.A1CLevel != null) {
+                bloodCholesterol.A1CLevel = updateModel.A1CLevel;
             }
             if (updateModel.Unit != null) {
                 bloodCholesterol.Unit = updateModel.Unit;

@@ -47,7 +47,7 @@ export class UserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
     getByPhoneAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.GetByPhoneAndRole';
@@ -64,7 +64,7 @@ export class UserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
     getByEmailAndRole = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'User.GetByEmailAndRole';
@@ -95,10 +95,20 @@ export class UserController {
 
             const user: UserDetailsDto = userDetails.user;
             const accessToken = userDetails.accessToken;
+
+            const isProfileComplete = user.Person.FirstName &&
+            user.Person.LastName &&
+            user.Person.Gender &&
+            user.Person.BirthDate ? true : false;
+
             const message = `User '${user.Person.DisplayName}' logged in successfully!`;
             const data = {
-                AccessToken : accessToken,
-                User        : user,
+                AccessToken       : accessToken,
+                User              : user,
+                RoleId            : user.RoleId,
+                IsProfileComplete : isProfileComplete,
+                SessionId         : userDetails.sessionId,
+                SessionValidTill  : userDetails.sessionValidTill
             };
 
             ResponseHandler.success(request, response, message, 200, data, true);
@@ -144,7 +154,9 @@ export class UserController {
                 AccessToken       : accessToken,
                 User              : user,
                 RoleId            : user.RoleId,
-                IsProfileComplete : isProfileComplete
+                IsProfileComplete : isProfileComplete,
+                SessionId         : userDetails.sessionId,
+                SessionValidTill  : userDetails.sessionValidTill
             };
 
             const message = `User '${user.Person.DisplayName}' logged in successfully!`;
@@ -164,7 +176,7 @@ export class UserController {
             const userId = request.currentUser.UserId;
 
             var deviceToken = await UserValidator.logoutToken(request);
-            
+
             if (!sesssionId) {
                 return true;
             }
@@ -173,12 +185,12 @@ export class UserController {
             if (invalidated) {
                 Logger.instance().log(`Session invalidated successfully!`);
             }
-            
+
             var filter = {
                 UserId : userId,
                 Token  : deviceToken
             };
-        
+
             var deviceDetails = await this._userDeviceDetailsService.search(filter);
 
             if (deviceDetails.Items.length > 0) {
@@ -193,5 +205,5 @@ export class UserController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
 }

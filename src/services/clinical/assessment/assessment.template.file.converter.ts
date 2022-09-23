@@ -105,7 +105,7 @@ export class AssessmentTemplateFileConverter {
         const sourceFileLocation = path.join(sourceFolder, filename);
 
         await fs.promises.mkdir(sourceFolder, { recursive: true });
-    
+
         const jsonObj = AssessmentTemplateFileConverter.convertToJson(templateObj);
         const jsonStr = JSON.stringify(jsonObj, null, 2);
         fs.writeFileSync(sourceFileLocation, jsonStr);
@@ -162,7 +162,7 @@ export class AssessmentTemplateFileConverter {
             }
 
             //Add paths
-            
+
             if (questionNode.Paths && questionNode.Paths.length > 0) {
                 const pathObjects: CAssessmentNodePath[] = questionNode.Paths;
                 var paths = [];
@@ -171,6 +171,7 @@ export class AssessmentTemplateFileConverter {
                         DisplayCode           : pathObj.DisplayCode,
                         ParentNodeDisplayCode : nodeObj.DisplayCode,
                         NextNodeDisplayCode   : pathObj.NextNodeDisplayCode,
+                        IsExitPath            : pathObj.IsExitPath,
                         Condition             : AssessmentTemplateFileConverter.conditionToJson(pathObj.Condition)
                     };
                     paths.push(nodePath);
@@ -197,6 +198,11 @@ export class AssessmentTemplateFileConverter {
                 children.push(child);
             }
             condition['Children'] = children;
+        }
+        else if (conditionObj.OperatorType === ConditionOperatorType.None) {
+            condition['FirstOperand'] = null;
+            condition['SecondOperand'] = null;
+            condition['ThirdOperand'] = null;
         }
         else {
             condition['OperatorType'] = conditionObj.OperatorType;
@@ -284,6 +290,7 @@ export class AssessmentTemplateFileConverter {
                     nodePath.DisplayCode = pathObj.DisplayCode;
                     nodePath.ParentNodeDisplayCode = nodeObj.DisplayCode;
                     nodePath.NextNodeDisplayCode = pathObj.NextNodeDisplayCode;
+                    nodePath.IsExitPath = pathObj.IsExitPath;
                     nodePath.Condition = AssessmentTemplateFileConverter.conditionFromJson(pathObj.Condition);
                     paths.push(nodePath);
                 }

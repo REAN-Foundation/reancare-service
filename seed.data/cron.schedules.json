@@ -4,7 +4,8 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
-        "ScheduleCustomTasks": "0 1 1 * *"
+        "ScheduleCustomTasks": "* 11 * * *",
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
 
     },
     "development": {
@@ -12,7 +13,8 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
-        "ScheduleCustomTasks": "0 1 1 * *"
+        "ScheduleCustomTasks": "* 11 * * *",
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
 
     },
     "uat": {
@@ -20,13 +22,17 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
-        "ScheduleCustomTasks": "0 1 1 * *"
+        "ScheduleCustomTasks": "0 11 * * *",
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
+
     },
     "production": {
         "FileCleanup": "*/30 * * * *",
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "5 0 * * *",
-        "ScheduleCustomTasks": "0 1 1 * *"
+        "ScheduleCustomTasks": "0 11 * * *",
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
+        
     }
 }

@@ -23,6 +23,7 @@ export class AddressValidator extends BaseValidator {
             PostalCode  : requestBody.PostalCode ?? null,
             Longitude   : requestBody.Longitude ?? null,
             Lattitude   : requestBody.Lattitude ?? null,
+            Location    : requestBody.Location ?? null,
         };
 
         return createModel;
@@ -40,6 +41,7 @@ export class AddressValidator extends BaseValidator {
             PostalCode  : requestBody.PostalCode !== undefined ? requestBody.PostalCode : undefined,
             Longitude   : requestBody.Longitude !== undefined ? requestBody.Longitude : undefined,
             Lattitude   : requestBody.Lattitude !== undefined ? requestBody.Lattitude : undefined,
+            Location    : requestBody.Location !== undefined ? requestBody.Location : undefined,
         };
 
         return updateModel;

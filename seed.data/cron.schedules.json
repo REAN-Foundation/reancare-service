@@ -4,9 +4,9 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
-        "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "0 3 * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *"
+        "ScheduleCustomTasks": "* 11 * * *",
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
 
     },
     "development": {
@@ -14,9 +14,9 @@
         "MedicationReminder": "*/15 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
-        "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "0 3 * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *"
+        "ScheduleCustomTasks": "* 11 * * *",
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
 
     },
     "uat": {

@@ -57,15 +57,15 @@ export class CareplanRepo implements ICareplanRepo {
     public enrollPatient = async (model: EnrollmentDomainModel): Promise<EnrollmentDto> => {
         try {
             const entity = {
-                PatientUserId : model.PatientUserId,
-                Provider      : model.Provider,
-                ParticipantId : model.ParticipantId,
-                EnrollmentId  : model.EnrollmentId,
-                PlanCode      : model.PlanCode,
-                PlanName      : model.PlanName,
-                StartDate     : model.StartDate,
-                EndDate       : model.EndDate,
-                Gender        : model.Gender,
+                PatientUserId       : model.PatientUserId,
+                Provider            : model.Provider,
+                ParticipantStringId : model.ParticipantId,
+                EnrollmentStringId  : model.EnrollmentId,
+                PlanCode            : model.PlanCode,
+                PlanName            : model.PlanName,
+                StartDate           : model.StartDate,
+                EndDate             : model.EndDate,
+                Gender              : model.Gender,
             };
             const enrollment = await CareplanEnrollment.create(entity);
             return EnrollmentMapper.toDto(enrollment);

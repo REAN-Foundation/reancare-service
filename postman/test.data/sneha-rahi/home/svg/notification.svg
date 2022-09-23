@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="94" height="94" viewBox="0 0 94 94">
+    <defs>
+        <filter id="2p1vz4gsxa" x="0" y="0" width="94" height="94" filterUnits="userSpaceOnUse">
+            <feOffset dx="5" dy="5"/>
+            <feGaussianBlur stdDeviation="5" result="blur"/>
+            <feFlood flood-opacity=".161"/>
+            <feComposite operator="in" in2="blur"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <filter id="9rsx80oxcb" x="0" y="0" width="94" height="94" filterUnits="userSpaceOnUse">
+            <feOffset dx="5" dy="5"/>
+            <feGaussianBlur stdDeviation="5" result="blur-2"/>
+            <feFlood flood-opacity=".161"/>
+            <feComposite operator="in" in2="blur-2"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <filter id="wmcj2nqold" x="0" y="0" width="94" height="94" filterUnits="userSpaceOnUse">
+            <feOffset dx="5" dy="5"/>
+            <feGaussianBlur stdDeviation="5" result="blur-3"/>
+            <feFlood flood-opacity=".161"/>
+            <feComposite operator="in" in2="blur-3"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <clipPath id="ufd51c24jc"/>
+    </defs>
+    <g data-name="Group 1976">
+        <g style="filter:url(#9rsx80oxcb)">
+            <circle data-name="Ellipse 308" cx="32" cy="32" r="32" transform="translate(10 10)" style="fill:#dfe7fd"/>
+        </g>
+        <g data-name="Mask Group 37" style="clip-path:url(#ufd51c24jc)" transform="translate(-238 -199)">
+            <g data-name="Group 1975">
+                <path data-name="Head" d="m0 0 2.093 9.75a6.858 6.858 0 0 0-1.825 4.929C.648 20.1 8.194 18.9 9.662 16.17s1.293-9.672-.6-10.16C8.3 5.815 6.69 6.292 5.05 7.281L6.079 0z" transform="rotate(165.02 134.889 140.155)" style="fill:#d4a181"/>
+                <path d="M298.211 233.626a2.931 2.931 0 0 0 1.918-2.25 7.717 7.717 0 0 0-.068-3.926c-.026-.097-.052-.193-.084-.288a15.465 15.465 0 0 1 2.282 1.116 15.01 15.01 0 0 0 2.46 1.185 4.437 4.437 0 0 0 2.618.144 3.074 3.074 0 0 0 2.031-1.958 4.972 4.972 0 0 0 .16-3.04 3.972 3.972 0 0 0-.511-1.16 3.014 3.014 0 0 0-.864-.875 2.847 2.847 0 0 0-1.215-.442 4.088 4.088 0 0 0-1.572.134c-3.458.927-5.016 1.88-6.29 3.025a4.925 4.925 0 0 0-1.797-1.635 2.038 2.038 0 0 0-.69-.259 2.833 2.833 0 0 0-.544-.078 12.745 12.745 0 0 0-3.755.36c-.195.045-.39.094-.575.144l-.213.057a2.533 2.533 0 1 0-1.923 3.141 12.747 12.747 0 0 0 2.861-.269 5.3 5.3 0 0 0 .195 1.354 7.663 7.663 0 0 0 .502 1.328 1.18 1.18 0 0 1 .722-.674 1.5 1.5 0 0 1 1.183.165 1.545 1.545 0 0 1 .677.917 1.953 1.953 0 0 1-.058 1.294 1.4 1.4 0 0 1-.846.775 6.8 6.8 0 0 0 1.733 1.41 2.29 2.29 0 0 0 1.663.305z"/>
+                <path d="M18.023 0 8.744 31.96l-4.364 24H0L4.373 0z" transform="translate(290.947 262.99)" style="fill:#ba8b72"/>
+                <path data-name="Leg" d="M16.134 0c-.647 16.6-.392 25.658-.247 27.167s.968 11.611 6.573 29.295H17.9A267.277 267.277 0 0 1 7.037 27.167C6.186 24.939 3.671 15.884 0 0z" transform="translate(297.005 262.99)" style="fill:#d4a181"/>
+                <path d="M19 0Q15.378 16.5 6.475 52.664H.068C-.4 27.915 1.608 11.627 5.094 0z" transform="translate(290.171 262.99)" style="fill:#465d7c"/>
+                <path data-name="Pant" d="M17.147 0c-.634 16.6 1.009 32.96 6.1 52.922h-6.836A224.21 224.21 0 0 1 0 0z" transform="translate(296.025 262.99)" style="fill:#5b7aa3"/>
+                <path d="M15.226 4.557 14.988.723a.253.253 0 0 0-.23-.236L9.444 0 .33 3.382a.506.506 0 0 0-.311.613l.375 1.322h14.329z" transform="translate(304.889 318.186)" style="fill:#191847"/>
+                <path data-name="Shoe" d="M15.226 4.557 14.988.723a.253.253 0 0 0-.23-.236L9.444 0 .33 3.382a.506.506 0 0 0-.311.613l.375 1.322h14.329z" transform="translate(281.079 318.186)" style="fill:#191847"/>
+                <path d="m13.77 3.874 3.862 2.121s.813 3.092 1.943 3.111c.292.136.18-.458.139-1.052S19.7 6.884 20.243 7c1.1.226 3.776 2.217 4.238 1.813.683-.6.074-2.435-.643-3.349C22.5 3.753 21.387 3.169 18.643 2.4A18.231 18.231 0 0 1 13.99 0zM0 7.935l8.792 4.813a21.747 21.747 0 0 0 4.322 4.043c.434.181 1.192.291.483-.968s-1.4-2.613-1.037-3c.159-.17.422-.161.7-.152a1.007 1.007 0 0 0 .99-.338q.431-.644-4.617-2.035L3.247 4.452z" transform="scale(-1) rotate(-10.02 -1609.4 1538.413)" style="fill:#d4a181"/>
+                <path d="M1.394 6.168a21.61 21.61 0 0 1 11.967 1.61l1.1-4.058C11.007 1.232 6.424-.536 2.77.148a3.355 3.355 0 0 0-1.376 6.02z" transform="rotate(180 147.105 127.802)" style="fill:#51814f"/>
+                <path d="M8.465.6c-3.092.4-5.97.8-7.642.47C-2.044 10.376 3.5 14.158 3.5 20.112c.008 6.521 5.246 16.558 6.017 16.558h7.028c.388-4.977 2.338-10.463 3.939-15.883 5.108-1.159 16.449 2.875 16.449 2.875s2.863-5.921 2.647-8.442c-6.6-3.447-12.26-4.984-16.921-5.085a16.03 16.03 0 0 0-1.319-7.8C20.494.538 18.153 0 15.3 0a55.583 55.583 0 0 0-6.835.6z" transform="matrix(-.985 .174 -.174 -.985 315.65 270.645)" style="fill:#70ae6e"/>
+            </g>
+        </g>
+        <g style="filter:url(#wmcj2nqold)">
+            <g data-name="Ellipse 309" transform="translate(10 10)" style="fill:none;stroke:#fff;stroke-width:2px">
+                <circle cx="32" cy="32" r="32" style="stroke:none"/>
+                <circle cx="32" cy="32" r="31" style="fill:none"/>
+            </g>
+        </g>
+        <g data-name="Group 1974">
+            <path data-name="Path 125" d="M190.8 426.667h-8.855a.738.738 0 0 0-.738.738 5.166 5.166 0 1 0 10.331 0 .738.738 0 0 0-.738-.738z" transform="translate(-172.369 -374.344)" style="fill:#f8982b"/>
+            <path data-name="Path 126" d="M81.263 66.807a41.288 41.288 0 0 0-.852-1.725A24.027 24.027 0 0 1 77.1 53.954c0-5.849-3.1-10.141-7.893-10.933a9.435 9.435 0 0 0-7.766 2.264 10.362 10.362 0 0 0-3.541 8.146A23.566 23.566 0 0 1 54.6 65.1c-.317.626-.607 1.2-.837 1.7a2.916 2.916 0 0 0 2.67 4.121H78.6a2.916 2.916 0 0 0 2.665-4.119z" transform="translate(-53.506 -17.127)" style="fill:#fcaf58"/>
+            <path data-name="Path 127" d="M103.714 107.473a.738.738 0 0 1-.66-1.069l.238-.466a27.039 27.039 0 0 0 3.62-12.486c0-3.744 1.74-8.117 6.642-8.117a.738.738 0 0 1 0 1.476c-4.794 0-5.166 5.083-5.166 6.642a28.292 28.292 0 0 1-3.783 13.158l-.23.456a.738.738 0 0 1-.661.406z" transform="translate(-99.553 -56.625)" style="fill:#fff"/>
+            <g>
+                <path data-name="Path 123" d="M293.755 8.212A8.212 8.212 0 1 1 285.544 0a8.211 8.211 0 0 1 8.211 8.212zm0 0" transform="translate(-263.865 20.29)" style="fill:#d05591"/>
+            </g>
+        </g>
+    </g>
+</svg>

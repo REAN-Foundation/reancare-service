@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="34" viewBox="0 0 32 34">
+    <defs>
+        <clipPath id="5g1gmkdzra">
+            <circle data-name="Ellipse 264" cx="16" cy="16" r="16" transform="translate(18 173)" style="fill:#fff"/>
+        </clipPath>
+        <clipPath id="nfvegtbmnb">
+            <rect data-name="Rectangle 4493" width="12" height="9" rx="2" transform="translate(-.197 -.029)" style="fill:#c69f89"/>
+        </clipPath>
+        <clipPath id="7yv5gomfpc">
+            <rect data-name="Rectangle 4495" width="11" height="13" rx="2" transform="translate(.444 -.367)" style="fill:#d05591"/>
+        </clipPath>
+        <clipPath id="qllldme9ud">
+            <rect data-name="Rectangle 4501" width="12" height="12" rx="2" transform="translate(-.197 .246)" style="fill:#70ae6e"/>
+        </clipPath>
+        <clipPath id="cdpywa25be">
+            <rect data-name="Rectangle 4503" width="11" height="8" rx="2" transform="translate(.444 .246)" style="fill:#70ae6e"/>
+        </clipPath>
+    </defs>
+    <g data-name="Group 2255" transform="translate(-18 -171)">
+        <circle data-name="Ellipse 285" cx="16" cy="16" r="16" transform="translate(18 173)" style="fill:#fff"/>
+        <g data-name="Mask Group 26" style="clip-path:url(#5g1gmkdzra)">
+            <g data-name="Group 1954" transform="translate(-713.803 -914.246)">
+                <g data-name="Mask Group 21" transform="translate(736 1098.275)" style="clip-path:url(#nfvegtbmnb)">
+                    <rect data-name="Rectangle 4492" width="14" height="11" rx="5.5" transform="translate(-1.197 -1.028)" style="fill:#c69f89"/>
+                </g>
+                <g data-name="Mask Group 22" transform="translate(748.359 1094.613)" style="clip-path:url(#7yv5gomfpc)">
+                    <rect data-name="Rectangle 4494" width="13" height="13" rx="3" transform="translate(-.556 -.367)" style="fill:#d05591"/>
+                </g>
+                <rect data-name="Rectangle 4496" width="24" height="12" rx="2" transform="translate(735.803 1108.246)" style="fill:#5b7aa3"/>
+                <g data-name="Mask Group 24" transform="translate(736 1085)" style="clip-path:url(#qllldme9ud)">
+                    <g data-name="Rectangle 4497" style="fill:#fcaf58;stroke:#707070">
+                        <path style="stroke:none" d="M0 0h16v15H0z" transform="translate(-3.197 -1.754)"/>
+                        <path style="fill:none" d="M.5.5h15v14H.5z" transform="translate(-3.197 -1.754)"/>
+                    </g>
+                </g>
+                <g data-name="Mask Group 25" transform="translate(748.359 1085)" style="clip-path:url(#cdpywa25be)">
+                    <rect data-name="Rectangle 4502" width="15" height="11" rx="5.5" transform="translate(-1.556 -1.754)" style="fill:#70ae6e"/>
+                </g>
+            </g>
+            <path data-name="Hair Back" d="M47.94 190.173v4.529a5.367 5.367 0 0 1-4.556 5.305v.066h-6.916c-1.176-1.149.153-8.943.982-11.526a3.718 3.718 0 0 1 .341-.8 5.367 5.367 0 0 1 10.149 2.426z"/>
+            <path data-name="Head" d="m0 0 1.967 8.968A6.23 6.23 0 0 0 .252 13.5c.358 4.984 7.451 3.887 8.83 1.372s1.216-8.9-.567-9.345A6.408 6.408 0 0 0 4.747 6.7L5.714 0z" transform="rotate(180 23.676 101.5)" style="fill:#b28b67"/>
+            <path data-name="Hair Front" d="M44.335 199.957h6.916a12.421 12.421 0 0 0-.039-2.164 5.948 5.948 0 0 0-.348-1.472 5.572 5.572 0 0 0-1.219-1.8c-.852-.94-1.733-1.911-1.733-4.967l-.178-.175a13.85 13.85 0 0 0-.491-.47l.008-.185a9.626 9.626 0 0 0-1.243-1.839 6.364 6.364 0 0 0-1.437-1.264 3.549 3.549 0 0 0-1.877-.575 5 5 0 0 0-2.943.778 5.723 5.723 0 0 0-1.43 1.6 2.8 2.8 0 0 0 1.089 1.51 10.048 10.048 0 0 0 1.79.969 15.673 15.673 0 0 1 1.743.895 1.312 1.312 0 1 1 .826 2.33h-.06a26.406 26.406 0 0 0-.08 4.192 4.961 4.961 0 0 0 .706 2.637z"/>
+        </g>
+        <g data-name="Ellipse 286" transform="translate(18 173)" style="stroke:#5b7aa3;fill:none">
+            <circle cx="16" cy="16" r="16" style="stroke:none"/>
+            <circle cx="16" cy="16" r="15.5" style="fill:none"/>
+        </g>
+        <g data-name="Mask Group 27" transform="translate(22.198 170.754)" style="clip-path:url(#qllldme9ud)">
+            <g data-name="Rectangle 4504" style="fill:#fcaf58;stroke:#707070">
+                <path style="stroke:none" d="M0 0h16v15H0z" transform="translate(-3.197 -1.754)"/>
+                <path style="fill:none" d="M.5.5h15v14H.5z" transform="translate(-3.197 -1.754)"/>
+            </g>
+        </g>
+        <g data-name="Mask Group 28" transform="translate(34.556 170.754)" style="clip-path:url(#cdpywa25be)">
+            <rect data-name="Rectangle 4506" width="15" height="11" rx="5.5" transform="translate(-1.556 -1.754)" style="fill:#70ae6e"/>
+        </g>
+    </g>
+</svg>

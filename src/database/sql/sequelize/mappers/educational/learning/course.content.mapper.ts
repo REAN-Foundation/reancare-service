@@ -22,7 +22,7 @@ export class CourseContentMapper {
             ContentType    : courseContent.ContentType,
             ResourceLink   : courseContent.ResourceLink,
             Sequence       : courseContent.Sequence,
-
+            Course         : courseContent.Course,
         };
         return dto;
     };

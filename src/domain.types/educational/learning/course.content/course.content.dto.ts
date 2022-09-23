@@ -12,4 +12,5 @@ export interface CourseContentDto {
     ContentType?    : string;
     ResourceLink?   : string;
     Sequence?       : number;
+    Course?         : any,
 }

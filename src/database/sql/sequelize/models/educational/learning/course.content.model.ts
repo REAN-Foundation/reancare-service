@@ -9,6 +9,7 @@ import {
     IsUUID,
     PrimaryKey,
     ForeignKey,
+    BelongsTo,
 
 } from 'sequelize-typescript';
 
@@ -54,6 +55,9 @@ export default class CourseContent extends Model {
         allowNull : true,
     })
     CourseId: string;
+
+    @BelongsTo(() => Course)
+    Course: Course;
 
     @IsUUID(4)
     @ForeignKey(() => LearningPath)

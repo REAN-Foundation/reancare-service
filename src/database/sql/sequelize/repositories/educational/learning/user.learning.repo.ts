@@ -36,19 +36,21 @@ export class UserLearningRepo implements IUserLearningRepo {
                     existing.PercentageCompletion = progressPercentage;
                 }
                 await existing.save();
+                return UserLearningMapper.toDto(existing);
             }
-            const entity = {
-                LearningPathId       : learningPathId,
-                CourseId             : courseId,
-                UserId               : userId ,
-                ModuleId             : moduleId,
-                ContentId            : contentId   ,
-                ProgressStatus       : ProgressStatus.InProgress,
-                PercentageCompletion : progressPercentage ?? 100,
-            };
-
-            const learning = await UserLearning.create(entity);
-            return UserLearningMapper.toDto(learning);
+            else {
+                const entity = {
+                    LearningPathId       : learningPathId,
+                    CourseId             : courseId,
+                    UserId               : userId ,
+                    ModuleId             : moduleId,
+                    ContentId            : contentId   ,
+                    ProgressStatus       : ProgressStatus.InProgress,
+                    PercentageCompletion : progressPercentage ?? 100,
+                };
+                const learning = await UserLearning.create(entity);
+                return UserLearningMapper.toDto(learning);
+            }
 
         } catch (error) {
             Logger.instance().log(error.message);

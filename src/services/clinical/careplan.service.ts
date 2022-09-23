@@ -29,7 +29,6 @@ import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activi
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
 import { UserTaskDomainModel } from "../../domain.types/user/user.task/user.task.domain.model";
 import { Loader } from "../../startup/loader";
-import { HighRiskCareplanService } from "../../modules/careplan/providers/rean/rean.decision.making.service";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -471,7 +470,7 @@ export class CareplanService implements IUserActionService {
         }
     }
 
-    private async enrollAndCreateTask(enrollmentDetails ) {
+    public async enrollAndCreateTask(enrollmentDetails ) {
 
         var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);
         if (!enrollmentId) {
@@ -598,49 +597,10 @@ export class CareplanService implements IUserActionService {
         return  await this._careplanRepo.updateRisk(updateRisk);
     };
 
-    public scheduleDailyHighRiskCareplan = async (): Promise<void> => {
-    
-        const enrollments = await this._careplanRepo.getAllCareplanEnrollment();
-        Logger.instance().log(`Number of enrollments retrived ${enrollments.length}.`);
+    public scheduleDailyHighRiskCareplan = async (): Promise<boolean> => {
 
-        if (enrollments.length !== 0) {
-            enrollments.forEach(async enrollment => {
-
-                if (enrollment.HasHighRisk) {
-                    const highRiskCareplanService = Loader.container.resolve(HighRiskCareplanService);
-                    const deletedCount = await highRiskCareplanService.deleteFutureCareplanTask(enrollment);
-
-                    if (deletedCount > 0) {
-                        const enrollmentData : EnrollmentDomainModel = {
-                            Provider       : "REAN",
-                            PatientUserId  : enrollment.PatientUserId,
-                            ParticipantId  : enrollment.ParticipantId,
-                            PlanName       : "Maternity-High-Risk",
-                            PlanCode       : "2",
-                            StartDateStr   : new Date(enrollment.StartAt).toString(),
-                            StartDate      : new Date(enrollment.StartAt),
-                            EndDate        : TimeHelper.addDuration(new Date(enrollment.StartAt),240, DurationType.Day),
-                            EnrollmentDate : new Date(),
-                            WeekOffset     : 0,
-                            DayOffset      : 0
-                        };
-            
-                        const enrollmentDto = await this.enrollAndCreateTask(enrollmentData);
-                        Logger.instance().log(`Enrollment for high risk careplan: ${enrollmentDto}`);
-
-                        enrollment.HasHighRisk = false ;
-                        await this._careplanRepo.updateRisk( enrollment);
-                        
-                    } else {
-                        Logger.instance().log(`Not able to switch from normal to high risk careplan`);
-                    }
-                
-                }
-            });
-        } else {
-            Logger.instance().log(`No enrollments fetched from careplan task.`);
-        }
-            
+        const provider = "REAN";
+        return await this._handler.scheduleDailyHighRiskCareplan(provider);
     };
 
     //#endregion

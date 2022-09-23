@@ -74,4 +74,6 @@ export interface ICareplanService {
             healthPriorityType: string
         ): Promise<HealthPriorityDto>;
 
+    scheduleDailyHighRiskCareplan(): Promise<void>
+
 }

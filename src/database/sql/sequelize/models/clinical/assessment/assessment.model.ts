@@ -75,6 +75,13 @@ export default class Assessment extends Model {
     })
     AssessmentTemplateId: string;
 
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
+    })
+    ScoringApplicable: boolean;
+
     @BelongsTo(() => AssessmentTemplate)
     AssessmentTemplate: AssessmentTemplate;
 
@@ -115,7 +122,7 @@ export default class Assessment extends Model {
         allowNull : true,
     })
     ProviderAssessmentId: string;
-    
+
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
@@ -138,14 +145,14 @@ export default class Assessment extends Model {
         allowNull : true,
     })
     StartedAt: Date;
- 
+
     @IsDate
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
     FinishedAt: Date;
- 
+
     @Column({
         type      : DataType.STRING(16),
         allowNull : true,

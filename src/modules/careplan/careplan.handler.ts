@@ -29,6 +29,17 @@ export class CareplanHandler {
         return true;
     };
 
+    public getPatientEligibility = async (patient: any, provider: string, careplanCode: string) => {
+        if (this.isEnabledProvider(provider)) {
+            var service = CareplanHandler._services.getItem(provider);
+            return await service.getPatientEligibility(patient, careplanCode);
+        }
+        return {
+            Eligible : false,
+            Reason   : `The careplan by the provider is not available currently!`
+        };
+    };
+
     public getAvailableCarePlans = (provider?: string): CareplanConfig[] => {
         var careplans = ConfigurationManager.careplans();
         var plans: CareplanConfig[] = [];
@@ -99,19 +110,20 @@ export class CareplanHandler {
         patientUserId: uuid,
         provider: string,
         careplanCode: string,
+        participantId: string,
         enrollmentId: string,
         fromDate: Date,
         toDate: Date
     ): Promise<CareplanActivity[]> => {
         var service = CareplanHandler._services.getItem(provider);
-        return await service.fetchActivities(careplanCode, enrollmentId, fromDate, toDate);
+        return await service.fetchActivities(careplanCode, enrollmentId, participantId, fromDate, toDate);
     };
 
     public getActivity = async (
         patientUserId: uuid,
         provider: string,
         careplanCode: string,
-        enrollmentId: string,
+        enrollmentId: string | number,
         activityId: string,
         scheduledAt?: string
     ): Promise<CareplanActivity> => {
@@ -123,7 +135,7 @@ export class CareplanHandler {
         patientUserId: uuid,
         provider: string,
         careplanCode: string,
-        enrollmentId: string,
+        enrollmentId: string | number,
         activityId: string,
         updates: any
     ): Promise<CareplanActivity> => {

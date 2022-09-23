@@ -5,12 +5,12 @@ import { PatientDetailsDto, PatientDto } from "./patient.dto";
 //////////////////////////////////////////////////////////////////////////////////
 
 export interface PatientSearchFilters extends BaseSearchFilters{
-    Phone: string;
-    Email: string;
-    Name: string;
-    Gender: Gender;
-    BirthdateFrom: Date;
-    BirthdateTo: Date;
+    Phone?         : string;
+    Email?         : string;
+    Name?          : string;
+    Gender?        : Gender;
+    BirthdateFrom? : Date;
+    BirthdateTo?   : Date;
 }
 
 export interface PatientSearchResults extends BaseSearchResults {

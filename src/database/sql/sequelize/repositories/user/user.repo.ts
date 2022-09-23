@@ -146,9 +146,20 @@ export class UserRepo implements IUserRepo {
         }
     };
 
+    updateLastLogin = async (id: string): Promise<void> => {
+        try {
+            var user = await User.findByPk(id);
+            user.LastLogin = new Date();
+            await user.save();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     update = async (id: string, userDomainModel: UserDomainModel): Promise<UserDetailsDto> => {
         try {
-            const user = await User.findByPk(id);
+            var user = await User.findByPk(id);
 
             if (userDomainModel.DefaultTimeZone !== undefined &&
                 userDomainModel.DefaultTimeZone !== null &&

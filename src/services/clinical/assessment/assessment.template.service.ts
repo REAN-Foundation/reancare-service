@@ -5,7 +5,7 @@ import { IAssessmentTemplateRepo } from "../../../database/repository.interfaces
 import { AssessmentTemplateDomainModel } from '../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import { AssessmentTemplateDto } from '../../../domain.types/clinical/assessment/assessment.template.dto';
 import { AssessmentTemplateSearchFilters, AssessmentTemplateSearchResults } from "../../../domain.types/clinical/assessment/assessment.template.search.types";
-import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate } from "../../../domain.types/clinical/assessment/assessment.types";
+import { AssessmentNodeType, CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessmentQuestionNode, CAssessmentTemplate, CScoringCondition } from "../../../domain.types/clinical/assessment/assessment.types";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { AssessmentTemplateFileConverter } from "./assessment.template.file.converter";
 
@@ -30,7 +30,7 @@ export class AssessmentTemplateService {
 
     public getById = async (id: uuid): Promise<AssessmentTemplateDto> => {
         var templateDto = await this._assessmentTemplateRepo.getById(id);
-        
+
         return templateDto;
     };
 
@@ -87,7 +87,7 @@ export class AssessmentTemplateService {
     }
 
     sanitizeTemplateForExport = (template: CAssessmentTemplate): CAssessmentTemplate => {
-        
+
         delete template.TemplateId;
 
         for (var node of template.Nodes) {
@@ -118,5 +118,21 @@ export class AssessmentTemplateService {
 
         return template;
     };
+
+    addScoringCondition = async(model: CScoringCondition): Promise<CScoringCondition> => {
+        return await this._assessmentHelperRepo.addScoringCondition(model);
+    }
+
+    getScoringCondition = async(conditionId: uuid): Promise<CScoringCondition> => {
+        return await this._assessmentHelperRepo.getScoringCondition(conditionId);
+    }
+
+    updateScoringCondition = async(conditionId: uuid, updates: any): Promise<CScoringCondition> => {
+        return await this._assessmentHelperRepo.updateScoringCondition(conditionId, updates);
+    }
+
+    deleteScoringCondition = async(conditionId: uuid): Promise<boolean> => {
+        return await this._assessmentHelperRepo.deleteScoringCondition(conditionId);
+    }
 
 }

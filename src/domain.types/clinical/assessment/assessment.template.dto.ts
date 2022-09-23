@@ -11,6 +11,7 @@ export interface AssessmentTemplateDto {
     ProviderAssessmentCode?       : string;
     ProviderAssessmentId?         : string;
     Provider?                     : string;
+    ScoringApplicable?            : boolean;
     FileResourceId?               : uuid;
     RootNodeId?                   : uuid;
     QnAs?                         : any[];

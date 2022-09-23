@@ -175,12 +175,12 @@ export class UserTaskValidator extends BaseValidator {
 
         var filters: UserTaskSearchFilters = {
             UserId        : userId,
-            Task          : request.query.Task as string ?? null,
+            Task          : request.query.task as string ?? null,
             Category      : request.query.category as string ?? null,
             ActionType    : request.query.actionType as string ?? null,
             ActionId      : request.query.actionId as uuid ?? null,
             ScheduledFrom : scheduledFrom,
-            ScheduledTo   : scheduledTo,
+            ScheduledTo   : TimeHelper.addDuration(scheduledTo, 24, DurationType.Hour),
             Status        : status,
         };
 

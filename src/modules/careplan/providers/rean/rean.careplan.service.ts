@@ -19,6 +19,8 @@ import { DurationType } from "../../../../domain.types/miscellaneous/time.types"
 import { ActionPlanDto } from "../../../../domain.types/action.plan/action.plan.dto";
 import { GoalDto } from "../../../../domain.types/patient/goal/goal.dto";
 import { HealthPriorityDto } from "../../../../domain.types/patient/health.priority/health.priority.dto";
+import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
+import { CareplanService } from "../../../../services/clinical/careplan.service";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,10 +33,16 @@ export class ReanCareplanService implements ICareplanService {
 
     _assessmentTemplateRepo: AssessmentTemplateRepo = null;
 
+    _careplanRepo: CareplanRepo = null;
+
+    _careplanService: CareplanService = null;
+
     constructor() {
         this._assessmentService = Loader.container.resolve(AssessmentService);
         this._userTaskService = Loader.container.resolve(UserTaskService);
         this._assessmentTemplateRepo = Loader.container.resolve(AssessmentTemplateRepo);
+        this._careplanRepo = Loader.container.resolve(CareplanRepo);
+        this._careplanService = Loader.container.resolve(CareplanService);
     }
 
     public providerName(): string {
@@ -186,6 +194,50 @@ export class ReanCareplanService implements ICareplanService {
 
         return activityEntities;
 
+    };
+
+    scheduleDailyHighRiskCareplan = async (): Promise<void> => {
+    
+        const enrollments = await this._careplanRepo.getAllCareplanEnrollment();
+        Logger.instance().log(`Number of enrollments retrived ${enrollments.length}.`);
+
+        if (enrollments.length !== 0) {
+            enrollments.forEach(async enrollment => {
+
+                if (enrollment.HasHighRisk) {
+                    const deletedCount = await this._careplanRepo.deleteFutureCareplanTask(enrollment);
+
+                    if (deletedCount > 0) {
+                        const enrollmentData : EnrollmentDomainModel = {
+                            Provider       : "REAN",
+                            PatientUserId  : enrollment.PatientUserId,
+                            ParticipantId  : enrollment.ParticipantId,
+                            PlanName       : "Maternity-High-Risk",
+                            PlanCode       : "2",
+                            StartDateStr   : new Date(enrollment.StartAt).toString(),
+                            StartDate      : new Date(enrollment.StartAt),
+                            EndDate        : TimeHelper.addDuration(new Date(enrollment.StartAt),240, DurationType.Day),
+                            EnrollmentDate : new Date(),
+                            WeekOffset     : 0,
+                            DayOffset      : 0
+                        };
+            
+                        const enrollmentDto = await this._careplanService.enrollAndCreateTask(enrollmentData);
+                        Logger.instance().log(`Enrollment for high risk careplan: ${enrollmentDto}`);
+                        
+                    } else {
+                        Logger.instance().log(`Not able to switch from normal to high risk careplan`);
+                    }
+
+                    enrollment.HasHighRisk = false ;
+                    await this._careplanRepo.updateRisk( enrollment);
+                
+                }
+            });
+        } else {
+            Logger.instance().log(`No enrollments fetched from careplan task.`);
+        }
+            
     };
 
     //#endregion

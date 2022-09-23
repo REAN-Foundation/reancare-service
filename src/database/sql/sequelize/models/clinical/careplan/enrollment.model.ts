@@ -97,6 +97,19 @@ export default class CareplanEnrollment extends Model {
         type      : DataType.STRING(64),
         allowNull : true,
     })
+    Complication: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false
+    })
+    HasHighRisk: boolean;
+
+    @Column({
+        type      : DataType.STRING(64),
+        allowNull : true,
+    })
     Name: string;
 
     @Column

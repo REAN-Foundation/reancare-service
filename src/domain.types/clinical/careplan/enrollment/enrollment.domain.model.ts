@@ -17,6 +17,9 @@ export interface EnrollmentDomainModel {
     EnrollmentDate? : Date;
     Gender?         : string;
     BirthDate?      : Date;
-    WeekOffset?     : Date;
-    DayOffset?      : Date;
+    WeekOffset?     : number;
+    DayOffset?      : number;
+    Complication?   : string;
+    Phone?          : string;
+    HasHighRisk?    : boolean;
 }

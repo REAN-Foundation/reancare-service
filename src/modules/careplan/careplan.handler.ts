@@ -202,6 +202,14 @@ export class CareplanHandler {
         return await service.updateHealthPriority(patientUserId, enrollmentId, healthPriorityType);
     };
 
+    public scheduleDailyHighRiskCareplan = async (
+        provider: string,
+    ): Promise<boolean> => {
+        var service = CareplanHandler._services.getItem(provider);
+        await service.scheduleDailyHighRiskCareplan();
+        return true;
+    };
+
     private isEnabledProvider(provider: string) {
         var careplans = ConfigurationManager.careplans();
         return careplans.find(x => {

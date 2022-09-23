@@ -41,6 +41,7 @@ export class Scheduler {
                 this.scheduleCreateMedicationTasks();
                 this.scheduleMonthlyCustomTasks();
                 this.scheduleDailyCareplanPushTasks();
+                this.scheduleDailyHighRiskCareplan();
 
                 //this.scheduleDaillyPatientTasks();
 
@@ -106,6 +107,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
                 const careplanService = Loader.container.resolve(CareplanService);
                 await careplanService.scheduleDailyCareplanPushTasks();
+            })();
+        });
+    };
+
+    private scheduleDailyHighRiskCareplan = () => {
+        cron.schedule(Scheduler._schedules['ScheduleDailyHighRiskCareplan'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Daily High Risk Careplan...');
+                const careplanService = Loader.container.resolve(CareplanService);
+                await careplanService.scheduleDailyHighRiskCareplan();
             })();
         });
     };

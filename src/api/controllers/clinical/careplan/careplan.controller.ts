@@ -162,6 +162,21 @@ export class CareplanController extends BaseController {
         }
     };
 
+    updateRisk = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Careplan.UpdateRisk', request, response);
+
+            const model = await this._validator.updateRisk(request);
+            var riskDetails = await this._service.updateRisk(model);
+            ResponseHandler.success(request, response, 'Patient risk and complications updated successfully!', 200, {
+                RiskDetails : riskDetails
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

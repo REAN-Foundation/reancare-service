@@ -1,12 +1,25 @@
+import { NutritionQuestionnaireDomainModel }
+    from "../../../../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.domain.model";
+import { NutritionQuestionnaireDto }
+    from "../../../../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.dto";
 import { FoodConsumptionDomainModel } from "../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.domain.model";
-import { FoodConsumptionDto, FoodConsumptionEventDto, FoodConsumptionForDayDto } from "../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.dto";
-import { FoodConsumptionSearchFilters, FoodConsumptionSearchResults } from "../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.search.types";
+import { FoodConsumptionDto,
+    FoodConsumptionEventDto,
+    FoodConsumptionForDayDto
+} from "../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.dto";
+import { FoodConsumptionSearchFilters,
+    FoodConsumptionSearchResults
+} from "../../../../domain.types/wellness/nutrition/food.consumption/food.consumption.search.types";
 
 export interface IFoodConsumptionRepo {
 
     create(foodConsumptionDomainModel: FoodConsumptionDomainModel): Promise<FoodConsumptionDto>;
 
+    createNutritionQuestionnaire(nutritionQuestionnaireDomainModel: NutritionQuestionnaireDomainModel): Promise<NutritionQuestionnaireDto>;
+
     getById(id: string): Promise<FoodConsumptionDto>;
+
+    getNutritionQuestionnaire(): Promise<NutritionQuestionnaireDto[]>;
 
     getByEvent(event: string, patientUserId: string): Promise<FoodConsumptionEventDto>;
 
@@ -18,5 +31,7 @@ export interface IFoodConsumptionRepo {
     Promise<FoodConsumptionDto>;
 
     delete(id: string): Promise<boolean>;
+
+    totalCount(): Promise<number>;
 
 }

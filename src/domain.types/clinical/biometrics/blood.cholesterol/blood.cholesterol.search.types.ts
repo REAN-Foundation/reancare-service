@@ -12,6 +12,8 @@ export interface BloodCholesterolSearchFilters extends BaseSearchFilters{
     MaxHDL?              : number;
     MinLDL?              : number;
     MaxLDL?              : number;
+    MinA1CLevel?         : number;
+    MaxA1CLevel?         : number;
     CreatedDateFrom?     : Date;
     CreatedDateTo?       : Date;
     RecordedByUserId?    : uuid;

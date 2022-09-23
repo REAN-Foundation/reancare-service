@@ -19,6 +19,7 @@ export class BloodCholesterolMapper {
             LDL               : bloodCholesterol.LDL,
             TriglycerideLevel : bloodCholesterol.TriglycerideLevel,
             Ratio             : bloodCholesterol.Ratio,
+            A1CLevel          : bloodCholesterol.A1CLevel,
             Unit              : bloodCholesterol.Unit,
             RecordDate        : bloodCholesterol.RecordDate,
             RecordedByUserId  : bloodCholesterol.RecordedByUserId

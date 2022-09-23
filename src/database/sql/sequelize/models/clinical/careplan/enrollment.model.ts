@@ -33,15 +33,27 @@ export default class CareplanEnrollment extends Model {
 
     @Column({
         type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    EnrollmentId: string;
+
+    @Column({
+        type      : DataType.STRING(64),
         allowNull : false,
     })
-    EnrollmentId: number;
+    EnrollmentStringId: string;
 
     @Column({
         type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    ParticipantId: string;
+
+    @Column({
+        type      : DataType.STRING(64),
         allowNull : false,
     })
-    ParticipantId: number;
+    ParticipantStringId: string;
     
     @Column({
         type         : DataType.STRING(64),

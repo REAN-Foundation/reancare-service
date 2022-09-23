@@ -6,7 +6,7 @@ import { CustomTaskService } from '../../../services/user/custom.task.service';
 import { UserTaskService } from '../../../services/user/user.task.service';
 import { CustomTaskValidator } from '../../validators/user/custom.task.validator';
 import { Loader } from '../../../startup/loader';
-import { CustomTaskHelper } from '../../helpers/custom.task.helper';
+import { CommonActions } from '../../../custom/common.actions';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,7 +22,7 @@ export class CustomTaskController {
 
     _validator: CustomTaskValidator = new CustomTaskValidator();
 
-    _customTaskHelper: CustomTaskHelper = new CustomTaskHelper();
+    _customActions: CommonActions = new CommonActions();
 
     constructor() {
         this._service = Loader.container.resolve(CustomTaskService);
@@ -38,15 +38,15 @@ export class CustomTaskController {
         try {
             request.context = 'CustomTask.Create';
             await this._authorizer.authorize(request, response);
-            
+
             const domainModel = await this._validator.create(request);
 
-            var userTask = await this._customTaskHelper.createCustomTask(domainModel);
+            var userTask = await this._customActions.createCustomTask(domainModel);
 
             ResponseHandler.success(request, response, 'Custom task created successfully!', 201, {
                 UserTask : userTask,
             });
-            
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -55,7 +55,7 @@ export class CustomTaskController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'CustomTask.GetById';
-            
+
             await this._authorizer.authorize(request, response);
 
             const id: string = await this._validator.getParamUuid(request, 'id');
@@ -64,14 +64,14 @@ export class CustomTaskController {
             if (task == null) {
                 throw new ApiError(404, 'Custom task not found.');
             }
-            
+
             var userTask = await this._userTaskService.getByActionId(task.id);
             userTask['Action'] = task;
 
             ResponseHandler.success(request, response, 'Custom task retrieved successfully!', 200, {
                 UserTask : userTask,
             });
-            
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -84,7 +84,7 @@ export class CustomTaskController {
 
             const updateModel = await this._validator.update(request);
             const id: string = await this._validator.getParamUuid(request, 'id');
-            
+
             const task = await this._service.getById(id);
             if (task == null) {
                 throw new ApiError(404, 'Custom task not found.');
@@ -94,14 +94,14 @@ export class CustomTaskController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update custom task record!');
             }
-            
+
             var userTask = await this._userTaskService.getByActionId(task.id);
             userTask['Action'] = updated;
 
             ResponseHandler.success(request, response, 'Custom task record updated successfully!', 200, {
                 UserTask : userTask,
             });
-            
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -109,9 +109,4 @@ export class CustomTaskController {
 
     //#endregion
 
-    //#region Privates
-
-    //#endregion
-
 }
-

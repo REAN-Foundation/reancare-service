@@ -1,7 +1,7 @@
 import express from 'express';
 import { ApiError } from '../../common/api.error';
 import { ResponseHandler } from '../../common/response.handler';
-import { BloodGroupList, MaritalStatusList, SeverityList } from '../../domain.types/miscellaneous/system.types';
+import { BloodGroupList, EthnicityTypeList, MaritalStatusList, RaceTypeList, SeverityList } from '../../domain.types/miscellaneous/system.types';
 import { TypesService } from '../../services/types.service';
 import { Loader } from '../../startup/loader';
 import { BaseController } from './base.controller';
@@ -90,6 +90,32 @@ export class TypesController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    getRaceTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Types.GetRaceTypes', request, response, false);
+
+            ResponseHandler.success(request, response, 'Race types retrieved successfully!', 200, {
+                RaceTypes : RaceTypeList,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getEthnicityTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Types.GetEthnicityTypes', request, response, false);
+
+            ResponseHandler.success(request, response, 'Ethnicity types retrieved successfully!', 200, {
+                EthnicityTypes : EthnicityTypeList,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
     
     getMaritalStatuses = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
@@ -131,6 +157,25 @@ export class TypesController extends BaseController {
 
             ResponseHandler.success(request, response, 'Fetched priority types successfully!', 201, {
                 PriorityTypes : priorityTypes,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getLabRecordTypes = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Types.LabRecords', request, response, false);
+
+            const displayName : string = request.query.displayName as string ?? null;
+            const labRecordTypes = await this._service.getLabRecordTypes(displayName);
+            if (labRecordTypes.length === 0) {
+                throw new ApiError(400, 'Cannot fetch lab record types!');
+            }
+
+            ResponseHandler.success(request, response, 'Fetched lab record types successfully!', 200, {
+                LabRecordTypes : labRecordTypes,
             });
 
         } catch (error) {

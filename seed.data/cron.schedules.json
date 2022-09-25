@@ -6,7 +6,7 @@
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleCustomTasks": "* 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
+        "ScheduleDailyCareplanPushTasks": "*/15 * * * *"
 
     },
     "development": {
@@ -16,7 +16,7 @@
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleCustomTasks": "* 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
+        "ScheduleDailyCareplanPushTasks": "*/15 * * * *"
 
     },
     "uat": {
@@ -25,7 +25,8 @@
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *",
+        "ScheduleDailyHighRiskCareplan": "0 3 * * *"
 
     },
     "production": {
@@ -34,7 +35,8 @@
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "5 0 * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "0 8 * * *"
+        "ScheduleDailyCareplanPushTasks": "0 8 * * *",
+        "ScheduleDailyHighRiskCareplan": "0 3 * * *"
         
     }
 }

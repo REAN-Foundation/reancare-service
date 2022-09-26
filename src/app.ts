@@ -3,7 +3,7 @@ import express from 'express';
 import fileUpload from 'express-fileupload';
 import helmet from 'helmet';
 import "reflect-metadata";
-import { Router } from './api/routes/router';
+import { Router } from './api/router';
 import { Logger } from './common/logger';
 import { ConfigurationManager } from "./config/configuration.manager";
 import { EHRDbConnector } from './custom/ehr.insights.records/ehr.db.connector';

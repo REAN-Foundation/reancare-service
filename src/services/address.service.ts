@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { IAddressRepo } from "../database/repository.interfaces/address.repo.interface";
+import { IAddressRepo } from "../database/repository.interfaces/general/address.repo.interface";
 import { AddressDomainModel } from '../domain.types/general/address/address.domain.model';
 import { AddressDto } from '../domain.types/general/address/address.dto';
 import { AddressSearchResults, AddressSearchFilters } from '../domain.types/general/address/address.search.types';

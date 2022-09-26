@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { ICustomTaskRepo } from "../../database/repository.interfaces/user/custom.task.repo.interface";
+import { ICustomTaskRepo } from "../../database/repository.interfaces/users/user/custom.task.repo.interface";
 import { CustomTaskDto } from '../../domain.types/users/custom.task/custom.task.dto';
 import { IUserActionService } from "./user.action.service.interface";
 import { uuid } from "../../domain.types/miscellaneous/system.types";

@@ -7,7 +7,7 @@ import { ApiError } from "../common/api.error";
 import { Logger } from "../common/logger";
 import { TimeHelper } from "../common/time.helper";
 import { ConfigurationManager } from "../config/configuration.manager";
-import { IFileResourceRepo } from "../database/repository.interfaces/file.resource.repo.interface";
+import { IFileResourceRepo } from "../database/repository.interfaces/general/file.resource.repo.interface";
 import { FileResourceUpdateModel, FileResourceUploadDomainModel } from '../domain.types/general/file.resource/file.resource.domain.model';
 import { FileResourceDetailsDto, FileResourceDto } from '../domain.types/general/file.resource/file.resource.dto';
 import { FileResourceSearchFilters, FileResourceSearchResults } from '../domain.types/general/file.resource/file.resource.search.types';

@@ -4,7 +4,7 @@ import {
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import User from '../../user/user.model';
+import User from '../../users/user/user.model';
 import LabRecordType from './lab.record.type.model';
 import { LabRecordTypeList } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types';
 

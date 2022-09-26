@@ -17,7 +17,7 @@ import {
     AssessmentType,
     AssessmentTypeList,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
-import FileResource from '../../file.resource/file.resource.model';
+import FileResource from '../../general/file.resource/file.resource.model';
 import AssessmentNode from './assessment.node.model';
 
 ///////////////////////////////////////////////////////////////////////

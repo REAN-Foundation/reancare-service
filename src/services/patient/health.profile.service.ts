@@ -1,6 +1,6 @@
 import { Severity } from "../../domain.types/miscellaneous/system.types";
 import { inject, injectable } from "tsyringe";
-import { IHealthProfileRepo } from "../../database/repository.interfaces/patient/health.profile.repo.interface";
+import { IHealthProfileRepo } from "../../database/repository.interfaces/users/patient/health.profile.repo.interface";
 import { HealthProfileDomainModel } from '../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../domain.types/users/patient/health.profile/health.profile.dto';
 

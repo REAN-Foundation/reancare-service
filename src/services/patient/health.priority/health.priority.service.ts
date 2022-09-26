@@ -1,13 +1,13 @@
 import { inject, injectable } from "tsyringe";
-import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
+import { IPatientRepo } from "../../../database/repository.interfaces/users/patient/patient.repo.interface";
 import { ApiError } from "../../../common/api.error";
-import { IPersonRepo } from "../../../database/repository.interfaces/person.repo.interface";
-import { IUserRepo } from "../../../database/repository.interfaces/user/user.repo.interface";
+import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
+import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
 import { CareplanHandler } from '../../../modules/careplan/careplan.handler';
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { HealthPriorityDto } from "../../../domain.types/users/patient/health.priority/health.priority.dto";
 import { HealthPriorityDomainModel } from "../../../domain.types/users/patient/health.priority/health.priority.domain.model";
-import { IHealthPriorityRepo } from "../../../database/repository.interfaces/patient/health.priority/health.priority.repo.interface";
+import { IHealthPriorityRepo } from "../../../database/repository.interfaces/users/patient/health.priority.repo.interface";
 import { HealthPriorityTypeDomainModel } from "../../../domain.types/users/patient/health.priority.type/health.priority.type.domain.model";
 import { HealthPriorityTypeDto } from "../../../domain.types/users/patient/health.priority.type/health.priority.type.dto";
 import { HealthPrioritySearchFilters, HealthPrioritySearchResults } from "../../../domain.types/users/patient/health.priority/health.priority.search.types";

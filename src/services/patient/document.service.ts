@@ -1,7 +1,7 @@
 
 import { inject, injectable } from "tsyringe";
 import { Helper } from "../../common/helper";
-import { IDocumentRepo } from "../../database/repository.interfaces/patient/document.repo.interface";
+import { IDocumentRepo } from "../../database/repository.interfaces/users/patient/document.repo.interface";
 import { DocumentDomainModel } from '../../domain.types/users/patient/document/document.domain.model';
 import { DocumentDto } from '../../domain.types/users/patient/document/document.dto';
 import { DocumentSearchFilters, DocumentSearchResults } from "../../domain.types/users/patient/document/document.search.types";

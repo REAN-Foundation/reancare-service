@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { ApiError } from '../common/api.error';
 import { ApiClientDomainModel, ApiClientVerificationDomainModel } from "../domain.types/api.client/api.client.domain.model";
 import { ApiClientDto, ClientApiKeyDto } from "../domain.types/api.client/api.client.dto";
-import { IApiClientRepo } from "../database/repository.interfaces/api.client.repo.interface";
+import { IApiClientRepo } from "../database/repository.interfaces/api.client/api.client.repo.interface";
 import { generate } from 'generate-password';
 import { Helper } from "../common/helper";
 import { CurrentClient } from "../domain.types/miscellaneous/current.client";
@@ -81,7 +81,7 @@ export class ApiClientService {
             verificationModel.ValidFrom,
             verificationModel.ValidTill
         );
-        
+
         return clientApiKeyDto;
     };
 

@@ -18,7 +18,7 @@ import { PatientDetailsDto } from '../../../../domain.types/users/patient/patien
 import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
 import { UserService } from '../../../../services/user/user.service';
 import { PersonService } from '../../../../services/person.service';
-import { UserHelper } from '../../../helpers/user.helper';
+import { UserHelper } from '../../../users/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

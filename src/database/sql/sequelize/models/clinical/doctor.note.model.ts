@@ -14,7 +14,7 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import User from '../user/user.model';
+import User from '../users/user/user.model';
 import { ClinicalValidationStatus, ClinicalValidationStatusList } from '../../../../../domain.types/miscellaneous/clinical.types';
 
 ///////////////////////////////////////////////////////////////////////

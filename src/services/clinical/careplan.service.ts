@@ -1,12 +1,12 @@
 import { inject, injectable } from "tsyringe";
 import { ICareplanRepo } from "../../database/repository.interfaces/clinical/careplan.repo.interface";
-import { IPatientRepo } from "../../database/repository.interfaces/patient/patient.repo.interface";
-import { IPersonRepo } from "../../database/repository.interfaces/person.repo.interface";
-import { IUserRepo } from "../../database/repository.interfaces/user/user.repo.interface";
+import { IPatientRepo } from "../../database/repository.interfaces/users/patient/patient.repo.interface";
+import { IPersonRepo } from "../../database/repository.interfaces/person/person.repo.interface";
+import { IUserRepo } from "../../database/repository.interfaces/users/user/user.repo.interface";
 import { IAssessmentRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
 import { IAssessmentTemplateRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
 import { IAssessmentHelperRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
-import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
+import { IUserTaskRepo } from "../../database/repository.interfaces/users/user/user.task.repo.interface";
 import { EnrollmentDomainModel } from '../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { EnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/enrollment.dto';
 import { ApiError } from "../../common/api.error";

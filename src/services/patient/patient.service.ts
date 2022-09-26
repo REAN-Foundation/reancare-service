@@ -1,11 +1,11 @@
 import { inject, injectable } from 'tsyringe';
 import { ConfigurationManager } from '../../config/configuration.manager';
-import { IAddressRepo } from '../../database/repository.interfaces/address.repo.interface';
-import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
-import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
-import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
-import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
-import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
+import { IAddressRepo } from '../../database/repository.interfaces/general/address.repo.interface';
+import { IPatientRepo } from '../../database/repository.interfaces/users/patient/patient.repo.interface';
+import { IPersonRepo } from '../../database/repository.interfaces/person/person.repo.interface';
+import { IPersonRoleRepo } from '../../database/repository.interfaces/person/person.role.repo.interface';
+import { IRoleRepo } from '../../database/repository.interfaces/role/role.repo.interface';
+import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { PatientDomainModel } from '../../domain.types/users/patient/patient/patient.domain.model';
 import { PatientDetailsDto, PatientDto } from '../../domain.types/users/patient/patient/patient.dto';

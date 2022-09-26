@@ -10,7 +10,7 @@ import { PatientService } from '../../../../services/patient/patient.service';
 import { Loader } from '../../../../startup/loader';
 import { PatientValidator } from './patient.validator';
 import { BaseUserController } from '../../base.user.controller';
-import { UserHelper } from '../../../helpers/user.helper';
+import { UserHelper } from '../../user.helper';
 import { UserDeviceDetailsService } from '../../../../services/user/user.device.details.service';
 import { PersonService } from '../../../../services/person.service';
 import { UserService } from '../../../../services/user/user.service';

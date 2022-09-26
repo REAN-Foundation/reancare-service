@@ -1,10 +1,10 @@
 import { CareplanHandler } from "../../modules/careplan/careplan.handler";
 import { inject, injectable } from "tsyringe";
-import { IGoalRepo } from "../../database/repository.interfaces/patient/goal.repo.interface";
+import { IGoalRepo } from "../../database/repository.interfaces/users/patient/goal.repo.interface";
 import { GoalDomainModel } from '../../domain.types/users/patient/goal/goal.domain.model';
 import { GoalDto } from '../../domain.types/users/patient/goal/goal.dto';
 import { GoalSearchResults, GoalSearchFilters } from '../../domain.types/users/patient/goal/goal.search.types';
-import { IHealthPriorityRepo } from "../../database/repository.interfaces/patient/health.priority/health.priority.repo.interface";
+import { IHealthPriorityRepo } from "../../database/repository.interfaces/users/patient/health.priority.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

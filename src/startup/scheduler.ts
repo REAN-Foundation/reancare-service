@@ -4,7 +4,6 @@ import { Logger } from '../common/logger';
 import { MedicationConsumptionService } from '../services/clinical/medication/medication.consumption.service';
 import { FileResourceService } from '../services/file.resource.service';
 import { Loader } from './loader';
-import { UserHelper } from '../api/helpers/user.helper';
 import { CareplanService } from '../services/clinical/careplan.service';
 import { CustomActionsHandler } from '../custom/custom.actions.handler';
 

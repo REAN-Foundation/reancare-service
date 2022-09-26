@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { Helper } from "../../common/helper";
 import { IMedicationConsumptionRepo } from "../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface";
-import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
+import { IUserTaskRepo } from "../../database/repository.interfaces/users/user/user.task.repo.interface";
 import { UserTaskDomainModel } from '../../domain.types/users/user.task/user.task.domain.model';
 import { TaskSummaryDto, UserTaskDto } from '../../domain.types/users/user.task/user.task.dto';
 import { UserTaskSearchFilters, UserTaskSearchResults } from '../../domain.types/users/user.task/user.task.search.types';

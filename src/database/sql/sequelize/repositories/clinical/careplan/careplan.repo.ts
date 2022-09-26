@@ -14,10 +14,10 @@ import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneo
 import { CareplanActivityMapper } from '../../../mappers/clinical/careplan/activity.mapper';
 import { Op } from 'sequelize';
 import { HealthPriorityDto } from '../../../../../../domain.types/users/patient/health.priority/health.priority.dto';
-import HealthPriority from '../../../models/patient/health.priority/health.priority.model';
-import { HealthPriorityMapper } from '../../../mappers/patient/health.priority/health.priority.mapper';
+import HealthPriority from '../../../models/users/patient/health.priority.model';
+import { HealthPriorityMapper } from '../../../mappers/users/patient/health.priority.mapper';
 import { Helper } from '../../../../../../common/helper';
-import UserTask from '../../../models/user/user.task.model';
+import UserTask from '../../../models/users/user/user.task.model';
 
 ///////////////////////////////////////////////////////////////////////
 

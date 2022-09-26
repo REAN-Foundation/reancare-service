@@ -1,8 +1,8 @@
 import { ApiError } from "../common/api.error";
-import { IHealthPriorityRepo } from "../database/repository.interfaces/patient/health.priority/health.priority.repo.interface";
+import { IHealthPriorityRepo } from "../database/repository.interfaces/users/patient/health.priority.repo.interface";
 import { HealthPriorityTypeDto } from "../domain.types/users/patient/health.priority.type/health.priority.type.dto";
 import { inject, injectable } from "tsyringe";
-import { IRoleRepo } from "../database/repository.interfaces/role.repo.interface";
+import { IRoleRepo } from "../database/repository.interfaces/role/role.repo.interface";
 import { Gender, GenderList } from "../domain.types/miscellaneous/system.types";
 import { OrganizationTypeList } from "../domain.types/general/organization/organization.types";
 import { RoleDto } from "../domain.types/role/role.dto";

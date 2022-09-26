@@ -5,10 +5,10 @@ import { Logger } from "../../../common/logger";
 import { TimeHelper } from "../../../common/time.helper";
 import { IMedicationConsumptionRepo } from "../../../database/repository.interfaces/clinical/medication/medication.consumption.repo.interface";
 import { IMedicationRepo } from "../../../database/repository.interfaces/clinical/medication/medication.repo.interface";
-import { IPatientRepo } from "../../../database/repository.interfaces/patient/patient.repo.interface";
-import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/user/user.device.details.repo.interface ";
-import { IUserRepo } from "../../../database/repository.interfaces/user/user.repo.interface";
-import { IUserTaskRepo } from "../../../database/repository.interfaces/user/user.task.repo.interface";
+import { IPatientRepo } from "../../../database/repository.interfaces/users/patient/patient.repo.interface";
+import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/users/user/user.device.details.repo.interface ";
+import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
+import { IUserTaskRepo } from "../../../database/repository.interfaces/users/user/user.task.repo.interface";
 import { MedicationConsumptionDomainModel } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model";
 import { MedicationConsumptionDetailsDto, MedicationConsumptionDto, MedicationConsumptionStatsDto, SchedulesForDayDto, SummarizedScheduleDto, SummaryForDayDto, SummaryForMonthDto } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.dto";
 import { MedicationConsumptionStatus } from "../../../domain.types/clinical/medication/medication.consumption/medication.consumption.types";
@@ -23,7 +23,7 @@ import { Loader } from "../../../startup/loader";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { MedicationConsumptionStore } from "../../../modules/ehr/services/medication.consumption.store";
 import { ConfigurationManager } from "../../../config/configuration.manager";
-import { IPersonRepo } from "../../../database/repository.interfaces/person.repo.interface";
+import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
 import * as MessageTemplates from '../../../modules/communication/message.template/message.templates.json';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

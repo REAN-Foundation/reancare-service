@@ -1,17 +1,17 @@
 import { generate } from 'generate-password';
-import { IUserLoginSessionRepo } from '../../database/repository.interfaces/user/user.login.session.repo.interface';
+import { IUserLoginSessionRepo } from '../../database/repository.interfaces/users/user/user.login.session.repo.interface';
 import { inject, injectable } from 'tsyringe';
 import { ApiError } from '../../common/api.error';
 import { Helper } from '../../common/helper';
 import { Logger } from '../../common/logger';
 import { TimeHelper } from '../../common/time.helper';
 import { ConfigurationManager } from '../../config/configuration.manager';
-import { IInternalTestUserRepo } from '../../database/repository.interfaces/internal.test.user.repo.interface';
-import { IOtpRepo } from '../../database/repository.interfaces/otp.repo.interface';
-import { IPersonRepo } from '../../database/repository.interfaces/person.repo.interface';
-import { IPersonRoleRepo } from '../../database/repository.interfaces/person.role.repo.interface';
-import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
-import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
+import { IInternalTestUserRepo } from '../../database/repository.interfaces/users/user/internal.test.user.repo.interface';
+import { IOtpRepo } from '../../database/repository.interfaces/users/user/otp.repo.interface';
+import { IPersonRepo } from '../../database/repository.interfaces/person/person.repo.interface';
+import { IPersonRoleRepo } from '../../database/repository.interfaces/person/person.role.repo.interface';
+import { IRoleRepo } from '../../database/repository.interfaces/role/role.repo.interface';
+import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
 import { OtpPersistenceEntity } from '../../domain.types/users/otp/otp.domain.types';
 import { PersonDetailsDto } from '../../domain.types/person/person.dto';
@@ -22,11 +22,11 @@ import { Loader } from '../../startup/loader';
 import { UserLoginSessionDomainModel } from '../../domain.types/users/user.login.session/user.login.session.domain.model';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
-import { IUserDeviceDetailsRepo } from '../../database/repository.interfaces/user/user.device.details.repo.interface ';
-import { IPatientRepo } from '../../database/repository.interfaces/patient/patient.repo.interface';
+import { IUserDeviceDetailsRepo } from '../../database/repository.interfaces/users/user/user.device.details.repo.interface ';
+import { IPatientRepo } from '../../database/repository.interfaces/users/patient/patient.repo.interface';
 import { IAssessmentTemplateRepo } from '../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface';
 import { IAssessmentRepo } from '../../database/repository.interfaces/clinical/assessment/assessment.repo.interface';
-import { IUserTaskRepo } from '../../database/repository.interfaces/user/user.task.repo.interface';
+import { IUserTaskRepo } from '../../database/repository.interfaces/users/user/user.task.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

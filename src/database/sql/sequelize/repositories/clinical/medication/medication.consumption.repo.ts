@@ -10,7 +10,7 @@ import { IMedicationConsumptionRepo } from '../../../../../repository.interfaces
 import { MedicationConsumptionMapper } from '../../../mappers/clinical/medication/medication.consumption.mapper';
 import MedicationConsumption from '../../../models/clinical/medication/medication.consumption.model';
 import Medication from '../../../models/clinical/medication/medication.model';
-import UserTask from '../../../models/user/user.task.model';
+import UserTask from '../../../models/users/user/user.task.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -48,7 +48,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             consumption.TakenAt = takenAt;
             consumption.IsCancelled = false;
             consumption.CancelledOn = null;
-            
+
             await consumption.save();
 
             var dto = MedicationConsumptionMapper.toDetailsDto(consumption);
@@ -72,7 +72,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             consumption.TakenAt = null;
             consumption.IsCancelled = false;
             consumption.CancelledOn = null;
-            
+
             await consumption.save();
 
             var dto = MedicationConsumptionMapper.toDetailsDto(consumption);
@@ -93,7 +93,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     TimeScheduleStart : { [Op.gte]: new Date() }
                 }
             };
-            
+
             const ids = (await MedicationConsumption.findAll(selector)).map(x => x.id);
             const deletedCount = await MedicationConsumption.destroy(selector);
             Logger.instance().log(`Deleted ${deletedCount} medication consumptions.`);
@@ -140,7 +140,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
     //     currentTimeZone: string,
     //     newTimeZone: string): Promise<number> => {
     // }
-    
+
     getById = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
         try {
             const consumption = await MedicationConsumption.findByPk(id);
@@ -150,7 +150,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     search = async (filters: MedicationConsumptionSearchFilters): Promise<MedicationConsumptionSearchResults> => {
         try {
             const search = { where: {} };
@@ -218,7 +218,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             };
 
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -228,10 +228,10 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
     getSchedulesForDay = async(patientUserId: string, date: Date)
         : Promise<MedicationConsumptionDto[]> => {
         try {
-            
+
             var dayStart = date;
             var dayEnd = TimeHelper.addDuration(dayStart, 24, DurationType.Hour);
-    
+
             var search = {
                 PatientUserId     : patientUserId,
                 TimeScheduleStart : {
@@ -240,11 +240,11 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                 },
                 IsCancelled : false
             };
-    
+
             const entities = await MedicationConsumption.findAll({
                 where : search
             });
-    
+
             var dtos = entities.map(x => MedicationConsumptionMapper.toDto(x));
             var fn = (a, b) => {
                 return a.TimeScheduleStart.getTime() - b.TimeScheduleStart.getTime();
@@ -261,7 +261,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
     getSchedulesForPatientForDuration = async (patientUserId: string, from: Date, to: Date)
     : Promise<MedicationConsumptionDto[]> => {
         try {
-   
+
             const entities = await MedicationConsumption.findAll({
                 where : {
                     PatientUserId     : patientUserId,
@@ -272,9 +272,9 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     IsCancelled : false
                 }
             });
-            
+
             return entities.map(x => MedicationConsumptionMapper.toDto(x));
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -296,13 +296,13 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             if (filterTaken) {
                 filter['IsTaken'] = false;
             }
-   
+
             const entities = await MedicationConsumption.findAll({
                 where : filter
             });
-            
+
             return entities.map(x => MedicationConsumptionMapper.toDto(x));
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -320,9 +320,9 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
     };
 
     getPendingConsumptionCountForMedication = async (medicationId: string): Promise<number> => {
-        
+
         try {
-   
+
             const count = await MedicationConsumption.count({
                 where : {
                     MedicationId      : medicationId,
@@ -332,9 +332,9 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     },
                 }
             });
-            
+
             return count;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -345,16 +345,16 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
     getTotalConsumptionCountForMedication = async (medicationId: string): Promise<number> => {
 
         try {
-   
+
             const count = await MedicationConsumption.count({
                 where : {
                     MedicationId : medicationId,
                     IsCancelled  : false
                 }
             });
-            
+
             return count;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -363,9 +363,9 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
     };
 
     cancelSchedule = async (id: string): Promise<boolean> => {
-        
+
         try {
-   
+
             var schedule = await MedicationConsumption.findByPk(id);
             if (schedule === null) {
                 return false;
@@ -375,7 +375,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             await schedule.save();
 
             return true;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -391,7 +391,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                 return null;
             }
             consumption.EhrId = ehrId;
-            
+
             await consumption.save();
 
             var dto = MedicationConsumptionMapper.toDetailsDto(consumption);

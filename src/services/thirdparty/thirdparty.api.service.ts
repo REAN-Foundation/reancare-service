@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { IThirdpartyApiRepo } from "../../database/repository.interfaces/thirdparty/thirdparty.api.repo.interface";
+import { IThirdpartyApiRepo } from "../../database/repository.interfaces/general/thirdparty.api.repo.interface";
 import { ThirdpartyApiCredentialsDomainModel, ThirdpartyApiCredentialsDto } from '../../domain.types/thirdparty/thirdparty.api.credentials';
 import { uuid } from "../../domain.types/miscellaneous/system.types";
 

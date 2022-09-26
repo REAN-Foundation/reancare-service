@@ -1,7 +1,7 @@
 import {
     Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsInt, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
-import FileResource from '../../file.resource/file.resource.model';
+import FileResource from '../../general/file.resource/file.resource.model';
 
 ///////////////////////////////////////////////////////////////////////
 

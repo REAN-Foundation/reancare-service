@@ -168,9 +168,6 @@ export class UserTaskValidator extends BaseValidator {
         if (request.query.scheduledTo) {
             const scheduledToStr : string = request.query.scheduledTo as string;
             scheduledTo = await userService.getDateInUserTimeZone(userId, scheduledToStr);
-            if (scheduledFrom.getTime() === scheduledTo.getTime()) {
-                scheduledTo = TimeHelper.addDuration(scheduledFrom, 1, DurationType.Day);
-            }
         }
 
         var filters: UserTaskSearchFilters = {

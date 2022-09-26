@@ -15,6 +15,7 @@ export interface PersonDomainModel {
     SelfIdentifiedGender? : string;
     MaritalStatus?        : string;
     BirthDate?            : Date;
+    Age?                  : string;
     ImageResourceId?      : string;
     AddressIds?           : string[];
 }

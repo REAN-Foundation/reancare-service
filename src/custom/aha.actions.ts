@@ -13,6 +13,7 @@ import { uuid } from '../domain.types/miscellaneous/system.types';
 import { CommonActions } from './common.actions';
 import { EnrollmentDomainModel } from '../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { CareplanService } from '../services/clinical/careplan.service';
+import { UserDeviceDetailsService } from '../services/user/user.device.details.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,12 +31,15 @@ export class AHAActions {
 
     _careplanService: CareplanService = null;
 
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
+
     constructor() {
         this._patientService = Loader.container.resolve(PatientService);
         this._assessmentService = Loader.container.resolve(AssessmentService);
         this._userTaskService = Loader.container.resolve(UserTaskService);
         this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
         this._careplanService = Loader.container.resolve(CareplanService);
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
     }
 
     //#region Public
@@ -56,15 +60,15 @@ export class AHAActions {
     public scheduledMonthlyRecurrentTasks = async () => {
         try {
             const patientUserIds = await this._patientService.getAllPatientUserIds();
-            Logger.instance().log(`Patients being processed for custom task: ${JSON.stringify(patientUserIds.length)}`);
+            Logger.instance().log(`[KCCQTask] Patients being processed for custom task: ${JSON.stringify(patientUserIds.length)}`);
             for await (var patientUserId of patientUserIds) {
-                var enrollments = await this._careplanService.getPatientEnrollments(patientUserId);
-                var activeEnrollments = [];
-                enrollments.forEach(enrollment => {
-                    activeEnrollments.push(enrollment.PlanCode);
+                var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
+                var userAppRegistrations = [];
+                userDevices.forEach(userDevice => {
+                    userAppRegistrations.push(userDevice.AppName);
                 });
 
-                if (activeEnrollments.length > 0 && activeEnrollments.indexOf('HeartFailure') !== -1) {
+                if (userAppRegistrations.length > 0 && this.eligibleForKCCQTask(userAppRegistrations)) {
                     Logger.instance().log(`Creating quality of life questionnaire task for patient:${patientUserId}`);
                     const assessmentTemplateName = 'Quality of Life Questionnaire';
                     await this.triggerAssessmentTask_QualityOfLife(patientUserId, assessmentTemplateName);
@@ -74,7 +78,7 @@ export class AHAActions {
             }
         }
         catch (error) {
-            Logger.instance().log(`Error performing post registration custom actions.`);
+            Logger.instance().log(`[KCCQTask] Error performing post registration custom actions.`);
         }
     };
 
@@ -266,7 +270,7 @@ export class AHAActions {
 
         const userTask = await this._userTaskService.search(filters);
         if (userTask.TotalCount === 0) {
-            Logger.instance().log(`Creating custom task as no task found. PatientUserId:
+            Logger.instance().log(`[KCCQTask] Creating custom task as no task found. PatientUserId:
                     ${JSON.stringify(patientUserId)}`);
             await this._commonActions.createAssessmentTask(patientUserId, assessmentTemplateName);
         }
@@ -274,15 +278,24 @@ export class AHAActions {
             const taskCreationDate = userTask.Items[0].CreatedAt;
             const dayDiff = TimeHelper.dayDiff(new Date(), taskCreationDate);
             if (dayDiff > 30) {
-                Logger.instance().log(`Creating custom task as 30 days have passed.
+                Logger.instance().log(`[KCCQTask] Creating custom task as 30 days have passed.
                         PatientUserId: ${JSON.stringify(patientUserId)}`);
                 await this._commonActions.createAssessmentTask(patientUserId, assessmentTemplateName);
             } else {
-                Logger.instance().log(`No custom task created for patient UserId:
+                Logger.instance().log(`[KCCQTask] No custom task created for patient UserId:
                         ${JSON.stringify(patientUserId)}`);
             }
         }
     };
+
+    private eligibleForKCCQTask = (userAppRegistrations) => {
+
+        const eligibleForKCCQTask =
+        userAppRegistrations.indexOf('HF Helper') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0;
+        
+        return eligibleForKCCQTask;
+    }
 
     //#endregion
 

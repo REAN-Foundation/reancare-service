@@ -55,7 +55,7 @@ export class FileResourceController {
             var domainModels = await this._validator.upload(request);
 
             if (domainModels.length === 0) {
-                throw new ApiError(400, 'File/s not found!');
+                throw new ApiError(400, 'Profile picture not found!');
             }
             var dtos = [];
             for await (var model of domainModels) {
@@ -63,7 +63,7 @@ export class FileResourceController {
                 dtos.push(this.sanitizeDto(dto));
             }
             
-            ResponseHandler.success(request, response, 'File/s uploaded successfully!', 201, {
+            ResponseHandler.success(request, response, 'Profile picture uploaded successfully!', 201, {
                 FileResources : dtos,
             });
         } catch (error) {

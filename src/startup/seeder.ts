@@ -251,6 +251,13 @@ export class Seeder {
     private seedDefaultRoles = async () => {
         
         const existing = await this._roleRepo.search();
+        if (existing.length === 10) {
+            await this._roleRepo.create({
+                RoleName    : Roles.Donor,
+                Description :
+                    'Represents blood donor as a person.',
+            });
+        }
         if (existing.length > 0) {
             return;
         }
@@ -472,13 +479,6 @@ export class Seeder {
     };
 
     public seedKnowledgeNuggets = async () => {
-
-        const count = await this._knowledgeNuggetRepo.totalCount();
-        if (count > 0) {
-            Logger.instance().log("Knowledge nuggets have already been seeded!");
-            return;
-        }
-
         Logger.instance().log('Seeding knowledge nuggets...');
 
         const arr = SeededKnowledgeNuggets['default'];
@@ -486,6 +486,15 @@ export class Seeder {
         for (let i = 0; i < arr.length; i++) {
 
             var t = arr[i];
+            const filters = {
+                TopicName : t['TopicName']
+            };
+            const existingRecord = await this._knowledgeNuggetRepo.search(filters);
+            if (existingRecord.Items.length > 0) {
+                Logger.instance().log(`Knowledge nugget has already been exist ${t['TopicName']}!`);
+                continue;
+            }
+
             var tokens = t['Tags'] ? t['Tags'].split(',') : [];
             const temp = t['AdditionalResources'];
 

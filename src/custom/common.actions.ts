@@ -12,6 +12,7 @@ import { uuid } from '../domain.types/miscellaneous/system.types';
 import { CustomTaskService } from '../services/user/custom.task.service';
 import { CustomTaskDomainModel } from '../domain.types/user/custom.task/custom.task.domain.model';
 import { ApiError } from '../common/api.error';
+import { UserTaskSearchFilters } from '../domain.types/user/user.task/user.task.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,7 +71,7 @@ export class CommonActions {
         };
 
         const userTask = await this._userTaskService.create(userTaskBody);
-        Logger.instance().log(`Action id for Quality of Life Questionnaire is ${userTask.ActionId}`);
+        Logger.instance().log(`[KCCQTask] Action id for Quality of Life Questionnaire is ${userTask.ActionId}`);
 
         return userTask.ActionId;
     };

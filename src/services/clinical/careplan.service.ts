@@ -119,21 +119,29 @@ export class CareplanService implements IUserActionService {
 
         if (activities.length !== 0) {
             activities.forEach(async activity => {
-                const todayDate = new Date().toISOString()
-                    .split('T')[1];
-                const num = todayDate.split('.')[0];
-                const num1 = num.split(':')[1];
-                const activityDate = activity.ScheduledAt.toISOString().split('T')[1];
-                const num2 = activityDate.split('.')[0];
-                const num3 = num2.split(':')[1];
 
-                if (num1 === num3) {
-                    const message = activity.Description;
-                    const patient = await this.getPatient(activity.PatientUserId);
-                    const phoneNumber = patient.User.Person.Phone;
-                    await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message);
+                const todayDateTime = new Date().toISOString()
+                    .split('T');
+                const activityDateTime = activity.ScheduledAt.toISOString().split('T');
 
-                    Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
+                if (todayDateTime[0] === activityDateTime[0]) {
+                    const num = todayDateTime[1].split('.')[0];
+                    const num1 = num.split(':',2);
+                    const num2 = num1[0].concat(':', num1[1]);
+
+                    const num3 = activityDateTime[1].split('.')[0];
+                    const num4 = num3.split(':',2);
+                    const num5 = num4[0].concat(':', num4[1]);
+
+                    if (num2 === num5){
+                        const message = activity.Description;
+                        const patient = await this.getPatient(activity.PatientUserId);
+                        const phoneNumber = patient.User.Person.Phone;
+                        await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message);
+                        await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
+
+                        Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
+                    }
 
                 }
             });

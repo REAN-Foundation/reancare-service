@@ -1,19 +1,19 @@
-import { PatientService } from '../services/patient/patient.service';
+import { PatientService } from '../services/users/patient/patient.service';
 import { Loader } from '../startup/loader';
-import { PatientDetailsDto } from '../domain.types/patient/patient/patient.dto';
+import { PatientDetailsDto } from '../domain.types/users/patient/patient/patient.dto';
 import { TimeHelper } from '../common/time.helper';
-import { CustomTaskDomainModel } from '../domain.types/user/custom.task/custom.task.domain.model';
-import { UserTaskCategory } from '../domain.types/user/user.task/user.task.types';
+import { CustomTaskDomainModel } from '../domain.types/users/custom.task/custom.task.domain.model';
+import { UserTaskCategory } from '../domain.types/users/user.task/user.task.types';
 import { Logger } from '../common/logger';
 import { AssessmentTemplateService } from '../services/clinical/assessment/assessment.template.service';
 import { AssessmentService } from '../services/clinical/assessment/assessment.service';
-import { UserTaskService } from '../services/user/user.task.service';
-import { UserTaskSearchFilters } from '../domain.types/user/user.task/user.task.search.types';
+import { UserTaskService } from '../services/users/user/user.task.service';
+import { UserTaskSearchFilters } from '../domain.types/users/user.task/user.task.search.types';
 import { uuid } from '../domain.types/miscellaneous/system.types';
 import { CommonActions } from './common.actions';
 import { EnrollmentDomainModel } from '../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { CareplanService } from '../services/clinical/careplan.service';
-import { UserDeviceDetailsService } from '../services/user/user.device.details.service';
+import { UserDeviceDetailsService } from '../services/users/user/user.device.details.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -82,6 +82,7 @@ export class AHAActions {
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public performActions_PostCareplanEnrollment = async (model: EnrollmentDomainModel) => {
         try {
             //Please move post enrollment actions here...
@@ -293,7 +294,7 @@ export class AHAActions {
         const eligibleForKCCQTask =
         userAppRegistrations.indexOf('HF Helper') >= 0 ||
         userAppRegistrations.indexOf('REAN HealthGuru') >= 0;
-        
+
         return eligibleForKCCQTask;
     }
 

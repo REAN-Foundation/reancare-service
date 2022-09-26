@@ -4,7 +4,7 @@ import { injectable } from "tsyringe";
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { Helper } from '../../../../../../common/helper';
-import { DiagnosticConditionDomainModel } from '../../../../../../domain.types/diagnostic.condition/diagnostic.condition.domain.model';
+import { DiagnosticConditionDomainModel } from '../../../../../../domain.types/clinical/diagnosis/diagnostic.condition.domain.model';
 
 ///////////////////////////////////////////////////////////////////
 
@@ -23,7 +23,7 @@ export class GcpDiagnosticConditionStore implements IDiagnosticConditionStore {
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
         return data;
     };
-    
+
     update = async (resourceId:string, updates: DiagnosticConditionDomainModel): Promise<any> => {
         const resourceType = 'Condition';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -81,7 +81,7 @@ export class GcpDiagnosticConditionStore implements IDiagnosticConditionStore {
 
         if (model.MedicalCondition.Description != null) {
             resource.code.coding.push({
-   
+
                 system  : "http://snomed.info/sct",
                 code    : "39065001",
                 display : model.MedicalCondition.Description
@@ -89,9 +89,9 @@ export class GcpDiagnosticConditionStore implements IDiagnosticConditionStore {
         }
         return resource;
     }
-    
+
     private updateDiagnosticConditionFhirResource(updates: DiagnosticConditionDomainModel, existingResource: any): any {
-        
+
         existingResource["clinicalStatus"] =  {
             coding : [
                 {
@@ -128,9 +128,9 @@ export class GcpDiagnosticConditionStore implements IDiagnosticConditionStore {
             existingResource["code"] = {
                 coding : []
             };
-            
+
             existingResource.code.coding.push({
-   
+
                 system  : "http://snomed.info/sct",
                 code    : "39065001",
                 display : updates.MedicalCondition.Description

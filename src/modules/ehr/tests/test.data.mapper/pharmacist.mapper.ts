@@ -1,7 +1,7 @@
 
 import { Helper } from "../../../../common/helper";
-import { AddressDomainModel } from "../../../../domain.types/address/address.domain.model";
-import { PharmacistDomainModel } from "../../../../domain.types/pharmacist/pharmacist.domain.types";
+import { AddressDomainModel } from "../../../../domain.types/general/address/address.domain.model";
+import { PharmacistDomainModel } from "../../../../domain.types/users/pharmacist/pharmacist.domain.types";
 import path from 'path';
 
 ///////////////////////////////////////////////////////////////////////////////////

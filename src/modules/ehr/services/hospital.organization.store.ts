@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { IHospitalOrganizationStore } from '../interfaces/hospital.organization.store.interface';
 import { injectable, inject } from "tsyringe";
-import { OrganizationDomainModel } from '../../../domain.types/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../domain.types/general/organization/organization.domain.model';
 
 ///////////////////////////////////////////////////////////////////
 
@@ -13,7 +13,7 @@ export class HospitalOrganizationStore {
     create = async (model: OrganizationDomainModel): Promise<any> => {
         return await this._service.create(model);
     }
-    
+
     getById = async (id: string): Promise<any> => {
         return await this._service.getById(id);
     }

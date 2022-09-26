@@ -2,12 +2,12 @@ import { Logger } from '../../../../../../common/logger';
 import { ApiError } from '../../../../../../common/api.error';
 import { Op } from 'sequelize';
 import { ILabRecordRepo } from '../../../../../../database/repository.interfaces/clinical/lab.record/lab.record.interface';
-import { LabRecordDomainModel } from '../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.domain.model';
-import { LabRecordDto } from '../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.dto';
-import { LabRecordTypeDto } from '../../../../../../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.dto';
-import { LabRecordTypeDomainModel } from '../../../../../../domain.types/clinical/lab.records/lab.recod.type/lab.record.type.domain.model';
-import { LabRecordSearchFilters } from '../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.search.types';
-import { LabRecordSearchResults } from '../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.search.types';
+import { LabRecordDomainModel } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model';
+import { LabRecordDto } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto';
+import { LabRecordTypeDto } from '../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto';
+import { LabRecordTypeDomainModel } from '../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.domain.model';
+import { LabRecordSearchFilters } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types';
+import { LabRecordSearchResults } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types';
 import LabRecordType from '../../../models/clinical/lab.record/lab.record.type.model';
 import LabRecord from '../../../models/clinical/lab.record/lab.record.model';
 import { LabRecordMapper } from '../../../mappers/clinical/lab.record/lab.record.mapper';
@@ -40,7 +40,7 @@ export class LabRecordRepo implements ILabRecordRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     getLabRecordTypes = async (displayName?: string): Promise<LabRecordTypeDto[]> => {
         try {
             const filter = { where: {} };
@@ -82,11 +82,11 @@ export class LabRecordRepo implements ILabRecordRepo {
                 NormalRangeMin : model.NormalRangeMin,
                 NormalRangeMax : model.NormalRangeMax,
                 Unit           : model.Unit,
-                
+
             };
             const labRecordType = await LabRecordType.create(entity);
             return await LabRecordTypeMapper.toTypeDto(labRecordType);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -178,7 +178,7 @@ export class LabRecordRepo implements ILabRecordRepo {
             };
 
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -188,7 +188,7 @@ export class LabRecordRepo implements ILabRecordRepo {
     update = async (id: string, updateModel: LabRecordDomainModel): Promise<LabRecordDto> => {
         try {
             const labReport = await LabRecord.findByPk(id);
-            
+
             if (updateModel.PatientUserId != null) {
                 labReport.PatientUserId = updateModel.PatientUserId;
             }

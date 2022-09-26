@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 import {
     ClinicalInterpretation, ClinicalInterpretationList, ClinicalValidationStatus, ClinicalValidationStatusList
 } from '../../../../../domain.types/miscellaneous/clinical.types';
-import User from '../user/user.model';
+import User from '../users/user/user.model';
 import MedicalCondition from './medical.condition.model';
 import Visit from './visit.model';
 

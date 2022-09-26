@@ -1,5 +1,5 @@
 import { ClinicalInterpretation, ClinicalValidationStatus } from "../../miscellaneous/clinical.types";
-import { PatientDto } from "../../patient/patient/patient.dto";
+import { PatientDto } from "../../users/patient/patient/patient.dto";
 import { MedicalConditionDto } from "../medical.condition/medical.condition.dto";
 
 export interface DiagnosisDto {

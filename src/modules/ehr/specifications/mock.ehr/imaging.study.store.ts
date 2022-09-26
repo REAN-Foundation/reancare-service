@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ImagingStudyDomainModel } from '../../../../domain.types/imaging.study/imaging.study.domain.model';
+import { ImagingStudyDomainModel } from '../../../../domain.types/clinical/imaging.study/imaging.study.domain.model';
 import { IImagingStudyStore } from '../../interfaces/imaging.study.store.interface';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@ export class MockImagingStudyStore implements IImagingStudyStore {
     getById = async (resourceId: string): Promise<any> => {
         return null;
     };
-    
+
     update = async (updates: any): Promise<any> => {
         return null;
     };

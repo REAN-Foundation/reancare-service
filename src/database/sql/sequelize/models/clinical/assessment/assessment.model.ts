@@ -21,8 +21,8 @@ import {
 import {
     ProgressStatus, ProgressStatusList
 } from '../../../../../../domain.types/miscellaneous/system.types';
-import User from '../../user/user.model';
-import UserTask from '../../user/user.task.model';
+import User from '../../users/user/user.model';
+import UserTask from '../../users/user/user.task.model';
 import AssessmentNode from './assessment.node.model';
 import AssessmentTemplate from './assessment.template.model';
 

@@ -17,7 +17,7 @@ import {
     ProgressStatus, ProgressStatusList
 } from '../../../../../../domain.types/miscellaneous/system.types';
 import Course from './course.model';
-import User from '../../user/user.model';
+import User from '../../users/user/user.model';
 import CourseModule from './course.module.model';
 import CourseContent from './course.content.model';
 import LearningPath from './learning.path.model';

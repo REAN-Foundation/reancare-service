@@ -15,8 +15,8 @@ import {
     MedicationTimeSchedules,
     MedicationTimeSchedulesList
 } from '../../../../../../domain.types/clinical/medication/medication/medication.types';
-import FileResource from '../../file.resource/file.resource.model';
-import User from '../../user/user.model';
+import FileResource from '../../general/file.resource/file.resource.model';
+import User from '../../users/user/user.model';
 import Order from '../order.model';
 import Visit from '../visit.model';
 import Drug from './drug.model';
@@ -71,7 +71,7 @@ export default class Medication extends Model {
         allowNull : true,
     })
     VisitId: string;
-    
+
     @IsUUID(4)
     @ForeignKey(() => Order)
     @Column({
@@ -79,7 +79,7 @@ export default class Medication extends Model {
         allowNull : true,
     })
     OrderId: string;
-    
+
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),

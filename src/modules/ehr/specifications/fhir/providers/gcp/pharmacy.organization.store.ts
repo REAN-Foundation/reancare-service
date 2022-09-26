@@ -1,6 +1,6 @@
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
-import { OrganizationDomainModel } from '../../../../../../domain.types/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.domain.model';
 import { IPharmacyOrganizationStore } from '../../../../interfaces/pharmacy.organization.store.interface';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ export class GcpPharmacyOrganizationStore implements IPharmacyOrganizationStore 
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
         return data;
     };
-    
+
     update = async (resourceId:string, updates: OrganizationDomainModel): Promise<any> => {
         const resourceType = 'Organization';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -46,7 +46,7 @@ export class GcpPharmacyOrganizationStore implements IPharmacyOrganizationStore 
                     text : "clinic"
                 }
             ],
-            
+
             telecom : [],
             address : []
         };

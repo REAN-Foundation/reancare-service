@@ -4,8 +4,8 @@ import {
 import { v4 } from 'uuid';
 import { VisitType, VisitTypeList } from '../../../../../domain.types/miscellaneous/clinical.types';
 import { ProgressStatus, ProgressStatusList } from '../../../../../domain.types/miscellaneous/system.types';
-import Organization from '../organization.model';
-import User from '../user/user.model';
+import Organization from '../general/organization/organization.model';
+import User from '../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -28,7 +28,7 @@ export default class Visit extends Model {
         allowNull : false,
     })
     id: string;
-    
+
     @Length({ max: 64 })
     @Column({
         type         : DataType.STRING(64),

@@ -1,9 +1,9 @@
 import path from 'path';
 import { Helper } from "../../../../common/helper";
-import { AddressDomainModel } from "../../../../domain.types/address/address.domain.model";
-import { PatientDomainModel } from '../../../../domain.types/patient/patient/patient.domain.model';
+import { AddressDomainModel } from "../../../../domain.types/general/address/address.domain.model";
+import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
-import { UserDomainModel } from '../../../../domain.types/user/user/user.domain.model';
+import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

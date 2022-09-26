@@ -1,4 +1,4 @@
-import { UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
+import { UserTaskCategory } from "../../../../domain.types/users/user.task/user.task.types";
 import { uuid } from "../../../miscellaneous/system.types";
 
 export interface CareplanActivityDto {

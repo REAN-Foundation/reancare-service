@@ -1,7 +1,7 @@
 import { NoticeActionDto } from '../../../../../domain.types/general/notice.action/notice.action.dto';
 import { NoticeDto } from '../../../../../domain.types/general/notice/notice.dto';
-import NoticeAction from '../../models/general/notice.action.model';
-import NoticeModel from '../../models/general/notice.model';
+import NoticeAction from '../../models/general/notice/notice.action.model';
+import NoticeModel from '../../models/general/notice/notice.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

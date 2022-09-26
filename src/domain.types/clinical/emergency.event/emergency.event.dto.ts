@@ -1,4 +1,4 @@
-import { PatientDto } from "../../patient/patient/patient.dto";
+import { PatientDto } from "../../users/patient/patient/patient.dto";
 
 export interface EmergencyEventDto {
     id?: string,

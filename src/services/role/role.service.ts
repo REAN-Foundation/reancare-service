@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import { IRoleRepo } from "../database/repository.interfaces/role/role.repo.interface";
-import { RoleDto } from "../domain.types/role/role.dto";
+import { IRoleRepo } from "../../database/repository.interfaces/role/role.repo.interface";
+import { RoleDto } from "../../domain.types/role/role.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

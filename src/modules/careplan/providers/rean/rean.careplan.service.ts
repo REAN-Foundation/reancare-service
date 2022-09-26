@@ -13,7 +13,7 @@ import {
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentService } from "../../../../services/clinical/assessment/assessment.service";
 import { Loader } from '../../../../startup/loader';
-import { UserTaskService } from '../../../../services/user/user.task.service';
+import { UserTaskService } from '../../../../services/users/user/user.task.service';
 import { AssessmentTemplateRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.template.repo';
 import { TimeHelper } from "../../../../common/time.helper";
 import { DurationType } from "../../../../domain.types/miscellaneous/time.types";

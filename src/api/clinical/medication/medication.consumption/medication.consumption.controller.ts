@@ -6,8 +6,8 @@ import { SchedulesForDayDto } from '../../../../domain.types/clinical/medication
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
-import { PatientService } from '../../../../services/patient/patient.service';
-import { UserService } from '../../../../services/user/user.service';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 import { MedicationConsumptionValidator } from './medication.consumption.validator';
 

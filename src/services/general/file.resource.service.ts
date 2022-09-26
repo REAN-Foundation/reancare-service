@@ -1,19 +1,19 @@
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
-import { Helper } from '../common/helper';
+import { Helper } from '../../common/helper';
 import { inject, injectable } from "tsyringe";
-import { ApiError } from "../common/api.error";
-import { Logger } from "../common/logger";
-import { TimeHelper } from "../common/time.helper";
-import { ConfigurationManager } from "../config/configuration.manager";
-import { IFileResourceRepo } from "../database/repository.interfaces/general/file.resource.repo.interface";
-import { FileResourceUpdateModel, FileResourceUploadDomainModel } from '../domain.types/general/file.resource/file.resource.domain.model';
-import { FileResourceDetailsDto, FileResourceDto } from '../domain.types/general/file.resource/file.resource.dto';
-import { FileResourceSearchFilters, FileResourceSearchResults } from '../domain.types/general/file.resource/file.resource.search.types';
-import { FileResourceMetadata } from "../domain.types/general/file.resource/file.resource.types";
-import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
-import { IFileStorageService } from '../modules/storage/interfaces/file.storage.service.interface';
+import { ApiError } from "../../common/api.error";
+import { Logger } from "../../common/logger";
+import { TimeHelper } from "../../common/time.helper";
+import { ConfigurationManager } from "../../config/configuration.manager";
+import { IFileResourceRepo } from "../../database/repository.interfaces/general/file.resource.repo.interface";
+import { FileResourceUpdateModel, FileResourceUploadDomainModel } from '../../domain.types/general/file.resource/file.resource.domain.model';
+import { FileResourceDetailsDto, FileResourceDto } from '../../domain.types/general/file.resource/file.resource.dto';
+import { FileResourceSearchFilters, FileResourceSearchResults } from '../../domain.types/general/file.resource/file.resource.search.types';
+import { FileResourceMetadata } from "../../domain.types/general/file.resource/file.resource.types";
+import { DateStringFormat, DurationType } from "../../domain.types/miscellaneous/time.types";
+import { IFileStorageService } from '../../modules/storage/interfaces/file.storage.service.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

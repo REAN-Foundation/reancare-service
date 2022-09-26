@@ -12,9 +12,9 @@ import { MedicationAdministrationRoutesList, MedicationDosageUnitsList, Medicati
 import { DrugService } from '../../../../services/clinical/medication/drug.service';
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { MedicationService } from '../../../../services/clinical/medication/medication.service';
-import { FileResourceService } from '../../../../services/file.resource.service';
-import { PatientService } from '../../../../services/patient/patient.service';
-import { UserService } from '../../../../services/user/user.service';
+import { FileResourceService } from '../../../../services/general/file.resource.service';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 import { MedicationValidator } from './medication.validator';
 

@@ -18,7 +18,7 @@ import { MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedu
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
 import { UserActionType, UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
 import { UserTaskDomainModel } from "../../../domain.types/users/user.task/user.task.domain.model";
-import { IUserActionService } from "../../../services/user/user.action.service.interface";
+import { IUserActionService } from "../../users/user/user.action.service.interface";
 import { Loader } from "../../../startup/loader";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { MedicationConsumptionStore } from "../../../modules/ehr/services/medication.consumption.store";

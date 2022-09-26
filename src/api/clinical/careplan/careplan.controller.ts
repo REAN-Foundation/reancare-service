@@ -5,7 +5,7 @@ import { ResponseHandler } from '../../../common/response.handler';
 import { Loader } from '../../../startup/loader';
 import { CareplanValidator } from './careplan.validator';
 import { BaseController } from '../../base.controller';
-import { UserService } from '../../../services/user/user.service';
+import { UserService } from '../../../services/users/user/user.service';
 import { TimeHelper } from '../../../common/time.helper';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { Logger } from '../../../common/logger';

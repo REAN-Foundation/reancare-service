@@ -2,7 +2,7 @@ import express from 'express';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { UserService } from '../../../../services/user/user.service';
+import { UserService } from '../../../../services/users/user/user.service';
 import { PhysicalActivityService } from '../../../../services/wellness/exercise/physical.activity.service';
 import { Loader } from '../../../../startup/loader';
 import { PhysicalActivityValidator } from './physical.activity.validator';

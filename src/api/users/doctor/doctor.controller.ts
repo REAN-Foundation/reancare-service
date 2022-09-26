@@ -5,7 +5,7 @@ import { ResponseHandler } from '../../../common/response.handler';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { Roles } from '../../../domain.types/role/role.types';
 import { UserDomainModel } from '../../../domain.types/users/user/user.domain.model';
-import { DoctorService } from '../../../services/doctor.service';
+import { DoctorService } from '../../../services/users/doctor.service';
 import { Loader } from '../../../startup/loader';
 import { DoctorValidator } from './doctor.validator';
 import { BaseUserController } from '../base.user.controller';

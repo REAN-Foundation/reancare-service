@@ -2,9 +2,9 @@ import express from 'express';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
-import { OrganizationService } from '../../../services/organization.service';
-import { PersonService } from '../../../services/person.service';
-import { RoleService } from '../../../services/role.service';
+import { OrganizationService } from '../../../services/general/organization.service';
+import { PersonService } from '../../../services/person/person.service';
+import { RoleService } from '../../../services/role/role.service';
 import { Loader } from '../../../startup/loader';
 import { OrganizationValidator } from './organization.validator';
 

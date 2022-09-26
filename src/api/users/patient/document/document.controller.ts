@@ -15,8 +15,8 @@ import { DocumentSearchFilters } from '../../../../domain.types/users/patient/do
 import { DocumentTypesList } from '../../../../domain.types/users/patient/document/document.types';
 import { SharedDocumentDetailsDomainModel } from '../../../../domain.types/users/patient/document/shared.document.details.domain.model';
 import { SharedDocumentDetailsDto } from '../../../../domain.types/users/patient/document/shared.document.details.dto';
-import { FileResourceService } from '../../../../services/file.resource.service';
-import { DocumentService } from '../../../../services/patient/document.service';
+import { FileResourceService } from '../../../../services/general/file.resource.service';
+import { DocumentService } from '../../../../services/users/patient/document.service';
 import { Loader } from '../../../../startup/loader';
 import { DocumentValidator } from './document.validator';
 

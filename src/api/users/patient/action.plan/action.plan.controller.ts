@@ -3,12 +3,12 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { Loader } from '../../../../startup/loader';
 import { BaseController } from '../../../base.controller';
-import { UserService } from '../../../../services/user/user.service';
+import { UserService } from '../../../../services/users/user/user.service';
 import { ActionPlanValidator } from './action.plan.validator';
-import { ActionPlanService } from '../../../../services/action.plan/action.plan.service';
+import { ActionPlanService } from '../../../../services/users/patient/action.plan.service';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { GoalService } from '../../../../services/patient/goal.service';
-import { HealthPriorityService } from '../../../../services/patient/health.priority/health.priority.service';
+import { GoalService } from '../../../../services/users/patient/goal.service';
+import { HealthPriorityService } from '../../../../services/users/patient/health.priority.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

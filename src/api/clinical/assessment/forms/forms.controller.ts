@@ -8,7 +8,7 @@ import { ThirdpartyApiCredentialsDto } from '../../../../domain.types/thirdparty
 import { AssessmentService } from '../../../../services/clinical/assessment/assessment.service';
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
 import { FormsService } from '../../../../services/clinical/assessment/forms.service';
-import { ThirdpartyApiService } from '../../../../services/thirdparty/thirdparty.api.service';
+import { ThirdpartyApiService } from '../../../../services/general/thirdparty.api.service';
 import { Loader } from '../../../../startup/loader';
 import { FormsValidator } from './forms.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
@@ -16,8 +16,8 @@ import { BaseController } from '../../../base.controller';
 import { Logger } from '../../../../common/logger';
 import { PatientDetailsDto } from '../../../../domain.types/users/patient/patient/patient.dto';
 import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
-import { UserService } from '../../../../services/user/user.service';
-import { PersonService } from '../../../../services/person.service';
+import { UserService } from '../../../../services/users/user/user.service';
+import { PersonService } from '../../../../services/person/person.service';
 import { UserHelper } from '../../../users/user.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////

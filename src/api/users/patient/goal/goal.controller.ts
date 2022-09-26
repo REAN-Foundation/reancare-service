@@ -2,7 +2,7 @@ import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
-import { GoalService } from '../../../../services/patient/goal.service';
+import { GoalService } from '../../../../services/users/patient/goal.service';
 import { Loader } from '../../../../startup/loader';
 import { GoalValidator } from './goal.validator';
 import { BaseController } from '../../../base.controller';

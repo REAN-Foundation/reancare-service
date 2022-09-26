@@ -1,12 +1,12 @@
 import express from 'express';
-import { PersonService } from '../../../services/person.service';
+import { PersonService } from '../../../services/person/person.service';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
-import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
+import { UserDeviceDetailsService } from '../../../services/users/user/user.device.details.service';
 import { Loader } from '../../../startup/loader';
 import { UserDeviceDetailsValidator } from './user.device.details.validator';
-import { PatientService } from '../../../services/patient/patient.service';
+import { PatientService } from '../../../services/users/patient/patient.service';
 import { FirebaseNotificationService } from '../../../modules/communication/notification.service/providers/firebase.notification.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////

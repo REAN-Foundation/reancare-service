@@ -6,7 +6,7 @@ import { MedicationSearchFilters } from '../../../../domain.types/clinical/medic
 import {
     MedicationAdministrationRoutes, MedicationDurationUnits
 } from "../../../../domain.types/clinical/medication/medication/medication.types";
-import { UserService } from '../../../../services/user/user.service';
+import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////

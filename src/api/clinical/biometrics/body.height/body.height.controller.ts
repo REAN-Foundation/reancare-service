@@ -7,9 +7,6 @@ import { Authorizer } from '../../../../auth/authorizer';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { BodyHeightService } from '../../../../services/clinical/biometrics/body.height.service';
-import { OrganizationService } from '../../../../services/organization.service';
-import { PersonService } from '../../../../services/person.service';
-import { RoleService } from '../../../../services/role.service';
 import { Loader } from '../../../../startup/loader';
 import { BodyHeightValidator } from './body.height.validator';
 
@@ -21,19 +18,10 @@ export class BodyHeightController {
 
     _service: BodyHeightService = null;
 
-    _roleService: RoleService = null;
-
-    _personService: PersonService = null;
-
-    _organizationService: OrganizationService = null;
-
     _authorizer: Authorizer = null;
 
     constructor() {
         this._service = Loader.container.resolve(BodyHeightService);
-        this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
         this._authorizer = Loader.authorizer;
     }
 

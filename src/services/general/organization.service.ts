@@ -1,13 +1,13 @@
-import { AddressDto } from "../domain.types/general/address/address.dto";
+import { AddressDto } from "../../domain.types/general/address/address.dto";
 import { inject, injectable } from "tsyringe";
-import { IOrganizationRepo } from "../database/repository.interfaces/general/organization.repo.interface";
-import { OrganizationDomainModel } from '../domain.types/general/organization/organization.domain.model';
-import { OrganizationDto } from '../domain.types/general/organization/organization.dto';
-import { OrganizationSearchFilters, OrganizationSearchResults } from '../domain.types/general/organization/organization.search.types';
-import { IUserRepo } from '../database/repository.interfaces/users/user/user.repo.interface';
-import { IAddressRepo } from '../database/repository.interfaces/general/address.repo.interface';
-import { PersonDto } from "../domain.types/person/person.dto";
-import { IPersonRepo } from "../database/repository.interfaces/person/person.repo.interface";
+import { IOrganizationRepo } from "../../database/repository.interfaces/general/organization.repo.interface";
+import { OrganizationDomainModel } from '../../domain.types/general/organization/organization.domain.model';
+import { OrganizationDto } from '../../domain.types/general/organization/organization.dto';
+import { OrganizationSearchFilters, OrganizationSearchResults } from '../../domain.types/general/organization/organization.search.types';
+import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';
+import { IAddressRepo } from '../../database/repository.interfaces/general/address.repo.interface';
+import { PersonDto } from "../../domain.types/person/person.dto";
+import { IPersonRepo } from "../../database/repository.interfaces/person/person.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

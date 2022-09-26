@@ -1,13 +1,13 @@
 import { inject, injectable } from "tsyringe";
-import { ApiError } from '../common/api.error';
-import { ApiClientDomainModel, ApiClientVerificationDomainModel } from "../domain.types/api.client/api.client.domain.model";
-import { ApiClientDto, ClientApiKeyDto } from "../domain.types/api.client/api.client.dto";
-import { IApiClientRepo } from "../database/repository.interfaces/api.client/api.client.repo.interface";
+import { ApiError } from '../../common/api.error';
+import { ApiClientDomainModel, ApiClientVerificationDomainModel } from "../../domain.types/api.client/api.client.domain.model";
+import { ApiClientDto, ClientApiKeyDto } from "../../domain.types/api.client/api.client.dto";
+import { IApiClientRepo } from "../../database/repository.interfaces/api.client/api.client.repo.interface";
 import { generate } from 'generate-password';
-import { Helper } from "../common/helper";
-import { CurrentClient } from "../domain.types/miscellaneous/current.client";
+import { Helper } from "../../common/helper";
+import { CurrentClient } from "../../domain.types/miscellaneous/current.client";
 import * as apikeyGenerator from 'uuid-apikey';
-import { ApiClientSearchFilters, ApiClientSearchResults } from "../domain.types/api.client/api.client.search.types";
+import { ApiClientSearchFilters, ApiClientSearchResults } from "../../domain.types/api.client/api.client.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

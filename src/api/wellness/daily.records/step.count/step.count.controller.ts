@@ -2,7 +2,7 @@ import express from 'express';
 import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { PatientService } from '../../../../services/patient/patient.service';
+import { PatientService } from '../../../../services/users/patient/patient.service';
 import { StepCountService } from '../../../../services/wellness/daily.records/step.count.service';
 import { Loader } from '../../../../startup/loader';
 import { StepCountValidator } from './step.count.validator';

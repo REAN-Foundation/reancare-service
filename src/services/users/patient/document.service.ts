@@ -1,13 +1,13 @@
 
 import { inject, injectable } from "tsyringe";
-import { Helper } from "../../common/helper";
-import { IDocumentRepo } from "../../database/repository.interfaces/users/patient/document.repo.interface";
-import { DocumentDomainModel } from '../../domain.types/users/patient/document/document.domain.model';
-import { DocumentDto } from '../../domain.types/users/patient/document/document.dto';
-import { DocumentSearchFilters, DocumentSearchResults } from "../../domain.types/users/patient/document/document.search.types";
-import { DocumentTypes } from "../../domain.types/users/patient/document/document.types";
-import { SharedDocumentDetailsDomainModel } from "../../domain.types/users/patient/document/shared.document.details.domain.model";
-import { SharedDocumentDetailsDto } from "../../domain.types/users/patient/document/shared.document.details.dto";
+import { Helper } from "../../../common/helper";
+import { IDocumentRepo } from "../../../database/repository.interfaces/users/patient/document.repo.interface";
+import { DocumentDomainModel } from '../../../domain.types/users/patient/document/document.domain.model';
+import { DocumentDto } from '../../../domain.types/users/patient/document/document.dto';
+import { DocumentSearchFilters, DocumentSearchResults } from "../../../domain.types/users/patient/document/document.search.types";
+import { DocumentTypes } from "../../../domain.types/users/patient/document/document.types";
+import { SharedDocumentDetailsDomainModel } from "../../../domain.types/users/patient/document/shared.document.details.domain.model";
+import { SharedDocumentDetailsDto } from "../../../domain.types/users/patient/document/shared.document.details.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

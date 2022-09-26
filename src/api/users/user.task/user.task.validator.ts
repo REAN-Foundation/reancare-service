@@ -4,7 +4,7 @@ import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { UserTaskDomainModel } from '../../../domain.types/users/user.task/user.task.domain.model';
 import { UserTaskSearchFilters } from '../../../domain.types/users/user.task/user.task.search.types';
-import { UserService } from '../../../services/user/user.service';
+import { UserService } from '../../../services/users/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { BaseValidator, Where } from '../../base.validator';
 

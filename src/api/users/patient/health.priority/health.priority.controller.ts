@@ -3,9 +3,9 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { Loader } from '../../../../startup/loader';
 import { BaseController } from '../../../base.controller';
-import { UserService } from '../../../../services/user/user.service';
+import { UserService } from '../../../../services/users/user/user.service';
 import { HealthPriorityValidator } from './health.priority.validator';
-import { HealthPriorityService } from '../../../../services/patient/health.priority/health.priority.service';
+import { HealthPriorityService } from '../../../../services/users/patient/health.priority.service';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////

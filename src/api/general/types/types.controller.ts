@@ -2,7 +2,7 @@ import express from 'express';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { BloodGroupList, EthnicityTypeList, MaritalStatusList, RaceTypeList, SeverityList } from '../../../domain.types/miscellaneous/system.types';
-import { TypesService } from '../../../services/types.service';
+import { TypesService } from '../../../services/general/types.service';
 import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
 

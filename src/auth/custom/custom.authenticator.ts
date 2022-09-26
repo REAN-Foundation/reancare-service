@@ -1,10 +1,10 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { UserService } from '../../services/user/user.service';
+import { UserService } from '../../services/users/user/user.service';
 import { Logger } from '../../common/logger';
 import { AuthenticationResult } from '../../domain.types/auth/auth.domain.types';
 import { CurrentClient } from '../../domain.types/miscellaneous/current.client';
-import { ApiClientService } from '../../services/api.client.service';
+import { ApiClientService } from '../../services/api.client/api.client.service';
 import { Loader } from '../../startup/loader';
 import { IAuthenticator } from '../authenticator.interface';
 
@@ -39,7 +39,7 @@ export class CustomAuthenticator implements IAuthenticator {
                 if (IsPrivileged) {
                     return res;
                 }
-                
+
                 res = {
                     Result        : false,
                     Message       : 'Unauthorized user access',
@@ -126,7 +126,7 @@ export class CustomAuthenticator implements IAuthenticator {
                 return res;
             }
             request.currentClient = client;
-            
+
         } catch (err) {
             Logger.instance().log(JSON.stringify(err, null, 2));
             res = {

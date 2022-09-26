@@ -19,7 +19,7 @@ import { UserActionType } from "../../domain.types/users/user.task/user.task.typ
 import { TimeHelper } from "../../common/time.helper";
 import { DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
-import { IUserActionService } from "../user/user.action.service.interface";
+import { IUserActionService } from "../users/user/user.action.service.interface";
 import { AssessmentTemplateDto } from "../../domain.types/clinical/assessment/assessment.template.dto";
 import { CAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import { CareplanActivity } from "../../domain.types/clinical/careplan/activity/careplan.activity";

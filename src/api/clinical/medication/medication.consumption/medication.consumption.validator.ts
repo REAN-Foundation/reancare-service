@@ -3,7 +3,7 @@ import { body, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../../common/helper';
 import { MedicationConsumptionScheduleDomainModel, MedicationConsumptionSummaryDomainModel } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.domain.model';
 import { MedicationConsumptionSearchFilters } from '../../../../domain.types/clinical/medication/medication.consumption/medication.consumption.search.types';
-import { UserService } from '../../../../services/user/user.service';
+import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////

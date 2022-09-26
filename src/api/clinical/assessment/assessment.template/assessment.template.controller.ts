@@ -8,7 +8,7 @@ import { CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessme
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AssessmentTemplateFileConverter } from '../../../../services/clinical/assessment/assessment.template.file.converter';
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
-import { FileResourceService } from '../../../../services/file.resource.service';
+import { FileResourceService } from '../../../../services/general/file.resource.service';
 import { Loader } from '../../../../startup/loader';
 import { AssessmentTemplateValidator } from './assessment.template.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';

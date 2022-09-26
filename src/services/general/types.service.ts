@@ -1,13 +1,13 @@
-import { ApiError } from "../common/api.error";
-import { IHealthPriorityRepo } from "../database/repository.interfaces/users/patient/health.priority.repo.interface";
-import { HealthPriorityTypeDto } from "../domain.types/users/patient/health.priority.type/health.priority.type.dto";
+import { ApiError } from "../../common/api.error";
+import { IHealthPriorityRepo } from "../../database/repository.interfaces/users/patient/health.priority.repo.interface";
+import { HealthPriorityTypeDto } from "../../domain.types/users/patient/health.priority.type/health.priority.type.dto";
 import { inject, injectable } from "tsyringe";
-import { IRoleRepo } from "../database/repository.interfaces/role/role.repo.interface";
-import { Gender, GenderList } from "../domain.types/miscellaneous/system.types";
-import { OrganizationTypeList } from "../domain.types/general/organization/organization.types";
-import { RoleDto } from "../domain.types/role/role.dto";
-import { LabRecordTypeDto } from "../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
-import { ILabRecordRepo } from "../database/repository.interfaces/clinical/lab.record/lab.record.interface";
+import { IRoleRepo } from "../../database/repository.interfaces/role/role.repo.interface";
+import { Gender, GenderList } from "../../domain.types/miscellaneous/system.types";
+import { OrganizationTypeList } from "../../domain.types/general/organization/organization.types";
+import { RoleDto } from "../../domain.types/role/role.dto";
+import { LabRecordTypeDto } from "../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
+import { ILabRecordRepo } from "../../database/repository.interfaces/clinical/lab.record/lab.record.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

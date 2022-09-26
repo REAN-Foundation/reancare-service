@@ -5,7 +5,7 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { AllergySearchFilters } from '../../../domain.types/clinical/allergy/allergy.search.types';
 import { AllergenCategoriesList, AllergenExposureRoutesList } from '../../../domain.types/clinical/allergy/allergy.types';
 import { AllergyService } from '../../../services/clinical/allergy.service';
-import { UserService } from '../../../services/user/user.service';
+import { UserService } from '../../../services/users/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { AllergyValidator } from './allergy.validator';
 import { BaseController } from '../../base.controller';

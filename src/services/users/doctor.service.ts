@@ -1,20 +1,20 @@
-import { ConfigurationManager } from '../config/configuration.manager';
+import { ConfigurationManager } from '../../config/configuration.manager';
 import { inject, injectable } from 'tsyringe';
-import { ApiError } from '../common/api.error';
-import { IAddressRepo } from '../database/repository.interfaces/general/address.repo.interface';
-import { IDoctorRepo } from '../database/repository.interfaces/users/doctor.repo.interface';
-import { IOrganizationRepo } from '../database/repository.interfaces/general/organization.repo.interface';
-import { IOtpRepo } from '../database/repository.interfaces/users/user/otp.repo.interface';
-import { IPersonRepo } from '../database/repository.interfaces/person/person.repo.interface';
-import { IPersonRoleRepo } from '../database/repository.interfaces/person/person.role.repo.interface';
-import { IRoleRepo } from '../database/repository.interfaces/role/role.repo.interface';
-import { IUserRepo } from '../database/repository.interfaces/users/user/user.repo.interface';
-import { DoctorDomainModel } from '../domain.types/users/doctor/doctor.domain.model';
-import { DoctorDetailsDto, DoctorDto } from '../domain.types/users/doctor/doctor.dto';
-import { DoctorDetailsSearchResults, DoctorSearchFilters, DoctorSearchResults } from '../domain.types/users/doctor/doctor.search.types';
-import { Roles } from '../domain.types/role/role.types';
-import { DoctorStore } from '../modules/ehr/services/doctor.store';
-import { Loader } from '../startup/loader';
+import { ApiError } from '../../common/api.error';
+import { IAddressRepo } from '../../database/repository.interfaces/general/address.repo.interface';
+import { IDoctorRepo } from '../../database/repository.interfaces/users/doctor.repo.interface';
+import { IOrganizationRepo } from '../../database/repository.interfaces/general/organization.repo.interface';
+import { IOtpRepo } from '../../database/repository.interfaces/users/user/otp.repo.interface';
+import { IPersonRepo } from '../../database/repository.interfaces/person/person.repo.interface';
+import { IPersonRoleRepo } from '../../database/repository.interfaces/person/person.role.repo.interface';
+import { IRoleRepo } from '../../database/repository.interfaces/role/role.repo.interface';
+import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';
+import { DoctorDomainModel } from '../../domain.types/users/doctor/doctor.domain.model';
+import { DoctorDetailsDto, DoctorDto } from '../../domain.types/users/doctor/doctor.dto';
+import { DoctorDetailsSearchResults, DoctorSearchFilters, DoctorSearchResults } from '../../domain.types/users/doctor/doctor.search.types';
+import { Roles } from '../../domain.types/role/role.types';
+import { DoctorStore } from '../../modules/ehr/services/doctor.store';
+import { Loader } from '../../startup/loader';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

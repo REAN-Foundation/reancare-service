@@ -3,7 +3,7 @@ import { InputValidationError } from '../../../../common/input.validation.error'
 import { DocumentDomainModel } from '../../../../domain.types/users/patient/document/document.domain.model';
 import { DocumentSearchFilters } from '../../../../domain.types/users/patient/document/document.search.types';
 import { Roles } from '../../../../domain.types/role/role.types';
-import { UserService } from '../../../../services/user/user.service';
+import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 import { BaseValidator, Where } from '../../../base.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';

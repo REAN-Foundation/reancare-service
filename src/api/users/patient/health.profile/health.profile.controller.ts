@@ -4,7 +4,7 @@ import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../../domain.types/users/patient/health.profile/health.profile.dto';
-import { HealthProfileService } from '../../../../services/patient/health.profile.service';
+import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
 import { Loader } from '../../../../startup/loader';
 import { HealthProfileValidator } from './health.profile.validator';
 import { BaseController } from '../../../base.controller';

@@ -2,10 +2,10 @@ import express from 'express';
 import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
 import { ResponseHandler } from '../../common/response.handler';
-import { AddressService } from '../../services/address.service';
-import { OrganizationService } from '../../services/organization.service';
-import { PersonService } from '../../services/person.service';
-import { UserService } from '../../services/user/user.service';
+import { AddressService } from '../../services/general/address.service';
+import { OrganizationService } from '../../services/general/organization.service';
+import { PersonService } from '../../services/person/person.service';
+import { UserService } from '../../services/users/user/user.service';
 import { Loader } from '../../startup/loader';
 import { PersonValidator } from './person.validator';
 

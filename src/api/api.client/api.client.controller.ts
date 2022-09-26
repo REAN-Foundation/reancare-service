@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { ApiClientService } from '../../services/api.client.service';
+import { ApiClientService } from '../../services/api.client/api.client.service';
 import { ResponseHandler } from '../../common/response.handler';
 import { Loader } from '../../startup/loader';
 import { Authorizer } from '../../auth/authorizer';

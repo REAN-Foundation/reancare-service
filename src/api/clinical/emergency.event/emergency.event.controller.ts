@@ -3,9 +3,9 @@ import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { EmergencyEventService } from '../../../services/clinical/emergency.event.service';
-import { OrganizationService } from '../../../services/organization.service';
-import { PatientService } from '../../../services/patient/patient.service';
-import { RoleService } from '../../../services/role.service';
+import { OrganizationService } from '../../../services/general/organization.service';
+import { PatientService } from '../../../services/users/patient/patient.service';
+import { RoleService } from '../../../services/role/role.service';
 import { Loader } from '../../../startup/loader';
 import { EmergencyEventValidator } from './emergency.event.validator';
 

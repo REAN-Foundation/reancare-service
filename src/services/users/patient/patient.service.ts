@@ -1,19 +1,19 @@
 import { inject, injectable } from 'tsyringe';
-import { ConfigurationManager } from '../../config/configuration.manager';
-import { IAddressRepo } from '../../database/repository.interfaces/general/address.repo.interface';
-import { IPatientRepo } from '../../database/repository.interfaces/users/patient/patient.repo.interface';
-import { IPersonRepo } from '../../database/repository.interfaces/person/person.repo.interface';
-import { IPersonRoleRepo } from '../../database/repository.interfaces/person/person.role.repo.interface';
-import { IRoleRepo } from '../../database/repository.interfaces/role/role.repo.interface';
-import { IUserRepo } from '../../database/repository.interfaces/users/user/user.repo.interface';
-import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
-import { PatientDomainModel } from '../../domain.types/users/patient/patient/patient.domain.model';
-import { PatientDetailsDto, PatientDto } from '../../domain.types/users/patient/patient/patient.dto';
-import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults } from '../../domain.types/users/patient/patient/patient.search.types';
-import { PersonDetailsDto } from '../../domain.types/person/person.dto';
-import { Roles } from '../../domain.types/role/role.types';
-import { PatientStore } from '../../modules/ehr/services/patient.store';
-import { Loader } from '../../startup/loader';
+import { ConfigurationManager } from '../../../config/configuration.manager';
+import { IAddressRepo } from '../../../database/repository.interfaces/general/address.repo.interface';
+import { IPatientRepo } from '../../../database/repository.interfaces/users/patient/patient.repo.interface';
+import { IPersonRepo } from '../../../database/repository.interfaces/person/person.repo.interface';
+import { IPersonRoleRepo } from '../../../database/repository.interfaces/person/person.role.repo.interface';
+import { IRoleRepo } from '../../../database/repository.interfaces/role/role.repo.interface';
+import { IUserRepo } from '../../../database/repository.interfaces/users/user/user.repo.interface';
+import { CurrentUser } from '../../../domain.types/miscellaneous/current.user';
+import { PatientDomainModel } from '../../../domain.types/users/patient/patient/patient.domain.model';
+import { PatientDetailsDto, PatientDto } from '../../../domain.types/users/patient/patient/patient.dto';
+import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults } from '../../../domain.types/users/patient/patient/patient.search.types';
+import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
+import { Roles } from '../../../domain.types/role/role.types';
+import { PatientStore } from '../../../modules/ehr/services/patient.store';
+import { Loader } from '../../../startup/loader';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,10 +1,10 @@
 import express from 'express';
-import { UserDeviceDetailsService } from '../../../services/user/user.device.details.service';
+import { UserDeviceDetailsService } from '../../../services/users/user/user.device.details.service';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { UserDetailsDto } from '../../../domain.types/users/user/user.dto';
-import { UserService } from '../../../services/user/user.service';
+import { UserService } from '../../../services/users/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { UserValidator } from './user.validator';
 import { Logger } from '../../../common/logger';

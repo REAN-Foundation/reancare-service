@@ -4,7 +4,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { AssessmentService } from '../../../../services/clinical/assessment/assessment.service';
 import { CareplanService } from '../../../../services/clinical/careplan.service';
-import { UserTaskService } from '../../../../services/user/user.task.service';
+import { UserTaskService } from '../../../../services/users/user/user.task.service';
 import { Loader } from '../../../../startup/loader';
 import { AssessmentValidator } from './assessment.validator';
 import { BaseController } from '../../../base.controller';

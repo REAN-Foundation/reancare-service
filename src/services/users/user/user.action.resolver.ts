@@ -1,10 +1,10 @@
-import { UserActionType } from "../../domain.types/users/user.task/user.task.types";
-import { Loader } from "../../startup/loader";
-import { MedicationConsumptionService } from "../clinical/medication/medication.consumption.service";
-import { CareplanService } from "../clinical/careplan.service";
+import { UserActionType } from "../../../domain.types/users/user.task/user.task.types";
+import { Loader } from "../../../startup/loader";
+import { MedicationConsumptionService } from "../../clinical/medication/medication.consumption.service";
+import { CareplanService } from "../../clinical/careplan.service";
 import { CustomTaskService } from "./custom.task.service";
 import { IUserActionService } from "./user.action.service.interface";
-import { uuid } from "../../domain.types/miscellaneous/system.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

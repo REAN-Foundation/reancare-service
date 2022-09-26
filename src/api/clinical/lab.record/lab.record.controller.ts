@@ -3,7 +3,7 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { Loader } from '../../../startup/loader';
 import { BaseController } from '../../base.controller';
-import { UserService } from '../../../services/user/user.service';
+import { UserService } from '../../../services/users/user/user.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { LabRecordService } from '../../../services/clinical/lab.record/lab.record.service';
 import { LabRecordValidator } from './lab.record.validator';

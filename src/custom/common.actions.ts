@@ -7,9 +7,9 @@ import { UserActionType, UserTaskCategory } from '../domain.types/users/user.tas
 import { Logger } from '../common/logger';
 import { AssessmentTemplateService } from '../services/clinical/assessment/assessment.template.service';
 import { AssessmentService } from '../services/clinical/assessment/assessment.service';
-import { UserTaskService } from '../services/user/user.task.service';
+import { UserTaskService } from '../services/users/user/user.task.service';
 import { uuid } from '../domain.types/miscellaneous/system.types';
-import { CustomTaskService } from '../services/user/custom.task.service';
+import { CustomTaskService } from '../services/users/user/custom.task.service';
 import { CustomTaskDomainModel } from '../domain.types/users/custom.task/custom.task.domain.model';
 import { ApiError } from '../common/api.error';
 

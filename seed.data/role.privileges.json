@@ -362,6 +362,8 @@
             "KnowledgeNugget.GetTodaysTopic",
             "KnowledgeNugget.GetById",
             "KnowledgeNugget.Search",
+            "KnowledgeNugget.Update",
+            "KnowledgeNugget.Delete",
             "Order.GetById",
             "Order.Update",
             "Order.Search",

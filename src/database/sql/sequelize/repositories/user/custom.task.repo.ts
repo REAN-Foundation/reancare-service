@@ -2,9 +2,9 @@
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system.types';
-import { UserActionType, UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task.types';
-import { CustomTaskDomainModel } from '../../../../../domain.types/user/custom.task/custom.task.domain.model';
-import { CustomTaskDto } from '../../../../../domain.types/user/custom.task/custom.task.dto';
+import { UserActionType, UserTaskCategory } from '../../../../../domain.types/users/user.task/user.task.types';
+import { CustomTaskDomainModel } from '../../../../../domain.types/users/custom.task/custom.task.domain.model';
+import { CustomTaskDto } from '../../../../../domain.types/users/custom.task/custom.task.dto';
 import { ICustomTaskRepo } from '../../../../repository.interfaces/user/custom.task.repo.interface';
 import { CustomTaskMapper } from '../../mappers/user/custom.task.mapper';
 import CustomTask from '../../models/user/custom.task.model';
@@ -149,7 +149,7 @@ export class CustomTaskRepo implements ICustomTaskRepo {
         return CustomTaskMapper.toDto(task);
 
     };
-    
+
     cancelTask = async (id: string, cancellationTime?: Date, reason?: string): Promise<CustomTaskDto> => {
 
         var task = await CustomTask.findByPk(id);

@@ -1,5 +1,5 @@
 import Doctor from '../models/doctor.model';
-import { DoctorDetailsDto, DoctorDto } from '../../../../domain.types/doctor/doctor.dto';
+import { DoctorDetailsDto, DoctorDto } from '../../../../domain.types/users/doctor/doctor.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,7 @@ export class DoctorMapper {
         if (doctor.ProfessionalHighlights != null && doctor.ProfessionalHighlights.length > 2) {
             professionalHighlights = JSON.parse(doctor.ProfessionalHighlights);
         }
-        
+
         const dto: DoctorDetailsDto = {
             id                     : doctor.id,
             UserId                 : doctor.UserId,

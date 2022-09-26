@@ -3,10 +3,10 @@ import { OtpMapper } from '../mappers/otp.mapper';
 import { Logger } from "../../../../common/logger";
 import { ApiError } from "../../../../common/api.error";
 import { IOtpRepo } from "../../../repository.interfaces/otp.repo.interface";
-import { OtpPersistenceEntity } from "../../../../domain.types/otp/otp.domain.types";
+import { OtpPersistenceEntity } from "../../../../domain.types/users/otp/otp.domain.types";
 import Otp from "../models/otp.model";
 import { Op, Sequelize } from 'sequelize';
-import { OtpDto } from '../../../../domain.types/otp/otp.dto';
+import { OtpDto } from '../../../../domain.types/users/otp/otp.dto';
 
 ///////////////////////////////////////////////////////////////////////
 

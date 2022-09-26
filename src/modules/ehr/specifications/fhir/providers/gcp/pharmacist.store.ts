@@ -1,5 +1,5 @@
 import { Helper } from '../../../../../../common/helper';
-import { PharmacistDomainModel } from '../../../../../../domain.types/pharmacist/pharmacist.domain.types';
+import { PharmacistDomainModel } from '../../../../../../domain.types/users/pharmacist/pharmacist.domain.types';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { IPharmacistStore } from '../../../../interfaces/pharmacist.store.interface';
@@ -8,7 +8,7 @@ import { FhirHelper } from '../../fhir.helper';
 ////////////////////////////////////////////////////////////////////////////////
 
 export class GcpPharmacistStore implements IPharmacistStore {
-    
+
     add = async (model: PharmacistDomainModel): Promise<any> => {
         var body = this.createPharmacistFhirResource(model);
         const resourceType = 'Practitioner';
@@ -21,7 +21,7 @@ export class GcpPharmacistStore implements IPharmacistStore {
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
         return data;
     };
-    
+
     update = async (resourceId:string, updates: PharmacistDomainModel): Promise<any> => {
         const resourceType = 'Practitioner';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -101,7 +101,7 @@ export class GcpPharmacistStore implements IPharmacistStore {
     }
 
     updatePharmacistFhirResource(updates: PharmacistDomainModel, existingResource: any): healthcare_v1.Schema$HttpBody {
-        
+
         existingResource.resourceType = "Practitioner";
 
         if (existingResource.name.length === 0) {
@@ -170,7 +170,7 @@ export class GcpPharmacistStore implements IPharmacistStore {
             }
             existingResource.address.push(address);
         }
-        
+
         return existingResource;
     }
 

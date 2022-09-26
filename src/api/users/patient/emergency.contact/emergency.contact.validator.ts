@@ -1,8 +1,8 @@
 import express from 'express';
 import { body, oneOf } from 'express-validator';
-import { AddressDomainModel } from '../../../../domain.types/address/address.domain.model';
-import { EmergencyContactDomainModel } from '../../../../domain.types/patient/emergency.contact/emergency.contact.domain.model';
-import { EmergencyContactSearchFilters } from '../../../../domain.types/patient/emergency.contact/emergency.contact.search.types';
+import { AddressDomainModel } from '../../../../domain.types/general/address/address.domain.model';
+import { EmergencyContactDomainModel } from '../../../../domain.types/users/patient/emergency.contact/emergency.contact.domain.model';
+import { EmergencyContactSearchFilters } from '../../../../domain.types/users/patient/emergency.contact/emergency.contact.search.types';
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 import { BaseValidator, Where } from '../../../base.validator';
 

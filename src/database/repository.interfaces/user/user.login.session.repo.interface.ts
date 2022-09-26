@@ -1,4 +1,4 @@
-import { UserLoginSessionDomainModel } from '../../../domain.types/user/user.login.session/user.login.session.domain.model';
+import { UserLoginSessionDomainModel } from '../../../domain.types/users/user.login.session/user.login.session.domain.model';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 
 ////////////////////////////////////////////////////////////////////////////////////

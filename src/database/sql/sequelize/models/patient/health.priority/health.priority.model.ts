@@ -10,7 +10,7 @@ import {
     PrimaryKey,
     ForeignKey,
 } from 'sequelize-typescript';
-import { HealthPriorityType, HealthPriorityTypeList } from '../../../../../../domain.types/patient/health.priority.type/health.priority.types';
+import { HealthPriorityType, HealthPriorityTypeList } from '../../../../../../domain.types/users/patient/health.priority.type/health.priority.types';
 
 import { v4 } from 'uuid';
 import User from '../../user/user.model';
@@ -36,7 +36,7 @@ export default class HealthPriority extends Model {
         allowNull : false,
     })
     id: string;
-    
+
     @IsUUID(4)
     @ForeignKey(() => User)
     @Column({

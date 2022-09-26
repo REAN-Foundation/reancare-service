@@ -1,8 +1,8 @@
 import { IUserLoginSessionRepo } from '../../../../../database/repository.interfaces/user/user.login.session.repo.interface';
 import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
 import UserLoginSession from '../../models/user/user.login.session.model';
-import { UserLoginSessionDomainModel } from '../../../../../domain.types/user/user.login.session/user.login.session.domain.model';
-import { UserLoginSessionDto } from '../../../../../domain.types/user/user.login.session/user.login.session.dto';
+import { UserLoginSessionDomainModel } from '../../../../../domain.types/users/user.login.session/user.login.session.domain.model';
+import { UserLoginSessionDto } from '../../../../../domain.types/users/user.login.session/user.login.session.dto';
 import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
 import { UserLoginSessionMapper } from '../../mappers/user/user.login.session.mapper';
@@ -36,12 +36,12 @@ export class UserLoginSessionRepo implements IUserLoginSessionRepo {
         if (now > userLoginSessionDetails.ValidTill) {
             return false;
         }
-        
+
         return userLoginSessionDetails.IsActive;
     };
 
     invalidateSession = async (sessionId: uuid): Promise<boolean> => {
-       
+
         const userLoginSessionDetails = await UserLoginSession.findByPk(sessionId);
         userLoginSessionDetails.IsActive = false;
         await userLoginSessionDetails.save();
@@ -49,7 +49,7 @@ export class UserLoginSessionRepo implements IUserLoginSessionRepo {
     };
 
     invalidateAllSessions = async (userId: uuid): Promise<boolean> => {
-       
+
         const userLoginSessionsDetails = await UserLoginSession.findAll({
             where : {
                 UserId : userId

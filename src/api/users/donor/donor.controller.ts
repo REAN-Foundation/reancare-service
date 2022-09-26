@@ -5,7 +5,7 @@ import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
 import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { Roles } from '../../../domain.types/role/role.types';
-import { UserDomainModel } from '../../../domain.types/user/user/user.domain.model';
+import { UserDomainModel } from '../../../domain.types/users/user/user.domain.model';
 import { Loader } from '../../../startup/loader';
 import { DonorValidator } from './donor.validator';
 import { BaseUserController } from '../base.user.controller';

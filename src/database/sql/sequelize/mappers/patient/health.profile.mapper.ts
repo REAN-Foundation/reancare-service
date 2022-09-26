@@ -1,5 +1,5 @@
 import HealthProfile from '../../models/patient/health.profile.model';
-import { HealthProfileDto } from '../../../../../domain.types/patient/health.profile/health.profile.dto';
+import { HealthProfileDto } from '../../../../../domain.types/users/patient/health.profile/health.profile.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

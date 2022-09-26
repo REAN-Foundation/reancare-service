@@ -1,7 +1,7 @@
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
-import { HealthProfileDomainModel } from '../../../../../domain.types/patient/health.profile/health.profile.domain.model';
-import { HealthProfileDto } from '../../../../../domain.types/patient/health.profile/health.profile.dto';
+import { HealthProfileDomainModel } from '../../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
+import { HealthProfileDto } from '../../../../../domain.types/users/patient/health.profile/health.profile.dto';
 import { IHealthProfileRepo } from '../../../../repository.interfaces/patient/health.profile.repo.interface';
 import { HealthProfileMapper } from '../../mappers/patient/health.profile.mapper';
 import HealthProfile from '../../models/patient/health.profile.model';

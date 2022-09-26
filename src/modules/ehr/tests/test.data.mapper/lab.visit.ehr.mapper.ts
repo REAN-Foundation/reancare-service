@@ -1,5 +1,5 @@
 import path from 'path';
-import { LabVisitDomainModel } from '../../../../domain.types/lab.visit/lab.visit.domain.model';
+import { LabVisitDomainModel } from '../../../../domain.types/clinical/lab.visit/lab.visit.domain.model';
 import { Helper } from '../../../../common/helper';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@ export class LabVisitMapper {
         var labVisitObj = Helper.jsonToObj(jsonPath);
 
         var model: LabVisitDomainModel = {
-            
+
             DisplayId        : labVisitObj.DisplayId,
             DisplayEhrId     : labVisitObj.DisplayEhrId,
             PatientUserId    : labVisitObj.PatientUserId,

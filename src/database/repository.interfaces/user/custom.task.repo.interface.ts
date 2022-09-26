@@ -1,5 +1,5 @@
-import { CustomTaskDto } from "../../../domain.types/user/custom.task/custom.task.dto";
-import { CustomTaskDomainModel } from "../../../domain.types/user/custom.task/custom.task.domain.model";
+import { CustomTaskDto } from "../../../domain.types/users/custom.task/custom.task.dto";
+import { CustomTaskDomainModel } from "../../../domain.types/users/custom.task/custom.task.domain.model";
 
 export interface ICustomTaskRepo {
 

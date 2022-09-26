@@ -1,5 +1,5 @@
-import { AddressDto } from "../../domain.types/address/address.dto";
-import { OrganizationDto } from "../../domain.types/organization/organization.dto";
+import { AddressDto } from "../../domain.types/general/address/address.dto";
+import { OrganizationDto } from "../../domain.types/general/organization/organization.dto";
 import { PersonDomainModel } from "../../domain.types/person/person.domain.model";
 import { PersonDetailsDto, PersonDto } from "../../domain.types/person/person.dto";
 

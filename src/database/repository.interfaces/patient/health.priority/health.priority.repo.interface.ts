@@ -1,8 +1,8 @@
-import { HealthPrioritySearchFilters, HealthPrioritySearchResults } from '../../../../domain.types/patient/health.priority/health.priority.search.types';
-import { HealthPriorityTypeDomainModel } from '../../../../domain.types/patient/health.priority.type/health.priority.type.domain.model';
-import { HealthPriorityTypeDto } from '../../../../domain.types/patient/health.priority.type/health.priority.type.dto';
-import { HealthPriorityDomainModel } from '../../../../domain.types/patient/health.priority/health.priority.domain.model';
-import { HealthPriorityDto } from '../../../../domain.types/patient/health.priority/health.priority.dto';
+import { HealthPrioritySearchFilters, HealthPrioritySearchResults } from '../../../../domain.types/users/patient/health.priority/health.priority.search.types';
+import { HealthPriorityTypeDomainModel } from '../../../../domain.types/users/patient/health.priority.type/health.priority.type.domain.model';
+import { HealthPriorityTypeDto } from '../../../../domain.types/users/patient/health.priority.type/health.priority.type.dto';
+import { HealthPriorityDomainModel } from '../../../../domain.types/users/patient/health.priority/health.priority.domain.model';
+import { HealthPriorityDto } from '../../../../domain.types/users/patient/health.priority/health.priority.dto';
 
 export interface IHealthPriorityRepo {
 

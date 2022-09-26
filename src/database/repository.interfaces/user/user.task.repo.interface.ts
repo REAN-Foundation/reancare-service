@@ -1,6 +1,6 @@
-import { UserTaskDomainModel } from "../../../domain.types/user/user.task/user.task.domain.model";
-import { TaskSummaryDto, UserTaskDto } from "../../../domain.types/user/user.task/user.task.dto";
-import { UserTaskSearchFilters, UserTaskSearchResults } from "../../../domain.types/user/user.task/user.task.search.types";
+import { UserTaskDomainModel } from "../../../domain.types/users/user.task/user.task.domain.model";
+import { TaskSummaryDto, UserTaskDto } from "../../../domain.types/users/user.task/user.task.dto";
+import { UserTaskSearchFilters, UserTaskSearchResults } from "../../../domain.types/users/user.task/user.task.search.types";
 
 export interface IUserTaskRepo {
 

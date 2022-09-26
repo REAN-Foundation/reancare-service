@@ -2,8 +2,8 @@ import express from 'express';
 import { body, param, query, validationResult } from 'express-validator';
 import { ResponseHandler } from '../../../common/response.handler';
 import { Helper } from '../../../common/helper';
-import { UserDeviceDetailsDomainModel } from '../../../domain.types/user/user.device.details/user.device.domain.model';
-import { UserDeviceDetailsSearchFilters } from '../../../domain.types/user/user.device.details/user.device.search.types';
+import { UserDeviceDetailsDomainModel } from '../../../domain.types/users/user.device.details/user.device.domain.model';
+import { UserDeviceDetailsSearchFilters } from '../../../domain.types/users/user.device.details/user.device.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -226,7 +226,7 @@ export class UserDeviceDetailsValidator {
                 Body  : request.body.Body,
             };
             return details;
-            
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

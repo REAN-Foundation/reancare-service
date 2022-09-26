@@ -2,8 +2,8 @@ import { Op } from 'sequelize';
 import { ApiError } from "../../../../common/api.error";
 import { Helper } from "../../../../common/helper";
 import { Logger } from "../../../../common/logger";
-import { AddressDto } from "../../../../domain.types/address/address.dto";
-import { OrganizationDto } from "../../../../domain.types/organization/organization.dto";
+import { AddressDto } from "../../../../domain.types/general/address/address.dto";
+import { OrganizationDto } from "../../../../domain.types/general/organization/organization.dto";
 import { PersonDomainModel } from "../../../../domain.types/person/person.domain.model";
 import { PersonDetailsDto, PersonDto } from "../../../../domain.types/person/person.dto";
 import { IPersonRepo } from "../../../repository.interfaces/person.repo.interface";
@@ -66,7 +66,7 @@ export class PersonRepo implements IPersonRepo {
                     }
                 }
             });
- 
+
             for await (const person of persons) {
                 const withRole = await PersonRole.findOne({ where: { PersonId: person.id, RoleId: roleId } });
                 if (withRole != null) {
@@ -259,7 +259,7 @@ export class PersonRepo implements IPersonRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     removeAddress = async (id: string, addressId: string): Promise<boolean> => {
         try {
             var result = await PersonAddresses.destroy({

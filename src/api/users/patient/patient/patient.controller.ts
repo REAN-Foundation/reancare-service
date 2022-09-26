@@ -4,7 +4,7 @@ import { ApiError } from '../../../../common/api.error';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
-import { UserDomainModel } from '../../../../domain.types/user/user/user.domain.model';
+import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { HealthProfileService } from '../../../../services/patient/health.profile.service';
 import { PatientService } from '../../../../services/patient/patient.service';
 import { Loader } from '../../../../startup/loader';

@@ -9,9 +9,9 @@ import { IPersonRepo } from '../database/repository.interfaces/person.repo.inter
 import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.repo.interface';
 import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
 import { IUserRepo } from '../database/repository.interfaces/user/user.repo.interface';
-import { DoctorDomainModel } from '../domain.types/doctor/doctor.domain.model';
-import { DoctorDetailsDto, DoctorDto } from '../domain.types/doctor/doctor.dto';
-import { DoctorDetailsSearchResults, DoctorSearchFilters, DoctorSearchResults } from '../domain.types/doctor/doctor.search.types';
+import { DoctorDomainModel } from '../domain.types/users/doctor/doctor.domain.model';
+import { DoctorDetailsDto, DoctorDto } from '../domain.types/users/doctor/doctor.dto';
+import { DoctorDetailsSearchResults, DoctorSearchFilters, DoctorSearchResults } from '../domain.types/users/doctor/doctor.search.types';
 import { Roles } from '../domain.types/role/role.types';
 import { DoctorStore } from '../modules/ehr/services/doctor.store';
 import { Loader } from '../startup/loader';
@@ -41,7 +41,7 @@ export class DoctorService {
     //#region Publics
 
     create = async (doctorDomainModel: DoctorDomainModel): Promise<DoctorDetailsDto> => {
-        
+
         if (this._ehrDoctorStore) {
             const ehrId = await this._ehrDoctorStore.create(doctorDomainModel);
             doctorDomainModel.EhrId = ehrId;

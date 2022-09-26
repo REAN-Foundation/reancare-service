@@ -5,9 +5,9 @@ import { IPersonRoleRepo } from '../database/repository.interfaces/person.role.r
 import { IRoleRepo } from '../database/repository.interfaces/role.repo.interface';
 import { IUserRepo } from '../database/repository.interfaces/user/user.repo.interface';
 import { Roles } from '../domain.types/role/role.types';
-import { DonorDomainModel } from '../domain.types/donor/donor.domain.model';
-import { DonorDetailsDto, DonorDto } from '../domain.types/donor/donor.dto';
-import { DonorSearchFilters, DonorDetailsSearchResults, DonorSearchResults } from '../domain.types/donor/donor.search.types';
+import { DonorDomainModel } from '../domain.types/users/donor/donor.domain.model';
+import { DonorDetailsDto, DonorDto } from '../domain.types/users/donor/donor.dto';
+import { DonorSearchFilters, DonorDetailsSearchResults, DonorSearchResults } from '../domain.types/users/donor/donor.search.types';
 import { IDonorRepo } from '../database/repository.interfaces/donor.repo.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

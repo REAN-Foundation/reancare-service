@@ -1,5 +1,5 @@
 import GoalAction from "../../models/action.plan/action.plan.model";
-import { ActionPlanDto } from "../../../../../domain.types/action.plan/action.plan.dto";
+import { ActionPlanDto } from "../../../../../domain.types/users/patient/action.plan/action.plan.dto";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +25,7 @@ export class ActionPlanMapper {
             Status               : actionPlan.Status,
             ScheduledEndDate     : actionPlan.ScheduledEndDate,
         };
-        
+
         return dto;
     };
 

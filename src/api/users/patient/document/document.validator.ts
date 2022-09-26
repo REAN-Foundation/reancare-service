@@ -1,7 +1,7 @@
 import express from 'express';
 import { InputValidationError } from '../../../../common/input.validation.error';
-import { DocumentDomainModel } from '../../../../domain.types/patient/document/document.domain.model';
-import { DocumentSearchFilters } from '../../../../domain.types/patient/document/document.search.types';
+import { DocumentDomainModel } from '../../../../domain.types/users/patient/document/document.domain.model';
+import { DocumentSearchFilters } from '../../../../domain.types/users/patient/document/document.search.types';
 import { Roles } from '../../../../domain.types/role/role.types';
 import { UserService } from '../../../../services/user/user.service';
 import { Loader } from '../../../../startup/loader';

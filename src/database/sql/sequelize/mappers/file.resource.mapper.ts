@@ -1,9 +1,9 @@
 import FileResource from '../models/file.resource/file.resource.model';
-import { FileResourceDetailsDto, FileResourceDto } from '../../../../domain.types/file.resource/file.resource.dto';
+import { FileResourceDetailsDto, FileResourceDto } from '../../../../domain.types/general/file.resource/file.resource.dto';
 import FileResourceReference from '../models/file.resource/file.resource.reference.model';
 import FileResourceVersion from '../models/file.resource/file.resource.version.model';
-import { ResourceReference } from '../../../../domain.types/file.resource/file.resource.types';
-import { FileResourceMetadata } from '../../../../domain.types/file.resource/file.resource.types';
+import { ResourceReference } from '../../../../domain.types/general/file.resource/file.resource.types';
+import { FileResourceMetadata } from '../../../../domain.types/general/file.resource/file.resource.types';
 import { ConfigurationManager } from '../../../../config/configuration.manager';
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ export class FileResourceMapper {
         var dtos = fileVersions.map(x => {
             return FileResourceMapper.toFileVersionDto(x, sanitize);
         });
-        
+
         return dtos;
     };
 

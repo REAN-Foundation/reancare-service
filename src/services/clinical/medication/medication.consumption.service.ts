@@ -16,8 +16,8 @@ import { MedicationDto } from "../../../domain.types/clinical/medication/medicat
 import { MedicationSearchFilters, MedicationSearchResults } from '../../../domain.types/clinical/medication/medication/medication.search.types';
 import { MedicationDurationUnits, MedicationFrequencyUnits, MedicationTimeSchedules } from "../../../domain.types/clinical/medication/medication/medication.types";
 import { DurationType } from "../../../domain.types/miscellaneous/time.types";
-import { UserActionType, UserTaskCategory } from "../../../domain.types/user/user.task/user.task.types";
-import { UserTaskDomainModel } from "../../../domain.types/user/user.task/user.task.domain.model";
+import { UserActionType, UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
+import { UserTaskDomainModel } from "../../../domain.types/users/user.task/user.task.domain.model";
 import { IUserActionService } from "../../../services/user/user.action.service.interface";
 import { Loader } from "../../../startup/loader";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
@@ -60,7 +60,7 @@ export class MedicationConsumptionService implements IUserActionService {
         if (startDate == null) {
             throw new ApiError(422, 'Medication consumption instances cannot be added as start date is invalid.');
         }
-        
+
         var duration = medication.Duration;
         var durationUnit = medication.DurationUnit;
         var frequency = medication.Frequency;
@@ -75,11 +75,11 @@ export class MedicationConsumptionService implements IUserActionService {
         var totalCount = 0;
         var pendingCount = 0;
         //var now = new Date();
-        
+
         var consumptions: MedicationConsumptionDto[] = [];
 
         //Logger.instance().log(startDate.toISOString());
-        
+
         var i = 0;
 
         while (i < days) {
@@ -110,7 +110,7 @@ export class MedicationConsumptionService implements IUserActionService {
                 await this.createMedicationTaskForSchedule(savedRecord);
 
                 totalCount++;
-                
+
                 // if (TimeHelper.isAfter(now, start)) {
                 //     pendingCount++;
                 //     //Add task only for the schedule which is in next two days
@@ -119,7 +119,7 @@ export class MedicationConsumptionService implements IUserActionService {
                 //         await this.createMedicationTaskForSchedule(savedRecord);
                 //     }
                 // }
-                
+
                 consumptions.push(savedRecord);
             }
 
@@ -133,7 +133,7 @@ export class MedicationConsumptionService implements IUserActionService {
 
         return creationSummary;
     };
-    
+
     getConsumptionStatusForMedication = async (medicationId: string)
         : Promise<MedicationConsumptionStatsDto> => {
 
@@ -153,30 +153,30 @@ export class MedicationConsumptionService implements IUserActionService {
         try {
 
             var takenMeds = [];
-    
+
             for await (var id of consumptionIds) {
-                
+
                 var medConsumption = await this._medicationConsumptionRepo.getById(id);
                 if (medConsumption === null) {
                     Logger.instance().log('Medication consumption instance with given id cannot be found.');
                     continue;
                 }
-    
+
                 var takenAt = new Date();
                 var isPastScheduleEnd = TimeHelper.isAfter(new Date(), medConsumption.TimeScheduleEnd);
                 if (isPastScheduleEnd) {
                     takenAt = medConsumption.TimeScheduleEnd;
                 }
-   
+
                 var updatedDto = await this._medicationConsumptionRepo.markAsTaken(id, takenAt);
                 if (updatedDto === null) {
                     Logger.instance().log('Unable to mark medication as taken!');
                     continue;
                 }
-    
+
                 //Now update the associated user task as completed
                 await this.finishAssociatedTask(medConsumption);
-    
+
                 takenMeds.push(updatedDto);
             }
             return takenMeds;
@@ -191,34 +191,34 @@ export class MedicationConsumptionService implements IUserActionService {
         try {
 
             var missedMeds = [];
-    
+
             for await (var id of consumptionIds) {
-                
+
                 var medConsumption = await this._medicationConsumptionRepo.getById(id);
                 if (medConsumption === null) {
                     Logger.instance().log('Medication consumption instance with given id cannot be found.');
                     continue;
                 }
-    
+
                 if (medConsumption.Status === MedicationConsumptionStatus.Missed) {
                     Logger.instance().log('Medication consumption instance with given id already marked as missed.');
                     continue;
                 }
-    
+
                 if (medConsumption.Status === MedicationConsumptionStatus.Taken) {
                     Logger.instance().log('Medication consumption instance with given id already marked as taken.');
                     continue;
                 }
-    
+
                 var updated = await this._medicationConsumptionRepo.markAsMissed(id);
                 if (updated === null) {
                     Logger.instance().log('Unable to mark medication as missed!');
                     continue;
                 }
-    
+
                 //Now update the associated user task as completed
                 await this.finishAssociatedTask(medConsumption);
-    
+
                 missedMeds.push(updated);
             }
             return missedMeds;
@@ -247,16 +247,16 @@ export class MedicationConsumptionService implements IUserActionService {
         if (isPastScheduleEnd) {
             takenAt = medConsumption.TimeScheduleEnd;
         }
-   
+
         var updated = await this._medicationConsumptionRepo.markAsTaken(id, takenAt);
         if (updated === null) {
             Logger.instance().log('Unable to mark medication as taken!');
             return null;
         }
-    
+
         //Now update the associated user task as completed
         await this.finishAssociatedTask(updated);
-    
+
         return updated;
     };
 
@@ -273,7 +273,7 @@ export class MedicationConsumptionService implements IUserActionService {
         //     Logger.instance().log('Medication consumption instance with given id cannot be found.');
         //     return null;
         // }
-        
+
         //Now update the associated user task as completed
         await this.finishAssociatedTask(updatedDto);
 
@@ -294,13 +294,13 @@ export class MedicationConsumptionService implements IUserActionService {
 
     getScheduleForDuration = async (patientUserId: string, duration: string, when: string)
         : Promise<MedicationConsumptionDto[]> => {
-            
+
         var durationInHours: number = this.parseDurationInHours(duration);
 
         try {
-    
+
             var dtos: MedicationConsumptionDto[] = [];
-    
+
             if (when === 'past') {
                 var from = TimeHelper.subtractDuration(new Date(), durationInHours, DurationType.Hour);
                 dtos = await this._medicationConsumptionRepo.getSchedulesForPatientForDuration(
@@ -328,12 +328,12 @@ export class MedicationConsumptionService implements IUserActionService {
             }
             dtos.sort(fn);
             return dtos;
-    
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    
+
     };
 
     getSchedulesForDay = async (patientUserId: string, date: Date)
@@ -348,7 +348,7 @@ export class MedicationConsumptionService implements IUserActionService {
 
     getSchedulesForDayByDrugs = async (patientUserId: string, date: Date)
     : Promise<SummaryForDayDto> => {
-    
+
         var consumptions = await this._medicationConsumptionRepo.getSchedulesForDay(patientUserId, date);
         var classifiedList = this.classifyByDrugs(consumptions);
         var summary: SummaryForDayDto = {
@@ -362,14 +362,14 @@ export class MedicationConsumptionService implements IUserActionService {
         patientUserId: string,
         pastMonthsCount: number,
         futureMonthsCount: number): Promise<SummaryForMonthDto[]> => {
-            
+
         if (futureMonthsCount > 2) {
             futureMonthsCount = 2;
         }
         if (pastMonthsCount > 6) {
             pastMonthsCount = 6;
         }
-        
+
         //Get summary of last 6 months
         var consumptionSummaryForMonths = [];
 
@@ -382,7 +382,7 @@ export class MedicationConsumptionService implements IUserActionService {
             var daysInMonth = TimeHelper.daysInMonthContainingDate(date);
 
             // var str = TimeHelper.format(date, 'YYYY-MM');
-            
+
             var medConsumptionsForMonth = await this._medicationConsumptionRepo.getSchedulesForPatientForDuration(
                 patientUserId, startOfMonth, endOfMonth);
             var fn = (a, b) => {
@@ -435,7 +435,7 @@ export class MedicationConsumptionService implements IUserActionService {
         }
         return count;
     };
-    
+
     createMedicationTaskForSchedule = async (consumption: MedicationConsumptionDto): Promise<boolean> => {
 
         const existingTask = await this._userTaskRepo.getTaskForUserWithAction(
@@ -444,7 +444,7 @@ export class MedicationConsumptionService implements IUserActionService {
         if (existingTask !== null) {
             return false; //If exists...
         }
-        
+
         const displayId = Helper.generateDisplayId('TSK');
         const domainModel: UserTaskDomainModel = {
             Task               : consumption.Details,
@@ -458,7 +458,7 @@ export class MedicationConsumptionService implements IUserActionService {
             IsRecurrent        : false,
         };
         await this._userTaskRepo.create(domainModel);
-        
+
         return true;
     };
 
@@ -544,7 +544,7 @@ export class MedicationConsumptionService implements IUserActionService {
     }
 
     private parseDurationInHours = (duration: string): number => {
-        
+
         var durationInHours = 0;
         var tokens = duration.toLowerCase().split(":");
 
@@ -576,7 +576,7 @@ export class MedicationConsumptionService implements IUserActionService {
         return durationInHours;
 
     };
-    
+
     private getPatientTimeZone = async(patientUserId) => {
         var user = await this._userRepo.getById(patientUserId);
         if (user != null) {
@@ -726,7 +726,7 @@ export class MedicationConsumptionService implements IUserActionService {
         : SummarizedScheduleDto[] => {
 
         var arrangedByDrugList: SummarizedScheduleDto[] = [];
-        
+
         var listByDrugName = this.segregateByDrugName(medConsumptions);
         for (const key in listByDrugName) {
             var drug = key;
@@ -746,7 +746,7 @@ export class MedicationConsumptionService implements IUserActionService {
     private segregateByDrugName = (medConsumptions: MedicationConsumptionDetailsDto[]) => {
 
         var listByDrugName = {};
-        
+
         for (var i = 0; i < medConsumptions.length; i++) {
             var drug = medConsumptions[i].DrugName;
             if (!listByDrugName[drug]) {
@@ -754,7 +754,7 @@ export class MedicationConsumptionService implements IUserActionService {
             }
             listByDrugName[drug].push(medConsumptions[i]);
         }
-        
+
         return listByDrugName;
     };
 
@@ -782,7 +782,7 @@ export class MedicationConsumptionService implements IUserActionService {
         title = title.replace("{{DrugName}}", medicationDrugNames.join(', '));
         var body = MessageTemplates.MedicationReminder.Body;
         body = body.replace("{{EndTime}}", TimeHelper.format(updatedTime, 'hh:mm A'));
-    
+
         Logger.instance().log(`Notification Title: ${title}`);
         Logger.instance().log(`Notification Body: ${body}`);
 

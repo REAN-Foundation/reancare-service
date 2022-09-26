@@ -1,5 +1,5 @@
 import path from 'path';
-import { OrganizationDomainModel } from '../../../../domain.types/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../../domain.types/general/organization/organization.domain.model';
 import { Helper } from "../../../../common/helper";
 
 ///////////////////////////////////////////////////////////////////////////////////

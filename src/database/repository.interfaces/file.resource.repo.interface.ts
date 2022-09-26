@@ -1,7 +1,7 @@
-import { FileResourceMetadata } from "../../domain.types/file.resource/file.resource.types";
-import { FileResourceUpdateModel, FileResourceUploadDomainModel } from "../../domain.types/file.resource/file.resource.domain.model";
-import { FileResourceDetailsDto, FileResourceDto } from "../../domain.types/file.resource/file.resource.dto";
-import { FileResourceSearchFilters, FileResourceSearchResults } from "../../domain.types/file.resource/file.resource.search.types";
+import { FileResourceMetadata } from "../../domain.types/general/file.resource/file.resource.types";
+import { FileResourceUpdateModel, FileResourceUploadDomainModel } from "../../domain.types/general/file.resource/file.resource.domain.model";
+import { FileResourceDetailsDto, FileResourceDto } from "../../domain.types/general/file.resource/file.resource.dto";
+import { FileResourceSearchFilters, FileResourceSearchResults } from "../../domain.types/general/file.resource/file.resource.search.types";
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,11 +22,11 @@ export interface IFileResourceRepo {
     getVersionByVersionId(id: string, versionId: string): Promise<FileResourceMetadata>;
 
     getLatestVersion(id: string): Promise<FileResourceMetadata>;
-    
+
     getVersions(id: string): Promise<FileResourceMetadata[]>;
 
     getVersionNames(id: string): Promise<string[]>;
-    
+
     search(filters: FileResourceSearchFilters): Promise<FileResourceSearchResults>;
 
     rename(id: string, newFileName: string): Promise<boolean>;

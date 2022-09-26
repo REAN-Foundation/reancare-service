@@ -1,7 +1,7 @@
 import { Authorizer } from '../../auth/authorizer';
 import { ApiError } from '../../common/api.error';
 import { Logger } from '../../common/logger';
-import { AddressDomainModel } from '../../domain.types/address/address.domain.model';
+import { AddressDomainModel } from '../../domain.types/general/address/address.domain.model';
 import { AddressService } from '../../services/address.service';
 import { PersonService } from '../../services/person.service';
 import { RoleService } from '../../services/role.service';

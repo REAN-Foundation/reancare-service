@@ -1,11 +1,11 @@
 import { Op } from 'sequelize';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
-import { DocumentDomainModel } from "../../../../../domain.types/patient/document/document.domain.model";
-import { DocumentDto } from "../../../../../domain.types/patient/document/document.dto";
-import { DocumentSearchFilters, DocumentSearchResults } from '../../../../../domain.types/patient/document/document.search.types';
-import { SharedDocumentDetailsDomainModel } from '../../../../../domain.types/patient/document/shared.document.details.domain.model';
-import { SharedDocumentDetailsDto } from '../../../../../domain.types/patient/document/shared.document.details.dto';
+import { DocumentDomainModel } from "../../../../../domain.types/users/patient/document/document.domain.model";
+import { DocumentDto } from "../../../../../domain.types/users/patient/document/document.dto";
+import { DocumentSearchFilters, DocumentSearchResults } from '../../../../../domain.types/users/patient/document/document.search.types';
+import { SharedDocumentDetailsDomainModel } from '../../../../../domain.types/users/patient/document/shared.document.details.domain.model';
+import { SharedDocumentDetailsDto } from '../../../../../domain.types/users/patient/document/shared.document.details.dto';
 import { IDocumentRepo } from '../../../../repository.interfaces/patient/document.repo.interface';
 import { DocumentMapper } from '../../mappers/patient/document.mapper';
 import Document from '../../models/patient/document.model';
@@ -39,7 +39,7 @@ export class DocumentRepo implements IDocumentRepo {
 
             const document = await Document.create(entity);
             return await DocumentMapper.toDto(document);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -94,7 +94,7 @@ export class DocumentRepo implements IDocumentRepo {
             if (documentDomainModel.UploadedDate != null) {
                 document.UploadedDate = documentDomainModel.UploadedDate;
             }
-    
+
             await document.save();
 
             return DocumentMapper.toDto(document);
@@ -152,7 +152,7 @@ export class DocumentRepo implements IDocumentRepo {
 
             const document = await SharedDocumentDetails.create(entity);
             return DocumentMapper.toSharedDocumentDto(document);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -239,7 +239,7 @@ export class DocumentRepo implements IDocumentRepo {
             };
 
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

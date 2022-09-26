@@ -1,5 +1,5 @@
 import Address from '../models/address.model';
-import { AddressDto } from '../../../../domain.types/address/address.dto';
+import { AddressDto } from '../../../../domain.types/general/address/address.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

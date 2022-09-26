@@ -1,6 +1,6 @@
-import { HealthPriorityType } from "../../../../../../domain.types/patient/health.priority.type/health.priority.types";
-import { HealthPriorityTypeDto } from "../../../../../../domain.types/patient/health.priority.type/health.priority.type.dto";
-import { HealthPriorityDto } from "../../../../../../domain.types/patient/health.priority/health.priority.dto";
+import { HealthPriorityType } from "../../../../../../domain.types/users/patient/health.priority.type/health.priority.types";
+import { HealthPriorityTypeDto } from "../../../../../../domain.types/users/patient/health.priority.type/health.priority.type.dto";
+import { HealthPriorityDto } from "../../../../../../domain.types/users/patient/health.priority/health.priority.dto";
 import HealthPriority from "../../../models/patient/health.priority/health.priority.model";
 import HealthPriorityTypeModel from "../../../models/patient/health.priority/health.priority.type.model";
 
@@ -29,7 +29,7 @@ export class HealthPriorityMapper {
             ScheduledEndDate     : healthPriority.ScheduledEndDate,
             IsPrimary            : healthPriority.IsPrimary,
         };
-        
+
         return dto;
     };
 
@@ -44,7 +44,7 @@ export class HealthPriorityMapper {
             Type : healthPriorityType.Type,
             Tags : healthPriorityType.Tags ? JSON.parse(healthPriorityType.Tags) : [],
         };
-        
+
         return typeDto;
     };
 

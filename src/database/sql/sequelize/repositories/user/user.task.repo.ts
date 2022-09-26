@@ -5,10 +5,10 @@ import { Logger } from '../../../../../common/logger';
 import { TimeHelper } from '../../../../../common/time.helper';
 import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system.types';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
-import { UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task.types';
-import { UserTaskDomainModel } from '../../../../../domain.types/user/user.task/user.task.domain.model';
-import { TaskSummaryDto, UserTaskDto } from '../../../../../domain.types/user/user.task/user.task.dto';
-import { UserTaskSearchFilters, UserTaskSearchResults } from '../../../../../domain.types/user/user.task/user.task.search.types';
+import { UserTaskCategory } from '../../../../../domain.types/users/user.task/user.task.types';
+import { UserTaskDomainModel } from '../../../../../domain.types/users/user.task/user.task.domain.model';
+import { TaskSummaryDto, UserTaskDto } from '../../../../../domain.types/users/user.task/user.task.dto';
+import { UserTaskSearchFilters, UserTaskSearchResults } from '../../../../../domain.types/users/user.task/user.task.search.types';
 import { IUserTaskRepo } from '../../../../repository.interfaces/user/user.task.repo.interface';
 import { UserTaskMapper } from '../../mappers/user/user.task.mapper';
 import User from '../../models/user/user.model';
@@ -198,7 +198,7 @@ export class UserTaskRepo implements IUserTaskRepo {
                     [Op.gte] : filters.ScheduledFrom,
                 };
             }
-            
+
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
                 search.where['CreatedAt'] = {
                     [Op.gte] : filters.CreatedDateFrom,
@@ -256,7 +256,7 @@ export class UserTaskRepo implements IUserTaskRepo {
             };
 
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -362,7 +362,7 @@ export class UserTaskRepo implements IUserTaskRepo {
         return UserTaskMapper.toDto(task);
 
     };
-    
+
     cancelTask = async (id: string, reason: string): Promise<UserTaskDto> => {
 
         var task = await UserTask.findByPk(id);
@@ -412,7 +412,7 @@ export class UserTaskRepo implements IUserTaskRepo {
             var offsetMinutes = TimeHelper.getTimezoneOffsets(timezoneOffset, DurationType.Minute);
             var dayStart = TimeHelper.strToUtc(str, offsetMinutes);
             var dayEnd = TimeHelper.addDuration(dayStart, 24, DurationType.Hour);
-    
+
             var searchForFinished = {
                 UserId             : userId,
                 ScheduledStartTime : {
@@ -463,9 +463,9 @@ export class UserTaskRepo implements IUserTaskRepo {
                 InProgressTasks : inProgressTasks,
                 PendingTasks    : pendingTasks
             };
-            
+
             return summary;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

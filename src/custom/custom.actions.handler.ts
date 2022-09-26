@@ -1,5 +1,5 @@
 
-import { PatientDetailsDto } from '../domain.types/patient/patient/patient.dto';
+import { PatientDetailsDto } from '../domain.types/users/patient/patient/patient.dto';
 import { ConfigurationManager } from '../config/configuration.manager';
 import { Logger } from '../common/logger';
 import { uuid } from '../domain.types/miscellaneous/system.types';

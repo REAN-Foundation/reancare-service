@@ -1,10 +1,10 @@
 import { Op } from 'sequelize';
 import { ApiError } from '../../../../common/api.error';
 import { Logger } from '../../../../common/logger';
-import { AddressDto } from '../../../../domain.types/address/address.dto';
-import { OrganizationDomainModel } from '../../../../domain.types/organization/organization.domain.model';
-import { OrganizationDto } from '../../../../domain.types/organization/organization.dto';
-import { OrganizationSearchFilters, OrganizationSearchResults } from '../../../../domain.types/organization/organization.search.types';
+import { AddressDto } from '../../../../domain.types/general/address/address.dto';
+import { OrganizationDomainModel } from '../../../../domain.types/general/organization/organization.domain.model';
+import { OrganizationDto } from '../../../../domain.types/general/organization/organization.dto';
+import { OrganizationSearchFilters, OrganizationSearchResults } from '../../../../domain.types/general/organization/organization.search.types';
 import { PersonDto } from '../../../../domain.types/person/person.dto';
 import { IOrganizationRepo } from '../../../repository.interfaces/organization.repo.interface';
 import { AddressMapper } from '../mappers/address.mapper';
@@ -73,7 +73,7 @@ export class OrganizationRepo implements IOrganizationRepo {
 
             const dto = OrganizationMapper.toDto(organization, parentOrganization);
             return dto;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -274,7 +274,7 @@ export class OrganizationRepo implements IOrganizationRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     removeAddress = async (id: string, addressId: string): Promise<boolean> => {
         try {
             var result = await OrganizationAddresses.destroy({

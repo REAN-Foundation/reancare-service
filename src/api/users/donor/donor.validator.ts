@@ -1,8 +1,8 @@
 import express from 'express';
 import { query, body, validationResult, param } from 'express-validator';
-import { DonorDomainModel } from '../../../domain.types/donor/donor.domain.model';
+import { DonorDomainModel } from '../../../domain.types/users/donor/donor.domain.model';
 import { Helper } from '../../../common/helper';
-import { DonorSearchFilters } from '../../../domain.types/donor/donor.search.types';
+import { DonorSearchFilters } from '../../../domain.types/users/donor/donor.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

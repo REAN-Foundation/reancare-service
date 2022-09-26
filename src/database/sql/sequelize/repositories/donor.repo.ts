@@ -3,11 +3,11 @@ import { ApiError } from "../../../../common/api.error";
 import { Op } from 'sequelize';
 import Person from "../models/person.model";
 import { IDonorRepo } from "../../../../database/repository.interfaces/donor.repo.interface";
-import { DonorDomainModel } from "../../../../domain.types/donor/donor.domain.model";
-import { DonorDetailsDto, DonorDto } from "../../../../domain.types/donor/donor.dto";
+import { DonorDomainModel } from "../../../../domain.types/users/donor/donor.domain.model";
+import { DonorDetailsDto, DonorDto } from "../../../../domain.types/users/donor/donor.dto";
 import Donor from "../models/donor.model";
 import { DonorMapper } from "../mappers/donor.mapper";
-import { DonorSearchFilters, DonorSearchResults } from "../../../../domain.types/donor/donor.search.types";
+import { DonorSearchFilters, DonorSearchResults } from "../../../../domain.types/users/donor/donor.search.types";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -34,7 +34,7 @@ export class DonorRepo implements IDonorRepo {
             const dto = await DonorMapper.toDetailsDto(donor);
 
             return dto;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -56,7 +56,7 @@ export class DonorRepo implements IDonorRepo {
     updateByUserId = async (userId: string, model: DonorDomainModel): Promise<DonorDetailsDto> => {
         try {
             const donor = await Donor.findOne({ where: { UserId: userId } });
-            
+
             if (model.EhrId != null) {
                 donor.EhrId = model.EhrId;
             }
@@ -183,13 +183,13 @@ export class DonorRepo implements IDonorRepo {
             search['offset'] = offset;
 
             const foundResults = await Donor.findAndCountAll(search);
-            
+
             const dtos: DonorDto[] = [];
             for (const donor of foundResults.rows) {
                 const dto = await DonorMapper.toDto(donor);
                 dtos.push(dto);
             }
-            
+
             const count = foundResults.count;
             const totalCount = typeof count === "number" ? count : count[0];
 
@@ -202,7 +202,7 @@ export class DonorRepo implements IDonorRepo {
                 OrderedBy      : orderByColum,
                 Items          : dtos
             };
-            
+
             return searchResults;
 
         } catch (error) {
@@ -210,5 +210,5 @@ export class DonorRepo implements IDonorRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
 }

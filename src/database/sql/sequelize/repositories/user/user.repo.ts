@@ -2,8 +2,8 @@ import { Op } from 'sequelize';
 import { ApiError } from "../../../../../common/api.error";
 import { Helper } from "../../../../../common/helper";
 import { Logger } from "../../../../../common/logger";
-import { UserDomainModel } from "../../../../../domain.types/user/user/user.domain.model";
-import { UserDetailsDto } from "../../../../../domain.types/user/user/user.dto";
+import { UserDomainModel } from "../../../../../domain.types/users/user/user.domain.model";
+import { UserDetailsDto } from "../../../../../domain.types/users/user/user.dto";
 import { IUserRepo } from "../../../../repository.interfaces/user/user.repo.interface";
 import { UserMapper } from "../../mappers/user/user.mapper";
 import Person from "../../models/person.model";
@@ -28,9 +28,9 @@ export class UserRepo implements IUserRepo {
         }
         return null;
     };
-    
+
     getByEmailAndRole = async (email: any, roleId: number): Promise<UserDetailsDto> => {
-        
+
         const person = await Person.findOne({
             where : {
                 Email : { [Op.like]: '%' + email + '%' },
@@ -52,7 +52,7 @@ export class UserRepo implements IUserRepo {
     };
 
     getByPhoneAndRole = async (phone: string, roleId: number) => {
-        
+
         const person = await Person.findOne({
             where : {
                 Phone : { [Op.like]: '%' + phone + '%' }
@@ -96,7 +96,7 @@ export class UserRepo implements IUserRepo {
         //     let phoneTemp: string = phone;
         //     phoneTemp = phoneTemp.replace(' ', '');
         // }
-        
+
         return user != null;
     };
 

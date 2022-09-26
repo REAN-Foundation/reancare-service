@@ -2,12 +2,12 @@
 import { inject, injectable } from "tsyringe";
 import { Helper } from "../../common/helper";
 import { IDocumentRepo } from "../../database/repository.interfaces/patient/document.repo.interface";
-import { DocumentDomainModel } from '../../domain.types/patient/document/document.domain.model';
-import { DocumentDto } from '../../domain.types/patient/document/document.dto';
-import { DocumentSearchFilters, DocumentSearchResults } from "../../domain.types/patient/document/document.search.types";
-import { DocumentTypes } from "../../domain.types/patient/document/document.types";
-import { SharedDocumentDetailsDomainModel } from "../../domain.types/patient/document/shared.document.details.domain.model";
-import { SharedDocumentDetailsDto } from "../../domain.types/patient/document/shared.document.details.dto";
+import { DocumentDomainModel } from '../../domain.types/users/patient/document/document.domain.model';
+import { DocumentDto } from '../../domain.types/users/patient/document/document.dto';
+import { DocumentSearchFilters, DocumentSearchResults } from "../../domain.types/users/patient/document/document.search.types";
+import { DocumentTypes } from "../../domain.types/users/patient/document/document.types";
+import { SharedDocumentDetailsDomainModel } from "../../domain.types/users/patient/document/shared.document.details.domain.model";
+import { SharedDocumentDetailsDto } from "../../domain.types/users/patient/document/shared.document.details.dto";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -60,7 +60,7 @@ export class DocumentService {
     //#region Privates
 
     getDocumentDisplayId = (docType: DocumentTypes) => {
-        
+
         var prefix = 'DCMT';
 
         var prefixes = {};
@@ -72,7 +72,7 @@ export class DocumentService {
         prefixes[DocumentTypes.DischargeSummary] = 'DSSM';
         prefixes[DocumentTypes.OpdPaper] = 'OPDP';
         prefixes[DocumentTypes.Unknown] = 'UNKN';
-        
+
         const keys = Object.keys(prefixes);
 
         if (keys.includes(docType)){

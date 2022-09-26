@@ -1,11 +1,11 @@
 import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
 import { IActionPlanRepo } from '../../../../repository.interfaces/action.plan/action.plan.repo.interface';
-import { ActionPlanDto } from '../../../../../domain.types/action.plan/action.plan.dto';
-import { ActionPlanDomainModel } from '../../../../../domain.types/action.plan/action.plan.domain.model';
+import { ActionPlanDto } from '../../../../../domain.types/users/patient/action.plan/action.plan.dto';
+import { ActionPlanDomainModel } from '../../../../../domain.types/users/patient/action.plan/action.plan.domain.model';
 import ActionPlan from '../../models/action.plan/action.plan.model';
 import { ActionPlanMapper } from '../../mappers/action.plan/action.plan.mapper';
-import { ActionPlanSearchFilters, ActionPlanSearchResults } from '../../../../../domain.types/action.plan/action.plan.search.types';
+import { ActionPlanSearchFilters, ActionPlanSearchResults } from '../../../../../domain.types/users/patient/action.plan/action.plan.search.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -135,12 +135,12 @@ export class ActionPlanRepo implements IActionPlanRepo {
             };
 
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    
+
     };
 
     update = async (id: string, updateModel: ActionPlanDomainModel): Promise<ActionPlanDto> => {

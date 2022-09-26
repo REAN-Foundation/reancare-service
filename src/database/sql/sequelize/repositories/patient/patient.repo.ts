@@ -1,9 +1,9 @@
 import { Op } from 'sequelize';
 import { ApiError } from "../../../../../common/api.error";
 import { Logger } from "../../../../../common/logger";
-import { PatientDomainModel } from "../../../../../domain.types/patient/patient/patient.domain.model";
-import { PatientDetailsDto, PatientDto } from "../../../../../domain.types/patient/patient/patient.dto";
-import { PatientSearchFilters, PatientSearchResults } from "../../../../../domain.types/patient/patient/patient.search.types";
+import { PatientDomainModel } from "../../../../../domain.types/users/patient/patient/patient.domain.model";
+import { PatientDetailsDto, PatientDto } from "../../../../../domain.types/users/patient/patient/patient.dto";
+import { PatientSearchFilters, PatientSearchResults } from "../../../../../domain.types/users/patient/patient/patient.search.types";
 import { IPatientRepo } from "../../../../repository.interfaces/patient/patient.repo.interface";
 import { PatientMapper } from "../../mappers/patient/patient.mapper";
 import Patient from "../../models/patient/patient.model";
@@ -56,7 +56,7 @@ export class PatientRepo implements IPatientRepo {
     updateByUserId = async (userId: string, model: PatientDomainModel): Promise<PatientDetailsDto> => {
         try {
             const patient = await Patient.findOne({ where: { UserId: userId } });
-            
+
             if (model.NationalHealthId !== undefined) {
                 patient.NationalHealthId = model.NationalHealthId;
             }
@@ -183,7 +183,7 @@ export class PatientRepo implements IPatientRepo {
             search['offset'] = offset;
 
             const foundResults = await Patient.findAndCountAll(search);
-            
+
             const dtos: PatientDto[] = [];
             for (const patient of foundResults.rows) {
                 const dto = await PatientMapper.toDto(patient);
@@ -201,7 +201,7 @@ export class PatientRepo implements IPatientRepo {
                 OrderedBy      : orderByColum,
                 Items          : dtos
             };
-            
+
             return searchResults;
 
         } catch (error) {
@@ -224,5 +224,5 @@ export class PatientRepo implements IPatientRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
 }

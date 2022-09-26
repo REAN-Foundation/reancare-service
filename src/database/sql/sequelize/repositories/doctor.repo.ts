@@ -5,9 +5,9 @@ import Doctor from "../models/doctor.model";
 import { DoctorMapper } from "../mappers/doctor.mapper";
 import { Op } from 'sequelize';
 import Person from "../models/person.model";
-import { DoctorDetailsDto, DoctorDto } from '../../../../domain.types/doctor/doctor.dto';
-import { DoctorDomainModel } from '../../../../domain.types/doctor/doctor.domain.model';
-import { DoctorSearchFilters, DoctorSearchResults } from '../../../../domain.types/doctor/doctor.search.types';
+import { DoctorDetailsDto, DoctorDto } from '../../../../domain.types/users/doctor/doctor.dto';
+import { DoctorDomainModel } from '../../../../domain.types/users/doctor/doctor.domain.model';
+import { DoctorSearchFilters, DoctorSearchResults } from '../../../../domain.types/users/doctor/doctor.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -42,7 +42,7 @@ export class DoctorRepo implements IDoctorRepo {
             const dto = await DoctorMapper.toDetailsDto(doctor);
 
             return dto;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -64,7 +64,7 @@ export class DoctorRepo implements IDoctorRepo {
     updateByUserId = async (userId: string, model: DoctorDomainModel): Promise<DoctorDetailsDto> => {
         try {
             const doctor = await Doctor.findOne({ where: { UserId: userId } });
-            
+
             if (model.NationalDigiDoctorId != null) {
                 doctor.NationalDigiDoctorId = model.NationalDigiDoctorId;
             }
@@ -94,7 +94,7 @@ export class DoctorRepo implements IDoctorRepo {
 
                 var professionalHighlights = model.ProfessionalHighlights.length > 0 ?
                     JSON.stringify(model.ProfessionalHighlights) : '[]';
-    
+
                 doctor.ProfessionalHighlights = professionalHighlights;
             }
             if (model.ConsultationFee != null) {
@@ -240,13 +240,13 @@ export class DoctorRepo implements IDoctorRepo {
             search['offset'] = offset;
 
             const foundResults = await Doctor.findAndCountAll(search);
-            
+
             const dtos: DoctorDto[] = [];
             for (const doctor of foundResults.rows) {
                 const dto = await DoctorMapper.toDto(doctor);
                 dtos.push(dto);
             }
-            
+
             const count = foundResults.count;
             const totalCount = typeof count === "number" ? count : count[0];
 
@@ -259,7 +259,7 @@ export class DoctorRepo implements IDoctorRepo {
                 OrderedBy      : orderByColum,
                 Items          : dtos
             };
-            
+
             return searchResults;
 
         } catch (error) {
@@ -267,5 +267,5 @@ export class DoctorRepo implements IDoctorRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
 }

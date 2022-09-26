@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { IFamilyHistoryStore } from '../interfaces/family.history.store.interface';
 import { injectable, inject } from "tsyringe";
-import { FamilyHistoryDomainModel } from '../../../domain.types/family.history/family.history.domain.model';
+import { FamilyHistoryDomainModel } from '../../../domain.types/clinical/family.history/family.history.domain.model';
 
 ///////////////////////////////////////////////////////////////////
 

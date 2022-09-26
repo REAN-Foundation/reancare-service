@@ -1,6 +1,6 @@
-import { EmergencyContactDomainModel } from "../../../domain.types/patient/emergency.contact/emergency.contact.domain.model";
-import { EmergencyContactDto } from "../../../domain.types/patient/emergency.contact/emergency.contact.dto";
-import { EmergencyContactSearchFilters, EmergencyContactSearchResults } from "../../../domain.types/patient/emergency.contact/emergency.contact.search.types";
+import { EmergencyContactDomainModel } from "../../../domain.types/users/patient/emergency.contact/emergency.contact.domain.model";
+import { EmergencyContactDto } from "../../../domain.types/users/patient/emergency.contact/emergency.contact.dto";
+import { EmergencyContactSearchFilters, EmergencyContactSearchResults } from "../../../domain.types/users/patient/emergency.contact/emergency.contact.search.types";
 
 export interface IEmergencyContactRepo {
 

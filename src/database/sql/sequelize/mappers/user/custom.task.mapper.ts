@@ -1,6 +1,6 @@
 import { ProgressStatus } from '../../../../../domain.types/miscellaneous/system.types';
-import { UserActionType, UserTaskCategory } from '../../../../../domain.types/user/user.task/user.task.types';
-import { CustomTaskDto } from '../../../../../domain.types/user/custom.task/custom.task.dto';
+import { UserActionType, UserTaskCategory } from '../../../../../domain.types/users/user.task/user.task.types';
+import { CustomTaskDto } from '../../../../../domain.types/users/custom.task/custom.task.dto';
 import CustomTask from '../../models/user/custom.task.model';
 import { getTaskStatus } from './task.helper';
 

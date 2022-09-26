@@ -1,5 +1,5 @@
-import { UserLoginSessionDomainModel } from '../../../../../domain.types/user/user.login.session/user.login.session.domain.model';
-import { UserLoginSessionDto } from '../../../../../domain.types/user/user.login.session/user.login.session.dto';
+import { UserLoginSessionDomainModel } from '../../../../../domain.types/users/user.login.session/user.login.session.domain.model';
+import { UserLoginSessionDto } from '../../../../../domain.types/users/user.login.session/user.login.session.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

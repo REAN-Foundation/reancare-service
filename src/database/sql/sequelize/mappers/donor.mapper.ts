@@ -1,5 +1,5 @@
 import Donor from '../models/donor.model';
-import { DonorDetailsDto, DonorDto } from '../../../../domain.types/donor/donor.dto';
+import { DonorDetailsDto, DonorDto } from '../../../../domain.types/users/donor/donor.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -15,7 +15,7 @@ export class DonorMapper {
         if (donor.MedIssues !== null && donor.MedIssues.length > 2) {
             medIssues = JSON.parse(donor.MedIssues);
         }
-        
+
         const dto: DonorDetailsDto = {
             id                : donor.id,
             UserId            : donor.UserId,

@@ -1,10 +1,10 @@
 import express from 'express';
-import { UserTaskDto } from '../../../domain.types/user/user.task/user.task.dto';
+import { UserTaskDto } from '../../../domain.types/users/user.task/user.task.dto';
 import { Authorizer } from '../../../auth/authorizer';
 import { ApiError } from '../../../common/api.error';
 import { Logger } from '../../../common/logger';
 import { ResponseHandler } from '../../../common/response.handler';
-import { UserActionType, UserActionTypeList, UserTaskCategoryList } from '../../../domain.types/user/user.task/user.task.types';
+import { UserActionType, UserActionTypeList, UserTaskCategoryList } from '../../../domain.types/users/user.task/user.task.types';
 import { OrganizationService } from '../../../services/organization.service';
 import { PersonService } from '../../../services/person.service';
 import { RoleService } from '../../../services/role.service';

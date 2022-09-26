@@ -2,8 +2,8 @@ import express from 'express';
 import { body, oneOf, param, query, validationResult } from 'express-validator';
 import { Helper } from '../../../common/helper';
 import { ResponseHandler } from '../../../common/response.handler';
-import { UserExistanceModel, UserLoginDetails } from '../../../domain.types/user/user/user.domain.model';
-import { UserSearchFilters } from '../../../domain.types/user/user/user.search.types';
+import { UserExistanceModel, UserLoginDetails } from '../../../domain.types/users/user/user.domain.model';
+import { UserSearchFilters } from '../../../domain.types/users/user/user.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -20,7 +20,7 @@ export class UserValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        
+
         return request.params.id;
     };
 
@@ -35,7 +35,7 @@ export class UserValidator {
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
         }
-        
+
         return request.body.Token;
     };
 
@@ -208,7 +208,7 @@ export class UserValidator {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
     static userExistsCheck = async (
         request: express.Request): Promise<UserExistanceModel> => {
 

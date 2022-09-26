@@ -1,5 +1,5 @@
 import Goal from '../../models/patient/goal.model';
-import { GoalDto } from '../../../../../domain.types/patient/goal/goal.dto';
+import { GoalDto } from '../../../../../domain.types/users/patient/goal/goal.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

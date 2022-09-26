@@ -1,5 +1,5 @@
 import Organization from '../models/organization.model';
-import { OrganizationDto } from '../../../../domain.types/organization/organization.dto';
+import { OrganizationDto } from '../../../../domain.types/general/organization/organization.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +9,7 @@ export class OrganizationMapper {
         organization: Organization,
         parentOrganization = null
     ): OrganizationDto => {
-        
+
         if (organization == null) {
             return null;
         }
@@ -34,5 +34,5 @@ export class OrganizationMapper {
 
         return dto;
     };
-    
+
 }

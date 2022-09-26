@@ -8,9 +8,9 @@ import { PersonService } from '../../services/person.service';
 import { RoleService } from '../../services/role.service';
 import { UserService } from '../../services/user/user.service';
 import { Loader } from '../../startup/loader';
-import { PatientDomainModel } from '../../domain.types/patient/patient/patient.domain.model';
-import { PatientDetailsDto } from '../../domain.types/patient/patient/patient.dto';
-import { UserDetailsDto } from '../../domain.types/user/user/user.dto';
+import { PatientDomainModel } from '../../domain.types/users/patient/patient/patient.domain.model';
+import { PatientDetailsDto } from '../../domain.types/users/patient/patient/patient.dto';
+import { UserDetailsDto } from '../../domain.types/users/user/user.dto';
 import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { RoleDto } from '../../domain.types/role/role.dto';
 

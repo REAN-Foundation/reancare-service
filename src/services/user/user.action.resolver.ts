@@ -1,4 +1,4 @@
-import { UserActionType } from "../../domain.types/user/user.task/user.task.types";
+import { UserActionType } from "../../domain.types/users/user.task/user.task.types";
 import { Loader } from "../../startup/loader";
 import { MedicationConsumptionService } from "../clinical/medication/medication.consumption.service";
 import { CareplanService } from "../clinical/careplan.service";

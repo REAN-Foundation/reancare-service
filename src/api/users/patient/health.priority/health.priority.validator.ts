@@ -1,6 +1,6 @@
 import express from 'express';
-import { HealthPrioritySearchFilters } from '../../../../domain.types/patient/health.priority/health.priority.search.types';
-import { HealthPriorityDomainModel } from '../../../../domain.types/patient/health.priority/health.priority.domain.model';
+import { HealthPrioritySearchFilters } from '../../../../domain.types/users/patient/health.priority/health.priority.search.types';
+import { HealthPriorityDomainModel } from '../../../../domain.types/users/patient/health.priority/health.priority.domain.model';
 import { BaseValidator, Where } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////

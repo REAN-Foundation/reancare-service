@@ -1,4 +1,4 @@
-import { OtpDto } from "../../../../domain.types/otp/otp.dto";
+import { OtpDto } from "../../../../domain.types/users/otp/otp.dto";
 import Otp from "../models/otp.model";
 
 ///////////////////////////////////////////////////////////////////////////////////

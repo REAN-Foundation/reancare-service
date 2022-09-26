@@ -7,9 +7,9 @@ import { IPersonRoleRepo } from '../../database/repository.interfaces/person.rol
 import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
 import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
-import { PatientDomainModel } from '../../domain.types/patient/patient/patient.domain.model';
-import { PatientDetailsDto, PatientDto } from '../../domain.types/patient/patient/patient.dto';
-import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults } from '../../domain.types/patient/patient/patient.search.types';
+import { PatientDomainModel } from '../../domain.types/users/patient/patient/patient.domain.model';
+import { PatientDetailsDto, PatientDto } from '../../domain.types/users/patient/patient/patient.dto';
+import { PatientDetailsSearchResults, PatientSearchFilters, PatientSearchResults } from '../../domain.types/users/patient/patient/patient.search.types';
 import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { Roles } from '../../domain.types/role/role.types';
 import { PatientStore } from '../../modules/ehr/services/patient.store';
@@ -36,7 +36,7 @@ export class PatientService {
     }
 
     //#region Publics
-    
+
     create = async (patientDomainModel: PatientDomainModel): Promise<PatientDetailsDto> => {
 
         if (this._ehrPatientStore) {

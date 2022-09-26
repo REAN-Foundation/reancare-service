@@ -1,14 +1,14 @@
-import { HealthPriorityDomainModel } from '../../../../../../domain.types/patient/health.priority/health.priority.domain.model';
-import { HealthPriorityDto } from '../../../../../../domain.types/patient/health.priority/health.priority.dto';
+import { HealthPriorityDomainModel } from '../../../../../../domain.types/users/patient/health.priority/health.priority.domain.model';
+import { HealthPriorityDto } from '../../../../../../domain.types/users/patient/health.priority/health.priority.dto';
 import { IHealthPriorityRepo } from '../../../../../repository.interfaces/patient/health.priority/health.priority.repo.interface';
 import HealthPriority from '../../../models/patient/health.priority/health.priority.model';
 import { HealthPriorityMapper } from '../../../mappers/patient/health.priority/health.priority.mapper';
 import { Logger } from '../../../../../../common/logger';
 import { ApiError } from '../../../../../../common/api.error';
-import { HealthPriorityTypeDomainModel } from '../../../../../../domain.types/patient/health.priority.type/health.priority.type.domain.model';
-import { HealthPriorityTypeDto } from '../../../../../../domain.types/patient/health.priority.type/health.priority.type.dto';
+import { HealthPriorityTypeDomainModel } from '../../../../../../domain.types/users/patient/health.priority.type/health.priority.type.domain.model';
+import { HealthPriorityTypeDto } from '../../../../../../domain.types/users/patient/health.priority.type/health.priority.type.dto';
 import HealthPriorityType    from '../../../models/patient/health.priority/health.priority.type.model';
-import { HealthPrioritySearchFilters, HealthPrioritySearchResults } from '../../../../../../domain.types/patient/health.priority/health.priority.search.types';
+import { HealthPrioritySearchFilters, HealthPrioritySearchResults } from '../../../../../../domain.types/users/patient/health.priority/health.priority.search.types';
 import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     getPriorityTypes = async (tags?: string): Promise<HealthPriorityTypeDto[]> => {
         try {
             const filter = { where: {} };
@@ -97,7 +97,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
             };
             const priority = await HealthPriorityType.create(entity);
             return HealthPriorityMapper.toTypeDto(priority);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -167,7 +167,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
             };
 
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -177,7 +177,7 @@ export class HealthPriorityRepo implements IHealthPriorityRepo {
     update = async (id: string, updateModel: HealthPriorityDomainModel): Promise<HealthPriorityDto> => {
         try {
             const healthPriority = await HealthPriority.findByPk(id);
-            
+
             if (updateModel.PatientUserId != null) {
                 healthPriority.PatientUserId = updateModel.PatientUserId;
             }

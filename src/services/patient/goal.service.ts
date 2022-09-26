@@ -1,9 +1,9 @@
 import { CareplanHandler } from "../../modules/careplan/careplan.handler";
 import { inject, injectable } from "tsyringe";
 import { IGoalRepo } from "../../database/repository.interfaces/patient/goal.repo.interface";
-import { GoalDomainModel } from '../../domain.types/patient/goal/goal.domain.model';
-import { GoalDto } from '../../domain.types/patient/goal/goal.dto';
-import { GoalSearchResults, GoalSearchFilters } from '../../domain.types/patient/goal/goal.search.types';
+import { GoalDomainModel } from '../../domain.types/users/patient/goal/goal.domain.model';
+import { GoalDto } from '../../domain.types/users/patient/goal/goal.dto';
+import { GoalSearchResults, GoalSearchFilters } from '../../domain.types/users/patient/goal/goal.search.types';
 import { IHealthPriorityRepo } from "../../database/repository.interfaces/patient/health.priority/health.priority.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,9 +32,9 @@ export class GoalService {
     };
 
     getGoalsByPriority = async (priorityId: string): Promise<GoalDto[]> => {
-        
+
         var priority =  await this._healthPriorityRepo.getById(priorityId);
-        
+
         var goals =  await this._careplanHandler.getGoals(priority.PatientUserId, priority.ProviderEnrollmentId,
             priority.Provider, priority.HealthPriorityType);
 

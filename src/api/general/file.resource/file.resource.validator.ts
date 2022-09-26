@@ -7,9 +7,9 @@ import { InputValidationError } from '../../../common/input.validation.error';
 import { Helper } from "../../../common/helper";
 import { TimeHelper } from '../../../common/time.helper';
 import { ConfigurationManager } from '../../../config/configuration.manager';
-import { FileResourceRenameDomainModel, FileResourceUpdateModel, FileResourceUploadDomainModel } from '../../../domain.types/file.resource/file.resource.domain.model';
-import { FileResourceSearchFilters } from '../../../domain.types/file.resource/file.resource.search.types';
-import { DownloadDisposition, FileResourceMetadata, ResourceReference } from '../../../domain.types/file.resource/file.resource.types';
+import { FileResourceRenameDomainModel, FileResourceUpdateModel, FileResourceUploadDomainModel } from '../../../domain.types/general/file.resource/file.resource.domain.model';
+import { FileResourceSearchFilters } from '../../../domain.types/general/file.resource/file.resource.search.types';
+import { DownloadDisposition, FileResourceMetadata, ResourceReference } from '../../../domain.types/general/file.resource/file.resource.types';
 import { BaseValidator } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////

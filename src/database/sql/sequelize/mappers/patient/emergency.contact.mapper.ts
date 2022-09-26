@@ -1,5 +1,5 @@
-import { EmergencyContactDto } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.dto';
-import { EmergencyContactRoles } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.types';
+import { EmergencyContactDto } from '../../../../../domain.types/users/patient/emergency.contact/emergency.contact.dto';
+import { EmergencyContactRoles } from '../../../../../domain.types/users/patient/emergency.contact/emergency.contact.types';
 import EmergencyContact from '../../models/patient/emergency.contact.model';
 import { AddressMapper } from '../address.mapper';
 import { OrganizationMapper } from '../organization.mapper';

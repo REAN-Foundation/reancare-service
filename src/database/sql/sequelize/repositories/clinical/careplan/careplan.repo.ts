@@ -13,7 +13,7 @@ import CareplanActivity from "../../../models/clinical/careplan/careplan.activit
 import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityMapper } from '../../../mappers/clinical/careplan/activity.mapper';
 import { Op } from 'sequelize';
-import { HealthPriorityDto } from '../../../../../../domain.types/patient/health.priority/health.priority.dto';
+import { HealthPriorityDto } from '../../../../../../domain.types/users/patient/health.priority/health.priority.dto';
 import HealthPriority from '../../../models/patient/health.priority/health.priority.model';
 import { HealthPriorityMapper } from '../../../mappers/patient/health.priority/health.priority.mapper';
 import { Helper } from '../../../../../../common/helper';
@@ -173,7 +173,7 @@ export class CareplanRepo implements ICareplanRepo {
                 }
                 activityEntities.push(entity);
             });
-            
+
             const records = await CareplanActivity.bulkCreate(activityEntities);
 
             var dtos = [];
@@ -305,7 +305,7 @@ export class CareplanRepo implements ICareplanRepo {
         : Promise<CareplanActivityDto> => {
         try {
             var record = await CareplanActivity.findByPk(activityId);
-            
+
             record.RawContent = JSON.stringify(activityDetails.RawContent);
             if (!record.Title) {
                 record.Title = activityDetails.Title;
@@ -438,7 +438,7 @@ export class CareplanRepo implements ICareplanRepo {
             if (model.HasHighRisk != null) {
                 updateRisk.HasHighRisk = model.HasHighRisk;
             }
-    
+
             await updateRisk.save();
 
             return EnrollmentMapper.toDto(updateRisk);
@@ -458,7 +458,7 @@ export class CareplanRepo implements ICareplanRepo {
                     ScheduledAt   : { [Op.gte]: new Date() }
                 }
             };
-            
+
             const ids = (await CareplanActivity.findAll(selector)).map(x => x.id);
             const deletedCount = await CareplanActivity.destroy(selector);
             Logger.instance().log(`Deleted ${deletedCount} careplan task.`);
@@ -470,7 +470,7 @@ export class CareplanRepo implements ICareplanRepo {
                     }
                 });
                 Logger.instance().log(`Deleted ${deletedTaskCount} careplan associated user tasks.`);
-                
+
             }
             return deletedCount;
         } catch (error) {

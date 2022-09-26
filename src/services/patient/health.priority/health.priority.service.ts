@@ -5,12 +5,12 @@ import { IPersonRepo } from "../../../database/repository.interfaces/person.repo
 import { IUserRepo } from "../../../database/repository.interfaces/user/user.repo.interface";
 import { CareplanHandler } from '../../../modules/careplan/careplan.handler';
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
-import { HealthPriorityDto } from "../../../domain.types/patient/health.priority/health.priority.dto";
-import { HealthPriorityDomainModel } from "../../../domain.types/patient/health.priority/health.priority.domain.model";
+import { HealthPriorityDto } from "../../../domain.types/users/patient/health.priority/health.priority.dto";
+import { HealthPriorityDomainModel } from "../../../domain.types/users/patient/health.priority/health.priority.domain.model";
 import { IHealthPriorityRepo } from "../../../database/repository.interfaces/patient/health.priority/health.priority.repo.interface";
-import { HealthPriorityTypeDomainModel } from "../../../domain.types/patient/health.priority.type/health.priority.type.domain.model";
-import { HealthPriorityTypeDto } from "../../../domain.types/patient/health.priority.type/health.priority.type.dto";
-import { HealthPrioritySearchFilters, HealthPrioritySearchResults } from "../../../domain.types/patient/health.priority/health.priority.search.types";
+import { HealthPriorityTypeDomainModel } from "../../../domain.types/users/patient/health.priority.type/health.priority.type.domain.model";
+import { HealthPriorityTypeDto } from "../../../domain.types/users/patient/health.priority.type/health.priority.type.dto";
+import { HealthPrioritySearchFilters, HealthPrioritySearchResults } from "../../../domain.types/users/patient/health.priority/health.priority.search.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,7 +46,7 @@ export class HealthPriorityService {
 
         return priorities;
     };
-    
+
     createType = async (domainModel: HealthPriorityTypeDomainModel): Promise<HealthPriorityTypeDto> => {
         return await this._healthPriorityRepo.createType(domainModel);
     };

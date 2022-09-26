@@ -1,6 +1,6 @@
-import { GoalDomainModel } from "../../../domain.types/patient/goal/goal.domain.model";
-import { GoalDto } from "../../../domain.types/patient/goal/goal.dto";
-import { GoalSearchFilters, GoalSearchResults } from "../../../domain.types/patient/goal/goal.search.types";
+import { GoalDomainModel } from "../../../domain.types/users/patient/goal/goal.domain.model";
+import { GoalDto } from "../../../domain.types/users/patient/goal/goal.dto";
+import { GoalSearchFilters, GoalSearchResults } from "../../../domain.types/users/patient/goal/goal.search.types";
 
 export interface IGoalRepo {
 
@@ -15,5 +15,5 @@ export interface IGoalRepo {
     update(id: string, contactDomainModel: GoalDomainModel): Promise<GoalDto>;
 
     delete(id: string): Promise<boolean>;
-    
+
 }

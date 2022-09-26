@@ -1,6 +1,6 @@
 import express from 'express';
-import { ActionPlanSearchFilters } from '../../../../domain.types/action.plan/action.plan.search.types';
-import { ActionPlanDomainModel } from '../../../../domain.types/action.plan/action.plan.domain.model';
+import { ActionPlanSearchFilters } from '../../../../domain.types/users/patient/action.plan/action.plan.search.types';
+import { ActionPlanDomainModel } from '../../../../domain.types/users/patient/action.plan/action.plan.domain.model';
 import { BaseValidator, Where } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////

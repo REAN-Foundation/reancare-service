@@ -5,14 +5,14 @@ import { injectable, inject } from 'tsyringe';
 import { PersonDomainModel } from '../domain.types/person/person.domain.model';
 import { PersonDetailsDto, PersonDto } from '../domain.types/person/person.dto';
 import { PersonSearchFilters } from '../domain.types/person/patient.search.types';
-import { OrganizationDto } from '../domain.types/organization/organization.dto';
-import { AddressDto } from '../domain.types/address/address.dto';
+import { OrganizationDto } from '../domain.types/general/organization/organization.dto';
+import { AddressDto } from '../domain.types/general/address/address.dto';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class PersonService {
-    
+
     constructor(
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IPersonRoleRepo') private _personRoleRepo: IPersonRoleRepo,
@@ -74,7 +74,7 @@ export class PersonService {
     addAddress = async (id: string, addressId: string): Promise<boolean> => {
         return await this._personRepo.addAddress(id, addressId);
     };
-    
+
     removeAddress = async (id: string, addressId: string): Promise<boolean> => {
         return await this._personRepo.removeAddress(id, addressId);
     };

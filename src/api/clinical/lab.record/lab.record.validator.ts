@@ -1,6 +1,6 @@
 import express from 'express';
-import { LabRecordDomainModel } from '../../../domain.types/clinical/lab.records/lab.record/lab.record.domain.model';
-import { LabRecordSearchFilters } from '../../../domain.types/clinical/lab.records/lab.record/lab.record.search.types';
+import { LabRecordDomainModel } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model';
+import { LabRecordSearchFilters } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.search.types';
 import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////

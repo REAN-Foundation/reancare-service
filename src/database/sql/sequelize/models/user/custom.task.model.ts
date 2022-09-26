@@ -4,8 +4,8 @@ import {
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import { UserTaskCategory, UserTaskCategoryList } from '../../../../../domain.types/user/user.task/user.task.types';
-import { UserActionTypeList, UserActionType } from '../../../../../domain.types/user/user.task/user.task.types';
+import { UserTaskCategory, UserTaskCategoryList } from '../../../../../domain.types/users/user.task/user.task.types';
+import { UserActionTypeList, UserActionType } from '../../../../../domain.types/users/user.task/user.task.types';
 import User from './user.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ export default class CustomTask extends Model {
         allowNull : true,
     })
     Description: string;
-    
+
     @Length({ max: 128 })
     @Column({
         type         : DataType.STRING(128),
@@ -143,7 +143,7 @@ export default class CustomTask extends Model {
         allowNull : true,
     })
     CancellationReason: string;
-   
+
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : false,

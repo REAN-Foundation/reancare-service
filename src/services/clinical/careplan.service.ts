@@ -14,8 +14,8 @@ import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 import { ProgressStatus, uuid } from "../../domain.types/miscellaneous/system.types";
 import { ParticipantDomainModel } from "../../domain.types/clinical/careplan/participant/participant.domain.model";
 import { CareplanActivityDomainModel } from "../../domain.types/clinical/careplan/activity/careplan.activity.domain.model";
-import { UserTaskCategory } from "../../domain.types/user/user.task/user.task.types";
-import { UserActionType } from "../../domain.types/user/user.task/user.task.types";
+import { UserTaskCategory } from "../../domain.types/users/user.task/user.task.types";
+import { UserActionType } from "../../domain.types/users/user.task/user.task.types";
 import { TimeHelper } from "../../common/time.helper";
 import { DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
@@ -27,7 +27,7 @@ import { CareplanConfig } from "../../config/configuration.types";
 import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/assessment.domain.model";
 import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
-import { UserTaskDomainModel } from "../../domain.types/user/user.task/user.task.domain.model";
+import { UserTaskDomainModel } from "../../domain.types/users/user.task/user.task.domain.model";
 import { Loader } from "../../startup/loader";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,32 +114,33 @@ export class CareplanService implements IUserActionService {
     };
 
     public scheduleDailyCareplanPushTasks = async (): Promise<void> => {
-    
+
         const activities = await this._careplanRepo.getAllReanActivities();
 
         if (activities.length !== 0) {
             activities.forEach(async activity => {
-                const todayDate = new Date().toISOString().split('T')[1];
+                const todayDate = new Date().toISOString()
+                    .split('T')[1];
                 const num = todayDate.split('.')[0];
                 const num1 = num.split(':')[1];
                 const activityDate = activity.ScheduledAt.toISOString().split('T')[1];
                 const num2 = activityDate.split('.')[0];
                 const num3 = num2.split(':')[1];
-   
+
                 if (num1 === num3) {
                     const message = activity.Description;
                     const patient = await this.getPatient(activity.PatientUserId);
                     const phoneNumber = patient.User.Person.Phone;
                     await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message);
-                   
+
                     Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
-                
+
                 }
             });
         } else {
             Logger.instance().log(`No activities fetched from careplan task.`);
         }
-            
+
     };
 
     public getPatientEligibility = async (patient: any, provider: string, careplanCode: string) => {
@@ -149,7 +150,7 @@ export class CareplanService implements IUserActionService {
     public getPatientEnrollments = async (patientUserId: string) => {
         return await this._careplanRepo.getPatientEnrollments(patientUserId);
     };
-    
+
     public fetchTasks = async (careplanId: uuid): Promise<boolean> => {
 
         var enrollment = await this._careplanRepo.getCareplanEnrollment(careplanId);
@@ -169,7 +170,7 @@ export class CareplanService implements IUserActionService {
 
             var existing: boolean = await this._careplanRepo.activityExists(
                 x.Provider, x.EnrollmentId, x.ProviderActionId, x.Sequence, x.ScheduledAt);
-            
+
             if (existing) {
                 continue;
             }
@@ -201,13 +202,13 @@ export class CareplanService implements IUserActionService {
                 enrollment.PatientUserId,
                 enrollmentId,
                 activityModel);
-    
+
             careplanActivities.push(careplanActivity);
 
         }
 
         await this.createScheduledUserTasks(enrollment.PatientUserId, careplanActivities);
-    
+
         return true;
     };
 
@@ -229,7 +230,7 @@ export class CareplanService implements IUserActionService {
                 activity.EnrollmentId,
                 activity.ProviderActionId,
                 scheduledAt);
-        
+
             details.PatientUserId = activity.PatientUserId;
             details.Provider = activity.Provider;
             details.PlanCode = activity.PlanCode;
@@ -239,7 +240,7 @@ export class CareplanService implements IUserActionService {
             activity = await this._careplanRepo.updateActivityDetails(activity.id, details);
             details.Title = activity.Title;
             details.Description = activity.Description;
-            
+
             //Handle assessment activities in special manner...
             if (activity.Category === UserTaskCategory.Assessment ||
             activity.Type === 'Assessment') {
@@ -270,7 +271,7 @@ export class CareplanService implements IUserActionService {
     };
 
     public updateAction = async (activityId: uuid, updates: any): Promise<any> => {
-        
+
         var activity = await this._careplanRepo.updateActivity(activityId, ProgressStatus.Completed, new Date());
 
         var activityUpdates = {
@@ -284,9 +285,9 @@ export class CareplanService implements IUserActionService {
             activity.PlanCode,
             activity.EnrollmentId,
             activity.ProviderActionId, activityUpdates);
-        
+
         Logger.instance().log(JSON.stringify(details, null, 2));
-    
+
         activity['Details'] = details;
 
         return activity;
@@ -333,7 +334,7 @@ export class CareplanService implements IUserActionService {
     };
 
     public getAssessmentTemplate = async (model: CareplanActivity): Promise<AssessmentTemplateDto> => {
- 
+
         if (!model) {
             throw new Error('Invalid careplan activity encountered!');
         }
@@ -348,7 +349,7 @@ export class CareplanService implements IUserActionService {
         if (existingTemplate) {
             return existingTemplate;
         }
-        
+
         var assessmentTemplate: CAssessmentTemplate =
             await this._handler.convertToAssessmentTemplate(model);
 
@@ -365,7 +366,7 @@ export class CareplanService implements IUserActionService {
         scheduledAt: string): Promise<AssessmentDto> => {
 
         var existingAssessment = await this._assessmentRepo.getByActivityId(activity.id);
-    
+
         if (existingAssessment) {
             return existingAssessment;
         }
@@ -477,17 +478,17 @@ export class CareplanService implements IUserActionService {
             throw new ApiError(500, 'Error while enrolling patient to careplan');
         }
         enrollmentDetails.EnrollmentId = enrollmentId;
-    
+
         var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
-    
+
         var activities = await this._handler.fetchActivities(
             enrollmentDetails.PatientUserId, enrollmentDetails.Provider, enrollmentDetails.PlanCode,
             enrollmentDetails.ParticipantId, enrollmentId, enrollmentDetails.StartDate, enrollmentDetails.EndDate);
-    
+
         Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
-    
+
         const activityModels = activities.map(x => {
-    
+
             var a: CareplanActivityDomainModel = {
                 PatientUserId    : enrollmentDetails.PatientUserId,
                 EnrollmentId     : enrollmentId,
@@ -507,10 +508,10 @@ export class CareplanService implements IUserActionService {
                 Frequency        : x.Frequency,
                 Status           : x.Status
             };
-    
+
             return a;
         });
-    
+
         var careplanActivities = await this._careplanRepo.addActivities(
             enrollmentDetails.Provider,
             enrollmentDetails.PlanName,
@@ -518,12 +519,12 @@ export class CareplanService implements IUserActionService {
             enrollmentDetails.PatientUserId,
             enrollmentId,
             activityModels);
-    
+
         Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
-    
+
         //task scheduling
         await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
-    
+
         return dto;
     }
 

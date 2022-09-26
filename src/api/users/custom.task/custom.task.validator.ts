@@ -1,6 +1,6 @@
 import express from 'express';
-import { UserActionType } from '../../../domain.types/user/user.task/user.task.types';
-import { CustomTaskDomainModel } from '../../../domain.types/user/custom.task/custom.task.domain.model';
+import { UserActionType } from '../../../domain.types/users/user.task/user.task.types';
+import { CustomTaskDomainModel } from '../../../domain.types/users/custom.task/custom.task.domain.model';
 import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////

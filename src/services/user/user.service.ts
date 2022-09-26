@@ -13,13 +13,13 @@ import { IPersonRoleRepo } from '../../database/repository.interfaces/person.rol
 import { IRoleRepo } from '../../database/repository.interfaces/role.repo.interface';
 import { IUserRepo } from '../../database/repository.interfaces/user/user.repo.interface';
 import { CurrentUser } from '../../domain.types/miscellaneous/current.user';
-import { OtpPersistenceEntity } from '../../domain.types/otp/otp.domain.types';
+import { OtpPersistenceEntity } from '../../domain.types/users/otp/otp.domain.types';
 import { PersonDetailsDto } from '../../domain.types/person/person.dto';
 import { Roles } from '../../domain.types/role/role.types';
-import { UserDomainModel, UserLoginDetails } from '../../domain.types/user/user/user.domain.model';
-import { UserDetailsDto, UserDto } from '../../domain.types/user/user/user.dto';
+import { UserDomainModel, UserLoginDetails } from '../../domain.types/users/user/user.domain.model';
+import { UserDetailsDto, UserDto } from '../../domain.types/users/user/user.dto';
 import { Loader } from '../../startup/loader';
-import { UserLoginSessionDomainModel } from '../../domain.types/user/user.login.session/user.login.session.domain.model';
+import { UserLoginSessionDomainModel } from '../../domain.types/users/user.login.session/user.login.session.domain.model';
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { IUserDeviceDetailsRepo } from '../../database/repository.interfaces/user/user.device.details.repo.interface ';

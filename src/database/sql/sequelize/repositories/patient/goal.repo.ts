@@ -4,9 +4,9 @@ import { Op } from 'sequelize';
 import { GoalMapper } from '../../mappers/patient/goal.mapper';
 import { Logger } from '../../../../../common/logger';
 import { ApiError } from '../../../../../common/api.error';
-import { GoalDomainModel } from '../../../../../domain.types/patient/goal/goal.domain.model';
-import { GoalDto } from '../../../../../domain.types/patient/goal/goal.dto';
-import { GoalSearchFilters, GoalSearchResults } from '../../../../../domain.types/patient/goal/goal.search.types';
+import { GoalDomainModel } from '../../../../../domain.types/users/patient/goal/goal.domain.model';
+import { GoalDto } from '../../../../../domain.types/users/patient/goal/goal.dto';
+import { GoalSearchFilters, GoalSearchResults } from '../../../../../domain.types/users/patient/goal/goal.search.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -57,7 +57,7 @@ export class GoalRepo implements IGoalRepo {
             Logger.instance().log(`Patient User id: ${JSON.stringify(patientUserId)}`);
 
             const selectedGoals = await Goal.findAll({ where: { PatientUserId: patientUserId } });
-            
+
             const dtos: GoalDto[] = [];
             for (const selectedGoal of selectedGoals) {
                 const dto = GoalMapper.toDto(selectedGoal);

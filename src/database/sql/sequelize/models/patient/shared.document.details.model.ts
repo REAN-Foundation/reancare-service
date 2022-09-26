@@ -3,7 +3,7 @@ import {
     IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import { DocumentTypes, DocumentTypesList } from '../../../../../domain.types/patient/document/document.types';
+import { DocumentTypes, DocumentTypesList } from '../../../../../domain.types/users/patient/document/document.types';
 import FileResource from '../file.resource/file.resource.model';
 import User from '../user/user.model';
 import Document from './document.model';
@@ -37,7 +37,7 @@ export default class SharedDocumentDetails extends Model {
         allowNull : false,
     })
     DocumentId: string;
-    
+
     @IsUUID(4)
     @ForeignKey(() => FileResource)
     @Column({

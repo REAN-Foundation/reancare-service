@@ -8,7 +8,7 @@ import {
     Severity,
     SeverityList
 } from '../../../../domain.types/miscellaneous/system.types';
-import { HealthProfileDomainModel } from '../../../../domain.types/patient/health.profile/health.profile.domain.model';
+import { HealthProfileDomainModel } from '../../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { BaseValidator, Where } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////

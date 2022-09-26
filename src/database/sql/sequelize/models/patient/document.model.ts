@@ -4,7 +4,7 @@ import {
 import { v4 } from 'uuid';
 import { OrderTypes } from '../../../../../domain.types/clinical/order/order.types';
 import { VisitType, VisitTypeList } from '../../../../../domain.types/miscellaneous/clinical.types';
-import { DocumentTypes, DocumentTypesList } from '../../../../../domain.types/patient/document/document.types';
+import { DocumentTypes, DocumentTypesList } from '../../../../../domain.types/users/patient/document/document.types';
 import { Roles } from '../../../../../domain.types/role/role.types';
 import Order from '../clinical/order.model';
 import Visit from '../clinical/visit.model';
@@ -32,7 +32,7 @@ export default class Document extends Model {
         allowNull : false,
     })
     id: string;
-    
+
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),

@@ -2,7 +2,7 @@ import {
     BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey,IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../../../domain.types/patient/emergency.contact/emergency.contact.types';
+import { EmergencyContactRoleList, EmergencyContactRoles } from '../../../../../domain.types/users/patient/emergency.contact/emergency.contact.types';
 import Address from '../address.model';
 import Organization from '../organization.model';
 import Person from '../person.model';
@@ -38,7 +38,7 @@ export default class EmergencyContact extends Model {
 
     @BelongsTo(() => User)
     PatientUser: User;
-    
+
     @IsUUID(4)
     @ForeignKey(() => Person)
     @Column({
@@ -86,7 +86,7 @@ export default class EmergencyContact extends Model {
         defaultValue : false,
     })
     IsAvailableForEmergency: boolean;
-  
+
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),

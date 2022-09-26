@@ -1,9 +1,9 @@
-import { AddressDto } from "../domain.types/address/address.dto";
+import { AddressDto } from "../domain.types/general/address/address.dto";
 import { inject, injectable } from "tsyringe";
 import { IOrganizationRepo } from "../database/repository.interfaces/organization.repo.interface";
-import { OrganizationDomainModel } from '../domain.types/organization/organization.domain.model';
-import { OrganizationDto } from '../domain.types/organization/organization.dto';
-import { OrganizationSearchFilters, OrganizationSearchResults } from '../domain.types/organization/organization.search.types';
+import { OrganizationDomainModel } from '../domain.types/general/organization/organization.domain.model';
+import { OrganizationDto } from '../domain.types/general/organization/organization.dto';
+import { OrganizationSearchFilters, OrganizationSearchResults } from '../domain.types/general/organization/organization.search.types';
 import { IUserRepo } from '../database/repository.interfaces/user/user.repo.interface';
 import { IAddressRepo } from '../database/repository.interfaces/address.repo.interface';
 import { PersonDto } from "../domain.types/person/person.dto";
@@ -110,7 +110,7 @@ export class OrganizationService {
 
         var addresses: AddressDto[] = await this._organizationRepo.getAddresses(dto.id);
         dto.Addresses = addresses;
-        
+
         return dto;
     };
 

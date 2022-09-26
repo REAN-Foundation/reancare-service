@@ -1,8 +1,8 @@
 import { OrderTypes } from '../../../../../domain.types/clinical/order/order.types';
 import { VisitType } from '../../../../../domain.types/miscellaneous/clinical.types';
-import { DocumentDto } from '../../../../../domain.types/patient/document/document.dto';
-import { DocumentTypes } from '../../../../../domain.types/patient/document/document.types';
-import { SharedDocumentDetailsDto } from '../../../../../domain.types/patient/document/shared.document.details.dto';
+import { DocumentDto } from '../../../../../domain.types/users/patient/document/document.dto';
+import { DocumentTypes } from '../../../../../domain.types/users/patient/document/document.types';
+import { SharedDocumentDetailsDto } from '../../../../../domain.types/users/patient/document/shared.document.details.dto';
 import DocumentModel from '../../models/patient/document.model';
 import SharedDocumentDetails from '../../models/patient/shared.document.details.model';
 

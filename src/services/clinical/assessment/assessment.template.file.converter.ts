@@ -21,7 +21,7 @@ import {
     ConditionOperandDataType,
     ConditionOperatorType
 } from '../../../domain.types/clinical/assessment/assessment.types';
-import { FileResourceDto } from '../../../domain.types/file.resource/file.resource.dto';
+import { FileResourceDto } from '../../../domain.types/general/file.resource/file.resource.dto';
 import { DateStringFormat } from '../../../domain.types/miscellaneous/time.types';
 import { FileResourceService } from '../../../services/file.resource.service';
 

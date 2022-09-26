@@ -1,4 +1,4 @@
-import { OrganizationDomainModel } from '../../../../../../domain.types/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.domain.model';
 import { IClinicOrganizationStore } from '../../../../interfaces/clinic.organization.store.interface';
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
@@ -19,7 +19,7 @@ export class GcpClinicOrganizationStore implements IClinicOrganizationStore {
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
         return data;
     };
-    
+
     update = async (resourceId:string, updates: OrganizationDomainModel): Promise<any> => {
         const resourceType = 'Organization';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -45,7 +45,7 @@ export class GcpClinicOrganizationStore implements IClinicOrganizationStore {
                     text : "clinic"
                 }
             ],
-            
+
             telecom : []
         };
 
@@ -66,7 +66,7 @@ export class GcpClinicOrganizationStore implements IClinicOrganizationStore {
                 value  : model.ContactEmail
             });
         }
-        
+
         if (model.AddressIds != null) {
             resource['address'] = [
                 {
@@ -98,7 +98,7 @@ export class GcpClinicOrganizationStore implements IClinicOrganizationStore {
         existingResource.resourceType = "Organization";
 
         existingResource.telecom = [];
-        
+
         if (updates.Name != null) {
             existingResource['name'] = updates.Name;
         }

@@ -3,9 +3,9 @@ import { IAddressRepo } from "../../database/repository.interfaces/address.repo.
 import { IOrganizationRepo } from "../../database/repository.interfaces/organization.repo.interface";
 import { IEmergencyContactRepo } from "../../database/repository.interfaces/patient/emergency.contact.repo.interface";
 import { IPersonRepo } from "../../database/repository.interfaces/person.repo.interface";
-import { EmergencyContactDomainModel } from '../../domain.types/patient/emergency.contact/emergency.contact.domain.model';
-import { EmergencyContactDto } from '../../domain.types/patient/emergency.contact/emergency.contact.dto';
-import { EmergencyContactSearchFilters, EmergencyContactSearchResults } from '../../domain.types/patient/emergency.contact/emergency.contact.search.types';
+import { EmergencyContactDomainModel } from '../../domain.types/users/patient/emergency.contact/emergency.contact.domain.model';
+import { EmergencyContactDto } from '../../domain.types/users/patient/emergency.contact/emergency.contact.dto';
+import { EmergencyContactSearchFilters, EmergencyContactSearchResults } from '../../domain.types/users/patient/emergency.contact/emergency.contact.search.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,7 +65,7 @@ export class EmergencyContactService {
     //#region Privates
 
     private updateDto = async (dto: EmergencyContactDto): Promise<EmergencyContactDto> => {
-        
+
         if (dto == null) {
             return null;
         }
@@ -86,7 +86,7 @@ export class EmergencyContactService {
 
         return dto;
     };
-    
+
     //#endregion
 
 }

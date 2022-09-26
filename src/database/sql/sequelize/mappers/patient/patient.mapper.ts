@@ -1,4 +1,4 @@
-import { PatientDetailsDto, PatientDto } from "../../../../../domain.types/patient/patient/patient.dto";
+import { PatientDetailsDto, PatientDto } from "../../../../../domain.types/users/patient/patient/patient.dto";
 import Patient from '../../models/patient/patient.model';
 
 ///////////////////////////////////////////////////////////////////////////////////

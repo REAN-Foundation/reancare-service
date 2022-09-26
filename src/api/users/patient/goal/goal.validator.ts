@@ -1,7 +1,7 @@
 import express from 'express';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
-import { GoalDomainModel } from '../../../../domain.types/patient/goal/goal.domain.model';
-import { GoalSearchFilters } from '../../../../domain.types/patient/goal/goal.search.types';
+import { GoalDomainModel } from '../../../../domain.types/users/patient/goal/goal.domain.model';
+import { GoalSearchFilters } from '../../../../domain.types/users/patient/goal/goal.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////

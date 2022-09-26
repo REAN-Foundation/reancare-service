@@ -8,10 +8,10 @@ import { Logger } from "../common/logger";
 import { TimeHelper } from "../common/time.helper";
 import { ConfigurationManager } from "../config/configuration.manager";
 import { IFileResourceRepo } from "../database/repository.interfaces/file.resource.repo.interface";
-import { FileResourceUpdateModel, FileResourceUploadDomainModel } from '../domain.types/file.resource/file.resource.domain.model';
-import { FileResourceDetailsDto, FileResourceDto } from '../domain.types/file.resource/file.resource.dto';
-import { FileResourceSearchFilters, FileResourceSearchResults } from '../domain.types/file.resource/file.resource.search.types';
-import { FileResourceMetadata } from "../domain.types/file.resource/file.resource.types";
+import { FileResourceUpdateModel, FileResourceUploadDomainModel } from '../domain.types/general/file.resource/file.resource.domain.model';
+import { FileResourceDetailsDto, FileResourceDto } from '../domain.types/general/file.resource/file.resource.dto';
+import { FileResourceSearchFilters, FileResourceSearchResults } from '../domain.types/general/file.resource/file.resource.search.types';
+import { FileResourceMetadata } from "../domain.types/general/file.resource/file.resource.types";
 import { DateStringFormat, DurationType } from "../domain.types/miscellaneous/time.types";
 import { IFileStorageService } from '../modules/storage/interfaces/file.storage.service.interface';
 
@@ -38,7 +38,7 @@ export class FileResourceService {
 
             //First add resource definition
             resource = await this.uploadDefaultVersion(domainModel);
-            
+
             var imageVersions = await this.generateImageVersions(domainModel);
             for await (var versionMetadata of imageVersions) {
                 var storageKey = await this.uploadFileToStorage(versionMetadata);
@@ -62,12 +62,12 @@ export class FileResourceService {
         storageLocation: string,
         isPublicResource: boolean
     ): Promise<FileResourceDto> => {
-        
+
         var exists = fs.existsSync(sourceLocation);
         if (!exists) {
             Logger.instance().log('Source file location does not exist!');
         }
-        
+
         var storageKey:string = null;
         var existingStorageKey = await this._storageService.exists(storageLocation);
         if (existingStorageKey !== undefined && existingStorageKey !== null) {
@@ -79,7 +79,7 @@ export class FileResourceService {
 
         var stats = fs.statSync(sourceLocation);
         var filename = path.basename(sourceLocation);
-        
+
         var metadata: FileResourceMetadata = {
             Version        : '1',
             OriginalName   : filename,
@@ -96,7 +96,7 @@ export class FileResourceService {
             MimeType               : Helper.getMimeType(sourceLocation),
             IsPublicResource       : isPublicResource,
         };
-        
+
         var resource = await this._fileResourceRepo.create(domainModel);
 
         var versions = [];
@@ -131,7 +131,7 @@ export class FileResourceService {
         }
 
         //await this._storageService.rename(resource.DefaultVersion.StorageKey, newFileName);
-        
+
         return await this._fileResourceRepo.rename(id, newFileName);
     };
 
@@ -296,10 +296,10 @@ export class FileResourceService {
 
         versions.push(version);
         resource.Versions = versions;
-        
+
         return resource;
     }
-   
+
     private async uploadFileToStorage(fileMetadata: FileResourceMetadata) {
 
         var dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
@@ -307,7 +307,7 @@ export class FileResourceService {
         var storageKey = 'resources/' + dateFolder + '/' + filename;
 
         await this._storageService.upload(storageKey, fileMetadata.SourceFilePath);
-        
+
         return storageKey;
     }
 
@@ -318,14 +318,14 @@ export class FileResourceService {
                 fs.readdirSync(source, { withFileTypes: true })
                     .filter(dirent => dirent.isDirectory())
                     .map(dirent => dirent.name);
-    
+
             var cleanupBeforeInMinutes = ConfigurationManager.TemporaryFolderCleanupBefore();
-            
+
             var cleanupBefore = TimeHelper.subtractDuration(
                 new Date(), cleanupBeforeInMinutes, DurationType.Minute);
 
             var directories = getDirectories(parentFolder);
-    
+
             for await (var d of directories) {
                 var tmp = new Date();
                 tmp.setTime(parseInt(d));
@@ -340,7 +340,7 @@ export class FileResourceService {
         catch (error) {
             Logger.instance().log(error.message);
         }
-    
+
     }
 
     private isSupportedImageType = (mimeType: string): boolean => {

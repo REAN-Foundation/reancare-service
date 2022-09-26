@@ -34,10 +34,10 @@ import {
     TextQueryAnswer
 } from "../../../domain.types/clinical/assessment/assessment.types";
 import { FormDto } from "../../../domain.types/clinical/assessment/form.types";
-import { FileResourceDto } from "../../../domain.types/file.resource/file.resource.dto";
+import { FileResourceDto } from "../../../domain.types/general/file.resource/file.resource.dto";
 import { ProgressStatus, uuid } from "../../../domain.types/miscellaneous/system.types";
 import { DateStringFormat } from "../../../domain.types/miscellaneous/time.types";
-import { PatientDetailsDto } from "../../../domain.types/patient/patient/patient.dto";
+import { PatientDetailsDto } from "../../../domain.types/users/patient/patient/patient.dto";
 import { Roles } from "../../../domain.types/role/role.types";
 import { ThirdpartyApiCredentialsDomainModel, ThirdpartyApiCredentialsDto } from "../../../domain.types/thirdparty/thirdparty.api.credentials";
 import { FormsHandler } from "../../../modules/forms/forms.handler";
@@ -66,7 +66,7 @@ export class FormsService {
     public getFormsList = async (connectionModel: ThirdpartyApiCredentialsDto): Promise<FormDto[]> => {
         return await FormsHandler.getFormsList(connectionModel);
     };
-    
+
     public importFormAsAssessmentTemplate = async (connectionModel: ThirdpartyApiCredentialsDto, providerFormId: string)
             : Promise<CAssessmentTemplate> => {
         var downloadedFilepath = await FormsHandler.downloadForm(connectionModel, providerFormId);
@@ -102,7 +102,7 @@ export class FormsService {
 
         const keysLastName = ['LastName', 'lastName', 'Last_Name', 'last_name'];
         var lastName = Helper.getValueForEitherKeys(submission, keysLastName);
-                
+
         return { phone, email, firstName, lastName };
     };
 
@@ -153,7 +153,7 @@ export class FormsService {
         providerFormId: string,
         submission: any)
         : Promise<AssessmentDto> => {
-        
+
         const submissionKeys = Object.keys(submission);
         if (Helper.isEmptyObject(submission)) {
             return null;
@@ -244,7 +244,7 @@ export class FormsService {
         | BooleanQueryAnswer
         | FileQueryAnswer
         | BiometricQueryAnswer> => {
-            
+
         if (node.NodeType === AssessmentNodeType.Question) {
             const nd = node as CAssessmentQuestionNode;
             if (nd.QueryResponseType === QueryResponseType.SingleChoiceSelection) {
@@ -300,7 +300,7 @@ export class FormsService {
         const fileResourceService = Loader.container.resolve(FileResourceService);
         return await fileResourceService.uploadLocal(sourceLocation, storageKey, false);
     };
-    
+
     private async getSingleChoiceQueryResponse(
         value: any, nd: CAssessmentQuestionNode,
         assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {
@@ -348,7 +348,7 @@ export class FormsService {
         };
         return answer;
     }
-    
+
     private async getTextQueryResponse(
         value: any, nd: CAssessmentQuestionNode,
         assessmentId: string, node: CAssessmentQuestionNode | CAssessmentListNode | CAssessmentMessageNode) {

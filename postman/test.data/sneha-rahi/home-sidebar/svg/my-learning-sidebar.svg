@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="35" viewBox="0 0 32 35">
+    <defs>
+        <clipPath id="re9ops4t6a">
+            <circle data-name="Ellipse 266" cx="16" cy="16" r="16" transform="translate(18 255)" style="fill:#fff"/>
+        </clipPath>
+    </defs>
+    <g data-name="Group 2253" transform="translate(-18 -252)">
+        <circle data-name="Ellipse 276" cx="16" cy="16" r="16" transform="translate(18 255)" style="fill:#fff"/>
+        <g data-name="Mask Group 12" style="clip-path:url(#re9ops4t6a)">
+            <g data-name="Group 11">
+                <path d="m0 9.42 1.062-4.97a3.5 3.5 0 0 1-.926-2.511C.329-.823 4.158-.215 4.9 1.179s.659 4.929-.3 5.178a3.4 3.4 0 0 1-2.034-.648l.519 3.711z" transform="translate(25.137 262.45)" style="fill:#c69f89"/>
+                <path d="M25.962 267.523c-.387-1.729-1.49-2.908-1.322-3.681a1.313 1.313 0 0 1 .9-.961 2.025 2.025 0 0 1 2.432-1.304c2.056.227 3.312 1.086 2.77 2.973a4.326 4.326 0 0 0-1.931.129c-.4.148-.566.915-.566.915h-.377s-.545-.911-1.079-.67-.242 1.173-.242 1.173l-.185 1.426z"/>
+                <path data-name="Seat Stuff" d="M3.55 0h9.93l1.3 16H0z" style="fill:#c5cfd6" transform="translate(16.011 287.999)"/>
+                <path data-name="Seat Stuff" d="M3.55 0H6.6l1.832 16H0z" style="fill:rgba(0,0,0,.1)" transform="translate(16.011 287.999)"/>
+                <path d="M.182 16.464s-.334-6.016-.1-8.63c.269-2.984.6-5.575.79-6.515.459-2.243 3.547-1.2 3.547 0 0 2.73-2.616 15.273-2.616 15.273z" transform="rotate(20 -785.922 248.36)" style="fill:#b28b67"/>
+                <path data-name="LegLower" d="M.231 17.74A85.441 85.441 0 0 1 .1 7.841c.273-2.986.6-5.578.8-6.519.462-2.245 3.547-1.2 3.546 0 0 2.731-2.486 15.6-2.616 16.416S.311 18.765.231 17.74z" transform="translate(39.2 285.032)" style="fill:#b28b67"/>
+                <path data-name="LegLower" d="M0 14.422.642 1.33c.471-2.263 4.487-1.208 4.487.006 0 2.754-1.638 12.267-1.638 13.088z" transform="rotate(20 -785.696 247.089)" style="fill:#191847"/>
+                <path d="M.585.615A.262.262 0 0 0 .25.792L0 1.671A8.406 8.406 0 0 0 .118 2.7H7.5s.288-.951-.332-1.027-1.03-.137-1.03-.137L2.706.011a.131.131 0 0 0-.174.07l-.22.535a2.966 2.966 0 0 1-.932.268z" transform="rotate(30 -539.844 208.653)" style="fill:#191847"/>
+                <path data-name="shoe" d="M.575.939a.257.257 0 0 0-.33.174L0 1.98A8.32 8.32 0 0 0 .116 3h7.25s.283-.938-.326-1.013-1.012-.135-1.012-.135L2.658.343a.128.128 0 0 0-.171.069L2.27.939a2.9 2.9 0 0 1-.916.264z" transform="translate(38.89 301.001)" style="fill:#191847"/>
+                <path data-name="Leg and Butt" d="M21.95 4.7c0 3.428-1.622 11.424-1.623 12.179h-3.489s.766-10.7.543-10.818-9.133.893-11.8.893C1.723 6.958.129 4.519 0 0h7.633C9.187.167 17.294 1.808 20.3 2.373A2.129 2.129 0 0 1 21.95 4.7z" transform="translate(22.052 282.58)" style="fill:#2f3676"/>
+                <path d="m.293 0 4.743 1.858a11.012 11.012 0 0 1 2.983.365c.212.11.5.37-.218.505S6.328 3.037 6.3 3.3s.472.442.363.821q-.11.379-2.3-1.137L0 2.407z" transform="rotate(14.98 -1037.59 268.946)" style="fill:#c69f89"/>
+                <path data-name="Coat Back" d="M1.734 0C4.973 3.459 8.92 5.718 14.3 7.724l-1.193 2.4C7.558 9.59 4.589 9.167 2.259 5.7A50.8 50.8 0 0 1 0 .291z" transform="rotate(14.98 -1009.149 235.247)" style="fill:#51814f"/>
+                <path d="M0 14.71h9.9S6.534 4.414 6.461.577c0-.13-.242-.36-.349-.33A4.283 4.283 0 0 1 3.621 0C1.275 3.788.463 8.452 0 14.71z" transform="translate(22.052 269.031)" style="fill:#f2f2f2"/>
+                <path data-name="Clothes Jacket" d="M.183 17.885H5.46c4.368 0 3.262-8.926.3-17.885H4.225a.7.7 0 0 0-.635.436C1.547 4.39-.655 12.231.183 17.885z" transform="translate(20.757 269.031)" style="fill:#70ae6e"/>
+            </g>
+        </g>
+        <g data-name="Ellipse 277" transform="translate(18 255)" style="stroke:#5b7aa3;fill:none">
+            <circle cx="16" cy="16" r="16" style="stroke:none"/>
+            <circle cx="16" cy="16" r="15.5" style="fill:none"/>
+        </g>
+        <g data-name="Group 1939" transform="translate(34 252.191)">
+            <path d="M2 0h9a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2z" transform="translate(0 -.191)" style="fill:#ccc"/>
+            <circle cx="1" cy="1" r="1" transform="translate(6 19.809)" style="fill:#fff"/>
+            <ellipse cy=".5" ry=".5" transform="translate(6 .809)" style="fill:#fff"/>
+            <rect width="3" height="1" rx=".5" transform="translate(5 .809)" style="fill:#fff"/>
+            <rect data-name="Container" width="11" height="4" rx="1" transform="translate(1 2.809)" style="fill:#fff"/>
+            <rect width="5.809" height=".645" rx=".322" transform="translate(1.97 4.195)" style="fill:#dde3e9"/>
+            <rect data-name="Label" width="3.899" height=".645" rx=".322" transform="translate(1.97 5.269)" style="fill:#dde3e9"/>
+            <circle cx="1" cy="1" r="1" transform="translate(9 3.809)" style="fill:#dde3e9"/>
+            <circle transform="translate(10 3.809)" style="fill:#f2f2f2"/>
+            <rect data-name="Background" width="11" height="4" rx="1" transform="translate(1 7.809)" style="fill:#fff"/>
+            <rect width="5.809" height=".501" rx=".251" transform="translate(4.875 8.842)" style="fill:#dde3e9"/>
+            <rect data-name="Name" width="3.899" height=".501" rx=".251" transform="translate(4.875 9.678)" style="fill:#dde3e9"/>
+            <circle cx="1" cy="1" r="1" transform="translate(2 8.809)" style="fill:#c5cfd6"/>
+            <ellipse data-name="Indicator" cy=".5" ry=".5" transform="translate(10 11.809)" style="fill:#f2f2f2"/>
+            <rect data-name="Background" width="11" height="6" rx="1" transform="translate(1 12.809)" style="fill:#fff"/>
+            <rect data-name="Name" width="5.809" height=".501" rx=".251" transform="translate(4.358 14.143)" style="fill:#dde3e9"/>
+            <rect data-name="Name" width="3.899" height=".501" rx=".251" transform="translate(4.358 14.978)" style="fill:#dde3e9"/>
+            <circle data-name="Avatar" cx="1" cy="1" r="1" transform="translate(2 13.809)" style="fill:#c5cfd6"/>
+        </g>
+        <path data-name="Arm" d="m.3 0 4.744 1.843a11.028 11.028 0 0 1 2.985.357c.212.109.5.368-.22.505s-1.475.313-1.509.58.471.441.361.819q-.111.379-2.3-1.129L0 2.405z" transform="rotate(-38 408.606 84.041)" style="fill:#c69f89"/>
+        <path data-name="Clothes Back" d="M.115 1.167c2.816-.006 7.522.59 12.973-1.167l.524 2.629C8.927 5.653 4.174 7.882.232 6.6c-.659-.219.343-2.092-.117-5.433z" transform="translate(26.178 267.87)" style="fill:#70ae6e"/>
+    </g>
+</svg>

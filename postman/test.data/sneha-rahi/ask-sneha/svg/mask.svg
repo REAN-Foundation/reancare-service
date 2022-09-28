@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+    <defs>
+        <clipPath id="1ncp7r6wla">
+            <circle data-name="Ellipse 333" cx="18" cy="18" r="18" transform="translate(-.176)" style="fill:#fff;stroke:#707070"/>
+        </clipPath>
+    </defs>
+    <g data-name="Mask Group 61" transform="translate(.176)" style="clip-path:url(#1ncp7r6wla)">
+        <path data-name="Rectangle 4678" transform="translate(-13.033 -8.069)" style="fill:#70ae6e" d="M0 0h60.429v54.621H0z"/>
+        <g data-name="Group 2183">
+            <path data-name="Head" d="m0 28.026 3.285-14.785A10.2 10.2 0 0 1 .42 5.769c.6-8.216 12.443-6.409 14.747-2.262s2.033 14.665-.947 15.406c-1.188.3-3.718-.428-6.293-1.927l1.616 11.04z" transform="translate(9.918 10.872)" style="fill:#b28b67"/>
+            <path d="M12.47 25.751c-1.198-5.145-4.61-8.652-4.089-10.951a4 4 0 0 1 2.778-2.858s1.168-4.562 7.529-3.881 10.245 3.232 8.568 8.845c-1.541 0-3.4-.538-5.975.384-1.225.439-1.754 2.722-1.754 2.722h-1.161s-1.693-2.71-3.339-1.991-.748 3.489-.748 3.489l-.572 4.241z"/>
+        </g>
+    </g>
+</svg>

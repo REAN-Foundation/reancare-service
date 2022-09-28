@@ -86,5 +86,125 @@
         ],
         "Tags": "Saturated fats, cholesterol, heart disease, stroke"
 
+    },
+    {
+        "TopicName": "Heart attack",
+        "BriefInformation": "Heart attacks occur when the blood flow to a part of the heart is blocked, usually by a blood clot. If this clot cuts off blood flow completely, the part of the heart muscle supplied by that artery begins to die.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "Heart attack"
+
+    },
+    {
+        "TopicName": "Stroke",
+        "BriefInformation": "Stroke occurs when a blood vessel that feeds the brain gets blocked or bursts. When that happens, part of the brain can’t get the blood (and oxygen) it needs. Brain tissue then begins to die.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "Stroke"
+
+    },
+    {
+        "TopicName": "Cholesterol",
+        "BriefInformation": "Cholesterol is a waxy substance that circulates in the blood. Your body needs it to build cells and make vitamins and other hormones. However, as the amount of cholesterol in your blood increases, so does the risk to your health. High cholesterol contributes to a higher risk of cardiovascular diseases, such as heart disease and stroke.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "Cholesterol"
+
+    },
+    {
+        "TopicName": "HDL Cholesterol",
+        "BriefInformation": "HDL cholesterol is called “good” cholesterol. A healthy HDL-cholesterol level may protect against heart attack and stroke. HDL takes cholesterol away from your arteries and back to the liver. There, it’s processed so that excess can be removed from your body. HDL may also remove cholesterol from plaque in the arteries.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "HDL Cholesterol"
+
+    },
+    {
+        "TopicName": "LDL Cholesterol",
+        "BriefInformation": "LDL cholesterol is known as “bad” cholesterol. The body’s tissues use some of this cholesterol to build cells. But too much of it can cause fatty buildups inside your arteries. With LDL, lower is better to reduce heart attack and stroke risk in people who are at high risk.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "LDL Cholesterol"
+
+    },
+    {
+        "TopicName": "Triglycerides",
+        "BriefInformation": "Triglycerides are the most common type of fat in your body. They come from food, and your body also makes them. They store excess energy from your diet.A high triglyceride level combined with high LDL (bad) cholesterol or low HDL (good) cholesterol is linked with fatty buildups within the artery walls. This increases the risk of heart attack and stroke.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "Triglycerides"
+
+    },
+    {
+        "TopicName": "High blood pressure ",
+        "BriefInformation": "High blood pressure, also called hypertension, means the pressure in your arteries is consistently above the normal range. Blood pressure is the force of blood pushing against blood vessel walls. It’s recorded as two numbers, such as 122/78 mm Hg. The top number (systolic) is the pressure when the heart beats. The bottom number (diastolic) is the pressure when the heart rests between beats.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "High blood pressure"
+
+    },
+    {
+        "TopicName": "Life's Essential 8",
+        "BriefInformation": "Life’s Essential 8 are the key measures for improving and maintaining cardiovascular health, as defined by the American Heart Association. Better cardiovascular health helps lower the risk for heart disease, stroke and other major health problems. They include: Eat Better, Be More Active, Quit Tobacco, Get Healthy Sleep, Manage Weight, Control Cholesterol, Manage Blood Sugar and Manage Blood Pressure.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "Life's Essential 8"
+
+    },
+    {
+        "TopicName": "ASCVD",
+        "BriefInformation": "Atherosclerotic cardiovascular disease, otherwise known as ASCVD, is caused by plaque buildup in arterial walls and refers to conditions that include: Coronary Heart Disease (CHD), such as myocardial infarction, angina, and coronary artery stenosis.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "ASCVD"
+
+    },
+    {
+        "TopicName": "Statins (HMG-CoA reductase inhibitors)",
+        "BriefInformation": "Statins (HMG-CoA reductase inhibitors) prevent the production of cholesterol in the liver. Their major effect is to lower LDL (bad) cholesterol.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "Statins"
+
+    },
+    {
+        "TopicName": "Ezetimibe (cholesterol absorption inhibitors)",
+        "BriefInformation": "Ezetimibe (cholesterol absorption inhibitors) works by preventing cholesterol from being absorbed in the intestine. It’s the most commonly used non-statin agent.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "Ezetimibe (cholesterol absorption inhibitors)"
+
+    },
+    {
+        "TopicName": "PCSK9 inhibitors",
+        "BriefInformation": "PCSK9 inhibitors are powerful LDL-lowering drugs. They bind to and inactivate a protein in liver to lower LDL (bad) cholesterol. Some names are alirocumab and evolocumab.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "PCSK9 inhibitors"
+
+    },
+    {
+        "TopicName": "Hyperlipidemia",
+        "BriefInformation": "Hyperlipidemia means your blood has too many lipids (or fats), such as cholesterol and triglycerides. One type of hyperlipidemia, hypercholesterolemia, means you have too much non-HDL cholesterol and LDL (bad) cholesterol in your blood. This condition increases fatty deposits in arteries and the risk of blockages.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "Hyperlipidemia"
+
+    },
+    {
+        "TopicName": "Familial hypercholesterolemia (FH)",
+        "BriefInformation": "Familial hypercholesterolemia (FH) is an inherited defect in how the body recycles LDL (bad) cholesterol. As a result, LDL levels in the blood remain very high. People with FH are essentially born with high LDL cholesterol.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "Familial hypercholesterolemia(FH)"
+
+    },
+    {
+        "TopicName": "Support Network",
+        "BriefInformation": "Signing up at www.heart.org/SupportNetwork is easy, and membership is free — putting advice, encouragement and reliable, helpful information at your fingertips whenever you need.",
+        "DetailedInformation": "",
+        "AdditionalResources": [],
+        "Tags": "Support Network"
+
     }
 ]

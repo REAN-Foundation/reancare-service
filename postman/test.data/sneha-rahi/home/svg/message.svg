@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="94" height="94" viewBox="0 0 94 94">
+    <defs>
+        <filter id="4qt1cy4r7a" x="0" y="0" width="94" height="94" filterUnits="userSpaceOnUse">
+            <feOffset dx="5" dy="5"/>
+            <feGaussianBlur stdDeviation="5" result="blur"/>
+            <feFlood flood-opacity=".161"/>
+            <feComposite operator="in" in2="blur"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <filter id="pa08d7ot2c" x="0" y="0" width="94" height="94" filterUnits="userSpaceOnUse">
+            <feOffset dx="5" dy="5"/>
+            <feGaussianBlur stdDeviation="5" result="blur-2"/>
+            <feFlood flood-opacity=".161"/>
+            <feComposite operator="in" in2="blur-2"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <clipPath id="huvgg2oc9b">
+            <circle data-name="Ellipse 307" cx="32.044" cy="32.044" style="fill:#fff" r="32.044"/>
+        </clipPath>
+    </defs>
+    <g data-name="Group 1973">
+        <g data-name="Group 1972">
+            <g style="filter:url(#4qt1cy4r7a)">
+                <circle data-name="Ellipse 302" cx="32" cy="32" r="32" transform="translate(10 10)" style="fill:#dfe7fd"/>
+            </g>
+            <g data-name="Mask Group 36" transform="translate(9.34 10)" style="clip-path:url(#huvgg2oc9b)">
+                <path data-name="Head" d="m0 0 5.119 23.862C2.265 27.213.332 31.321.655 35.922c.931 13.26 19.389 10.343 22.98 3.65S26.8 15.9 22.158 14.708c-1.851-.477-5.793.691-9.806 3.11L14.871 0z" transform="rotate(180 33.129 32.045)" style="fill:#b28b67"/>
+            </g>
+            <path data-name="Path 44" d="M56.859 39.582h-12.51a2.632 2.632 0 0 0-2.681 2.681v7.15a2.689 2.689 0 0 0 2.681 2.681h8.936l3.574 3.574v-3.574a2.689 2.689 0 0 0 2.681-2.681v-7.15a2.633 2.633 0 0 0-2.681-2.681z" transform="translate(-12.456 -6.333)" style="fill:#5b7aa3"/>
+            <path data-name="Path 45" d="M31.859 25h-12.51a2.632 2.632 0 0 0-2.681 2.681v7.15a2.689 2.689 0 0 0 2.681 2.681v3.574l3.574-3.574H25.6v-3.574a4.425 4.425 0 0 1 4.469-4.469h4.469v-1.788A2.635 2.635 0 0 0 31.859 25z" transform="translate(1.82 1.994)" style="fill:#5b7aa3"/>
+            <g style="filter:url(#pa08d7ot2c)">
+                <g data-name="Ellipse 312" transform="translate(10 10)" style="stroke:#fff;stroke-width:2px;fill:none">
+                    <circle cx="32" cy="32" r="32" style="stroke:none"/>
+                    <circle cx="32" cy="32" r="31" style="fill:none"/>
+                </g>
+            </g>
+        </g>
+        <path d="M72.62 52.873c1.866-8.3 7.184-13.964 6.372-17.675a6.317 6.317 0 0 0-4.329-4.616s-1.819-7.358-11.732-6.259-15.96 5.215-13.351 14.274c2.4 0 5.3-.869 9.311.62 1.908.708 2.73 4.393 2.73 4.393h1.812s2.638-4.373 5.2-3.214 1.166 5.631 1.166 5.631l.893 6.846z"/>
+    </g>
+</svg>

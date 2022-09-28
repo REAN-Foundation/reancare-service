@@ -1,5 +1,5 @@
 import { Gender } from "../miscellaneous/system.types";
-import { AddressDto } from "../address/address.dto";
+import { AddressDto } from "../general/address/address.dto";
 import { PersonRoleDto } from "../role/person.role.dto";
 
 //////////////////////////////////////////////////////////////////////////////

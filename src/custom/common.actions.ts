@@ -2,15 +2,15 @@ import { Loader } from '../startup/loader';
 import { TimeHelper } from '../common/time.helper';
 import { DurationType } from '../domain.types/miscellaneous/time.types';
 import { AssessmentDomainModel } from '../domain.types/clinical/assessment/assessment.domain.model';
-import { UserTaskDomainModel } from '../domain.types/user/user.task/user.task.domain.model';
-import { UserActionType, UserTaskCategory } from '../domain.types/user/user.task/user.task.types';
+import { UserTaskDomainModel } from '../domain.types/users/user.task/user.task.domain.model';
+import { UserActionType, UserTaskCategory } from '../domain.types/users/user.task/user.task.types';
 import { Logger } from '../common/logger';
 import { AssessmentTemplateService } from '../services/clinical/assessment/assessment.template.service';
 import { AssessmentService } from '../services/clinical/assessment/assessment.service';
-import { UserTaskService } from '../services/user/user.task.service';
+import { UserTaskService } from '../services/users/user/user.task.service';
 import { uuid } from '../domain.types/miscellaneous/system.types';
-import { CustomTaskService } from '../services/user/custom.task.service';
-import { CustomTaskDomainModel } from '../domain.types/user/custom.task/custom.task.domain.model';
+import { CustomTaskService } from '../services/users/user/custom.task.service';
+import { CustomTaskDomainModel } from '../domain.types/users/custom.task/custom.task.domain.model';
 import { ApiError } from '../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ export class CommonActions {
             ActionType         : UserActionType.Careplan,
             ActionId           : assessmentId,
             ScheduledStartTime : new Date(),
-            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 1, DurationType.Day),
+            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 9, DurationType.Day),
             IsRecurrent        : false
         };
 

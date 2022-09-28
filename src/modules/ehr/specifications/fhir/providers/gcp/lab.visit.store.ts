@@ -1,7 +1,7 @@
 import { healthcare_v1 } from 'googleapis';
 import { ILabVisitStore } from '../../../../interfaces/lab.visit.store.interface';
 import { GcpHelper } from './helper.gcp';
-import { LabVisitDomainModel } from '../../../../../../domain.types/lab.visit/lab.visit.domain.model';
+import { LabVisitDomainModel } from '../../../../../../domain.types/clinical/lab.visit/lab.visit.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class GcpLabVisitStore implements ILabVisitStore {
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
         return data;
     };
-    
+
     update = async (resourceId:string, updates: LabVisitDomainModel): Promise<any> => {
         const resourceType = 'Encounter';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -50,7 +50,7 @@ export class GcpLabVisitStore implements ILabVisitStore {
                 display : "inpatient encounter"
             }
         };
-        
+
         if (model.EhrId != null) {
             resource['subject'] = {
                 reference : `Patient/${model.EhrId}`
@@ -131,7 +131,7 @@ export class GcpLabVisitStore implements ILabVisitStore {
                 }
             ];
         }
-        
+
         return existingResource;
     }
 

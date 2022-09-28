@@ -1,5 +1,5 @@
-import { LabRecordType } from "../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.types";
-import { LabRecordDto } from "../../../../../../domain.types/clinical/lab.records/lab.record/lab.record.dto";
+import { LabRecordType } from "../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types";
+import { LabRecordDto } from "../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
 
 export class LabRecordMapper {
 
@@ -22,9 +22,9 @@ export class LabRecordMapper {
             ReportId       : labRecord.ReportId,
             OrderId        : labRecord.OrderId,
             RecordedAt     : labRecord.RecordedAt,
-            
+
         };
-        
+
         return dto;
     };
 

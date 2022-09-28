@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PatientDomainModel } from '../../../../domain.types/patient/patient/patient.domain.model';
+import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
 import { IPatientStore } from '../../interfaces/patient.store.interface';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@ export class MockPatientStore implements IPatientStore {
     getById = async (resourceId: string): Promise<any> => {
         return null;
     };
-    
+
     search = async (filter: any): Promise<any> => {
         return null;
     };

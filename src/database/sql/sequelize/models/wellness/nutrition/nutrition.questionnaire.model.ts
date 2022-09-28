@@ -13,7 +13,7 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import FileResource from '../../file.resource/file.resource.model';
+import FileResource from '../../general/file.resource/file.resource.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -58,8 +58,8 @@ export default class NutritionQuestionnaire extends Model {
 
     @Length({ max: 128 })
     @Column({
-        type         : DataType.STRING(128),
-        allowNull    : true,
+        type      : DataType.STRING(128),
+        allowNull : true,
     })
     Tags: string;
 

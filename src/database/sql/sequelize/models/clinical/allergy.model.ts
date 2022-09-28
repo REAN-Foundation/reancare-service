@@ -17,7 +17,7 @@ import { Severity, SeverityList } from '../../../../../domain.types/miscellaneou
 import { AllergenExposureRoutes, AllergenExposureRoutesList } from '../../../../../domain.types/clinical/allergy/allergy.types';
 
 import { v4 } from 'uuid';
-import User from '../user/user.model';
+import User from '../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 

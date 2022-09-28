@@ -13,10 +13,11 @@ import CareplanActivity from "../../../models/clinical/careplan/careplan.activit
 import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { CareplanActivityMapper } from '../../../mappers/clinical/careplan/activity.mapper';
 import { Op } from 'sequelize';
-import { HealthPriorityDto } from '../../../../../../domain.types/patient/health.priority/health.priority.dto';
-import HealthPriority from '../../../models/patient/health.priority/health.priority.model';
-import { HealthPriorityMapper } from '../../../mappers/patient/health.priority/health.priority.mapper';
+import { HealthPriorityDto } from '../../../../../../domain.types/users/patient/health.priority/health.priority.dto';
+import HealthPriority from '../../../models/users/patient/health.priority.model';
+import { HealthPriorityMapper } from '../../../mappers/users/patient/health.priority.mapper';
 import { Helper } from '../../../../../../common/helper';
+import UserTask from '../../../models/users/user/user.task.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -56,15 +57,15 @@ export class CareplanRepo implements ICareplanRepo {
     public enrollPatient = async (model: EnrollmentDomainModel): Promise<EnrollmentDto> => {
         try {
             const entity = {
-                PatientUserId : model.PatientUserId,
-                Provider      : model.Provider,
-                ParticipantId : model.ParticipantId,
-                EnrollmentId  : model.EnrollmentId,
-                PlanCode      : model.PlanCode,
-                PlanName      : model.PlanName,
-                StartDate     : model.StartDate,
-                EndDate       : model.EndDate,
-                Gender        : model.Gender,
+                PatientUserId       : model.PatientUserId,
+                Provider            : model.Provider,
+                ParticipantStringId : model.ParticipantId,
+                EnrollmentStringId  : model.EnrollmentId,
+                PlanCode            : model.PlanCode,
+                PlanName            : model.PlanName,
+                StartDate           : model.StartDate,
+                EndDate             : model.EndDate,
+                Gender              : model.Gender,
             };
             const enrollment = await CareplanEnrollment.create(entity);
             return EnrollmentMapper.toDto(enrollment);
@@ -82,6 +83,20 @@ export class CareplanRepo implements ICareplanRepo {
                 }
             });
             return EnrollmentMapper.toDto(enrollment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public getAllCareplanEnrollment = async (): Promise<EnrollmentDto[]> => {
+        try {
+            const enrollment = await CareplanEnrollment.findAll({
+                where : {}
+            });
+            return enrollment.map(x => {
+                return EnrollmentMapper.toDto(x);
+            });
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -158,7 +173,7 @@ export class CareplanRepo implements ICareplanRepo {
                 }
                 activityEntities.push(entity);
             });
-            
+
             const records = await CareplanActivity.bulkCreate(activityEntities);
 
             var dtos = [];
@@ -290,7 +305,7 @@ export class CareplanRepo implements ICareplanRepo {
         : Promise<CareplanActivityDto> => {
         try {
             var record = await CareplanActivity.findByPk(activityId);
-            
+
             record.RawContent = JSON.stringify(activityDetails.RawContent);
             if (!record.Title) {
                 record.Title = activityDetails.Title;
@@ -391,8 +406,7 @@ export class CareplanRepo implements ICareplanRepo {
 
             const foundResults = await CareplanActivity.findAndCountAll({
                 where : {
-                    Provider : "REAN",
-                    PlanName : "Maternity Careplan"
+                    Provider : "REAN"
                 },
                 order : [[orderByColum, order]]
             });
@@ -405,6 +419,63 @@ export class CareplanRepo implements ICareplanRepo {
 
         } catch (error) {
             Logger.instance().log(error.message);
+        }
+    };
+
+    public updateRisk = async (model: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+        try {
+            const updateRisk = await CareplanEnrollment.findOne({
+                where : {
+                    PatientUserId : model.PatientUserId,
+                    Provider      : model.Provider,
+                    PlanCode      : model.PlanCode,
+                },
+            });
+
+            if (model.Complication != null) {
+                updateRisk.Complication = model.Complication;
+            }
+            if (model.HasHighRisk != null) {
+                updateRisk.HasHighRisk = model.HasHighRisk;
+            }
+
+            await updateRisk.save();
+
+            return EnrollmentMapper.toDto(updateRisk);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public deleteFutureCareplanTask = async (enrollment: EnrollmentDomainModel): Promise<number> => {
+        try {
+            var selector = {
+                where : {
+                    Provider      : enrollment.Provider,
+                    PlanCode      : enrollment.PlanCode,
+                    PatientUserId : enrollment.PatientUserId,
+                    ScheduledAt   : { [Op.gte]: new Date() }
+                }
+            };
+
+            const ids = (await CareplanActivity.findAll(selector)).map(x => x.id);
+            const deletedCount = await CareplanActivity.destroy(selector);
+            Logger.instance().log(`Deleted ${deletedCount} careplan task.`);
+
+            if (deletedCount > 0) {
+                var deletedTaskCount = await UserTask.destroy({
+                    where : {
+                        ActionId : ids, //ActionType : UserTaskActionType.Medication
+                    }
+                });
+                Logger.instance().log(`Deleted ${deletedTaskCount} careplan associated user tasks.`);
+
+            }
+            return deletedCount;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
         }
     };
 

@@ -1,18 +1,19 @@
-import { PatientService } from '../services/patient/patient.service';
+import { PatientService } from '../services/users/patient/patient.service';
 import { Loader } from '../startup/loader';
-import { PatientDetailsDto } from '../domain.types/patient/patient/patient.dto';
+import { PatientDetailsDto } from '../domain.types/users/patient/patient/patient.dto';
 import { TimeHelper } from '../common/time.helper';
-import { CustomTaskDomainModel } from '../domain.types/user/custom.task/custom.task.domain.model';
-import { UserTaskCategory } from '../domain.types/user/user.task/user.task.types';
+import { CustomTaskDomainModel } from '../domain.types/users/custom.task/custom.task.domain.model';
+import { UserTaskCategory } from '../domain.types/users/user.task/user.task.types';
 import { Logger } from '../common/logger';
 import { AssessmentTemplateService } from '../services/clinical/assessment/assessment.template.service';
 import { AssessmentService } from '../services/clinical/assessment/assessment.service';
-import { UserTaskService } from '../services/user/user.task.service';
-import { UserTaskSearchFilters } from '../domain.types/user/user.task/user.task.search.types';
+import { UserTaskService } from '../services/users/user/user.task.service';
+import { UserTaskSearchFilters } from '../domain.types/users/user.task/user.task.search.types';
 import { uuid } from '../domain.types/miscellaneous/system.types';
 import { CommonActions } from './common.actions';
 import { EnrollmentDomainModel } from '../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { CareplanService } from '../services/clinical/careplan.service';
+import { UserDeviceDetailsService } from '../services/users/user/user.device.details.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,12 +31,15 @@ export class AHAActions {
 
     _careplanService: CareplanService = null;
 
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
+
     constructor() {
         this._patientService = Loader.container.resolve(PatientService);
         this._assessmentService = Loader.container.resolve(AssessmentService);
         this._userTaskService = Loader.container.resolve(UserTaskService);
         this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
         this._careplanService = Loader.container.resolve(CareplanService);
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
     }
 
     //#region Public
@@ -58,13 +62,13 @@ export class AHAActions {
             const patientUserIds = await this._patientService.getAllPatientUserIds();
             Logger.instance().log(`[KCCQTask] Patients being processed for custom task: ${JSON.stringify(patientUserIds.length)}`);
             for await (var patientUserId of patientUserIds) {
-                var enrollments = await this._careplanService.getPatientEnrollments(patientUserId);
-                var activeEnrollments = [];
-                enrollments.forEach(enrollment => {
-                    activeEnrollments.push(enrollment.PlanCode);
+                var userDevices = await this._userDeviceDetailsService.getByUserId(patientUserId);
+                var userAppRegistrations = [];
+                userDevices.forEach(userDevice => {
+                    userAppRegistrations.push(userDevice.AppName);
                 });
 
-                if (activeEnrollments.length > 0 && activeEnrollments.indexOf('HeartFailure') !== -1) {
+                if (userAppRegistrations.length > 0 && this.eligibleForKCCQTask(userAppRegistrations)) {
                     Logger.instance().log(`Creating quality of life questionnaire task for patient:${patientUserId}`);
                     const assessmentTemplateName = 'Quality of Life Questionnaire';
                     await this.triggerAssessmentTask_QualityOfLife(patientUserId, assessmentTemplateName);
@@ -78,6 +82,7 @@ export class AHAActions {
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public performActions_PostCareplanEnrollment = async (model: EnrollmentDomainModel) => {
         try {
             //Please move post enrollment actions here...
@@ -273,8 +278,8 @@ export class AHAActions {
         else {
             const taskCreationDate = userTask.Items[0].CreatedAt;
             const dayDiff = TimeHelper.dayDiff(new Date(), taskCreationDate);
-            if (dayDiff > 1) {
-                Logger.instance().log(`[KCCQTask] Creating custom task as 1 days have passed.
+            if (dayDiff > 30) {
+                Logger.instance().log(`[KCCQTask] Creating custom task as 30 days have passed.
                         PatientUserId: ${JSON.stringify(patientUserId)}`);
                 await this._commonActions.createAssessmentTask(patientUserId, assessmentTemplateName);
             } else {
@@ -283,6 +288,15 @@ export class AHAActions {
             }
         }
     };
+
+    private eligibleForKCCQTask = (userAppRegistrations) => {
+
+        const eligibleForKCCQTask =
+        userAppRegistrations.indexOf('HF Helper') >= 0 ||
+        userAppRegistrations.indexOf('REAN HealthGuru') >= 0;
+
+        return eligibleForKCCQTask;
+    }
 
     //#endregion
 

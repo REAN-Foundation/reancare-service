@@ -9,25 +9,25 @@ import { Helper } from "../../../../common/helper";
 import { CareplanActivity } from "../../../../domain.types/clinical/careplan/activity/careplan.activity";
 import { ParticipantDomainModel } from "../../../../domain.types/clinical/careplan/participant/participant.domain.model";
 import { ProgressStatus } from "../../../../domain.types/miscellaneous/system.types";
-import { UserActionType, UserTaskCategory } from "../../../../domain.types/user/user.task/user.task.types";
+import { UserActionType, UserTaskCategory } from "../../../../domain.types/users/user.task/user.task.types";
 import {
     QueryResponseType,
     CAssessmentQueryResponse,
     CAssessmentTemplate,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AhaAssessmentConverter } from "./aha.assessment.converter";
-import { ActionPlanDto } from "../../../../domain.types/action.plan/action.plan.dto";
-import { HealthPriorityType } from "../../../../domain.types/patient/health.priority.type/health.priority.types";
-import { GoalDto } from "../../../../domain.types/patient/goal/goal.dto";
+import { ActionPlanDto } from "../../../../domain.types/users/patient/action.plan/action.plan.dto";
+import { HealthPriorityType } from "../../../../domain.types/users/patient/health.priority.type/health.priority.types";
+import { GoalDto } from "../../../../domain.types/users/patient/goal/goal.dto";
 import { AssessmentDto } from "../../../../domain.types/clinical/assessment/assessment.dto";
 import { BiometricsType } from "../../../../domain.types/clinical/biometrics/biometrics.types";
-import { HealthPriorityDto } from "../../../../domain.types/patient/health.priority/health.priority.dto";
+import { HealthPriorityDto } from "../../../../domain.types/users/patient/health.priority/health.priority.dto";
 import { AssessmentService } from "../../../../services/clinical/assessment/assessment.service";
 import { Loader } from '../../../../startup/loader';
-import { UserTaskService } from '../../../../services/user/user.task.service';
+import { UserTaskService } from '../../../../services/users/user/user.task.service';
 import { AssessmentTemplateRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.template.repo';
 import { AssessmentDomainModel } from "../../../../domain.types/clinical/assessment/assessment.domain.model";
-import { UserTaskDomainModel } from "../../../../domain.types/user/user.task/user.task.domain.model";
+import { UserTaskDomainModel } from "../../../../domain.types/users/user.task/user.task.domain.model";
 import { TimeHelper } from "../../../../common/time.helper";
 import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
 
@@ -998,6 +998,10 @@ export class AhaCareplanService implements ICareplanService {
         catch (error) {
             throw new ApiError(500, 'Unable to extract news items from the RSS feed!');
         }
+    }
+
+    scheduleDailyHighRiskCareplan(): Promise<void> {
+        throw new Error("Method not implemented.");
     }
 
     //#endregion

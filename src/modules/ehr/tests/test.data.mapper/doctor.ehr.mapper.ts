@@ -1,7 +1,7 @@
-import { DoctorDomainModel } from '../../../../domain.types/doctor/doctor.domain.model';
-import { UserDomainModel } from '../../../../domain.types/user/user/user.domain.model';
+import { DoctorDomainModel } from '../../../../domain.types/users/doctor/doctor.domain.model';
+import { UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
-import { AddressDomainModel } from "../../../../domain.types/address/address.domain.model";
+import { AddressDomainModel } from "../../../../domain.types/general/address/address.domain.model";
 import { Helper } from "../../../../common/helper";
 
 import path from 'path';

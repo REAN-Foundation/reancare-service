@@ -1,7 +1,7 @@
 import { GcpHelper } from './helper.gcp';
 import { healthcare_v1 } from 'googleapis';
 import { IHospitalOrganizationStore } from '../../../../interfaces/hospital.organization.store.interface';
-import { OrganizationDomainModel } from '../../../../../../domain.types/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../../../../domain.types/general/organization/organization.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@ export class GcpHospitalOrganizationStore implements IHospitalOrganizationStore 
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
         return data;
     };
-    
+
     update = async (resourceId:string, updates: OrganizationDomainModel): Promise<any> => {
         const resourceType = 'Organization';
         var data = await GcpHelper.getResourceById(resourceId, resourceType);
@@ -45,7 +45,7 @@ export class GcpHospitalOrganizationStore implements IHospitalOrganizationStore 
                     text : "hospital"
                 }
             ],
-            
+
             telecom : []
         };
 
@@ -66,7 +66,7 @@ export class GcpHospitalOrganizationStore implements IHospitalOrganizationStore 
                 value  : model.ContactEmail
             });
         }
-        
+
         if (model.AddressIds != null) {
             resource['address'] = [
                 {
@@ -94,11 +94,11 @@ export class GcpHospitalOrganizationStore implements IHospitalOrganizationStore 
     }
 
     updateHospitalFhirResource(updates: OrganizationDomainModel, existingResource: any): any {
-        
+
         existingResource.resourceType = "Organization";
 
         existingResource.telecom = [];
-        
+
         if (updates.Name != null) {
             existingResource['name'] = updates.Name;
         }
@@ -144,5 +144,5 @@ export class GcpHospitalOrganizationStore implements IHospitalOrganizationStore 
     }
 
     //#endregion
-    
+
 }

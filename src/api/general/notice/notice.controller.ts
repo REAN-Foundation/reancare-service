@@ -30,7 +30,7 @@ export class NoticeController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('General.Notice.Create', request, response);
+            await this.setContext('Notice.Create', request, response);
 
             const model = await this._validator.create(request);
             const notice = await this._service.create(model);
@@ -49,7 +49,7 @@ export class NoticeController extends BaseController {
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('General.Notice.GetById', request, response);
+            await this.setContext('Notice.GetById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const notice = await this._service.getById(id);
@@ -68,7 +68,7 @@ export class NoticeController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('General.Notice.Search', request, response);
+            await this.setContext('Notice.Search', request, response);
             const filters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
 
@@ -90,7 +90,7 @@ export class NoticeController extends BaseController {
     update = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('General.Notice.Update', request, response);
+            await this.setContext('Notice.Update', request, response);
 
             const domainModel = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -115,7 +115,7 @@ export class NoticeController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('General.Notice.Delete', request, response);
+            await this.setContext('Notice.Delete', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
@@ -139,16 +139,15 @@ export class NoticeController extends BaseController {
     createAction = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('General.Notice.CreateAction', request, response);
+            await this.setContext('Notice.CreateAction', request, response);
 
             const userId = request.currentUser.UserId;
             const model = await this._validator.createAction(request);
             const entity: NoticeActionDomainModel = {
-                UserId        : userId,
-                NoticeId      : model.NoticeId,
-                Action        : model.Action,
-                ActionContent : model.ActionContent,
-                ActionTakenAt : model.ActionTakenAt
+                UserId   : userId,
+                NoticeId : model.NoticeId,
+                Action   : model.Action,
+                Contents : model.Contents,
             };
 
             const noticeAction = await this._service.createAction(entity);
@@ -167,7 +166,7 @@ export class NoticeController extends BaseController {
     getActionById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            await this.setContext('General.Notice.GetActionById', request, response);
+            await this.setContext('Notice.GetActionById', request, response);
 
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const noticeAction = await this._service.getActionById(id);

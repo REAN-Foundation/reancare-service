@@ -11,7 +11,7 @@ export const register = (app: express.Application): void => {
     const controller = new NoticeController();
 
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.post('/:noticeId/actions/:actionName', authenticator.authenticateClient,
+    router.post('/:id/users/:userId/take-action', authenticator.authenticateClient,
         authenticator.authenticateUser, controller.createAction);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
@@ -20,5 +20,5 @@ export const register = (app: express.Application): void => {
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
 
-    app.use('/api/v1/general/notices', router);
+    app.use('/api/v1/notices', router);
 };

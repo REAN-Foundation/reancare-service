@@ -100,13 +100,13 @@
             "FoodComponentMonitoring.Update",
             "FoodComponentMonitoring.Delete",
             "User.Logout",
-            "General.Notice.Create",
-            "General.Notice.GetById",
-            "General.Notice.Update",
-            "General.Notice.Search",
-            "General.Notice.Delete",
-            "General.Notice.CreateAction",
-            "General.Notice.GetActionById",
+            "Notice.Create",
+            "Notice.GetById",
+            "Notice.Update",
+            "Notice.Search",
+            "Notice.Delete",
+            "Notice.CreateAction",
+            "Notice.GetActionById",
             "Course.Create",
             "Course.GetById",
             "Course.Update",
@@ -488,7 +488,10 @@
             "LabRecord.Delete",
             "Donor.Search",
             "Donor.GetByUserId",
-            "Donor.UpdateByUserId"
+            "Donor.UpdateByUserId",
+            "Notice.GetById",
+            "Notice.Search",
+            "Notice.CreateAction"
         ]
     },
     {

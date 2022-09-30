@@ -67,6 +67,7 @@ import { register as registerUserLearningRoutes } from './educational/learning/u
 import { register as registerLabRecordRoutes } from './clinical/lab.record/lab.record.routes';
 import { register as registerTestRoutes } from './general/test/test.routes';
 import { register as registerDonorRoutes } from './users/donor/donor.routes';
+import { register as registerNotificationRoutes } from './general/notification/notification.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -158,6 +159,7 @@ export class Router {
                 registerLabRecordRoutes(this._app);
                 registerTestRoutes(this._app);
                 registerDonorRoutes(this._app);
+                registerNotificationRoutes(this._app);
 
                 resolve(true);
 

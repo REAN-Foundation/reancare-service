@@ -140,7 +140,9 @@
             "LabRecord.GetById",
             "LabRecord.Search",
             "LabRecord.Update",
-            "LabRecord.Delete"
+            "LabRecord.Delete",
+            "Notification.Create"
+            
         ]
     },
     {
@@ -489,9 +491,17 @@
             "Donor.Search",
             "Donor.GetByUserId",
             "Donor.UpdateByUserId",
+<<<<<<< HEAD
             "Notice.GetById",
             "Notice.Search",
             "Notice.CreateAction"
+=======
+            "Notification.GetById",
+            "Notification.Search",
+            "Notification.MarkAsRead",
+            "Notification.Update",
+            "Notification.Delete"
+>>>>>>> origin/notifications_refactoring
         ]
     },
     {

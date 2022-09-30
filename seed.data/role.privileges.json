@@ -140,7 +140,9 @@
             "LabRecord.GetById",
             "LabRecord.Search",
             "LabRecord.Update",
-            "LabRecord.Delete"
+            "LabRecord.Delete",
+            "Notification.Create"
+            
         ]
     },
     {
@@ -488,7 +490,12 @@
             "LabRecord.Delete",
             "Donor.Search",
             "Donor.GetByUserId",
-            "Donor.UpdateByUserId"
+            "Donor.UpdateByUserId",
+            "Notification.GetById",
+            "Notification.Search",
+            "Notification.MarkAsRead",
+            "Notification.Update",
+            "Notification.Delete"
         ]
     },
     {

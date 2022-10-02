@@ -9,6 +9,7 @@ export interface DonorSearchFilters {
     Name?: string;
     Gender?: Gender;
     BloodGroup? : string,
+    AcceptorUserId? : string,
     MedIssues? : string,
     IsAvailable? : boolean,
     HasDonatedEarlier? : boolean,

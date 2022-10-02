@@ -36,6 +36,8 @@ export class DonorValidator {
             },
             MedIssues         : request.body.MedIssues ?? null,
             BloodGroup        : request.body.BloodGroup ?? null,
+            AcceptorUserId    : request.body.AcceptorUserId ?? null,
+            LastDonationDate  : request.body.LastDonationDate ?? null,
             IsAvailable       : request.body.IsAvailable ?? false,
             HasDonatedEarlier : request.body.HasDonatedEarlier ?? false,
             AddressId         : request.body.AddressId,
@@ -121,6 +123,16 @@ export class DonorValidator {
             .escape()
             .run(request);
 
+        await body('AcceptorUserId').optional()
+            .trim()
+            .escape()
+            .run(request);
+
+        await body('LastDonationDate').optional()
+            .trim()
+            .escape()
+            .run(request);
+
         await body('MedIssues').optional()
             .run(request);
 
@@ -165,6 +177,11 @@ export class DonorValidator {
 
         await query('gender').optional()
             .isAlpha()
+            .trim()
+            .escape()
+            .run(request);
+
+        await query('acceptorUserId').optional()
             .trim()
             .escape()
             .run(request);
@@ -272,6 +289,7 @@ export class DonorValidator {
             Email             : request.query.email ?? null,
             Name              : request.query.name ?? null,
             Gender            : request.query.gender ?? null,
+            AcceptorUserId    : request.query.acceptorUserId ?? null,
             BloodGroup        : request.query.bloodGroup ?? null,
             MedIssues         : request.query.medIssues ?? null,
             IsAvailable       : request.query.isAvailable ?? null,

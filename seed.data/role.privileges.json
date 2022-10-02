@@ -140,7 +140,8 @@
             "LabRecord.GetById",
             "LabRecord.Search",
             "LabRecord.Update",
-            "LabRecord.Delete"
+            "LabRecord.Delete",
+            "Person.GetAllPersonsWithPhone"
         ]
     },
     {
@@ -488,7 +489,8 @@
             "LabRecord.Delete",
             "Donor.Search",
             "Donor.GetByUserId",
-            "Donor.UpdateByUserId"
+            "Donor.UpdateByUserId",
+            "Person.GetAllPersonsWithPhone"
         ]
     },
     {
@@ -803,7 +805,8 @@
             "LabRecord.Delete",
             "Donor.Search",
             "Donor.GetByUserId",
-            "Donor.UpdateByUserId"
+            "Donor.UpdateByUserId",
+            "Person.GetAllPersonsWithPhone"
         ]
     },
     {

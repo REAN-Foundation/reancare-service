@@ -74,4 +74,22 @@ export class PersonValidator {
         return { phone, roleId };
     };
 
+    static getAllPersonsWithPhone = async (request: express.Request)
+        : Promise<{ phone: string }> => {
+
+        await param('phone').trim()
+            .escape()
+            .run(request);
+
+        const result = validationResult(request);
+
+        if (!result.isEmpty()) {
+            Helper.handleValidationError(result);
+        }
+
+        const phone = request.params.phone;
+
+        return { phone };
+    };
+
 }

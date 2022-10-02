@@ -74,7 +74,12 @@ export class HealthProfileRepo implements IHealthProfileRepo {
             if (patientHealthProfile == null) {
                 throw new Error("Cannot find health-profile for the patient.");
             }
-
+            if (patientHealthProfileDomainModel.BloodTransfusionDate !== undefined) {
+                patientHealthProfile.BloodTransfusionDate = patientHealthProfileDomainModel.BloodTransfusionDate;
+            }
+            if (patientHealthProfileDomainModel.BloodDonationCycle !== undefined) {
+                patientHealthProfile.BloodDonationCycle = patientHealthProfileDomainModel.BloodDonationCycle;
+            }
             if (patientHealthProfileDomainModel.BloodGroup !== undefined) {
                 patientHealthProfile.BloodGroup = patientHealthProfileDomainModel.BloodGroup;
             }

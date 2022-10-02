@@ -2,6 +2,8 @@ export interface HealthProfileDto {
     id                  : string;
     PatientUserId?      : string;
     BloodGroup?         : string;
+    BloodTransfusionDate? : Date;
+    BloodDonationCycle? : number;
     MajorAilment?       : string;
     OtherConditions?    : string;
     IsDiabetic?         : boolean;

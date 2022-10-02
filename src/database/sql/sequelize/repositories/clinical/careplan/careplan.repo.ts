@@ -406,7 +406,9 @@ export class CareplanRepo implements ICareplanRepo {
 
             const foundResults = await CareplanActivity.findAndCountAll({
                 where : {
-                    Provider : "REAN"
+                    Provider : {
+                        [Op.or] : ["REAN", "REAN_BW"]
+                    },
                 },
                 order : [[orderByColum, order]]
             });

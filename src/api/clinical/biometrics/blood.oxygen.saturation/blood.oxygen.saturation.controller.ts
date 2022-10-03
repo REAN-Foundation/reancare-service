@@ -7,8 +7,8 @@ import { Loader } from '../../../../startup/loader';
 import { BloodOxygenSaturationValidator } from './blood.oxygen.saturation.validator';
 import { BaseController } from '../../../base.controller';
 import { BloodOxygenSaturationDomainModel } from '../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.domain.model';
-import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
-import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,7 +39,7 @@ export class BloodOxygenSaturationController extends BaseController {
             if (bloodOxygenSaturation == null) {
                 throw new ApiError(400, 'Cannot create record for blood oxygen saturation!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, bloodOxygenSaturation.id, model);
             ResponseHandler.success(request, response, 'Blood oxygen saturation record created successfully!', 201, {
                 BloodOxygenSaturation : bloodOxygenSaturation,
             });
@@ -107,7 +107,7 @@ export class BloodOxygenSaturationController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood oxygen saturation record!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, id, model);
             ResponseHandler.success(request, response, 'Blood oxygen saturation record updated successfully!', 200, {
                 BloodOxygenSaturation : updated,
             });
@@ -144,10 +144,14 @@ export class BloodOxygenSaturationController extends BaseController {
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, model: BloodOxygenSaturationDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BloodOxygenSaturationDomainModel) => {
         if (model.BloodOxygenSaturation) {
-            EHRMasterRecordsHandler.addFloatRecord(
-                patientUserId, EHRRecordTypes.BloodOxygenSaturation, model.BloodOxygenSaturation, model.Unit);
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.BloodOxygenSaturation,
+                model.BloodOxygenSaturation,
+                model.Unit);
         }
     }
 

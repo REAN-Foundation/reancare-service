@@ -14,12 +14,12 @@ import { v4 } from 'uuid';
 
 @Table({
     timestamps      : true,
-    modelName       : 'EHRRecordSet',
-    tableName       : 'ehr_record_sets',
+    modelName       : 'DynamicEHRData',
+    tableName       : 'dynamic_ehr_data',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class EHRRecordSet extends Model {
+export default class DynamicEHRData extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -38,6 +38,13 @@ export default class EHRRecordSet extends Model {
         allowNull : false,
     })
     PatientUserId: string;
+
+    @IsUUID(4)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    RecordId: string;
 
     @Length({ max: 256 })
     @Column({
@@ -58,98 +65,52 @@ export default class EHRRecordSet extends Model {
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    PrimaryValueString: string;
+    ValueString: string;
 
     @Column({
         type      : DataType.INTEGER,
         allowNull : true,
     })
-    PrimaryValueInt: number;
+    ValueInt: number;
 
     @Column({
         type      : DataType.FLOAT,
         allowNull : true,
     })
-    PrimaryValueFloat: number;
+    ValueFloat: number;
 
     @Column({
         type      : DataType.BOOLEAN,
         allowNull : true,
     })
-    PrimaryValueBoolean: boolean;
+    ValueBoolean: boolean;
 
     @Column({
         type      : DataType.DATE,
         allowNull : true,
     })
-    PrimaryValueDate: Date;
+    ValueDate: Date;
 
     @Length({ max: 256 })
     @Column({
         type      : DataType.STRING(256),
         allowNull : true,
     })
-    PrimaryValueName: string;
+    ValueName: string;
 
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),
         allowNull : true,
     })
-    PrimaryValueDataType: string;
+    ValueDataType: string;
 
     @Length({ max: 64 })
     @Column({
         type      : DataType.STRING(64),
         allowNull : true,
     })
-    PrimaryValueUnit: string;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    SecondaryValueString: string;
-
-    @Column({
-        type      : DataType.INTEGER,
-        allowNull : true,
-    })
-    SecondaryValueInt: number;
-
-    @Column({
-        type      : DataType.FLOAT,
-        allowNull : true,
-    })
-    SecondaryValueFloat: number;
-
-    @Column({
-        type      : DataType.BOOLEAN,
-        allowNull : true,
-    })
-    SecondaryValueBoolean: boolean;
-
-    @Length({ max: 256 })
-    @Column({
-        type      : DataType.STRING(256),
-        allowNull : true,
-    })
-    SecondaryValueName: string;
-
-    @Length({ max: 64 })
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    SecondaryValueDataType: string;
-
-    @Length({ max: 64 })
-    @Column({
-        type      : DataType.STRING(64),
-        allowNull : true,
-    })
-    SecondaryValueUnit: string;
+    ValueUnit: string;
 
     @Length({ max: 64 })
     @Column({

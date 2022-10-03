@@ -7,8 +7,8 @@ import { Loader } from '../../../../startup/loader';
 import { BodyTemperatureValidator } from './body.temperature.validator';
 import { BaseController } from '../../../base.controller';
 import { BodyTemperatureDomainModel } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.domain.model';
-import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,7 +40,7 @@ export class BodyTemperatureController extends BaseController {
             if (bodyTemperature == null) {
                 throw new ApiError(400, 'Cannot create record for body temperature!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, bodyTemperature.id, model);
             ResponseHandler.success(request, response, 'Body temperature record created successfully!', 201, {
                 BodyTemperature : bodyTemperature,
             });
@@ -105,7 +105,7 @@ export class BodyTemperatureController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update body temperature record!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, id, model);
             ResponseHandler.success(request, response, 'Body temperature record updated successfully!', 200, {
                 BodyTemperature : updated,
             });
@@ -142,10 +142,10 @@ export class BodyTemperatureController extends BaseController {
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, model: BodyTemperatureDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BodyTemperatureDomainModel) => {
         if (model.BodyTemperature) {
-            EHRMasterRecordsHandler.addFloatRecord(
-                patientUserId, EHRRecordTypes.BodyTemperature, model.BodyTemperature, model.Unit);
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId, recordId, EHRRecordTypes.BodyTemperature, model.BodyTemperature, model.Unit);
         }
     }
 

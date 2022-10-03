@@ -19,14 +19,14 @@ export class PulseService {
         @inject('IPulseRepo') private _pulseRepo: IPulseRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
-            this._ehrPulseStore = Loader.container.resolve(PulseStore);    
+            this._ehrPulseStore = Loader.container.resolve(PulseStore);
         }
     }
 
     create = async (pulseDomainModel: PulseDomainModel):
     Promise<PulseDto> => {
 
-        if (this._ehrPulseStore) {            
+        if (this._ehrPulseStore) {
             const ehrId = await this._ehrPulseStore.add(pulseDomainModel);
             pulseDomainModel.EhrId = ehrId;
         }
@@ -46,7 +46,7 @@ export class PulseService {
     update = async (id: uuid, pulseDomainModel: PulseDomainModel):
     Promise<PulseDto> => {
         var dto = await this._pulseRepo.update(id, pulseDomainModel);
-        if (this._ehrPulseStore) { 
+        if (this._ehrPulseStore) {
             await this._ehrPulseStore.update(dto.EhrId, dto);
         }
         return dto;

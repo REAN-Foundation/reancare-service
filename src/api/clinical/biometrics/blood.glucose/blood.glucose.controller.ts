@@ -7,8 +7,8 @@ import { BloodGlucoseService } from '../../../../services/clinical/biometrics/bl
 import { Loader } from '../../../../startup/loader';
 import { BloodGlucoseValidator } from './blood.glucose.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,7 +39,7 @@ export class BloodGlucoseController extends BaseController {
             if (bloodGlucose == null) {
                 throw new ApiError(400, 'Cannot create record for blood glucose!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, bloodGlucose.id, model);
             ResponseHandler.success(request, response, 'Blood glucose record created successfully!', 201, {
                 BloodGlucose : bloodGlucose,
             });
@@ -106,7 +106,7 @@ export class BloodGlucoseController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood glucose record!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, id, model);
             ResponseHandler.success(request, response, 'Blood glucose record updated successfully!', 200, {
                 BloodGlucose : updated,
             });
@@ -142,10 +142,14 @@ export class BloodGlucoseController extends BaseController {
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, model: BloodGlucoseDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BloodGlucoseDomainModel) => {
         if (model.BloodGlucose) {
-            EHRMasterRecordsHandler.addFloatRecord(
-                patientUserId, EHRRecordTypes.BloodGlucose, model.BloodGlucose, model.Unit);
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.BloodGlucose,
+                model.BloodGlucose,
+                model.Unit);
         }
     }
 

@@ -118,6 +118,7 @@ export const ConditionOperatorTypeList: ConditionOperatorType[] = [
     ConditionOperatorType.IsTrue,
     ConditionOperatorType.IsFalse,
     ConditionOperatorType.Exists,
+    ConditionOperatorType.None,
 ];
 
 export enum ConditionCompositionType {

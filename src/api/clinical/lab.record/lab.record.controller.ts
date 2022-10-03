@@ -7,6 +7,9 @@ import { UserService } from '../../../services/users/user/user.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { LabRecordService } from '../../../services/clinical/lab.record/lab.record.service';
 import { LabRecordValidator } from './lab.record.validator';
+import { EHRAnalyticsHandler } from '../../../custom/ehr.analytics/ehr.analytics.handler';
+import { LabRecordDomainModel } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model';
+import { EHRRecordTypes } from '../../../custom/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,7 +42,7 @@ export class LabRecordController extends BaseController {
             if (labRecord == null) {
                 throw new ApiError(400, 'Cannot create lab record!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record created successfully!`, 201, {
                 LabRecord : labRecord,
             });
@@ -58,7 +61,6 @@ export class LabRecordController extends BaseController {
             if (labRecord == null) {
                 throw new ApiError(404, 'Lab record not found.');
             }
-
             ResponseHandler.success(request, response, `${labRecord.DisplayName} record retrieved successfully!`, 200, {
                 LabRecord : labRecord,
             });
@@ -93,18 +95,18 @@ export class LabRecordController extends BaseController {
 
             await this.setContext('LabRecord.Update', request, response);
 
-            const domainModel = await this._validator.update(request);
+            const model = await this._validator.update(request);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingRecord = await this._service.getById(id);
             if (existingRecord == null) {
                 throw new ApiError(404, 'Lab record not found.');
             }
 
-            const updated = await this._service.update(domainModel.id, domainModel);
+            const updated = await this._service.update(model.id, model);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update lab record!');
             }
-
+            this.addEHRRecord(model.PatientUserId, model);
             ResponseHandler.success(request, response, `${updated.DisplayName} record updated successfully!`, 200, {
                 LabRecord : updated,
             });
@@ -136,6 +138,19 @@ export class LabRecordController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#endregion
+
+    //#region Privates
+
+    private addEHRRecord = (patientUserId: uuid, model: LabRecordDomainModel) => {
+        if (model) {
+            EHRAnalyticsHandler.addIntegerRecord(
+                patientUserId,
+                model.id,
+                EHRRecordTypes.LabRecord, model.PrimaryValue, model.Unit, model.TypeName, model.DisplayName);
+        }
+    }
 
     //#endregion
 

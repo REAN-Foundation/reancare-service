@@ -51,6 +51,12 @@ export class AHAActions {
                 await this.createAHAHealthSurveyTask(patient);
                 await this._commonActions.createAssessmentTask(patient.UserId, 'Quality of Life Questionnaire');
             }
+
+            if (this.eligibleForMedicalProfileTask(clientCode)) {
+                await this._commonActions.createAssessmentTask(patient.UserId, 'Medical Profile Details');
+            } else {
+                Logger.instance().log(`Skipped creating medical profile task for patient : ${patient.UserId}.`);
+            }
         }
         catch (error) {
             Logger.instance().log(`Error performing post registration custom actions.`);
@@ -296,6 +302,17 @@ export class AHAActions {
         userAppRegistrations.indexOf('REAN HealthGuru') >= 0;
 
         return eligibleForKCCQTask;
+    }
+
+    private eligibleForMedicalProfileTask = (clientCode) => {
+
+        const eligibleClientCodes = [
+            'REANPTNT',
+            'REANDCTR',
+            'REANPTNTAHA'
+        ];
+
+        return eligibleClientCodes.indexOf(clientCode) >= 0;
     }
 
     //#endregion

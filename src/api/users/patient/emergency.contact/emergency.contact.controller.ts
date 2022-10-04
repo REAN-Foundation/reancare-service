@@ -14,7 +14,7 @@ import { UserService } from '../../../../services/users/user/user.service';
 import { Loader } from '../../../../startup/loader';
 import { EmergencyContactValidator } from './emergency.contact.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
+import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -156,9 +156,11 @@ export class EmergencyContactController extends BaseController {
             }
 
             if (domainModel.ContactRelation === EmergencyContactRoles.Doctor) {
-                await EHRMasterRecordsHandler.addOrUpdatePatient(
+                await EHRAnalyticsHandler.addOrUpdatePatient(
                     domainModel.PatientUserId,
-                    patientEmergencyContact.ContactPersonId
+                    {
+                        DoctorPersonId : patientEmergencyContact.ContactPersonId
+                    }
                 );
             }
 

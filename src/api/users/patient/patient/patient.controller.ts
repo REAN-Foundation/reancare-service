@@ -15,8 +15,7 @@ import { UserDeviceDetailsService } from '../../../../services/users/user/user.d
 import { PersonService } from '../../../../services/person/person.service';
 import { UserService } from '../../../../services/users/user/user.service';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
-import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -228,19 +227,25 @@ export class PatientController extends BaseUserController {
     //#region Privates
 
     private addPatientToEHRRecords = (patientUserId: uuid) => {
-        EHRMasterRecordsHandler.addOrUpdatePatient(patientUserId);
+        EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {});
     }
 
     private addEHRRecord = (patientUserId: uuid,
         model: PersonDomainModel) => {
         if (model.BirthDate) {
-            EHRMasterRecordsHandler.addDateRecord(patientUserId, EHRRecordTypes.Birthdate, model.BirthDate);
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                BirthDate : model.BirthDate
+            });
         }
         if (model.Gender) {
-            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.Gender, model.Gender);
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                Gender : model.Gender
+            });
         }
         if (model.MaritalStatus) {
-            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.BloodGroup, model.MaritalStatus);
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                MaritalStatus : model.MaritalStatus
+            });
         }
     }
 

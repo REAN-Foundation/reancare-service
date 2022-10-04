@@ -7,8 +7,8 @@ import { Loader } from '../../../../startup/loader';
 import { PulseValidator } from './pulse.validator';
 import { BaseController } from '../../../base.controller';
 import { PulseDomainModel } from '../../../../domain.types/clinical/biometrics/pulse/pulse.domain.model';
-import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -39,7 +39,7 @@ export class PulseController extends BaseController{
             if (pulse == null) {
                 throw new ApiError(400, 'Cannot create record for pulse!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, pulse.id, model);
             ResponseHandler.success(request, response, 'Pulse rate record created successfully!', 201, {
                 Pulse : pulse,
             });
@@ -106,7 +106,7 @@ export class PulseController extends BaseController{
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update pulse record!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, id, model);
             ResponseHandler.success(request, response, 'Pulse rate record updated successfully!', 200, {
                 Pulse : updated,
             });
@@ -143,10 +143,10 @@ export class PulseController extends BaseController{
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, model: PulseDomainModel) => {
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: PulseDomainModel) => {
         if (model.Pulse) {
-            EHRMasterRecordsHandler.addFloatRecord(
-                patientUserId, EHRRecordTypes.Pulse, model.Pulse, model.Unit);
+            EHRAnalyticsHandler.addIntegerRecord(
+                patientUserId, recordId, EHRRecordTypes.Pulse, model.Pulse, model.Unit);
         }
     }
 

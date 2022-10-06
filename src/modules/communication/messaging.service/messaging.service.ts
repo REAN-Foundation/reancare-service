@@ -48,7 +48,8 @@ export class MessagingService {
         
         const resp1 = await needle('post', url, obj, options);
         if (resp1.statusCode !== 200) {
-            throw new Error(`Failed to send message to phone number: ${toPhone}`);
+            Logger.instance().log(`Failed to send message to phone number: ${toPhone}`);
+            return false;
         }
         return true;
     };

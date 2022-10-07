@@ -8,8 +8,7 @@ import { HealthProfileService } from '../../../../services/users/patient/health.
 import { Loader } from '../../../../startup/loader';
 import { HealthProfileValidator } from './health.profile.validator';
 import { BaseController } from '../../../base.controller';
-import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -86,19 +85,59 @@ export class HealthProfileController extends BaseController{
 
     private addEHRRecord = (patientUserId: uuid, model: HealthProfileDomainModel) => {
         if (model.Race) {
-            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.Race, model.Race);
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                Race : model.Race
+            });
         }
         if (model.Ethnicity) {
-            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.Ethnicity, model.Ethnicity);
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                Ethnicity : model.Ethnicity
+            });
         }
         if (model.BloodGroup) {
-            EHRMasterRecordsHandler.addStringRecord(patientUserId, EHRRecordTypes.BloodGroup, model.BloodGroup);
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                BloodGroup : model.BloodGroup
+            });
         }
         if (model.IsDiabetic) {
-            EHRMasterRecordsHandler.addBooleanRecord(patientUserId, EHRRecordTypes.Diabetic, model.IsDiabetic);
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                IsDiabetic : model.IsDiabetic
+            });
         }
         if (model.IsSmoker) {
-            EHRMasterRecordsHandler.addBooleanRecord(patientUserId, EHRRecordTypes.Smoker, model.IsSmoker);
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                IsSmoker : model.IsSmoker
+            });
+        }
+        if (model.Nationality) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                Nationality : model.Nationality
+            });
+        }
+        if (model.HasHeartAilment) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                HasHeartAilment : model.HasHeartAilment
+            });
+        }
+        if (model.IsDiabetic) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                IsDiabetic : model.IsDiabetic
+            });
+        }
+        if (model.MaritalStatus) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                MaritalStatus : model.MaritalStatus
+            });
+        }
+        if (model.MaritalStatus) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                MaritalStatus : model.MaritalStatus
+            });
+        }
+        if (model.MaritalStatus) {
+            EHRAnalyticsHandler.addOrUpdatePatient(patientUserId, {
+                MaritalStatus : model.MaritalStatus
+            });
         }
     }
 

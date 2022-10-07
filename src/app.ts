@@ -6,7 +6,7 @@ import "reflect-metadata";
 import { Router } from './api/router';
 import { Logger } from './common/logger';
 import { ConfigurationManager } from "./config/configuration.manager";
-import { EHRDbConnector } from './custom/ehr.insights.records/ehr.db.connector';
+import { EHRDbConnector } from './custom/ehr.analytics/ehr.db.connector';
 import { Loader } from './startup/loader';
 
 /////////////////////////////////////////////////////////////////////////

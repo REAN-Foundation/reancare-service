@@ -14,6 +14,7 @@ import { CommonActions } from './common.actions';
 import { EnrollmentDomainModel } from '../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { CareplanService } from '../services/clinical/careplan.service';
 import { UserDeviceDetailsService } from '../services/users/user/user.device.details.service';
+import { AssessmentDto } from '../domain.types/clinical/assessment/assessment.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -110,6 +111,24 @@ export class AHAActions {
             Logger.instance().log(`Error performing post registration custom actions.`);
         }
     };
+
+    public performActions_GenerateAssessmentReport =
+        async (patientUserId: uuid, assessmentId: uuid, score: any): Promise<string> => {
+            try {
+                Logger.instance().log(`Performing post assessment report generation ...`);
+                const patient = await this._patientService.getByUserId(patientUserId);
+                const assessment = await this._assessmentService.getById(assessmentId);
+                if (assessment.Title.includes("Quality of Life Questionnaire")) {
+                    //This is KCCQ assessment,...
+                    const reportUrl = await this.generateKCCQAssessmentReport(patient, assessment, score);
+                    return reportUrl;
+                }
+                return '';
+            }
+            catch (error) {
+                Logger.instance().log(`Error performing post registration custom actions.`);
+            }
+        }
 
     //#endregion
 
@@ -296,6 +315,11 @@ export class AHAActions {
         userAppRegistrations.indexOf('REAN HealthGuru') >= 0;
 
         return eligibleForKCCQTask;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    generateKCCQAssessmentReport = async (patient: PatientDetailsDto, assessment: AssessmentDto, score: any) => {
+        throw new Error('Method not implemented.');
     }
 
     //#endregion

@@ -58,6 +58,19 @@ export class CustomActionsHandler {
         }
     };
 
+    public performActions_GenerateAssessmentReport = async (
+        patientUserId: uuid, assessmentId: uuid, score: any): Promise<any> => {
+        try {
+            if (this.isForAHA()) {
+                return await this._ahaActions.performActions_GenerateAssessmentReport(
+                    patientUserId, assessmentId, score);
+            }
+        }
+        catch (error) {
+            Logger.instance().log(`Error performing post registration custom actions.`);
+        }
+    };
+
     //#endregion
 
     //#region Privates

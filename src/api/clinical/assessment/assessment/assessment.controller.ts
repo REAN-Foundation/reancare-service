@@ -186,10 +186,13 @@ export class AssessmentController extends BaseController{
                 var customActions = new CustomActionsHandler();
                 var score = await customActions.performActions_PostAssessmentScoring(
                     assessment.PatientUserId, assessment.id);
+                const reportUrl = await customActions.performActions_GenerateAssessmentReport(
+                    assessment.PatientUserId, assessment.id, score);
 
                 ResponseHandler.success(request, response, 'Assessment started successfully!', 200, {
                     AssessmentId : assessment.id,
                     Score        : score,
+                    ReportUrl    : reportUrl,
                 });
             }
             else {
@@ -303,8 +306,11 @@ export class AssessmentController extends BaseController{
                     var customActions = new CustomActionsHandler();
                     var score = await customActions.performActions_PostAssessmentScoring(
                         assessment.PatientUserId, assessment.id);
+                    const reportUrl = await customActions.performActions_GenerateAssessmentReport(
+                        assessment.PatientUserId, assessment.id, score);
                     if (score) {
                         answerResponse['AssessmentScore'] = score;
+                        answerResponse['AssessmentScoreReport'] = reportUrl;
                     }
                 }
 
@@ -371,8 +377,11 @@ export class AssessmentController extends BaseController{
                     var customActions = new CustomActionsHandler();
                     var score = await customActions.performActions_PostAssessmentScoring(
                         assessment.PatientUserId, assessment.id);
+                    const reportUrl = await customActions.performActions_GenerateAssessmentReport(
+                        assessment.PatientUserId, assessment.id, score);
                     if (score) {
                         answerResponse['AssessmentScore'] = score;
+                        answerResponse['AssessmentScoreReport'] = reportUrl;
                     }
                 }
 

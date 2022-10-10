@@ -58,9 +58,9 @@ export class CommonActions {
         const assessment = await this._assessmentService.create(assessmentBody);
         const assessmentId = assessment.id;
 
-        var scheduledEndTime = null;
-        if (templateName === 'Quality of Life Questionnaire') {
-            scheduledEndTime = TimeHelper.addDuration(new Date(), 9, DurationType.Day);
+        var scheduledEndTime = TimeHelper.addDuration(new Date(), 9, DurationType.Day);
+        if (templateName === 'Medical Profile Details') {
+            scheduledEndTime = TimeHelper.addDuration(new Date(), 6, DurationType.Month);
         }
 
         const userTaskBody : UserTaskDomainModel = {

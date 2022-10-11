@@ -61,7 +61,7 @@ export class CareplanController extends BaseController {
             Logger.instance().log(`Start Date: ${JSON.stringify(startDate)}`);
 
             var endDate: Date = null;
-            if (model.PlanCode === 'Cholesterol') {
+            if (model.PlanCode === 'Cholesterol' || model.PlanCode === 'Stroke') {
                 if (model.EndDateStr) {
                     endDate = new Date(model.EndDateStr);
                     endDate = TimeHelper.addDuration(endDate, 1, DurationType.Day);

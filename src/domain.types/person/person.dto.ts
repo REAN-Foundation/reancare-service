@@ -32,4 +32,5 @@ export interface PersonDto {
     Email: string;
     Gender: Gender;
     BirthDate: Date;
+    TelegramChatId?: string;
 }

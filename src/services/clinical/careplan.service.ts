@@ -136,9 +136,13 @@ export class CareplanService implements IUserActionService {
                     if (num2 === num5){
                         const message = activity.Description;
                         const patient = await this.getPatient(activity.PatientUserId);
-                        const phoneNumber = patient.User.Person.Phone;
+                        let phoneNumber = patient.User.Person.Phone;
+                        if (activity.Provider === "REAN") {
+                            phoneNumber = patient.User.Person.TelegramChatId;
+                        }
                         let response = null;
-                        response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message);
+                        response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
+                            activity.Provider);
                         if (response === true) {
                             await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
                             Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);

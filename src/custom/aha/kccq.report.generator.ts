@@ -1,6 +1,10 @@
 import { AssessmentDto } from '../../domain.types/clinical/assessment/assessment.dto';
 import { PatientDetailsDto } from '../../domain.types/users/patient/patient/patient.dto';
 import { PDFGenerator } from '../../modules/reports/pdf.generator';
+import { htmlTextToPNG } from '../../common/html.renderer';
+import { TimeHelper } from '../../common/time.helper';
+import { Helper } from '../../common/helper';
+import { DateStringFormat } from '../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -8,7 +12,42 @@ export const generateReportPDF = async (
     patient: PatientDetailsDto,
     assessment: AssessmentDto,
     score: any) => {
-    throw new Error('Method not implemented.');
+
+    const reportModel = getReportModel(patient, assessment, score);
+    const htmlText = await generateChartHtml(score);
+    const chartImagePath = await htmlTextToPNG(htmlText, 400, 300);
+    const reportPDFPath = await exportReportToPDF(reportModel, chartImagePath);
+    return reportPDFPath;
+};
+
+const generateChartHtml = async (
+    score: any): Promise<string> => {
+    return '';
+};
+
+const getReportModel = (
+    patient: PatientDetailsDto,
+    assessment: AssessmentDto,
+    score: any) => {
+    
+    const patientName = patient.User.Person.DisplayName;
+    const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);
+    const assessmentDate = assessment.FinishedAt ?? new Date();
+    const assessmentDateStr = assessmentDate.toISOString().split('T')[0];
+    const reportDate = TimeHelper.getDateWithTimezone(assessmentDateStr, patient.User.DefaultTimeZone);
+    const reportDateStr = TimeHelper.getDateString(reportDate, DateStringFormat.YYYY_MM_DD);
+
+    return {
+        Name       : patientName,
+        DisplayId  : patient.DisplayId,
+        Age        : patientAge,
+        ReportDate : reportDateStr,
+        ...score
+    };
+};
+
+const exportReportToPDF = async (reportModel: any, chartImagePath: string) => {
+    return '';
 };
 
 // const exportOrderToPDF = async (drugOrderId, regenerate) => {

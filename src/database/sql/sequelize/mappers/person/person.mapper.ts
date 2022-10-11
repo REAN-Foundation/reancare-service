@@ -35,6 +35,7 @@ export class PersonMapper {
             Age                  : person.Age ?? age,
             Phone                : person.Phone,
             Email                : person.Email,
+            TelegramChatId       : person.TelegramChatId,
             ImageResourceId      : person.ImageResourceId,
             ActiveSince          : person.CreatedAt,
             Roles                : [],

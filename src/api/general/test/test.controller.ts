@@ -5,7 +5,7 @@ import { UserService } from '../../../services/users/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { Logger } from '../../../common/logger';
 import { CustomActionsHandler } from '../../../custom/custom.actions.handler';
-import { CommonActions } from '../../../custom/common.actions';
+import { CommonActions } from '../../../custom/common/common.actions';
 import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@ import { PatientDetailsDto } from '../domain.types/users/patient/patient/patient
 import { ConfigurationManager } from '../config/configuration.manager';
 import { Logger } from '../common/logger';
 import { uuid } from '../domain.types/miscellaneous/system.types';
-import { AHAActions } from './aha.actions';
+import { AHAActions } from './aha/aha.actions';
 import { EnrollmentDomainModel } from '../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////

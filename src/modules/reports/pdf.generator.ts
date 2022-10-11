@@ -1,0 +1,228 @@
+
+import fs from 'fs';
+import path from 'path';
+// import { Logger } from '../../common/logger';
+// import { ApiError } from '../../common/api.error';
+// import { Helper } from '../../common/helper';
+import pdfkit from 'pdfkit';
+
+export class PDFGenerator {
+
+    static getAbsoluteFilePath = async (filePrefix) => {
+
+        const TEMP_UPLOAD_FOLDER = path.join(process.cwd(), './tmp/resources/uploads/');
+    
+        var timestamp = new Date().getTime()
+            .toString();
+        var filename = filePrefix + timestamp + '.pdf';
+        var folderPath = path.join(TEMP_UPLOAD_FOLDER, timestamp);
+        await fs.promises.mkdir(folderPath, { recursive: true });
+        var absFilepath = path.join(folderPath, filename);
+        
+        return { absFilepath, filename };
+    };
+
+    // static SaveToS3 = async (absFilepath, filename, referencingItemId, referencingItemKeyword) => {
+    //     var fileDetails = [];
+    //     var fileStats = fs.statSync(absFilepath);
+    //     fileDetails.push({
+    //         name: filename,
+    //         path: absFilepath,
+    //         mimetype: Helper.getMimeType(absFilepath),
+    //         original_name: filename,
+    //         size: fileStats.size
+    //     });
+    //     Logger.instance().log('Storing in S3...');
+    //     var uploaded = await FileResourceService.UploadToS3(
+    //        null, fileDetails, false, referencingItemId, referencingItemKeyword, true);
+    //     for await (var d of fileDetails) {
+    //         //fs.unlinkSync(d.path); //Remove from temp folder
+    //     }
+    //     Logger.Log('Stored.');
+    //     return uploaded;
+    // };
+
+    createDocument = (title, author, writeStream) => {
+
+        const document = new pdfkit({
+            size : 'A4',
+            info : {
+                Title  : title,
+                Author : author,
+            },
+            margins : {
+                top    : 0,
+                bottom : 0,
+                left   : 0,
+                right  : 50
+            }
+        });
+        document.pipe(writeStream);
+        return document;
+    };
+    
+    AddOrderHeader = (document, model, y) => {
+    
+        var imageFile = path.join(process.cwd(), "./assets/images/REANCare_Header.png");
+    
+        document
+            .image(imageFile, 0, 0, { width: 595 })
+            .fillColor("#ffffff")
+            .font('Helvetica')
+            .fontSize(16)
+            .text(model.DoctorName, 100, y, { align: 'right' });
+    
+        document
+            .fontSize(7);
+    
+        y = y + 20;
+        if (model.Specialization != null){
+            document
+                .font('Helvetica')
+                .text(model.Specialization, 100, y, { align: "right" });
+        }
+    
+        document
+            .fontSize(9);
+    
+        y = y + 12;
+        if (model.DoctorPhonenumber != null){
+            document
+                .font('Helvetica-Bold')
+                .text(model.DoctorPhonenumber, 100, y, { align: "right" });
+        }
+        
+        document.moveDown();
+    
+        return y;
+    };
+    
+    AddOrderPageNumber = (document, page, totalPages) => {
+    
+        var pageNumber = 'Page: ' + page.toString() + ' of ' + totalPages.toString();
+    
+        document
+            .fontSize(8)
+            .fillColor('#222222')
+            .text(pageNumber, 0, 780, { align: "right" });
+    
+    };
+    
+    AddOrderFooter = (document, model, y) => {
+    
+        var imageFile = path.join(process.cwd(), "./assets/images/REANCare_Footer.png");
+    
+        document
+            .image(imageFile, 0, 800, { width: 595 });
+    
+        document
+            .fontSize(8)
+            .fillColor('#ffffff');
+        if (model.ClinicName != null){
+            document
+                .text(model.ClinicName, 100, 810, { align: "right" });
+        }
+    
+        document.fontSize(7);
+        if (model.ClinicAddress != null){
+            document
+                .text(model.ClinicAddress, 100, 822, { align: "right" });
+        }
+    
+        return y;
+    };
+    
+    DrawLine = (document, fromX, fromY, toX, toY) => {
+        document
+            .strokeColor("#aaaaaa")
+            .lineWidth(1)
+            .moveTo(fromX, fromY)
+            .lineTo(toX, toY)
+            .stroke();
+    };
+    
+    AddNewPage = (document) => {
+        
+        document.addPage({
+            size    : 'A4',
+            margins : {
+                top    : 0,
+                bottom : 0,
+                left   : 0,
+                right  : 50
+            }
+        });
+    };
+    
+    AddOrderMetadata = (y, document, model) => {
+    
+        y = y + 35;
+    
+        document
+            .fillColor('#444444')
+            .fontSize(10)
+            .text('Date: ' + model.OrderDate, 200, y, { align: "right" })
+            .moveDown();
+    
+        var imageFile = path.join(process.cwd(), "./assets/images/Prescription_symbol.png");
+        document
+            .image(imageFile, 50, y, { width: 25, height: 25, align: 'left' });
+    
+        y = y + 10;
+    
+        document
+            .fillColor('#444444')
+            .fontSize(16)
+            .font('Helvetica-Bold')
+            .text(model.DocumentTitle, 0, y, { align: "center" })
+            .moveDown();
+    
+        y = y + 30;
+    
+        //DrawLine(document, y);
+        document
+            .roundedRect(50, y, 500, 60, 1)
+            .lineWidth(0.1)
+            .fillOpacity(0.8)
+            //.fillAndStroke("#EBE0FF", "#6541A5");
+            .fill("#EBE0FF");
+    
+        y = y + 10;
+    
+        document
+            .fillOpacity(1.0)
+            .lineWidth(1)
+            .fill("#444444");
+    
+        document
+            .fillColor("#444444")
+            .font('Helvetica')
+            .fontSize(10);
+    
+        document
+            .font('Helvetica-Bold')
+            .text('Patient', 75, y, { align: "left" })
+            .font('Helvetica')
+            .text(model.PatientName, 175, y, { align: "left" })
+            .moveDown();
+    
+        y = y + 15;
+        document
+            .font('Helvetica-Bold')
+            .text('Patient ID', 75, y, { align: "left" })
+            .font('Helvetica')
+            .text(model.PatientDisplayId, 175, y, { align: "left" })
+            .moveDown();
+    
+        y = y + 15;
+        document
+            .font('Helvetica-Bold')
+            .text('Prescription ID', 75, y, { align: "left" })
+            .font('Helvetica')
+            .text(model.OrderDisplayId, 175, y, { align: "left" })
+            .moveDown();
+            
+        return y;
+    };
+    
+}

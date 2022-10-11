@@ -74,6 +74,12 @@ export default class Person extends Model {
     Email: string;
 
     @Column({
+        type      : DataType.STRING(64),
+        allowNull : true,
+    })
+    TelegramChatId: string;
+
+    @Column({
         type         : DataType.ENUM,
         values       : GenderList,
         defaultValue : Gender.Unknown,

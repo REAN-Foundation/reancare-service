@@ -28,6 +28,7 @@ export class PatientValidator extends BaseValidator {
                     Prefix               : request.body.Prefix ?? null,
                     Phone                : phone,
                     Email                : request.body.Email ?? null,
+                    TelegramChatId       : request.body.TelegramChatId ?? null,
                     Gender               : request.body.Gender ?? null,
                     SelfIdentifiedGender : request.body.SelfIdentifiedGender ?? null,
                     MaritalStatus        : request.body.MaritalStatus ?? null,
@@ -55,11 +56,13 @@ export class PatientValidator extends BaseValidator {
         const entity: PatientDomainModel = {
             User : {
                 Person : {
-                    FirstName       : request.body.FirstName !== undefined ? request.body.FirstName : undefined,
-                    LastName        : request.body.LastName !== undefined ? request.body.LastName : undefined,
-                    Prefix          : request.body.Prefix !== undefined ? request.body.Prefix : undefined,
-                    Email           : request.body.Email !== undefined ? request.body.Email : undefined,
-                    Gender          : request.body.Gender !== undefined ? request.body.Gender : undefined,
+                    FirstName      : request.body.FirstName !== undefined ? request.body.FirstName : undefined,
+                    LastName       : request.body.LastName !== undefined ? request.body.LastName : undefined,
+                    Prefix         : request.body.Prefix !== undefined ? request.body.Prefix : undefined,
+                    Email          : request.body.Email !== undefined ? request.body.Email : undefined,
+                    TelegramChatId : request.body.TelegramChatId !== undefined ?
+                        request.body.TelegramChatId : undefined,
+                    Gender               : request.body.Gender !== undefined ? request.body.Gender : undefined,
                     SelfIdentifiedGender : request.body.SelfIdentifiedGender !== undefined ?
                         request.body.SelfIdentifiedGender : undefined,
                     MaritalStatus : request.body.MaritalStatus !== undefined ?
@@ -122,6 +125,7 @@ export class PatientValidator extends BaseValidator {
 
         await this.validateString(request, 'Phone', Where.Body, create, false);
         await this.validateEmail(request, 'Email', Where.Body, false, true);
+        await this.validateString(request, 'TelegramChatId', Where.Body, false, true);
         await this.validateString(request, 'Prefix', Where.Body, false, true);
         await this.validateString(request, 'FirstName', Where.Body, false, true);
         await this.validateString(request, 'LastName', Where.Body, false, true);

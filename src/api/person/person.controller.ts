@@ -160,4 +160,22 @@ export class PersonController {
         }
     };
 
+    getAllPersonsWithPhone = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            request.context = 'Person.GetAllPersonsWithPhone';
+
+            const { phone } = await PersonValidator.getAllPersonsWithPhone(request);
+            const persons = await this._service.getPersonWithPhone(phone);
+            const message =
+                persons ? `Person record retrieved successfully!` : 'No records found!';
+                
+            ResponseHandler.success(request, response, message, 200, {
+                Persons : persons,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
 }

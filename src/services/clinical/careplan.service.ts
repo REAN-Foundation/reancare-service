@@ -137,10 +137,12 @@ export class CareplanService implements IUserActionService {
                         const message = activity.Description;
                         const patient = await this.getPatient(activity.PatientUserId);
                         const phoneNumber = patient.User.Person.Phone;
-                        await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message);
-                        await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
-
-                        Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
+                        let response = null;
+                        response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message);
+                        if (response === true) {
+                            await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
+                            Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
+                        }
                     }
 
                 }

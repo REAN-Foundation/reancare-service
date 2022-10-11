@@ -82,6 +82,29 @@
                     "Description": "Personal care plans help you to explore, understand and record your individual choices for pregnancy, birth and early parenthood. Every woman and family is different, with individual needs, which have an influence on care and preferences."
                 }
             ]
+        },
+        { 
+            "Enabled": true,
+            "Provider": "REAN_BW",
+            "Service": "ReanBWService",
+            "Plans": [
+                {
+                    "Provider" : "REAN_BW",
+                    "Name": "Patient messages",
+                    "Code": "4",
+                    "DisplayName": "Blood Warior Patient",
+                    "DefaultDurationDays": 30,
+                    "Description": "Blood warrior patient messages."
+                },
+                {
+                    "Provider" : "REAN_BW",
+                    "Name": "Donor messages",
+                    "Code": "5",
+                    "DisplayName": "Blood Warior Donor",
+                    "DefaultDurationDays": 30,
+                    "Description": "Blood warrior donor messages."
+                }
+            ]
         }
     ],
     "FormServiceProviders" : [

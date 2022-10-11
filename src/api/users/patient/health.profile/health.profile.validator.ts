@@ -18,28 +18,30 @@ export class HealthProfileValidator extends BaseValidator {
     getDomainModel = (request: express.Request): HealthProfileDomainModel => {
 
         const model: HealthProfileDomainModel = {
-            BloodGroup         : request.body.BloodGroup ?? undefined,
-            MajorAilment       : request.body.MajorAilment ?? undefined,
-            OtherConditions    : request.body.OtherConditions ?? undefined,
-            IsDiabetic         : request.body.IsDiabetic ?? undefined,
-            HasHeartAilment    : request.body.HasHeartAilment ?? undefined,
-            MaritalStatus      : request.body.MaritalStatus ?? undefined,
-            Ethnicity          : request.body.Ethnicity ?? undefined,
-            Race               : request.body.Race ?? undefined,
-            Nationality        : request.body.Nationality ?? undefined,
-            Occupation         : request.body.Occupation ?? undefined,
-            SedentaryLifestyle : request.body.SedentaryLifestyle ?? undefined,
-            IsSmoker           : request.body.IsSmoker ?? undefined,
-            SmokingSeverity    : request.body.SmokingSeverity ?? undefined,
-            SmokingSince       : request.body.SmokingSince ?? undefined,
-            IsDrinker          : request.body.IsDrinker ?? undefined,
-            DrinkingSeverity   : request.body.DrinkingSeverity ?? undefined,
-            DrinkingSince      : request.body.DrinkingSince ?? undefined,
-            SubstanceAbuse     : request.body.SubstanceAbuse ?? undefined,
-            ProcedureHistory   : request.body.ProcedureHistory ?? undefined,
-            ObstetricHistory   : request.body.ObstetricHistory ?? undefined,
-            OtherInformation   : request.body.OtherInformation ?? undefined,
-            TobaccoQuestionAns : request.body.TobaccoQuestionAns ?? undefined,
+            BloodGroup           : request.body.BloodGroup ?? undefined,
+            BloodTransfusionDate : request.body.BloodTransfusionDate ?? undefined,
+            BloodDonationCycle   : request.body.BloodDonationCycle ?? undefined,
+            MajorAilment         : request.body.MajorAilment ?? undefined,
+            OtherConditions      : request.body.OtherConditions ?? undefined,
+            IsDiabetic           : request.body.IsDiabetic ?? undefined,
+            HasHeartAilment      : request.body.HasHeartAilment ?? undefined,
+            MaritalStatus        : request.body.MaritalStatus ?? undefined,
+            Ethnicity            : request.body.Ethnicity ?? undefined,
+            Race                 : request.body.Race ?? undefined,
+            Nationality          : request.body.Nationality ?? undefined,
+            Occupation           : request.body.Occupation ?? undefined,
+            SedentaryLifestyle   : request.body.SedentaryLifestyle ?? undefined,
+            IsSmoker             : request.body.IsSmoker ?? undefined,
+            SmokingSeverity      : request.body.SmokingSeverity ?? undefined,
+            SmokingSince         : request.body.SmokingSince ?? undefined,
+            IsDrinker            : request.body.IsDrinker ?? undefined,
+            DrinkingSeverity     : request.body.DrinkingSeverity ?? undefined,
+            DrinkingSince        : request.body.DrinkingSince ?? undefined,
+            SubstanceAbuse       : request.body.SubstanceAbuse ?? undefined,
+            ProcedureHistory     : request.body.ProcedureHistory ?? undefined,
+            ObstetricHistory     : request.body.ObstetricHistory ?? undefined,
+            OtherInformation     : request.body.OtherInformation ?? undefined,
+            TobaccoQuestionAns   : request.body.TobaccoQuestionAns ?? undefined,
         };
 
         return model;
@@ -56,6 +58,8 @@ export class HealthProfileValidator extends BaseValidator {
     private async validateBody(request) {
 
         await this.validateString(request, 'BloodGroup', Where.Body, false, true);
+        await this.validateInt(request, 'BloodDonationCycle', Where.Body, false, true);
+        await this.validateDate(request, 'BloodTransfusionDate', Where.Body, false, true);
         await this.validateString(request, 'MajorAilment', Where.Body, false, true);
         await this.validateString(request, 'OtherConditions', Where.Body, false, true);
         await this.validateBoolean(request, 'IsDiabetic', Where.Body, false, true);

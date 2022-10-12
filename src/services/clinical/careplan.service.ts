@@ -134,7 +134,7 @@ export class CareplanService implements IUserActionService {
                     const num5 = num4[0].concat(':', num4[1]);
 
                     if (num2 === num5){
-                        const message = activity.Description;
+                        const message = `${activity.Title}:\n${activity.Description}`;
                         const patient = await this.getPatient(activity.PatientUserId);
                         let phoneNumber = patient.User.Person.Phone;
                         if (activity.Provider === "REAN") {

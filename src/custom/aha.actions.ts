@@ -10,7 +10,7 @@ import { AssessmentService } from '../services/clinical/assessment/assessment.se
 import { UserTaskService } from '../services/users/user/user.task.service';
 import { UserTaskSearchFilters } from '../domain.types/users/user.task/user.task.search.types';
 import { uuid } from '../domain.types/miscellaneous/system.types';
-import { CommonActions } from './common.actions';
+import { CommonActions } from './common/common.actions';
 import { EnrollmentDomainModel } from '../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { CareplanService } from '../services/clinical/careplan.service';
 import { UserDeviceDetailsService } from '../services/users/user/user.device.details.service';
@@ -21,7 +21,7 @@ export class AHAActions {
 
     _commonActions: CommonActions = new CommonActions();
 
-    _assessmentService: AssessmentService = null;
+    _assessmentService: AssessmentService = undefined;
 
     _patientService: PatientService = null;
 

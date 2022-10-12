@@ -347,7 +347,7 @@ export class TimeHelper {
         return TimeHelper.strToUtc(str, offsetMinutes);
     };
 
-    static dayDiff = (first: Date, second: Date) => {
+    static dayDiff = (first: Date, second: Date|undefined) => {
         const diff = first.getTime() - second.getTime();
         var dayDiff = diff / (1000 * 60 * 60 * 24);
         return dayDiff;

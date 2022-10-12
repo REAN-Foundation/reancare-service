@@ -1,28 +1,36 @@
-import { AssessmentDto } from '../../domain.types/clinical/assessment/assessment.dto';
-import { PatientDetailsDto } from '../../domain.types/users/patient/patient/patient.dto';
-import { PDFGenerator } from '../../modules/reports/pdf.generator';
-import { htmlTextToPNG } from '../../common/html.renderer';
-import { TimeHelper } from '../../common/time.helper';
-import { Helper } from '../../common/helper';
-import { DateStringFormat } from '../../domain.types/miscellaneous/time.types';
+import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
+import { PatientDetailsDto } from '../../../domain.types/users/patient/patient/patient.dto';
+import { PDFGenerator } from '../../../modules/reports/pdf.generator';
+import { htmlTextToPNG } from '../../../common/html.renderer';
+import { TimeHelper } from '../../../common/time.helper';
+import { Helper } from '../../../common/helper';
+import { DateStringFormat } from '../../../domain.types/miscellaneous/time.types';
+import { kccqChartHtmlText } from './kccq.chart.html';
+import { KccqScore } from './kccq.types';
+import * as fs from 'fs';
+import * as path from 'path';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export const generateReportPDF = async (
     patient: PatientDetailsDto,
     assessment: AssessmentDto,
-    score: any) => {
-
+    score: KccqScore): Promise<string> => {
     const reportModel = getReportModel(patient, assessment, score);
     const htmlText = await generateChartHtml(score);
     const chartImagePath = await htmlTextToPNG(htmlText, 400, 300);
-    const reportPDFPath = await exportReportToPDF(reportModel, chartImagePath);
-    return reportPDFPath;
+    const absoluteChartImagePath = path.join(process.cwd(), chartImagePath);
+    const reportUrl = await exportReportToPDF(reportModel, absoluteChartImagePath);
+    return reportUrl;
 };
 
 const generateChartHtml = async (
-    score: any): Promise<string> => {
-    return '';
+    score: KccqScore): Promise<string> => {
+    const overallScore = score.OverallSummaryScore.toFixed();
+    var txt = kccqChartHtmlText;
+    txt = txt.replace('{{GAUGE_VALUE}}', overallScore);
+    txt = txt.replace('{{GAUGE_VALUE}}', overallScore);
+    return txt;
 };
 
 const getReportModel = (
@@ -46,9 +54,140 @@ const getReportModel = (
     };
 };
 
-const exportReportToPDF = async (reportModel: any, chartImagePath: string) => {
-    return '';
+const exportReportToPDF = async (reportModel: any, absoluteChartImagePath: string): Promise<string> => {
+    try {
+        var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Quality-of-Life-Report-');
+        var writeStream = fs.createWriteStream(absFilepath);
+        const reportTitle = `Quality of Life Score`;
+        const author = 'REAN Foundation';
+        var document = PDFGenerator.createDocument(reportTitle, author, writeStream);
+        PDFGenerator.addNewPage(document);
+        var y = 25;
+        const ahaHeaderImagePath = './assets/images/AHA_header_2.png';
+        y = addHeader(document, reportTitle, y, ahaHeaderImagePath);
+        y = addReportMetadata(document, reportModel, y);
+        y = addChartImage(document, absoluteChartImagePath, y);
+        PDFGenerator.addOrderPageNumber(document, 1, 1);
+
+        return '';
+    }
+    catch (error) {
+        throw new Error(`Unable to generate assessment report! ${error.message}`);
+    }
 };
+
+const addHeader = (document: PDFKit.PDFDocument, title: string, y: number, headerImagePath: string) => {
+        
+    var imageFile = path.join(process.cwd(), headerImagePath);
+
+    document
+        .image(imageFile, 0, 0, { width: 595 })
+        .fillColor("#c21422")
+        .font('Helvetica')
+        .fontSize(16)
+        .text(title, 100, y, { align: 'center' });
+
+    document
+        .fontSize(7);
+
+    y = y + 24;
+        
+    document.moveDown();
+
+    return y;
+};
+
+const addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: number) => {
+
+    y = y + 35;
+    
+    document
+        .fillColor('#444444')
+        .fontSize(10)
+        .text('Date: ' + model.ReportDate, 200, y, { align: "right" })
+        .moveDown();
+   
+    y = y + 40;
+    
+    //DrawLine(document, y);
+    document
+        .roundedRect(50, y, 500, 40, 1)
+        .lineWidth(0.1)
+        .fillOpacity(0.8)
+    //.fillAndStroke("#EBE0FF", "#6541A5");
+        .fill("#e8ecef");
+    
+    y = y + 10;
+    
+    document
+        .fillOpacity(1.0)
+        .lineWidth(1)
+        .fill("#444444");
+    
+    document
+        .fillColor("#444444")
+        .font('Helvetica')
+        .fontSize(10);
+    
+    document
+        .font('Helvetica-Bold')
+        .text('Patient', 75, y, { align: "left" })
+        .font('Helvetica')
+        .text(model.Name, 175, y, { align: "left" })
+        .moveDown();
+    
+    y = y + 15;
+    document
+        .font('Helvetica-Bold')
+        .text('Patient ID', 75, y, { align: "left" })
+        .font('Helvetica')
+        .text(model.DisplayId, 175, y, { align: "left" })
+        .moveDown();
+               
+    return y;
+    
+};
+
+const addChartImage = (document: PDFKit.PDFDocument, absoluteChartImagePath: string, y: number) => {
+
+    return y;
+};
+
+// async function crea(author, title, model) {
+
+//     return new Promise(async (resolve, reject) => {
+//         try {
+//             var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Quality-of-Life-Report-');
+//             var writeStream = fs.createWriteStream(absFilepath);
+
+//             const document = PDFGenerator.createDocument(title, author, writeStream);
+
+//             const NUM_ITEMS_PER_PAGE = 8;
+//             var numPages = Math.ceil(model.Items.length / NUM_ITEMS_PER_PAGE);
+//             var y = 17;
+
+//             for (var i = 0; i < numPages; i++) {
+
+//                 if (i > 0) {
+//                     PDFGenerator.addNewPage(document);
+//                 }
+//                 var pageNumber = i + 1;
+//                 y = 17;
+//                 y = PDFGenerator.addOrderHeader(document, model, y);
+//                 y = addOrderMiddleArea(document, model, y, pageNumber);
+//                 PDFGenerator.addOrderPageNumber(document, pageNumber, numPages);
+//                 y = PDFGenerator.addOrderFooter(document, model, y);
+//             }
+//             document.end();
+//             // return { writeStream, absFilepath, filename };
+//             resolve({ writeStream, absFilepath, filename });
+//         }
+//         catch (error) {
+//             reject(error);
+//         }
+//     });
+
+// }
 
 // const exportOrderToPDF = async (drugOrderId, regenerate) => {
 
@@ -112,7 +251,7 @@ const exportReportToPDF = async (reportModel: any, chartImagePath: string) => {
 //         var { writeStream, absFilepath, filename } = await CreateDrugOrderPDF(author, title, model);
 
 //         Logger.Log('Saving pdf...');
-//         var x = await PDFGenerationService.SavePDFLocally(writeStream, absFilepath);
+//         var x = await PDFGenerator.SavePDFLocally(writeStream, absFilepath);
 //         Logger.Log('Saved.');
 
 //         var timestamp = new Date().getTime().toString();
@@ -131,7 +270,7 @@ const exportReportToPDF = async (reportModel: any, chartImagePath: string) => {
 
 //         var keyword = DocumentTypes.PatientMedPrescription;
 //         var referencingItemId = patient.DisplayId ? patient.DisplayId : patientUserId;
-//         var documents = await PDFGenerationService.SaveToS3(absFilepath, filename, referencingItemId, keyword);
+//         var documents = await PDFGenerator.SaveToS3(absFilepath, filename, referencingItemId, keyword);
 //         if (documents.length == 0) {
 //             return;
 //         }
@@ -162,42 +301,6 @@ const exportReportToPDF = async (reportModel: any, chartImagePath: string) => {
 
 //     return uploaded;
 // };
-
-// async function CreateDrugOrderPDF(author, title, model) {
-
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             var { absFilepath, filename } = await PDFGenerationService.GetAbsoluteFilePath('Drug-order-');
-//             var writeStream = fs.createWriteStream(absFilepath);
-
-//             const document = PDFGenerationService.CreateDocument(title, author, writeStream);
-
-//             const NUM_ITEMS_PER_PAGE = 8;
-//             var numPages = Math.ceil(model.Items.length / NUM_ITEMS_PER_PAGE);
-//             var y = 17;
-
-//             for (var i = 0; i < numPages; i++) {
-
-//                 if (i > 0) {
-//                     PDFGenerationService.AddNewPage(document);
-//                 }
-//                 var pageNumber = i + 1;
-//                 y = 17;
-//                 y = PDFGenerationService.AddOrderHeader(document, model, y);
-//                 y = AddOrderMiddleArea(document, model, y, pageNumber);
-//                 PDFGenerationService.AddOrderPageNumber(document, pageNumber, numPages);
-//                 y = PDFGenerationService.AddOrderFooter(document, model, y);
-//             }
-//             document.end();
-//             // return { writeStream, absFilepath, filename };
-//             resolve({ writeStream, absFilepath, filename });
-//         }
-//         catch (error) {
-//             reject(error);
-//         }
-//     });
-
-// }
 
 // function CreateDrugOrderDataModel(title, doctor, patient, visit, order, medications, suggestedPharmacy) {
 

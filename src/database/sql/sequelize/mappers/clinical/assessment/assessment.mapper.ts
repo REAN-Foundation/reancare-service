@@ -26,6 +26,7 @@ export class AssessmentMapper {
             ProviderEnrollmentId   : assessment.ProviderEnrollmentId,
             ProviderAssessmentCode : assessment.ProviderAssessmentCode,
             ProviderAssessmentId   : assessment.ProviderAssessmentId,
+            ReportUrl              : assessment.ReportUrl,
             Status                 : assessment.Status as ProgressStatus,
             ScheduledAt            : assessment.ScheduledDateString ? new Date(assessment.ScheduledDateString) : null,
             CreatedAt              : assessment.CreatedAt,

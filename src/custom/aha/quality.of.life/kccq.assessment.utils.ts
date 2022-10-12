@@ -1,13 +1,13 @@
 
-import { UserTaskSearchFilters } from '../../domain.types/users/user.task/user.task.search.types';
-import { UserTaskService } from '../../services/users/user/user.task.service';
-import { Logger } from '../../common/logger';
-import { uuid } from '../../domain.types/miscellaneous/system.types';
-import { CommonActions } from '../common/common.actions';
-import { TimeHelper } from '../../common/time.helper';
-import { Loader } from '../../startup/loader';
-import { AssessmentDto } from '../../domain.types/clinical/assessment/assessment.dto';
-import { PatientDetailsDto } from '../../domain.types/users/patient/patient/patient.dto';
+import { UserTaskSearchFilters } from '../../../domain.types/users/user.task/user.task.search.types';
+import { UserTaskService } from '../../../services/users/user/user.task.service';
+import { Logger } from '../../../common/logger';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { CommonActions } from '../../common/common.actions';
+import { TimeHelper } from '../../../common/time.helper';
+import { Loader } from '../../../startup/loader';
+import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
+import { PatientDetailsDto } from '../../../domain.types/users/patient/patient/patient.dto';
 import { generateReportPDF } from './kccq.report.generator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -180,7 +180,7 @@ export class KccqAssessmentUtils {
     public static generateReport = async (
         patient: PatientDetailsDto,
         assessment: AssessmentDto,
-        score: any) => {
+        score: any): Promise<string> => {
         return await generateReportPDF(patient, assessment, score);
     };
 

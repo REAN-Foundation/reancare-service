@@ -130,6 +130,12 @@ export default class Assessment extends Model {
     })
     ProviderEnrollmentId: string;
 
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    ReportUrl: string;
+
     @Length({ max: 32 })
     @Column({
         type         : DataType.STRING(32),

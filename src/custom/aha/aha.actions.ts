@@ -12,7 +12,8 @@ import { CommonActions } from '../common/common.actions';
 import { EnrollmentDomainModel } from '../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { CareplanService } from '../../services/clinical/careplan.service';
 import { UserDeviceDetailsService } from '../../services/users/user/user.device.details.service';
-import { KccqAssessmentUtils } from './kccq.assessment.utils';
+import { KccqAssessmentUtils } from './quality.of.life/kccq.assessment.utils';
+import { AssessmentDomainModel } from '../../domain.types/clinical/assessment/assessment.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -119,9 +120,16 @@ export class AHAActions {
                 const assessment = await this._assessmentService.getById(assessmentId);
                 if (assessment.Title.includes("Quality of Life Questionnaire")) {
                     //This is KCCQ assessment,...
+                    if (assessment.ReportUrl != null) {
+                        return assessment.ReportUrl;
+                    }
                     const reportUrl = await KccqAssessmentUtils.generateReport(
                         patient, assessment, score);
-                    return reportUrl;
+                    const updates: AssessmentDomainModel = {
+                        ReportUrl : reportUrl
+                    };
+                    const updatedAssessment = await this._assessmentService.update(assessmentId, updates);
+                    return updatedAssessment.ReportUrl;
                 }
                 return '';
             }

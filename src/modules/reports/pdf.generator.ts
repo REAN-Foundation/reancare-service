@@ -4,6 +4,7 @@ import path from 'path';
 // import { Logger } from '../../common/logger';
 // import { ApiError } from '../../common/api.error';
 // import { Helper } from '../../common/helper';
+import { TimeHelper } from '../../common/time.helper';
 import pdfkit from 'pdfkit';
 
 export class PDFGenerator {
@@ -11,9 +12,7 @@ export class PDFGenerator {
     static getAbsoluteFilePath = async (filePrefix) => {
 
         const TEMP_UPLOAD_FOLDER = path.join(process.cwd(), './tmp/resources/uploads/');
-    
-        var timestamp = new Date().getTime()
-            .toString();
+        const timestamp = TimeHelper.timestamp(new Date());
         var filename = filePrefix + timestamp + '.pdf';
         var folderPath = path.join(TEMP_UPLOAD_FOLDER, timestamp);
         await fs.promises.mkdir(folderPath, { recursive: true });
@@ -42,7 +41,7 @@ export class PDFGenerator {
     //     return uploaded;
     // };
 
-    createDocument = (title, author, writeStream) => {
+    static createDocument = (title, author, writeStream) => {
 
         const document = new pdfkit({
             size : 'A4',
@@ -60,10 +59,34 @@ export class PDFGenerator {
         document.pipe(writeStream);
         return document;
     };
+
+    static addNewPage = (document) => {
+        
+        document.addPage({
+            size    : 'A4',
+            margins : {
+                top    : 0,
+                bottom : 0,
+                left   : 0,
+                right  : 50
+            }
+        });
+    };
     
-    AddOrderHeader = (document, model, y) => {
+    static addOrderPageNumber = (document, pageNumber, totalPages, color = '#222222') => {
     
-        var imageFile = path.join(process.cwd(), "./assets/images/REANCare_Header.png");
+        var pageNumberStr = 'Page: ' + pageNumber.toString() + ' of ' + totalPages.toString();
+    
+        document
+            .fontSize(8)
+            .fillColor(color)
+            .text(pageNumberStr, 0, 780, { align: "right" });
+    
+    };
+
+    static addHeader = (document, model, y: number, headerImagePath) => {
+    
+        var imageFile = path.join(process.cwd(), headerImagePath);
     
         document
             .image(imageFile, 0, 0, { width: 595 })
@@ -97,21 +120,11 @@ export class PDFGenerator {
         return y;
     };
     
-    AddOrderPageNumber = (document, page, totalPages) => {
+    static addOrderFooter = (document, model, y, logoImagePath) => {
     
-        var pageNumber = 'Page: ' + page.toString() + ' of ' + totalPages.toString();
-    
-        document
-            .fontSize(8)
-            .fillColor('#222222')
-            .text(pageNumber, 0, 780, { align: "right" });
-    
-    };
-    
-    AddOrderFooter = (document, model, y) => {
-    
-        var imageFile = path.join(process.cwd(), "./assets/images/REANCare_Footer.png");
-    
+        //var imageFile = path.join(process.cwd(), "./assets/images/REANCare_Footer.png");
+        var imageFile = path.join(process.cwd(), logoImagePath);
+
         document
             .image(imageFile, 0, 800, { width: 595 });
     
@@ -132,7 +145,7 @@ export class PDFGenerator {
         return y;
     };
     
-    DrawLine = (document, fromX, fromY, toX, toY) => {
+    static drawLine = (document, fromX, fromY, toX, toY) => {
         document
             .strokeColor("#aaaaaa")
             .lineWidth(1)
@@ -141,20 +154,7 @@ export class PDFGenerator {
             .stroke();
     };
     
-    AddNewPage = (document) => {
-        
-        document.addPage({
-            size    : 'A4',
-            margins : {
-                top    : 0,
-                bottom : 0,
-                left   : 0,
-                right  : 50
-            }
-        });
-    };
-    
-    AddOrderMetadata = (y, document, model) => {
+    static addOrderMetadata = (y, document, model) => {
     
         y = y + 35;
     

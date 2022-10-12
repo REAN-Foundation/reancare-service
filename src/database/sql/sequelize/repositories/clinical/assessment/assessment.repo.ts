@@ -101,6 +101,9 @@ export class AssessmentRepo implements IAssessmentRepo {
             if (updateModel.Description != null) {
                 assessment.Description = updateModel.Description;
             }
+            if (updateModel.ReportUrl != null) {
+                assessment.ReportUrl = updateModel.ReportUrl;
+            }
             if (updateModel.ProviderAssessmentId != null) {
                 assessment.ProviderAssessmentId = updateModel.ProviderAssessmentId;
             }

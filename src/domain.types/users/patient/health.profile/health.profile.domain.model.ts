@@ -4,6 +4,8 @@ export interface HealthProfileDomainModel {
     id?                : string;
     PatientUserId?     : string;
     BloodGroup?        : BloodGroup;
+    BloodTransfusionDate? : Date;
+    BloodDonationCycle? : number;
     MajorAilment?      : string;
     OtherConditions?   : string;
     IsDiabetic?        : boolean;

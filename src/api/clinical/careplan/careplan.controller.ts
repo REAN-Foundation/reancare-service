@@ -9,6 +9,7 @@ import { UserService } from '../../../services/users/user/user.service';
 import { TimeHelper } from '../../../common/time.helper';
 import { DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { Logger } from '../../../common/logger';
+import { CommunityNetworkService } from '../../../modules/community.bw/community.network.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +18,8 @@ export class CareplanController extends BaseController {
     //#region member variables and constructors
     _service: CareplanService = null;
 
+    _communityNetworkService: CommunityNetworkService = null;
+
     _userService: UserService = null;
 
     _validator: CareplanValidator = new CareplanValidator();
@@ -24,6 +27,7 @@ export class CareplanController extends BaseController {
     constructor() {
         super();
         this._service = Loader.container.resolve(CareplanService);
+        this._communityNetworkService = Loader.container.resolve(CommunityNetworkService);
         this._userService = Loader.container.resolve(UserService);
     }
 
@@ -57,7 +61,7 @@ export class CareplanController extends BaseController {
             Logger.instance().log(`Start Date: ${JSON.stringify(startDate)}`);
 
             var endDate: Date = null;
-            if (model.PlanCode === 'Cholesterol') {
+            if (model.PlanCode === 'Cholesterol' || model.PlanCode === 'Stroke') {
                 if (model.EndDateStr) {
                     endDate = new Date(model.EndDateStr);
                     endDate = TimeHelper.addDuration(endDate, 1, DurationType.Day);
@@ -81,7 +85,12 @@ export class CareplanController extends BaseController {
             model.StartDate = startDate;
             model.EndDate = endDate;
 
-            const enrollment = await this._service.enroll(model);
+            let enrollment = null;
+            if (model.Provider === 'REAN_BW') {
+                enrollment = await this._communityNetworkService.enroll(model);
+            } else {
+                enrollment = await this._service.enroll(model);
+            }
             if (enrollment == null) {
                 throw new ApiError(400, 'Cannot enroll patient to careplan!');
             }

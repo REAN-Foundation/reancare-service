@@ -22,14 +22,20 @@ export class MessagingService {
         return await this._service.sendWhatsappMessage(toPhone, message);
     };
 
-    sendWhatsappWithReanBot = async (toPhone: string, message: string): Promise<boolean> => {
+    sendWhatsappWithReanBot = async (toPhone: string, message: string, provider:string): Promise<boolean> => {
 
         const reanBotBaseUrl = process.env.REANBOT_BACKEND_BASE_URL;
         const urlToken = process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN;
 
-        const countryCode = toPhone.split("-")[0];
-        const num = toPhone.split("-")[1];
-        const code =  countryCode.substring(1);
+        if (provider === "REAN_BW") {
+            const countryCode = toPhone.split("-")[0];
+            const num = toPhone.split("-")[1];
+            const code =  countryCode.substring(1);
+            toPhone = code.concat(num);
+        }
+        const client = provider === "REAN_BW" ? "BLOOD_WARRIORS" : "MATERNAL_BOT";
+        const channel = provider === "REAN_BW" ? "whatsappMeta" : "telegram";
+        
         const headers = {
             'authentication' : process.env.REANBOT_WEBHOOK_CLIENT_HEADER_TOKEN,
         };
@@ -37,10 +43,11 @@ export class MessagingService {
             headers : headers
         };
         
-        const url = `${reanBotBaseUrl}MATERNAL_BOT/whatsappMeta/${urlToken}/send`;
-        Logger.instance().log(`: ${url}`);
+        const url = `${reanBotBaseUrl}${client}/${channel}/${urlToken}/send`;
+        Logger.instance().log(`URL: ${url}`);
+        Logger.instance().log(`Phone: ${toPhone}`);
         const obj = {
-            userId    : code.concat(num),
+            userId    : toPhone,
             agentName : "ReanCare",
             type      : "text",
             message   : message
@@ -48,7 +55,8 @@ export class MessagingService {
         
         const resp1 = await needle('post', url, obj, options);
         if (resp1.statusCode !== 200) {
-            throw new Error(`Failed to send message to phone number: ${toPhone}`);
+            Logger.instance().log(`Failed to send message to phone number: ${toPhone}`);
+            return false;
         }
         return true;
     };

@@ -12,6 +12,8 @@ export interface DonorDetailsDto {
     EhrId?             : string;
     User               : UserDto;
     BloodGroup?        : string,
+    AcceptorUserId?    : string;
+    LastDonationDate?  : Date;
     MedIssues?         : string[];
     IsAvailable?       : boolean;
     HasDonatedEarlier? : boolean;
@@ -28,6 +30,8 @@ export interface DonorDto {
     Phone       : string;
     Email       : string;
     BloodGroup  : string;
+    AcceptorUserId  : string;
+    LastDonationDate  : Date;
     MedIssues   : string[];
     Gender      : Gender;
     BirthDate   : Date;

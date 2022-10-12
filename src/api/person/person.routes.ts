@@ -14,7 +14,7 @@ export const register = (app: express.Application): void => {
     //entity controllers such patient, doctor, etc.
 
     router.get('/phone/:phone/role/:roleId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAllPersonsWithPhoneAndRole);
-
+    router.get('/phone/:phone', authenticator.authenticateClient, authenticator.authenticateUser, controller.getAllPersonsWithPhone);
     //Person may be associated with multiple organizations.
     //e.g. A apecialist doctor may be associated multiple hospitals
     router.get('/:id/organizations', authenticator.authenticateClient, authenticator.authenticateUser, controller.getOrganizations);

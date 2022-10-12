@@ -13,6 +13,7 @@ export interface PersonDetailsDto {
     DisplayName           : string;
     Phone                 : string;
     Email                 : string;
+    TelegramChatId?       : string;
     Gender                : Gender;
     SelfIdentifiedGender? : string;
     MaritalStatus?        : string;
@@ -31,4 +32,5 @@ export interface PersonDto {
     Email: string;
     Gender: Gender;
     BirthDate: Date;
+    TelegramChatId?: string;
 }

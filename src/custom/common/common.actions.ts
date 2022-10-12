@@ -58,6 +58,11 @@ export class CommonActions {
         const assessment = await this._assessmentService.create(assessmentBody);
         const assessmentId = assessment.id;
 
+        var scheduledEndTime = TimeHelper.addDuration(new Date(), 9, DurationType.Day);
+        if (templateName === 'Medical Profile Details') {
+            scheduledEndTime = TimeHelper.addDuration(new Date(), 6, DurationType.Month);
+        }
+
         const userTaskBody : UserTaskDomainModel = {
             UserId             : patientUserId,
             Task               : templateName,
@@ -65,7 +70,7 @@ export class CommonActions {
             ActionType         : UserActionType.Careplan,
             ActionId           : assessmentId,
             ScheduledStartTime : new Date(),
-            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 9, DurationType.Day),
+            ScheduledEndTime   : scheduledEndTime,
             IsRecurrent        : false
         };
 
@@ -97,7 +102,5 @@ export class CommonActions {
         userTask['Action'] = customTask;
         return userTask;
     };
-
-    //#endregion
 
 }

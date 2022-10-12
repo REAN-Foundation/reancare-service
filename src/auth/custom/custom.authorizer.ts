@@ -24,6 +24,10 @@ export class CustomAuthorizer implements IAuthorizer {
         try {
             const currentUser = request.currentUser;
             const context = request.context;
+            const currentClient = request.currentClient;
+            if (currentClient.IsPrivileged === true) {
+                return true;
+            }
             if (context == null || context === 'undefined') {
                 return false;
             }

@@ -37,8 +37,13 @@
         "CleanupFolderBeforeMinutes": 10
     },
     "Careplans" : [
+<<<<<<< Updated upstream
         {
             "Enabled" : true,
+=======
+        { 
+            "Enabled" : false,
+>>>>>>> Stashed changes
             "Provider": "AHA",
             "Service": "AhaCarePlanService",
             "Plans": [

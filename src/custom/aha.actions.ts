@@ -172,7 +172,8 @@ export class AHAActions {
             q13 = false;
         }
         if (missingValues <= 1) {
-            const denominator = 3.0 - missingValues;
+            //const denominator = 3.0 - missingValues;
+            const denominator = 3.0;
             const sum = (q11 ? answers['1.1'] : 0) + (q12 ? answers['1.2'] : 0) + (q13 ? answers['1.3'] : 0);
             const average = sum / denominator;
             kccq_PL_score = 100.0 * (average - 1) / 4.0;
@@ -211,7 +212,8 @@ export class AHAActions {
             q83 = false;
         }
         if (missingValues <= 1) {
-            const denominator = 3.0 - missingValues;
+            //const denominator = 3.0 - missingValues;
+            const denominator = 3.0;
             const sum = (q81 ? answers['8.1'] : 0) + (q82 ? answers['8.2'] : 0) + (q83 ? answers['8.3'] : 0);
             const avg = sum / denominator;
             kccq_SL_score = 100.0 * (avg - 1) / 4.0;

@@ -6,12 +6,15 @@ import path from 'path';
 // import { Helper } from '../../common/helper';
 import { TimeHelper } from '../../common/time.helper';
 import pdfkit from 'pdfkit';
+import { ConfigurationManager } from "../../config/configuration.manager";
+
+///////////////////////////////////////////////////////////////////////////////////////
 
 export class PDFGenerator {
 
     static getAbsoluteFilePath = async (filePrefix) => {
-
-        const TEMP_UPLOAD_FOLDER = path.join(process.cwd(), './tmp/resources/uploads/');
+        var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
+        const TEMP_UPLOAD_FOLDER = path.join(process.cwd(), tempUploadFolder);
         const timestamp = TimeHelper.timestamp(new Date());
         var filename = filePrefix + timestamp + '.pdf';
         var folderPath = path.join(TEMP_UPLOAD_FOLDER, timestamp);
@@ -20,26 +23,6 @@ export class PDFGenerator {
         
         return { absFilepath, filename };
     };
-
-    // static SaveToS3 = async (absFilepath, filename, referencingItemId, referencingItemKeyword) => {
-    //     var fileDetails = [];
-    //     var fileStats = fs.statSync(absFilepath);
-    //     fileDetails.push({
-    //         name: filename,
-    //         path: absFilepath,
-    //         mimetype: Helper.getMimeType(absFilepath),
-    //         original_name: filename,
-    //         size: fileStats.size
-    //     });
-    //     Logger.instance().log('Storing in S3...');
-    //     var uploaded = await FileResourceService.UploadToS3(
-    //        null, fileDetails, false, referencingItemId, referencingItemKeyword, true);
-    //     for await (var d of fileDetails) {
-    //         //fs.unlinkSync(d.path); //Remove from temp folder
-    //     }
-    //     Logger.Log('Stored.');
-    //     return uploaded;
-    // };
 
     static createDocument = (title, author, writeStream) => {
 
@@ -83,6 +66,20 @@ export class PDFGenerator {
             .text(pageNumberStr, 0, 780, { align: "right" });
     
     };
+
+    static savePDFLocally = async (writeStream, absFilepath: string): Promise<string> => {
+
+        return new Promise((resolve, reject) => {
+            
+            writeStream
+                .on('finish', () => {
+                    return resolve(absFilepath);
+                })
+                .on('error', (error) => {
+                    return reject(error);
+                });
+        });
+    }
 
     static addHeader = (document, model, y: number, headerImagePath) => {
     

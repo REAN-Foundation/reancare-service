@@ -65,4 +65,26 @@ export class TestController {
         }
     }
 
+    testReportGeneration = async (request: express.Request, response: express.Response): Promise<any> => {
+        try {
+
+            Logger.instance().log('Testing: Generating assessment report...');
+
+            const patientUserId = request.params.patientUserId;
+            const assessmentId = request.params.assessmentId;
+            const score = request.body.Score;
+
+            var customActionHandler = new CustomActionsHandler();
+            const result = await customActionHandler.performActions_GenerateAssessmentReport(
+                patientUserId, assessmentId, score);
+
+            ResponseHandler.success(request, response, 'Assessment created successfully!', 200, {
+                Result : result,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
 }

@@ -9,6 +9,7 @@ import * as SeededAssessmentTemplates from '../../seed.data/symptom.assessment.t
 import * as SeededSymptomTypes from '../../seed.data/symptom.types.json';
 import * as SeededNutritionQuestionnaire from '../../seed.data/nutrition.questionnaire.json';
 import * as SeededLabRecordTypes from '../../seed.data/lab.record.types.seed.json';
+import * as seededHealthSystemsAndHospitals from '../../seed.data/health.systems.and.hospitals.seed..json';
 import { Helper } from "../common/helper";
 import { Logger } from "../common/logger";
 import { IApiClientRepo } from "../database/repository.interfaces/api.client/api.client.repo.interface";
@@ -24,6 +25,7 @@ import { IPersonRoleRepo } from "../database/repository.interfaces/person/person
 import { IRolePrivilegeRepo } from "../database/repository.interfaces/role/role.privilege.repo.interface";
 import { IRoleRepo } from "../database/repository.interfaces/role/role.repo.interface";
 import { IUserRepo } from "../database/repository.interfaces/users/user/user.repo.interface";
+import { IHealthSystemRepo } from "../database/repository.interfaces/users/patient/health.system.repo.interface";
 import { ApiClientDomainModel } from "../domain.types/api.client/api.client.domain.model";
 import { DrugDomainModel } from "../domain.types/clinical/medication/drug/drug.domain.model";
 import { MedicationStockImageDomainModel } from "../domain.types/clinical/medication/medication.stock.image/medication.stock.image.domain.model";
@@ -58,6 +60,9 @@ import { IFoodConsumptionRepo }
     from "../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface";
 import { NutritionQuestionnaireDomainModel }
     from "../domain.types/wellness/nutrition/nutrition.questionnaire/nutrition.questionnaire.domain.model";
+import { HealthSystemDomainModel } from "../domain.types/users/patient/health.system/health.system.domain.model";
+import { HealthSystemHospitalDomainModel } from "../domain.types/users/patient/health.system/health.system.hospital.domain.model";
+import { HealthSystemService } from "../services/users/patient/health.system.service";
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -92,6 +97,8 @@ export class Seeder {
 
     _foodConsumptionService: FoodConsumptionService = null;
 
+    _healthSystemService: HealthSystemService = null;
+
     _userHelper = new UserHelper();
 
     constructor(
@@ -110,6 +117,7 @@ export class Seeder {
         @inject('IHealthPriorityRepo') private _healthPriorityRepo: IHealthPriorityRepo,
         @inject('ILabRecordRepo') private _labRecordRepo: ILabRecordRepo,
         @inject('IFoodConsumptionRepo') private _foodConsumptionRepo: IFoodConsumptionRepo,
+        @inject('IHealthSystemRepo') private _healthSystemRepo: IHealthSystemRepo,
     ) {
         this._apiClientService = Loader.container.resolve(ApiClientService);
         this._patientService = Loader.container.resolve(PatientService);
@@ -125,8 +133,9 @@ export class Seeder {
         this._healthPriorityService = Loader.container.resolve(HealthPriorityService);
         this._labRecordService = Loader.container.resolve(LabRecordService);
         this._foodConsumptionService = Loader.container.resolve(FoodConsumptionService);
+        this._healthSystemService = Loader.container.resolve(HealthSystemService);
     }
-
+    
     public init = async (): Promise<void> => {
         try {
             await this.createTempFolders();
@@ -143,6 +152,7 @@ export class Seeder {
             await this.seedHealthPriorityTypes();
             await this.seedLabReportTypes();
             await this.seedNutritionQuestionnaire();
+            await this.seedHealthSystemsAndHospitals();
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -618,5 +628,38 @@ export class Seeder {
             await this._foodConsumptionService.createNutritionQuestionnaire(model);
         }
     };
+
+    public seedHealthSystemsAndHospitals = async () => {
+
+        const count = await this._healthSystemRepo.totalCount();
+        if (count > 0) {
+            Logger.instance().log("Health systems and associated hospitals have already been seeded!");
+            return;
+        }
+
+        Logger.instance().log('Seeding health systems and associated hospitals...');
+
+        const arr = seededHealthSystemsAndHospitals['default'];
+
+        for (let i = 0; i < arr.length; i++) {
+
+            var t = arr[i];
+            const model: HealthSystemDomainModel = {
+                Name            : t['HealthSystem']
+            };
+            var healthSystem = await this._healthSystemService.createHealthSystem(model);
+
+            for (let j = 0; j < t['AssociatedHospitals'].length; j++) {
+
+                const entity: HealthSystemHospitalDomainModel = {
+                    HealthSystemId : healthSystem.id,
+                    Name           : t['AssociatedHospitals'][j]
+                };
+            await this._healthSystemService.createHealthSystemHospital(entity);
+
+            }
+        }   
+
+    }
 
 }

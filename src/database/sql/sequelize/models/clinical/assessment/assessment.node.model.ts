@@ -166,6 +166,12 @@ export default class AssessmentNode extends Model {
     })
     Acknowledged: boolean;
 
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    CorrectOption : number;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

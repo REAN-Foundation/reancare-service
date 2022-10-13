@@ -445,7 +445,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 Sequence                    : nodeObj.Sequence ?? sequence,
                 Score                       : nodeObj.Score,
                 ServeListNodeChildrenAtOnce : nodeObj.ServeListNodeChildrenAtOnce,
-                QueryResponseType           : QueryResponseType.None
+                QueryResponseType           : QueryResponseType.None,
+                CorrectOption               : nodeObj.CorrectOption,
             };
 
             var thisNode = await AssessmentNode.create(nodeEntity);

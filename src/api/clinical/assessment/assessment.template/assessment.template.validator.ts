@@ -20,6 +20,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             Title                       : request.body.Title ?? null,
             Description                 : request.body.Description,
             DisplayCode                 : request.body.DisplayCode ?? null,
+            ScoringApplicable           : request.body.ScoringApplicable ?? false,
             ProviderAssessmentCode      : request.body.ProviderAssessmentCode ?? null,
             Provider                    : request.body.Provider ?? null,
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
@@ -36,16 +37,11 @@ export class AssessmentTemplateValidator extends BaseValidator {
     search = async (
         request: express.Request
     ): Promise<AssessmentTemplateSearchFilters> => {
-
         await this.validateUuid(request, 'title', Where.Query, false, false);
         await this.validateString(request, 'type', Where.Query, false, false, true);
-
         await this.validateBaseSearchFilters(request);
-
         this.validateRequest(request);
-
         return this.getFilter(request);
-
     };
 
     private getFilter(request): AssessmentTemplateSearchFilters {
@@ -73,6 +69,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'Type', Where.Body, true, false);
         await this.validateString(request, 'Title', Where.Body, true, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, false);
         await this.validateString(request, 'DisplayCode', Where.Body, false, false);
@@ -86,6 +83,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'Type', Where.Body, false, false);
         await this.validateString(request, 'Title', Where.Body, false, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
+        await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, false);
 
@@ -109,6 +107,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'QueryResponseType', Where.Body, false, false);
         await this.validateArray(request, 'Options', Where.Body, false, false);
         await this.validateDecimal(request, 'Score', Where.Body, false, false);
+        await this.validateAny(request, 'CorrectAnswer', Where.Body, false, false);
 
         this.validateRequest(request);
 
@@ -125,6 +124,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Description       : request.body.Description ?? null,
                 TemplateId        : templateId,
                 Score             : request.body.Score ?? 0,
+                CorrectAnswer     : request.body.CorrectAnswer ? JSON.stringify(request.body.CorrectAnswer) : null,
                 Options           : []
             };
             if (request.body.Options && request.body.Options.length > 0) {
@@ -188,6 +188,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'QueryResponseType', Where.Body, false, false);
         await this.validateDecimal(request, 'Score', Where.Body, false, false);
         await this.validateDecimal(request, 'Sequence', Where.Body, false, false);
+        await this.validateAny(request, 'CorrectAnswer', Where.Body, false, false);
 
         this.validateRequest(request);
 

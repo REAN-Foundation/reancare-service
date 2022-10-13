@@ -66,6 +66,7 @@ export class AssessmentService {
         model.Provider = template.Provider;
         model.ProviderAssessmentCode = template.ProviderAssessmentCode;
         model.Title = model.Title ?? template.Title;
+        model.ScoringApplicable = template.ScoringApplicable;
         model.Type = template.Type;
         model.ScheduledDateString = model.ScheduledDateString ?? new Date().toISOString()
             .split('T')[0];

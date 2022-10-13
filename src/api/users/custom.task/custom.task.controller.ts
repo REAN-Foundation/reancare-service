@@ -6,7 +6,7 @@ import { CustomTaskService } from '../../../services/users/user/custom.task.serv
 import { UserTaskService } from '../../../services/users/user/user.task.service';
 import { CustomTaskValidator } from './custom.task.validator';
 import { Loader } from '../../../startup/loader';
-import { CommonActions } from '../../../custom/common.actions';
+import { CommonActions } from '../../../custom/common/common.actions';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

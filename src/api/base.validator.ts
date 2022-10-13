@@ -266,6 +266,19 @@ export class BaseValidator {
         await chain.run(request);
     };
 
+    validateAny = async(
+        request: express.Request,
+        field: string,
+        where: Where,
+        required: boolean,
+        nullable: boolean) => {
+
+        var chain: ValidationChain = this.getValidationChain(field, where);
+        chain = chain.trim();
+        chain = this.checkRequired(required, chain, nullable);
+        await chain.run(request);
+    };
+
     validateBaseSearchFilters = async(request: express.Request) => {
 
         await this.validateDate(request, 'createdDateFrom', Where.Query, false, false);

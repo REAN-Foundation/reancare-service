@@ -71,7 +71,7 @@ export const kccqChartHtmlText = `
 				labelFormat: d3.format(',g'),
 				labelInset: 10,
 
-				arcColorFn: d3.interpolateHsl(d3.rgb('#B5E61D'), d3.rgb('#FF0000'))
+				arcColorFn: d3.interpolateHsl(d3.rgb('#FF0000'), d3.rgb('#B5E61D'))
 			};
 			var range = undefined;
 			var r = undefined;

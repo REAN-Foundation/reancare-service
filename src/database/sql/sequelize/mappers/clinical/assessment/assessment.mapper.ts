@@ -22,6 +22,7 @@ export class AssessmentMapper {
             PatientUserId          : assessment.PatientUserId,
             AssessmentTemplateId   : assessment.AssessmentTemplateId,
             ScoringApplicable      : assessment.ScoringApplicable,
+            ScoreDetails           : assessment.ScoreDetails ? JSON.parse(assessment.ScoreDetails) : null,
             Provider               : assessment.Provider,
             ProviderEnrollmentId   : assessment.ProviderEnrollmentId,
             ProviderAssessmentCode : assessment.ProviderAssessmentCode,

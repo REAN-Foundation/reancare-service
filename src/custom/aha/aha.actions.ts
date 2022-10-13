@@ -120,7 +120,7 @@ export class AHAActions {
                 const assessment = await this._assessmentService.getById(assessmentId);
                 if (assessment.Title.includes("Quality of Life Questionnaire")) {
                     //This is KCCQ assessment,...
-                    if (assessment.ReportUrl != null) {
+                    if (assessment.ReportUrl != null && assessment.ReportUrl.length > 2) {
                         return assessment.ReportUrl;
                     }
                     const reportUrl = await KccqAssessmentUtils.generateReport(
@@ -131,7 +131,7 @@ export class AHAActions {
                     const updatedAssessment = await this._assessmentService.update(assessmentId, updates);
                     return updatedAssessment.ReportUrl;
                 }
-                return '';
+                return null;
             }
             catch (error) {
                 Logger.instance().log(`Error performing post registration custom actions.`);

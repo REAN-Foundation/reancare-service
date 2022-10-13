@@ -8,10 +8,14 @@ import { Helper } from '../../../common/helper';
 import { DateStringFormat } from '../../../domain.types/miscellaneous/time.types';
 import { kccqChartHtmlText } from './kccq.chart.html';
 import { KccqScore } from './kccq.types';
-import * as fs from 'fs';
-import * as path from 'path';
 import { FileResourceService } from '../../../services/general/file.resource.service';
 import { Loader } from '../../../startup/loader';
+import { DocumentDomainModel } from '../../../domain.types/users/patient/document/document.domain.model';
+import { DocumentTypes } from '../../../domain.types/users/patient/document/document.types';
+import { DocumentService } from '../../../services/users/patient/document.service';
+import { Logger } from '../../../common/logger';
+import * as fs from 'fs';
+import * as path from 'path';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,9 +25,8 @@ export const generateReportPDF = async (
     score: KccqScore): Promise<string> => {
     const reportModel = getReportModel(patient, assessment, score);
     const htmlText = await generateChartHtml(score);
-    const chartImagePath = await htmlTextToPNG(htmlText, 400, 300);
-    const absoluteChartImagePath = path.join(process.cwd(), chartImagePath);
-    const reportUrl = await exportReportToPDF(reportModel, absoluteChartImagePath);
+    const chartImagePath = await htmlTextToPNG(htmlText, 370, 250);
+    const reportUrl = await exportReportToPDF(reportModel, chartImagePath);
     return reportUrl;
 };
 
@@ -40,7 +43,7 @@ const getReportModel = (
     patient: PatientDetailsDto,
     assessment: AssessmentDto,
     score: any) => {
-    
+
     const patientName = patient.User.Person.DisplayName;
     const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);
     const assessmentDate = assessment.FinishedAt ?? new Date();
@@ -49,10 +52,12 @@ const getReportModel = (
     const reportDateStr = TimeHelper.getDateString(reportDate, DateStringFormat.YYYY_MM_DD);
 
     return {
-        Name       : patientName,
-        DisplayId  : patient.DisplayId,
-        Age        : patientAge,
-        ReportDate : reportDateStr,
+        Name          : patientName,
+        PatientUserId : patient.User.id,
+        AssessmentId  : assessment.id,
+        DisplayId     : patient.DisplayId,
+        Age           : patientAge,
+        ReportDate    : reportDateStr,
         ...score
     };
 };
@@ -61,11 +66,11 @@ const exportReportToPDF = async (reportModel: any, absoluteChartImagePath: strin
     try {
         var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Quality-of-Life-Report-');
         var writeStream = fs.createWriteStream(absFilepath);
-        const reportTitle = `Quality of Life Score`;
+        const reportTitle = `Quality of Life Assessment Score`;
         const author = 'REAN Foundation';
         var document = PDFGenerator.createDocument(reportTitle, author, writeStream);
-        PDFGenerator.addNewPage(document);
-        var y = 25;
+        //PDFGenerator.addNewPage(document);
+        var y = 17;
         const ahaHeaderImagePath = './assets/images/AHA_header_2.png';
         const ahaFooterImagePath = './assets/images/AHA_footer_1.png';
         y = addHeader(document, reportTitle, y, ahaHeaderImagePath);
@@ -76,7 +81,26 @@ const exportReportToPDF = async (reportModel: any, absoluteChartImagePath: strin
         addOrderFooter(document, "https://www.heart.org/", ahaFooterImagePath);
         document.end();
         const localFilePath = await PDFGenerator.savePDFLocally(writeStream, absFilepath);
-        const url = await uploadFile(localFilePath);
+        const { url, resourceId } = await uploadFile(localFilePath);
+
+        const mimeType = Helper.getMimeType(filename);
+        const documentModel: DocumentDomainModel = {
+            DocumentType  : DocumentTypes.Assessment,
+            PatientUserId : reportModel.PatientUserId,
+            RecordDate    : new Date(reportModel.ReportDate),
+            UploadedDate  : new Date(),
+            FileMetaData  : {
+                ResourceId       : resourceId,
+                OriginalName     : filename,
+                Url              : url,
+                IsDefaultVersion : true,
+                MimeType         : mimeType,
+            }
+        };
+        const patientDocumentService = Loader.container.resolve(DocumentService);
+        const documentDto = await patientDocumentService.upload(documentModel);
+        Logger.instance().log(`Document Id: ${documentDto.id}`);
+
         return url;
     }
     catch (error) {
@@ -84,31 +108,34 @@ const exportReportToPDF = async (reportModel: any, absoluteChartImagePath: strin
     }
 };
 
-const uploadFile = async (sourceLocation: string): Promise<string> => {
+const uploadFile = async (sourceLocation: string) => {
     const filename = path.basename(sourceLocation);
     const dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
     const storageKey = `resources/${dateFolder}/${filename}`;
     const fileResourceService = Loader.container.resolve(FileResourceService);
     const dto = await fileResourceService.uploadLocal(sourceLocation, storageKey, false);
-    return dto.DefaultVersion.Url;
+    const url = dto.DefaultVersion.Url;
+    const resourceId = dto.id;
+    return { url, resourceId };
 };
 
 const addHeader = (document: PDFKit.PDFDocument, title: string, y: number, headerImagePath: string) => {
-        
+
     var imageFile = path.join(process.cwd(), headerImagePath);
 
+    y = y + 5;
     document
         .image(imageFile, 0, 0, { width: 595 })
         .fillColor("#c21422")
-        .font('Helvetica')
-        .fontSize(16)
-        .text(title, 100, y, { align: 'center' });
+        .font('Helvetica-Bold')
+        .fontSize(18)
+        .text(title, 90, y, { align: 'center' });
 
     document
         .fontSize(7);
 
     y = y + 24;
-        
+
     document.moveDown();
 
     return y;
@@ -116,46 +143,40 @@ const addHeader = (document: PDFKit.PDFDocument, title: string, y: number, heade
 
 const addScoreDetails = (document: PDFKit.PDFDocument, model: any, y: number): number => {
 
-    y = y + 35;
-    
-    document
-        .fillColor('#444444')
-        .fontSize(10)
-        .text('Date: ' + model.ReportDate, 200, y, { align: "right" })
-        .moveDown();
-   
-    y = y + 40;
-    
+    y = y + 230;
+
     //DrawLine(document, y);
     document
-        .roundedRect(50, y, 500, 40, 1)
+        .roundedRect(150, y, 300, 38, 1)
         .lineWidth(0.1)
         .fillOpacity(0.8)
     //.fillAndStroke("#EBE0FF", "#6541A5");
         .fill("#e8ecef");
-    
-    y = y + 10;
-    
+
+    y = y + 13;
+
     document
         .fillOpacity(1.0)
         .lineWidth(1)
         .fill("#444444");
-    
+
     document
         .fillColor("#444444")
         .font('Helvetica')
         .fontSize(10);
-    
+
     const overallScore = model.OverallSummaryScore.toFixed();
 
     document
         .font('Helvetica-Bold')
-        .text('Overall Score', 75, y, { align: "left" })
-        .font('Helvetica')
-        .text(overallScore, 175, y, { align: "left" })
+        .fontSize(16)
+        .text('Overall Score', 215, y, { align: "left" })
+        .fillColor("#c21422")
+        .font('Helvetica-Bold')
+        .text(overallScore, 365, y, { align: "left" })
         .moveDown();
-    
-    y = y + 35;
+
+    y = y + 65;
 
     const physicalLimitationScore = model.PhysicalLimitation_KCCQ_PL_score.toFixed();
     const symptomFrequencyScore = model.SymptomFrequency_KCCQ_SF_score.toFixed();
@@ -163,107 +184,127 @@ const addScoreDetails = (document: PDFKit.PDFDocument, model: any, y: number): n
     const socialLimitationScore = model.SocialLimitation_KCCQ_SL_score.toFixed();
     const clinicalSummaryScore = model.ClinicalSummaryScore.toFixed();
 
+    const labelX = 180;
+    const valueX = 400;
+    const rowYOffset = 25;
+
     document
-        .font('Helvetica-Bold')
-        .text('Physical limitation', 75, y, { align: "left" })
-        .font('Helvetica')
-        .text(physicalLimitationScore, 175, y, { align: "left" })
-        .moveDown();
-    y = y + 18;
+        .fontSize(12)
+        .fillColor("#444444");
 
     document
         .font('Helvetica-Bold')
-        .text('Physical limitation', 75, y, { align: "left" })
+        .text('Physical Limitation Score', labelX, y, { align: "left" })
         .font('Helvetica')
-        .text(symptomFrequencyScore, 175, y, { align: "left" })
+        .text(physicalLimitationScore, valueX, y, { align: "left" })
         .moveDown();
-    y = y + 18;
+    y = y + rowYOffset;
 
     document
         .font('Helvetica-Bold')
-        .text('Physical limitation', 75, y, { align: "left" })
+        .text('Symptom Frequency Score', labelX, y, { align: "left" })
         .font('Helvetica')
-        .text(qualityOfLifeScore, 175, y, { align: "left" })
+        .text(symptomFrequencyScore, valueX, y, { align: "left" })
         .moveDown();
-    y = y + 18;
+    y = y + rowYOffset;
 
     document
         .font('Helvetica-Bold')
-        .text('Physical limitation', 75, y, { align: "left" })
+        .text('Quality of Life Score', labelX, y, { align: "left" })
         .font('Helvetica')
-        .text(socialLimitationScore, 175, y, { align: "left" })
+        .text(qualityOfLifeScore, valueX, y, { align: "left" })
         .moveDown();
-    y = y + 18;
-    
+    y = y + rowYOffset;
+
     document
         .font('Helvetica-Bold')
-        .text('Physical limitation', 75, y, { align: "left" })
+        .text('Social Limitation SCore', labelX, y, { align: "left" })
         .font('Helvetica')
-        .text(clinicalSummaryScore, 175, y, { align: "left" })
+        .text(socialLimitationScore, valueX, y, { align: "left" })
         .moveDown();
-    y = y + 18;
+    y = y + rowYOffset;
+
+    document
+        .font('Helvetica-Bold')
+        .text('Clinical Summary Score', labelX, y, { align: "left" })
+        .font('Helvetica')
+        .text(clinicalSummaryScore, valueX, y, { align: "left" })
+        .moveDown();
+    y = y + rowYOffset;
 
     return y;
 };
 
 const addChartImage = (document: PDFKit.PDFDocument, absoluteChartImagePath: string, y: number): number => {
 
+    y = y + 35;
+
     document
-        .image(absoluteChartImagePath, 0, 0, { width: 350, align: 'center' });
+        .image(absoluteChartImagePath, 125, y, { width: 350, align: 'center' });
 
     document
         .fontSize(7);
 
-    y = y + 350;
-        
+    y = y + 25;
+
     document.moveDown();
 
     return y;
 };
 
 const addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: number): number => {
-    y = y + 35;
-       
+
+    y = y + 45;
+
+    document
+        .fillColor('#444444')
+        .fontSize(10)
+        .text('Date: ' + model.ReportDate, 200, y, { align: "right" })
+        .moveDown();
+
+    y = y + 20;
+
     //DrawLine(document, y);
     document
-        .roundedRect(50, y, 500, 40, 1)
+        .roundedRect(50, y, 500, 65, 1)
         .lineWidth(0.1)
         .fillOpacity(0.8)
     //.fillAndStroke("#EBE0FF", "#6541A5");
         .fill("#e8ecef");
-    
-    y = y + 10;
-    
+
+    y = y + 20;
+
     document
         .fillOpacity(1.0)
         .lineWidth(1)
         .fill("#444444");
-    
+
     document
         .fillColor("#444444")
         .font('Helvetica')
-        .fontSize(10);
-    
+        .fontSize(13);
+
     document
         .font('Helvetica-Bold')
-        .text('Patient', 75, y, { align: "left" })
+        .text('Patient', 90, y, { align: "left" })
         .font('Helvetica')
-        .text(model.Name, 175, y, { align: "left" })
+        .text(model.Name, 190, y, { align: "left" })
         .moveDown();
-    
-    y = y + 15;
+
+    y = y + 23;
+
     document
         .font('Helvetica-Bold')
-        .text('Patient ID', 75, y, { align: "left" })
+        .text('Patient ID', 90, y, { align: "left" })
         .font('Helvetica')
-        .text(model.DisplayId, 175, y, { align: "left" })
+        .text(model.DisplayId, 190, y, { align: "left" })
         .moveDown();
 
     return y;
 };
 
 const addOrderFooter = (document, text, logoImagePath) => {
-    
+
     //var imageFile = path.join(process.cwd(), "./assets/images/REANCare_Footer.png");
     var imageFile = path.join(process.cwd(), logoImagePath);
 
@@ -271,9 +312,13 @@ const addOrderFooter = (document, text, logoImagePath) => {
         .image(imageFile, 0, 800, { width: 595 });
 
     document
-        .fontSize(8)
+        .fontSize(12)
         .fillColor('#ffffff');
 
     document
-        .text(text, 100, 810, { align: "right" });
+        .text(text, 100, 815, {
+            align     : "right",
+            link      : text,
+            underline : false
+        });
 };

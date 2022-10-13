@@ -239,6 +239,7 @@ export class CAssessmentQuestionNode extends CAssessmentNode {
     Options?         : CAssessmentQueryOption[];
     UserResponse?    : CAssessmentQueryResponse;
     SkipCondition?   : CAssessmentPathCondition;
+    CorrectAnswer?   : string;
 
     constructor() {
         super();

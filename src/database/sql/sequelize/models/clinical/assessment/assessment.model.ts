@@ -194,6 +194,13 @@ export default class Assessment extends Model {
     @BelongsTo(() => UserTask)
     UserTask: UserTask;
 
+    @Column({
+        type         : DataType.TEXT,
+        defaultValue : null,
+        allowNull    : true,
+    })
+    ScoreDetails: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

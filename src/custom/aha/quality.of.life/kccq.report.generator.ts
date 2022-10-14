@@ -218,7 +218,7 @@ const addScoreDetails = (document: PDFKit.PDFDocument, model: any, y: number): n
 
     document
         .font('Helvetica-Bold')
-        .text('Social Limitation SCore', labelX, y, { align: "left" })
+        .text('Social Limitation Score', labelX, y, { align: "left" })
         .font('Helvetica')
         .text(socialLimitationScore, valueX, y, { align: "left" })
         .moveDown();

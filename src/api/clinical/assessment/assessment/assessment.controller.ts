@@ -13,6 +13,7 @@ import { AssessmentNodeType, AssessmentType, CAssessmentListNode } from '../../.
 import { AssessmentHelperRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.helper.repo';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
 import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -414,12 +415,18 @@ export class AssessmentController extends BaseController{
     }
 
     private async generateScoreReport(assessment: AssessmentDto) {
+
         var customActions = new CustomActionsHandler();
+
         var score = await customActions.performActions_PostAssessmentScoring(
             assessment.PatientUserId, assessment.id);
 
+        Logger.instance().log(`Score: ${JSON.stringify(score, null, 2)}`);
+
         const reportUrl = await customActions.performActions_GenerateAssessmentReport(
             assessment.PatientUserId, assessment.id, score);
+
+        Logger.instance().log(`Report Url: ${JSON.stringify(reportUrl, null, 2)}`);
 
         const scoreStr = JSON.stringify(score);
 
@@ -428,6 +435,7 @@ export class AssessmentController extends BaseController{
             ScoreDetails : scoreStr,
             ReportUrl    : reportUrl
         });
+
         return { score, reportUrl };
     }
 

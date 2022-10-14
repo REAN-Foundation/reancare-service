@@ -1010,6 +1010,7 @@ export class AssessmentService {
             ExpectedResponseType : questionNode.QueryResponseType as QueryResponseType,
             Options              : questionNode.Options,
             ProviderGivenCode    : questionNode.ProviderGivenCode,
+            CorrectOption        : questionNode.CorrectOption,
         };
         return query;
     }
@@ -1031,6 +1032,7 @@ export class AssessmentService {
             ExpectedResponseType : QueryResponseType.Ok,
             Options              : [],
             ProviderGivenCode    : messageNode.ProviderGivenCode,
+            CorrectOption        : messageNode.CorrectOption
         };
         return query;
     }

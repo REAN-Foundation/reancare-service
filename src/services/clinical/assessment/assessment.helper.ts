@@ -26,6 +26,7 @@ export class AssessmentHelperService {
             ExpectedResponseType : questionNode.QueryResponseType as QueryResponseType,
             Options              : questionNode.Options,
             ProviderGivenCode    : questionNode.ProviderGivenCode,
+            CorrectOption        : questionNode.CorrectOption
         };
         return query;
     }
@@ -46,6 +47,7 @@ export class AssessmentHelperService {
             ExpectedResponseType : QueryResponseType.Ok,
             Options              : [],
             ProviderGivenCode    : messageNode.ProviderGivenCode,
+            CorrectOption        : messageNode.CorrectOption
         };
         return query;
     }

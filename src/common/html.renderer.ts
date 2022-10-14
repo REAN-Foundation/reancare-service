@@ -6,29 +6,62 @@ import { ConfigurationManager } from '../config/configuration.manager';
 import path from 'path';
 import fs from 'fs';
 import { Logger } from './logger';
+import nodeHtmlToImage from 'node-html-to-image';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
+// export const htmlTextToPNG = async (htmlText: string, width: number, height: number, filename?: string) => {
+//     try {
+//         const browser: puppeteer.Browser = await puppeteer.launch();
+//         const page = await browser.newPage();
+//         await page.setViewport({
+//             width  : width,
+//             height : height,
+
+//         });
+//         //await page.goto('file:///F:/service-1/index.html');
+//         await page.setContent(htmlText);
+
+//         const generatedFilePath = await getGeneratedFilePath(filename);
+//         await page.screenshot({
+//             path     : generatedFilePath,
+//             fullPage : false,
+//         });
+//         await browser.close();
+
+//         return generatedFilePath;
+//     }
+//     catch (error) {
+//         Logger.instance().log(`HTML Error: ${error.message}`);
+//     }
+// };
+
 export const htmlTextToPNG = async (htmlText: string, width: number, height: number, filename?: string) => {
     try {
-        const browser: puppeteer.Browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        await page.setViewport({
-            width  : width,
-            height : height,
-
-        });
-        //await page.goto('file:///F:/service-1/index.html');
-        await page.setContent(htmlText);
-
         const generatedFilePath = await getGeneratedFilePath(filename);
-        await page.screenshot({
-            path     : generatedFilePath,
-            fullPage : false,
-        });
-        await browser.close();
 
-        return generatedFilePath;
+        return new Promise<string>( (resolve, reject) => {
+            nodeHtmlToImage({
+                output        : generatedFilePath,
+                html          : htmlText,
+                puppeteerArgs : {
+                    args            : ['--no-sandbox'],
+                    defaultViewport : {
+                        width             : width,
+                        height            : height,
+                        deviceScaleFactor : 1
+                    }
+                }
+            })
+                .then(() => {
+                    Logger.instance().log('Imgae file created');
+                    resolve(generatedFilePath);
+                })
+                .catch(async (error) => {
+                    Logger.instance().log(`Error creating image file: ${error.message}`);
+                    reject(null);
+                });
+        });
     }
     catch (error) {
         Logger.instance().log(`HTML Error: ${error.message}`);

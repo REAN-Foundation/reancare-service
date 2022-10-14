@@ -188,5 +188,5 @@ export class KccqAssessmentUtils {
         const a = filtered.find(x => x.Title.startsWith(tag) );
         return a?.Value;
     };
-   
+
 }

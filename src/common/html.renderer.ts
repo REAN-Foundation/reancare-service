@@ -31,7 +31,7 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
         return generatedFilePath;
     }
     catch (error) {
-        Logger.instance().log(`Error: ${error.message}`);
+        Logger.instance().log(`HTML Error: ${error.message}`);
     }
 };
 

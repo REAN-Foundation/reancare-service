@@ -103,12 +103,15 @@ export class AHAActions {
             var score = null;
             if (assessment.Title.includes("Quality of Life Questionnaire")) {
                 //This is KCCQ assessment,...
+                Logger.instance().log('Calculating the score...');
                 score = KccqAssessmentUtils.scoreKCCQAssessment(userResponses);
             }
+            Logger.instance().log(`Score: ${JSON.stringify(score, null, 2)}`);
             return score;
         }
         catch (error) {
             Logger.instance().log(`Error performing post registration custom actions.`);
+            Logger.instance().log(error.message);
         }
     };
 
@@ -116,18 +119,27 @@ export class AHAActions {
         async (patientUserId: uuid, assessmentId: uuid, score: any): Promise<string> => {
             try {
                 Logger.instance().log(`Performing post assessment report generation ...`);
+
                 const patient = await this._patientService.getByUserId(patientUserId);
                 const assessment = await this._assessmentService.getById(assessmentId);
+
                 if (assessment.Title.includes("Quality of Life Questionnaire")) {
+
+                    Logger.instance().log('Generating the report ...');
+
                     //This is KCCQ assessment,...
                     if (assessment.ReportUrl != null && assessment.ReportUrl.length > 2) {
+                        Logger.instance().log(`Report url exists - ${assessment.ReportUrl}`);
                         return assessment.ReportUrl;
                     }
+                    Logger.instance().log(`Generating assessment report...`);
                     const reportUrl = await KccqAssessmentUtils.generateReport(
                         patient, assessment, score);
+
                     const updates: AssessmentDomainModel = {
                         ReportUrl : reportUrl
                     };
+
                     const updatedAssessment = await this._assessmentService.update(assessmentId, updates);
                     return updatedAssessment.ReportUrl;
                 }
@@ -135,6 +147,7 @@ export class AHAActions {
             }
             catch (error) {
                 Logger.instance().log(`Error performing post registration custom actions.`);
+                Logger.instance().log(error.message);
             }
         }
 

@@ -7,27 +7,29 @@ import { PatientInsuranceDto } from "../insurance/insurance.dto";
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 export interface PatientDto {
-    id: string;
-    UserId: string;
-    DisplayId: string;
-    EhrId: string;
-    DisplayName: string;
-    UserName: string,
-    Phone: string;
-    Email: string;
-    Gender: Gender;
-    BirthDate: Date;
-    Age: string;
+    id          : string;
+    UserId      : string;
+    DisplayId   : string;
+    EhrId       : string;
+    DisplayName : string;
+    UserName    : string,
+    Phone       : string;
+    Email       : string;
+    Gender      : Gender;
+    BirthDate   : Date;
+    Age         : string;
 }
 
 export interface PatientDetailsDto {
-    id: string;
-    UserId: string;
-    User: UserDto;
-    DisplayId: string,
-    EhrId?: string;
-    NationalHealthId?:string;
-    HealthProfile?: HealthProfileDto;
-    Insurances?: PatientInsuranceDto[];
-    EmergencyContacts?: EmergencyContactDto[];
+    id                  : string;
+    UserId              : string;
+    User                : UserDto;
+    DisplayId           : string,
+    EhrId?              : string;
+    NationalHealthId?   : string;
+    HealthSystem?       : string;
+    AssociatedHospital? : string;
+    HealthProfile?      : HealthProfileDto;
+    Insurances?         : PatientInsuranceDto[];
+    EmergencyContacts?  : EmergencyContactDto[];
 }

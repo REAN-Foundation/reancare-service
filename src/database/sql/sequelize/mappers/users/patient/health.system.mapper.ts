@@ -1,7 +1,8 @@
 import HealthSystem from '../../../models/users/patient/health.system.model';
 import { HealthSystemDto } from '../../../../../../domain.types/users/patient/health.system/health.system.dto';
 import HealthSystemHospital from '../../../models/users/patient/health.system.hospital.model';
-import { HealthSystemHospitalDto } from '../../../../../../domain.types/users/patient/health.system/health.system.hospital.dto';
+import { HealthSystemHospitalDto } from
+    '../../../../../../domain.types/users/patient/health.system/health.system.hospital.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

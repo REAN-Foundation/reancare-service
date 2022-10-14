@@ -15,6 +15,7 @@ import { Loader } from '../../../../startup/loader';
 import { EmergencyContactValidator } from './emergency.contact.validator';
 import { BaseController } from '../../../base.controller';
 import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { HealthSystemService } from '../../../../services/users/patient/health.system.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +37,8 @@ export class EmergencyContactController extends BaseController {
 
     _addressService: AddressService = null;
 
+    _healthSystemService: HealthSystemService = null;
+
     constructor() {
         super();
         this._service = Loader.container.resolve(EmergencyContactService);
@@ -44,6 +47,7 @@ export class EmergencyContactController extends BaseController {
         this._orgService = Loader.container.resolve(OrganizationService);
         this._userService = Loader.container.resolve(UserService);
         this._addressService = Loader.container.resolve(AddressService);
+        this._healthSystemService = Loader.container.resolve(HealthSystemService);
         this._authorizer = Loader.authorizer;
     }
 
@@ -258,6 +262,43 @@ export class EmergencyContactController extends BaseController {
             ResponseHandler.success(request, response, 'Emergency contact record deleted successfully!', 200, {
                 Deleted : true,
             });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getHealthSystems = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Emergency.Contact.GetHealthSystems', request, response);
+
+            const healthSystems = await this._healthSystemService.getHealthSystems();
+            if (healthSystems.length === 0) {
+                throw new ApiError(400, 'Cannot fetch health systems!');
+            }
+
+            ResponseHandler.success(request, response, 'Fetched health systems successfully!', 201, {
+                HealthSystems : healthSystems,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getHealthSystemHospitals = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Emergency.Contact.GetHealthSystemHospitals', request, response);
+
+            const healthSystemId : uuid = request.params.healthSystemId;
+            const healthSystems = await this._healthSystemService.getHealthSystemHospitals(healthSystemId);
+            if (healthSystems.length === 0) {
+                throw new ApiError(400, 'Cannot fetch hospitals associated with health system!');
+            }
+
+            ResponseHandler.success(request, response, 'Fetched hospitals associated with health system!', 201, {
+                HealthSystems : healthSystems,
+            });
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

@@ -3,7 +3,9 @@ import { inject, injectable } from "tsyringe";
 import { HealthSystemDomainModel } from "../../../domain.types/users/patient/health.system/health.system.domain.model";
 import { HealthSystemDto } from "../../../domain.types/users/patient/health.system/health.system.dto";
 import { HealthSystemHospitalDto } from "../../../domain.types/users/patient/health.system/health.system.hospital.dto";
-import { HealthSystemHospitalDomainModel } from "../../../domain.types/users/patient/health.system/health.system.hospital.domain.model";
+import { HealthSystemHospitalDomainModel } from
+    "../../../domain.types/users/patient/health.system/health.system.hospital.domain.model";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,8 +30,8 @@ export class HealthSystemService {
         return await this._healthSystemRepo.createHealthSystemHospital(model);
     };
 
-    getHealthSystemHospitals = async (): Promise<HealthSystemHospitalDto[]> => {
-        return await this._healthSystemRepo.getHealthSystems();
+    getHealthSystemHospitals = async (healthSystemId: uuid): Promise<HealthSystemHospitalDto[]> => {
+        return await this._healthSystemRepo.getHealthSystemHospitals(healthSystemId);
     };
 
 }

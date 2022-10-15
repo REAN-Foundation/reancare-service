@@ -84,10 +84,10 @@ export class NoticeValidator extends BaseValidator {
 
     private  async validateCreateActionBody(request) {
 
-        await this.validateUuid(request, 'noticeId', Where.Param, true, false);
-        await this.validateString(request, 'actionName', Where.Param, false, true);
-        await this.validateString(request, 'ActionContent', Where.Body, false, true);
-        await this.validateDate(request, 'ActionTakenAt', Where.Body, false, true);
+        await this.validateUuid(request, 'NoticeId', Where.Body, true, false);
+        await this.validateString(request, 'Action', Where.Body, false, true);
+        await this.validateArray(request, 'Contents', Where.Body, false, true);
+        // await this.validateDate(request, 'ActionTakenAt', Where.Body, false, true);
         this.validateRequest(request);
     }
 
@@ -95,12 +95,10 @@ export class NoticeValidator extends BaseValidator {
 
         const NoticeActionModel: NoticeActionDomainModel = {
 
-            NoticeId      : request.params.noticeId,
-            Action        : request.params.actionName,
-            ActionContent : request.body.ActionContent,
-            ActionTakenAt : request.body.ActionTakenAt ?? new Date(),
+            NoticeId : request.body.NoticeId,
+            Action   : request.body.Action,
+            Contents : request.body.Contents,
         };
-
         return NoticeActionModel;
     };
 

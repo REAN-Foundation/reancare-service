@@ -239,7 +239,7 @@ export class CAssessmentQuestionNode extends CAssessmentNode {
     Options?         : CAssessmentQueryOption[];
     UserResponse?    : CAssessmentQueryResponse;
     SkipCondition?   : CAssessmentPathCondition;
-    CorrectAnswer?   : string;
+    CorrectAnswer?   : string | any;
 
     constructor() {
         super();
@@ -249,7 +249,6 @@ export class CAssessmentQuestionNode extends CAssessmentNode {
         this.Paths = [];
         this.Options = [];
     }
-
 }
 
 export class CAssessmentMessageNode extends CAssessmentNode {

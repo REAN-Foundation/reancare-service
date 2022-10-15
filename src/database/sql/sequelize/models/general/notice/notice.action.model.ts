@@ -60,16 +60,10 @@ export default class NoticeAction extends Model {
     Action: string;
 
     @Column({
-        type      : DataType.DATE,
-        allowNull : true,
-    })
-    ActionTakenAt: Date;
-
-    @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
-    ActionContent: string;
+    Contents: string;
 
     @Column
     @CreatedAt

@@ -144,11 +144,10 @@ export class NoticeController extends BaseController {
             const userId = request.currentUser.UserId;
             const model = await this._validator.createAction(request);
             const entity: NoticeActionDomainModel = {
-                UserId        : userId,
-                NoticeId      : model.NoticeId,
-                Action        : model.Action,
-                ActionContent : model.ActionContent,
-                ActionTakenAt : model.ActionTakenAt
+                UserId   : userId,
+                NoticeId : model.NoticeId,
+                Action   : model.Action,
+                Contents : model.Contents,
             };
 
             const noticeAction = await this._service.createAction(entity);

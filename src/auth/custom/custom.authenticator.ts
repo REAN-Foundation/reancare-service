@@ -34,7 +34,7 @@ export class CustomAuthenticator implements IAuthenticator {
             const authHeader = request.headers['authorization'];
             const token = authHeader && authHeader.split(' ')[1];
 
-            if (token == 'null' || null) {
+            if (token == null || token == 'null') {
                 const IsPrivileged = request.currentClient.IsPrivileged as boolean;
                 if (IsPrivileged) {
                     return res;

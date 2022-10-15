@@ -203,14 +203,16 @@ export class NoticeRepo implements INoticeRepo {
     };
 
     createAction = async (createModel: NoticeActionDomainModel): Promise<NoticeActionDto> => {
-
+        
+        var contents = createModel.Contents && createModel.Contents.length > 0 ?
+            JSON.stringify(createModel.Contents) : '[]';
+       
         try {
             const entity = {
-                UserId        : createModel.UserId,
-                NoticeId      : createModel.NoticeId,
-                Action        : createModel.Action,
-                ActionTakenAt : createModel.ActionTakenAt,
-                ActionContent : createModel.ActionContent,
+                UserId   : createModel.UserId,
+                NoticeId : createModel.NoticeId,
+                Action   : createModel.Action,
+                Contents : contents
             };
 
             const noticeAction = await NoticeAction.create(entity);

@@ -446,7 +446,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 Score                       : nodeObj.Score,
                 ServeListNodeChildrenAtOnce : nodeObj.ServeListNodeChildrenAtOnce,
                 QueryResponseType           : QueryResponseType.None,
-                CorrectOption               : nodeObj.CorrectOption,
+                CorrectAnswer               : nodeObj.CorrectAnswer,
             };
 
             var thisNode = await AssessmentNode.create(nodeEntity);
@@ -462,6 +462,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
                 const questionNode = nodeObj as CAssessmentQuestionNode;
                 thisNode.QueryResponseType = questionNode.QueryResponseType;
+                thisNode.CorrectAnswer     = questionNode.CorrectAnswer;
                 await thisNode.save();
 
                 if (questionNode.Options && questionNode.Options.length > 0) {
@@ -512,6 +513,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             if (Helper.hasProperty(updates, 'Sequence')) {
                 thisNode.Sequence = updates['Sequence'];
+            }
+            if (Helper.hasProperty(updates, 'CorrectAnswer')) {
+                thisNode.CorrectAnswer = updates['CorrectAnswer'];
             }
             if (Helper.hasProperty(updates, 'Score')) {
                 thisNode.Score = updates['Score'];

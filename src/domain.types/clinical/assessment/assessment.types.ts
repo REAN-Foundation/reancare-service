@@ -118,6 +118,7 @@ export const ConditionOperatorTypeList: ConditionOperatorType[] = [
     ConditionOperatorType.IsTrue,
     ConditionOperatorType.IsFalse,
     ConditionOperatorType.Exists,
+    ConditionOperatorType.None,
 ];
 
 export enum ConditionCompositionType {
@@ -239,6 +240,7 @@ export class CAssessmentQuestionNode extends CAssessmentNode {
     Options?         : CAssessmentQueryOption[];
     UserResponse?    : CAssessmentQueryResponse;
     SkipCondition?   : CAssessmentPathCondition;
+    CorrectAnswer?   : string;
 
     constructor() {
         super();

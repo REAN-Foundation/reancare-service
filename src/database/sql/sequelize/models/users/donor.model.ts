@@ -63,6 +63,18 @@ export default class Donor extends Model {
     BloodGroup: string;
 
     @Column({
+        type      : DataType.UUID,
+        allowNull : true,
+    })
+    AcceptorUserId?   : string;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    LastDonationDate?  : Date;
+
+    @Column({
         type      : DataType.STRING(1024),
         allowNull : true,
     })

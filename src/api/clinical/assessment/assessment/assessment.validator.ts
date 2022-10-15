@@ -24,6 +24,7 @@ export class AssessmentValidator extends BaseValidator {
             Type                   : request.body.Type ?? null,
             AssessmentTemplateId   : request.body.AssessmentTemplateId ?? null,
             ScoringApplicable      : request.body.ScoringApplicable ?? false,
+            ScoreDetails           : request.body.ScoreDetails ? JSON.stringify(request.body.ScoreDetails) : null,
             ProviderEnrollmentId   : request.body.ProviderEnrollmentId ?? null,
             ProviderAssessmentCode : request.body.ProviderAssessmentCode ?? null,
             Provider               : request.body.Provider ?? null,
@@ -207,6 +208,7 @@ export class AssessmentValidator extends BaseValidator {
         await this.validateString(request, 'Type', Where.Body, false, false);
         await this.validateString(request, 'AssessmentTemplateId', Where.Body, false, false);
         await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, false);
+        await this.validateObject(request, 'ScoreDetails', Where.Body, false, false);
         await this.validateString(request, 'ProviderEnrollmentId', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateString(request, 'Provider', Where.Body, false, false);

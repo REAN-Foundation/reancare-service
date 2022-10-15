@@ -10,6 +10,7 @@ export const register = (app: express.Application): void => {
 
     router.post('/schedule-monthly-custom-tasks', authenticator.authenticateClient, controller.scheduleMonthlyCustomTasks);
     router.post('/assessment-tasks/:patientUserId/assessment-templates/:templateId', authenticator.authenticateClient, controller.createAssessmentTask);
+    router.post('/reports/:patientUserId/assessments/:assessmentId', authenticator.authenticateClient, controller.testReportGeneration);
 
     app.use('/api/v1/tests', router);
 };

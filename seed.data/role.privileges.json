@@ -141,8 +141,8 @@
             "LabRecord.Search",
             "LabRecord.Update",
             "LabRecord.Delete",
-            "Notification.Create"
-            
+            "Notification.Create",
+            "Person.GetAllPersonsWithPhone"
         ]
     },
     {
@@ -498,7 +498,8 @@
             "Notification.Search",
             "Notification.MarkAsRead",
             "Notification.Update",
-            "Notification.Delete"
+            "Notification.Delete",
+            "Person.GetAllPersonsWithPhone"
         ]
     },
     {
@@ -813,7 +814,8 @@
             "LabRecord.Delete",
             "Donor.Search",
             "Donor.GetByUserId",
-            "Donor.UpdateByUserId"
+            "Donor.UpdateByUserId",
+            "Person.GetAllPersonsWithPhone"
         ]
     },
     {

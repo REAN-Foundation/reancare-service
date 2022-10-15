@@ -11,6 +11,8 @@ export interface DonorDomainModel {
     EhrId?            : string;
     User?             : UserDomainModel;
     BloodGroup?       : string,
+    AcceptorUserId?   : string;
+    LastDonationDate? : Date;
     MedIssues?        : string[];
     IsAvailable?      : boolean;
     HasDonatedEarlier? : boolean;

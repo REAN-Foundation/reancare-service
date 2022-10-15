@@ -8,8 +8,8 @@ import { BloodPressureValidator } from './blood.pressure.validator';
 import { BaseController } from '../../../base.controller';
 import { Logger } from '../../../../common/logger';
 import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
-import { EHRMasterRecordsHandler } from '../../../../custom/ehr.insights.records/ehr.master.records.handler';
-import { EHRRecordTypes } from '../../../../custom/ehr.insights.records/ehr.record.types';
+import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
+import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,7 +40,7 @@ export class BloodPressureController extends BaseController {
             if (bloodPressure == null) {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, bloodPressure.id, model);
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
                 BloodPressure : bloodPressure,
             });
@@ -110,7 +110,7 @@ export class BloodPressureController extends BaseController {
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update blood pressure record!');
             }
-            this.addEHRRecord(model.PatientUserId, model);
+            this.addEHRRecord(model.PatientUserId, id, model);
             ResponseHandler.success(request, response, 'Blood pressure record updated successfully!', 200, {
                 BloodPressure : updated,
             });
@@ -147,18 +147,26 @@ export class BloodPressureController extends BaseController {
 
     //#region Privates
 
-    private addEHRRecord = (patientUserId: uuid, model: BloodPressureDomainModel) => {
-        if (model.Diastolic) {
-            EHRMasterRecordsHandler.addFloatRecord(
+    private addEHRRecord = (patientUserId: uuid, recordId: uuid, model: BloodPressureDomainModel) => {
+        if (model.Systolic) {
+            EHRAnalyticsHandler.addFloatRecord(
                 patientUserId,
+                recordId,
                 EHRRecordTypes.BloodPressure,
                 model.Systolic,
                 model.Unit,
                 'Systolic Blood Pressure',
-                'Blood Pressure',
+                'Blood Pressure');
+        }
+        if (model.Diastolic) {
+            EHRAnalyticsHandler.addFloatRecord(
+                patientUserId,
+                recordId,
+                EHRRecordTypes.BloodPressure,
                 model.Diastolic,
                 model.Unit,
-                'Distolic Blood Pressure');
+                'Distolic Blood Pressure',
+                'Blood Pressure');
         }
     }
 

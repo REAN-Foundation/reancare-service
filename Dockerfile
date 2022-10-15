@@ -9,6 +9,8 @@ RUN apk add --no-cache \
         awscli \
     && rm -rf /var/cache/apk/*
 RUN apk add --update alpine-sdk
+RUN apk add chromium \
+    harfbuzz
 WORKDIR /app
 COPY package*.json /app/
 RUN npm install -g typescript
@@ -29,6 +31,8 @@ RUN apk add --no-cache \
         awscli \
     && rm -rf /var/cache/apk/*
 RUN apk add --update alpine-sdk
+RUN apk add chromium \
+    harfbuzz
 RUN apk update
 RUN apk upgrade
 ADD . /app

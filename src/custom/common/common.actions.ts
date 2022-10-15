@@ -1,17 +1,17 @@
-import { Loader } from '../startup/loader';
-import { TimeHelper } from '../common/time.helper';
-import { DurationType } from '../domain.types/miscellaneous/time.types';
-import { AssessmentDomainModel } from '../domain.types/clinical/assessment/assessment.domain.model';
-import { UserTaskDomainModel } from '../domain.types/users/user.task/user.task.domain.model';
-import { UserActionType, UserTaskCategory } from '../domain.types/users/user.task/user.task.types';
-import { Logger } from '../common/logger';
-import { AssessmentTemplateService } from '../services/clinical/assessment/assessment.template.service';
-import { AssessmentService } from '../services/clinical/assessment/assessment.service';
-import { UserTaskService } from '../services/users/user/user.task.service';
-import { uuid } from '../domain.types/miscellaneous/system.types';
-import { CustomTaskService } from '../services/users/user/custom.task.service';
-import { CustomTaskDomainModel } from '../domain.types/users/custom.task/custom.task.domain.model';
-import { ApiError } from '../common/api.error';
+import { Loader } from '../../startup/loader';
+import { TimeHelper } from '../../common/time.helper';
+import { DurationType } from '../../domain.types/miscellaneous/time.types';
+import { AssessmentDomainModel } from '../../domain.types/clinical/assessment/assessment.domain.model';
+import { UserTaskDomainModel } from '../../domain.types/users/user.task/user.task.domain.model';
+import { UserActionType, UserTaskCategory } from '../../domain.types/users/user.task/user.task.types';
+import { Logger } from '../../common/logger';
+import { AssessmentTemplateService } from '../../services/clinical/assessment/assessment.template.service';
+import { AssessmentService } from '../../services/clinical/assessment/assessment.service';
+import { UserTaskService } from '../../services/users/user/user.task.service';
+import { uuid } from '../../domain.types/miscellaneous/system.types';
+import { CustomTaskService } from '../../services/users/user/custom.task.service';
+import { CustomTaskDomainModel } from '../../domain.types/users/custom.task/custom.task.domain.model';
+import { ApiError } from '../../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,6 +58,11 @@ export class CommonActions {
         const assessment = await this._assessmentService.create(assessmentBody);
         const assessmentId = assessment.id;
 
+        var scheduledEndTime = TimeHelper.addDuration(new Date(), 9, DurationType.Day);
+        if (templateName === 'Medical Profile Details') {
+            scheduledEndTime = TimeHelper.addDuration(new Date(), 6, DurationType.Month);
+        }
+
         const userTaskBody : UserTaskDomainModel = {
             UserId             : patientUserId,
             Task               : templateName,
@@ -65,7 +70,7 @@ export class CommonActions {
             ActionType         : UserActionType.Careplan,
             ActionId           : assessmentId,
             ScheduledStartTime : new Date(),
-            ScheduledEndTime   : TimeHelper.addDuration(new Date(), 9, DurationType.Day),
+            ScheduledEndTime   : scheduledEndTime,
             IsRecurrent        : false
         };
 
@@ -97,7 +102,5 @@ export class CommonActions {
         userTask['Action'] = customTask;
         return userTask;
     };
-
-    //#endregion
 
 }

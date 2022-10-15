@@ -14,14 +14,16 @@ export const DailyAssessmentFeelingList: DailyAssessmentFeelings [] = [
 ];
 
 export enum DailyAssessmentMoods {
-    Happy    = 'Happy',
-    Lonely   = 'Lonely',
-    Angry    = 'Angry',
-    Stressed = 'Stressed',
-    Anxious  = 'Anxious',
-    Fearful  = 'Fearful',
-    Sad      = 'Sad',
-    Hopeful  = 'Hopeful',
+    Happy       = 'Happy',
+    Lonely      = 'Lonely',
+    Angry       = 'Angry',
+    Stressed    = 'Stressed',
+    Anxious     = 'Anxious',
+    Fearful     = 'Fearful',
+    Sad         = 'Sad',
+    Hopeful     = 'Hopeful',
+    Calm        = 'Calm',
+    StatusQuo   = 'Status Quo',
     UnSpecified = 'Unspecified',
 }
 
@@ -34,6 +36,8 @@ export const DailyAssessmentMoodList: DailyAssessmentMoods [] = [
     DailyAssessmentMoods.Fearful,
     DailyAssessmentMoods.Sad,
     DailyAssessmentMoods.Hopeful,
+    DailyAssessmentMoods.Calm,
+    DailyAssessmentMoods.StatusQuo,
     DailyAssessmentMoods.UnSpecified,
 
 ];

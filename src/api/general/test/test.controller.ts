@@ -5,7 +5,7 @@ import { UserService } from '../../../services/users/user/user.service';
 import { Loader } from '../../../startup/loader';
 import { Logger } from '../../../common/logger';
 import { CustomActionsHandler } from '../../../custom/custom.actions.handler';
-import { CommonActions } from '../../../custom/common.actions';
+import { CommonActions } from '../../../custom/common/common.actions';
 import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -58,6 +58,28 @@ export class TestController {
 
             ResponseHandler.success(request, response, 'Assessment created successfully!', 200, {
                 Assessment : assessment,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    }
+
+    testReportGeneration = async (request: express.Request, response: express.Response): Promise<any> => {
+        try {
+
+            Logger.instance().log('Testing: Generating assessment report...');
+
+            const patientUserId = request.params.patientUserId;
+            const assessmentId = request.params.assessmentId;
+            const score = request.body.Score;
+
+            var customActionHandler = new CustomActionsHandler();
+            const result = await customActionHandler.performActions_GenerateAssessmentReport(
+                patientUserId, assessmentId, score);
+
+            ResponseHandler.success(request, response, 'Assessment created successfully!', 200, {
+                Result : result,
             });
 
         } catch (error) {

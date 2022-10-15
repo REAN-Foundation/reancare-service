@@ -23,6 +23,8 @@ export class DonorMapper {
             DisplayId         : donor.DisplayId,
             EhrId             : donor.EhrId,
             BloodGroup        : donor.BloodGroup,
+            AcceptorUserId    : donor.AcceptorUserId,
+            LastDonationDate  : donor.LastDonationDate,
             IsAvailable       : donor.IsAvailable,
             MedIssues         : medIssues,
             HasDonatedEarlier : donor.HasDonatedEarlier,
@@ -43,19 +45,21 @@ export class DonorMapper {
         }
 
         const dto: DonorDto = {
-            id          : donor.id,
-            UserId      : donor.UserId,
-            DisplayId   : donor.DisplayId,
-            EhrId       : donor.EhrId,
-            BloodGroup  : donor.BloodGroup,
-            MedIssues   : medIssues,
-            DisplayName : null,
-            UserName    : null,
-            Phone       : null,
-            Email       : null,
-            Gender      : null,
-            BirthDate   : null,
-            Age         : null,
+            id               : donor.id,
+            UserId           : donor.UserId,
+            DisplayId        : donor.DisplayId,
+            EhrId            : donor.EhrId,
+            BloodGroup       : donor.BloodGroup,
+            AcceptorUserId   : donor.AcceptorUserId,
+            LastDonationDate : donor.LastDonationDate,
+            MedIssues        : medIssues,
+            DisplayName      : null,
+            UserName         : null,
+            Phone            : null,
+            Email            : null,
+            Gender           : null,
+            BirthDate        : null,
+            Age              : null,
         };
         return dto;
     };

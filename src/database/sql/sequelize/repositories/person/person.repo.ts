@@ -117,6 +117,7 @@ export class PersonRepo implements IPersonRepo {
                 LastName             : personDomainModel.LastName,
                 Phone                : personDomainModel.Phone,
                 Email                : personDomainModel.Email ?? null,
+                TelegramChatId       : personDomainModel.TelegramChatId ?? null,
                 Gender               : personDomainModel.Gender ?? 'Unknown',
                 SelfIdentifiedGender : personDomainModel.SelfIdentifiedGender ?? null,
                 MaritalStatus        : personDomainModel.MaritalStatus ?? null,
@@ -172,6 +173,9 @@ export class PersonRepo implements IPersonRepo {
             }
             if (personDomainModel.Email !== undefined) {
                 person.Email = personDomainModel.Email;
+            }
+            if (personDomainModel.TelegramChatId !== undefined) {
+                person.TelegramChatId = personDomainModel.TelegramChatId;
             }
             if (personDomainModel.Gender !== undefined) {
                 person.Gender = Helper.getEnumKeyFromValue(Gender, personDomainModel.Gender) || 'Unknown';

@@ -1,24 +1,21 @@
 import express from 'express';
+import { NotificationController } from './notification.controller';
 import { Loader } from '../../../startup/loader';
-import { NoticeController } from './notice.controller';
 
 ///////////////////////////////////////////////////////////////////////////////////
-
+ 
 export const register = (app: express.Application): void => {
-
+ 
     const router = express.Router();
     const authenticator = Loader.authenticator;
-    const controller = new NoticeController();
-
+    const controller = new NotificationController();
+ 
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
-    router.post('/:id/users/:userId/take-action', authenticator.authenticateClient,
-        authenticator.authenticateUser, controller.createAction);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);
-    router.get('/:id/actions', authenticator.authenticateClient,
-        authenticator.authenticateUser, controller.getActionById);
+    router.put('/:id/mark-as-read', authenticator.authenticateClient, authenticator.authenticateUser, controller.markAsRead);
     router.put('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.update);
     router.delete('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.delete);
-
-    app.use('/api/v1/general/notices', router);
+ 
+    app.use('/api/v1/general/notifications', router);
 };

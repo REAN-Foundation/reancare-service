@@ -142,7 +142,7 @@ export class AssessmentHelperMapper {
             questionNodeDto.QueryResponseType = node.QueryResponseType as QueryResponseType;
             questionNodeDto.Options = options;
             questionNodeDto.Paths = paths;
-            questionNodeDto.CorrectAnswer = node.CorrectAnswer;
+            questionNodeDto.CorrectAnswer = node.CorrectAnswer ? JSON.parse(node.CorrectAnswer) : null;
             return questionNodeDto;
         }
         if (node.NodeType === AssessmentNodeType.NodeList) {

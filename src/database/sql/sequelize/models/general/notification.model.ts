@@ -8,20 +8,22 @@ import {
     DeletedAt,
     IsUUID,
     PrimaryKey,
+    ForeignKey,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
+import User from '../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'LearningPath',
-    tableName       : 'educational_learning_paths',
+    modelName       : 'Notification',
+    tableName       : 'Notifications',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class LearningPath extends Model {
+export default class Notification extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -34,17 +36,25 @@ export default class LearningPath extends Model {
     })
     id: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => User)
+    @Column({
+        type      : DataType.UUID,
+        allowNull : false,
+    })
+    UserId: string;
+
     @Column({
         type      : DataType.STRING(256),
         allowNull : false,
     })
-    Name: string;
+    Title: string;
 
     @Column({
-        type      : DataType.TEXT,
+        type      : DataType.STRING(1024),
         allowNull : true,
     })
-    Description: string;
+    Body: string;
 
     @Column({
         type      : DataType.TEXT,
@@ -53,22 +63,28 @@ export default class LearningPath extends Model {
     ImageUrl: string;
 
     @Column({
-        type      : DataType.FLOAT,
+        type      : DataType.STRING(128),
         allowNull : true,
     })
-    DurationInDays: number;
+    Type: string;
+  
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Payload: string;
 
     @Column({
-        type      : DataType.FLOAT,
+        type      : DataType.DATE,
         allowNull : true,
     })
-    PreferenceWeight: number;
+    SentOn: Date;
 
     @Column({
-        type      : DataType.BOOLEAN,
+        type      : DataType.DATE,
         allowNull : true,
     })
-    Enabled: boolean;
+    ReadOn: Date;
 
     @Column
     @CreatedAt

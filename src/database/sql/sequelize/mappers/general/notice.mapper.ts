@@ -40,13 +40,18 @@ export class NoticeMapper {
             return null;
         }
 
+        var contents = [];
+        if (noticeAction.Contents !== null && noticeAction.Contents !== undefined) {
+            contents = JSON.parse(noticeAction.Contents);
+        }
+
         const actionDto: NoticeActionDto = {
-            id            : noticeAction.id,
-            UserId        : noticeAction.UserId,
-            NoticeId      : noticeAction.NoticeId,
-            Action        : noticeAction.Action,
-            ActionContent : noticeAction.ActionContent,
-            ActionTakenAt : noticeAction.ActionTakenAt,
+            id       : noticeAction.id,
+            UserId   : noticeAction.UserId,
+            NoticeId : noticeAction.NoticeId,
+            Action   : noticeAction.Action,
+            Contents : contents
+
         };
         return actionDto;
     };

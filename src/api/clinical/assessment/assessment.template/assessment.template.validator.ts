@@ -109,6 +109,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'QueryResponseType', Where.Body, false, false);
         await this.validateArray(request, 'Options', Where.Body, false, false);
         await this.validateDecimal(request, 'Score', Where.Body, false, false);
+        await this.validateDecimal(request, 'CorrectOption', Where.Body, true, false);
 
         this.validateRequest(request);
 
@@ -125,7 +126,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Description       : request.body.Description ?? null,
                 TemplateId        : templateId,
                 Score             : request.body.Score ?? 0,
-                Options           : []
+                Options           : [],
+                CorrectOption     : request.body.CorrectOption ?? null
             };
             if (request.body.Options && request.body.Options.length > 0) {
                 var options: CAssessmentQueryOption[] = [];

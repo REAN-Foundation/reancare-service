@@ -15,6 +15,7 @@ export interface AssessmentQueryDto {
     Description?        : string;
     Message?            : string;
     Options             : CAssessmentQueryOption[];
+    CorrectOption       : number;
     ProviderGivenCode?  : string;
     ProviderGivenId?    : string;
 }
@@ -34,4 +35,5 @@ export interface AssessmentQueryListDto {
     ChildrenQuestions          : AssessmentQueryDto[];
     ProviderGivenCode?         : string;
     ProviderGivenId?           : string;
+    CorrectOption?             : number;
 }

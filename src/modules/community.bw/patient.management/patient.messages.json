@@ -3,24 +3,25 @@
         "Name": "Message before 10 day",
         "TimeSlot": "Morning",
         "Sequence": 1,
-        "Day": 1,
-        "Message": "Blood transfusion date is 10 days away. Please monitor the health of your child. \nRegards \nTeam Blood Warriors"
+        "Day": 10,
+        "Message": "Hi, \nBlood transfusion date is 10 days away. Please monitor the health of your child. \nRegards \nTeam Blood Warriors"
         
     },
     {
         "Name": "Message before 7 day",
         "TimeSlot": "Morning",
         "Sequence": 2,
-        "Day": 2,
-        "Message": "Blood transfusion date is 7 days away. Please monitor the health of your child. \nRegards \nTeam Blood Warriors"
+        "Day": 7,
+        "Message": "Hi, \nBlood transfusion date is 7 days away. Please monitor the health of your child. \nRegards \nTeam Blood Warriors"
         
     },
     {
-        "Name": "On raising request",
+        "Name": "Message before 5 day",
         "TimeSlot": "Morning",
         "Sequence": 3,
-        "Day": 3,
-        "Message": "The blood donation request is raised successfully and request to donors is sent. We will send you a confirmation when donation is scheduled. \nRegards \nTeam Blood Warriors"
+        "Day": 5,
+        "Type": "interactive-buttons",
+        "Message": "Hi, \nWe are 5 days away from blood transfusion. \nShall we raise a donation request?"
 
     }
 ]

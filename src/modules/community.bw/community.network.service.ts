@@ -15,6 +15,8 @@ import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activi
 import { UserTaskDomainModel } from "../../domain.types/users/user.task/user.task.domain.model";
 import { PatientNetworkService } from "./patient.management/patient.network.service";
 import { uuid } from "../../domain.types/miscellaneous/system.types";
+import { HealthProfileService } from "../../services/users/patient/health.profile.service";
+import { Loader } from "../../startup/loader";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,13 +25,15 @@ export class CommunityNetworkService {
 
     _patientNetworkService: PatientNetworkService = new PatientNetworkService();
 
+    _patientHealthProfileService: HealthProfileService = null;
+
     constructor(
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
         @inject('IPatientRepo') private _patientRepo: IPatientRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
-    ) {}
+    ) { this._patientHealthProfileService = Loader.container.resolve(HealthProfileService); }
 
     public enroll = async (enrollmentDetails: EnrollmentDomainModel): Promise<EnrollmentDto> => {
 
@@ -69,6 +73,9 @@ export class CommunityNetworkService {
             }
         }
 
+        const healthProfile = await this._patientHealthProfileService.getByPatientUserId(
+            enrollmentDetails.PatientUserId);
+
         enrollmentDetails.ParticipantId = participant.ParticipantId;
         enrollmentDetails.Gender = patient.User.Person.Gender;
         enrollmentDetails.EnrollmentId = participant.ParticipantId;
@@ -77,7 +84,7 @@ export class CommunityNetworkService {
 
         var activities = await this._patientNetworkService.fetchActivities(
             enrollmentDetails.PlanCode, enrollmentDetails.ParticipantId, enrollmentDetails.EnrollmentId,
-            enrollmentDetails.StartDate, enrollmentDetails.EndDate);
+            healthProfile.BloodTransfusionDate, enrollmentDetails.EndDate);
 
         Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
 
@@ -90,7 +97,7 @@ export class CommunityNetworkService {
                 Provider         : enrollmentDetails.Provider,
                 PlanName         : enrollmentDetails.PlanName,
                 PlanCode         : enrollmentDetails.PlanCode,
-                Type             : x.Type ?? "message",
+                Type             : x.Type,
                 Category         : x.Category,
                 ProviderActionId : x.ProviderActionId,
                 Title            : x.Title,
@@ -186,7 +193,6 @@ export class CommunityNetworkService {
     public getActivity = async (activityId: uuid): Promise<CareplanActivityDto> => {
         return await this._careplanRepo.getActivity(activityId);
     };
-
 
     //#region Privates
 

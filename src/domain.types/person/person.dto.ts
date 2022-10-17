@@ -1,5 +1,5 @@
 import { Gender } from "../miscellaneous/system.types";
-import { AddressDto } from "../address/address.dto";
+import { AddressDto } from "../general/address/address.dto";
 import { PersonRoleDto } from "../role/person.role.dto";
 
 //////////////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@ export interface PersonDetailsDto {
     DisplayName           : string;
     Phone                 : string;
     Email                 : string;
+    TelegramChatId?       : string;
     Gender                : Gender;
     SelfIdentifiedGender? : string;
     MaritalStatus?        : string;
@@ -31,4 +32,5 @@ export interface PersonDto {
     Email: string;
     Gender: Gender;
     BirthDate: Date;
+    TelegramChatId?: string;
 }

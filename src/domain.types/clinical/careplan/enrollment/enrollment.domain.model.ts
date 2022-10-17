@@ -6,7 +6,9 @@ export interface EnrollmentDomainModel {
     PlanCode?       : string;
     PlanName?       : string;
     ParticipantId?  : number | string;
+    ParticipantStringId?  : number | string;
     EnrollmentId?   : number | string;
+    EnrollmentStringId?   : number | string;
     CareplanId?     : number;
     StartDateStr?   : string;
     EndDateStr?     : string;
@@ -15,6 +17,9 @@ export interface EnrollmentDomainModel {
     EnrollmentDate? : Date;
     Gender?         : string;
     BirthDate?      : Date;
-    WeekOffset?     : Date;
-    DayOffset?      : Date;
+    WeekOffset?     : number;
+    DayOffset?      : number;
+    Complication?   : string;
+    Phone?          : string;
+    HasHighRisk?    : boolean;
 }

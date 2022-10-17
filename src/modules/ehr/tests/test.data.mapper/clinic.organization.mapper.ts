@@ -1,7 +1,7 @@
 // import { PharmacistDomainModel } from "../domain.types/pharmacist.domain.types";
 import path from 'path';
 import { Helper } from "../../../../common/helper";
-import { OrganizationDomainModel } from '../../../../domain.types/organization/organization.domain.model';
+import { OrganizationDomainModel } from '../../../../domain.types/general/organization/organization.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 

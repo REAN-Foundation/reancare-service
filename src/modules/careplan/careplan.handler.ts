@@ -8,9 +8,9 @@ import { ProviderResolver } from "./provider.resolver";
 import { ConfigurationManager } from "../../config/configuration.manager";
 import { CareplanConfig } from "../../config/configuration.types";
 import { CAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
-import { GoalDto } from "../../domain.types/patient/goal/goal.dto";
-import { ActionPlanDto } from "../../domain.types/action.plan/action.plan.dto";
-import { HealthPriorityDto } from "../../domain.types/patient/health.priority/health.priority.dto";
+import { GoalDto } from "../../domain.types/users/patient/goal/goal.dto";
+import { ActionPlanDto } from "../../domain.types/users/patient/action.plan/action.plan.dto";
+import { HealthPriorityDto } from "../../domain.types/users/patient/health.priority/health.priority.dto";
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -202,11 +202,19 @@ export class CareplanHandler {
         return await service.updateHealthPriority(patientUserId, enrollmentId, healthPriorityType);
     };
 
+    public scheduleDailyHighRiskCareplan = async (
+        provider: string,
+    ): Promise<boolean> => {
+        var service = CareplanHandler._services.getItem(provider);
+        await service.scheduleDailyHighRiskCareplan();
+        return true;
+    };
+
     private isEnabledProvider(provider: string) {
         var careplans = ConfigurationManager.careplans();
         return careplans.find(x => {
             return x.Provider === provider && x.Enabled;
         });
     }
-    
+
 }

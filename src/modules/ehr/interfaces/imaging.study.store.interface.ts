@@ -1,4 +1,4 @@
-import { ImagingStudyDomainModel } from '../../../domain.types/imaging.study/imaging.study.domain.model';
+import { ImagingStudyDomainModel } from '../../../domain.types/clinical/imaging.study/imaging.study.domain.model';
 
 ////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,4 +1,4 @@
-import { UserTaskCategory } from "../../../../../../domain.types/user/user.task/user.task.types";
+import { UserTaskCategory } from "../../../../../../domain.types/users/user.task/user.task.types";
 import { CareplanActivityDto } from "../../../../../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import CareplanActivity from "../../../models/clinical/careplan/careplan.activity.model";
 

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="375" height="10" viewBox="0 0 375 10">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #5b7aa3;
+      }
+
+      .cls-2 {
+        fill: #d05591;
+      }
+
+      .cls-3 {
+        fill: #70ae6e;
+      }
+
+      .cls-4 {
+        fill: #fcaf58;
+      }
+    </style>
+  </defs>
+  <g id="Group_2091" data-name="Group 2091" transform="translate(0 -679)">
+    <rect id="Rectangle_4602" data-name="Rectangle 4602" class="cls-1" width="94" height="10" transform="translate(0 679)"/>
+    <rect id="Rectangle_4603" data-name="Rectangle 4603" class="cls-2" width="94" height="10" transform="translate(94 679)"/>
+    <rect id="Rectangle_4604" data-name="Rectangle 4604" class="cls-3" width="94" height="10" transform="translate(187 679)"/>
+    <rect id="Rectangle_4605" data-name="Rectangle 4605" class="cls-4" width="94" height="10" transform="translate(281 679)"/>
+  </g>
+</svg>

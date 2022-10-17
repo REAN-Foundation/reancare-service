@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="66" height="66" viewBox="0 0 66 66">
+    <defs>
+        <clipPath id="clip-path">
+            <circle id="Ellipse_291" data-name="Ellipse 291" cx="16" cy="16" r="16" transform="translate(.364 .364)" style="fill:#fff"/>
+        </clipPath>
+        <clipPath id="clip-path-2"/>
+        <filter id="Ellipse_293" x="0" y="0" width="66" height="66" filterUnits="userSpaceOnUse">
+            <feOffset dx="5" dy="5"/>
+            <feGaussianBlur stdDeviation="5" result="blur"/>
+            <feFlood flood-opacity=".161"/>
+            <feComposite operator="in" in2="blur"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <filter id="Ellipse_294" x="0" y="0" width="66" height="66" filterUnits="userSpaceOnUse">
+            <feOffset dx="5" dy="5"/>
+            <feGaussianBlur stdDeviation="5" result="blur-2"/>
+            <feFlood flood-opacity=".161"/>
+            <feComposite operator="in" in2="blur-2"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <style>
+            
+        </style>
+    </defs>
+    <g id="Group_2195" data-name="Group 2195" transform="translate(-287.099 -722.942)">
+        <circle id="Ellipse_292" data-name="Ellipse 292" cx="18" cy="18" r="18" transform="translate(297.099 732.942)" style="fill:#e0e7fb"/>
+        <g id="Mask_Group_32" data-name="Mask Group 32" transform="translate(297.099 732.942)" style="clip-path:url(#clip-path-2)">
+            <g id="Group_1959" data-name="Group 1959" transform="rotate(-4.01 74.33 246.732)">
+                <path id="Head" d="m0 14.207 1.609-7.495a5.271 5.271 0 0 1-1.4-3.788C.5-1.241 6.3-.324 7.426 1.778s.994 7.434-.464 7.81a5.158 5.158 0 0 1-3.081-.977l.791 5.6z" transform="rotate(14.98 -.967 123.108)" style="fill:#d4a181"/>
+                <path id="Union_2" data-name="Union 2" d="M7.593 6.292v-.229c-1.608 1.1-2.848 3.278-4.977 3.278-2.9 0-4.046-5.838 0-5.838a10.675 10.675 0 0 1 5.276.997A3.787 3.787 0 0 1 8.9 2.923a1.569 1.569 0 0 1 .464-.33 2.158 2.158 0 0 1 .388-.166 9.7 9.7 0 0 1 2.86-.48c.212-.007.421-.01.625-.007a1.947 1.947 0 1 1 2.052 1.949 9.829 9.829 0 0 1-2.178.37A4.057 4.057 0 0 1 13.24 5.3c0 2.185-1.524 5.206-3.044 5.206S7.593 8.477 7.593 6.292z" transform="rotate(14.98 11.743 89.455)"/>
+                <path id="Ear" d="M1.168 2.53c.494 0 .973-.566.973-1.362A1.147 1.147 0 0 0 1.168 0 1.167 1.167 0 0 0 0 1.168 1.223 1.223 0 0 0 1.168 2.53z" transform="rotate(14.98 -16.812 129.288)"/>
+                <path id="Leg" d="m0 0 14.467 24.176 10.847 20.44h2.336L9.477 0z" transform="translate(25.056 35.362)" style="fill:#ba8b72"/>
+                <path id="shoe" d="M.871.915a.389.389 0 0 0-.5.262L0 2.486a12.5 12.5 0 0 0 .175 1.536h10.982s.428-1.415-.494-1.527-1.532-.2-1.532-.2L4.026.017a.2.2 0 0 0-.259.1l-.328.8a4.414 4.414 0 0 1-1.388.4z" transform="translate(48.614 77.853)" style="fill:#fff"/>
+                <path id="Pant" d="m24.707 41.343 4.505-1.362s-2.961-8.848-7.258-19.473S12.725 0 12.725 0H0a234.3 234.3 0 0 0 11.628 22.716 173.6 173.6 0 0 0 13.079 18.627z" transform="translate(22.65 35.362)" style="fill:#fff"/>
+                <path id="Leg-2" data-name="Leg" d="M22.142 0a194.794 194.794 0 0 1-4.248 19.685Q17.646 20.02 0 25.679l.5 2.059q21.048-3.038 22.181-4.709C23.813 21.355 29.469 8.128 31.66 0z" transform="translate(1.962 35.362)" style="fill:#d4a181"/>
+                <path id="Pant-2" data-name="Pant" d="m0 23.9.889 3.317q15.739 1.38 19.287-1.994T28.264 0H16.13q-2.876 17.89-3.216 18.641T0 23.9z" transform="translate(6.098 35.362)" style="fill:#fff"/>
+                <path id="shoe-2" data-name="shoe" d="M.835.877a.373.373 0 0 0-.479.252L0 2.384a11.988 11.988 0 0 0 .168 1.473h10.525S11.1 2.5 10.22 2.392s-1.469-.2-1.469-.2L3.859.016a.187.187 0 0 0-.249.1L3.3.878a4.23 4.23 0 0 1-1.33.382z" transform="rotate(79.98 -33.631 32.067)" style="fill:#fff"/>
+                <path id="Arm" d="m1.549 0 5.963 4.877a16.721 16.721 0 0 1 4.127 1.914c.254.257.55.765-.551.622s-2.266-.244-2.438.125.473.855.138 1.347q-.335.492-2.78-2.7L0 3.316z" transform="rotate(-2 943.377 -1215.385)" style="fill:#d4a181"/>
+                <path id="Arm-2" data-name="Arm" d="M10.634 0s-4.981 11.019-5.78 12.033a18.419 18.419 0 0 1-4.373 2.41c-.644.266-.517.809-.332.985 1.5 1.433 2.907.414 4.55.037 1.8-.414 1.2 1.708 2.627 1.4-.209-.978-.788-2.839-.115-3.837C7.66 12.365 14.039.74 14.039.74z" transform="rotate(8 -180.763 44.047)" style="fill:#d4a181"/>
+                <path id="Clothes_Back" data-name="Clothes Back" d="M0 .89 2.067 0a48.55 48.55 0 0 0 16.147 18.821L16.7 22.045C10.053 18.874 3.814 16.505.9 11.131-.083 9.327.13 3.138 0 .89z" transform="rotate(2 -433.757 911.223)" style="fill:#465d7c"/>
+                <path id="Shirt" d="M0 21.837s9.181 1.008 14.454 0c.435-.083.416-1.96.214-2.472C11.523 11.385 9.455 5.543 9.455 0a7.155 7.155 0 0 1-3.03.135C2.548 5.848.766 12.4 0 21.837z" transform="rotate(10.02 -68.87 148.37)" style="fill:#191847"/>
+                <path id="Clothes_Front" data-name="Clothes Front" d="M12.845.183S1.641 10.105 0 28.6l3.809.427c3.006-15.783 10.6-18.562 10.6-18.562L13.881 0z" transform="rotate(20 -20.119 55.018)" style="fill:#5b7aa3"/>
+                <path id="Clothes_Body" data-name="Clothes Body" d="M0 42.063c8.031-3.207 23.1-3.8 28.876-5.092C21.78 20.989 11.845 8.77 12.5.152L8.011 0C6.937 2.57 4.079 6.434 2.676 10.316c-1.156 3.2.342 6.475-.2 9.843a16.155 16.155 0 0 1-.367 1.668C.19 28.9.319 35.164 0 42.063z" transform="rotate(10.02 -65.56 132.304)" style="fill:#5b7aa3"/>
+                <path id="Path_108" data-name="Path 108" d="M9.186 3.244c9.1 4.294 13.043 7.676 13.043 7.676s3.761 3.027 5.519 1.349S29.16 14.5 29.16 14.5a5.519 5.519 0 0 1-6.594.476c-3.784-2.214-2.82-4.137-6.205-5.177S9.223 8.286 8.132 6.74 3.078 3.412.814 2.988 1.728 0 1.728 0" transform="translate(5.947 4.623)" style="fill:#191847"/>
+            </g>
+        </g>
+        <g transform="translate(287.1 722.94)" style="filter:url(#Ellipse_294)">
+            <g id="Ellipse_294-2" data-name="Ellipse 294" transform="translate(10 10)" style="stroke-width:2px;fill:none;stroke:#5b7aa3">
+                <circle cx="18" cy="18" r="18" style="stroke:none"/>
+                <circle cx="18" cy="18" r="17" style="fill:none"/>
+            </g>
+        </g>
+        <path id="np_question_1679760_000000" d="M0 3.133C0-.89 7.527-1.15 7.527 3c0 2.466-2.466 2.336-2.985 4.672a.918.918 0 1 1-1.817-.26c0-2.206 1.817-2.336 2.6-3.763a1.482 1.482 0 0 0-1.432-2.074c-2.206 0-1.428 2.466-2.855 2.466A1 1 0 0 1 0 3.133zm3.634 8.306a1.169 1.169 0 0 1 0-2.336 1.168 1.168 0 1 1 0 2.335z" transform="rotate(10.02 -4096.699 2203.503)" style="fill-rule:evenodd;fill:#191847"/>
+    </g>
+</svg>

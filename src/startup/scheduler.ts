@@ -2,9 +2,8 @@ import * as cron from 'node-cron';
 import * as CronSchedules from '../../seed.data/cron.schedules.json';
 import { Logger } from '../common/logger';
 import { MedicationConsumptionService } from '../services/clinical/medication/medication.consumption.service';
-import { FileResourceService } from '../services/file.resource.service';
+import { FileResourceService } from '../services/general/file.resource.service';
 import { Loader } from './loader';
-import { UserHelper } from '../api/helpers/user.helper';
 import { CareplanService } from '../services/clinical/careplan.service';
 import { CustomActionsHandler } from '../custom/custom.actions.handler';
 
@@ -41,6 +40,7 @@ export class Scheduler {
                 this.scheduleCreateMedicationTasks();
                 this.scheduleMonthlyCustomTasks();
                 this.scheduleDailyCareplanPushTasks();
+                this.scheduleDailyHighRiskCareplan();
 
                 //this.scheduleDaillyPatientTasks();
 
@@ -106,6 +106,16 @@ export class Scheduler {
                 Logger.instance().log('Running scheduled jobs: Schedule Maternity Careplan Task...');
                 const careplanService = Loader.container.resolve(CareplanService);
                 await careplanService.scheduleDailyCareplanPushTasks();
+            })();
+        });
+    };
+
+    private scheduleDailyHighRiskCareplan = () => {
+        cron.schedule(Scheduler._schedules['ScheduleDailyHighRiskCareplan'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Daily High Risk Careplan...');
+                const careplanService = Loader.container.resolve(CareplanService);
+                await careplanService.scheduleDailyHighRiskCareplan();
             })();
         });
     };

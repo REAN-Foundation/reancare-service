@@ -7,8 +7,8 @@ import { NoticeDto } from "../../../../../domain.types/general/notice/notice.dto
 import { NoticeSearchFilters, NoticeSearchResults } from "../../../../../domain.types/general/notice/notice.search.types";
 import { INoticeRepo } from '../../../../repository.interfaces/general/notice.repo.interface';
 import { NoticeMapper } from '../../mappers/general/notice.mapper';
-import NoticeAction from '../../models/general/notice.action.model';
-import NoticeModel from '../../models/general/notice.model';
+import NoticeAction from '../../models/general/notice/notice.action.model';
+import NoticeModel from '../../models/general/notice/notice.model';
 import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
@@ -180,7 +180,7 @@ export class NoticeRepo implements INoticeRepo {
             if (updateModel.Action != null) {
                 notice.Action = updateModel.Action;
             }
-    
+
             await notice.save();
 
             return await NoticeMapper.toDto(notice);
@@ -204,13 +204,15 @@ export class NoticeRepo implements INoticeRepo {
 
     createAction = async (createModel: NoticeActionDomainModel): Promise<NoticeActionDto> => {
         
+        var contents = createModel.Contents && createModel.Contents.length > 0 ?
+            JSON.stringify(createModel.Contents) : '[]';
+       
         try {
             const entity = {
-                UserId        : createModel.UserId,
-                NoticeId      : createModel.NoticeId,
-                Action        : createModel.Action,
-                ActionTakenAt : createModel.ActionTakenAt,
-                ActionContent : createModel.ActionContent,
+                UserId   : createModel.UserId,
+                NoticeId : createModel.NoticeId,
+                Action   : createModel.Action,
+                Contents : contents
             };
 
             const noticeAction = await NoticeAction.create(entity);

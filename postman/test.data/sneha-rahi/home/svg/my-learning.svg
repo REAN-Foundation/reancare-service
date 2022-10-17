@@ -1,0 +1,226 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="172" viewBox="0 0 340 172">
+    <defs>
+        <clipPath id="74lrkztwqa">
+            <path data-name="Rectangle 4733" transform="translate(18 637)" style="fill:#fff" d="M0 0h173v82H0z"/>
+        </clipPath>
+    </defs>
+    <g data-name="Group 2232" transform="translate(-18 -616)">
+        <rect data-name="Rectangle 4446" width="340" height="172" rx="20" transform="translate(18 616)" style="fill:#5b7aa3"/>
+        <text data-name="MY LEARNING" transform="translate(228 646)" style="font-size:16px;font-family:SourceSansPro-Bold,Source Sans Pro;font-weight:700;letter-spacing:.1em;fill:#fff"><tspan x="0" y="0">MY LEARNING</tspan></text>
+        <g data-name="Group 12">
+            <g transform="translate(186.627 658.526)">
+                <rect width="44" height="85" rx="8" transform="translate(.373 .474)" style="fill:#f2f2f2"/>
+                <ellipse cx="3.5" cy="4" rx="3.5" ry="4" transform="translate(18.373 72.474)" style="fill:#fff"/>
+                <g transform="translate(17.988 3.787)">
+                    <ellipse cx="1" cy="1.5" rx="1" ry="1.5" transform="translate(.385 -.313)" style="fill:#fff"/>
+                    <rect width="5" height="3" rx="1.5" transform="translate(2.385 -.313)" style="fill:#fff"/>
+                </g>
+                <g transform="translate(3.787 8.521)">
+                    <rect width="38" height="15" rx="4" transform="translate(-.414 -.046)" style="fill:#fff"/>
+                    <g transform="translate(10.861 4.232)">
+                        <rect width="20.779" height="2.306" rx="1.153" style="fill:#dde3e9"/>
+                        <rect data-name="Name" width="13.947" height="2.306" rx="1.153" transform="translate(0 3.843)" style="fill:#dde3e9"/>
+                    </g>
+                    <ellipse cx="4" cy="3.5" rx="4" ry="3.5" transform="translate(1.586 3.954)" style="fill:#c5cfd6"/>
+                </g>
+                <g data-name="Row" transform="translate(3.787 26.509)">
+                    <rect data-name="Background" width="38" height="11" rx="4" transform="translate(-.414 -.035)" style="fill:#fff"/>
+                    <g data-name="Text" transform="translate(10.861 2.867)">
+                        <rect data-name="Name" width="20.779" height="1.793" rx=".897" style="fill:#dde3e9"/>
+                        <rect data-name="Name" width="13.947" height="1.793" rx=".897" transform="translate(0 2.989)" style="fill:#dde3e9"/>
+                    </g>
+                    <ellipse data-name="Avatar" cx="4" cy="3.5" rx="4" ry="3.5" transform="translate(1.586 1.965)" style="fill:#c5cfd6"/>
+                </g>
+                <g data-name="Row" transform="translate(3.787 39.764)">
+                    <rect data-name="Background" width="38" height="13" rx="4" transform="translate(-.414 -.289)" style="fill:#fff"/>
+                    <g data-name="Text" transform="translate(10.861 3.844)">
+                        <rect data-name="Name" width="20.779" height="1.793" rx=".897" style="fill:#dde3e9"/>
+                        <rect data-name="Name" width="13.947" height="1.793" rx=".897" transform="translate(0 2.989)" style="fill:#dde3e9"/>
+                    </g>
+                    <circle data-name="Avatar" cx="3.5" cy="3.5" r="3.5" transform="translate(1.586 2.711)" style="fill:#afb9c5"/>
+                </g>
+                <g data-name="Row" transform="translate(3.787 53.965)">
+                    <rect data-name="Background" width="38" height="14" rx="4" transform="translate(-.414 -.49)" style="fill:#fff"/>
+                    <g data-name="Text" transform="translate(10.861 3.875)">
+                        <rect data-name="Name" width="20.779" height="1.793" rx=".897" style="fill:#dde3e9"/>
+                        <rect data-name="Name" width="13.947" height="1.793" rx=".897" transform="translate(0 2.989)" style="fill:#dde3e9"/>
+                    </g>
+                    <ellipse data-name="Avatar" cx="4" cy="3.5" rx="4" ry="3.5" transform="translate(1.586 2.51)" style="fill:#c5cfd6"/>
+                </g>
+            </g>
+            <g data-name="Mobile3" transform="translate(215.03 667.047)">
+                <rect data-name="Container" width="45" height="85" rx="8" transform="translate(-.03 -.046)" style="fill:#dde3e9"/>
+                <ellipse data-name="Touch" cx="4" cy="4.5" rx="4" ry="4.5" transform="translate(18.97 71.954)" style="fill:#fff"/>
+                <g data-name="Camera" transform="translate(18.935 3.787)">
+                    <ellipse data-name="Lens" cy=".5" ry=".5" transform="translate(.036 .167)" style="fill:#fff"/>
+                    <rect data-name="Sensor" width="5" height="1" rx=".5" transform="translate(3.036 .167)" style="fill:#fff"/>
+                </g>
+                <g data-name="Rows">
+                    <g data-name="Row" transform="translate(4.734 7.574)">
+                        <rect data-name="Container" width="38" height="15" rx="4" transform="translate(.237 .38)" style="fill:#fff"/>
+                        <g data-name="Text Stuff" transform="translate(2.19 4.059)">
+                            <rect width="20.779" height="2.306" rx="1.153" style="fill:#dde3e9"/>
+                            <rect data-name="Label" width="13.947" height="2.306" rx="1.153" transform="translate(0 3.843)" style="fill:#dde3e9"/>
+                        </g>
+                        <g transform="translate(31.243 4.734)">
+                            <ellipse data-name="Background" cx="2" cy="3" rx="2" ry="3" transform="translate(-.006 -.354)" style="fill:#dde3e9"/>
+                            <circle cx="1" cy="1" r="1" transform="translate(-.006 .646)" style="fill:#f2f2f2"/>
+                        </g>
+                    </g>
+                    <g data-name="Row" transform="translate(4.734 24.615)">
+                        <rect data-name="Background" width="38" height="11" rx="4" transform="translate(.237 .338)" style="fill:#fff"/>
+                        <g data-name="Text" transform="translate(10.729 3.64)">
+                            <rect data-name="Name" width="20.779" height="1.793" rx=".897" style="fill:#dde3e9"/>
+                            <rect data-name="Name" width="13.947" height="1.793" rx=".897" transform="translate(0 2.989)" style="fill:#dde3e9"/>
+                        </g>
+                        <circle data-name="Avatar" cx="3.5" cy="3.5" r="3.5" transform="translate(2.237 2.338)" style="fill:#c5cfd6"/>
+                    </g>
+                    <g data-name="Row" transform="translate(4.734 39.763)">
+                        <rect data-name="Container" width="38" height="11" rx="4" transform="translate(.237 .19)" style="fill:#fff"/>
+                        <g data-name="Text Stuff" transform="translate(2.19 2.724)">
+                            <rect data-name="Label" width="20.779" height="1.793" rx=".897" style="fill:#dde3e9"/>
+                            <rect data-name="Label" width="13.947" height="1.793" rx=".897" transform="translate(0 2.989)" style="fill:#afb9c5"/>
+                        </g>
+                        <g data-name="Check" transform="translate(31.243 2.84)">
+                            <ellipse data-name="Background" cx="2" cy="1.5" rx="2" ry="1.5" transform="translate(-.006 .35)" style="fill:#dde3e9"/>
+                            <ellipse data-name="Indicator" cx="1" cy=".5" rx="1" ry=".5" transform="translate(-.006 1.35)" style="fill:#f2f2f2"/>
+                        </g>
+                    </g>
+                    <g data-name="Row" transform="translate(4.734 53.018)">
+                        <rect data-name="Background" width="38" height="11" rx="4" transform="translate(.237 -.064)" style="fill:#fff"/>
+                        <g data-name="Text" transform="translate(10.729 3.702)">
+                            <rect data-name="Name" width="20.779" height="1.793" rx=".897" style="fill:#dde3e9"/>
+                            <rect data-name="Name" width="13.947" height="1.793" rx=".897" transform="translate(0 2.989)" style="fill:#dde3e9"/>
+                        </g>
+                        <ellipse data-name="Avatar" cx="2.5" cy="3.5" rx="2.5" ry="3.5" transform="translate(3.237 2.936)" style="fill:#c5cfd6"/>
+                        <ellipse data-name="Avatar" cx="3.5" cy="4" rx="3.5" ry="4" transform="translate(2.237 1.936)" style="fill:#c5cfd6"/>
+                    </g>
+                </g>
+            </g>
+            <g transform="translate(244.379 672.727)">
+                <rect data-name="Container" width="96" height="98" rx="8" transform="translate(-.379 .273)" style="fill:#f2f2f2"/>
+                <rect data-name="Background" width="20" height="24" rx="8" transform="translate(70.621 12.273)" style="fill:#fff"/>
+                <g data-name="Profile Info" transform="translate(74.793 17.041)">
+                    <ellipse data-name="Avatar" cx="5" cy="4.5" rx="5" ry="4.5" transform="translate(1.828 .232)" style="fill:#dde3e9"/>
+                    <rect data-name="Name" width="13" height="2" rx="1" transform="translate(-.172 10.232)" style="fill:#dde3e9"/>
+                    <rect data-name="Name" width="11" height="2" rx="1" transform="translate(.828 12.232)" style="fill:#dde3e9"/>
+                </g>
+                <path d="M7 0h82a7 7 0 0 1 7 7H0a7 7 0 0 1 7-7z" transform="translate(-.379 .273)" style="fill:#c5cfd6"/>
+                <g transform="translate(2.84 3.787)">
+                    <ellipse data-name="buttons" cx="1.5" cy=".5" rx="1.5" ry=".5" transform="translate(-.219 .486)" style="fill:#f2f2f2"/>
+                    <ellipse data-name="buttons" cx="1.5" cy=".5" rx="1.5" ry=".5" transform="translate(2.781 .486)" style="fill:#f2f2f2"/>
+                    <ellipse data-name="buttons" cx="1" cy=".5" rx="1" ry=".5" transform="translate(6.781 .486)" style="fill:#f2f2f2"/>
+                </g>
+                <g transform="translate(71.006 37.87)">
+                    <rect data-name="Background" width="20" height="55" rx="8" transform="translate(-.385 .403)" style="fill:#fff"/>
+                    <g data-name="Rows" transform="translate(4.734 5.68)">
+                        <rect width="11" height="7" rx="3.5" transform="translate(-.118 -.277)" style="fill:#dde3e9"/>
+                        <rect data-name="Data" width="11" height="6" rx="3" transform="translate(-.118 9.723)" style="fill:#afb9c5"/>
+                        <rect data-name="Data" width="11" height="9" rx="4" transform="translate(-.118 17.723)" style="fill:#dde3e9"/>
+                        <rect data-name="Data" width="11" height="7" rx="3.5" transform="translate(-.118 37.723)" style="fill:#dde3e9"/>
+                        <rect data-name="Data" width="11" height="7" rx="3.5" transform="translate(-.118 27.723)" style="fill:#c5cfd6"/>
+                    </g>
+                </g>
+                <g data-name="Rows">
+                    <g data-name="Row" transform="translate(5.68 13.254)">
+                        <rect data-name="Container" width="63" height="13" rx="4" transform="translate(-.059 .019)" style="fill:#fff"/>
+                        <g data-name="Text Stuff" transform="translate(1.682 3.77)">
+                            <rect data-name="Label" width="47.534" height="2.007" rx="1.003" style="fill:#dde3e9"/>
+                            <rect data-name="Label" width="31.907" height="2.007" rx="1.003" transform="translate(0 3.344)" style="fill:#dde3e9"/>
+                        </g>
+                        <g data-name="Check" transform="translate(54.326 4.453)">
+                            <circle data-name="Background" cx="1.992" cy="1.992" r="1.992" style="fill:#dde3e9"/>
+                            <circle data-name="Indicator" cx=".854" cy=".854" r=".854" transform="translate(1.139 1.139)" style="fill:#f2f2f2"/>
+                        </g>
+                    </g>
+                    <g data-name="Row" transform="translate(5.68 28.402)">
+                        <rect data-name="Container" width="63" height="11" rx="4" transform="translate(-.059 -.129)" style="fill:#fff"/>
+                        <g data-name="Text Stuff" transform="translate(1.682 3.594)">
+                            <rect data-name="Label" width="47.534" height="1.665" rx=".833" style="fill:#dde3e9"/>
+                            <rect data-name="Label" width="31.907" height="1.665" rx=".833" transform="translate(0 2.775)" style="fill:#dde3e9"/>
+                        </g>
+                        <g data-name="Check" transform="translate(54.326 3.822)">
+                            <circle data-name="Background" cx="1.992" cy="1.992" r="1.992" style="fill:#dde3e9"/>
+                            <circle data-name="Indicator" cx=".854" cy=".854" r=".854" transform="translate(1.139 1.139)" style="fill:#f2f2f2"/>
+                        </g>
+                    </g>
+                    <g data-name="Row" transform="translate(5.68 42.603)">
+                        <rect data-name="Container" width="63" height="11" rx="4" transform="translate(-.059 -.33)" style="fill:#fff"/>
+                        <g data-name="Text Stuff" transform="translate(1.682 2.771)">
+                            <rect data-name="Label" width="47.534" height="1.665" rx=".833" style="fill:#dde3e9"/>
+                            <rect data-name="Label" width="31.907" height="1.665" rx=".833" transform="translate(0 2.775)" style="fill:#dde3e9"/>
+                        </g>
+                        <g data-name="Check" transform="translate(54.326 2.999)">
+                            <circle data-name="Background" cx="1.992" cy="1.992" r="1.992" style="fill:#dde3e9"/>
+                            <circle data-name="Indicator" cx=".854" cy=".854" r=".854" transform="translate(1.139 1.139)" style="fill:#afb9c5"/>
+                        </g>
+                    </g>
+                    <g data-name="Row" transform="translate(5.68 81.42)">
+                        <rect data-name="Container" width="63" height="12" rx="4" transform="translate(-.059 -.147)" style="fill:#fff"/>
+                        <g data-name="Text Stuff" transform="translate(1.682 4.088)">
+                            <rect data-name="Label" width="47.534" height="1.665" rx=".833" style="fill:#dde3e9"/>
+                            <rect data-name="Label" width="31.907" height="1.665" rx=".833" transform="translate(0 2.775)" style="fill:#dde3e9"/>
+                        </g>
+                        <g data-name="Check" transform="translate(54.326 4.316)">
+                            <circle data-name="Background" cx="1.992" cy="1.992" r="1.992" style="fill:#dde3e9"/>
+                            <circle data-name="Indicator" cx=".854" cy=".854" r=".854" transform="translate(1.139 1.139)" style="fill:#f2f2f2"/>
+                        </g>
+                    </g>
+                    <g data-name="Row" transform="translate(5.68 69.112)">
+                        <rect data-name="Container" width="63" height="10" rx="4" transform="translate(-.059 .161)" style="fill:#fff"/>
+                        <g data-name="Text Stuff" transform="translate(1.682 3.018)">
+                            <rect data-name="Label" width="47.534" height="1.665" rx=".833" style="fill:#dde3e9"/>
+                            <rect data-name="Label" width="31.907" height="1.665" rx=".833" transform="translate(0 2.775)" style="fill:#dde3e9"/>
+                        </g>
+                        <g data-name="Check" transform="translate(54.326 3.246)">
+                            <circle data-name="Background" cx="1.992" cy="1.992" r="1.992" style="fill:#dde3e9"/>
+                            <circle data-name="Indicator" cx=".854" cy=".854" r=".854" transform="translate(1.139 1.139)" style="fill:#f2f2f2"/>
+                        </g>
+                    </g>
+                    <g data-name="Row" transform="translate(5.68 55.858)">
+                        <rect data-name="Container" width="63" height="10" rx="4" transform="translate(-.059 .415)" style="fill:#fff"/>
+                        <g data-name="Text Stuff" transform="translate(1.682 2.895)">
+                            <rect data-name="Label" width="47.534" height="1.665" rx=".833" style="fill:#dde3e9"/>
+                            <rect data-name="Label" width="31.907" height="1.665" rx=".833" transform="translate(0 2.775)" style="fill:#dde3e9"/>
+                        </g>
+                        <g data-name="Check" transform="translate(54.326 3.122)">
+                            <circle data-name="Background" cx="1.992" cy="1.992" r="1.992" style="fill:#dde3e9"/>
+                            <circle data-name="Indicator" cx=".854" cy=".854" r=".854" transform="translate(1.139 1.139)" style="fill:#f2f2f2"/>
+                        </g>
+                    </g>
+                </g>
+            </g>
+            <g transform="translate(180 749.414)">
+                <rect width="2" height="6" rx="1" transform="translate(0 10.587)" style="fill:#dde3e9"/>
+                <rect data-name="Value" width="3" height="12" rx="1.5" transform="translate(3 4.587)" style="fill:#dde3e9"/>
+                <rect data-name="Value" height="14" transform="translate(9 2.587)" style="fill:#dde3e9"/>
+                <rect data-name="Value" width="2" height="12" rx="1" transform="translate(11 4.587)" style="fill:#dde3e9"/>
+                <rect data-name="Value" width="2" height="17" rx="1" transform="translate(16 -.413)" style="fill:#c5cfd6"/>
+            </g>
+            <path data-name="Value" d="M8.269 8.113a2.3 2.3 0 1 1-1.68-3.858V0A6.588 6.588 0 0 0 0 6.547a6.588 6.588 0 0 0 6.589 6.547 6.511 6.511 0 0 0 4.8-2.073z" transform="translate(204.913 761.445)" style="fill:#f2f2f2"/>
+            <path data-name="Value" d="M0 0v4.255a2.291 2.291 0 0 1 2.291 2.292h4.256A6.567 6.567 0 0 0 0 0z" transform="translate(211.46 761.445)" style="fill:#afb9c5"/>
+            <path data-name="Value" d="M.875 0A2.271 2.271 0 0 1 0 1.791l2.618 3.332A6.492 6.492 0 0 0 5.123 0z" transform="translate(212.883 767.992)" style="fill:#c5cfd6"/>
+        </g>
+        <g data-name="Mask Group 67" style="clip-path:url(#74lrkztwqa)">
+            <path data-name="Leaf Bottom" d="M-80.342 150.631a26.913 26.913 0 0 1-.584 3.476 10.312 10.312 0 0 0 .584-3.476zm-6.323-27.237a66.827 66.827 0 0 0-13.821-18.8c1.115-4.022 11.961-10.3 5.1-13.63-3.641-1.758-7.095 1.653-7.688 5.106-.407 2.373.558 5.277 1.537 7.509q-2.63-2.507-5.434-4.836a271.013 271.013 0 0 0-7.867-6.269c3.981-4.121 7.353-15.486 1.644-17.019-8.431-2.256-3.636 12.757-2.907 15.58a.452.452 0 0 0 .379-.165c-.033.264-.072.546-.123.831-5.081-3.9-10.231-7.708-15.227-11.709a21.712 21.712 0 0 0 1.537-2.248 24.346 24.346 0 0 0 2.975-4.816c1.2-2.743 2.264-7.074-1.369-8.461-3.951-1.513-5.53 3.405-5.405 6.284a37.98 37.98 0 0 0 1.12 5.788c.121.6-.076 3.363.7 2.14a5.834 5.834 0 0 0 .026.975q-1.345-1.083-2.674-2.189a1.022 1.022 0 0 0 .057-.335 1 1 0 0 0-1.484-.862q-1.755-1.49-3.472-3.03a480.65 480.65 0 0 1-7.318-6.721c.48-.454.249-1.037.695-1.516s1.355-.777 1.884-1.227a13.256 13.256 0 0 0 3.151-4.3c1.24-2.583 2.737-7.945-1.338-8.934-4.2-1.021-6.031 4.161-6.129 7.346a80.475 80.475 0 0 0 1.2 8.121c-4.52-4.268-8.979-8.708-13.046-13.249 1.157-.071 4.314-2.595 4.943-3.271 1.536-1.65 3.925-5.245.991-6.929-2.608-1.493-5.594 1.021-6.552 3.364a31.934 31.934 0 0 0-.563 5.5 122.66 122.66 0 0 1-4.808-5.827q-1.51-1.95-2.845-4.01a1.88 1.88 0 0 0 .528-.573c4.17-.928 9.19-7.722 4.129-9.732-2.41-.956-4.844 1.4-5.9 3.284a24.136 24.136 0 0 0-.733 3.773 77.983 77.983 0 0 1-6.294-14.437.914.914 0 0 0 .672-.883 12.509 12.509 0 0 0 4.853-4.605c.813-1.427 2.242-4.664-.4-5.295-3.441-.821-5.3 4.425-5.441 6.969-.017.3.029 1.149.082 1.931a1.147 1.147 0 0 0-.353.025 111.409 111.409 0 0 1-2.4-9.431c1.818-.687 1.629-10.341.325-11.649-2.914-2.929-4.621 1.61-4.35 3.948a15.451 15.451 0 0 0 3.337 7.363c.174.228.127.219.151-.113a.659.659 0 0 0 .179.361 41.647 41.647 0 0 0 .067 4.243 97.532 97.532 0 0 0 1.853 10.977q.3 1.316.664 2.608a21.63 21.63 0 0 0-4.418-2.5c-2.083-.8-5.27-1.613-7.21.025a3.363 3.363 0 0 0-.121 5.059c1.727 1.725 4.7 1.5 6.916 1.212 1-.132 6.348-.838 5.03-1.644a4.361 4.361 0 0 1 .534.22q.21.631.438 1.257c-.03.02-.056.041-.089.061.036-.018.06-.036.092-.054a48.847 48.847 0 0 0 6.172 11.751 11.679 11.679 0 0 0-2.818-.592c-2.82-.206-8.6 2.261-5.27 5.8 3.192 3.393 7.669-.658 11.051-1.36a158.9 158.9 0 0 0 11.474 12.656.907.907 0 0 0-.533.49c-1.574-.692-3.23-1.714-4.665-1.939-2.07-.324-6.283-.367-7.734 1.532-1.786 2.336.351 4.047 2.622 4.358 3.294.453 7.479-1.351 10.56-2.583a1.042 1.042 0 0 0 .968-.377l.2-.077c4.093 4.022 8.327 7.9 12.532 11.684h-.13a10.9 10.9 0 0 0-3.451-1.35c-2.838-.532-6.135-.364-8.3 1.767s-2.776 5.667-.314 7.8c4.928 4.259 11.3-6.368 13.64-6.92 4.271 3.806 8.761 7.335 13.314 10.786a7.82 7.82 0 0 0-1.544-.23c-4.3-.184-14.054 5.539-8.538 10.384 4.807 4.221 9.644-4.637 13.17-7.83 4.288 3.213 8.6 6.4 12.8 9.73a11.778 11.778 0 0 0-6.65.388c-2.39.856-6.212 2.879-4.505 6.054 1.736 3.229 6.362 1.478 8.758.3 1.307-.642 3.884-2.716 6.195-3.653A80.3 80.3 0 0 1-90.426 122.1a69.832 69.832 0 0 1 6.826 15.083c1.074 3.362 3.138 8.994 3.02 13.448 1.211-8.967-2.391-19.472-6.085-27.237zm-94.077-106.149c-.358 0-1.7-3.6-2.122-4.134a12.094 12.094 0 0 0-4.786-3.444c-2.94-1.261-6.674.573-4.883 4.218 1.429 2.91 5.3 3.5 8.655 3.5a44.503 44.503 0 0 0 3.136-.14z" transform="rotate(122 -188.545 440.685)" style="opacity:.349;fill:#fff"/>
+        </g>
+        <g data-name="Group 11">
+            <path d="m0 34.729 3.915-18.321A12.918 12.918 0 0 1 .5 7.148C1.213-3.033 15.33-.793 18.076 4.345s2.42 18.173-1.129 19.091c-1.415.366-4.431-.531-7.5-2.388l1.926 13.68z" transform="translate(77.313 634.813)" style="fill:#c69f89"/>
+            <path d="M80.354 653.513c-1.427-6.375-5.494-10.721-4.873-13.57a4.839 4.839 0 0 1 3.311-3.544s1.391-5.65 8.973-4.806 12.209 4 10.211 10.96c-1.837 0-4.055-.667-7.121.476-1.459.544-2.088 3.373-2.088 3.373h-1.386s-2.017-3.357-3.978-2.468-.892 4.323-.892 4.323l-.683 5.256z"/>
+            <path data-name="Seat Stuff" d="M13.09 0H49.7l4.8 58.991H0z" style="fill:#c5cfd6" transform="translate(43.667 729.009)"/>
+            <path data-name="Seat Stuff" d="M13.09 0h11.26l6.739 58.991H0z" style="fill:rgba(0,0,0,.1)" transform="translate(43.667 729.009)"/>
+            <path d="M.672 60.7S-.559 38.521.311 28.883c.993-11 2.2-20.554 2.913-24.022C4.917-3.409 16.3.445 16.3 4.878c0 10.064-9.645 56.308-9.645 56.308z" transform="rotate(20 -1961.548 705.7)" style="fill:#b28b67"/>
+            <path data-name="LegLower" d="M.85 65.4C.376 59.385-.505 38.55.376 28.907 1.383 17.9 2.6 8.341 3.318 4.871 5.02-3.4 16.4.436 16.39 4.871c-.013 10.069-9.166 57.522-9.644 60.522S1.148 69.185.85 65.4z" transform="translate(129.163 718.067)" style="fill:#b28b67"/>
+            <path data-name="LegLower" d="M0 53.171 2.366 4.9C4.1-3.441 18.91.451 18.909 4.924c0 10.155-6.039 45.227-6.04 48.253z" transform="rotate(20 -1960.72 701.014)" style="fill:#191847"/>
+            <path d="M2.158 2.268a.965.965 0 0 0-1.237.65L0 6.162A30.991 30.991 0 0 0 .435 9.97h27.209s1.056-3.506-1.225-3.785-3.8-.5-3.8-.5L9.976.042A.482.482 0 0 0 9.334.3l-.813 1.971a10.934 10.934 0 0 1-3.438.987z" transform="rotate(30 -1376.984 574.206)" style="fill:#191847"/>
+            <path data-name="shoe" d="M2.12 2.568A.947.947 0 0 0 .9 3.21L0 6.409a30.676 30.676 0 0 0 .427 3.756h26.728s1.042-3.458-1.2-3.733-3.729-.5-3.729-.5L9.8.373a.473.473 0 0 0-.631.253l-.8 1.945a10.71 10.71 0 0 1-3.377.973z" transform="translate(128.019 777.836)" style="fill:#191847"/>
+            <path data-name="Leg and Butt" d="M80.926 17.333c0 12.639-5.979 42.12-5.983 44.9l-12.864.01s2.824-39.459 2-39.884-33.67 3.292-43.522 3.292C6.354 25.654.477 16.66 0 0h28.143c5.73.616 35.619 6.668 46.719 8.748 4.752.891 6.064 5.103 6.064 8.585z" transform="translate(65.94 709.028)" style="fill:#2f3676"/>
+            <path d="M1.108 0 18.6 6.793a40.658 40.658 0 0 1 11 1.307c.781.4 1.85 1.358-.812 1.862s-5.439 1.153-5.562 2.14 1.738 1.624 1.33 3.021q-.408 1.4-8.474-4.163L0 8.867z" transform="rotate(-38 1015.748 165.899)" style="fill:#c69f89"/>
+            <path data-name="Arm" d="m1.081 0 17.486 6.851a40.6 40.6 0 0 1 11 1.344c.781.406 1.852 1.365-.805 1.862s-5.429 1.139-5.549 2.126 1.74 1.631 1.337 3.028q-.4 1.4-8.476-4.193L0 8.875z" transform="rotate(14.98 -2569.917 767.43)" style="fill:#c69f89"/>
+            <path data-name="Coat Back" d="M6.394 0c11.939 12.753 26.494 21.082 46.341 28.476l-4.4 8.835C27.866 35.355 16.921 33.8 8.329 21.028 6.173 17.823 2.312 6.8 0 1.074z" transform="rotate(14.98 -2465.051 643.196)" style="fill:#51814f"/>
+            <path d="M0 54.234h36.49s-12.4-37.96-12.667-52.107C23.813 1.646 22.929.8 22.538.91 18.245 2.127 13.35 0 13.35 0 4.7 13.967 1.708 31.163 0 54.234z" transform="translate(65.94 659.075)" style="fill:#f2f2f2"/>
+            <path data-name="Clothes Jacket" d="M.674 65.94H20.13c16.1 0 12.027-32.908 1.1-65.94h-5.654a2.568 2.568 0 0 0-2.342 1.606C5.7 16.186-2.416 45.092.674 65.94z" transform="translate(61.167 659.075)" style="fill:#70ae6e"/>
+            <path data-name="Clothes Back" d="M.426 4.3C10.8 4.282 28.157 6.476 48.252 0l1.932 9.692C32.913 20.844 15.388 29.061.857 24.32-1.575 23.527 2.12 16.622.426 4.3z" transform="translate(81.152 654.794)" style="fill:#70ae6e"/>
+        </g>
+    </g>
+</svg>

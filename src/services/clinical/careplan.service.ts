@@ -1,12 +1,12 @@
 import { inject, injectable } from "tsyringe";
 import { ICareplanRepo } from "../../database/repository.interfaces/clinical/careplan.repo.interface";
-import { IPatientRepo } from "../../database/repository.interfaces/patient/patient.repo.interface";
-import { IPersonRepo } from "../../database/repository.interfaces/person.repo.interface";
-import { IUserRepo } from "../../database/repository.interfaces/user/user.repo.interface";
+import { IPatientRepo } from "../../database/repository.interfaces/users/patient/patient.repo.interface";
+import { IPersonRepo } from "../../database/repository.interfaces/person/person.repo.interface";
+import { IUserRepo } from "../../database/repository.interfaces/users/user/user.repo.interface";
 import { IAssessmentRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
 import { IAssessmentTemplateRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.template.repo.interface";
 import { IAssessmentHelperRepo } from "../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
-import { IUserTaskRepo } from "../../database/repository.interfaces/user/user.task.repo.interface";
+import { IUserTaskRepo } from "../../database/repository.interfaces/users/user/user.task.repo.interface";
 import { EnrollmentDomainModel } from '../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { EnrollmentDto } from '../../domain.types/clinical/careplan/enrollment/enrollment.dto';
 import { ApiError } from "../../common/api.error";
@@ -14,12 +14,12 @@ import { CareplanHandler } from '../../modules/careplan/careplan.handler';
 import { ProgressStatus, uuid } from "../../domain.types/miscellaneous/system.types";
 import { ParticipantDomainModel } from "../../domain.types/clinical/careplan/participant/participant.domain.model";
 import { CareplanActivityDomainModel } from "../../domain.types/clinical/careplan/activity/careplan.activity.domain.model";
-import { UserTaskCategory } from "../../domain.types/user/user.task/user.task.types";
-import { UserActionType } from "../../domain.types/user/user.task/user.task.types";
+import { UserTaskCategory } from "../../domain.types/users/user.task/user.task.types";
+import { UserActionType } from "../../domain.types/users/user.task/user.task.types";
 import { TimeHelper } from "../../common/time.helper";
 import { DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Logger } from "../../common/logger";
-import { IUserActionService } from "../user/user.action.service.interface";
+import { IUserActionService } from "../users/user/user.action.service.interface";
 import { AssessmentTemplateDto } from "../../domain.types/clinical/assessment/assessment.template.dto";
 import { CAssessmentTemplate } from "../../domain.types/clinical/assessment/assessment.types";
 import { CareplanActivity } from "../../domain.types/clinical/careplan/activity/careplan.activity";
@@ -27,7 +27,7 @@ import { CareplanConfig } from "../../config/configuration.types";
 import { AssessmentDomainModel } from "../../domain.types/clinical/assessment/assessment.domain.model";
 import { CareplanActivityDto } from "../../domain.types/clinical/careplan/activity/careplan.activity.dto";
 import { AssessmentDto } from "../../domain.types/clinical/assessment/assessment.dto";
-import { UserTaskDomainModel } from "../../domain.types/user/user.task/user.task.domain.model";
+import { UserTaskDomainModel } from "../../domain.types/users/user.task/user.task.domain.model";
 import { Loader } from "../../startup/loader";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,85 +110,51 @@ export class CareplanService implements IUserActionService {
         enrollmentDetails.ParticipantId = participant.ParticipantId;
         enrollmentDetails.Gender = patient.User.Person.Gender;
 
-        var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);
-        if (!enrollmentId) {
-            throw new ApiError(500, 'Error while enrolling patient to careplan');
-        }
-        enrollmentDetails.EnrollmentId = enrollmentId;
-        
-        var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
-
-        var activities = await this._handler.fetchActivities(
-            enrollmentDetails.PatientUserId, enrollmentDetails.Provider, enrollmentDetails.PlanCode,
-            enrollmentDetails.ParticipantId, enrollmentId, enrollmentDetails.StartDate, enrollmentDetails.EndDate);
-
-        Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
-
-        const activityModels = activities.map(x => {
-
-            var a: CareplanActivityDomainModel = {
-                PatientUserId    : enrollmentDetails.PatientUserId,
-                EnrollmentId     : enrollmentId,
-                ParticipantId    : enrollmentDetails.ParticipantId,
-                Provider         : enrollmentDetails.Provider,
-                PlanName         : enrollmentDetails.PlanName,
-                PlanCode         : enrollmentDetails.PlanCode,
-                Type             : x.Type,
-                Category         : x.Category,
-                ProviderActionId : x.ProviderActionId,
-                Title            : x.Title,
-                Description      : x.Description,
-                Url              : x.Url,
-                Language         : x.Language,
-                ScheduledAt      : x.ScheduledAt,
-                Sequence         : x.Sequence,
-                Frequency        : x.Frequency,
-                Status           : x.Status
-            };
-
-            return a;
-        });
-
-        var careplanActivities = await this._careplanRepo.addActivities(
-            enrollmentDetails.Provider,
-            enrollmentDetails.PlanName,
-            enrollmentDetails.PlanCode,
-            enrollmentDetails.PatientUserId,
-            enrollmentId,
-            activityModels);
-
-        Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
-
-        //task scheduling
-
-        await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
-
-        return dto;
+        return await this.enrollAndCreateTask(enrollmentDetails);
     };
 
     public scheduleDailyCareplanPushTasks = async (): Promise<void> => {
-    
+
         const activities = await this._careplanRepo.getAllReanActivities();
 
         if (activities.length !== 0) {
             activities.forEach(async activity => {
-                const todayDate = new Date().toISOString().split('T')[0];
-                const activityDate = activity.ScheduledAt.toISOString().split('T')[0];
 
-                if (todayDate === activityDate) {
-                    const message = activity.Description;
-                    const patient = await this.getPatient(activity.PatientUserId);
-                    const phoneNumber = patient.User.Person.Phone;
-                    await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message);
-                   
-                    Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
-                
+                const todayDateTime = new Date().toISOString()
+                    .split('T');
+                const activityDateTime = activity.ScheduledAt.toISOString().split('T');
+
+                if (todayDateTime[0] === activityDateTime[0]) {
+                    const num = todayDateTime[1].split('.')[0];
+                    const num1 = num.split(':',2);
+                    const num2 = num1[0].concat(':', num1[1]);
+
+                    const num3 = activityDateTime[1].split('.')[0];
+                    const num4 = num3.split(':',2);
+                    const num5 = num4[0].concat(':', num4[1]);
+
+                    if (num2 === num5){
+                        const message = `${activity.Title}:\n${activity.Description}`;
+                        const patient = await this.getPatient(activity.PatientUserId);
+                        let phoneNumber = patient.User.Person.Phone;
+                        if (activity.Provider === "REAN") {
+                            phoneNumber = patient.User.Person.TelegramChatId;
+                        }
+                        let response = null;
+                        response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
+                            activity.Provider);
+                        if (response === true) {
+                            await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
+                            Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
+                        }
+                    }
+
                 }
             });
         } else {
             Logger.instance().log(`No activities fetched from careplan task.`);
         }
-            
+
     };
 
     public getPatientEligibility = async (patient: any, provider: string, careplanCode: string) => {
@@ -198,7 +164,7 @@ export class CareplanService implements IUserActionService {
     public getPatientEnrollments = async (patientUserId: string) => {
         return await this._careplanRepo.getPatientEnrollments(patientUserId);
     };
-    
+
     public fetchTasks = async (careplanId: uuid): Promise<boolean> => {
 
         var enrollment = await this._careplanRepo.getCareplanEnrollment(careplanId);
@@ -218,7 +184,7 @@ export class CareplanService implements IUserActionService {
 
             var existing: boolean = await this._careplanRepo.activityExists(
                 x.Provider, x.EnrollmentId, x.ProviderActionId, x.Sequence, x.ScheduledAt);
-            
+
             if (existing) {
                 continue;
             }
@@ -250,13 +216,13 @@ export class CareplanService implements IUserActionService {
                 enrollment.PatientUserId,
                 enrollmentId,
                 activityModel);
-    
+
             careplanActivities.push(careplanActivity);
 
         }
 
         await this.createScheduledUserTasks(enrollment.PatientUserId, careplanActivities);
-    
+
         return true;
     };
 
@@ -278,7 +244,7 @@ export class CareplanService implements IUserActionService {
                 activity.EnrollmentId,
                 activity.ProviderActionId,
                 scheduledAt);
-        
+
             details.PatientUserId = activity.PatientUserId;
             details.Provider = activity.Provider;
             details.PlanCode = activity.PlanCode;
@@ -288,7 +254,7 @@ export class CareplanService implements IUserActionService {
             activity = await this._careplanRepo.updateActivityDetails(activity.id, details);
             details.Title = activity.Title;
             details.Description = activity.Description;
-            
+
             //Handle assessment activities in special manner...
             if (activity.Category === UserTaskCategory.Assessment ||
             activity.Type === 'Assessment') {
@@ -319,7 +285,7 @@ export class CareplanService implements IUserActionService {
     };
 
     public updateAction = async (activityId: uuid, updates: any): Promise<any> => {
-        
+
         var activity = await this._careplanRepo.updateActivity(activityId, ProgressStatus.Completed, new Date());
 
         var activityUpdates = {
@@ -333,9 +299,9 @@ export class CareplanService implements IUserActionService {
             activity.PlanCode,
             activity.EnrollmentId,
             activity.ProviderActionId, activityUpdates);
-        
+
         Logger.instance().log(JSON.stringify(details, null, 2));
-    
+
         activity['Details'] = details;
 
         return activity;
@@ -382,7 +348,7 @@ export class CareplanService implements IUserActionService {
     };
 
     public getAssessmentTemplate = async (model: CareplanActivity): Promise<AssessmentTemplateDto> => {
- 
+
         if (!model) {
             throw new Error('Invalid careplan activity encountered!');
         }
@@ -397,7 +363,7 @@ export class CareplanService implements IUserActionService {
         if (existingTemplate) {
             return existingTemplate;
         }
-        
+
         var assessmentTemplate: CAssessmentTemplate =
             await this._handler.convertToAssessmentTemplate(model);
 
@@ -414,7 +380,7 @@ export class CareplanService implements IUserActionService {
         scheduledAt: string): Promise<AssessmentDto> => {
 
         var existingAssessment = await this._assessmentRepo.getByActivityId(activity.id);
-    
+
         if (existingAssessment) {
             return existingAssessment;
         }
@@ -519,6 +485,63 @@ export class CareplanService implements IUserActionService {
         }
     }
 
+    public async enrollAndCreateTask(enrollmentDetails ) {
+
+        var enrollmentId = await this._handler.enrollPatientToCarePlan(enrollmentDetails);
+        if (!enrollmentId) {
+            throw new ApiError(500, 'Error while enrolling patient to careplan');
+        }
+        enrollmentDetails.EnrollmentId = enrollmentId;
+
+        var dto = await this._careplanRepo.enrollPatient(enrollmentDetails);
+
+        var activities = await this._handler.fetchActivities(
+            enrollmentDetails.PatientUserId, enrollmentDetails.Provider, enrollmentDetails.PlanCode,
+            enrollmentDetails.ParticipantId, enrollmentId, enrollmentDetails.StartDate, enrollmentDetails.EndDate);
+
+        Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
+
+        const activityModels = activities.map(x => {
+
+            var a: CareplanActivityDomainModel = {
+                PatientUserId    : enrollmentDetails.PatientUserId,
+                EnrollmentId     : enrollmentId,
+                ParticipantId    : enrollmentDetails.ParticipantId,
+                Provider         : enrollmentDetails.Provider,
+                PlanName         : enrollmentDetails.PlanName,
+                PlanCode         : enrollmentDetails.PlanCode,
+                Type             : x.Type,
+                Category         : x.Category,
+                ProviderActionId : x.ProviderActionId,
+                Title            : x.Title,
+                Description      : x.Description,
+                Url              : x.Url,
+                Language         : x.Language,
+                ScheduledAt      : x.ScheduledAt,
+                Sequence         : x.Sequence,
+                Frequency        : x.Frequency,
+                Status           : x.Status
+            };
+
+            return a;
+        });
+
+        var careplanActivities = await this._careplanRepo.addActivities(
+            enrollmentDetails.Provider,
+            enrollmentDetails.PlanName,
+            enrollmentDetails.PlanCode,
+            enrollmentDetails.PatientUserId,
+            enrollmentId,
+            activityModels);
+
+        Logger.instance().log(`Careplan Activities: ${JSON.stringify(careplanActivities)}`);
+
+        //task scheduling
+        await this.createScheduledUserTasks(enrollmentDetails.PatientUserId, careplanActivities);
+
+        return dto;
+    }
+
     getWeeklyStatus = async (careplanId: uuid): Promise<any> => {
 
         var enrollment = await this._careplanRepo.getCareplanEnrollment(careplanId);
@@ -573,6 +596,26 @@ export class CareplanService implements IUserActionService {
     Promise<CareplanActivityDto> => {
 
         return await this._careplanRepo.updateActivityUserResponse(activityId, userResponse);
+    };
+
+    public updateRisk = async (updateRisk: EnrollmentDomainModel): Promise<EnrollmentDto> => {
+
+        const filter = {
+            Phone : updateRisk.Phone
+        };
+        const patient = await this._patientRepo.search(filter);
+        if (patient.Items.length === 0) {
+            throw new Error('Patient does not exist!');
+        }
+        updateRisk.PatientUserId = patient.Items[0].UserId;
+
+        return  await this._careplanRepo.updateRisk(updateRisk);
+    };
+
+    public scheduleDailyHighRiskCareplan = async (): Promise<boolean> => {
+
+        const provider = "REAN";
+        return await this._handler.scheduleDailyHighRiskCareplan(provider);
     };
 
     //#endregion

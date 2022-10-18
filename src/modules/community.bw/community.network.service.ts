@@ -84,7 +84,7 @@ export class CommunityNetworkService {
 
         var activities = await this._patientNetworkService.fetchActivities(
             enrollmentDetails.PlanCode, enrollmentDetails.ParticipantId, enrollmentDetails.EnrollmentId,
-            healthProfile.BloodTransfusionDate, enrollmentDetails.EndDate);
+            enrollmentDetails.StartDate, healthProfile.BloodTransfusionDate, enrollmentDetails.EndDate);
 
         Logger.instance().log(`Activities: ${JSON.stringify(activities)}`);
 

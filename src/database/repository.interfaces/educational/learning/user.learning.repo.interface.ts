@@ -9,6 +9,7 @@ export interface IUserLearningRepo {
         learningPathId?: uuid,
         courseId?: uuid,
         moduleId?: uuid,
+        actionId?: uuid,
         progressStatus?: ProgressStatus,
         progressPercentage?: number,): Promise<UserLearningDto>;
 

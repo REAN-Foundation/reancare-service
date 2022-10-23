@@ -34,6 +34,7 @@ export class UserLearningController extends BaseController {
             const userLearning = await this._service.updateUserLearning(
                 model.UserId,
                 model.ContentId,
+                model.ActionId ?? null,
                 model.LearningPathId ?? null,
                 model.CourseId ?? null,
                 model.ModuleId ?? null,

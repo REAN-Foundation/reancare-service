@@ -84,6 +84,12 @@ export default class UserLearning extends Model {
     })
     ContentId: string;
 
+    @Column({
+        type      : DataType.UUIDV4,
+        allowNull : true,
+    })
+    ActionId: string;
+
     @Length({ max: 32 })
     @Column({
         type         : DataType.STRING(32),

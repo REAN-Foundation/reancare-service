@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { CourseContentType } from '../../../../../../domain.types/educational/learning/course.content/course.content.type';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { CourseContentDomainModel } from "../../../../../../domain.types/educational/learning/course.content/course.content.domain.model";
@@ -134,7 +135,7 @@ export class CourseContentRepo implements ICourseContentRepo {
                 courseContent.DurationInMins = updateModel.DurationInMins;
             }
             if (updateModel.ContentType != null) {
-                courseContent.ContentType = updateModel.ContentType;
+                courseContent.ContentType = updateModel.ContentType as CourseContentType;
             }
             if (updateModel.ResourceLink != null) {
                 courseContent.ResourceLink = updateModel.ResourceLink;

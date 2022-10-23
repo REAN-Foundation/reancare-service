@@ -24,6 +24,7 @@ export class UserLearningService {
     updateUserLearning = async (
         userId: uuid,
         contentId: uuid,
+        actionId?: uuid,
         learningPathId?: uuid,
         courseId?: uuid,
         moduleId?: uuid,
@@ -51,7 +52,7 @@ export class UserLearningService {
             progressPercentage = 100;
         }
         return await this._userLearningRepo.updateUserLearning(
-            userId, contentId, learningPathId, courseId, moduleId, progressStatus, progressPercentage);
+            userId, contentId, learningPathId, courseId, moduleId, actionId, progressStatus, progressPercentage);
     };
 
     getLearningPathProgress = async (userId: uuid, learningPathId: uuid): Promise<number> => {

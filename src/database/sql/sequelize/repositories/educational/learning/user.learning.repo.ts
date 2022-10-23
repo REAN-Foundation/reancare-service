@@ -16,6 +16,7 @@ export class UserLearningRepo implements IUserLearningRepo {
         learningPathId?: uuid,
         courseId?: uuid,
         moduleId?: uuid,
+        actionId?: uuid,
         progressStatus?: ProgressStatus,
         progressPercentage?: number,
     ):
@@ -44,7 +45,8 @@ export class UserLearningRepo implements IUserLearningRepo {
                     CourseId             : courseId,
                     UserId               : userId ,
                     ModuleId             : moduleId,
-                    ContentId            : contentId   ,
+                    ContentId            : contentId,
+                    ActionId             : actionId,
                     ProgressStatus       : ProgressStatus.InProgress,
                     PercentageCompletion : progressPercentage ?? 100,
                 };

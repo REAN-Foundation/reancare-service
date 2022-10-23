@@ -22,7 +22,8 @@ export class MessagingService {
         return await this._service.sendWhatsappMessage(toPhone, message);
     };
 
-    sendWhatsappWithReanBot = async (toPhone: string, message: string, provider:string): Promise<boolean> => {
+    sendWhatsappWithReanBot = async (toPhone: string, message: string, provider:string,
+        Type:string): Promise<boolean> => {
 
         const reanBotBaseUrl = process.env.REANBOT_BACKEND_BASE_URL;
         const urlToken = process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN;
@@ -32,6 +33,11 @@ export class MessagingService {
             const num = toPhone.split("-")[1];
             const code =  countryCode.substring(1);
             toPhone = code.concat(num);
+        }
+        let payload = null;
+        if (Type === 'interactive-buttons') {
+            payload = ["Yes", "Raise_Request_Yes", "No", "Raise_Request_No"];
+
         }
         const client = provider === "REAN_BW" ? "BLOOD_WARRIORS" : "MATERNAL_BOT";
         const channel = provider === "REAN_BW" ? "whatsappMeta" : "telegram";
@@ -49,8 +55,9 @@ export class MessagingService {
         const obj = {
             userId    : toPhone,
             agentName : "ReanCare",
-            type      : "text",
-            message   : message
+            type      : Type,
+            message   : message,
+            payload   : payload
         };
         
         const resp1 = await needle('post', url, obj, options);

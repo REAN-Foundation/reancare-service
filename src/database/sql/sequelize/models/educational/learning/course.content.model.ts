@@ -109,7 +109,7 @@ export default class CourseContent extends Model {
     ResourceLink: string;
 
     @Column({
-        type      : DataType.UUIDV4,
+        type      : DataType.UUID,
         allowNull : true,
     })
     ActionTemplateId: string;

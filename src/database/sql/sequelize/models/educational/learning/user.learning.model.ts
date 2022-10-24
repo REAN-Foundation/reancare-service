@@ -85,7 +85,7 @@ export default class UserLearning extends Model {
     ContentId: string;
 
     @Column({
-        type      : DataType.UUIDV4,
+        type      : DataType.UUID,
         allowNull : true,
     })
     ActionId: string;

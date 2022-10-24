@@ -13,7 +13,7 @@ export class CourseContentValidator extends BaseValidator {
     }
 
     getDomainModel = (request: express.Request): CourseContentDomainModel => {
-        const CourseContentModel: CourseContentDomainModel = {
+        const courseContentModel: CourseContentDomainModel = {
             ModuleId         : request.body.ModuleId,
             CourseId         : request.body.CourseId,
             LearningPathId   : request.body.LearningPathId,
@@ -26,7 +26,7 @@ export class CourseContentValidator extends BaseValidator {
             ActionTemplateId : request.body.ActionTemplateId,
             Sequence         : request.body.Sequence,
         };
-        return CourseContentModel;
+        return courseContentModel;
     };
 
     create = async (request: express.Request): Promise<CourseContentDomainModel> => {

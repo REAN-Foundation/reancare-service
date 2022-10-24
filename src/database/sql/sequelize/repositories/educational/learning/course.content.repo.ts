@@ -19,16 +19,17 @@ export class CourseContentRepo implements ICourseContentRepo {
     Promise<CourseContentDto> => {
         try {
             const entity = {
-                LearningPathId : createModel.LearningPathId,
-                CourseId       : createModel.CourseId,
-                ModuleId       : createModel.ModuleId,
-                Title          : createModel.Title ,
-                Description    : createModel.Description,
-                ImageUrl       : createModel.ImageUrl,
-                DurationInMins : createModel.DurationInMins,
-                ContentType    : createModel.ContentType,
-                ResourceLink   : createModel.ResourceLink,
-                Sequence       : createModel.Sequence,
+                LearningPathId   : createModel.LearningPathId,
+                CourseId         : createModel.CourseId,
+                ModuleId         : createModel.ModuleId,
+                Title            : createModel.Title ,
+                Description      : createModel.Description,
+                ImageUrl         : createModel.ImageUrl,
+                DurationInMins   : createModel.DurationInMins,
+                ContentType      : createModel.ContentType,
+                ActionTemplateId : createModel.ActionTemplateId,
+                ResourceLink     : createModel.ResourceLink,
+                Sequence         : createModel.Sequence,
             };
 
             const courseContent = await CourseContent.create(entity);
@@ -139,6 +140,9 @@ export class CourseContentRepo implements ICourseContentRepo {
             }
             if (updateModel.ResourceLink != null) {
                 courseContent.ResourceLink = updateModel.ResourceLink;
+            }
+            if (updateModel.ActionTemplateId != null) {
+                courseContent.ActionTemplateId = updateModel.ActionTemplateId;
             }
             if (updateModel.Sequence != null) {
                 courseContent.Sequence = updateModel.Sequence;

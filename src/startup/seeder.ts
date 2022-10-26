@@ -251,11 +251,11 @@ export class Seeder {
     private seedDefaultRoles = async () => {
 
         const existing = await this._roleRepo.search();
-        if (existing.length === 10) {
+        if (existing.length === 11) {
             await this._roleRepo.create({
-                RoleName    : Roles.Donor,
+                RoleName    : Roles.Volunteer,
                 Description :
-                    'Represents blood donor as a person.',
+                    'Represents a person managing the blood bridge.',
             });
         }
         if (existing.length > 0) {
@@ -303,6 +303,11 @@ export class Seeder {
             RoleName    : Roles.SocialHealthWorker,
             Description :
                 'Represents a health social worker/health support professional representing government/private health service.',
+        });
+        await this._roleRepo.create({
+            RoleName    : Roles.Donor,
+            Description :
+                'Represents blood donor as a person.',
         });
 
         Logger.instance().log('Seeded default roles successfully!');

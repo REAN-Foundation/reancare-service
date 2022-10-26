@@ -500,7 +500,12 @@
             "Notification.MarkAsRead",
             "Notification.Update",
             "Notification.Delete",
-            "Person.GetAllPersonsWithPhone"
+            "Person.GetAllPersonsWithPhone",
+            "Volunteer.Create",
+            "Volunteer.GetByUserId",
+            "Volunteer.Search",
+            "Volunteer.UpdateByUserId",
+            "Volunteer.DeleteByUserId"
         ]
     },
     {
@@ -816,7 +821,12 @@
             "Donor.Search",
             "Donor.GetByUserId",
             "Donor.UpdateByUserId",
-            "Person.GetAllPersonsWithPhone"
+            "Person.GetAllPersonsWithPhone",
+            "Volunteer.Create",
+            "Volunteer.GetByUserId",
+            "Volunteer.Search",
+            "Volunteer.UpdateByUserId",
+            "Volunteer.DeleteByUserId"
         ]
     },
     {

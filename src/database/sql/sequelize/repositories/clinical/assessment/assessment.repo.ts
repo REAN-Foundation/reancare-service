@@ -139,7 +139,7 @@ export class AssessmentRepo implements IAssessmentRepo {
                 search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
             }
             if (filters.AssessmentTemplateId != null) {
-                search.where['AssessmentTemplateId'] = { [Op.like]: '%' + filters.AssessmentTemplateId + '%' };
+                search.where['AssessmentTemplateId'] = filters.AssessmentTemplateId;
             }
 
             let orderByColum = 'Title';

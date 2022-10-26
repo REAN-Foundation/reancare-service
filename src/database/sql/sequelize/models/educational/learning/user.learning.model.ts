@@ -10,6 +10,7 @@ import {
     PrimaryKey,
     ForeignKey,
     Length,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
@@ -83,6 +84,9 @@ export default class UserLearning extends Model {
         allowNull : false,
     })
     ContentId: string;
+
+    @BelongsTo(() => CourseContent)
+    Content: CourseContent;
 
     @Column({
         type      : DataType.UUID,

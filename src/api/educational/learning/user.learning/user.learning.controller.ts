@@ -143,12 +143,13 @@ export class UserLearningController extends BaseController {
         try {
             await this.setContext('UserLearning.GetUserCourseContents', request, response);
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            const contents = await this._service.getUserCourseContents(userId);
+            const learningPathId: uuid = request.query['learningPathId'] as string ?? null;
+            const contents = await this._service.getUserCourseContents(userId, learningPathId);
             if (contents == null) {
                 throw new ApiError(404, 'User course contents cannot be retrieved.');
             }
             for await (var content of contents) {
-                const percentageCompletion = await this._service.getContentProgress(userId, content.id);
+                const percentageCompletion = await this._service.getContentProgress(userId, content.ContentId);
                 content['PercentageCompletion'] = percentageCompletion;
             }
             ResponseHandler.success(request, response, 'User course contents retrieved successfully!', 200, {

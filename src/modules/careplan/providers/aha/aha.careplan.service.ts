@@ -321,6 +321,7 @@ export class AhaCareplanService implements ICareplanService {
 
         const status = this.getActivityStatus(activity.status);
         const description = this.getActivityDescription(activity.text, activity.description);
+        const transcription = this.getActivityTranscription(activity);
 
         var activityUrl = this.extractUrl(activity.url, activity);
 
@@ -332,6 +333,7 @@ export class AhaCareplanService implements ICareplanService {
             Category         : category,
             Title            : title,
             Description      : description,
+            Transcription    : transcription,
             Url              : activityUrl,
             Language         : 'English',
             Status           : status,
@@ -934,6 +936,24 @@ export class AhaCareplanService implements ICareplanService {
             desc += '\n';
         }
         return desc;
+    }
+
+    private getActivityTranscription(activity: any) {
+        var transcription = null;
+        if (
+            activity.locale &&
+            typeof activity.locale !== 'object' &&
+            activity.locale.length > 0 &&
+            activity.locale[0]['en-US']
+        ) {
+            transcription = activity.locale[0]['en-US'].transcription;
+        }
+
+        if (!transcription) {
+            transcription = activity.text ?? '';
+        }
+        
+        return transcription;
     }
 
     private createInitialAssessmentTask = async (

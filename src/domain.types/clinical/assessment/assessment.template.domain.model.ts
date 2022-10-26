@@ -10,4 +10,5 @@ export interface AssessmentTemplateDomainModel {
     ScoringApplicable?          : boolean;
     FileResourceId?             : uuid;
     ServeListNodeChildrenAtOnce : boolean;
+    TotalNumberOfQuestions?     : number;
 }

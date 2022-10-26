@@ -70,6 +70,7 @@ export class AssessmentService {
         model.Type = template.Type;
         model.ScheduledDateString = model.ScheduledDateString ?? new Date().toISOString()
             .split('T')[0];
+        model.TotalNumberOfQuestions = template.TotalNumberOfQuestions;
 
         return await this._assessmentRepo.create(model);
     };

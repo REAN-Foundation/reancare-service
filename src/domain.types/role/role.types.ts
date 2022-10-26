@@ -11,4 +11,5 @@ export enum Roles {
     PatientFamilyMember  = 'Patient family member',
     PatientFriend        = 'Patient friend',
     Donor                = 'Donor',
+    Volunteer            = 'Volunteer',
 }

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "8a530e50-430a-4bb6-80c0-26a8be2a2dcf",
+		"_postman_id": "b107dd76-0fcc-4afa-a4b4-a700849abfdf",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -4249,6 +4249,673 @@
 			]
 		},
 		{
+			"name": "Volunteer",
+			"item": [
+				{
+					"name": "Register volunteer- with only a phone number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"VOLUNTEER_USER_ID\", jsonRes.Data.Volunteer.User.id);\r",
+									"    pm.environment.set(\"VOLUNTEER_PERSON_ID\", jsonRes.Data.Volunteer.User.Person.id);\r",
+									"    pm.environment.set(\"VOLUNTEER_PERSON_ID_1\", jsonRes.Data.Volunteer.User.Person.id);\r",
+									"    pm.environment.set(\"PERSON_ID\", jsonRes.Data.Volunteer.User.Person.id);\r",
+									"    pm.environment.set(\"PERSON_ID_3\", jsonRes.Data.Volunteer.User.Person.id);\r",
+									"\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Volunteer is created\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Volunteer');\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.have.property('User');\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User.Person).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User.Person).to.have.property('id');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Randomly generated user details\r",
+									"\r",
+									"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
+									"\r",
+									"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
+									"\r",
+									"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
+									"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
+									"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+									"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
+									"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
+									"var password = \"Test@123\";\r",
+									"\r",
+									"pm.environment.set(\"FIRST_NAME\", first);\r",
+									"pm.environment.set(\"LAST_NAME\", last);\r",
+									"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+									"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");\r",
+									"pm.environment.set(\"EMAIL\", email);\r",
+									"pm.environment.set(\"PASSWORD\", password);\r",
+									"\r",
+									"//Profile images\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text",
+								"description": "API key for client app authentication"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/volunteers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"volunteers"
+							]
+						},
+						"description": "Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. \"+91-1234567890\".\n\nThe typical request body is as follows - \n`\n{\n    \"Phone\": \"+91-1234567890\",\n    \"Prefix\": \"Mr.\",\n    \"FirstName\": \"John\",\n    \"MiddleName\": \"X\",\n    \"LastName\": \"Doe\",\n    \"Email\": \"john.doe@gmail.com\",\n    \"Gender\": \"Male\",\n    \"BirthDate\": \"1979-01-01\",\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\"\n}\n`"
+					},
+					"response": []
+				},
+				{
+					"name": "Register volunteer- with phone and password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"VOLUNTEER_USER_ID\", jsonRes.Data.Volunteer.User.id);\r",
+									"    pm.environment.set(\"VOLUNTEER_PERSON_ID_2\", jsonRes.Data.Volunteer.User.Person.id);\r",
+									"    pm.environment.set(\"PERSON_ID_2\", jsonRes.Data.Volunteer.User.Person.id);\r",
+									"\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Volunteer is created\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Volunteer');\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.have.property('User');\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User.Person).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User.Person).to.have.property('id');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Randomly generated user details\r",
+									"\r",
+									"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
+									"\r",
+									"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
+									"\r",
+									"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
+									"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
+									"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+									"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
+									"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
+									"var password = \"Test@123\";\r",
+									"\r",
+									"pm.environment.set(\"FIRST_NAME\", first);\r",
+									"pm.environment.set(\"LAST_NAME\", last);\r",
+									"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+									"pm.environment.set(\"PHONE_COUNTRY_CODE\", \"+91\");\r",
+									"pm.environment.set(\"EMAIL\", email);\r",
+									"pm.environment.set(\"PASSWORD\", password);\r",
+									"\r",
+									"//Profile images\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/volunteers",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"volunteers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Volunteer log-in with password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"VOLUNTEER_USER_JWT\", jsonRes.Data.AccessToken);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Volunteer login: Access token is returned\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
+									"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Phone\": \"{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": 12\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/users/login-with-password",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"login-with-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get volunteer by user id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Volunteer is retrived successfully!\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Volunteer');\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.have.property('User');\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User.Person).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User.Person).to.have.property('id');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var password = \"Client-Test@123\";\r",
+									"pm.environment.set(\"API_CLIENT_PASSWORD\", password);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/volunteers/{{VOLUNTEER_USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"volunteers",
+								"{{VOLUNTEER_USER_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update volunteer details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"VOLUNTEER_FIRST_NAME\", jsonRes.Data.Volunteer.User.Person.FirstName);\r",
+									"    pm.environment.set(\"VOLUNTEER_PHONE\", jsonRes.Data.Volunteer.User.Person.Phone);\r",
+									"    pm.environment.set(\"VOLUNTEER_GENDER\", jsonRes.Data.Volunteer.User.Person.Gender);\r",
+									"    pm.environment.set(\"VOLUNTEER_EMAIL\", jsonRes.Data.Volunteer.User.Person.Email);\r",
+									"\r",
+									"    var phone = jsonRes.Data.Volunteer.User.Person.Phone;\r",
+									"    var tokens = phone.split('-');\r",
+									"    var phoneNumber = tokens[1];\r",
+									"\r",
+									"    pm.environment.set(\"VOLUNTEER_PHONE_NUMBER\", phoneNumber);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Volunteer details are updated\", function () {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Volunteer');\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Volunteer).to.have.property('User');\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User).to.have.property('id');\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User.Person).to.not.be.empty;\r",
+									"    pm.expect(jsonRes.Data.Volunteer.User.Person).to.have.property('id');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"Garfield\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"Miller\",\r\n    \"Email\": \"john.doe@gmail.com\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\",\r\n    \"BloodGroup\": \"O+\",\r\n    \"LastDonationDate\": \"2022-07-18\",\r\n    \"MedIssues\": [\"Over Weight\", \"Dibetic\"],\r\n    \"IsAvailable\": true\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/volunteers/{{VOLUNTEER_USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"volunteers",
+								"{{VOLUNTEER_USER_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search volunteers",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"List of donors is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Volunteers');\r",
+									"    pm.expect(jsonRes.Data.Volunteers.Items.length).to.be.greaterThan(0);\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/volunteers/search?order=ascending&pageIndex=0&itemsPerPage=25&phone={{VOLUNTEER_PHONE}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"volunteers",
+								"search"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "{{VOLUNTEER_EMAIL}}",
+									"description": "Search by patient email",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "{{VOLUNTEER_FIRST_NAME}}",
+									"description": "Search by name",
+									"disabled": true
+								},
+								{
+									"key": "gender",
+									"value": "{{VOLUNTEER_GENDER}}",
+									"description": "Search by patient gender",
+									"disabled": true
+								},
+								{
+									"key": "bloodGroup",
+									"value": "O",
+									"description": "Date in format: YYYY-MM-DD. Start of the range for birthdate based search",
+									"disabled": true
+								},
+								{
+									"key": "medIssues",
+									"value": "Over weight",
+									"description": "Date in format: YYYY-MM-DD. End of the range for birthdate based search",
+									"disabled": true
+								},
+								{
+									"key": "birthdateFrom",
+									"value": "1975-01-01",
+									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
+									"disabled": true
+								},
+								{
+									"key": "birthdateTo",
+									"value": "2021-12-12",
+									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
+									"disabled": true
+								},
+								{
+									"key": "createdDateFrom",
+									"value": "2021-05-01",
+									"description": "The name of the parameter to order by",
+									"disabled": true
+								},
+								{
+									"key": "createdDateTo",
+									"value": "2021-12-12",
+									"description": "'ascending' or 'descending'",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": "Email",
+									"description": "Page index for pagination",
+									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "ascending",
+									"description": "Items per page"
+								},
+								{
+									"key": "pageIndex",
+									"value": "0"
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "25"
+								},
+								{
+									"key": "phone",
+									"value": "{{VOLUNTEER_PHONE}}"
+								}
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete volunteer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Status).to.eql('success');",
+									"});",
+									"",
+									"pm.test(\"Volunteer record is deleted\", function () {",
+									"",
+									"    var expectedValue = true;",
+									"    ",
+									"    var jsonRes = pm.response.json();",
+									"    pm.expect(jsonRes.Data).to.have.property('Deleted');",
+									"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);",
+									"",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_URL}}/volunteers/{{VOLUNTEER_USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"volunteers",
+								"{{VOLUNTEER_USER_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Addresses",
 			"item": [
 				{
@@ -7380,10 +8047,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patient-emergency-contacts/{{PATIENT_EMERGENCY_CONTACT_ID}}",
 											"host": [
@@ -7734,10 +8397,6 @@
 												"type": "text"
 											}
 										],
-										"body": {
-											"mode": "raw",
-											"raw": ""
-										},
 										"url": {
 											"raw": "{{BASE_URL}}/patient-emergency-contacts/search?patientUserId={{PATIENT_USER_ID}}&isAvailableForEmergency=true",
 											"host": [

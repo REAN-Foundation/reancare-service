@@ -25,6 +25,7 @@ export class CareplanActivityMapper {
             ProviderActionId : activity.ProviderActionId,
             Title            : activity.Title,
             Description      : activity.Description,
+            Transcription    : activity.Transcription,
             Url              : activity.Url,
             ScheduledAt      : activity.ScheduledAt,
             StartedAt        : activity.StartedAt,

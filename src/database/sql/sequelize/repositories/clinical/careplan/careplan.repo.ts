@@ -322,6 +322,9 @@ export class CareplanRepo implements ICareplanRepo {
             if (!record.Description) {
                 record.Description = activityDetails.Description;
             }
+            if (!record.Transcription) {
+                record.Transcription = activityDetails.Transcription;
+            }
             if (!Helper.isUrl(record.Url)) {
                 if (record.Url !== activityDetails.Url && Helper.isUrl(activityDetails.Url)) {
                     record.Url = activityDetails.Url;

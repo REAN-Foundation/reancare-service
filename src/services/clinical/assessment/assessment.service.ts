@@ -1012,7 +1012,7 @@ export class AssessmentService {
             ExpectedResponseType : questionNode.QueryResponseType as QueryResponseType,
             Options              : questionNode.Options,
             ProviderGivenCode    : questionNode.ProviderGivenCode,
-            CorrectAnswer        : questionNode.CorrectAnswer,
+            CorrectAnswer        : questionNode.CorrectAnswer ? JSON.parse(questionNode.CorrectAnswer) : null,
         };
         return query;
     }

@@ -7,6 +7,7 @@ export enum DocumentTypes {
     DoctorNotes = 'Doctor notes',
     DischargeSummary = 'Discharge summary',
     OpdPaper = 'OPD paper',
+    Assessment = 'Assessment',
     Unknown = 'Unknown'
 }
 
@@ -18,5 +19,6 @@ export const DocumentTypesList: DocumentTypes [] = [
     DocumentTypes.DoctorNotes,
     DocumentTypes.DischargeSummary,
     DocumentTypes.OpdPaper,
+    DocumentTypes.Assessment,
     DocumentTypes.Unknown,
 ];

@@ -27,7 +27,8 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                 Description                 : model.Description ?? null,
                 ProviderAssessmentCode      : model.ProviderAssessmentCode ?? null,
                 Provider                    : model.Provider ?? null,
-                ServeListNodeChildrenAtOnce : model.ServeListNodeChildrenAtOnce ?? null
+                ServeListNodeChildrenAtOnce : model.ServeListNodeChildrenAtOnce ?? false,
+                ScoringApplicable           : model.ScoringApplicable ?? false,
             };
             const assessmentTemplate = await AssessmentTemplate.create(entity);
             return AssessmentTemplateMapper.toDto(assessmentTemplate);
@@ -140,6 +141,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             if (updateModel.Description != null) {
                 assessmentTemplate.Description = updateModel.Description;
             }
+            if (updateModel.ScoringApplicable != null) {
+                assessmentTemplate.ScoringApplicable = updateModel.ScoringApplicable;
+            }
             if (updateModel.ProviderAssessmentCode != null) {
                 assessmentTemplate.ProviderAssessmentCode = updateModel.ProviderAssessmentCode;
             }
@@ -181,5 +185,5 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
     };
 
     //#endregion
-    
+
 }

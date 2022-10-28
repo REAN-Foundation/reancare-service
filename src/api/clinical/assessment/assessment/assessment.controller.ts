@@ -12,6 +12,8 @@ import { AssessmentQuestionResponseDto } from '../../../../domain.types/clinical
 import { AssessmentNodeType, AssessmentType, CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentHelperRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.helper.repo';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
+import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
+import { Logger } from '../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -182,14 +184,11 @@ export class AssessmentController extends BaseController{
                 throw new ApiError(404, 'Assessment record not found.');
             }
             if (assessment.ScoringApplicable) {
-
-                var customActions = new CustomActionsHandler();
-                var score = await customActions.performActions_PostAssessmentScoring(
-                    assessment.PatientUserId, assessment.id);
-
+                var { score, reportUrl } = await this.generateScoreReport(assessment);
                 ResponseHandler.success(request, response, 'Assessment started successfully!', 200, {
                     AssessmentId : assessment.id,
                     Score        : score,
+                    ReportUrl    : reportUrl,
                 });
             }
             else {
@@ -300,11 +299,10 @@ export class AssessmentController extends BaseController{
 
                 //If the assessment has scoring enabled, score the assessment
                 if (assessment.ScoringApplicable) {
-                    var customActions = new CustomActionsHandler();
-                    var score = await customActions.performActions_PostAssessmentScoring(
-                        assessment.PatientUserId, assessment.id);
+                    var { score, reportUrl } = await this.generateScoreReport(assessment);
                     if (score) {
                         answerResponse['AssessmentScore'] = score;
+                        answerResponse['AssessmentScoreReport'] = reportUrl;
                     }
                 }
 
@@ -368,11 +366,10 @@ export class AssessmentController extends BaseController{
 
                 //If the assessment has scoring enabled, score the assessment
                 if (assessment.ScoringApplicable) {
-                    var customActions = new CustomActionsHandler();
-                    var score = await customActions.performActions_PostAssessmentScoring(
-                        assessment.PatientUserId, assessment.id);
+                    var { score, reportUrl } = await this.generateScoreReport(assessment);
                     if (score) {
                         answerResponse['AssessmentScore'] = score;
+                        answerResponse['AssessmentScoreReport'] = reportUrl;
                     }
                 }
 
@@ -415,6 +412,31 @@ export class AssessmentController extends BaseController{
                 }
             }
         }
+    }
+
+    private async generateScoreReport(assessment: AssessmentDto) {
+
+        var customActions = new CustomActionsHandler();
+
+        var score = await customActions.performActions_PostAssessmentScoring(
+            assessment.PatientUserId, assessment.id);
+
+        Logger.instance().log(`Score: ${JSON.stringify(score, null, 2)}`);
+
+        const reportUrl = await customActions.performActions_GenerateAssessmentReport(
+            assessment.PatientUserId, assessment.id, score);
+
+        Logger.instance().log(`Report Url: ${JSON.stringify(reportUrl, null, 2)}`);
+
+        const scoreStr = JSON.stringify(score);
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const updatedAssessment = await this._service.update(assessment.id, {
+            ScoreDetails : scoreStr,
+            ReportUrl    : reportUrl
+        });
+
+        return { score, reportUrl };
     }
 
     //#endregion

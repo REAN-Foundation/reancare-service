@@ -141,7 +141,9 @@
             "LabRecord.Search",
             "LabRecord.Update",
             "LabRecord.Delete",
-            "Person.GetAllPersonsWithPhone"
+            "Person.GetAllPersonsWithPhone",
+            "Notification.Create"
+
         ]
     },
     {
@@ -492,7 +494,20 @@
             "Donor.Search",
             "Donor.GetByUserId",
             "Donor.UpdateByUserId",
-            "Person.GetAllPersonsWithPhone"
+            "General.Notice.GetById",
+            "General.Notice.Search",
+            "General.Notice.CreateAction",
+            "Notification.GetById",
+            "Notification.Search",
+            "Notification.MarkAsRead",
+            "Notification.Update",
+            "Notification.Delete",
+            "Person.GetAllPersonsWithPhone",
+            "Volunteer.Create",
+            "Volunteer.GetByUserId",
+            "Volunteer.Search",
+            "Volunteer.UpdateByUserId",
+            "Volunteer.DeleteByUserId"
         ]
     },
     {
@@ -810,7 +825,12 @@
             "Donor.Search",
             "Donor.GetByUserId",
             "Donor.UpdateByUserId",
-            "Person.GetAllPersonsWithPhone"
+            "Person.GetAllPersonsWithPhone",
+            "Volunteer.Create",
+            "Volunteer.GetByUserId",
+            "Volunteer.Search",
+            "Volunteer.UpdateByUserId",
+            "Volunteer.DeleteByUserId"
         ]
     },
     {

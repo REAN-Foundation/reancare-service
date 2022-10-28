@@ -89,6 +89,12 @@ export class AssessmentRepo implements IAssessmentRepo {
             if (updateModel.StartedAt != null) {
                 assessment.StartedAt = updateModel.StartedAt;
             }
+            if (updateModel.ScoringApplicable != null) {
+                assessment.ScoringApplicable = updateModel.ScoringApplicable;
+            }
+            if (updateModel.ScoreDetails != null) {
+                assessment.ScoreDetails = updateModel.ScoreDetails;
+            }
             if (updateModel.FinishedAt != null) {
                 assessment.FinishedAt = updateModel.FinishedAt;
             }
@@ -100,6 +106,9 @@ export class AssessmentRepo implements IAssessmentRepo {
             }
             if (updateModel.Description != null) {
                 assessment.Description = updateModel.Description;
+            }
+            if (updateModel.ReportUrl != null) {
+                assessment.ReportUrl = updateModel.ReportUrl;
             }
             if (updateModel.ProviderAssessmentId != null) {
                 assessment.ProviderAssessmentId = updateModel.ProviderAssessmentId;

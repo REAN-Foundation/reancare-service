@@ -290,13 +290,13 @@ export class EmergencyContactController extends BaseController {
             await this.setContext('Emergency.Contact.GetHealthSystemHospitals', request, response);
 
             const healthSystemId : uuid = request.params.healthSystemId;
-            const healthSystems = await this._healthSystemService.getHealthSystemHospitals(healthSystemId);
-            if (healthSystems.length === 0) {
+            const healthSystemHospitals = await this._healthSystemService.getHealthSystemHospitals(healthSystemId);
+            if (healthSystemHospitals.length === 0) {
                 throw new ApiError(400, 'Cannot fetch hospitals associated with health system!');
             }
 
             ResponseHandler.success(request, response, 'Fetched hospitals associated with health system!', 201, {
-                HealthSystems : healthSystems,
+                HealthSystemHospitals : healthSystemHospitals,
             });
 
         } catch (error) {

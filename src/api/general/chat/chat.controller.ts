@@ -90,13 +90,13 @@ export class ChatController extends BaseController {
         }
     };
     
-    ccc = async (request: express.Request, response: express.Response): Promise<void> => {
+    searchUserConversations = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
             await this.setContext('Chat.SearchUserConversations', request, response);
-
-            const domainModel = await this._validator.create(request);
-            const chat = await this._service.create(domainModel);
+            
+            const domainModel = await this._validator.searchUserConversations(request);
+            const chat = await this._service.searchUserConversations(domainModel);
             if (chat == null) {
                 throw new ApiError(400, 'Cannot create chat!');
             }

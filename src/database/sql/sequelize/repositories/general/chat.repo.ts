@@ -16,9 +16,31 @@ import { ChatMapper } from '../../mappers/general/chat.mapper';
 
 export class ChatRepo implements IChatRepo {
 
-    startConversation(model: ConversationDomainModel): Promise<ConversationDto> {
-        throw new Error('Method not implemented.');
-    }
+    startConversation = async (model: ConversationDomainModel): Promise<ConversationDto> => {
+        try {
+            const entity = {
+                IsGroupConversation : model.IsGroupConversation ?? false,
+                Marked              : model.Marked ?? false,
+                StartedByUserId     : model.StartedByUserId ?? null,
+                Topic               : model.Topic ?? null,
+            };
+            const conversation = await Conversation.create(entity);
+            var participants = [];
+            for await (var userId of model.Users) {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                const participant = await ConversationParticipant.create({
+                    ConversationId : conversation.id,
+                    UserId         : userId,
+                });
+                participants.push(userId);
+            }
+            const dto = await ChatMapper.toDto(conversation, participants);
+            return dto;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
     sendMessage(id: ChatMessageDomainModel): Promise<ChatMessageDto> {
         throw new Error('Method not implemented.');

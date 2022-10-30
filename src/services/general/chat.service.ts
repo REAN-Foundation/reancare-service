@@ -1,8 +1,11 @@
 import { inject, injectable } from "tsyringe";
 import { IChatRepo } from "../../../database/repository.interfaces/general/chat.repo.interface";
-import { ChatDomainModel } from '../../../../../domain.types/general/chat/chat.domain.model';
-import { ChatDto } from '../../domain.types/general/chat/chat.dto';
-import { ChatSearchResults, ChatSearchFilters } from '../../domain.types/general/chat/chat.search.types';
+import { ConversationDomainModel } from '../../domain.types/general/chat/conversation.domain.model';
+import { ConversationDto } from '../../domain.types/general/chat/conversation.dto';
+import { CoversationSearchFfilters } from '../../domain.types/general/chat/conversation.search.filters';
+import { ChatMessageDomainModel } from "../../domain.types/general/chat/chat.message.domain.model";
+import { ChatMessageDto } from "../../domain.types/general/chat/chat.message.dto";
+import { uuid } from "../../domain.types/miscellaneous/system.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -13,20 +16,20 @@ export class ChatService {
         @inject('IChatRepo') private _chatRepo: IChatRepo,
     ) {}
 
-    create = async (chatDomainModel: ChatDomainModel): Promise<ChatDto> => {
-        return await this._chatRepo.create(chatDomainModel);
+    startConversation = async (model: ConversationDomainModel): Promise<ConversationDto> => {
+        return await this._chatRepo.create(model);
     };
 
-    getById = async (id: string): Promise<ChatDto> => {
-        return await this._chatRepo.getById(id);
+    sendMessage = async (id: ChatMessageDomainModel): Promise<ChatMessageDto> => {
+        return await this._chatRepo.sendMessage(id);
     };
 
-    search = async (filters: ChatSearchFilters): Promise<ChatSearchResults> => {
-        return await this._chatRepo.search(filters);
+    getConversationMessages = async (conversationId: uuid): Promise<ChatMessageDto[]> => {
+        return await this._chatRepo.getConversationMessages(conversationId);
     };
 
-    update = async (id: string, chatDomainModel: ChatDomainModel): Promise<ChatDto> => {
-        return await this._chatRepo.update(id, chatDomainModel);
+    searchUserConversations = async (userId: uuid, filters: ConversationSearchFilters): Promise<ConversationDto[]> => {
+        return await this._chatRepo.searchUserConversations(userId, filters);
     };
 
     delete = async (id: string): Promise<boolean> => {

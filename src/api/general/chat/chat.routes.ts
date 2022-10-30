@@ -13,7 +13,7 @@ export const register = (app: express.Application): void => {
     router.post('/conversations/start', authenticator.authenticateClient, authenticator.authenticateUser, controller.startConversation);
     router.post('/conversations/:conversationId/messages', authenticator.authenticateClient, authenticator.authenticateUser, controller.sendMessage);
     router.get('/conversations/:conversationId/messages', authenticator.authenticateClient, authenticator.authenticateUser, controller.getConversationMessages);
-    router.get('/users/:userId/conversations', authenticator.authenticateClient, authenticator.authenticateUser, controller.searchUserConversations);
+    router.get('/users/:userId/conversations/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.searchUserConversations);
     router.get('/converations/:conversationId', authenticator.authenticateClient, authenticator.authenticateUser, controller.getConversationById);
     router.put('/converations/:conversationId', authenticator.authenticateClient, authenticator.authenticateUser, controller.updateConversation);
     router.delete('/converations/:conversationId', authenticator.authenticateClient, authenticator.authenticateUser, controller.deleteConversation);

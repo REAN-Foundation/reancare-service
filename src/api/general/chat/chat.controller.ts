@@ -60,7 +60,7 @@ export class ChatController extends BaseController {
             await this.setContext('Chat.SendMessage', request, response);
 
             const domainModel = await this._validator.sendMessage(request);
-            const chat = await this._service.create(domainModel);
+            const chat = await this._service.sendMessage(domainModel);
             if (chat == null) {
                 throw new ApiError(400, 'Cannot create chat!');
             }
@@ -79,14 +79,10 @@ export class ChatController extends BaseController {
 
             await this.setContext('Chat.GetConversationMessages', request, response);
 
-            const domainModel = await this._validator.create(request);
-            const chat = await this._service.create(domainModel);
-            if (chat == null) {
-                throw new ApiError(400, 'Cannot create chat!');
-            }
-
+            const conversationId = await this._validator.getParamUuid(request, 'conversationId');
+            const conversationMessages = await this._service.getConversationMessages(conversationId);
             ResponseHandler.success(request, response, 'Chat created successfully!', 201, {
-                Chat : chat,
+                ConversationMessages : conversationMessages,
             });
 
         } catch (error) {
@@ -94,7 +90,7 @@ export class ChatController extends BaseController {
         }
     };
     
-    searchUserConversations = async (request: express.Request, response: express.Response): Promise<void> => {
+    ccc = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
             await this.setContext('Chat.SearchUserConversations', request, response);

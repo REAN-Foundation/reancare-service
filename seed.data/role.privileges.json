@@ -142,8 +142,17 @@
             "LabRecord.Update",
             "LabRecord.Delete",
             "Person.GetAllPersonsWithPhone",
-            "Notification.Create"
-
+            "Notification.Create",
+            "Chat.StartConversation",
+            "Chat.SendMessage",
+            "Chat.GetConversationMessages",
+            "Chat.SearchUserConversations",
+            "Chat.GetConversationById",
+            "Chat.UpdateConversation",
+            "Chat.DeleteConversation",
+            "Chat.GetMessage",
+            "Chat.UpdateMessage",
+            "Chat.DeleteMessage"
         ]
     },
     {
@@ -500,7 +509,17 @@
             "Notification.MarkAsRead",
             "Notification.Update",
             "Notification.Delete",
-            "Person.GetAllPersonsWithPhone"
+            "Person.GetAllPersonsWithPhone",
+            "Chat.StartConversation",
+            "Chat.SendMessage",
+            "Chat.GetConversationMessages",
+            "Chat.SearchUserConversations",
+            "Chat.GetConversationById",
+            "Chat.UpdateConversation",
+            "Chat.DeleteConversation",
+            "Chat.GetMessage",
+            "Chat.UpdateMessage",
+            "Chat.DeleteMessage"
         ]
     },
     {
@@ -816,7 +835,17 @@
             "Donor.Search",
             "Donor.GetByUserId",
             "Donor.UpdateByUserId",
-            "Person.GetAllPersonsWithPhone"
+            "Person.GetAllPersonsWithPhone",
+            "Chat.StartConversation",
+            "Chat.SendMessage",
+            "Chat.GetConversationMessages",
+            "Chat.SearchUserConversations",
+            "Chat.GetConversationById",
+            "Chat.UpdateConversation",
+            "Chat.DeleteConversation",
+            "Chat.GetMessage",
+            "Chat.UpdateMessage",
+            "Chat.DeleteMessage"
         ]
     },
     {

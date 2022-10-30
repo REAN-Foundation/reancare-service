@@ -519,7 +519,12 @@
             "Chat.DeleteConversation",
             "Chat.GetMessage",
             "Chat.UpdateMessage",
-            "Chat.DeleteMessage"
+            "Chat.DeleteMessage",
+            "Volunteer.Create",
+            "Volunteer.GetByUserId",
+            "Volunteer.Search",
+            "Volunteer.UpdateByUserId",
+            "Volunteer.DeleteByUserId"
         ]
     },
     {
@@ -845,7 +850,12 @@
             "Chat.DeleteConversation",
             "Chat.GetMessage",
             "Chat.UpdateMessage",
-            "Chat.DeleteMessage"
+            "Chat.DeleteMessage",
+            "Volunteer.Create",
+            "Volunteer.GetByUserId",
+            "Volunteer.Search",
+            "Volunteer.UpdateByUserId",
+            "Volunteer.DeleteByUserId"
         ]
     },
     {

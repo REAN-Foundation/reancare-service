@@ -3,8 +3,7 @@ import { ApiError } from '../../../common/api.error';
 import { ResponseHandler } from '../../../common/response.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ChatService } from '../../../services/general/chat.service';
-import { OrganizationService } from '../../../services/general/organization.service';
-import { PersonService } from '../../../services/person/person.service';
+import { UserService } from '../../../services/users/user/user.service';
 import { RoleService } from '../../../services/role/role.service';
 import { Loader } from '../../../startup/loader';
 import { ChatValidator } from './chat.validator';
@@ -20,9 +19,7 @@ export class ChatController extends BaseController {
 
     _roleService: RoleService = null;
 
-    _personService: PersonService = null;
-
-    _organizationService: OrganizationService = null;
+    _userService: UserService = null;
 
     _validator = new ChatValidator();
 
@@ -30,8 +27,7 @@ export class ChatController extends BaseController {
         super();
         this._service = Loader.container.resolve(ChatService);
         this._roleService = Loader.container.resolve(RoleService);
-        this._personService = Loader.container.resolve(PersonService);
-        this._organizationService = Loader.container.resolve(OrganizationService);
+        this._userService = Loader.container.resolve(UserService);
     }
 
     //#endregion
@@ -43,14 +39,14 @@ export class ChatController extends BaseController {
 
             await this.setContext('Chat.StartConversation', request, response);
 
-            const domainModel = await this._validator.create(request);
-            const chat = await this._service.create(domainModel);
-            if (chat == null) {
-                throw new ApiError(400, 'Cannot create chat!');
+            const domainModel = await this._validator.startConversation(request);
+            const conversation = await this._service.startConversation(domainModel);
+            if (conversation == null) {
+                throw new ApiError(400, 'Cannot start conversation!');
             }
 
             ResponseHandler.success(request, response, 'Chat created successfully!', 201, {
-                Chat : chat,
+                Conversation : conversation,
             });
 
         } catch (error) {
@@ -63,7 +59,7 @@ export class ChatController extends BaseController {
 
             await this.setContext('Chat.SendMessage', request, response);
 
-            const domainModel = await this._validator.create(request);
+            const domainModel = await this._validator.sendMessage(request);
             const chat = await this._service.create(domainModel);
             if (chat == null) {
                 throw new ApiError(400, 'Cannot create chat!');

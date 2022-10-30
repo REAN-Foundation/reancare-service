@@ -1,7 +1,8 @@
 import express from 'express';
-import { ChatDomainModel } from '../../../domain.types/general/chat/chat.domain.model';
-import { ChatSearchFilters } from '../../../domain.types/general/chat/chat.search.types';
+import { ConversationDomainModel } from '../../../domain.types/general/chat/conversation.domain.model';
+import { ChatMessageDomainModel } from '../../../domain.types/general/chat/chat.message.domain.model';
 import { BaseValidator, Where } from '../../base.validator';
+import { uuid } from '../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -11,124 +12,98 @@ export class ChatValidator extends BaseValidator {
         super();
     }
 
-    getCreateDomainModel = (requestBody: any): ChatDomainModel => {
+    getCreateConversationDomainModel = (requestBody: any, currentUserId: uuid): ConversationDomainModel => {
 
-        const createModel: ChatDomainModel = {
-            Type       : requestBody.Type ?? 'Home',
-            ChatLine   : requestBody.ChatLine,
-            City       : requestBody.City ?? null,
-            District   : requestBody.District ?? null,
-            State      : requestBody.State ?? null,
-            Country    : requestBody.Country ?? null,
-            PostalCode : requestBody.PostalCode ?? null,
-            Longitude  : requestBody.Longitude ?? null,
-            Lattitude  : requestBody.Lattitude ?? null,
-            Location   : requestBody.Location ?? null,
+        const createModel: ConversationDomainModel = {
+            IsGroupConversation : requestBody.IsGroupConversation ?? false,
+            Topic               : requestBody.Topic ?? null,
+            Marked              : requestBody.Marked ?? false,
+            StartedByUserId     : currentUserId,
+            Users               : requestBody.Users ?? null,
         };
 
         return createModel;
     };
 
-    getUpdateDomainModel = (requestBody: any): ChatDomainModel => {
+    getUpdateConversationDomainModel = (requestBody: any): ConversationDomainModel => {
 
-        const updateModel: ChatDomainModel = {
-            Type       : requestBody.Type !== undefined ? requestBody.Type : undefined,
-            ChatLine   : requestBody.ChatLine,
-            City       : requestBody.City !== undefined ? requestBody.City : undefined,
-            District   : requestBody.District !== undefined ? requestBody.District : undefined,
-            State      : requestBody.State !== undefined ? requestBody.State : undefined,
-            Country    : requestBody.Country !== undefined ? requestBody.Country : undefined,
-            PostalCode : requestBody.PostalCode !== undefined ? requestBody.PostalCode : undefined,
-            Longitude  : requestBody.Longitude !== undefined ? requestBody.Longitude : undefined,
-            Lattitude  : requestBody.Lattitude !== undefined ? requestBody.Lattitude : undefined,
-            Location   : requestBody.Location !== undefined ? requestBody.Location : undefined,
+        const updateModel: ConversationDomainModel = {
+            Topic  : requestBody.Topic ?? null,
+            Marked : requestBody.Marked ?? false,
         };
 
         return updateModel;
     };
 
-    create = async (request: express.Request): Promise<ChatDomainModel> => {
-        await this.validateCreateBody(request);
-        return this.getCreateDomainModel(request.body);
+    private async validateConversationCreateBody(request) {
+        await this.validateBoolean(request, 'IsGroupConversation', Where.Body, false, false);
+        await this.validateString(request, 'Topic', Where.Body, false, false);
+        await this.validateBoolean(request, 'Marked', Where.Body, false, false);
+        await this.validateArray(request, 'Users', Where.Body, true, false);
+        await this.validateRequest(request);
+    }
+    
+    private async validateConversationUpdateBody(request) {
+        await this.validateString(request, 'Topic', Where.Body, false, false);
+        await this.validateBoolean(request, 'Marked', Where.Body, false, false);
+        await this.validateRequest(request);
+    }
+
+    startConversation = async (request: express.Request): Promise<ConversationDomainModel> => {
+        await this.validateConversationCreateBody(request);
+        return this.getCreateConversationDomainModel(request.body, request.currentUser.UserId);
     };
 
-    search = async (request: express.Request): Promise<ChatSearchFilters> => {
-
-        await this.validateUuid(request, 'personId', Where.Query, false, false);
-        await this.validateUuid(request, 'organizationId', Where.Query, false, false);
-        await this.validateString(request, 'type', Where.Query, false, false);
-        await this.validateString(request, 'chatLine', Where.Query, false, false);
-        await this.validateString(request, 'city', Where.Query, false, false);
-        await this.validateString(request, 'district', Where.Query, false, false);
-        await this.validateString(request, 'state', Where.Query, false, false);
-        await this.validateString(request, 'country', Where.Query, false, false);
-        await this.validateString(request, 'postalCode', Where.Query, false, false);
-        await this.validateString(request, 'longitudeFrom', Where.Query, false, false);
-        await this.validateString(request, 'longitudeTo', Where.Query, false, false);
-        await this.validateString(request, 'lattitudeFrom', Where.Query, false, false);
-        await this.validateString(request, 'lattitudeTo', Where.Query, false, false);
-
-        await this.validateBaseSearchFilters(request);
-
-        this.validateRequest(request);
-
-        return this.getFilter(request);
-    };
-
-    update = async (request: express.Request): Promise<ChatDomainModel> => {
-        await this.validateUpdateBody(request);
-        const domainModel = this.getUpdateDomainModel(request.body);
-        domainModel.id = await this.getParamUuid(request, 'id');
+    updateConversation = async (request: express.Request): Promise<ConversationDomainModel> => {
+        await this.validateConversationUpdateBody(request);
+        const domainModel = this.getUpdateConversationDomainModel(request.body);
+        domainModel.id = await this.getParamUuid(request, 'conversationId');
         return domainModel;
     };
 
-    private async validateCreateBody(request) {
-        await this.validateString(request, 'Type', Where.Body, true, false);
-        await this.validateString(request, 'ChatLine', Where.Body, true, false);
-        await this.validateString(request, 'City', Where.Body, false, true);
-        await this.validateString(request, 'District', Where.Body, false, true);
-        await this.validateString(request, 'State', Where.Body, false, true);
-        await this.validateString(request, 'Country', Where.Body, false, true);
-        await this.validateString(request, 'PostalCode', Where.Body, false, true);
-        await this.validateString(request, 'Longitude', Where.Body, false, true);
-        await this.validateString(request, 'Lattitude', Where.Body, false, true);
-        await this.validateString(request, 'State', Where.Body, false, true);
-        await this.validateRequest(request);
-    }
+    getCreateMessageDomainModel =
+        (requestBody: any, currentUserId: uuid, conversationId: uuid): ChatMessageDomainModel => {
 
-    private async validateUpdateBody(request) {
-        await this.validateString(request, 'Type', Where.Body, false, false);
-        await this.validateString(request, 'ChatLine', Where.Body, false, false);
-        await this.validateString(request, 'City', Where.Body, false, true);
-        await this.validateString(request, 'District', Where.Body, false, true);
-        await this.validateString(request, 'State', Where.Body, false, true);
-        await this.validateString(request, 'Country', Where.Body, false, true);
-        await this.validateString(request, 'PostalCode', Where.Body, false, true);
-        await this.validateString(request, 'Longitude', Where.Body, false, true);
-        await this.validateString(request, 'Lattitude', Where.Body, false, true);
-        await this.validateString(request, 'State', Where.Body, false, true);
-        await this.validateRequest(request);
-    }
+            const createModel: ChatMessageDomainModel = {
+                ConversationId : conversationId,
+                SenderId       : requestBody.SenderId ?? currentUserId,
+                Message        : requestBody.Message ?? null,
+            };
 
-    private getFilter(request): ChatSearchFilters {
-
-        const filters: ChatSearchFilters = {
-            Type           : request.query.type ?? null,
-            PersonId       : request.query.personId ?? null,
-            OrganizationId : request.query.organizationId ?? null,
-            ChatLine       : request.query.chatLine ?? null,
-            City           : request.query.city ?? null,
-            District       : request.query.district ?? null,
-            State          : request.query.state ?? null,
-            Country        : request.query.country ?? null,
-            PostalCode     : request.query.postalCode ?? null,
-            LongitudeFrom  : request.query.longitudeFrom ?? null,
-            LongitudeTo    : request.query.longitudeTo ?? null,
-            LattitudeFrom  : request.query.lattitudeFrom ?? null,
-            LattitudeTo    : request.query.lattitudeTo ?? null,
+            return createModel;
         };
 
-        return this.updateBaseSearchFilters(request, filters);
+    getUpdateMessageDomainModel = (requestBody: any): ChatMessageDomainModel => {
+
+        const updateModel: ChatMessageDomainModel = {
+            Message : requestBody.Message ?? null,
+        };
+
+        return updateModel;
+    };
+
+    private async validateMessageCreateBody(request) {
+        await this.validateUuid(request, 'SenderId', Where.Body, false, false);
+        await this.validateString(request, 'Message', Where.Body, true, false);
+        await this.validateRequest(request);
     }
+
+    private async validateMessageUpdateBody(request) {
+        await this.validateString(request, 'Message', Where.Body, true, false);
+        await this.validateRequest(request);
+    }
+    
+    sendMessage = async (request: express.Request): Promise<ChatMessageDomainModel> => {
+        await this.validateMessageCreateBody(request);
+        return this.getCreateMessageDomainModel(
+            request.body, request.currentUser.UserId, request.params.conversationId);
+    };
+
+    updateMessage = async (request: express.Request): Promise<ChatMessageDomainModel> => {
+        await this.validateMessageUpdateBody(request);
+        const domainModel = this.getUpdateMessageDomainModel(request.body);
+        domainModel.id = await this.getParamUuid(request, 'messageId');
+        return domainModel;
+    };
 
 }

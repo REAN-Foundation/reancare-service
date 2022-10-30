@@ -3,6 +3,7 @@ import { ConversationDomainModel } from '../../../domain.types/general/chat/conv
 import { ChatMessageDomainModel } from '../../../domain.types/general/chat/chat.message.domain.model';
 import { BaseValidator, Where } from '../../base.validator';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { ConversationSearchFilters } from '../../../domain.types/general/chat/conversation.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,7 +43,7 @@ export class ChatValidator extends BaseValidator {
         await this.validateArray(request, 'Users', Where.Body, true, false);
         await this.validateRequest(request);
     }
-    
+
     private async validateConversationUpdateBody(request) {
         await this.validateString(request, 'Topic', Where.Body, false, false);
         await this.validateBoolean(request, 'Marked', Where.Body, false, false);
@@ -92,7 +93,7 @@ export class ChatValidator extends BaseValidator {
         await this.validateString(request, 'Message', Where.Body, true, false);
         await this.validateRequest(request);
     }
-    
+
     sendMessage = async (request: express.Request): Promise<ChatMessageDomainModel> => {
         await this.validateMessageCreateBody(request);
         return this.getCreateMessageDomainModel(
@@ -104,6 +105,30 @@ export class ChatValidator extends BaseValidator {
         const domainModel = this.getUpdateMessageDomainModel(request.body);
         domainModel.id = await this.getParamUuid(request, 'messageId');
         return domainModel;
+    };
+
+    private async validateConversationSearchFilters(request) {
+        await this.validateBoolean(request, 'IsGroupConversation', Where.Body, false, false);
+        await this.validateString(request, 'Topic', Where.Body, false, false);
+        await this.validateBoolean(request, 'Marked', Where.Body, false, false);
+        await this.validateArray(request, 'Users', Where.Body, true, false);
+        await this.validateRequest(request);
+    }
+
+    getConversationSearchFilters = (request: express.Request): ConversationSearchFilters => {
+
+        var filters: ConversationSearchFilters = {
+            CurrentUserId : request.params.userId,
+            OtherUserId   : request.query.otherUserId as uuid ?? null,
+        };
+
+        return this.updateBaseSearchFilters(request, filters);
+    };
+
+    searchUserConversations = async (request: express.Request): Promise<ConversationSearchFilters> => {
+        await this.validateConversationSearchFilters(request);
+        const filters = this.getConversationSearchFilters(request);
+        return filters;
     };
 
 }

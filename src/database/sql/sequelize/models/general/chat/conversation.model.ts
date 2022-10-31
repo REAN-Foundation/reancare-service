@@ -28,7 +28,7 @@ export default class Conversation extends Model {
 
     @Column({
         type      : DataType.STRING(256),
-        allowNull : false,
+        allowNull : true,
     })
     Topic: string;
 
@@ -40,8 +40,9 @@ export default class Conversation extends Model {
     IsGroupConversation : boolean;
 
     @Column({
-        type      : DataType.BOOLEAN,
-        allowNull : false,
+        type         : DataType.BOOLEAN,
+        allowNull    : false,
+        defaultValue : false,
     })
     Marked : boolean;
 

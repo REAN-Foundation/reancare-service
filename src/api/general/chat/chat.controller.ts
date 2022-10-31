@@ -46,7 +46,7 @@ export class ChatController extends BaseController {
                 throw new ApiError(400, 'Cannot start conversation!');
             }
 
-            ResponseHandler.success(request, response, 'Chat created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Conversation started successfully!', 201, {
                 Conversation : conversation,
             });
 
@@ -66,7 +66,7 @@ export class ChatController extends BaseController {
                 throw new ApiError(400, 'Cannot create chat!');
             }
 
-            ResponseHandler.success(request, response, 'Chat created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Chat message sent successfully!', 201, {
                 ChatMessage : message,
             });
 
@@ -82,7 +82,7 @@ export class ChatController extends BaseController {
 
             const conversationId = await this._validator.getParamUuid(request, 'conversationId');
             const conversationMessages = await this._service.getConversationMessages(conversationId);
-            ResponseHandler.success(request, response, 'Chat created successfully!', 200, {
+            ResponseHandler.success(request, response, 'Conversation messages retrieved successfully!', 200, {
                 ConversationMessages : conversationMessages,
             });
 
@@ -97,7 +97,7 @@ export class ChatController extends BaseController {
             await this.setContext('Chat.SearchUserConversations', request, response);
             const filters = await this._validator.searchUserConversations(request);
             const userConversations = await this._service.searchUserConversations(filters);
-            ResponseHandler.success(request, response, 'Chat created successfully!', 200, {
+            ResponseHandler.success(request, response, 'Conversations retrieved successfully!', 200, {
                 UserConversations : userConversations,
             });
 

@@ -1099,7 +1099,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 2.What do we do if we are forced to do something we don’t want to do, like quit education rr get married\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"Quit education or get married\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"Text\": \"Run away from home\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"Get violent with family\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"Talk to a trusted person or organisation and seek support\",\r\n            \"Sequence\": 4\r\n        }\r\n        \r\n    ],\r\n    \"CorrectAnswer\" : 4\r\n}\r\n",
+											"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 2.What do we do if we are forced to do something we don’t want to do, like quit education or get married\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"Quit education or get married\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"Text\": \"Run away from home\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"Get violent with family\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"Talk to a trusted person or organisation and seek support\",\r\n            \"Sequence\": 4\r\n        }\r\n        \r\n    ],\r\n    \"CorrectAnswer\" : 4\r\n}\r\n",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -13672,12 +13672,229 @@
 			"name": "Chat module",
 			"item": [
 				{
-					"name": "Search patients Copy",
+					"name": "Second user logs in",
+					"item": [
+						{
+							"name": "Register second user with phone and password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"OTHER_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+											"var password = \"Test@123\";\r",
+											"\r",
+											"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+											"pm.environment.set(\"PASSWORD\", password);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Phone\": \"91-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Second user logs in",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"SECOND_USER_JWT\", jsonRes.Data.AccessToken);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient login: Access token is returned\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
+											"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"PATIENT_LOGIN_ROLE_ID\", 2);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Phone\": \"91-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/users/login-with-password",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"login-with-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update user details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"//Randomly generated user details\r",
+											"\r",
+											"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
+											"\r",
+											"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
+											"\r",
+											"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
+											"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
+											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+											"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
+											"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
+											"var password = \"Test@123\";\r",
+											"\r",
+											"pm.environment.set(\"FIRST_NAME\", first);\r",
+											"pm.environment.set(\"LAST_NAME\", last);\r",
+											"pm.environment.set(\"EMAIL\", email);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{SECOND_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"{{FIRST_NAME}}\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"{{LAST_NAME}}\",\r\n    \"Email\": \"{{EMAIL}}\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\",\r\n    \"Address\": {\r\n        \"Type\": \"Official\",\r\n        \"AddressLine\": \"99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli\",\r\n        \"City\": \"Mumbai\",\r\n        \"Country\": \"India\"\r\n    },\r\n    \"DefaultTimeZone\": \"+05:30\",\r\n    \"CurrentTimeZone\": \"+05:30\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients/{{OTHER_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients",
+										"{{OTHER_USER_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Search patients",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Request is successfull\", function () {\r",
 									"    pm.response.to.have.status(200);\r",
@@ -13694,7 +13911,8 @@
 									"});\r",
 									"\r",
 									""
-								]
+								],
+								"type": "text/javascript"
 							}
 						}
 					],
@@ -13804,6 +14022,962 @@
 									"value": "25",
 									"description": "Items per page"
 								}
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Start conversation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"CONVERSATION_ID\", jsonRes.Data.Conversation.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"A conversation is created\", function () {\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Conversation');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"InitiatingUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"OtherUserId\": \"{{OTHER_USER_ID}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/conversations/start",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"conversations",
+								"start"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Start group conversation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    pm.environment.set(\"CONVERSATION_ID\", jsonRes.Data.Conversation.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"A conversation is created\", function () {\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Conversation');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"IsGroupConversation\": true,\r\n    \"Topic\": \"Football\",\r\n    \"Marked\": true,\r\n    \"Users\": [\r\n        \"{{PATIENT_USER_ID}}\",\r\n        \"{{OTHER_USER_ID}}\"\r\n    ]\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/conversations",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"conversations"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "First user sends message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"A conversation is created\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Conversation');\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Message\": \"Football today?\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/conversations/{{CONVERSATION_ID}}/messages",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"conversations",
+								"{{CONVERSATION_ID}}",
+								"messages"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Second user sends message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"A conversation is created\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Conversation');\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECOND_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Message\": \"At what time?\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/conversations/{{CONVERSATION_ID}}/messages",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"conversations",
+								"{{CONVERSATION_ID}}",
+								"messages"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "First user sends message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"A conversation is created\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Conversation');\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Message\": \"After office. 7pm\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/conversations/{{CONVERSATION_ID}}/messages",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"conversations",
+								"{{CONVERSATION_ID}}",
+								"messages"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Second user sends message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"A conversation is created\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Conversation');\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECOND_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Message\": \"Sounds good. Let's ping everyone.\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/conversations/{{CONVERSATION_ID}}/messages",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"conversations",
+								"{{CONVERSATION_ID}}",
+								"messages"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Get conversation beween these two users - 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"List of patients is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Patients');\r",
+									"    pm.expect(jsonRes.Data.Patients.Items.length).to.be.greaterThan(0);\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/conversations/first-user/{{PATIENT_USER_ID}}/second-user/{{OTHER_USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"conversations",
+								"first-user",
+								"{{PATIENT_USER_ID}}",
+								"second-user",
+								"{{OTHER_USER_ID}}"
+							],
+							"query": [
+								{
+									"key": "phone",
+									"value": "{{PATIENT_PHONE_NUMBER}}",
+									"description": "Search by patient phone",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "{{PATIENT_EMAIL}}",
+									"description": "Search by patient email",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "{{PATIENT_FIRST_NAME}}",
+									"description": "Search by name",
+									"disabled": true
+								},
+								{
+									"key": "gender",
+									"value": "{{PATIENT_GENDER}}",
+									"description": "Search by patient gender",
+									"disabled": true
+								},
+								{
+									"key": "birthdateFrom",
+									"value": "1975-01-01",
+									"description": "Date in format: YYYY-MM-DD. Start of the range for birthdate based search",
+									"disabled": true
+								},
+								{
+									"key": "birthdateTo",
+									"value": "2021-12-12",
+									"description": "Date in format: YYYY-MM-DD. End of the range for birthdate based search",
+									"disabled": true
+								},
+								{
+									"key": "createdDateFrom",
+									"value": "2021-05-01",
+									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
+									"disabled": true
+								},
+								{
+									"key": "createdDateTo",
+									"value": "2021-12-12",
+									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Get conversation beween these two users - 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"List of patients is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Patients');\r",
+									"    pm.expect(jsonRes.Data.Patients.Items.length).to.be.greaterThan(0);\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/conversations/first-user/{{OTHER_USER_ID}}/second-user/{{PATIENT_USER_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"conversations",
+								"first-user",
+								"{{OTHER_USER_ID}}",
+								"second-user",
+								"{{PATIENT_USER_ID}}"
+							],
+							"query": [
+								{
+									"key": "phone",
+									"value": "{{PATIENT_PHONE_NUMBER}}",
+									"description": "Search by patient phone",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "{{PATIENT_EMAIL}}",
+									"description": "Search by patient email",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "{{PATIENT_FIRST_NAME}}",
+									"description": "Search by name",
+									"disabled": true
+								},
+								{
+									"key": "gender",
+									"value": "{{PATIENT_GENDER}}",
+									"description": "Search by patient gender",
+									"disabled": true
+								},
+								{
+									"key": "birthdateFrom",
+									"value": "1975-01-01",
+									"description": "Date in format: YYYY-MM-DD. Start of the range for birthdate based search",
+									"disabled": true
+								},
+								{
+									"key": "birthdateTo",
+									"value": "2021-12-12",
+									"description": "Date in format: YYYY-MM-DD. End of the range for birthdate based search",
+									"disabled": true
+								},
+								{
+									"key": "createdDateFrom",
+									"value": "2021-05-01",
+									"description": "Date in format: YYYY-MM-DD. Start of the range for creation date based search",
+									"disabled": true
+								},
+								{
+									"key": "createdDateTo",
+									"value": "2021-12-12",
+									"description": "Date in format: YYYY-MM-DD. End of the range for creation date based search",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Get conversation messages",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonRes = pm.response.json();\r",
+									"\r",
+									"try {\r",
+									"    const messages = jsonRes.Data.ConversationMessages;\r",
+									"    var count = 1;\r",
+									"    for (var message of messages) {\r",
+									"        pm.environment.set(\"CHAT_MESSAGE_\" + count.toString(), message.id);\r",
+									"        count++;\r",
+									"    }\r",
+									"\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/conversations/{{CONVERSATION_ID}}/messages",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"conversations",
+								"{{CONVERSATION_ID}}",
+								"messages"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Get conversation by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"List of patients is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Patients');\r",
+									"    pm.expect(jsonRes.Data.Patients.Items.length).to.be.greaterThan(0);\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/conversations/{{CONVERSATION_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"conversations",
+								"{{CONVERSATION_ID}}"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Get message by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/messages/{{CHAT_MESSAGE_1}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"messages",
+								"{{CHAT_MESSAGE_1}}"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Update message by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Message\": \"Let's roll!\"\r\n}"
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/messages/{{CHAT_MESSAGE_1}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"messages",
+								"{{CHAT_MESSAGE_1}}"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete message by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/messages/{{CHAT_MESSAGE_1}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"messages",
+								"{{CHAT_MESSAGE_1}}"
 							]
 						},
 						"description": "Search addresses using query parameters."

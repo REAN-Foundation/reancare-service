@@ -20,7 +20,6 @@ export class ChatRepo implements IChatRepo {
     startConversation = async (model: ConversationDomainModel): Promise<ConversationDto> => {
         try {
             if (!model.IsGroupConversation &&
-                model.Users.length === 0 &&
                 model.OtherUserId != null) {
 
                 //This is one-2-one conversation

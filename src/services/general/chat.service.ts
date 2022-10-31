@@ -33,7 +33,7 @@ export class ChatService {
     };
 
     getConversationById = async (conversationId: string): Promise<ConversationDto> => {
-        return await this._chatRepo.conversationId(conversationId);
+        return await this._chatRepo.getConversationById(conversationId);
     };
 
     updateConversation = async (conversationId: uuid, updates: ConversationDomainModel): Promise<ConversationDto> => {
@@ -44,7 +44,7 @@ export class ChatService {
         return await this._chatRepo.deleteConversation(conversationId);
     };
 
-    getMessage = async (messageId: uuid): Promise<boolean> => {
+    getMessage = async (messageId: uuid): Promise<ChatMessageDto> => {
         return await this._chatRepo.getMessage(messageId);
     };
 

@@ -6,7 +6,7 @@ import Conversation from '../../models/general/chat/conversation.model';
 
 export class ChatMapper {
 
-    static toDto = (conversation: Conversation, users: uuid[]): ConversationDto => {
+    static toDto = (conversation: Conversation, users?: uuid[]): ConversationDto => {
         if (conversation == null){
             return null;
         }
@@ -17,7 +17,7 @@ export class ChatMapper {
             Marked              : conversation.Marked,
             StartedByUserId     : conversation.StartedByUserId,
             Topic               : conversation.Topic,
-            Users               : users,
+            Users               : users ?? null,
         };
         return dto;
     };

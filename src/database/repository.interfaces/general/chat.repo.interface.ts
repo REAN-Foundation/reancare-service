@@ -3,26 +3,27 @@ import { ConversationDto } from "../../../domain.types/general/chat/conversation
 import { ChatMessageDomainModel } from "../../../domain.types/general/chat/chat.message.domain.model";
 import { ChatMessageDto } from "../../../domain.types/general/chat/chat.message.dto";
 import { ConversationSearchFilters, ConversationSearchResults } from "../../../domain.types/general/chat/conversation.search.types";
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 
 export interface IChatRepo {
 
     startConversation(model: ConversationDomainModel): Promise<ConversationDto>;
 
-    sendMessage(id: ChatMessageDomainModel): Promise<ChatMessageDto>;
+    sendMessage(model: ChatMessageDomainModel): Promise<ChatMessageDto>;
 
-    getConversationMessages(conversationId: string): Promise<ChatMessageDto[]>;
+    getConversationMessages(conversationId: uuid): Promise<ChatMessageDto[]>;
 
     searchUserConversations(filters: ConversationSearchFilters): Promise<ConversationSearchResults>;
 
-    conversationId(conversationId: string): Promise<ConversationDto>;
+    getConversationById(conversationId: uuid): Promise<ConversationDto>;
 
-    updateConversation(conversationId: string, updates: ConversationDomainModel): Promise<ConversationDto>;
+    updateConversation(conversationId: uuid, updates: ConversationDomainModel): Promise<ConversationDto>;
 
-    deleteConversation(conversationId: string): Promise<boolean>;
+    deleteConversation(conversationId: uuid): Promise<boolean>;
 
-    getMessage(messageId: string): Promise<boolean>;
+    getMessage(messageId: uuid): Promise<ChatMessageDto>;
 
-    updateMessage(messageId: string, updates: ChatMessageDomainModel): Promise<ChatMessageDto>;
+    updateMessage(messageId: uuid, updates: ChatMessageDomainModel): Promise<ChatMessageDto>;
 
-    deleteMessage(messageId: string): Promise<boolean>;
+    deleteMessage(messageId: uuid): Promise<boolean>;
 }

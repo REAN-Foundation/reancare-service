@@ -21,6 +21,12 @@ export interface IChatRepo {
 
     deleteConversation(conversationId: uuid): Promise<boolean>;
 
+    addUserToConversation(conversationId: uuid, userId: uuid): Promise<boolean>;
+
+    removeUserFromConversation(conversationId: uuid, userId: uuid): Promise<boolean>;
+
+    getConversationBetweenTwoUsers(firstUserId: uuid, secondUserId: uuid): Promise<ConversationDto>;
+
     getMessage(messageId: uuid): Promise<ChatMessageDto>;
 
     updateMessage(messageId: uuid, updates: ChatMessageDomainModel): Promise<ChatMessageDto>;

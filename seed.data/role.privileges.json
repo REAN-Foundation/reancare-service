@@ -152,7 +152,10 @@
             "Chat.DeleteConversation",
             "Chat.GetMessage",
             "Chat.UpdateMessage",
-            "Chat.DeleteMessage"
+            "Chat.DeleteMessage",
+            "Chat.AddUserToConversation",
+            "Chat.RemoveUserFromConversation",
+            "Chat.GetConversationBetweenTwoUsers"
         ]
     },
     {
@@ -520,6 +523,9 @@
             "Chat.GetMessage",
             "Chat.UpdateMessage",
             "Chat.DeleteMessage",
+            "Chat.AddUserToConversation",
+            "Chat.RemoveUserFromConversation",
+            "Chat.GetConversationBetweenTwoUsers",
             "Volunteer.Create",
             "Volunteer.GetByUserId",
             "Volunteer.Search",
@@ -851,6 +857,9 @@
             "Chat.GetMessage",
             "Chat.UpdateMessage",
             "Chat.DeleteMessage",
+            "Chat.AddUserToConversation",
+            "Chat.RemoveUserFromConversation",
+            "Chat.GetConversationBetweenTwoUsers",
             "Volunteer.Create",
             "Volunteer.GetByUserId",
             "Volunteer.Search",

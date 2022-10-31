@@ -15,7 +15,8 @@ export class ChatMapper {
             id                  : conversation.id,
             IsGroupConversation : conversation.IsGroupConversation,
             Marked              : conversation.Marked,
-            StartedByUserId     : conversation.StartedByUserId,
+            InitiatingUserId    : conversation.InitiatingUserId,
+            OtherUserId         : conversation.OtherUserId,
             Topic               : conversation.Topic,
             Users               : users ?? null,
         };

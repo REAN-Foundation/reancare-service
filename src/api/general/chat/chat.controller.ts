@@ -166,6 +166,69 @@ export class ChatController extends BaseController {
         }
     };
 
+    addUserToConversation = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Chat.AddUserToConversation', request, response);
+
+            const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+
+            const added = await this._service.addUserToConversation(conversationId, userId);
+            if (!added) {
+                throw new ApiError(422, 'User cannot be added to conversation.');
+            }
+            ResponseHandler.success(request, response, 'User added to conversation successfully!', 200, {
+                Added : true,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    removeUserFromConversation = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Chat.RemoveUserFromConversation', request, response);
+
+            const conversationId: uuid = await this._validator.getParamUuid(request, 'conversationId');
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+
+            const added = await this._service.removeUserFromConversation(conversationId, userId);
+            if (!added) {
+                throw new ApiError(422, 'User cannot be removed from conversation.');
+            }
+            ResponseHandler.success(request, response, 'User removed from conversation successfully!', 200, {
+                Added : true,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getConversationBetweenTwoUsers = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+
+            await this.setContext('Chat.GetConversationBetweenTwoUsers', request, response);
+
+            const firstUserId: uuid = await this._validator.getParamUuid(request, 'firstUserId');
+            const secondUserId: uuid = await this._validator.getParamUuid(request, 'secondUserId');
+
+            const conversation = await this._service.getConversationBetweenTwoUsers(firstUserId, secondUserId);
+            if (!conversation) {
+                throw new ApiError(404, 'Conversation cannot be found.');
+            }
+            ResponseHandler.success(request, response, 'Conversation between users retrieved successfully!', 200, {
+                Conversation : conversation,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     getMessage = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 

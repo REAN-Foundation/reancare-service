@@ -44,6 +44,18 @@ export class ChatService {
         return await this._chatRepo.deleteConversation(conversationId);
     };
 
+    addUserToConversation = async (conversationId: uuid, userId: uuid): Promise<boolean> => {
+        return await this._chatRepo.addUserToConversation(conversationId, userId);
+    };
+
+    removeUserFromConversation = async (conversationId: uuid, userId: uuid): Promise<boolean> => {
+        return await this._chatRepo.removeUserFromConversation(conversationId, userId);
+    };
+
+    getConversationBetweenTwoUsers = async (firstUserId: uuid, secondUserId: uuid): Promise<ConversationDto> => {
+        return await this._chatRepo.getConversationBetweenTwoUsers(firstUserId, secondUserId);
+    };
+
     getMessage = async (messageId: uuid): Promise<ChatMessageDto> => {
         return await this._chatRepo.getMessage(messageId);
     };

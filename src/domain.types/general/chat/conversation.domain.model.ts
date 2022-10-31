@@ -5,6 +5,7 @@ export interface ConversationDomainModel {
     IsGroupConversation?: boolean;
     Topic?              : string;
     Marked?             : boolean;
-    StartedByUserId?    : uuid;
+    InitiatingUserId?   : uuid;
+    OtherUserId?        : uuid;
     Users?              : uuid[],
 }

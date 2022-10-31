@@ -19,24 +19,55 @@ export class ChatRepo implements IChatRepo {
 
     startConversation = async (model: ConversationDomainModel): Promise<ConversationDto> => {
         try {
+            if (!model.IsGroupConversation &&
+                model.Users.length === 0 &&
+                model.OtherUserId != null) {
+
+                //This is one-2-one conversation
+                //Obtain existing conversation between these 2 users
+
+                const existing = await Conversation.findOne({
+                    where : {
+                        [Op.or] : [
+                            {
+                                InitiatingUserId : model.InitiatingUserId,
+                                OtherUserId      : model.OtherUserId,
+                            },
+                            {
+                                InitiatingUserId : model.OtherUserId,
+                                OtherUserId      : model.InitiatingUserId,
+                            },
+                        ]
+                    }
+                });
+                if (existing) {
+                    //Found, return the existing...
+                    return ChatMapper.toDto(existing);
+                }
+            }
             const entity = {
                 IsGroupConversation : model.IsGroupConversation ?? false,
                 Marked              : model.Marked ?? false,
-                StartedByUserId     : model.StartedByUserId ?? null,
+                InitiatingUserId    : model.InitiatingUserId ?? null,
+                OtherUserId         : model.OtherUserId ?? null,
                 Topic               : model.Topic ?? null,
             };
             const conversation = await Conversation.create(entity);
-            var participants = [];
-            for await (var userId of model.Users) {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                const participant = await ConversationParticipant.create({
-                    ConversationId : conversation.id,
-                    UserId         : userId,
-                });
-                participants.push(userId);
+            var participants = null;
+            if (model.IsGroupConversation && model.Users.length > 0) {
+                participants = [];
+                for await (var userId of model.Users) {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    const participant = await ConversationParticipant.create({
+                        ConversationId : conversation.id,
+                        UserId         : userId,
+                    });
+                    participants.push(userId);
+                }
             }
-            const dto = await ChatMapper.toDto(conversation, participants);
+            const dto = ChatMapper.toDto(conversation, participants);
             return dto;
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -77,10 +108,33 @@ export class ChatRepo implements IChatRepo {
     searchUserConversations = async (filters: ConversationSearchFilters)
         : Promise<ConversationSearchResults> => {
         try {
-            if (!filters.OtherUserId) {
+            var conditions = [];
+            if (!filters.IsGroupconversation) {
+                if (filters.OtherUserId) {
+                    conditions = [
+                        {
+                            InitiatingUserId : filters.CurrentUserId,
+                            OtherUserId      : filters.OtherUserId,
+                        },
+                        {
+                            InitiatingUserId : filters.OtherUserId,
+                            OtherUserId      : filters.CurrentUserId,
+                        },
+                    ];
+                }
+                else {
+                    conditions = [
+                        {
+                            InitiatingUserId : filters.CurrentUserId,
+                        },
+                        {
+                            OtherUserId : filters.CurrentUserId,
+                        },
+                    ];
+                }
                 var search = {
                     where : {
-                        UserId : filters.CurrentUserId
+                        [Op.or] : conditions
                     },
                     include : [
                         {
@@ -90,8 +144,8 @@ export class ChatRepo implements IChatRepo {
                     ]
                 };
                 const { pageIndex, limit, order, orderByColum } = this.updateSearch(filters, search);
-                const foundResults = await ConversationParticipant.findAndCountAll(search);
-                const dtos = foundResults.rows.map(x => ChatMapper.toDto(x.Conversation));
+                const foundResults = await Conversation.findAndCountAll(search);
+                const dtos = foundResults.rows.map(x => ChatMapper.toDto(x));
                 const searchResults: ConversationSearchResults = {
                     TotalCount     : foundResults.count,
                     RetrievedCount : dtos.length,
@@ -149,12 +203,15 @@ export class ChatRepo implements IChatRepo {
                     id : conversationId
                 }
             });
-            const participants = await ConversationParticipant.findAll({
-                where : {
-                    ConversationId : conversationId
-                }
-            });
-            const userIds = participants.map(x => x.UserId);
+            let userIds = [];
+            if (conversation.IsGroupConversation) {
+                const participants = await ConversationParticipant.findAll({
+                    where : {
+                        ConversationId : conversationId
+                    }
+                });
+                userIds = participants.map(x => x.UserId);
+            }
             return ChatMapper.toDto(conversation, userIds);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -184,6 +241,87 @@ export class ChatRepo implements IChatRepo {
             });
             const userIds = participants.map(x => x.UserId);
             return ChatMapper.toDto(conversation, userIds);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    addUserToConversation = async (conversationId: string, userId: uuid)
+        : Promise<boolean> => {
+        try {
+            const participant = await ConversationParticipant.findOne({
+                where : {
+                    ConversationId : conversationId,
+                    UserId         : userId,
+                }
+            });
+            if (participant) {
+                throw new ApiError(422, 'The participant is already part of the conversation!');
+            }
+            const newParticipant = await ConversationParticipant.create({
+                where : {
+                    ConversationId : conversationId,
+                    UserId         : userId,
+                }
+            });
+            if (newParticipant) {
+                return true;
+            }
+            return false;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    removeUserFromConversation = async (conversationId: string, userId: uuid)
+        : Promise<boolean> => {
+        try {
+            const participant = await ConversationParticipant.findOne({
+                where : {
+                    ConversationId : conversationId,
+                    UserId         : userId,
+                }
+            });
+            if (!participant) {
+                throw new ApiError(422, 'The participant is not part of the conversation!');
+            }
+            const deleted = await ConversationParticipant.destroy({
+                where : {
+                    ConversationId : conversationId,
+                    UserId         : userId,
+                }
+            });
+            return deleted > 0;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
+    getConversationBetweenTwoUsers = async (firstUserId: uuid, secondUserId: uuid)
+    : Promise<ConversationDto>  => {
+        try {
+            const existing = await Conversation.findOne({
+                where : {
+                    [Op.or] : [
+                        {
+                            InitiatingUserId : firstUserId,
+                            OtherUserId      : secondUserId,
+                        },
+                        {
+                            InitiatingUserId : secondUserId,
+                            OtherUserId      : firstUserId,
+                        },
+                    ]
+                }
+            });
+            if (existing) {
+                //Found, return the existing...
+                return ChatMapper.toDto(existing);
+            }
+            return null;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

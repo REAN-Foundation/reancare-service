@@ -19,7 +19,8 @@ export class ChatValidator extends BaseValidator {
             IsGroupConversation : requestBody.IsGroupConversation ?? false,
             Topic               : requestBody.Topic ?? null,
             Marked              : requestBody.Marked ?? false,
-            StartedByUserId     : currentUserId,
+            InitiatingUserId    : currentUserId,
+            OtherUserId         : requestBody.OtherUserId ?? null,
             Users               : requestBody.Users ?? null,
         };
 
@@ -40,7 +41,8 @@ export class ChatValidator extends BaseValidator {
         await this.validateBoolean(request, 'IsGroupConversation', Where.Body, false, false);
         await this.validateString(request, 'Topic', Where.Body, false, false);
         await this.validateBoolean(request, 'Marked', Where.Body, false, false);
-        await this.validateArray(request, 'Users', Where.Body, true, false);
+        await this.validateUuid(request, 'OtherUserId', Where.Body, false, false);
+        await this.validateArray(request, 'Users', Where.Body, false, false);
         await this.validateRequest(request);
     }
 
@@ -118,8 +120,9 @@ export class ChatValidator extends BaseValidator {
     getConversationSearchFilters = (request: express.Request): ConversationSearchFilters => {
 
         var filters: ConversationSearchFilters = {
-            CurrentUserId : request.params.userId,
-            OtherUserId   : request.query.otherUserId as uuid ?? null,
+            CurrentUserId       : request.params.userId,
+            OtherUserId         : request.query.otherUserId as uuid ?? null,
+            IsGroupconversation : request.params.isGroupconversation === 'true' ? true : false,
         };
 
         return this.updateBaseSearchFilters(request, filters);

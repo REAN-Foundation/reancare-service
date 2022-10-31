@@ -1,4 +1,4 @@
-import { BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey,
+import { Column, CreatedAt, DataType, DeletedAt, ForeignKey,
     IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
@@ -51,10 +51,15 @@ export default class Conversation extends Model {
 
         allowNull : false,
     })
-    StartedByUserId: string;
+    InitiatingUserId: string;
 
-    @BelongsTo(() =>  User)
-    StartedByUser:  User;
+    @ForeignKey(() => User)
+    @Column({
+        type : DataType.UUID,
+
+        allowNull : false,
+    })
+    OtherUserId: string;
 
     @Column
     @CreatedAt

@@ -128,7 +128,7 @@ export class ReanCareplanService implements ICareplanService {
 
         const enrollmentData : EnrollmentDomainModel = {
             ParticipantId  : model.ParticipantId,
-            CareplanId     : parseInt(model.PlanCode),
+            PlanCode       : model.PlanCode,
             StartDate      : new Date(model.StartDateStr),
             EndDate        : TimeHelper.addDuration(model.StartDate,240,DurationType.Day),
             EnrollmentDate : new Date(),
@@ -158,7 +158,7 @@ export class ReanCareplanService implements ICareplanService {
         participantId: string ): Promise<CareplanActivity[]> => {
 
         const careplanApiBaseUrl = process.env.CAREPLAN_API_BASE_URL;
-        const url = `${careplanApiBaseUrl}/enrollment-tasks/search?careplanId=${careplanCode}&participantId=${participantId}`;
+        const url = `${careplanApiBaseUrl}/enrollment-tasks/search?enrollmentId=${enrollmentId}`;
         const headerOptions = await this.getHeaderOptions();
         var response = await needle("get", url, headerOptions);
 
@@ -213,8 +213,8 @@ export class ReanCareplanService implements ICareplanService {
                             Provider       : "REAN",
                             PatientUserId  : enrollment.PatientUserId,
                             ParticipantId  : enrollment.ParticipantId,
-                            PlanName       : "Maternity-High-Risk",
-                            PlanCode       : "2",
+                            PlanName       : "High Risk Maternity Careplan",
+                            PlanCode       : "Maternity-High-Risk",
                             StartDateStr   : new Date(enrollment.StartAt).toString(),
                             StartDate      : new Date(enrollment.StartAt),
                             EndDate        : TimeHelper.addDuration(new Date(enrollment.StartAt),240, DurationType.Day),

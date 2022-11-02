@@ -17,8 +17,23 @@ export class ChatMapper {
             Marked              : conversation.Marked,
             InitiatingUserId    : conversation.InitiatingUserId,
             OtherUserId         : conversation.OtherUserId,
-            Topic               : conversation.Topic,
-            Users               : users ?? null,
+            OtherUser           : conversation.OtherUser ? {
+                id          : conversation.OtherUser.id,
+                FirstName   : conversation.OtherUser.Person?.FirstName,
+                LastName    : conversation.OtherUser.Person?.LastName,
+                Prefix      : conversation.OtherUser.Person?.Prefix,
+                DisplayName : `${conversation.OtherUser.Person?.FirstName} ${conversation.OtherUser.Person?.LastName}`
+            } : null,
+            InitiatingUser : conversation.InitiatingUser ? {
+                id          : conversation.InitiatingUser.id,
+                FirstName   : conversation.InitiatingUser.Person?.FirstName,
+                LastName    : conversation.InitiatingUser.Person?.LastName,
+                Prefix      : conversation.InitiatingUser.Person?.Prefix,
+                DisplayName : `${conversation.InitiatingUser.Person?.FirstName} ${conversation.InitiatingUser.Person?.LastName}`
+            } : null,
+            Topic : conversation.Topic,
+            Users : users ?? null,
+            LastMessageTimestamp: conversation.LastMessageTimestamp,
         };
         return dto;
     };

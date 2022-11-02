@@ -31,9 +31,9 @@ export class ChatMapper {
                 Prefix      : conversation.InitiatingUser.Person?.Prefix,
                 DisplayName : `${conversation.InitiatingUser.Person?.FirstName} ${conversation.InitiatingUser.Person?.LastName}`
             } : null,
-            Topic : conversation.Topic,
-            Users : users ?? null,
-            LastMessageTimestamp: conversation.LastMessageTimestamp,
+            Topic                : conversation.Topic,
+            Users                : users ?? null,
+            LastMessageTimestamp : conversation.LastMessageTimestamp,
         };
         return dto;
     };

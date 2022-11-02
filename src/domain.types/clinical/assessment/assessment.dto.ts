@@ -25,4 +25,5 @@ export interface AssessmentDto {
     FinishedAt?            : Date;
     CreatedAt              : Date;
     UserResponses?         : any[];
+    TotalNumberOfQuestions?: number;
 }

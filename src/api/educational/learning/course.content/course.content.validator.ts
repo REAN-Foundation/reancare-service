@@ -1,4 +1,5 @@
 import express from 'express';
+import { CourseContentType } from '../../../../domain.types/educational/learning/course.content/course.content.type';
 import { CourseContentDomainModel } from '../../../../domain.types/educational/learning/course.content/course.content.domain.model';
 import { CourseContentSearchFilters } from '../../../../domain.types/educational/learning/course.content/course.content.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
@@ -12,19 +13,20 @@ export class CourseContentValidator extends BaseValidator {
     }
 
     getDomainModel = (request: express.Request): CourseContentDomainModel => {
-        const CourseContentModel: CourseContentDomainModel = {
-            ModuleId       : request.body.ModuleId,
-            CourseId       : request.body.CourseId,
-            LearningPathId : request.body.LearningPathId,
-            Title          : request.body.Title,
-            Description    : request.body.Description,
-            ImageUrl       : request.body.ImageUrl,
-            DurationInMins : request.body.DurationInMins,
-            ContentType    : request.body.ContentType,
-            ResourceLink   : request.body.ResourceLink,
-            Sequence       : request.body.Sequence,
+        const courseContentModel: CourseContentDomainModel = {
+            ModuleId         : request.body.ModuleId,
+            CourseId         : request.body.CourseId,
+            LearningPathId   : request.body.LearningPathId,
+            Title            : request.body.Title,
+            Description      : request.body.Description,
+            ImageUrl         : request.body.ImageUrl,
+            DurationInMins   : request.body.DurationInMins,
+            ContentType      : request.body.ContentType as CourseContentType,
+            ResourceLink     : request.body.ResourceLink,
+            ActionTemplateId : request.body.ActionTemplateId,
+            Sequence         : request.body.Sequence,
         };
-        return CourseContentModel;
+        return courseContentModel;
     };
 
     create = async (request: express.Request): Promise<CourseContentDomainModel> => {
@@ -63,6 +65,7 @@ export class CourseContentValidator extends BaseValidator {
         await this.validateDecimal(request, 'DurationInMins', Where.Body, false, true);
         await this.validateString(request, 'ContentType', Where.Body, false, true);
         await this.validateString(request, 'ResourceLink ', Where.Body, false, true);
+        await this.validateUuid(request, 'ActionTemplateId ', Where.Body, false, false);
         await this.validateString(request, 'Sequence', Where.Body, false, true);
 
         this.validateRequest(request);
@@ -76,6 +79,7 @@ export class CourseContentValidator extends BaseValidator {
         await this.validateDecimal(request, 'DurationInMins', Where.Body, false, false);
         await this.validateString(request, 'ContentType', Where.Body, false, false);
         await this.validateString(request, 'ResourceLink ', Where.Body, false, false);
+        await this.validateUuid(request, 'ActionTemplateId ', Where.Body, false, false);
         await this.validateString(request, 'Sequence ', Where.Body, false, false);
 
         this.validateRequest(request);

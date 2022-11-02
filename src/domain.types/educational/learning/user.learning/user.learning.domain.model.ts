@@ -7,9 +7,9 @@ export interface UserLearningDomainModel {
     CourseId?       : uuid;
     ModuleId?       : uuid;
     ContentId?      : uuid;
+    ActionId?       : uuid;
     CreatedDate?    : Date;
     UpdateDate?     : Date;
     ProgressStatus? : ProgressStatus;
     PercentageCompletion?: number;
 }
-

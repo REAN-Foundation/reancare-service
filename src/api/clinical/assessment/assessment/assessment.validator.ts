@@ -47,6 +47,7 @@ export class AssessmentValidator extends BaseValidator {
         await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
         await this.validateString(request, 'title', Where.Query, false, false, true);
         await this.validateString(request, 'type', Where.Query, false, false, true);
+        await this.validateString(request, 'templateId', Where.Query, false, false, true);
 
         await this.validateBaseSearchFilters(request);
 
@@ -168,9 +169,10 @@ export class AssessmentValidator extends BaseValidator {
     private getFilter(request): AssessmentSearchFilters {
 
         var filters: AssessmentSearchFilters = {
-            PatientUserId : request.query.patientUserId ?? null,
-            Title         : request.query.title ?? null,
-            Type          : request.query.type ?? null,
+            PatientUserId        : request.query.patientUserId ?? null,
+            Title                : request.query.title ?? null,
+            Type                 : request.query.type ?? null,
+            AssessmentTemplateId : request.query.templateId ?? null,
         };
 
         return this.updateBaseSearchFilters(request, filters);

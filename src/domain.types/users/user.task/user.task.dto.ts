@@ -8,6 +8,7 @@ export interface UserTaskDto {
     Task?                 : string;
     Category?             : UserTaskCategory;
     Description?          : string;
+    Transcription?        : string;
     ActionType?           : UserActionType;
     ActionId?             : string;
     Action?               : any;

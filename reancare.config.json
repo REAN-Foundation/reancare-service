@@ -76,7 +76,15 @@
                 {
                     "Provider" : "REAN",
                     "Name": "Maternity Careplan",
-                    "Code": "1",
+                    "Code": "2",
+                    "DisplayName": "Maternity Careplan",
+                    "DefaultDurationDays": 100,
+                    "Description": "Personal care plans help you to explore, understand and record your individual choices for pregnancy, birth and early parenthood. Every woman and family is different, with individual needs, which have an influence on care and preferences."
+                },
+                {
+                    "Provider" : "REAN",
+                    "Name": "Maternity Careplan 3",
+                    "Code": "3",
                     "DisplayName": "Maternity Careplan",
                     "DefaultDurationDays": 100,
                     "Description": "Personal care plans help you to explore, understand and record your individual choices for pregnancy, birth and early parenthood. Every woman and family is different, with individual needs, which have an influence on care and preferences."

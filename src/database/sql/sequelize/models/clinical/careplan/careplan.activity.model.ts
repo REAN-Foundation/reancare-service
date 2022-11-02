@@ -102,6 +102,12 @@ export default class CareplanActivity extends Model {
     })
     Description: string;
 
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Transcription: string;
+
     @IsUrl
     @Column({
         type      : DataType.TEXT,

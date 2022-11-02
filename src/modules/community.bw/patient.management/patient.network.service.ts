@@ -12,13 +12,14 @@ export class PatientNetworkService implements IBloodWarriorService {
         return "REAN_BW";
     }
 
-    public fetchActivities = async (careplanCode: string, enrollmentId: string,
-        participantId?: string, startDate?: Date, toDate?: Date): Promise<CareplanActivity[]> => {
-        
-        const activities = PatientMessages['default'];
+    public fetchActivities = async (careplanCode: string, enrollmentId: string,participantId?: string,
+        startDate?: Date, bloodTransfusionDate?: Date, toDate?: Date): Promise<CareplanActivity[]> => {
+        const activities = PatientMessages['default']; 
         var activityEntities: CareplanActivity[] = [];
 
         activities.forEach(async activity => {
+            let activityDate = TimeHelper.addDuration(startDate, activity.Day, DurationType.Day);
+            activityDate = TimeHelper.addDuration(activityDate, 210, DurationType.Minute);
 
             var entity: CareplanActivity = {
                 ParticipantId          : participantId,
@@ -26,10 +27,11 @@ export class PatientNetworkService implements IBloodWarriorService {
                 Provider               : this.providerName(),
                 ProviderActionId       : activity.Sequence,
                 Title                  : activity.Name,
+                Type                   : activity.Type ?? 'text',
                 PlanCode               : careplanCode,
                 Description            : activity.Message,
                 Language               : 'English',
-                ScheduledAt            : TimeHelper.addDuration(new Date(),activity.Day,DurationType.Minute),
+                ScheduledAt            : activityDate,
                 TimeSlot               : activity.TimeSlot,
                 IsRegistrationActivity : activity.IsRegistrationActivity
             };

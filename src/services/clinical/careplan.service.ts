@@ -142,7 +142,7 @@ export class CareplanService implements IUserActionService {
                         }
                         let response = null;
                         response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
-                            activity.Provider);
+                            activity.Provider, activity.Type);
                         if (response === true) {
                             await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
                             Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
@@ -201,6 +201,7 @@ export class CareplanService implements IUserActionService {
                 ProviderActionId : x.ProviderActionId,
                 Title            : x.Title,
                 Description      : x.Description,
+                Transcription    : x.Transcription,
                 Url              : x.Url,
                 Language         : x.Language,
                 ScheduledAt      : x.ScheduledAt,
@@ -254,6 +255,7 @@ export class CareplanService implements IUserActionService {
             activity = await this._careplanRepo.updateActivityDetails(activity.id, details);
             details.Title = activity.Title;
             details.Description = activity.Description;
+            details.Transcription = activity.Transcription;
 
             //Handle assessment activities in special manner...
             if (activity.Category === UserTaskCategory.Assessment ||

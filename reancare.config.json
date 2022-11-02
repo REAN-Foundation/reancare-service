@@ -76,15 +76,15 @@
                 {
                     "Provider" : "REAN",
                     "Name": "Maternity Careplan",
-                    "Code": "2",
+                    "Code": "DMC-Maternity",
                     "DisplayName": "Maternity Careplan",
                     "DefaultDurationDays": 100,
                     "Description": "Personal care plans help you to explore, understand and record your individual choices for pregnancy, birth and early parenthood. Every woman and family is different, with individual needs, which have an influence on care and preferences."
                 },
                 {
                     "Provider" : "REAN",
-                    "Name": "Maternity Careplan 3",
-                    "Code": "3",
+                    "Name": "High Risk Maternity Careplan",
+                    "Code": "Maternity-High-Risk",
                     "DisplayName": "Maternity Careplan",
                     "DefaultDurationDays": 100,
                     "Description": "Personal care plans help you to explore, understand and record your individual choices for pregnancy, birth and early parenthood. Every woman and family is different, with individual needs, which have an influence on care and preferences."
@@ -99,7 +99,7 @@
                 {
                     "Provider" : "REAN_BW",
                     "Name": "Patient messages",
-                    "Code": "4",
+                    "Code": "Patient-Reminders",
                     "DisplayName": "Blood Warior Patient",
                     "DefaultDurationDays": 30,
                     "Description": "Blood warrior patient messages."
@@ -107,7 +107,7 @@
                 {
                     "Provider" : "REAN_BW",
                     "Name": "Donor messages",
-                    "Code": "5",
+                    "Code": "Donor-Reminders",
                     "DisplayName": "Blood Warior Donor",
                     "DefaultDurationDays": 30,
                     "Description": "Blood warrior donor messages."

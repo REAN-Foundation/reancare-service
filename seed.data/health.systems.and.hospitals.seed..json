@@ -1,0 +1,63 @@
+[
+    {
+        "HealthSystem": "Wellstar Health System",
+        "AssociatedHospitals": [
+            "Wellstar Kennestone - Stroke, CAD",
+            "Wellstar Paulding Hospital - CAD",
+            "Wellstar Douglas Hospital - CAD",
+            "Wellstar CVM Clinic Marietta",
+            "Wellstar CVM Clinic Hiram",
+            "Wellstar CVM Clinic Douglasville"
+        ]
+    },
+    {
+        "HealthSystem": "UC San Diego Health",
+        "AssociatedHospitals": [
+            "UC San Diego Health Hillcrest - Stroke",
+            "UC San DiegoHealth  La Jolla - Stroke",
+            "UC San Diego Health Primary Care Clinics -  BP, Diabetes",
+            "UC San Diego Health Community Care Clinics - BP, Diabetes"
+        ]
+    },
+    {
+        "HealthSystem": "M Health Fairview",
+        "AssociatedHospitals": [
+            "Ridges - Stroke", 
+            "Southdale - Stroke", 
+            "Grand Itasca - Stroke",
+            "Ridges Specialty",
+            "Southdale Specialty", 
+            "Grand Itasca Clinic System"
+        ]
+    },
+    {
+        "HealthSystem": "Atrium Health",
+        "AssociatedHospitals": [
+            "Atrium Health Wake Forest Baptist - Stroke", 
+            "Atrium Health Wake Forest Highpoint", 
+            "Atrium Health Wake Forest Heart and Vascular Premier",
+            "Atrium Health Wake Forest Heart and Vascular Downtown Health Plaza",
+            "Atrium Health Wake Forest Janeway"
+        ]
+    },
+    {
+        "HealthSystem": "Kaiser Permanente",
+        "AssociatedHospitals": [
+            "Kaiser San Francisco - CAD", 
+            "Kaiser Freemont - CAD", 
+            "Kaiser South Sacramento - CAD",
+            "Kaiser San Francisco", 
+            "Kaiser Freemont", 
+            "Kaiser South Sacramento"
+        ]
+    },
+    {
+        "HealthSystem": "Nebraska Health System",
+        "AssociatedHospitals": [
+            "Nebraska Medical Center - Stroke, CAD", 
+            "Bellevue Hospital -  Stroke, CAD", 
+            "Heart and Vascular Center at Bellevue Health Center",
+            "Grand Island Health Center"
+        ]
+    }
+]

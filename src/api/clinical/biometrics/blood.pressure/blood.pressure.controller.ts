@@ -10,6 +10,9 @@ import { Logger } from '../../../../common/logger';
 import { BloodPressureDomainModel } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model';
 import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analytics.handler';
 import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,11 +22,17 @@ export class BloodPressureController extends BaseController {
 
     _service: BloodPressureService = null;
 
+    _patientService: PatientService = null;
+
+    _userDeviceDetailsService: UserDeviceDetailsService = null;
+
     _validator: BloodPressureValidator = new BloodPressureValidator();
 
     constructor() {
         super();
         this._service = Loader.container.resolve(BloodPressureService);
+        this._patientService = Loader.container.resolve(PatientService);
+        this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
     }
 
     //#endregion
@@ -41,6 +50,9 @@ export class BloodPressureController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
             }
             this.addEHRRecord(model.PatientUserId, bloodPressure.id, model);
+            if (model.Systolic > 120 || model.Diastolic > 80) {
+                this.sendBPMessage(model.PatientUserId, model);
+            }
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
                 BloodPressure : bloodPressure,
             });
@@ -168,6 +180,22 @@ export class BloodPressureController extends BaseController {
                 'Distolic Blood Pressure',
                 'Blood Pressure');
         }
+    }
+
+    private sendBPMessage = async (patientUserId: uuid, model: BloodPressureDomainModel) => {
+        
+        const patient  = await this._patientService.getByUserId(patientUserId);
+        const deviceDetails = await this._userDeviceDetailsService.getByUserId(patientUserId);
+        const appName = deviceDetails[0].AppName;
+        const phoneNumber = patient.User.Person.Phone;
+        var userFirstName = 'user';
+        const message = `Dear ${userFirstName}, we noticed that you are BP level recorded to ${model.Systolic}/${model.Diastolic} on ${appName} app!`;
+        const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
+        if (sendStatus) {
+            Logger.instance().log(`Message sent successfully`);
+        }
+
+        return true;
     }
 
     //#endregion

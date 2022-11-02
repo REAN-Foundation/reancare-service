@@ -11,6 +11,10 @@ export const register = (app: express.Application): void => {
     const controller = new EmergencyContactController();
 
     router.get('/roles', authenticator.authenticateClient, authenticator.authenticateUser, controller.getContactRoles);
+    router.get('/health-systems', authenticator.authenticateClient,
+        authenticator.authenticateUser,controller.getHealthSystems);
+    router.get('/health-systems/:healthSystemId', authenticator.authenticateClient,
+        authenticator.authenticateUser,controller.getHealthSystemHospitals);
     router.post('/', authenticator.authenticateClient, authenticator.authenticateUser, controller.create);
     router.get('/search', authenticator.authenticateClient, authenticator.authenticateUser, controller.search);
     router.get('/:id', authenticator.authenticateClient, authenticator.authenticateUser, controller.getById);

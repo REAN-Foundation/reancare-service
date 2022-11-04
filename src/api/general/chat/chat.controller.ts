@@ -292,6 +292,32 @@ export class ChatController extends BaseController {
         }
     };
 
+    getMarkedConversationsForUser = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Chat.GetMarkedConversationsForUser', request, response);
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const conversations = await this._service.getMarkedConversationsForUser(userId);
+            ResponseHandler.success(request, response, 'Marked conversations for the user retrieved successfully!', 200, {
+                Conversations : conversations,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getRecentConversationsForUser = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this.setContext('Chat.GetRecentConversationsForUser', request, response);
+            const userId: uuid = await this._validator.getParamUuid(request, 'userId');
+            const conversations = await this._service.getRecentConversationsForUser(userId);
+            ResponseHandler.success(request, response, 'Recent conversations for the user retrieved successfully!', 200, {
+                Conversations : conversations,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
 }

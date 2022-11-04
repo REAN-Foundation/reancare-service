@@ -11,6 +11,8 @@ export interface PatientDto {
     UserId: string;
     DisplayId: string;
     EhrId: string;
+    FirstName: string;
+    LastName: string;
     DisplayName: string;
     UserName: string,
     Phone: string;

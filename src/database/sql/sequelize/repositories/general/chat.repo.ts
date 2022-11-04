@@ -39,7 +39,8 @@ export class ChatRepo implements IChatRepo {
                                 OtherUserId      : model.InitiatingUserId,
                             },
                         ]
-                    }
+                    },
+                    include : this.includeUserDetails(),
                 });
                 if (existing) {
                     //Found, return the existing...
@@ -66,9 +67,7 @@ export class ChatRepo implements IChatRepo {
                     participants.push(userId);
                 }
             }
-            const dto = ChatMapper.toDto(conversation, participants);
-            return dto;
-
+            return await this.getConversationById(conversation.id);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -206,32 +205,7 @@ export class ChatRepo implements IChatRepo {
                 where : {
                     id : conversationId
                 },
-                include : [
-                    {
-                        model    : User,
-                        as       : 'OtherUser',
-                        required : true,
-                        include  : [
-                            {
-                                model    : Person,
-                                as       : 'Person',
-                                required : true
-                            }
-                        ]
-                    },
-                    {
-                        model    : User,
-                        as       : 'InitiatingUser',
-                        required : true,
-                        include  : [
-                            {
-                                model    : Person,
-                                as       : 'Person',
-                                required : true
-                            }
-                        ]
-                    }
-                ],
+                include : this.includeUserDetails(),
             });
             let userIds = [];
             if (conversation.IsGroupConversation) {

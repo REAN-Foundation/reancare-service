@@ -7,6 +7,12 @@ import { BloodPressureSearchFilters, BloodPressureSearchResults } from '../../..
 import { BloodPressureStore } from "../../../modules/ehr/services/blood.pressure.store";
 import { Loader } from "../../../startup/loader";
 import { ConfigurationManager } from "../../../config/configuration.manager";
+import * as MessageTemplates from '../../../modules/communication/message.template/message.templates.json';
+import { Logger } from "../../../common/logger";
+import { IUserDeviceDetailsRepo } from "../../../database/repository.interfaces/users/user/user.device.details.repo.interface ";
+import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
+import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,6 +23,9 @@ export class BloodPressureService {
 
     constructor(
         @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
+        @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
+        @inject('IUserRepo') private _userRepo: IUserRepo,
+        @inject('IPersonRepo') private _personRepo: IPersonRepo,
     ) {
         if (ConfigurationManager.EhrEnabled()) {
             this._ehrBloodPressureStore = Loader.container.resolve(BloodPressureStore);
@@ -56,4 +65,30 @@ export class BloodPressureService {
         return await this._bloodPressureRepo.delete(id);
     };
 
+    sendBPNotification = async (patientUserId: uuid, model: BloodPressureDomainModel) => {
+        var user = await this._userRepo.getById(patientUserId);
+        var person = await this._personRepo.getById(user.PersonId);
+
+        var deviceList = await this._userDeviceDetailsRepo.getByUserId(patientUserId);
+        var deviceListsStr = JSON.stringify(deviceList, null, 2);
+        Logger.instance().log(`Sent blood pressure notifications to following devices - ${deviceListsStr}`);
+
+
+        var title = MessageTemplates['BPNotification'].Title;
+        title = title.replace("{{PatientName}}", person.FirstName ?? "there");
+        var body = MessageTemplates['BPNotification'].Body;
+        body = body.replace("{{Systolic}}", model.Systolic.toString());
+        body = body.replace("{{Diastolic}}",model.Diastolic.toString());
+        //var body = MessageTemplates['BPNotification'].Body;
+
+        Logger.instance().log(`Notification Title: ${title}`);
+        Logger.instance().log(`Notification Body: ${body}`);
+
+        var message = Loader.notificationService.formatNotificationMessage(
+            MessageTemplates.MedicationReminder.NotificationType, title, body
+        );
+        for await (var device of deviceList) {
+            await Loader.notificationService.sendNotificationToDevice(device.Token, message);
+        }
+    }
 }

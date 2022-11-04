@@ -12,6 +12,7 @@ import { EHRAnalyticsHandler } from '../../../../custom/ehr.analytics/ehr.analyt
 import { EHRRecordTypes } from '../../../../custom/ehr.analytics/ehr.record.types';
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
+import { PersonService } from '../../../../services/person/person.service';
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -24,6 +25,8 @@ export class BloodPressureController extends BaseController {
 
     _patientService: PatientService = null;
 
+    _personService: PersonService = null;
+
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
     _validator: BloodPressureValidator = new BloodPressureValidator();
@@ -32,6 +35,7 @@ export class BloodPressureController extends BaseController {
         super();
         this._service = Loader.container.resolve(BloodPressureService);
         this._patientService = Loader.container.resolve(PatientService);
+        this._personService = Loader.container.resolve(PersonService);
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
     }
 
@@ -52,6 +56,7 @@ export class BloodPressureController extends BaseController {
             this.addEHRRecord(model.PatientUserId, bloodPressure.id, model);
             if (model.Systolic > 120 || model.Diastolic > 80) {
                 this.sendBPMessage(model.PatientUserId, model);
+                await this._service.sendBPNotification(model.PatientUserId, model);
             }
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
                 BloodPressure : bloodPressure,
@@ -188,8 +193,12 @@ export class BloodPressureController extends BaseController {
         const deviceDetails = await this._userDeviceDetailsService.getByUserId(patientUserId);
         const appName = deviceDetails[0].AppName;
         const phoneNumber = patient.User.Person.Phone;
+        const person = await this._personService.getById(patient.User.PersonId);
         var userFirstName = 'user';
-        const message = `Dear ${userFirstName}, we noticed that you are BP level recorded to ${model.Systolic}/${model.Diastolic} on ${appName} app!`;
+        if (person && person.FirstName) {
+            userFirstName = person.FirstName;
+        }
+        const message = `Dear ${userFirstName}, Your recent systolic blood pressure is ${model.Systolic} and diastolic blood pressure is ${model.Diastolic}.\nWhich is Elevated. Please consult your doctor.\nBlood pressure category will change based on systolic and diastolic.`;
         const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
         if (sendStatus) {
             Logger.instance().log(`Message sent successfully`);

@@ -3,5 +3,10 @@
         "NotificationType": "Upcoming medication",
         "Title"           : "Hey {{PatientName}}, reminder to take {{DrugName}}.",
         "Body"            : "Please take your medicine before {{EndTime}}."
+    },
+    "BPNotification": {
+        "NotificationType": "Alert",
+        "Title"           : "Dear {{PatientName}},",
+        "Body"            : "Your recent systolic blood pressure is {{Systolic}} and diastolic blood pressure is {{Diastolic}}.\nWhich is Elevated. Please consult your doctor.\nBlood pressure category will change based on systolic and diastolic"
     }
 }    

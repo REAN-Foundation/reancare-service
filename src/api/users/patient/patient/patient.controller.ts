@@ -139,7 +139,7 @@ export class PatientController extends BaseUserController {
                     Patients : searchResults,
                 });
             } else {
-                throw new ApiError(404, 'Only provileged clients are allowed to access this API!');
+                throw new ApiError(404, 'Only privileged clients are allowed to access this API!');
             }
             
         } catch (error) {

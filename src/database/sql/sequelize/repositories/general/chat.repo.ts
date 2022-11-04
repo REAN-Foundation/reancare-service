@@ -12,6 +12,8 @@ import ChatMessage from '../../models/general/chat/chat.message.model';
 import ConversationParticipant from '../../models/general/chat/conversation.participant.model';
 import { ChatMapper } from '../../mappers/general/chat.mapper';
 import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
+import User from '../../models/users/user/user.model';
+import Person from '../../models/person/person.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -37,7 +39,8 @@ export class ChatRepo implements IChatRepo {
                                 OtherUserId      : model.InitiatingUserId,
                             },
                         ]
-                    }
+                    },
+                    include : this.includeUserDetails(),
                 });
                 if (existing) {
                     //Found, return the existing...
@@ -64,9 +67,7 @@ export class ChatRepo implements IChatRepo {
                     participants.push(userId);
                 }
             }
-            const dto = ChatMapper.toDto(conversation, participants);
-            return dto;
-
+            return await this.getConversationById(conversation.id);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -81,12 +82,20 @@ export class ChatRepo implements IChatRepo {
                 Message        : model.Message,
             };
             const message = await ChatMessage.create(entity);
+
+            //Update last message timestamp
+            const conversation = await Conversation.findByPk(model.ConversationId);
+            if (conversation) {
+                conversation.LastMessageTimestamp = new Date();
+            }
+            await conversation.save();
+
             return message;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getConversationMessages = async (conversationId: uuid): Promise<ChatMessageDto[]> => {
         try {
@@ -102,7 +111,7 @@ export class ChatRepo implements IChatRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     searchUserConversations = async (filters: ConversationSearchFilters)
         : Promise<ConversationSearchResults> => {
@@ -135,12 +144,7 @@ export class ChatRepo implements IChatRepo {
                     where : {
                         [Op.or] : conditions
                     },
-                    include : [
-                        {
-                            model : Conversation,
-                            as    : 'Conversation',
-                        }
-                    ]
+                    include : this.includeUserDetails(),
                 };
                 const { pageIndex, limit, order, orderByColum } = this.updateSearch(filters, search);
                 const foundResults = await Conversation.findAndCountAll(search);
@@ -193,14 +197,15 @@ export class ChatRepo implements IChatRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getConversationById = async (conversationId: uuid): Promise<ConversationDto> => {
         try {
             const conversation = await Conversation.findOne({
                 where : {
                     id : conversationId
-                }
+                },
+                include : this.includeUserDetails(),
             });
             let userIds = [];
             if (conversation.IsGroupConversation) {
@@ -216,7 +221,7 @@ export class ChatRepo implements IChatRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     updateConversation = async (conversationId: string, updates: ConversationDomainModel)
         : Promise<ConversationDto> => {
@@ -244,7 +249,7 @@ export class ChatRepo implements IChatRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     addUserToConversation = async (conversationId: string, userId: uuid)
         : Promise<boolean> => {
@@ -272,7 +277,7 @@ export class ChatRepo implements IChatRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     removeUserFromConversation = async (conversationId: string, userId: uuid)
         : Promise<boolean> => {
@@ -297,7 +302,7 @@ export class ChatRepo implements IChatRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getConversationBetweenTwoUsers = async (firstUserId: uuid, secondUserId: uuid)
     : Promise<ConversationDto>  => {
@@ -314,7 +319,8 @@ export class ChatRepo implements IChatRepo {
                             OtherUserId      : firstUserId,
                         },
                     ]
-                }
+                },
+                include : this.includeUserDetails(),
             });
             if (existing) {
                 //Found, return the existing...
@@ -345,7 +351,7 @@ export class ChatRepo implements IChatRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     getMessage = async (messageId: string): Promise<ChatMessageDto> => {
         try {
@@ -361,7 +367,7 @@ export class ChatRepo implements IChatRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     updateMessage = async (messageId: string, updates: ChatMessageDomainModel): Promise<ChatMessageDto> => {
         try {
@@ -385,7 +391,7 @@ export class ChatRepo implements IChatRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
 
     deleteMessage = async (messageId: string): Promise<boolean> => {
         try {
@@ -399,7 +405,58 @@ export class ChatRepo implements IChatRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    }
+    };
+
+    getMarkedConversationsForUser = async (userId: string): Promise<ConversationDto[]> => {
+        try {
+            const conversations = await Conversation.findAll({
+                where : {
+                    Marked  : true,
+                    [Op.or] : [
+                        {
+                            InitiatingUserId : userId,
+                        },
+                        {
+                            OtherUserId : userId,
+                        },
+                    ]
+                },
+                include : this.includeUserDetails(),
+                order   : [['CreatedAt', 'DESC']],
+                limit   : 15,
+                offset  : 0,
+            });
+            return conversations.map(x => ChatMapper.toDto(x));
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getRecentConversationsForUser = async (userId: string): Promise<ConversationDto[]> => {
+        try {
+            const conversations = await Conversation.findAll({
+                where : {
+                    [Op.or] : [
+                        {
+                            InitiatingUserId : userId,
+                        },
+                        {
+                            OtherUserId : userId,
+                        },
+                    ]
+                },
+                include : this.includeUserDetails(),
+                order   : [['LastMessageTimestamp', 'DESC']],
+                limit   : 15,
+                offset  : 0,
+            });
+            return conversations.map(x => ChatMapper.toDto(x));
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
 
     //#region Privates
 
@@ -443,6 +500,34 @@ export class ChatRepo implements IChatRepo {
         return { pageIndex, limit, order, orderByColum };
     };
 
+    private includeUserDetails() {
+        return [
+            {
+                model    : User,
+                as       : 'OtherUser',
+                required : true,
+                include  : [
+                    {
+                        model    : Person,
+                        as       : 'Person',
+                        required : true
+                    }
+                ]
+            },
+            {
+                model    : User,
+                as       : 'InitiatingUser',
+                required : true,
+                include  : [
+                    {
+                        model    : Person,
+                        as       : 'Person',
+                        required : true
+                    }
+                ]
+            }
+        ];
+    }
     //#endregion
 
 }

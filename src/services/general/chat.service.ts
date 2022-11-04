@@ -68,4 +68,12 @@ export class ChatService {
         return await this._chatRepo.deleteMessage(messageId);
     };
 
+    getMarkedConversationsForUser = async (userId: uuid): Promise<ConversationDto[]> => {
+        return await this._chatRepo.getMarkedConversationsForUser(userId);
+    };
+
+    getRecentConversationsForUser = async (userId: uuid): Promise<ConversationDto[]> => {
+        return await this._chatRepo.getRecentConversationsForUser(userId);
+    };
+
 }

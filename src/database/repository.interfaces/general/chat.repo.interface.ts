@@ -32,4 +32,9 @@ export interface IChatRepo {
     updateMessage(messageId: uuid, updates: ChatMessageDomainModel): Promise<ChatMessageDto>;
 
     deleteMessage(messageId: uuid): Promise<boolean>;
+
+    getMarkedConversationsForUser(userId: uuid): Promise<ConversationDto[]>;
+
+    getRecentConversationsForUser(userId: uuid): Promise<ConversationDto[]>;
+
 }

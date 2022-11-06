@@ -155,7 +155,12 @@
             "Chat.DeleteMessage",
             "Chat.AddUserToConversation",
             "Chat.RemoveUserFromConversation",
-            "Chat.GetConversationBetweenTwoUsers"
+            "Chat.GetConversationBetweenTwoUsers",
+            "PatientDonors.Create",
+            "PatientDonors.GetById",
+            "PatientDonors.Search",
+            "PatientDonors.Update",
+            "PatientDonors.Delete"
         ]
     },
     {
@@ -532,7 +537,12 @@
             "Volunteer.GetByUserId",
             "Volunteer.Search",
             "Volunteer.UpdateByUserId",
-            "Volunteer.DeleteByUserId"
+            "Volunteer.DeleteByUserId",
+            "PatientDonors.Create",
+            "PatientDonors.GetById",
+            "PatientDonors.Search",
+            "PatientDonors.Update",
+            "PatientDonors.Delete"
         ]
     },
     {
@@ -868,7 +878,12 @@
             "Volunteer.GetByUserId",
             "Volunteer.Search",
             "Volunteer.UpdateByUserId",
-            "Volunteer.DeleteByUserId"
+            "Volunteer.DeleteByUserId",
+            "PatientDonors.Create",
+            "PatientDonors.GetById",
+            "PatientDonors.Search",
+            "PatientDonors.Update",
+            "PatientDonors.Delete"
         ]
     },
     {

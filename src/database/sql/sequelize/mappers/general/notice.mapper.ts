@@ -49,6 +49,7 @@ export class NoticeMapper {
             id       : noticeAction.id,
             UserId   : noticeAction.UserId,
             NoticeId : noticeAction.NoticeId,
+            Notice   : noticeAction.Notice,
             Action   : noticeAction.Action,
             Contents : contents
 

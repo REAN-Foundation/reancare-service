@@ -26,29 +26,33 @@ export class NoticeService {
         return await this._noticeRepo.create(noticeDomainModel);
     };
 
-    getById = async (id: uuid): Promise<NoticeDto> => {
-        return await this._noticeRepo.getById(id);
+    getNotice = async (id: uuid): Promise<NoticeDto> => {
+        return await this._noticeRepo.getNotice(id);
     };
 
     search = async (filters: NoticeSearchFilters): Promise<NoticeSearchResults> => {
         return await this._noticeRepo.search(filters);
     };
 
-    update = async (id: uuid, noticeDomainModel: NoticeDomainModel):
+    updateNotice = async (id: uuid, noticeDomainModel: NoticeDomainModel):
     Promise<NoticeDto> => {
-        return await this._noticeRepo.update(id, noticeDomainModel);
+        return await this._noticeRepo.updateNotice(id, noticeDomainModel);
     };
 
-    delete = async (id: uuid): Promise<boolean> => {
-        return await this._noticeRepo.delete(id);
+    deleteNotice = async (id: uuid): Promise<boolean> => {
+        return await this._noticeRepo.deleteNotice(id);
     };
 
-    createAction = async (noticeActionDomainModel: NoticeActionDomainModel): Promise<NoticeActionDto> => {
-        return await this._noticeRepo.createAction(noticeActionDomainModel);
+    takeAction = async (noticeActionDomainModel: NoticeActionDomainModel): Promise<NoticeActionDto> => {
+        return await this._noticeRepo.takeAction(noticeActionDomainModel);
     };
 
-    getActionById = async (id: uuid): Promise<NoticeActionDto> => {
-        return await this._noticeRepo.getActionById(id);
+    getNoticeActionForUser = async (noticeId: uuid, userId: uuid): Promise<NoticeActionDto> => {
+        return await this._noticeRepo.getNoticeActionForUser(noticeId, userId);
+    };
+
+    getAllNoticeActionsForUser = async (userId: uuid): Promise<NoticeActionDto[]> => {
+        return await this._noticeRepo.getAllNoticeActionsForUser(userId);
     };
 
 }

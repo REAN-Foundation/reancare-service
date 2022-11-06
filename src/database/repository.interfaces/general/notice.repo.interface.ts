@@ -1,3 +1,4 @@
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { NoticeActionDomainModel } from "../../../domain.types/general/notice.action/notice.action.domain.model";
 import { NoticeActionDto } from "../../../domain.types/general/notice.action/notice.action.dto";
 import { NoticeDomainModel } from "../../../domain.types/general/notice/notice.domain.model";
@@ -8,16 +9,18 @@ export interface INoticeRepo {
 
     create(noticeDomainModel: NoticeDomainModel): Promise<NoticeDto>;
 
-    getById(id: string): Promise<NoticeDto>;
-    
+    getNotice(id: uuid): Promise<NoticeDto>;
+
     search(filters: NoticeSearchFilters): Promise<NoticeSearchResults>;
 
-    update(id: string, noticeDomainModel: NoticeDomainModel): Promise<NoticeDto>;
+    updateNotice(id: uuid, noticeDomainModel: NoticeDomainModel): Promise<NoticeDto>;
 
-    delete(id: string): Promise<boolean>;
+    deleteNotice(id: uuid): Promise<boolean>;
 
-    createAction(noticeActionDomainModel: NoticeActionDomainModel): Promise<NoticeActionDto>;
+    takeAction(noticeActionDomainModel: NoticeActionDomainModel): Promise<NoticeActionDto>;
 
-    getActionById(id: string): Promise<NoticeActionDto>;
+    getNoticeActionForUser(noticeId: uuid, userId: uuid): Promise<NoticeActionDto>;
+
+    getAllNoticeActionsForUser(userId: uuid): Promise<NoticeActionDto[]>;
 
 }

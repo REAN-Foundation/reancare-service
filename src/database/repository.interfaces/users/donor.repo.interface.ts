@@ -12,5 +12,7 @@ export interface IDonorRepo {
 
     search(filters: DonorSearchFilters): Promise<DonorSearchResults>;
 
+    deleteByUserId(userId: string): Promise<boolean>;
+
     // searchFull(filters: DoctorSearchFilters): Promise<DoctorDetailsSearchResults>;
 }

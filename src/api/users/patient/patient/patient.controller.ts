@@ -123,30 +123,6 @@ export class PatientController extends BaseUserController {
         }
     };
 
-    getPatientByPhone = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            await this.setContext('Patient.GetPatientByPhone', request, response, false);
-
-            if (request.currentClient.IsPrivileged) {
-
-                const filters = await this._validator.search(request);            
-                const searchResults = await this._service.getPatientByPhone(filters);
-                const count = searchResults.Items.length;
-                const message =
-                    count === 0 ? 'No records found!' : `Total ${count} patient records retrieved successfully!`;
-
-                ResponseHandler.success(request, response, message, 200, {
-                    Patients : searchResults,
-                });
-            } else {
-                throw new ApiError(404, 'Only privileged clients are allowed to access this API!');
-            }
-            
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
     updateByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             await this.setContext('Patient.UpdateByUserId', request, response);

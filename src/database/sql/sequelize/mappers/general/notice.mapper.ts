@@ -8,7 +8,7 @@ import NoticeModel from '../../models/general/notice/notice.model';
 export class NoticeMapper {
 
     static toDto = (
-        notice: NoticeModel): NoticeDto => {
+        notice: NoticeModel, actionByCurrentUser?: any): NoticeDto => {
         if (notice == null) {
             return null;
         }
@@ -30,6 +30,7 @@ export class NoticeMapper {
             Tags        : tags,
             ImageUrl    : notice.ImageUrl,
             Action      : notice.Action,
+            UserAction  : actionByCurrentUser,
         };
         return dto;
     };

@@ -55,7 +55,7 @@ export class NoticeRepo implements INoticeRepo {
         }
     };
 
-    search = async (filters: NoticeSearchFilters): Promise<NoticeSearchResults> => {
+    search = async (filters: NoticeSearchFilters, currentUserId: uuid): Promise<NoticeSearchResults> => {
         try {
 
             const search = { where: {} };
@@ -123,8 +123,17 @@ export class NoticeRepo implements INoticeRepo {
             const foundResults = await NoticeModel.findAndCountAll(search);
 
             const dtos: NoticeDto[] = [];
-            for (const notice of foundResults.rows) {
-                const dto = await NoticeMapper.toDto(notice);
+            for await (const notice of foundResults.rows) {
+                let actionByCurrentUser = null;
+                if (currentUserId) {
+                    actionByCurrentUser = await NoticeAction.findOne({
+                        where : {
+                            NoticeId : notice.id,
+                            UserId   : currentUserId
+                        }
+                    });
+                }
+                const dto = NoticeMapper.toDto(notice, actionByCurrentUser);
                 dtos.push(dto);
             }
 
@@ -146,8 +155,7 @@ export class NoticeRepo implements INoticeRepo {
 
     };
 
-    updateNotice = async (id: string, updateModel: NoticeDomainModel):
-    Promise<NoticeDto> => {
+    updateNotice = async (id: string, updateModel: NoticeDomainModel): Promise<NoticeDto> => {
         try {
             const notice = await NoticeModel.findByPk(id);
 
@@ -185,7 +193,7 @@ export class NoticeRepo implements INoticeRepo {
 
             await notice.save();
 
-            return await NoticeMapper.toDto(notice);
+            return NoticeMapper.toDto(notice);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -195,7 +203,6 @@ export class NoticeRepo implements INoticeRepo {
 
     deleteNotice = async (id: string): Promise<boolean> => {
         try {
-
             const result = await NoticeModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
@@ -209,16 +216,21 @@ export class NoticeRepo implements INoticeRepo {
         var contents = createModel.Contents && createModel.Contents.length > 0 ?
             JSON.stringify(createModel.Contents) : '[]';
 
+        const notice = await Notice.findByPk(createModel.NoticeId);
+        if (!notice) {
+            throw new ApiError(404, 'Notice not found!');
+        }
+
         try {
             const entity = {
                 UserId   : createModel.UserId,
                 NoticeId : createModel.NoticeId,
-                Action   : createModel.Action,
+                Action   : notice.Action,
                 Contents : contents
             };
 
             const noticeAction = await NoticeAction.create(entity);
-            return await NoticeMapper.toActionDto(noticeAction);
+            return NoticeMapper.toActionDto(noticeAction);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

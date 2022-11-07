@@ -30,8 +30,8 @@ export class NoticeService {
         return await this._noticeRepo.getNotice(id);
     };
 
-    search = async (filters: NoticeSearchFilters): Promise<NoticeSearchResults> => {
-        return await this._noticeRepo.search(filters);
+    search = async (filters: NoticeSearchFilters, currentUserId: uuid): Promise<NoticeSearchResults> => {
+        return await this._noticeRepo.search(filters, currentUserId);
     };
 
     updateNotice = async (id: uuid, noticeDomainModel: NoticeDomainModel):

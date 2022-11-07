@@ -512,6 +512,8 @@
             "General.Notice.GetById",
             "General.Notice.Search",
             "General.Notice.TakeAction",
+            "General.Notice.GetNoticeActionForUser",
+            "General.Notice.GetAllNoticeActionsForUser",
             "Notification.GetById",
             "Notification.Search",
             "Notification.MarkAsRead",

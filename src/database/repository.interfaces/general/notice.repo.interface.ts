@@ -11,7 +11,7 @@ export interface INoticeRepo {
 
     getNotice(id: uuid): Promise<NoticeDto>;
 
-    search(filters: NoticeSearchFilters): Promise<NoticeSearchResults>;
+    search(filters: NoticeSearchFilters, currentUserId: uuid): Promise<NoticeSearchResults>;
 
     updateNotice(id: uuid, noticeDomainModel: NoticeDomainModel): Promise<NoticeDto>;
 

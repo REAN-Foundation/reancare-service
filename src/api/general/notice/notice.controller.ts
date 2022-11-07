@@ -70,7 +70,8 @@ export class NoticeController extends BaseController {
 
             await this.setContext('General.Notice.Search', request, response);
             const filters = await this._validator.search(request);
-            const searchResults = await this._service.search(filters);
+            const currentUserId = request.currentUser.UserId;
+            const searchResults = await this._service.search(filters, currentUserId);
 
             const count = searchResults.Items.length;
 
@@ -169,9 +170,6 @@ export class NoticeController extends BaseController {
             const noticeId: uuid = await this._validator.getParamUuid(request, 'id');
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
             const noticeAction = await this._service.getNoticeActionForUser(noticeId, userId);
-            if (noticeAction == null) {
-                throw new ApiError(404, 'Notice action not found.');
-            }
             ResponseHandler.success(request, response, 'Notice action retrieved successfully for the user!', 200, {
                 NoticeAction : noticeAction,
             });

@@ -79,7 +79,6 @@ export class BloodPressureService {
         var body = MessageTemplates['BPNotification'].Body;
         body = body.replace("{{Systolic}}", model.Systolic.toString());
         body = body.replace("{{Diastolic}}",model.Diastolic.toString());
-        //var body = MessageTemplates['BPNotification'].Body;
 
         Logger.instance().log(`Notification Title: ${title}`);
         Logger.instance().log(`Notification Body: ${body}`);

@@ -12,4 +12,5 @@ export interface NoticeDto {
     Tags?        : string[];
     ImageUrl?    : string;
     Action?      : string;
+    UserAction?  : any;
 }

@@ -12,14 +12,16 @@ export class PatientMapper {
         }
 
         const dto: PatientDetailsDto = {
-            id                : patient.id,
-            UserId            : patient.UserId,
-            User              : null,
-            DisplayId         : patient.DisplayId,
-            EhrId             : patient.EhrId,
-            HealthProfile     : null, //PatientMedicalProfileDto;
-            Insurances        : [], //PatientInsuranceDto[];
-            EmergencyContacts : [], // PatientEmergencyContactDto[];
+            id                 : patient.id,
+            UserId             : patient.UserId,
+            User               : null,
+            DisplayId          : patient.DisplayId,
+            EhrId              : patient.EhrId,
+            HealthSystem       : patient.HealthSystem,
+            AssociatedHospital : patient.AssociatedHospital,
+            HealthProfile      : null, //PatientMedicalProfileDto;
+            Insurances         : [], //PatientInsuranceDto[];
+            EmergencyContacts  : [], // PatientEmergencyContactDto[];
         };
         return dto;
     };
@@ -36,6 +38,8 @@ export class PatientMapper {
             DisplayId   : patient.DisplayId,
             EhrId       : patient.EhrId,
             DisplayName : null,
+            FirstName   : null,
+            LastName    : null,
             UserName    : null,
             Phone       : null,
             Email       : null,

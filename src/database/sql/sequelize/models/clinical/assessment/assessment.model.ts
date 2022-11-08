@@ -201,6 +201,12 @@ export default class Assessment extends Model {
     })
     ScoreDetails: string;
 
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    TotalNumberOfQuestions: number;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

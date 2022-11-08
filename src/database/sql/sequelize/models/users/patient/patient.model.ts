@@ -82,6 +82,18 @@ export default class Patient extends Model {
     })
     EhrId: string;
 
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    HealthSystem: string;
+
+    @Column({
+        type      : DataType.STRING(256),
+        allowNull : true,
+    })
+    AssociatedHospital: string;
+
     @BelongsTo(() => User)
     User: User;
 

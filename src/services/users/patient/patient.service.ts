@@ -73,7 +73,7 @@ export class PatientService {
             dto = await this.updateDto(dto);
             items.push(dto);
         }
-
+        
         if (items.length > 0) {
             const currentUser: CurrentUser = {
                 UserId        : items[0].id,
@@ -148,6 +148,8 @@ export class PatientService {
         dto.Gender = user.Person.Gender;
         dto.BirthDate = user.Person.BirthDate;
         dto.Age = user.Person.Age;
+        dto.FirstName = user.Person.FirstName;
+        dto.LastName = user.Person.LastName;
         return dto;
     };
 

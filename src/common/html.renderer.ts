@@ -50,7 +50,8 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
                         width             : width,
                         height            : height,
                         deviceScaleFactor : 1
-                    }
+                    },
+                    executablePath: '/usr/bin/chromium-browser'
                 }
             })
                 .then(() => {

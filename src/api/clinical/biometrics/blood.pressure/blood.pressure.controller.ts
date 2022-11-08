@@ -198,7 +198,7 @@ export class BloodPressureController extends BaseController {
         if (person && person.FirstName) {
             userFirstName = person.FirstName;
         }
-        const message = `Dear ${userFirstName}, Your recent systolic blood pressure is ${model.Systolic} and diastolic blood pressure is ${model.Diastolic}.\nWhich is Elevated. Please consult your doctor.\nBlood pressure category will change based on systolic and diastolic.`;
+        const message = `Dear ${userFirstName}, Your recent systolic blood pressure is ${model.Systolic} and diastolic blood pressure is ${model.Diastolic}, it is Elevated.\nPlease consult your doctor.\nBlood pressure category will change based on systolic and diastolic.`;
         const sendStatus = await Loader.messagingService.sendSMS(phoneNumber, message);
         if (sendStatus) {
             Logger.instance().log(`Message sent successfully`);

@@ -45,7 +45,7 @@ export class HealthProfileService {
             OtherConditions    : null,
             IsDiabetic         : false,
             HasHeartAilment    : false,
-            MaritalStatus      : 'Unknown',
+            MaritalStatus      : null,
             Ethnicity          : null,
             Race               : null,
             Nationality        : null,

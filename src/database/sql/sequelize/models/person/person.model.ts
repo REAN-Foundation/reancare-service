@@ -99,6 +99,20 @@ export default class Person extends Model {
     })
     MaritalStatus: string;
 
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    Ethnicity: string;
+
+    @Column({
+        type         : DataType.STRING(128),
+        allowNull    : true,
+        defaultValue : ''
+    })
+    Race: string;
+
     @Column({
         type      : DataType.DATE,
         allowNull : true,

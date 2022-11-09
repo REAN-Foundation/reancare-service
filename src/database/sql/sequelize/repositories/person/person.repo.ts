@@ -218,7 +218,11 @@ export class PersonRepo implements IPersonRepo {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     search(filters: any): Promise<PersonDto[]> {
-        return {};
+        const dtos: PersonDto[] = [];
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        return new Promise((resolve, reject) => {
+            resolve(dtos);
+        });
     }
 
     getOrganizations = async (id: string): Promise<OrganizationDto[]> => {

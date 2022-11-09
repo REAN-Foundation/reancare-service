@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { TimeHelper } from '../../../../../../common/time.helper';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { BodyWeightDomainModel } from '../../../../../../domain.types/clinical/biometrics/body.weight/body.weight.domain.model';
@@ -7,6 +8,7 @@ import { BodyWeightSearchFilters, BodyWeightSearchResults } from '../../../../..
 import { IBodyWeightRepo } from '../../../../../repository.interfaces/clinical/biometrics/body.weight.repo.interface';
 import { BodyWeightMapper } from '../../../mappers/clinical/biometrics/body.weight.mapper';
 import BodyWeight from '../../../models/clinical/biometrics/body.weight.model';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -165,11 +167,43 @@ export class BodyWeightRepo implements IBodyWeightRepo {
     };
 
     getBodyWeightStatsForLast3Months = async (patientUserId: string): Promise<any> => {
-        return {};
+        try {
+            return await this.getStats(patientUserId, 3);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
     getBodyWeightStatsForLast6Months = async (patientUserId: string): Promise<any> => {
-        return {};
+        try {
+            return await this.getStats(patientUserId, 6);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
+
+    private async getStats(patientUserId: string, months: number) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const result = await BodyWeight.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                CreatedAt     : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        let bodyWeights = result.map(x => {
+            return {
+                BodyWeight : x.BodyWeight,
+                CreatedAt  : x.CreatedAt,
+            };
+        });
+        bodyWeights = bodyWeights.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+        return bodyWeights;
+    }
 
 }

@@ -19,9 +19,11 @@ import { FoodConsumptionEvents }
 import { IFoodConsumptionRepo }
     from '../../../../../repository.interfaces/wellness/nutrition/food.consumption.repo.interface';
 import { FoodConsumptionMapper } from '../../../mappers/wellness/nutrition/food.consumption.mapper';
-import FoodConsumptionModel from '../../../models/wellness/nutrition/food.consumption.model';
+import FoodConsumption from '../../../models/wellness/nutrition/food.consumption.model';
 import NutritionQuestionnaire from '../../../models/wellness/nutrition/nutrition.questionnaire.model';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -47,7 +49,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 Tags         : createModel.Tags && createModel.Tags.length > 0 ? JSON.stringify(createModel.Tags) : null,
             };
 
-            const foodConsumption = await FoodConsumptionModel.create(entity);
+            const foodConsumption = await FoodConsumption.create(entity);
             return await FoodConsumptionMapper.toDto(foodConsumption);
 
         } catch (error) {
@@ -81,7 +83,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
     getById = async (id: string): Promise<FoodConsumptionDto> => {
         try {
-            const foodConsumption = await FoodConsumptionModel.findByPk(id);
+            const foodConsumption = await FoodConsumption.findByPk(id);
             return await FoodConsumptionMapper.toDto(foodConsumption);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -91,7 +93,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
     getByEvent = async (consumedAs: string, patientUserId: string): Promise<FoodConsumptionEventDto> => {
         try {
-            const foodResults = await FoodConsumptionModel.findAll({
+            const foodResults = await FoodConsumption.findAll({
                 where : { ConsumedAs: consumedAs, PatientUserId: patientUserId }
             });
 
@@ -126,7 +128,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             const endTime = new Date(date);
             endTime.setHours(23, 59, 59, 0);
 
-            const foodResults = await FoodConsumptionModel.findAll({
+            const foodResults = await FoodConsumption.findAll({
                 where : {
                     StartTime     : { [Op.gte]: startTime },
                     EndTime       : { [Op.lte]: endTime },
@@ -239,7 +241,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            const foundResults = await FoodConsumptionModel.findAndCountAll(search);
+            const foundResults = await FoodConsumption.findAndCountAll(search);
 
             const dtos: FoodConsumptionDto[] = [];
             for (const foodConsumption of foundResults.rows) {
@@ -268,7 +270,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     update = async (id: string, updateModel: FoodConsumptionDomainModel):
         Promise<FoodConsumptionDto> => {
         try {
-            const foodConsumption = await FoodConsumptionModel.findByPk(id);
+            const foodConsumption = await FoodConsumption.findByPk(id);
 
             if (updateModel.PatientUserId != null) {
                 foodConsumption.PatientUserId = updateModel.PatientUserId;
@@ -307,7 +309,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            const result = await FoodConsumptionModel.destroy({ where: { id: id } });
+            const result = await FoodConsumption.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
@@ -430,11 +432,52 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     };
 
     getNutritionStatsForLastWeek = async (patientUserId: uuid): Promise<any> => {
-        return {};
+        try {
+            return await this.getStats(patientUserId, 7, DurationType.Day);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
     getNutritionStatsForLastMonth = async (patientUserId: uuid): Promise<any> => {
-        return {};
+        try {
+            return await this.getStats(patientUserId, 1, DurationType.Month);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
+
+    private async getStats(patientUserId: string, count: number, unit: DurationType) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), count, unit);
+        const result = await FoodConsumption.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                CreatedAt     : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        let nutritionRecords = result.map(x => {
+            return {
+                Food            : x.Food,
+                Description     : x.Description,
+                ConsumedAs      : x.ConsumedAs,
+                Calories        : x.Calories,
+                ImageResourceId : x.ImageResourceId,
+                StartTime       : x.StartTime,
+                EndTime         : x.EndTime,
+                FoodTypes       : x.FoodTypes ? JSON.parse(x.FoodTypes) : null,
+                Servings        : x.Servings,
+                ServingUnit     : x.ServingUnit,
+                CreatedAt       : x.CreatedAt,
+            };
+        });
+        nutritionRecords = nutritionRecords.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+        return nutritionRecords;
+    }
 
 }

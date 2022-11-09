@@ -119,20 +119,14 @@ export class StatisticsService {
         };
 
         //Medication trends
-        const MedicationsTakenLastWeek =
-            await this._medicationConsumptionRepo.getMedicationsTakenStatsForLastWeek(patientUserId);
-        const MedicationsTakenLastMonth =
-            await this._medicationConsumptionRepo.getMedicationsTakenStatsForLastMonth(patientUserId);
-        const MedicationsMissedLastWeek =
-            await this._medicationConsumptionRepo.getMedicationsMissedStatsForLastWeek(patientUserId);
-        const MedicationsMissedLastMonth =
-            await this._medicationConsumptionRepo.getMedicationsMissedStatsForLastMonth(patientUserId);
+        const MedicationStatsLastWeek =
+            await this._medicationConsumptionRepo.getMedicationStats(patientUserId, 7);
+        const MedicationsStatsLastMonth =
+            await this._medicationConsumptionRepo.getMedicationStats(patientUserId, 30);
 
         const medicationTrend = {
-            MedicationsTakenLastWeek,
-            MedicationsTakenLastMonth,
-            MedicationsMissedLastWeek,
-            MedicationsMissedLastMonth,
+            MedicationStatsLastWeek,
+            MedicationsStatsLastMonth,
         };
 
         const stats = {

@@ -1,4 +1,6 @@
 import { Op } from 'sequelize';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { SleepDomainModel } from '../../../../../../domain.types/wellness/daily.records/sleep/sleep.domain.model';
@@ -161,11 +163,43 @@ export class SleepRepo implements ISleepRepo {
     };
 
     getSleepStatsForLastWeek = async (patientUserId: string): Promise<any> => {
-        return {};
+        try {
+            return await this.getStats(patientUserId, 7, DurationType.Day);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
     getSleepStatsForLastMonth = async (patientUserId: string): Promise<any> => {
-        return {};
+        try {
+            return await this.getStats(patientUserId, 1, DurationType.Month);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
+
+    private async getStats(patientUserId: string, count: number, unit: DurationType) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), count, unit);
+        const result = await Sleep.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                RecordDate    : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        let sleepRecords = result.map(x => {
+            return {
+                SleepDuration : x.SleepDuration,
+                RecordDate    : x.RecordDate,
+            };
+        });
+        sleepRecords = sleepRecords.sort((a, b) => b.RecordDate.getTime() - a.RecordDate.getTime());
+        return sleepRecords;
+    }
 
 }

@@ -300,6 +300,14 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     }
 
+    getSleepStatsForLastWeek = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
+    getSleepStatsForLastMonth = async (patientUserId: string): Promise<boolean> => {
+        return {};
+    };
+
     //#endregion
 
 }

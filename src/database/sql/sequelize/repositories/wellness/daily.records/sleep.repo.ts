@@ -160,4 +160,12 @@ export class SleepRepo implements ISleepRepo {
         }
     };
 
+    getSleepStatsForLastWeek = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
+    getSleepStatsForLastMonth = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
 }

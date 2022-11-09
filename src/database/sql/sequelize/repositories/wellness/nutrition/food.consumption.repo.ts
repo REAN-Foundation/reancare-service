@@ -21,6 +21,7 @@ import { IFoodConsumptionRepo }
 import { FoodConsumptionMapper } from '../../../mappers/wellness/nutrition/food.consumption.mapper';
 import FoodConsumptionModel from '../../../models/wellness/nutrition/food.consumption.model';
 import NutritionQuestionnaire from '../../../models/wellness/nutrition/nutrition.questionnaire.model';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -30,24 +31,25 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     Promise<FoodConsumptionDto> => {
         try {
             const entity = {
-                PatientUserId     : createModel.PatientUserId,
-                Food              : createModel.Food,
-                Description       : createModel.Description,
-                ConsumedAs        : createModel.ConsumedAs,
-                Calories          : createModel.Calories,
-                ImageResourceId   : createModel.ImageResourceId,
-                StartTime         : createModel.StartTime,
-                EndTime           : createModel.EndTime,
-                FoodTypes         : createModel.FoodTypes && createModel.FoodTypes.length > 0 ? JSON.stringify(createModel.FoodTypes) : null,
-                Servings          : createModel.Servings,
-                ServingUnit       : createModel.ServingUnit,
-                UserResponse      : createModel.UserResponse,
-                Tags              : createModel.Tags && createModel.Tags.length > 0 ? JSON.stringify(createModel.Tags) : null,
+                PatientUserId   : createModel.PatientUserId,
+                Food            : createModel.Food,
+                Description     : createModel.Description,
+                ConsumedAs      : createModel.ConsumedAs,
+                Calories        : createModel.Calories,
+                ImageResourceId : createModel.ImageResourceId,
+                StartTime       : createModel.StartTime,
+                EndTime         : createModel.EndTime,
+                FoodTypes       : createModel.FoodTypes &&
+                    createModel.FoodTypes.length > 0 ? JSON.stringify(createModel.FoodTypes) : null,
+                Servings     : createModel.Servings,
+                ServingUnit  : createModel.ServingUnit,
+                UserResponse : createModel.UserResponse,
+                Tags         : createModel.Tags && createModel.Tags.length > 0 ? JSON.stringify(createModel.Tags) : null,
             };
 
             const foodConsumption = await FoodConsumptionModel.create(entity);
             return await FoodConsumptionMapper.toDto(foodConsumption);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -62,15 +64,15 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 QuestionType        : createModel.QuestionType,
                 AssociatedFoodTypes : createModel.AssociatedFoodTypes && createModel.AssociatedFoodTypes.length > 0 ?
                     JSON.stringify(createModel.AssociatedFoodTypes) : null,
-                Tags                : createModel.Tags && createModel.Tags.length > 0 ? JSON.stringify(createModel.Tags) : null,
-                ServingUnit         : createModel.ServingUnit,
-                ImageResourceId     : createModel.ImageResourceId,
-                QuestionInfo        : createModel.QuestionInfo,
+                Tags            : createModel.Tags && createModel.Tags.length > 0 ? JSON.stringify(createModel.Tags) : null,
+                ServingUnit     : createModel.ServingUnit,
+                ImageResourceId : createModel.ImageResourceId,
+                QuestionInfo    : createModel.QuestionInfo,
             };
 
             const nutrition = await NutritionQuestionnaire.create(entity);
             return await FoodConsumptionMapper.toDetailsDto(nutrition);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -256,7 +258,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             };
 
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -292,7 +294,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             if (updateModel.EndTime != null) {
                 foodConsumption.EndTime = updateModel.EndTime;
             }
-    
+
             await foodConsumption.save();
 
             return await FoodConsumptionMapper.toDto(foodConsumption);
@@ -412,7 +414,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     getNutritionQuestionnaire = async (): Promise<NutritionQuestionnaireDto[]> => {
         try {
             const filter = { where: {} };
-            
+
             const questionnaire = await NutritionQuestionnaire.findAll(filter);
             const dtos: NutritionQuestionnaireDto[] = [];
             for (const q of questionnaire) {
@@ -425,6 +427,14 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    };
+
+    getNutritionStatsForLastWeek = async (patientUserId: uuid): Promise<any> => {
+        return {};
+    };
+
+    getNutritionStatsForLastMonth = async (patientUserId: uuid): Promise<any> => {
+        return {};
     };
 
 }

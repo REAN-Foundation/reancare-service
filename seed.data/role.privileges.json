@@ -158,7 +158,9 @@
             "Chat.RemoveUserFromConversation",
             "Chat.GetConversationBetweenTwoUsers",
             "Chat.GetMarkedConversationsForUser",
-            "Chat.GetRecentConversationsForUser"
+            "Chat.GetRecentConversationsForUser",
+            "PatientStatistics.GetPatientStats",
+            "PatientStatistics.GetPatientStatsReport"
         ]
     },
     {
@@ -539,7 +541,9 @@
             "Volunteer.GetByUserId",
             "Volunteer.Search",
             "Volunteer.UpdateByUserId",
-            "Volunteer.DeleteByUserId"
+            "Volunteer.DeleteByUserId",
+            "PatientStatistics.GetPatientStats",
+            "PatientStatistics.GetPatientStatsReport"
         ]
     },
     {
@@ -877,7 +881,9 @@
             "Volunteer.GetByUserId",
             "Volunteer.Search",
             "Volunteer.UpdateByUserId",
-            "Volunteer.DeleteByUserId"
+            "Volunteer.DeleteByUserId",
+            "PatientStatistics.GetPatientStats",
+            "PatientStatistics.GetPatientStatsReport"
         ]
     },
     {

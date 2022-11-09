@@ -5,6 +5,10 @@ import { MedicationConsumptionSearchFilters, MedicationConsumptionSearchResults 
 ///////////////////////////////////////////////////////////////////////
 
 export interface IMedicationConsumptionRepo {
+    getMedicationsTakenStatsForLastWeek(patientUserId: string): Promise<any>;
+    getMedicationsTakenStatsForLastMonth(patientUserId: string): Promise<any>;
+    getMedicationsMissedStatsForLastWeek(patientUserId: string): Promise<any>;
+    getMedicationsMissedStatsForLastMonth(patientUserId: string): Promise<any>;
 
     getPendingConsumptionCountForMedication(medicationId: string): Promise<number>;
 

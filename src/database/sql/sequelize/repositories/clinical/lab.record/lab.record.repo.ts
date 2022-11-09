@@ -247,4 +247,17 @@ export class LabRecordRepo implements ILabRecordRepo {
         }
     };
 
+    getLabRecordsForLastMonth = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
+    getLabRecordsForLast3Months = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
+    getLabRecordsForLast6Months = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
+
 }

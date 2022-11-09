@@ -30,7 +30,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             };
             const physicalActivity = await PhysicalActivity.create(entity);
             return await PhysicalActivityMapper.toDto(physicalActivity);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -61,7 +61,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             if (filters.Category != null) {
                 search.where['Category'] = { [Op.like]: '%' + filters.Category + '%' };
             }
-            
+
             let orderByColum = 'PhysicalActivity';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
@@ -159,6 +159,14 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    };
+
+    getPhysicalActivityStatsForLastWeek = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
+    getPhysicalActivityStatsForLastMonth = async (patientUserId: string): Promise<any> => {
+        return {};
     };
 
 }

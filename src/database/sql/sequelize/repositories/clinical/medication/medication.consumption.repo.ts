@@ -403,4 +403,20 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
+    getMedicationsTakenStatsForLastWeek = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
+    getMedicationsTakenStatsForLastMonth = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
+    getMedicationsMissedStatsForLastWeek = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
+    getMedicationsMissedStatsForLastMonth = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
 }

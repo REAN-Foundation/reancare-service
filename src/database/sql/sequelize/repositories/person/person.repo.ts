@@ -218,7 +218,7 @@ export class PersonRepo implements IPersonRepo {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     search(filters: any): Promise<PersonDto[]> {
-        throw new Error('Method not implemented.');
+        return {};
     }
 
     getOrganizations = async (id: string): Promise<OrganizationDto[]> => {

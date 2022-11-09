@@ -31,4 +31,8 @@ export interface IAssessmentRepo {
 
     existsWithProviderSubmissionId(provider: string, providerSubmissionId: string): Promise<boolean>;
 
+    getSleepStatsForLastWeek(patientUserId: string): Promise<any>;
+
+    getSleepStatsForLastMonth(patientUserId: string): Promise<any>;
+
 }

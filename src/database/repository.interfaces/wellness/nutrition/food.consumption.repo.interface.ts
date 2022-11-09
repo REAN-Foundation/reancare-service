@@ -15,7 +15,7 @@ export interface IFoodConsumptionRepo {
 
     create(foodConsumptionDomainModel: FoodConsumptionDomainModel): Promise<FoodConsumptionDto>;
 
-    createNutritionQuestionnaire(nutritionQuestionnaireDomainModel: NutritionQuestionnaireDomainModel): Promise<NutritionQuestionnaireDto>;
+    createNutritionQuestionnaire(model: NutritionQuestionnaireDomainModel): Promise<NutritionQuestionnaireDto>;
 
     getById(id: string): Promise<FoodConsumptionDto>;
 
@@ -24,7 +24,7 @@ export interface IFoodConsumptionRepo {
     getByEvent(event: string, patientUserId: string): Promise<FoodConsumptionEventDto>;
 
     getForDay(date: Date, patientUserId: string): Promise<FoodConsumptionForDayDto>;
-    
+
     search(filters: FoodConsumptionSearchFilters): Promise<FoodConsumptionSearchResults>;
 
     update(id: string, foodConsumptionDomainModel: FoodConsumptionDomainModel):
@@ -33,5 +33,9 @@ export interface IFoodConsumptionRepo {
     delete(id: string): Promise<boolean>;
 
     totalCount(): Promise<number>;
+
+    getNutritionStatsForLastWeek(patientUserId: string): Promise<any>;
+
+    getNutritionStatsForLastMonth(patientUserId: string): Promise<any>;
 
 }

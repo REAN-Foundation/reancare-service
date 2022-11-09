@@ -164,4 +164,12 @@ export class BodyWeightRepo implements IBodyWeightRepo {
         }
     };
 
+    getBodyWeightStatsForLast3Months = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
+    getBodyWeightStatsForLast6Months = async (patientUserId: string): Promise<any> => {
+        return {};
+    };
+
 }

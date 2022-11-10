@@ -38,6 +38,8 @@ export class PatientMapper {
             DisplayId   : patient.DisplayId,
             EhrId       : patient.EhrId,
             DisplayName : null,
+            FirstName   : null,
+            LastName    : null,
             UserName    : null,
             Phone       : null,
             Email       : null,

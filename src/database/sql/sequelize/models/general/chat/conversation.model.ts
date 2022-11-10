@@ -1,4 +1,4 @@
-import { Column, CreatedAt, DataType, DeletedAt, ForeignKey,
+import { BelongsTo, Column, CreatedAt, DataType, DeletedAt, ForeignKey,
     IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
@@ -54,6 +54,9 @@ export default class Conversation extends Model {
     })
     InitiatingUserId: string;
 
+    @BelongsTo(() => User, 'InitiatingUserId')
+    InitiatingUser: User;
+
     @ForeignKey(() => User)
     @Column({
         type : DataType.UUID,
@@ -61,6 +64,15 @@ export default class Conversation extends Model {
         allowNull : false,
     })
     OtherUserId: string;
+
+    @BelongsTo(() => User, 'OtherUserId')
+    OtherUser: User;
+
+    @Column({
+        type      : DataType.DATE,
+        allowNull : true,
+    })
+    LastMessageTimestamp: Date;
 
     @Column
     @CreatedAt

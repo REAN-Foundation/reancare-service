@@ -50,7 +50,8 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
                         width             : width,
                         height            : height,
                         deviceScaleFactor : 1
-                    }
+                    },
+                    executablePath: '/usr/bin/chromium-browser'
                 }
             })
                 .then(() => {
@@ -70,7 +71,7 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
 
 export const htmlTextToPDFBuffer = async (htmlText: string): Promise<Buffer> => {
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox'], executablePath: '/usr/bin/chromium-browser'});
     const page = await browser.newPage();
 
     await page.setContent(htmlText);

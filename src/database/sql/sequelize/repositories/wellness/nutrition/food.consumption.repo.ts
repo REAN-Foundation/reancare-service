@@ -24,12 +24,16 @@ import NutritionQuestionnaire from '../../../models/wellness/nutrition/nutrition
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
+import Patient from '../../../models/users/patient/patient.model';
+import User from '../../../models/users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
-    create = async (createModel: FoodConsumptionDomainModel):
+    //#region Public
+
+    public create = async (createModel: FoodConsumptionDomainModel):
     Promise<FoodConsumptionDto> => {
         try {
             const entity = {
@@ -58,7 +62,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
     };
 
-    createNutritionQuestionnaire = async (createModel: NutritionQuestionnaireDomainModel):
+    public createNutritionQuestionnaire = async (createModel: NutritionQuestionnaireDomainModel):
     Promise<NutritionQuestionnaireDto> => {
         try {
             const entity = {
@@ -81,7 +85,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
     };
 
-    getById = async (id: string): Promise<FoodConsumptionDto> => {
+    public getById = async (id: string): Promise<FoodConsumptionDto> => {
         try {
             const foodConsumption = await FoodConsumption.findByPk(id);
             return await FoodConsumptionMapper.toDto(foodConsumption);
@@ -91,7 +95,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
     };
 
-    getByEvent = async (consumedAs: string, patientUserId: string): Promise<FoodConsumptionEventDto> => {
+    public getByEvent = async (consumedAs: string, patientUserId: string): Promise<FoodConsumptionEventDto> => {
         try {
             const foodResults = await FoodConsumption.findAll({
                 where : { ConsumedAs: consumedAs, PatientUserId: patientUserId }
@@ -121,7 +125,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
     };
 
-    getForDay = async (date: Date, patientUserId: string): Promise<FoodConsumptionForDayDto> => {
+    public getForDay = async (date: Date, patientUserId: string): Promise<FoodConsumptionForDayDto> => {
         try {
             const startTime = new Date(date);
             startTime.setHours(0, 0, 0, 0);
@@ -190,7 +194,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
     };
 
-    search = async (filters: FoodConsumptionSearchFilters): Promise<FoodConsumptionSearchResults> => {
+    public search = async (filters: FoodConsumptionSearchFilters): Promise<FoodConsumptionSearchResults> => {
         try {
 
             const search = { where: {} };
@@ -267,7 +271,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
     };
 
-    update = async (id: string, updateModel: FoodConsumptionDomainModel):
+    public update = async (id: string, updateModel: FoodConsumptionDomainModel):
         Promise<FoodConsumptionDto> => {
         try {
             const foodConsumption = await FoodConsumption.findByPk(id);
@@ -307,13 +311,102 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    public delete = async (id: string): Promise<boolean> => {
         try {
             const result = await FoodConsumption.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    public totalCount = async (): Promise<number> => {
+        try {
+            return await NutritionQuestionnaire.count();
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public getNutritionQuestionnaire = async (): Promise<NutritionQuestionnaireDto[]> => {
+        try {
+            const filter = { where: {} };
+
+            const questionnaire = await NutritionQuestionnaire.findAll(filter);
+            const dtos: NutritionQuestionnaireDto[] = [];
+            for (const q of questionnaire) {
+                const dto = FoodConsumptionMapper.toDetailsDto(q);
+                dtos.push(dto);
+            }
+
+            return dtos;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public getNutritionStatsForLastWeek = async (patientUserId: uuid): Promise<any> => {
+        try {
+            const questionnaireStats = await this.getQuestionnaireStats(patientUserId, 7);
+            const calorieStats = await this.getDayByDayCalorieStats(patientUserId, 7);
+            return {
+                QuestionnaireStats : questionnaireStats,
+                CalorieStats       : calorieStats,
+            };
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public getNutritionStatsForLastMonth = async (patientUserId: uuid): Promise<any> => {
+        try {
+            const questionnaireStats = await this.getQuestionnaireStats(patientUserId, 30);
+            const calorieStats = await this.getDayByDayCalorieStats(patientUserId, 30);
+            return {
+                QuestionnaireStats : questionnaireStats,
+                CalorieStats       : calorieStats,
+            };
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    //#endregion
+
+    //#region Privates
+
+    private getBooleanStats = (x) => {
+        if (x.UserResponse === true) {
+            return {
+                Response  : 1,
+                CreatedAt : x.CreatedAt,
+            };
+        }
+        else {
+            return {
+                Response  : 0,
+                CreatedAt : x.CreatedAt,
+            };
+        }
+    };
+
+    private getServingStats = (x) => {
+        if (x.Servings) {
+            return {
+                Servings  : x.Servings,
+                CreatedAt : x.CreatedAt,
+            };
+        }
+        else {
+            return {
+                Servings  : 0,
+                CreatedAt : x.CreatedAt,
+            };
         }
     };
 
@@ -404,80 +497,146 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         return duration;
     };
 
-    totalCount = async (): Promise<number> => {
-        try {
-            return await NutritionQuestionnaire.count();
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
+    private async getQuestionnaireStats(patientUserId: string, numDays: number) {
 
-    getNutritionQuestionnaire = async (): Promise<NutritionQuestionnaireDto[]> => {
-        try {
-            const filter = { where: {} };
+        const records = await this.getQuestionnaireRecords(patientUserId, numDays, DurationType.Day);
 
-            const questionnaire = await NutritionQuestionnaire.findAll(filter);
-            const dtos: NutritionQuestionnaireDto[] = [];
-            for (const q of questionnaire) {
-                const dto = FoodConsumptionMapper.toDetailsDto(q);
-                dtos.push(dto);
-            }
+        //Questionnaire handling
+        const genericNutritionRecords = records.filter(x => x.FoodTypes === `["GenericNutrition"]`);
+        const proteinConsumptionRecords = records.filter(x => x.FoodTypes === `["Protein"]`);
+        const lowSaltConsumptionRecords = records.filter(x => x.FoodTypes === `["Salt"]`);
 
-            return dtos;
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
+        const vegetableServingsRecords = records.filter(x => x.FoodTypes === `["Vegetables"]`);
+        const fruitServingsRecords = records.filter(x => x.FoodTypes === `["Fruits"]`);
+        const grainServingsRecords = records.filter(x => x.FoodTypes === `["Grains"]`);
+        const sugaryDrinksServingsRecords = records.filter(x => x.FoodTypes === `["Sugary drinks"]`);
+        const seaFoodServingsRecords = records.filter(x => x.FoodTypes === `["Sea food"]`);
 
-    getNutritionStatsForLastWeek = async (patientUserId: uuid): Promise<any> => {
-        try {
-            return await this.getStats(patientUserId, 7, DurationType.Day);
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
+        const healthyFoodChoicesStats = genericNutritionRecords.map(x => this.getBooleanStats(x));
+        const healthyProteinConsumptionStats = proteinConsumptionRecords.map(x => this.getBooleanStats(x));
+        const lowSaltConsumptionStats = lowSaltConsumptionRecords.map(x => this.getBooleanStats(x));
+        const vegetableServingsStats = vegetableServingsRecords.map(x => this.getServingStats(x));
+        const fruitServingsStatss = fruitServingsRecords.map(x => this.getServingStats(x));
+        const grainServingsStats = grainServingsRecords.map(x => this.getServingStats(x));
+        const sugaryDrinksServingsStats = sugaryDrinksServingsRecords.map(x => this.getServingStats(x));
+        const seaFoodServingsStats = seaFoodServingsRecords.map(x => this.getServingStats(x));
 
-    getNutritionStatsForLastMonth = async (patientUserId: uuid): Promise<any> => {
-        try {
-            return await this.getStats(patientUserId, 1, DurationType.Month);
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
+        return {
+            HealthyFoodChoices : {
+                Question : `Were most of your food choices healthy today?`,
+                Stats    : healthyFoodChoicesStats,
+            },
+            HealthyProteinConsumptions : {
+                Question : `Did you select healthy sources of protein today?`,
+                Stats    : healthyProteinConsumptionStats,
+            },
+            LowSaltFoods : {
+                Question : `Did you choose or prepare foods with little or no salt today?`,
+                Stats    : lowSaltConsumptionStats,
+            },
+            VegetableServings : {
+                Question : `How many servings of vegetables did you eat today?`,
+                Stats    : vegetableServingsStats,
+            },
+            FruitServings : {
+                Question : `How many servings of fruit did you eat today?`,
+                Stats    : fruitServingsStatss,
+            },
+            WholeGrainServings : {
+                Question : `How many servings of whole grains do you consume per day?`,
+                Stats    : grainServingsStats,
+            },
+            SugaryDrinksServings : {
+                Question : `How many servings of sugary drinks did you drink today?`,
+                Stats    : sugaryDrinksServingsStats,
+            },
+            SeafoodServings : {
+                Question : `How many servings of fish or shellfish/seafood did you eat today?`,
+                Stats    : seaFoodServingsStats,
+            },
+        };
+    }
 
-    private async getStats(patientUserId: string, count: number, unit: DurationType) {
+    private async getQuestionnaireRecords(patientUserId: string, count: number, unit: DurationType) {
         const today = new Date();
         const from = TimeHelper.subtractDuration(new Date(), count, unit);
-        const result = await FoodConsumption.findAll({
+        let nutritionRecords = await FoodConsumption.findAll({
             where : {
                 PatientUserId : patientUserId,
-                CreatedAt     : {
+                FoodTypes     : {
+                    [Op.not] : null,
+                },
+                CreatedAt : {
                     [Op.gte] : from,
                     [Op.lte] : today,
                 }
             }
         });
-        let nutritionRecords = result.map(x => {
-            return {
-                Food            : x.Food,
-                Description     : x.Description,
-                ConsumedAs      : x.ConsumedAs,
-                Calories        : x.Calories,
-                ImageResourceId : x.ImageResourceId,
-                StartTime       : x.StartTime,
-                EndTime         : x.EndTime,
-                FoodTypes       : x.FoodTypes ? JSON.parse(x.FoodTypes) : null,
-                Servings        : x.Servings,
-                ServingUnit     : x.ServingUnit,
-                CreatedAt       : x.CreatedAt,
-            };
-        });
         nutritionRecords = nutritionRecords.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
         return nutritionRecords;
     }
+
+    private async getDayByDayCalorieStats(patientUserId: string, numDays: number) {
+
+        const timezone = await this.getPatientTimezone(patientUserId);
+        const todayStr = (new Date()).toISOString()
+            .split('T')[0];
+        const todayStart = TimeHelper.getDateWithTimezone(todayStr, timezone);
+        const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
+        const reference = todayStart;
+
+        const stats = [];
+
+        for await (var day of dayList) {
+
+            var dayStart = TimeHelper.subtractDuration(reference, (day - 1) * 24, DurationType.Hour);
+            var dayEnd = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+
+            const dayStr = dayStart.toISOString().split('T')[0];
+
+            const consumptions = await FoodConsumption.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    FoodTypes     : null,
+                    CreatedAt     : {
+                        [Op.gte] : dayStart,
+                        [Op.lte] : dayEnd,
+                    }
+                }
+            });
+            let totalCaloriesForDay = 0;
+            consumptions.forEach((food) => {
+                totalCaloriesForDay += food.Calories;
+            });
+
+            stats.push({
+                DateStr  : dayStr,
+                Calories : totalCaloriesForDay,
+            });
+        }
+        return stats;
+    }
+
+    private async getPatientTimezone(patientUserId: string) {
+        let timezone = '+05:30';
+        const patient = await Patient.findOne({
+            where : {
+                UserId : patientUserId
+            },
+            include : [
+                {
+                    model    : User,
+                    as       : 'User',
+                    required : true,
+                }
+            ]
+        });
+        if (patient) {
+            timezone = patient.User.CurrentTimeZone;
+        }
+        return timezone;
+    }
+
+    //#endregion
 
 }

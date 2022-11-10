@@ -125,6 +125,24 @@ export default class Person extends Model {
     })
     Age: string;
 
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    StrokeSurvivorOrCaregiver: string;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    LivingAlone: boolean;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    WorkedPriorToStroke: boolean;
+
     @IsUUID(4)
     @Column({
         type      : DataType.UUID,

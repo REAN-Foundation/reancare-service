@@ -31,7 +31,7 @@ export class ChatValidator extends BaseValidator {
 
         const updateModel: ConversationDomainModel = {
             Topic  : requestBody.Topic ?? null,
-            Marked : requestBody.Marked ?? false,
+            Marked : requestBody.Marked ?? null,
         };
 
         return updateModel;

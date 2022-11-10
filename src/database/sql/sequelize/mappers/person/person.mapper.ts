@@ -31,6 +31,8 @@ export class PersonMapper {
             Gender               : Gender[person.Gender],
             SelfIdentifiedGender : person.SelfIdentifiedGender,
             MaritalStatus        : person.MaritalStatus,
+            Race                 : person.Race,
+            Ethnicity            : person.Ethnicity,
             BirthDate            : person.BirthDate,
             Age                  : person.Age ?? age,
             Phone                : person.Phone,

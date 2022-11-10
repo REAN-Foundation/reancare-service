@@ -508,628 +508,628 @@
 			]
 		},
 		{
-			"name": "Sneha raahi quiz",
+			"name": "Sneha-Rahi-Courses",
 			"item": [
 				{
-					"name": "Growing up",
+					"name": "Sneha raahi quiz",
 					"item": [
 						{
-							"name": "Maanav vikas ki avasthaayein",
+							"name": "Growing up",
 							"item": [
 								{
-									"name": "Create maanav vikas ki avasthaayein template",
-									"event": [
+									"name": "Maanav vikas ki avasthaayein",
+									"item": [
 										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"var jsonRes = pm.response.json();",
-													"",
-													"try {",
-													"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.id);",
-													"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ROOT_NODE_ID\", jsonRes.Data.AssessmentTemplate.RootNodeId);",
-													"    pm.environment.set(\"MANAV_VIKAS_ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.id);",
-													"}",
-													"catch (error) {",
-													"    console.log(error.message);",
-													"}",
-													"",
-													"pm.test(\"Request is successfull\", function () {",
-													"    pm.response.to.have.status(201);",
-													"    var jsonRes = pm.response.json();",
-													"    pm.expect(jsonRes.Status).to.eql('success');",
-													"});",
-													"",
-													"pm.test(\"New assessment template is created\", function () {",
-													"   ",
-													"    var jsonRes = pm.response.json();",
-													"    pm.expect(jsonRes.Data).to.have.property('AssessmentTemplate');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.not.be.empty;",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('id');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Title');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Description');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Type');",
-													"    ",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate.Title).equals(\"KCCQ assessment template\");",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate.Description).equals(\"Effect of heart failure on the life of a patient\");",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate.Type).equals(\"Custom\");",
-													"    ",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{ADMIN_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"Title\": \"Maanav vikas ki avasthaayein\",\n    \"Description\": \"Quiz for growing up!\",\n    \"Type\": \"Custom\",\n    \"Provider\": \"REAN\",\n    \"ProviderAssessmentCode\": \"1\",\n    \"ServeListNodeChildrenAtOnce\": false,\n    \"TotalNumberOfQuestions\": 3\n}",
-											"options": {
-												"raw": {
-													"language": "json"
+											"name": "Create maanav vikas ki avasthaayein template",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"var jsonRes = pm.response.json();",
+															"",
+															"try {",
+															"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.id);",
+															"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ROOT_NODE_ID\", jsonRes.Data.AssessmentTemplate.RootNodeId);",
+															"    pm.environment.set(\"MANAV_VIKAS_ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.id);",
+															"}",
+															"catch (error) {",
+															"    console.log(error.message);",
+															"}",
+															"",
+															"pm.test(\"Request is successfull\", function () {",
+															"    pm.response.to.have.status(201);",
+															"    var jsonRes = pm.response.json();",
+															"    pm.expect(jsonRes.Status).to.eql('success');",
+															"});",
+															"",
+															"pm.test(\"New assessment template is created\", function () {",
+															"   ",
+															"    var jsonRes = pm.response.json();",
+															"    pm.expect(jsonRes.Data).to.have.property('AssessmentTemplate');",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate).to.not.be.empty;",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('id');",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Title');",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Description');",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Type');",
+															"    ",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate.Title).equals(\"KCCQ assessment template\");",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate.Description).equals(\"Effect of heart failure on the life of a patient\");",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate.Type).equals(\"Custom\");",
+															"    ",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
 												}
-											}
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/clinical/assessment-templates",
-											"host": [
-												"{{BASE_URL}}"
 											],
-											"path": [
-												"clinical",
-												"assessment-templates"
-											]
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{ADMIN_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"Title\": \"Maanav vikas ki avasthaayein\",\n    \"Description\": \"Quiz for growing up!\",\n    \"Type\": \"Custom\",\n    \"Provider\": \"REAN\",\n    \"ProviderAssessmentCode\": \"1\",\n    \"ServeListNodeChildrenAtOnce\": false,\n    \"TotalNumberOfQuestions\": 3\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{BASE_URL}}/clinical/assessment-templates",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"clinical",
+														"assessment-templates"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Add question node- 1",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"var jsonRes = pm.response.json();\r",
+															"\r",
+															"try {\r",
+															"    pm.environment.set(\"GROWING_UP_ASSESSMENT_NODE_Q1_ID\", jsonRes.Data.AssessmentNode.id);\r",
+															"}\r",
+															"catch (error) {\r",
+															"    console.log(error.message);\r",
+															"}\r",
+															"\r",
+															"pm.test(\"Request is successfull\", function () {\r",
+															"    pm.response.to.have.status(201);\r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Status).to.eql('success');\r",
+															"});\r",
+															"\r",
+															"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
+															"   \r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
+															"    \r",
+															"});\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{ADMIN_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 1.How many stages of development are there?\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"6\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n\r\n            \"Text\": \"7\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"8\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"9\",\r\n            \"Sequence\": 4\r\n        }\r\n        \r\n    ],\r\n    \"CorrectAnswer\" : 3\r\n}\r\n",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"clinical",
+														"assessment-templates",
+														"{{ASSESSMENT_TEMPLATE_ID}}",
+														"nodes"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Add question node- 2",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"var jsonRes = pm.response.json();\r",
+															"\r",
+															"try {\r",
+															"    pm.environment.set(\"GROWING_UP_ASSESSMENT_NODE_Q2_ID\", jsonRes.Data.AssessmentNode.id);\r",
+															"}\r",
+															"catch (error) {\r",
+															"    console.log(error.message);\r",
+															"}\r",
+															"\r",
+															"pm.test(\"Request is successfull\", function () {\r",
+															"    pm.response.to.have.status(201);\r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Status).to.eql('success');\r",
+															"});\r",
+															"\r",
+															"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
+															"   \r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
+															"    \r",
+															"  \r",
+															"});\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{ADMIN_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 2.What do kishors feel is most important for them?\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"Feelings of security\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"Text\": \"Wanting to socialise and spend time with friends\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"Taking responsibility for family and career\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"Wanting to depend on their family\",\r\n            \"Sequence\": 4\r\n        }\r\n        \r\n    ],\r\n    \"CorrectAnswer\" : 1\r\n}\r\n",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"clinical",
+														"assessment-templates",
+														"{{ASSESSMENT_TEMPLATE_ID}}",
+														"nodes"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Add question node- 3",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"var jsonRes = pm.response.json();\r",
+															"\r",
+															"try {\r",
+															"    pm.environment.set(\"GROWING_UP_ASSESSMENT_NODE_Q3_ID\", jsonRes.Data.AssessmentNode.id);\r",
+															"}\r",
+															"catch (error) {\r",
+															"    console.log(error.message);\r",
+															"}\r",
+															"\r",
+															"pm.test(\"Request is successfull\", function () {\r",
+															"    pm.response.to.have.status(201);\r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Status).to.eql('success');\r",
+															"});\r",
+															"\r",
+															"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
+															"   \r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
+															"    \r",
+															"     \r",
+															"});\r",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{ADMIN_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 3.During what stage do we emphasise most on either our family or career?\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"Kishoravasta\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"Text\": \"Yuva\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"Madhyam Aayu\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"Budhapa\",\r\n            \"Sequence\": 4\r\n        }\r\n        \r\n    ],\r\n    \"CorrectAnswer\" : 1\r\n}\r\n",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"clinical",
+														"assessment-templates",
+														"{{ASSESSMENT_TEMPLATE_ID}}",
+														"nodes"
+													]
+												}
+											},
+											"response": []
 										}
-									},
-									"response": []
+									]
 								},
 								{
-									"name": "Add question node- 1",
-									"event": [
+									"name": "Transitioning from adolescence",
+									"item": [
 										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"var jsonRes = pm.response.json();\r",
-													"\r",
-													"try {\r",
-													"    pm.environment.set(\"GROWING_UP_ASSESSMENT_NODE_Q1_ID\", jsonRes.Data.AssessmentNode.id);\r",
-													"}\r",
-													"catch (error) {\r",
-													"    console.log(error.message);\r",
-													"}\r",
-													"\r",
-													"pm.test(\"Request is successfull\", function () {\r",
-													"    pm.response.to.have.status(201);\r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Status).to.eql('success');\r",
-													"});\r",
-													"\r",
-													"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
-													"   \r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
-													"    \r",
-													"});\r",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{ADMIN_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 1.How many stages of development are there?\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"6\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n\r\n            \"Text\": \"7\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"8\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"9\",\r\n            \"Sequence\": 4\r\n        }\r\n        \r\n    ],\r\n    \"CorrectAnswer\" : 3\r\n}\r\n",
-											"options": {
-												"raw": {
-													"language": "json"
+											"name": "Create transitioning from adolescence",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"var jsonRes = pm.response.json();",
+															"",
+															"try {",
+															"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.id);",
+															"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ROOT_NODE_ID\", jsonRes.Data.AssessmentTemplate.RootNodeId);",
+															"    pm.environment.set(\"ADOLESCENCE_ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.id);",
+															"}",
+															"catch (error) {",
+															"    console.log(error.message);",
+															"}",
+															"",
+															"pm.test(\"Request is successfull\", function () {",
+															"    pm.response.to.have.status(201);",
+															"    var jsonRes = pm.response.json();",
+															"    pm.expect(jsonRes.Status).to.eql('success');",
+															"});",
+															"",
+															"pm.test(\"New assessment template is created\", function () {",
+															"   ",
+															"    var jsonRes = pm.response.json();",
+															"    pm.expect(jsonRes.Data).to.have.property('AssessmentTemplate');",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate).to.not.be.empty;",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('id');",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Title');",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Description');",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Type');",
+															"    ",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate.Title).equals(\"KCCQ assessment template\");",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate.Description).equals(\"Effect of heart failure on the life of a patient\");",
+															"    pm.expect(jsonRes.Data.AssessmentTemplate.Type).equals(\"Custom\");",
+															"    ",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
 												}
-											}
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes",
-											"host": [
-												"{{BASE_URL}}"
 											],
-											"path": [
-												"clinical",
-												"assessment-templates",
-												"{{ASSESSMENT_TEMPLATE_ID}}",
-												"nodes"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Add question node- 2",
-									"event": [
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{ADMIN_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"Title\": \"Transitioning from adolescence\",\n    \"Description\": \"\",\n    \"DisplayCode\": \"\",\n    \"Type\": \"Careplan\",\n    \"Provider\": \"REAN\",\n    \"ProviderAssessmentCode\": \"1\",\n    \"ServeListNodeChildrenAtOnce\": false,\n    \"TotalNumberOfQuestions\": 2\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{BASE_URL}}/clinical/assessment-templates",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"clinical",
+														"assessment-templates"
+													]
+												}
+											},
+											"response": []
+										},
 										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"var jsonRes = pm.response.json();\r",
-													"\r",
-													"try {\r",
-													"    pm.environment.set(\"GROWING_UP_ASSESSMENT_NODE_Q2_ID\", jsonRes.Data.AssessmentNode.id);\r",
-													"}\r",
-													"catch (error) {\r",
-													"    console.log(error.message);\r",
-													"}\r",
-													"\r",
-													"pm.test(\"Request is successfull\", function () {\r",
-													"    pm.response.to.have.status(201);\r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Status).to.eql('success');\r",
-													"});\r",
-													"\r",
-													"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
-													"   \r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
-													"    \r",
-													"  \r",
-													"});\r",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{ADMIN_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 2.What do kishors feel is most important for them?\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"Feelings of security\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"Text\": \"Wanting to socialise and spend time with friends\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"Taking responsibility for family and career\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"Wanting to depend on their family\",\r\n            \"Sequence\": 4\r\n        }\r\n        \r\n    ],\r\n    \"CorrectAnswer\" : 1\r\n}\r\n",
-											"options": {
-												"raw": {
-													"language": "json"
+											"name": "Add question node- 1",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"var jsonRes = pm.response.json();\r",
+															"\r",
+															"try {\r",
+															"    pm.environment.set(\"GROWING_UP_ASSESSMENT_NODE_Q1_ID\", jsonRes.Data.AssessmentNode.id);\r",
+															"}\r",
+															"catch (error) {\r",
+															"    console.log(error.message);\r",
+															"}\r",
+															"\r",
+															"pm.test(\"Request is successfull\", function () {\r",
+															"    pm.response.to.have.status(201);\r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Status).to.eql('success');\r",
+															"});\r",
+															"\r",
+															"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
+															"   \r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
+															"    \r",
+															"});\r",
+															""
+														],
+														"type": "text/javascript"
+													}
 												}
-											}
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes",
-											"host": [
-												"{{BASE_URL}}"
 											],
-											"path": [
-												"clinical",
-												"assessment-templates",
-												"{{ASSESSMENT_TEMPLATE_ID}}",
-												"nodes"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Add question node- 3",
-									"event": [
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{ADMIN_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 1.What are some ways for us to deal with the confusion and mixed messages we receive at this age? <select all that apply>\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Multi Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"Speak to an adult we trust\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"Text\": \"Show that we are responsible\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"Build trust with people around us\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"Convince parents to give us what we want\",\r\n            \"Sequence\": 4\r\n        }\r\n    ]\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"clinical",
+														"assessment-templates",
+														"{{ASSESSMENT_TEMPLATE_ID}}",
+														"nodes"
+													]
+												}
+											},
+											"response": []
+										},
 										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"var jsonRes = pm.response.json();\r",
-													"\r",
-													"try {\r",
-													"    pm.environment.set(\"GROWING_UP_ASSESSMENT_NODE_Q3_ID\", jsonRes.Data.AssessmentNode.id);\r",
-													"}\r",
-													"catch (error) {\r",
-													"    console.log(error.message);\r",
-													"}\r",
-													"\r",
-													"pm.test(\"Request is successfull\", function () {\r",
-													"    pm.response.to.have.status(201);\r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Status).to.eql('success');\r",
-													"});\r",
-													"\r",
-													"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
-													"   \r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
-													"    \r",
-													"     \r",
-													"});\r",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{ADMIN_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 3.During what stage do we emphasise most on either our family or career?\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"Kishoravasta\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"Text\": \"Yuva\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"Madhyam Aayu\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"Budhapa\",\r\n            \"Sequence\": 4\r\n        }\r\n        \r\n    ],\r\n    \"CorrectAnswer\" : 1\r\n}\r\n",
-											"options": {
-												"raw": {
-													"language": "json"
+											"name": "Add question node- 2",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"var jsonRes = pm.response.json();\r",
+															"\r",
+															"try {\r",
+															"    pm.environment.set(\"GROWING_UP_ASSESSMENT_NODE_Q2_ID\", jsonRes.Data.AssessmentNode.id);\r",
+															"}\r",
+															"catch (error) {\r",
+															"    console.log(error.message);\r",
+															"}\r",
+															"\r",
+															"pm.test(\"Request is successfull\", function () {\r",
+															"    pm.response.to.have.status(201);\r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Status).to.eql('success');\r",
+															"});\r",
+															"\r",
+															"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
+															"   \r",
+															"    var jsonRes = pm.response.json();\r",
+															"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
+															"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
+															"    \r",
+															"  \r",
+															"});\r",
+															""
+														],
+														"type": "text/javascript"
+													}
 												}
-											}
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes",
-											"host": [
-												"{{BASE_URL}}"
 											],
-											"path": [
-												"clinical",
-												"assessment-templates",
-												"{{ASSESSMENT_TEMPLATE_ID}}",
-												"nodes"
-											]
-										}
-									},
-									"response": []
-								}
-							]
-						},
-						{
-							"name": "Transitioning from adolescence",
-							"item": [
-								{
-									"name": "Create transitioning from adolescence",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"var jsonRes = pm.response.json();",
-													"",
-													"try {",
-													"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.id);",
-													"    pm.environment.set(\"ASSESSMENT_TEMPLATE_ROOT_NODE_ID\", jsonRes.Data.AssessmentTemplate.RootNodeId);",
-													"    pm.environment.set(\"ADOLESCENCE_ASSESSMENT_TEMPLATE_ID\", jsonRes.Data.AssessmentTemplate.id);",
-													"}",
-													"catch (error) {",
-													"    console.log(error.message);",
-													"}",
-													"",
-													"pm.test(\"Request is successfull\", function () {",
-													"    pm.response.to.have.status(201);",
-													"    var jsonRes = pm.response.json();",
-													"    pm.expect(jsonRes.Status).to.eql('success');",
-													"});",
-													"",
-													"pm.test(\"New assessment template is created\", function () {",
-													"   ",
-													"    var jsonRes = pm.response.json();",
-													"    pm.expect(jsonRes.Data).to.have.property('AssessmentTemplate');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.not.be.empty;",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('id');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Title');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Description');",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate).to.have.property('Type');",
-													"    ",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate.Title).equals(\"KCCQ assessment template\");",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate.Description).equals(\"Effect of heart failure on the life of a patient\");",
-													"    pm.expect(jsonRes.Data.AssessmentTemplate.Type).equals(\"Custom\");",
-													"    ",
-													"});",
-													""
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{ADMIN_USER_JWT}}",
+														"type": "text"
+													},
+													{
+														"key": "x-api-key",
+														"value": "{{API_CLIENT_INTERNAL_KEY}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
 												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{ADMIN_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"Title\": \"Transitioning from adolescence\",\n    \"Description\": \"\",\n    \"DisplayCode\": \"\",\n    \"Type\": \"Careplan\",\n    \"Provider\": \"REAN\",\n    \"ProviderAssessmentCode\": \"1\",\n    \"ServeListNodeChildrenAtOnce\": false,\n    \"TotalNumberOfQuestions\": 2\n}",
-											"options": {
-												"raw": {
-													"language": "json"
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 2.What do we do if we are forced to do something we don’t want to do, like quit education or get married\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"Quit education or get married\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"Text\": \"Run away from home\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"Get violent with family\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"Talk to a trusted person or organisation and seek support\",\r\n            \"Sequence\": 4\r\n        }\r\n        \r\n    ],\r\n    \"CorrectAnswer\" : 4\r\n}\r\n",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes",
+													"host": [
+														"{{BASE_URL}}"
+													],
+													"path": [
+														"clinical",
+														"assessment-templates",
+														"{{ASSESSMENT_TEMPLATE_ID}}",
+														"nodes"
+													]
 												}
-											}
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/clinical/assessment-templates",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"clinical",
-												"assessment-templates"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "Add question node- 1",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"var jsonRes = pm.response.json();\r",
-													"\r",
-													"try {\r",
-													"    pm.environment.set(\"GROWING_UP_ASSESSMENT_NODE_Q1_ID\", jsonRes.Data.AssessmentNode.id);\r",
-													"}\r",
-													"catch (error) {\r",
-													"    console.log(error.message);\r",
-													"}\r",
-													"\r",
-													"pm.test(\"Request is successfull\", function () {\r",
-													"    pm.response.to.have.status(201);\r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Status).to.eql('success');\r",
-													"});\r",
-													"\r",
-													"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
-													"   \r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
-													"    \r",
-													"});\r",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{ADMIN_USER_JWT}}",
-												"type": "text"
 											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 1.What are some ways for us to deal with the confusion and mixed messages we receive at this age? <select all that apply>\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Multi Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"Speak to an adult we trust\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"Text\": \"Show that we are responsible\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"Build trust with people around us\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"Convince parents to give us what we want\",\r\n            \"Sequence\": 4\r\n        }\r\n    ]\r\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"clinical",
-												"assessment-templates",
-												"{{ASSESSMENT_TEMPLATE_ID}}",
-												"nodes"
-											]
+											"response": []
 										}
-									},
-									"response": []
-								},
-								{
-									"name": "Add question node- 2",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"var jsonRes = pm.response.json();\r",
-													"\r",
-													"try {\r",
-													"    pm.environment.set(\"GROWING_UP_ASSESSMENT_NODE_Q2_ID\", jsonRes.Data.AssessmentNode.id);\r",
-													"}\r",
-													"catch (error) {\r",
-													"    console.log(error.message);\r",
-													"}\r",
-													"\r",
-													"pm.test(\"Request is successfull\", function () {\r",
-													"    pm.response.to.have.status(201);\r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Status).to.eql('success');\r",
-													"});\r",
-													"\r",
-													"pm.test(\"Assessment question node - single choice selection is created\", function () {\r",
-													"   \r",
-													"    var jsonRes = pm.response.json();\r",
-													"    pm.expect(jsonRes.Data).to.have.property('AssessmentNode');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.not.be.empty;\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('id');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Title');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('Description');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');\r",
-													"    pm.expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');\r",
-													"    \r",
-													"  \r",
-													"});\r",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Authorization",
-												"value": "Bearer {{ADMIN_USER_JWT}}",
-												"type": "text"
-											},
-											{
-												"key": "x-api-key",
-												"value": "{{API_CLIENT_INTERNAL_KEY}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\r\n    \"ParentNodeId\": \"{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}\",\r\n    \"NodeType\": \"Question\",\r\n    \"Title\": \"Q 2.What do we do if we are forced to do something we don’t want to do, like quit education or get married\",\r\n    \"Description\": \"\",\r\n    \"QueryResponseType\": \"Single Choice Selection\",\r\n    \"Options\": [\r\n        {\r\n            \"Text\": \"Quit education or get married\",\r\n            \"Sequence\": 1\r\n        },\r\n        {\r\n            \"Text\": \"Run away from home\",\r\n            \"Sequence\": 2\r\n        },\r\n        {\r\n            \"Text\": \"Get violent with family\",\r\n            \"Sequence\": 3\r\n        },\r\n        {\r\n            \"Text\": \"Talk to a trusted person or organisation and seek support\",\r\n            \"Sequence\": 4\r\n        }\r\n        \r\n    ],\r\n    \"CorrectAnswer\" : 4\r\n}\r\n",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes",
-											"host": [
-												"{{BASE_URL}}"
-											],
-											"path": [
-												"clinical",
-												"assessment-templates",
-												"{{ASSESSMENT_TEMPLATE_ID}}",
-												"nodes"
-											]
-										}
-									},
-									"response": []
+									]
 								}
 							]
 						}
 					]
-				}
-			]
-		},
-		{
-			"name": "Sneha-Rahi-Courses",
-			"item": [
+				},
 				{
 					"name": "Learning Journeys",
 					"item": [
@@ -11431,7 +11431,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"type": "text/javascript",
 										"exec": [
 											"var jsonRes = pm.response.json();\r",
 											"\r",
@@ -11467,7 +11466,8 @@
 											"});\r",
 											"\r",
 											""
-										]
+										],
+										"type": "text/javascript"
 									}
 								}
 							],
@@ -11492,7 +11492,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Title\": \"Associate-Finance Processes and Operations\",\r\n    \"Description\": \"abcs\",\r\n    \"Link\": \"https://github.com/REAN-Foundation/reancare-service/pull/290\",\r\n    \"PostDate\": \"2022-08-03\",\r\n    \"DaysActive\": 7,\r\n    \"Tags\": [\"Popular\", \"HotNews\"],\r\n    \"IsActive\": false,\r\n    \"ImageUrl\": \"https://github.com/REAN-Foundation/reancare-service/pull/290\",\r\n    \"Action\": \"Apply for job\"\r\n}",
+									"raw": "{\r\n    \"Title\": \"Platform engineer\",\r\n    \"Description\": \"Firstly you will have to check for what violation you’ve received the show cause notice. If you really failed to conduct an AGM according to the timeline provided, your reply should contain acceptance of non-compliance and prayer for imposing low penalty due to the small size of the company. There shall be no loss to the shareholders and the general public, no repetitive nature of non-compliance etc. etc.\",\r\n    \"Link\": \"https://github.com/REAN-Foundation/reancare-service\",\r\n    \"PostDate\": \"2022-08-03\",\r\n    \"DaysActive\": 7,\r\n    \"Tags\": [\"Popular\", \"HotNews\"],\r\n    \"IsActive\": false,\r\n    \"ImageUrl\": \"https://www.complybook.com/images/blogs/original/1667016702Import%20of%20Milk%20and%20Milk%20Products.jpg\",\r\n    \"Action\": \"Apply for job\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -11500,11 +11500,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/notices/",
+									"raw": "{{BASE_URL}}/general/notices/",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
+										"general",
 										"notices",
 										""
 									]
@@ -11585,7 +11586,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"type": "text/javascript",
 										"exec": [
 											"pm.test(\"Request is successfull\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -11610,7 +11610,8 @@
 											"});",
 											"",
 											""
-										]
+										],
+										"type": "text/javascript"
 									}
 								}
 							],
@@ -11635,7 +11636,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"Title\": \"Job Apply\",\n    \"Description\": \"abcs\",\n    \"Link\": \"https://github.com/REAN-Foundation/reancare-service/pull/290\",\n    \"PostDate\": \"2022-08-03\",\n    \"DaysActive\": 7,\n    \"Tags\": [\"Popular\", \"Hot\"],\n    \"IsActive\": false,\n    \"ImageUrl\": \"https://github.com/REAN-Foundation/reancare-service/pull/290\",\n    \"Action\": \"Applied\"\n}",
+									"raw": "{\n    \"Title\": \"Job Apply\",\n    \"Description\": \"As per Section 96 of the Companies Act, 2013: Every company other than a One Person Company shall in each year hold in addition to any other meetings, a general meeting as its annual general meeting and shall specify the meeting as such in the notices calling it, and not more than 15 months shall elapse between the date of one annual general meeting of a company and that of the next. Provided that in case of the first annual general meeting, it shall be held within a period of 9 months from the date of closing of the first financial year of the company and in any other case, within a period of 6 months, from the date of closing of the financial year. Now, there are following 2 probabilities for getting a notice for violation of Section 96\",\n    \"Link\": \"https://amritmahotsav.nic.in/\",\n    \"PostDate\": \"2022-08-03\",\n    \"DaysActive\": 7,\n    \"Tags\": [\"Popular\", \"Hot\"],\n    \"IsActive\": false,\n    \"ImageUrl\": \"https://www.complybook.com/images/blogs/original/1584935885ReplyToShowCauseNoticeReceivedMCAComplianceManagementSystem.png\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -11643,11 +11644,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/notices/{{NOTICE_ID}}",
+									"raw": "{{BASE_URL}}/general/notices/{{NOTICE_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
+										"general",
 										"notices",
 										"{{NOTICE_ID}}"
 									]
@@ -11823,12 +11825,11 @@
 					"name": "Notice Action",
 					"item": [
 						{
-							"name": "Create notice action record",
+							"name": "Take action over notice",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"type": "text/javascript",
 										"exec": [
 											"var jsonRes = pm.response.json();\r",
 											"\r",
@@ -11862,7 +11863,8 @@
 											"});\r",
 											"\r",
 											""
-										]
+										],
+										"type": "text/javascript"
 									}
 								}
 							],
@@ -11895,7 +11897,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{BASE_URL}}/notices/{{NOTICE_ID}}/users/{{USER_ID}}/take-action",
+									"raw": "{{BASE_URL}}/notices/{{NOTICE_ID}}/users/{{PATIENT_USER_ID}}/take-action",
 									"host": [
 										"{{BASE_URL}}"
 									],
@@ -11903,7 +11905,7 @@
 										"notices",
 										"{{NOTICE_ID}}",
 										"users",
-										"{{USER_ID}}",
+										"{{PATIENT_USER_ID}}",
 										"take-action"
 									]
 								}
@@ -11911,12 +11913,11 @@
 							"response": []
 						},
 						{
-							"name": "Get notice action record by id",
+							"name": "Get notice action for the user",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"type": "text/javascript",
 										"exec": [
 											"pm.test(\"Request is successfull\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -11941,7 +11942,8 @@
 											"});",
 											"",
 											""
-										]
+										],
+										"type": "text/javascript"
 									}
 								}
 							],
@@ -11965,15 +11967,85 @@
 									}
 								],
 								"url": {
-									"raw": "{{BASE_URL}}/general/notices/{{NOTICE_ACTION_ID}}/actions",
+									"raw": "{{BASE_URL}}/general/notices/{{NOTICE_ID}}/users/{{PATIENT_USER_ID}}",
 									"host": [
 										"{{BASE_URL}}"
 									],
 									"path": [
 										"general",
 										"notices",
-										"{{NOTICE_ACTION_ID}}",
-										"actions"
+										"{{NOTICE_ID}}",
+										"users",
+										"{{PATIENT_USER_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all user actions",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Status).to.eql('success');",
+											"});",
+											"",
+											"pm.test(\"Notice action record is returned\", function () {",
+											"",
+											"    var expectedAction =  \"Job posting\";",
+											"    var expectedActionTakenAt = \"2022-08-04\";",
+											"    ",
+											"    var jsonRes = pm.response.json();",
+											"    pm.expect(jsonRes.Data).to.have.property('NoticeAction');",
+											"    pm.expect(jsonRes.Data.NoticeAction).to.not.be.empty;",
+											"    pm.expect(jsonRes.Data.NoticeAction).to.have.property('Action');",
+											"    pm.expect(jsonRes.Data.NoticeAction).to.have.property('ActionTakenAt');",
+											"    ",
+											"    pm.expect(jsonRes.Data.NoticeAction.Action).equals(expectedAction);",
+											"    pm.expect(jsonRes.Data.NoticeAction.ActionTakenAt).equals(expectedActionTakenAt);",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{ADMIN_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/general/notices/users/{{PATIENT_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"general",
+										"notices",
+										"users",
+										"{{PATIENT_USER_ID}}"
 									]
 								}
 							},
@@ -13724,7 +13796,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"91-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\"\r\n}"
+									"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Password\": \"{{PASSWORD}}\"\r\n}"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/patients",
@@ -13796,7 +13868,225 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Phone\": \"91-{{PHONE_NUMBER}}\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
+									"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/users/login-with-password",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"login-with-password"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update user details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"//Randomly generated user details\r",
+											"\r",
+											"var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];\r",
+											"\r",
+											"var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];\r",
+											"\r",
+											"var first = first_names[Math.floor(Math.random() * first_names.length)];\r",
+											"var last = last_names[Math.floor(Math.random() * last_names.length)];\r",
+											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+											"var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();\r",
+											"var email = first + \".\" + random_postfix + \".\" + last + \"@gmail.com\";\r",
+											"var password = \"Test@123\";\r",
+											"\r",
+											"pm.environment.set(\"FIRST_NAME\", first);\r",
+											"pm.environment.set(\"LAST_NAME\", last);\r",
+											"pm.environment.set(\"EMAIL\", email);\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{SECOND_USER_JWT}}",
+										"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Prefix\": \"Mr.\",\r\n    \"FirstName\": \"{{FIRST_NAME}}\",\r\n    \"MiddleName\": \"X\",\r\n    \"LastName\": \"{{LAST_NAME}}\",\r\n    \"Email\": \"{{EMAIL}}\",\r\n    \"Gender\": \"Male\",\r\n    \"BirthDate\": \"1979-01-01\",\r\n    \"ImageResourceId\": \"20fd7e52-0d24-4599-bda5-3ed7be2dd383\",\r\n    \"Address\": {\r\n        \"Type\": \"Official\",\r\n        \"AddressLine\": \"99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli\",\r\n        \"City\": \"Mumbai\",\r\n        \"Country\": \"India\"\r\n    },\r\n    \"DefaultTimeZone\": \"+05:30\",\r\n    \"CurrentTimeZone\": \"+05:30\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients/{{OTHER_USER_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients",
+										"{{OTHER_USER_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Third user logs in",
+					"item": [
+						{
+							"name": "Register second user with phone and password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"OTHER_USER_ID\", jsonRes.Data.Patient.User.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();\r",
+											"var password = \"Test@123\";\r",
+											"\r",
+											"pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+											"pm.environment.set(\"PASSWORD\", password);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Phone\": \"+91-9730359993\",\r\n    \"Password\": \"{{PASSWORD}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/patients",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"patients"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Second user logs in",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"SECOND_USER_JWT\", jsonRes.Data.AccessToken);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient login: Access token is returned\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('AccessToken');\r",
+											"    pm.expect(jsonRes.Data.AccessToken).to.not.be.null;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set(\"PATIENT_LOGIN_ROLE_ID\", 2);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"description": "API key for client app authentication",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Phone\": \"+91-9970155165\",\r\n    \"Password\": \"{{PASSWORD}}\",\r\n    \"LoginRoleId\": {{PATIENT_LOGIN_ROLE_ID}}\r\n}\r\n"
 								},
 								"url": {
 									"raw": "{{BASE_URL}}/users/login-with-password",
@@ -13945,7 +14235,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/patients/search?orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25",
+							"raw": "{{BASE_URL}}/patients/search?name=pea&orderBy=FirstName&order=ascending&pageIndex=0&itemsPerPage=5",
 							"host": [
 								"{{BASE_URL}}"
 							],
@@ -13968,9 +14258,8 @@
 								},
 								{
 									"key": "name",
-									"value": "{{PATIENT_FIRST_NAME}}",
-									"description": "Search by name",
-									"disabled": true
+									"value": "pea",
+									"description": "Search by name"
 								},
 								{
 									"key": "gender",
@@ -14004,7 +14293,7 @@
 								},
 								{
 									"key": "orderBy",
-									"value": "Email",
+									"value": "FirstName",
 									"description": "The name of the parameter to order by"
 								},
 								{
@@ -14019,7 +14308,7 @@
 								},
 								{
 									"key": "itemsPerPage",
-									"value": "25",
+									"value": "5",
 									"description": "Items per page"
 								}
 							]
@@ -14092,75 +14381,6 @@
 								"chats",
 								"conversations",
 								"start"
-							]
-						},
-						"description": "Search addresses using query parameters."
-					},
-					"response": []
-				},
-				{
-					"name": "Start group conversation",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonRes = pm.response.json();\r",
-									"\r",
-									"try {\r",
-									"    pm.environment.set(\"CONVERSATION_ID\", jsonRes.Data.Conversation.id);\r",
-									"}\r",
-									"catch (error) {\r",
-									"    console.log(error.message);\r",
-									"}\r",
-									"\r",
-									"pm.test(\"Request is successfull\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"    pm.expect(jsonRes.Status).to.eql('success');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"A conversation is created\", function () {\r",
-									"    pm.expect(jsonRes.Data).to.have.property('Conversation');\r",
-									"});\r",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{PATIENT_USER_JWT}}",
-								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
-								"type": "text"
-							},
-							{
-								"key": "x-api-key",
-								"value": "{{API_CLIENT_INTERNAL_KEY}}",
-								"description": "API key for client app authentication",
-								"type": "text"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"IsGroupConversation\": true,\r\n    \"Topic\": \"Football\",\r\n    \"Marked\": true,\r\n    \"Users\": [\r\n        \"{{PATIENT_USER_ID}}\",\r\n        \"{{OTHER_USER_ID}}\"\r\n    ]\r\n}"
-						},
-						"url": {
-							"raw": "{{BASE_URL}}/chats/conversations",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"chats",
-								"conversations"
 							]
 						},
 						"description": "Search addresses using query parameters."
@@ -14283,7 +14503,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Message\": \"At what time?\"\r\n}"
+							"raw": "{\r\n    \"Message\": \"काय करता आपण या क्षणाला?\"\r\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/chats/conversations/{{CONVERSATION_ID}}/messages",
@@ -14417,7 +14637,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Message\": \"Sounds good. Let's ping everyone.\"\r\n}"
+							"raw": "{\r\n    \"Message\": \"Sounds good. Let's ping everyone. Chat message sent successfully\"\r\n}"
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/chats/conversations/{{CONVERSATION_ID}}/messages",
@@ -14978,6 +15198,150 @@
 								"chats",
 								"messages",
 								"{{CHAT_MESSAGE_1}}"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Get recent conversations for first user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"List of patients is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Patients');\r",
+									"    pm.expect(jsonRes.Data.Patients.Items.length).to.be.greaterThan(0);\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/users/{{PATIENT_USER_ID}}/conversations/recent",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"users",
+								"{{PATIENT_USER_ID}}",
+								"conversations",
+								"recent"
+							]
+						},
+						"description": "Search addresses using query parameters."
+					},
+					"response": []
+				},
+				{
+					"name": "Get marked/favourite conversations for first user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Request is successfull\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Status).to.eql('success');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"List of patients is returned\", function () {\r",
+									"\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.expect(jsonRes.Data).to.have.property('Patients');\r",
+									"    pm.expect(jsonRes.Data.Patients.Items.length).to.be.greaterThan(0);\r",
+									"\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{PATIENT_USER_JWT}}",
+								"description": "User login session token (JWT). Format : Bearer JWT_TOKEN",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{API_CLIENT_INTERNAL_KEY}}",
+								"description": "API key for client app authentication",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/chats/users/{{PATIENT_USER_ID}}/conversations/marked",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"chats",
+								"users",
+								"{{PATIENT_USER_ID}}",
+								"conversations",
+								"marked"
 							]
 						},
 						"description": "Search addresses using query parameters."

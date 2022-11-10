@@ -19,4 +19,6 @@ export interface PatientDonorsDto {
     ElligibleDonorsCount? : number;
     Status?               : string;
     DonorGender?          : string;
+    DonorName?            : string;
+    DonorPhone?           : string
 }

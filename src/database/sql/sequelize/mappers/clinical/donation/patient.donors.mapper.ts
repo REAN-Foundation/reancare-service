@@ -23,7 +23,9 @@ export class PatientDonorsMapper {
             LastDonationDate : patientDonors.LastDonationDate,
             QuantityRequired : patientDonors.QuantityRequired,
             Status           : patientDonors.Status,
-            DonorGender      : null
+            DonorGender      : null,
+            DonorName        : null,
+            DonorPhone       : null
         };
         return dto;
     };

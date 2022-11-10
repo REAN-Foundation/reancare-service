@@ -79,9 +79,12 @@ export class PatientDonorsService {
             return null;
         }
         var donor = await this._donorRepo.getByUserId(dto.DonorUserId);
+        const user = await this._userRepo.getById(dto.DonorUserId);
         dto.Donor = donor;
-        const person = await this._personRepo.getById(donor.PersonId);
+        const person = await this._personRepo.getById(user.PersonId);
         dto.DonorGender = person.Gender;
+        dto.DonorName = person.DisplayName;
+        dto.DonorPhone = person.Phone;
         return dto;
     };
 
@@ -96,6 +99,8 @@ export class PatientDonorsService {
             user.Person = await this._personRepo.getById(user.PersonId);
         }
         dto.DonorGender = user.Person.Gender;
+        dto.DonorName = user.Person.DisplayName;
+        dto.DonorPhone =  user.Person.Phone;
         if (user.Person.Gender === 'Male' ) {
             const dayDiff = Math.floor(TimeHelper.dayDiff(new Date(), dto.LastDonationDate));
             return dayDiff > 90 ? dto : null;

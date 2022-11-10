@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { PhysicalActivityDomainModel } from '../../../../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
@@ -7,12 +8,16 @@ import { PhysicalActivitySearchFilters, PhysicalActivitySearchResults } from '..
 import { IPhysicalActivityRepo } from '../../../../../repository.interfaces/wellness/exercise/physical.activity.repo.interface';
 import { PhysicalActivityMapper } from '../../../mappers/wellness/exercise/physical.activity.mapper';
 import PhysicalActivity from '../../../models/wellness/exercise/physical.activity.model';
+import Patient from '../../../models/users/patient/patient.model';
+import User from '../../../models/users/user/user.model';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
 export class PhysicalActivityRepo implements IPhysicalActivityRepo {
 
-    create = async (createModel: PhysicalActivityDomainModel): Promise<PhysicalActivityDto> => {
+    public create = async (createModel: PhysicalActivityDomainModel): Promise<PhysicalActivityDto> => {
         try {
             const entity = {
                 id                          : createModel.id,
@@ -37,7 +42,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
         }
     };
 
-    getById = async (id: string): Promise<PhysicalActivityDto> => {
+    public getById = async (id: uuid): Promise<PhysicalActivityDto> => {
         try {
             const physicalActivity = await PhysicalActivity.findByPk(id);
             return await PhysicalActivityMapper.toDto(physicalActivity);
@@ -48,7 +53,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
         }
     };
 
-    search = async (filters: PhysicalActivitySearchFilters): Promise<PhysicalActivitySearchResults> => {
+    public search = async (filters: PhysicalActivitySearchFilters): Promise<PhysicalActivitySearchResults> => {
         try {
             const search = { where: {} };
 
@@ -110,7 +115,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
     };
 
     // eslint-disable-next-line max-len
-    update = async (id: string, updateModel: PhysicalActivityDomainModel): Promise<PhysicalActivityDto> => {
+    public update = async (id: uuid, updateModel: PhysicalActivityDomainModel): Promise<PhysicalActivityDto> => {
         try {
             const physicalActivity = await PhysicalActivity.findOne({ where: { id: id } });
 
@@ -151,7 +156,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
         }
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    public delete = async (id: uuid): Promise<boolean> => {
         try {
             await PhysicalActivity.destroy({ where: { id: id } });
             return true;
@@ -161,12 +166,140 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
         }
     };
 
-    getPhysicalActivityStatsForLastWeek = async (patientUserId: string): Promise<any> => {
-        return {};
+    public getPhysicalActivityStatsForLastWeek = async (patientUserId: uuid): Promise<any> => {
+        try {
+            const questionnaireStats = await this.getQuestionnaireStats(patientUserId, 7);
+            const calorieStats = await this.getDayByDayCalorieStats(patientUserId, 7);
+            return {
+                QuestionnaireStats : questionnaireStats,
+                CalorieStats       : calorieStats,
+            };
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
 
-    getPhysicalActivityStatsForLastMonth = async (patientUserId: string): Promise<any> => {
-        return {};
+    public getPhysicalActivityStatsForLastMonth = async (patientUserId: uuid): Promise<any> => {
+        try {
+            const questionnaireStats = await this.getQuestionnaireStats(patientUserId, 30);
+            const calorieStats = await this.getDayByDayCalorieStats(patientUserId, 30);
+            return {
+                QuestionnaireStats : questionnaireStats,
+                CalorieStats       : calorieStats,
+            };
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
+
+    //#region Privates
+
+    private getBooleanStats = (x) => {
+        if (x.PhysicalActivityQuestionAns === true) {
+            return {
+                Response  : 1,
+                CreatedAt : x.CreatedAt,
+            };
+        }
+        else {
+            return {
+                Response  : 0,
+                CreatedAt : x.CreatedAt,
+            };
+        }
+    };
+
+    private async getQuestionnaireStats(patientUserId: string, numDays: number) {
+        const questionnaireRecords = await this.getQuestionnaireRecords(patientUserId, numDays, DurationType.Day);
+        const quesrionnaireStats = questionnaireRecords.map(x => this.getBooleanStats(x));
+        return {
+            Question : `Did you add movement to your day today?`,
+            Stats    : quesrionnaireStats,
+        };
+    }
+
+    private async getQuestionnaireRecords(patientUserId: string, count: number, unit: DurationType) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), count, unit);
+        let nutritionRecords = await PhysicalActivity.findAll({
+            where : {
+                PatientUserId            : patientUserId,
+                PhysicalActivityQuestion : {
+                    [Op.not] : null,
+                },
+                CreatedAt : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        nutritionRecords = nutritionRecords.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+        return nutritionRecords;
+    }
+
+    private async getDayByDayCalorieStats(patientUserId: string, numDays: number) {
+
+        const timezone = await this.getPatientTimezone(patientUserId);
+        const todayStr = (new Date()).toISOString()
+            .split('T')[0];
+        const todayStart = TimeHelper.getDateWithTimezone(todayStr, timezone);
+        const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
+        const reference = todayStart;
+
+        const stats = [];
+
+        for await (var day of dayList) {
+
+            var dayStart = TimeHelper.subtractDuration(reference, (day - 1) * 24, DurationType.Hour);
+            var dayEnd = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+
+            const dayStr = dayStart.toISOString().split('T')[0];
+
+            const consumptions = await PhysicalActivity.findAll({
+                where : {
+                    PatientUserId            : patientUserId,
+                    PhysicalActivityQuestion : null,
+                    CreatedAt                : {
+                        [Op.gte] : dayStart,
+                        [Op.lte] : dayEnd,
+                    }
+                }
+            });
+            let totalCaloriesForDay = 0;
+            consumptions.forEach((food) => {
+                totalCaloriesForDay += food.CaloriesBurned;
+            });
+
+            stats.push({
+                DateStr  : dayStr,
+                Calories : totalCaloriesForDay,
+            });
+        }
+        return stats;
+    }
+
+    private async getPatientTimezone(patientUserId: string) {
+        let timezone = '+05:30';
+        const patient = await Patient.findOne({
+            where : {
+                UserId : patientUserId
+            },
+            include : [
+                {
+                    model    : User,
+                    as       : 'User',
+                    required : true,
+                }
+            ]
+        });
+        if (patient) {
+            timezone = patient.User.CurrentTimeZone;
+        }
+        return timezone;
+    }
+
+    //#endregion
 
 }

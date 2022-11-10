@@ -64,75 +64,59 @@ export class StatisticsService {
     public getPatientStats = async (patientUserId: uuid) => {
 
         //Nutrition
-        const NutritionLastWeek = await this._foodConsumptionRepo.getNutritionStatsForLastWeek(patientUserId);
-        const NutritionLastMonth = await this._foodConsumptionRepo.getNutritionStatsForLastMonth(patientUserId);
-        const NutritionQuestionnaireResponsesLastWeek =
-            await this.getNutritionQuestionnaireReponseForLastWeek(patientUserId);
-        const NutritionQuestionnaireResponsesLastMonth =
-            await this.getNutritionQuestionnaireReponseForLastMonth(patientUserId);
+        const nutritionLastWeek = await this._foodConsumptionRepo.getNutritionStatsForLastWeek(patientUserId);
+        const nutritionLastMonth = await this._foodConsumptionRepo.getNutritionStatsForLastMonth(patientUserId);
         const nutrition = {
-            NutritionLastWeek,
-            NutritionLastMonth,
-            NutritionQuestionnaireResponsesLastWeek,
-            NutritionQuestionnaireResponsesLastMonth,
+            LastWeek  : nutritionLastWeek,
+            LastMonth : nutritionLastMonth,
         };
 
         //Physical activity
-        const PhysicalActivityLastWeek = await this._physicalActivityRepo.getPhysicalActivityStatsForLastWeek(patientUserId);
-        const PhysicalActivityLastMonth =
-            await this._physicalActivityRepo.getPhysicalActivityStatsForLastMonth(patientUserId);
-        const PhysicalActivityQuestionnaireResponsesLastWeek =
-            await this.getPhysicalActivityQuestionnaireReponseForLastWeek(patientUserId);
-        const PhysicalActivityQuestionnaireResponsesLastMonth =
-            await this.getPhysicalActivityQuestionnaireReponseForLastMonth(patientUserId);
-        const physicalActivity = {
-            PhysicalActivityLastWeek,
-            PhysicalActivityLastMonth,
-            PhysicalActivityQuestionnaireResponsesLastWeek,
-            PhysicalActivityQuestionnaireResponsesLastMonth,
+        const exerciseLastWeek = await this._physicalActivityRepo.getPhysicalActivityStatsForLastWeek(patientUserId);
+        const exerciseLastMonth = await this._physicalActivityRepo.getPhysicalActivityStatsForLastMonth(patientUserId);
+        const physicalActivityTrends = {
+            LastWeek  : exerciseLastWeek,
+            LastMonth : exerciseLastMonth,
         };
 
         //Body weight
-        const BodyWeightLast3Months = await this._bodyWeightRepo.getBodyWeightStatsForLast3Months(patientUserId);
-        const BodyWeightLast6Months = await this._bodyWeightRepo.getBodyWeightStatsForLast6Months(patientUserId);
-        const bodyWeight = {
-            BodyWeightLast3Months,
-            BodyWeightLast6Months,
+        const bodyWeightLast3Months = await this._bodyWeightRepo.getBodyWeightStatsForLast3Months(patientUserId);
+        const bodyWeightLast6Months = await this._bodyWeightRepo.getBodyWeightStatsForLast6Months(patientUserId);
+        const bodyWeightTrends = {
+            LastWeek  : bodyWeightLast3Months,
+            LastMonth : bodyWeightLast6Months,
         };
 
         //Lab values
-        const LabRecordsLastMonth = await this._labRecordsRepo.getLabRecordsForLastMonth(patientUserId);
-        const LabRecordsLast3Months = await this._labRecordsRepo.getLabRecordsForLast3Months(patientUserId);
-        const LabRecordsLast6Months = await this._labRecordsRepo.getLabRecordsForLast6Months(patientUserId);
+        const labRecordsLastMonth = await this._labRecordsRepo.getLabRecordsForLastMonth(patientUserId);
+        const labRecordsLast3Months = await this._labRecordsRepo.getLabRecordsForLast3Months(patientUserId);
+        const labRecordsLast6Months = await this._labRecordsRepo.getLabRecordsForLast6Months(patientUserId);
         const labRecords = {
-            LabRecordsLastMonth,
-            LabRecordsLast3Months,
-            LabRecordsLast6Months,
+            LastMonth   : labRecordsLastMonth,
+            Last3Months : labRecordsLast3Months,
+            Last6Months : labRecordsLast6Months,
         };
 
         //Sleep trend
         const SleepTrendLastWeek = await this._sleepRepo.getSleepStatsForLastWeek(patientUserId);
         const SleepTrendLastMonth = await this._sleepRepo.getSleepStatsForLastMonth(patientUserId);
         const sleepTrend = {
-            SleepTrendLastWeek,
-            SleepTrendLastMonth,
+            LastWeek  : SleepTrendLastWeek,
+            LastMonth : SleepTrendLastMonth,
         };
 
         //Medication trends
-        const MedicationStatsLastWeek =
-            await this._medicationConsumptionRepo.getMedicationStats(patientUserId, 7);
-        const MedicationsStatsLastMonth =
-            await this._medicationConsumptionRepo.getMedicationStats(patientUserId, 30);
-
+        const medsLastWeek = await this._medicationConsumptionRepo.getMedicationStats(patientUserId, 7);
+        const medsLastMonth = await this._medicationConsumptionRepo.getMedicationStats(patientUserId, 30);
         const medicationTrend = {
-            MedicationStatsLastWeek,
-            MedicationsStatsLastMonth,
+            LastWeek  : medsLastWeek,
+            LastMonth : medsLastMonth,
         };
 
         const stats = {
             Nutrition        : nutrition,
-            PhysicalActivity : physicalActivity,
-            BodyWeight       : bodyWeight,
+            PhysicalActivity : physicalActivityTrends,
+            BodyWeight       : bodyWeightTrends,
             LabRecords       : labRecords,
             SleepTrend       : sleepTrend,
             MedicationTrend  : medicationTrend
@@ -143,26 +127,6 @@ export class StatisticsService {
 
     public generateReport = async (stats: any) => {
         throw new Error('Method not implemented.');
-    }
-
-    //#endregion
-
-    //#region Privates
-
-    private getNutritionQuestionnaireReponseForLastMonth = async (patientUserId: uuid) => {
-        throw new Error("Method not implemented.");
-    }
-
-    private getPhysicalActivityQuestionnaireReponseForLastMonth = async (patientUserId: uuid) => {
-        throw new Error("Method not implemented.");
-    }
-
-    private getNutritionQuestionnaireReponseForLastWeek = async (patientUserId: uuid) => {
-        throw new Error("Method not implemented.");
-    }
-
-    private getPhysicalActivityQuestionnaireReponseForLastWeek = async (patientUserId: uuid) => {
-        throw new Error("Method not implemented.");
     }
 
     //#endregion

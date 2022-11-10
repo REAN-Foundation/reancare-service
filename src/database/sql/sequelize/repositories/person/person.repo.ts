@@ -121,6 +121,8 @@ export class PersonRepo implements IPersonRepo {
                 Gender               : personDomainModel.Gender ?? 'Unknown',
                 SelfIdentifiedGender : personDomainModel.SelfIdentifiedGender ?? null,
                 MaritalStatus        : personDomainModel.MaritalStatus ?? null,
+                Race                 : personDomainModel.Race ?? null,
+                Ethnicity            : personDomainModel.Ethnicity ?? null,
                 BirthDate            : personDomainModel.BirthDate ?? null,
                 Age                  : personDomainModel.Age,
                 ImageResourceId      : personDomainModel.ImageResourceId ?? null,
@@ -185,6 +187,12 @@ export class PersonRepo implements IPersonRepo {
             }
             if (personDomainModel.MaritalStatus !== undefined) {
                 person.MaritalStatus = personDomainModel.MaritalStatus;
+            }
+            if (personDomainModel.Race !== undefined) {
+                person.Race = personDomainModel.Race;
+            }
+            if (personDomainModel.Ethnicity !== undefined) {
+                person.Ethnicity = personDomainModel.Ethnicity;
             }
             if (personDomainModel.Age !== undefined) {
                 person.Age = personDomainModel.Age;

@@ -146,6 +146,18 @@ export class HealthProfileRepo implements IHealthProfileRepo {
             if (patientHealthProfileDomainModel.TobaccoQuestionAns !== undefined) {
                 patientHealthProfile.TobaccoQuestionAns = patientHealthProfileDomainModel.TobaccoQuestionAns;
             }
+            if (patientHealthProfileDomainModel.TypeOfStroke !== undefined) {
+                patientHealthProfile.TypeOfStroke = patientHealthProfileDomainModel.TypeOfStroke;
+            }
+            if (patientHealthProfileDomainModel.HasHighBloodPressure !== undefined) {
+                patientHealthProfile.HasHighBloodPressure = patientHealthProfileDomainModel.HasHighBloodPressure;
+            }
+            if (patientHealthProfileDomainModel.HasHighCholesterol !== undefined) {
+                patientHealthProfile.HasHighCholesterol = patientHealthProfileDomainModel.HasHighCholesterol;
+            }
+            if (patientHealthProfileDomainModel.HasAtrialFibrillation !== undefined) {
+                patientHealthProfile.HasAtrialFibrillation = patientHealthProfileDomainModel.HasAtrialFibrillation;
+            }
 
             await patientHealthProfile.save();
 

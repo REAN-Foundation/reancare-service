@@ -205,7 +205,8 @@ export class DonorController extends BaseUserController {
                 throw new ApiError(404, 'User not found.');
             }
 
-            const deleted = await this._personService.delete(userId);
+            const deleted = await this._personService.delete(existingUser.PersonId);
+            await this._service.deleteByUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }

@@ -99,6 +99,20 @@ export default class Person extends Model {
     })
     MaritalStatus: string;
 
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    Ethnicity: string;
+
+    @Column({
+        type         : DataType.STRING(128),
+        allowNull    : true,
+        defaultValue : ''
+    })
+    Race: string;
+
     @Column({
         type      : DataType.DATE,
         allowNull : true,
@@ -110,6 +124,24 @@ export default class Person extends Model {
         allowNull : true,
     })
     Age: string;
+
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    StrokeSurvivorOrCaregiver: string;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    LivingAlone: boolean;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    WorkedPriorToStroke: boolean;
 
     @IsUUID(4)
     @Column({

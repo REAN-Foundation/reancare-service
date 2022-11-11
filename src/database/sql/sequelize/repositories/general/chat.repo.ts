@@ -234,7 +234,7 @@ export class ChatRepo implements IChatRepo {
             if (updates.Topic) {
                 conversation.Topic = updates.Topic;
             }
-            if (updates.Marked) {
+            if (updates.Marked != null) {
                 conversation.Marked = updates.Marked;
             }
             conversation = await conversation.save();

@@ -78,6 +78,7 @@ import { HealthSystemRepo } from './repositories/users/patient/health.system.rep
 import { NotificationRepo } from './repositories/general/notification.repo';
 import { VolunteerRepo } from './repositories/users/volunteer.repo';
 import { ChatRepo } from './repositories/general/chat.repo';
+import { PatientDonorsRepo } from './repositories/clinical/donation/patient.donors.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -165,6 +166,7 @@ export class SequelizeInjector {
         container.register('INotificationRepo', NotificationRepo);
         container.register('IVolunteerRepo', VolunteerRepo);
         container.register('IChatRepo', ChatRepo);
+        container.register('IPatientDonorsRepo', PatientDonorsRepo);
 
     }
 

@@ -10,6 +10,8 @@ import { NoticeMapper } from '../../mappers/general/notice.mapper';
 import NoticeAction from '../../models/general/notice/notice.action.model';
 import NoticeModel from '../../models/general/notice/notice.model';
 import { Op } from 'sequelize';
+import { uuid } from '../../../../../domain.types/miscellaneous/system.types';
+import Notice from '../../models/general/notice/notice.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -43,7 +45,7 @@ export class NoticeRepo implements INoticeRepo {
         }
     };
 
-    getById = async (id: string): Promise<NoticeDto> => {
+    getNotice = async (id: string): Promise<NoticeDto> => {
         try {
             const notice = await NoticeModel.findByPk(id);
             return await NoticeMapper.toDto(notice);
@@ -53,7 +55,7 @@ export class NoticeRepo implements INoticeRepo {
         }
     };
 
-    search = async (filters: NoticeSearchFilters): Promise<NoticeSearchResults> => {
+    search = async (filters: NoticeSearchFilters, currentUserId: uuid): Promise<NoticeSearchResults> => {
         try {
 
             const search = { where: {} };
@@ -121,8 +123,17 @@ export class NoticeRepo implements INoticeRepo {
             const foundResults = await NoticeModel.findAndCountAll(search);
 
             const dtos: NoticeDto[] = [];
-            for (const notice of foundResults.rows) {
-                const dto = await NoticeMapper.toDto(notice);
+            for await (const notice of foundResults.rows) {
+                let actionByCurrentUser = null;
+                if (currentUserId) {
+                    actionByCurrentUser = await NoticeAction.findOne({
+                        where : {
+                            NoticeId : notice.id,
+                            UserId   : currentUserId
+                        }
+                    });
+                }
+                const dto = NoticeMapper.toDto(notice, actionByCurrentUser);
                 dtos.push(dto);
             }
 
@@ -144,8 +155,7 @@ export class NoticeRepo implements INoticeRepo {
 
     };
 
-    update = async (id: string, updateModel: NoticeDomainModel):
-    Promise<NoticeDto> => {
+    updateNotice = async (id: string, updateModel: NoticeDomainModel): Promise<NoticeDto> => {
         try {
             const notice = await NoticeModel.findByPk(id);
 
@@ -183,7 +193,7 @@ export class NoticeRepo implements INoticeRepo {
 
             await notice.save();
 
-            return await NoticeMapper.toDto(notice);
+            return NoticeMapper.toDto(notice);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -191,9 +201,8 @@ export class NoticeRepo implements INoticeRepo {
         }
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    deleteNotice = async (id: string): Promise<boolean> => {
         try {
-
             const result = await NoticeModel.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
@@ -202,20 +211,47 @@ export class NoticeRepo implements INoticeRepo {
         }
     };
 
-    createAction = async (createModel: NoticeActionDomainModel): Promise<NoticeActionDto> => {
-        
+    takeAction = async (createModel: NoticeActionDomainModel): Promise<NoticeActionDto> => {
+
         var contents = createModel.Contents && createModel.Contents.length > 0 ?
             JSON.stringify(createModel.Contents) : '[]';
-       
+
+        const notice = await Notice.findByPk(createModel.NoticeId);
+        if (!notice) {
+            throw new ApiError(404, 'Notice not found!');
+        }
+
         try {
             const entity = {
                 UserId   : createModel.UserId,
                 NoticeId : createModel.NoticeId,
-                Action   : createModel.Action,
+                Action   : notice.Action,
                 Contents : contents
             };
 
             const noticeAction = await NoticeAction.create(entity);
+            return NoticeMapper.toActionDto(noticeAction);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getNoticeActionForUser = async (noticeId: uuid, userId: uuid): Promise<NoticeActionDto> => {
+        try {
+            const noticeAction = await NoticeAction.findOne({
+                where : {
+                    NoticeId : noticeId,
+                    UserId   : userId,
+                },
+                include : [
+                    {
+                        model    : Notice,
+                        as       : 'Notice',
+                        required : true
+                    }
+                ]
+            });
             return await NoticeMapper.toActionDto(noticeAction);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -223,14 +259,25 @@ export class NoticeRepo implements INoticeRepo {
         }
     };
 
-    getActionById = async (id: string): Promise<NoticeActionDto> => {
+    getAllNoticeActionsForUser = async (userId: string): Promise<NoticeActionDto[]> => {
         try {
-            const noticeAction = await NoticeAction.findByPk(id);
-            return await NoticeMapper.toActionDto(noticeAction);
+            const noticeActions = await NoticeAction.findAll({
+                where : {
+                    UserId : userId,
+                },
+                include : [
+                    {
+                        model    : Notice,
+                        as       : 'Notice',
+                        required : true
+                    }
+                ]
+            });
+            return noticeActions.map(x => NoticeMapper.toActionDto(x));
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
-    };
+    }
 
 }

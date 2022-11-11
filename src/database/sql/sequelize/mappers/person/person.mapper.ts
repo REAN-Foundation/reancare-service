@@ -22,24 +22,29 @@ export class PersonMapper {
         const age = Helper.getAgeFromBirthDate(person.BirthDate);
 
         const dto: PersonDetailsDto = {
-            id                   : person.id,
-            Prefix               : person.Prefix,
-            FirstName            : person.FirstName,
-            MiddleName           : person.MiddleName,
-            LastName             : person.LastName,
-            DisplayName          : displayName,
-            Gender               : Gender[person.Gender],
-            SelfIdentifiedGender : person.SelfIdentifiedGender,
-            MaritalStatus        : person.MaritalStatus,
-            BirthDate            : person.BirthDate,
-            Age                  : person.Age ?? age,
-            Phone                : person.Phone,
-            Email                : person.Email,
-            TelegramChatId       : person.TelegramChatId,
-            ImageResourceId      : person.ImageResourceId,
-            ActiveSince          : person.CreatedAt,
-            Roles                : [],
-            Addresses            : []
+            id                        : person.id,
+            Prefix                    : person.Prefix,
+            FirstName                 : person.FirstName,
+            MiddleName                : person.MiddleName,
+            LastName                  : person.LastName,
+            DisplayName               : displayName,
+            Gender                    : Gender[person.Gender],
+            SelfIdentifiedGender      : person.SelfIdentifiedGender,
+            MaritalStatus             : person.MaritalStatus,
+            Race                      : person.Race,
+            Ethnicity                 : person.Ethnicity,
+            BirthDate                 : person.BirthDate,
+            Age                       : person.Age ?? age,
+            StrokeSurvivorOrCaregiver : person.StrokeSurvivorOrCaregiver,
+            LivingAlone               : person.LivingAlone,
+            WorkedPriorToStroke       : person.WorkedPriorToStroke,
+            Phone                     : person.Phone,
+            Email                     : person.Email,
+            TelegramChatId            : person.TelegramChatId,
+            ImageResourceId           : person.ImageResourceId,
+            ActiveSince               : person.CreatedAt,
+            Roles                     : [],
+            Addresses                 : []
         };
         return dto;
     };

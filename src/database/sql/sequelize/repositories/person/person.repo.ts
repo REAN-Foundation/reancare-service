@@ -111,19 +111,24 @@ export class PersonRepo implements IPersonRepo {
     create = async (personDomainModel: PersonDomainModel): Promise<PersonDetailsDto> => {
         try {
             const entity = {
-                Prefix               : personDomainModel.Prefix ?? '',
-                FirstName            : personDomainModel.FirstName,
-                MiddleName           : personDomainModel.MiddleName ?? null,
-                LastName             : personDomainModel.LastName,
-                Phone                : personDomainModel.Phone,
-                Email                : personDomainModel.Email ?? null,
-                TelegramChatId       : personDomainModel.TelegramChatId ?? null,
-                Gender               : personDomainModel.Gender ?? 'Unknown',
-                SelfIdentifiedGender : personDomainModel.SelfIdentifiedGender ?? null,
-                MaritalStatus        : personDomainModel.MaritalStatus ?? null,
-                BirthDate            : personDomainModel.BirthDate ?? null,
-                Age                  : personDomainModel.Age,
-                ImageResourceId      : personDomainModel.ImageResourceId ?? null,
+                Prefix                    : personDomainModel.Prefix ?? '',
+                FirstName                 : personDomainModel.FirstName,
+                MiddleName                : personDomainModel.MiddleName ?? null,
+                LastName                  : personDomainModel.LastName,
+                Phone                     : personDomainModel.Phone,
+                Email                     : personDomainModel.Email ?? null,
+                TelegramChatId            : personDomainModel.TelegramChatId ?? null,
+                Gender                    : personDomainModel.Gender ?? 'Unknown',
+                SelfIdentifiedGender      : personDomainModel.SelfIdentifiedGender ?? null,
+                MaritalStatus             : personDomainModel.MaritalStatus ?? null,
+                Race                      : personDomainModel.Race ?? null,
+                Ethnicity                 : personDomainModel.Ethnicity ?? null,
+                BirthDate                 : personDomainModel.BirthDate ?? null,
+                Age                       : personDomainModel.Age,
+                StrokeSurvivorOrCaregiver : personDomainModel.StrokeSurvivorOrCaregiver ?? null,
+                LivingAlone               : personDomainModel.LivingAlone ?? null,
+                WorkedPriorToStroke       : personDomainModel.WorkedPriorToStroke ?? null,
+                ImageResourceId           : personDomainModel.ImageResourceId ?? null,
             };
             const person = await Person.create(entity);
             const dto = await PersonMapper.toDetailsDto(person);
@@ -186,8 +191,23 @@ export class PersonRepo implements IPersonRepo {
             if (personDomainModel.MaritalStatus !== undefined) {
                 person.MaritalStatus = personDomainModel.MaritalStatus;
             }
+            if (personDomainModel.Race !== undefined) {
+                person.Race = personDomainModel.Race;
+            }
+            if (personDomainModel.Ethnicity !== undefined) {
+                person.Ethnicity = personDomainModel.Ethnicity;
+            }
             if (personDomainModel.Age !== undefined) {
                 person.Age = personDomainModel.Age;
+            }
+             if (personDomainModel.StrokeSurvivorOrCaregiver !== undefined) {
+                person.StrokeSurvivorOrCaregiver = personDomainModel.StrokeSurvivorOrCaregiver;
+            }
+             if (personDomainModel.LivingAlone !== undefined) {
+                person.LivingAlone = personDomainModel.LivingAlone;
+            }
+             if (personDomainModel.WorkedPriorToStroke !== undefined) {
+                person.WorkedPriorToStroke = personDomainModel.WorkedPriorToStroke;
             }
             if (personDomainModel.BirthDate !== undefined) {
                 person.BirthDate = personDomainModel.BirthDate;

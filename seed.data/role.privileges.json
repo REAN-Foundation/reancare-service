@@ -106,8 +106,9 @@
             "General.Notice.Update",
             "General.Notice.Search",
             "General.Notice.Delete",
-            "General.Notice.CreateAction",
-            "General.Notice.GetActionById",
+            "General.Notice.TakeAction",
+            "General.Notice.GetNoticeActionForUser",
+            "General.Notice.GetAllNoticeActionsForUser",
             "Course.Create",
             "Course.GetById",
             "Course.Update",
@@ -158,7 +159,12 @@
             "Chat.RemoveUserFromConversation",
             "Chat.GetConversationBetweenTwoUsers",
             "Chat.GetMarkedConversationsForUser",
-            "Chat.GetRecentConversationsForUser"
+            "Chat.GetRecentConversationsForUser",
+            "PatientDonors.Create",
+            "PatientDonors.GetById",
+            "PatientDonors.Search",
+            "PatientDonors.Update",
+            "PatientDonors.Delete"
         ]
     },
     {
@@ -509,9 +515,12 @@
             "Donor.Search",
             "Donor.GetByUserId",
             "Donor.UpdateByUserId",
+            "Donor.DeleteByUserId",
             "General.Notice.GetById",
             "General.Notice.Search",
-            "General.Notice.CreateAction",
+            "General.Notice.TakeAction",
+            "General.Notice.GetNoticeActionForUser",
+            "General.Notice.GetAllNoticeActionsForUser",
             "Notification.GetById",
             "Notification.Search",
             "Notification.MarkAsRead",
@@ -537,7 +546,12 @@
             "Volunteer.GetByUserId",
             "Volunteer.Search",
             "Volunteer.UpdateByUserId",
-            "Volunteer.DeleteByUserId"
+            "Volunteer.DeleteByUserId",
+            "PatientDonors.Create",
+            "PatientDonors.GetById",
+            "PatientDonors.Search",
+            "PatientDonors.Update",
+            "PatientDonors.Delete"
         ]
     },
     {
@@ -856,6 +870,7 @@
             "Donor.Search",
             "Donor.GetByUserId",
             "Donor.UpdateByUserId",
+            "Donor.DeleteByUserId",
             "Person.GetAllPersonsWithPhone",
             "Chat.StartConversation",
             "Chat.SendMessage",
@@ -876,7 +891,12 @@
             "Volunteer.GetByUserId",
             "Volunteer.Search",
             "Volunteer.UpdateByUserId",
-            "Volunteer.DeleteByUserId"
+            "Volunteer.DeleteByUserId",
+            "PatientDonors.Create",
+            "PatientDonors.GetById",
+            "PatientDonors.Search",
+            "PatientDonors.Update",
+            "PatientDonors.Delete"
         ]
     },
     {

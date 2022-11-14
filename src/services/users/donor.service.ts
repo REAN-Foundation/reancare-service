@@ -79,6 +79,10 @@ export class DonorService {
         return false;
     };
 
+    public deleteByUserId = async (id: string): Promise<boolean> => {
+        return await this._donorRepo.deleteByUserId(id);
+    };
+
     //#endregion
 
     //#region Privates

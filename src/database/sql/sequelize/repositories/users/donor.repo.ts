@@ -222,4 +222,18 @@ export class DonorRepo implements IDonorRepo {
         }
     };
 
+    deleteByUserId = async (userId: string): Promise<boolean> => {
+        try {
+            const count = await Donor.destroy({
+                where : {
+                    UserId : userId
+                }
+            });
+            return count === 1;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    }
+
 }

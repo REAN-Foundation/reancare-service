@@ -71,6 +71,7 @@ import { register as registerNotificationRoutes } from './general/notification/n
 import { register as registerVolunteerRoutes } from './users/volunteer/volunteer.routes';
 import { register as registerChatRoutes } from './general/chat/chat.routes';
 import { register as registerPatientStatisticsRoutes } from './users/patient/statistics/statistics.routes';
+import { register as registerNewsfeedRoutes } from './general/newsfeed/newsfeed.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -166,6 +167,7 @@ export class Router {
                 registerVolunteerRoutes(this._app);
                 registerChatRoutes(this._app);
                 registerPatientStatisticsRoutes(this._app);
+                registerNewsfeedRoutes(this._app);
 
                 resolve(true);
 

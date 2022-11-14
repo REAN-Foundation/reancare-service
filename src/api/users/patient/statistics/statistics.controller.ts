@@ -36,7 +36,7 @@ export class StatisticsController {
     getPatientStats = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             request.context = 'PatientStatistics.GetPatientStats';
-            await this._authorizer.authorize(request, response);
+            //await this._authorizer.authorize(request, response);
             const patientUserId: string = await this._validator.getParamUuid(request, 'patientUserId');
             const stats = await this._service.getPatientStats(patientUserId);
             ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {

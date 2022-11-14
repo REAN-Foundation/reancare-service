@@ -183,7 +183,7 @@ export class PersonRepo implements IPersonRepo {
                 person.TelegramChatId = personDomainModel.TelegramChatId;
             }
             if (personDomainModel.Gender !== undefined) {
-                person.Gender = Helper.getEnumKeyFromValue(Gender, personDomainModel.Gender) || 'Unknown';
+                person.Gender = Helper.getEnumKeyFromValue(Gender, personDomainModel.Gender);
             }
             if (personDomainModel.SelfIdentifiedGender !== undefined) {
                 person.SelfIdentifiedGender = personDomainModel.SelfIdentifiedGender;

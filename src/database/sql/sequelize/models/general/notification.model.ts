@@ -19,7 +19,7 @@ import User from '../users/user/user.model';
 @Table({
     timestamps      : true,
     modelName       : 'Notification',
-    tableName       : 'Notifications',
+    tableName       : 'notifications',
     paranoid        : true,
     freezeTableName : true,
 })
@@ -67,7 +67,7 @@ export default class Notification extends Model {
         allowNull : true,
     })
     Type: string;
-  
+
     @Column({
         type      : DataType.TEXT,
         allowNull : true,

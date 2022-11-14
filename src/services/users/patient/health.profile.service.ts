@@ -3,6 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { IHealthProfileRepo } from "../../../database/repository.interfaces/users/patient/health.profile.repo.interface";
 import { HealthProfileDomainModel } from '../../../domain.types/users/patient/health.profile/health.profile.domain.model';
 import { HealthProfileDto } from '../../../domain.types/users/patient/health.profile/health.profile.dto';
+import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -11,6 +12,7 @@ export class HealthProfileService {
 
     constructor(
         @inject('IHealthProfileRepo') private _patientHealthProfileRepo: IHealthProfileRepo,
+        @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {}
 
     create = async (healthProfileDomainModel: HealthProfileDomainModel): Promise<HealthProfileDto> => {
@@ -18,7 +20,12 @@ export class HealthProfileService {
     };
 
     getByPatientUserId = async (patientUserId: string): Promise<HealthProfileDto> => {
-        return await this._patientHealthProfileRepo.getByPatientUserId(patientUserId);
+        const healthProfile = await this._patientHealthProfileRepo.getByPatientUserId(patientUserId);
+        var careplanDetails = await this._careplanRepo.getPatientEnrollments(patientUserId);
+        if (careplanDetails.length > 0 && careplanDetails[0].PlanName) {
+            healthProfile.MajorAilment = careplanDetails[0].PlanName;
+        }
+        return healthProfile;
     };
 
     updateByPatientUserId = async (patientUserId: string, healthProfileDomainModel: HealthProfileDomainModel)

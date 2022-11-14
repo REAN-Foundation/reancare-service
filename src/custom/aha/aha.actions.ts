@@ -14,6 +14,7 @@ import { CareplanService } from '../../services/clinical/careplan.service';
 import { UserDeviceDetailsService } from '../../services/users/user/user.device.details.service';
 import { KccqAssessmentUtils } from './quality.of.life/kccq.assessment.utils';
 import { AssessmentDomainModel } from '../../domain.types/clinical/assessment/assessment.domain.model';
+import { FileResourceService } from '../../services/general/file.resource.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +34,8 @@ export class AHAActions {
 
     _userDeviceDetailsService: UserDeviceDetailsService = null;
 
+    _fileResourceService: FileResourceService = null;
+
     constructor() {
         this._patientService = Loader.container.resolve(PatientService);
         this._assessmentService = Loader.container.resolve(AssessmentService);
@@ -40,6 +43,7 @@ export class AHAActions {
         this._assessmentTemplateService = Loader.container.resolve(AssessmentTemplateService);
         this._careplanService = Loader.container.resolve(CareplanService);
         this._userDeviceDetailsService = Loader.container.resolve(UserDeviceDetailsService);
+        this._fileResourceService = Loader.container.resolve(FileResourceService);
     }
 
     //#region Public
@@ -136,7 +140,10 @@ export class AHAActions {
                     //This is KCCQ assessment,...
                     if (assessment.ReportUrl != null && assessment.ReportUrl.length > 2) {
                         Logger.instance().log(`Report url exists - ${assessment.ReportUrl}`);
-                        return assessment.ReportUrl;
+                        const checkIfExists = this.checkIfFileResourceExists(assessment.ReportUrl);
+                        if (checkIfExists) {
+                            return assessment.ReportUrl;
+                        }
                     }
                     Logger.instance().log(`Generating assessment report...`);
                     const reportUrl = await KccqAssessmentUtils.generateReport(
@@ -160,6 +167,27 @@ export class AHAActions {
     //#endregion
 
     //#region Privates
+
+    private checkIfFileResourceExists = async (url) => {
+        if (!url) {
+            return false;
+        }
+        let tempTokens = url.split('file-resources/');
+        const second = tempTokens.length > 0 ? tempTokens[1] : null;
+        if (second == null) {
+            return false;
+        }
+        tempTokens = second.split('/');
+        const fileResourceId = tempTokens.length > 0 ? tempTokens[0] : null;
+        if (!fileResourceId) {
+            return false;
+        }
+        const fileResource = await this._fileResourceService.getById(fileResourceId);
+        if (!fileResource) {
+            return false;
+        }
+        return true;
+    };
 
     private createAHAHealthSurveyTask = async (patient: PatientDetailsDto) => {
 

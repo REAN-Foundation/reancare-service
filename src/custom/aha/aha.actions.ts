@@ -140,7 +140,7 @@ export class AHAActions {
                     //This is KCCQ assessment,...
                     if (assessment.ReportUrl != null && assessment.ReportUrl.length > 2) {
                         Logger.instance().log(`Report url exists - ${assessment.ReportUrl}`);
-                        const checkIfExists = this.checkIfFileResourceExists(assessment.ReportUrl);
+                        const checkIfExists = await this.checkIfFileResourceExists(assessment.ReportUrl);
                         if (checkIfExists) {
                             return assessment.ReportUrl;
                         }
@@ -172,20 +172,27 @@ export class AHAActions {
         if (!url) {
             return false;
         }
-        let tempTokens = url.split('file-resources/');
-        const second = tempTokens.length > 0 ? tempTokens[1] : null;
-        if (second == null) {
+        try {
+            let tempTokens = url.split('file-resources/');
+            const second = tempTokens.length > 0 ? tempTokens[1] : null;
+            if (second == null) {
+                return false;
+            }
+            tempTokens = second.split('/');
+            const fileResourceId = tempTokens.length > 0 ? tempTokens[0] : null;
+            if (!fileResourceId) {
+                return false;
+            }
+            const fileResource = await this._fileResourceService.getById(fileResourceId);
+            if (!fileResource) {
+                return false;
+            }
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
             return false;
         }
-        tempTokens = second.split('/');
-        const fileResourceId = tempTokens.length > 0 ? tempTokens[0] : null;
-        if (!fileResourceId) {
-            return false;
-        }
-        const fileResource = await this._fileResourceService.getById(fileResourceId);
-        if (!fileResource) {
-            return false;
-        }
+
         return true;
     };
 

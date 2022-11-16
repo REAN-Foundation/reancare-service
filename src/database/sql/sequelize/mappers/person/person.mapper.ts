@@ -28,7 +28,7 @@ export class PersonMapper {
             MiddleName                : person.MiddleName,
             LastName                  : person.LastName,
             DisplayName               : displayName,
-            Gender                    : Gender[person.Gender],
+            Gender                    : Gender[person.Gender] ?? 'Unknown',
             SelfIdentifiedGender      : person.SelfIdentifiedGender,
             MaritalStatus             : person.MaritalStatus,
             Race                      : person.Race,

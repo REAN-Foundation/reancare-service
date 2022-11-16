@@ -140,8 +140,7 @@ export class CareplanService implements IUserActionService {
                         if (activity.Provider === "REAN") {
                             phoneNumber = patient.User.Person.TelegramChatId;
                         }
-                        let response = null;
-                        response = Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
+                        Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
                             activity.Provider, activity.Type);
                     }
 

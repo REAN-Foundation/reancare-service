@@ -164,7 +164,12 @@
             "PatientDonors.GetById",
             "PatientDonors.Search",
             "PatientDonors.Update",
-            "PatientDonors.Delete"
+            "PatientDonors.Delete",
+            "DonationRecord.Create",
+            "DonationRecord.GetById",
+            "DonationRecord.Search",
+            "DonationRecord.Update",
+            "DonationRecord.Delete"
         ]
     },
     {
@@ -551,7 +556,12 @@
             "PatientDonors.GetById",
             "PatientDonors.Search",
             "PatientDonors.Update",
-            "PatientDonors.Delete"
+            "PatientDonors.Delete",
+            "DonationRecord.Create",
+            "DonationRecord.GetById",
+            "DonationRecord.Search",
+            "DonationRecord.Update",
+            "DonationRecord.Delete"
         ]
     },
     {
@@ -896,7 +906,12 @@
             "PatientDonors.GetById",
             "PatientDonors.Search",
             "PatientDonors.Update",
-            "PatientDonors.Delete"
+            "PatientDonors.Delete",
+            "DonationRecord.Create",
+            "DonationRecord.GetById",
+            "DonationRecord.Search",
+            "DonationRecord.Update",
+            "DonationRecord.Delete"
         ]
     },
     {

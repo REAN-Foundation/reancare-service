@@ -17,18 +17,18 @@ import nodeHtmlToImage from 'node-html-to-image';
 //         await page.setViewport({
 //             width  : width,
 //             height : height,
-
+//
 //         });
 //         //await page.goto('file:///F:/service-1/index.html');
 //         await page.setContent(htmlText);
-
+//
 //         const generatedFilePath = await getGeneratedFilePath(filename);
 //         await page.screenshot({
 //             path     : generatedFilePath,
 //             fullPage : false,
 //         });
 //         await browser.close();
-
+//
 //         return generatedFilePath;
 //     }
 //     catch (error) {
@@ -51,7 +51,7 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
                         height            : height,
                         deviceScaleFactor : 1
                     },
-                    executablePath: '/usr/bin/chromium-browser'
+                    executablePath : '/usr/bin/chromium-browser'
                 }
             })
                 .then(() => {
@@ -71,7 +71,7 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
 
 export const htmlTextToPDFBuffer = async (htmlText: string): Promise<Buffer> => {
 
-    const browser = await puppeteer.launch({args: ['--no-sandbox'], executablePath: '/usr/bin/chromium-browser'});
+    const browser = await puppeteer.launch({ args: ['--no-sandbox'], executablePath: '/usr/bin/chromium-browser' });
     const page = await browser.newPage();
 
     await page.setContent(htmlText);

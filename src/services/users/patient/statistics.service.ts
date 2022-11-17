@@ -26,6 +26,12 @@ import { PhysicalActivityRepo } from "../../../database/sql/sequelize/repositori
 import { FoodConsumptionRepo } from "../../../database/sql/sequelize/repositories/wellness/nutrition/food.consumption.repo";
 import { ISleepRepo } from "../../../database/repository.interfaces/wellness/daily.records/sleep.repo.interface";
 import { SleepRepo } from "../../../database/sql/sequelize/repositories/wellness/daily.records/sleep.repo";
+import { PatientDetailsDto } from "../../../domain.types/users/patient/patient/patient.dto";
+import { Helper } from "../../../common/helper";
+import { TimeHelper } from "../../../common/time.helper";
+import { PDFGenerator } from "../../../modules/reports/pdf.generator";
+import * as fs from 'fs';
+import * as path from 'path';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -125,9 +131,280 @@ export class StatisticsService {
         return stats;
     }
 
-    public generateReport = async (stats: any) => {
-        throw new Error('Method not implemented.');
+    public generateReport = async (reportModel: any) => {
+        return await this.generateReportPDF(reportModel);
     }
+
+    public getReportModel = (
+        patient: PatientDetailsDto,
+        stats: any) => {
+
+        const timezone = patient.User?.DefaultTimeZone ?? '+05:30';
+        const date = new Date();
+        const patientName = patient.User.Person.DisplayName;
+        const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);
+        const assessmentDate = TimeHelper.getDateWithTimezone(date.toISOString(), timezone);
+        const reportDateStr = assessmentDate.toLocaleDateString();
+
+        return {
+            Name          : patientName,
+            PatientUserId : patient.User.id,
+            DisplayId     : patient.DisplayId,
+            Age           : patientAge,
+            ReportDate    : date,
+            ReportDateStr : reportDateStr,
+            ...stats
+        };
+    };
+
+    //#endregion
+
+    //#region Privates
+
+    private generateReportPDF = async (reportModel: any) => {
+        const chartImagePaths = await this.generateChartImages(reportModel);
+        return await this.exportReportToPDF(reportModel, chartImagePaths);
+    };
+
+    private generateChartImages = async (
+        stats: any): Promise<any> => {
+        const chartImagePaths = {};
+        // const overallScore = score.OverallSummaryScore.toFixed();
+        // var txt = kccqChartHtmlText;
+        // txt = txt.replace('{{GAUGE_VALUE}}', overallScore);
+        // txt = txt.replace('{{GAUGE_VALUE}}', overallScore);
+        return chartImagePaths;
+    };
+
+    private exportReportToPDF = async (reportModel: any, absoluteChartImagePath: any) => {
+        try {
+            var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Quality-of-Life-Questionnaire-Score');
+            var writeStream = fs.createWriteStream(absFilepath);
+            const reportTitle = `Quality of Life Questionnaire Score`;
+            const author = 'REAN Foundation';
+            var document = PDFGenerator.createDocument(reportTitle, author, writeStream);
+            //PDFGenerator.addNewPage(document);
+            var y = 17;
+            const ahaHeaderImagePath = './assets/images/AHA_header_2.png';
+            const ahaFooterImagePath = './assets/images/AHA_footer_1.png';
+            y = this.addHeader(document, reportTitle, y, ahaHeaderImagePath);
+            y = this.addReportMetadata(document, reportModel, y);
+            y = this.addChartImage(document, absoluteChartImagePath, y);
+            y = this.addScoreDetails(document, reportModel, y);
+            PDFGenerator.addOrderPageNumber(document, 1, 1);
+            this.addOrderFooter(document, "https://www.heart.org/", ahaFooterImagePath);
+            document.end();
+            const localFilePath = await PDFGenerator.savePDFLocally(writeStream, absFilepath);
+            return { filename, localFilePath };
+        }
+        catch (error) {
+            throw new Error(`Unable to generate assessment report! ${error.message}`);
+        }
+    };
+
+    private addHeader = (document: PDFKit.PDFDocument, title: string, y: number, headerImagePath: string) => {
+
+        var imageFile = path.join(process.cwd(), headerImagePath);
+
+        y = y + 5;
+        document
+            .image(imageFile, 0, 0, { width: 595 })
+            .fillColor("#c21422")
+            .font('Helvetica-Bold')
+            .fontSize(18)
+            .text(title, 90, y, { align: 'center' });
+
+        document
+            .fontSize(7);
+
+        y = y + 24;
+
+        document.moveDown();
+
+        return y;
+    };
+
+    private addScoreDetails = (document: PDFKit.PDFDocument, model: any, y: number): number => {
+
+        y = y + 230;
+
+        //DrawLine(document, y);
+        document
+            .roundedRect(150, y, 300, 38, 1)
+            .lineWidth(0.1)
+            .fillOpacity(0.8)
+        //.fillAndStroke("#EBE0FF", "#6541A5");
+            .fill("#e8ecef");
+
+        y = y + 13;
+
+        document
+            .fillOpacity(1.0)
+            .lineWidth(1)
+            .fill("#444444");
+
+        document
+            .fillColor("#444444")
+            .font('Helvetica')
+            .fontSize(10);
+
+        const overallScore = model.OverallSummaryScore.toFixed();
+
+        document
+            .font('Helvetica-Bold')
+            .fontSize(16)
+            .text('Overall Score', 215, y, { align: "left" })
+            .fillColor("#c21422")
+            .font('Helvetica-Bold')
+            .text(overallScore, 365, y, { align: "left" })
+            .moveDown();
+
+        y = y + 65;
+
+        const physicalLimitationScore = model.PhysicalLimitation_KCCQ_PL_score.toFixed();
+        const symptomFrequencyScore = model.SymptomFrequency_KCCQ_SF_score.toFixed();
+        const qualityOfLifeScore = model.QualityOfLife_KCCQ_QL_score.toFixed();
+        const socialLimitationScore = model.SocialLimitation_KCCQ_SL_score.toFixed();
+        const clinicalSummaryScore = model.ClinicalSummaryScore.toFixed();
+
+        const labelX = 180;
+        const valueX = 400;
+        const rowYOffset = 25;
+
+        document
+            .fontSize(12)
+            .fillColor("#444444");
+
+        document
+            .font('Helvetica-Bold')
+            .text('Physical Limitation Score', labelX, y, { align: "left" })
+            .font('Helvetica')
+            .text(physicalLimitationScore, valueX, y, { align: "left" })
+            .moveDown();
+        y = y + rowYOffset;
+
+        document
+            .font('Helvetica-Bold')
+            .text('Symptom Frequency Score', labelX, y, { align: "left" })
+            .font('Helvetica')
+            .text(symptomFrequencyScore, valueX, y, { align: "left" })
+            .moveDown();
+        y = y + rowYOffset;
+
+        document
+            .font('Helvetica-Bold')
+            .text('Quality of Life Score', labelX, y, { align: "left" })
+            .font('Helvetica')
+            .text(qualityOfLifeScore, valueX, y, { align: "left" })
+            .moveDown();
+        y = y + rowYOffset;
+
+        document
+            .font('Helvetica-Bold')
+            .text('Social Limitation Score', labelX, y, { align: "left" })
+            .font('Helvetica')
+            .text(socialLimitationScore, valueX, y, { align: "left" })
+            .moveDown();
+        y = y + rowYOffset;
+
+        document
+            .font('Helvetica-Bold')
+            .text('Clinical Summary Score', labelX, y, { align: "left" })
+            .font('Helvetica')
+            .text(clinicalSummaryScore, valueX, y, { align: "left" })
+            .moveDown();
+        y = y + rowYOffset;
+
+        return y;
+    };
+
+    private addChartImage = (document: PDFKit.PDFDocument, absoluteChartImagePath: string, y: number): number => {
+
+        y = y + 35;
+
+        document
+            .image(absoluteChartImagePath, 125, y, { width: 350, align: 'center' });
+
+        document
+            .fontSize(7);
+
+        y = y + 25;
+
+        document.moveDown();
+
+        return y;
+    };
+
+    private addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: number): number => {
+
+        y = y + 45;
+
+        document
+            .fillColor('#444444')
+            .fontSize(10)
+            .text('Date: ' + model.ReportDateStr, 200, y, { align: "right" })
+            .moveDown();
+
+        y = y + 20;
+
+        //DrawLine(document, y);
+        document
+            .roundedRect(50, y, 500, 65, 1)
+            .lineWidth(0.1)
+            .fillOpacity(0.8)
+        //.fillAndStroke("#EBE0FF", "#6541A5");
+            .fill("#e8ecef");
+
+        y = y + 20;
+
+        document
+            .fillOpacity(1.0)
+            .lineWidth(1)
+            .fill("#444444");
+
+        document
+            .fillColor("#444444")
+            .font('Helvetica')
+            .fontSize(13);
+
+        document
+            .font('Helvetica-Bold')
+            .text('Patient', 90, y, { align: "left" })
+            .font('Helvetica')
+            .text(model.Name, 190, y, { align: "left" })
+            .moveDown();
+
+        y = y + 23;
+
+        document
+            .font('Helvetica-Bold')
+            .text('Patient ID', 90, y, { align: "left" })
+            .font('Helvetica')
+            .text(model.DisplayId, 190, y, { align: "left" })
+            .moveDown();
+
+        return y;
+    };
+
+    private addOrderFooter = (document, text, logoImagePath) => {
+
+        //var imageFile = path.join(process.cwd(), "./assets/images/REANCare_Footer.png");
+        var imageFile = path.join(process.cwd(), logoImagePath);
+
+        document
+            .image(imageFile, 0, 800, { width: 595 });
+
+        document
+            .fontSize(12)
+            .fillColor('#ffffff');
+
+        document
+            .text(text, 100, 815, {
+                align     : "right",
+                link      : text,
+                underline : false
+            });
+    };
 
     //#endregion
 

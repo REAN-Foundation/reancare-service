@@ -89,12 +89,6 @@ export default class FoodConsumption extends Model {
     Tags: string;
 
     @Column({
-        type      : DataType.TEXT,
-        allowNull : true,
-    })
-    NutritionQuestion: string;
-
-    @Column({
         type         : DataType.BOOLEAN,
         allowNull    : true,
         defaultValue : false,

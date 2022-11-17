@@ -2,7 +2,7 @@ import {
     Column, CreatedAt, DataType, DeletedAt, HasMany, Index, IsEmail, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import { Gender, GenderEnum } from '../../../../../domain.types/miscellaneous/system.types';
+import { Gender, Genders } from '../../../../../domain.types/miscellaneous/system.types';
 import { PersonIdentificationType } from '../../../../../domain.types/person/person.types';
 import Address from '../general/address.model';
 import User from '../users/user/user.model';
@@ -81,7 +81,7 @@ export default class Person extends Model {
 
     @Column({
         type         : DataType.ENUM,
-        values       : GenderEnum,
+        values       : Genders,
         defaultValue : Gender.Unknown,
         allowNull    : true,
     })

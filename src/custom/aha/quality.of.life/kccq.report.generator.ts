@@ -5,7 +5,7 @@ import { PDFGenerator } from '../../../modules/reports/pdf.generator';
 import { htmlTextToPNG } from '../../../common/html.renderer';
 import { TimeHelper } from '../../../common/time.helper';
 import { Helper } from '../../../common/helper';
-import { DateStringFormat } from '../../../domain.types/miscellaneous/time.types';
+import { DateStringFormat, DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { kccqChartHtmlText } from './kccq.chart.html';
 import { KccqScore } from './kccq.types';
 import { FileResourceService } from '../../../services/general/file.resource.service';
@@ -48,8 +48,9 @@ const getReportModel = (
     const date = assessment.FinishedAt ?? new Date();
     const patientName = patient.User.Person.DisplayName;
     const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);
-    const assessmentDate = TimeHelper.getDateWithTimezone(date.toISOString(), timezone);
-    const reportDateStr = assessmentDate.toLocaleDateString();
+    var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+    const assessmentDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
+    const reportDateStr = assessmentDate.toISOString().split('T')[0];
 
     return {
         Name          : patientName,

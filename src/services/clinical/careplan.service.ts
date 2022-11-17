@@ -140,13 +140,8 @@ export class CareplanService implements IUserActionService {
                         if (activity.Provider === "REAN") {
                             phoneNumber = patient.User.Person.TelegramChatId;
                         }
-                        let response = null;
-                        response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
+                        Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
                             activity.Provider, activity.Type);
-                        if (response === true) {
-                            await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
-                            Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
-                        }
                     }
 
                 }
@@ -550,7 +545,6 @@ export class CareplanService implements IUserActionService {
 
         var startDate = enrollment.StartAt;
         var endDate = enrollment.EndAt;
-
         var today = new Date();
         var begin =  new Date(startDate);
         var end =  new Date(endDate);
@@ -559,37 +553,39 @@ export class CareplanService implements IUserActionService {
         var dayOfCurrentWeek = -1;
         var message = "Your careplan is in progress.";
 
+        var careplanStatus = {
+            CurrentWeek      : currentWeek,
+            DayOfCurrentWeek : dayOfCurrentWeek,
+            Message          : message,
+            TotalWeeks       : 0,
+            StartDate        : null,
+            EndDate          : null,
+        };
+
         if (TimeHelper.isBefore(today, begin)) {
-            currentWeek = 0;
-            dayOfCurrentWeek = 0;
-            message = "Your careplan has not yet started.";
-            return { currentWeek, dayOfCurrentWeek, message };
+            careplanStatus.CurrentWeek = 0;
+            careplanStatus.DayOfCurrentWeek = 0;
+            careplanStatus.Message = "Your careplan has not yet started.";
+        } else if (TimeHelper.isAfter(today, end)){
+            careplanStatus.Message = "Your careplan has been finished.";
+        } else {
+            // current week
+            var diff = Math.abs(today.getTime() - begin.getTime());
+            var days = Math.floor(diff / (1000 * 3600 * 24));
+            currentWeek = (Math.floor(days / 7)) + 1;
+            dayOfCurrentWeek = (days % 7) + 1;
+            careplanStatus.CurrentWeek = currentWeek;
+            careplanStatus.DayOfCurrentWeek = dayOfCurrentWeek;
         }
-        if (TimeHelper.isAfter(today, end)){
-            message = "Your careplan has been finished.";
-            return { currentWeek, dayOfCurrentWeek, message };
-        }
-
-        // current week
-        var diff = Math.abs(today.getTime() - begin.getTime());
-        var days = Math.floor(diff / (1000 * 3600 * 24));
-        currentWeek = (Math.floor(days / 7)) + 1;
-        dayOfCurrentWeek = (days % 7) + 1;
-
+        
         // total weeks
         var duration = Math.abs(end.getTime() - begin.getTime());
         var totalDays = Math.floor(duration / (1000 * 3600 * 24));
         var totalWeeks = (Math.floor(totalDays / 7));
 
-        var careplanStatus = {
-
-            CurrentWeek      : currentWeek,
-            DayOfCurrentWeek : dayOfCurrentWeek,
-            Message          : message,
-            TotalWeeks       : totalWeeks,
-            StartDate        : startDate,
-            EndDate          : endDate,
-        };
+        careplanStatus.TotalWeeks = totalWeeks;
+        careplanStatus.StartDate = startDate;
+        careplanStatus.EndDate = endDate;
 
         return careplanStatus;
     };

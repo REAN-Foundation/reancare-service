@@ -46,6 +46,8 @@ export enum Gender {
     Unknown              = 'Unknown'
 }
 
+export const GenderEnum = Object.keys(Gender);
+
 export const GenderList: Gender[] = [
     Gender.Male,
     Gender.Female,

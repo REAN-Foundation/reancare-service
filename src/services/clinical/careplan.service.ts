@@ -113,12 +113,15 @@ export class CareplanService implements IUserActionService {
         return await this.enrollAndCreateTask(enrollmentDetails);
     };
 
+    private timer = ms => new Promise(res => setTimeout(res, ms));
+
     public scheduleDailyCareplanPushTasks = async (): Promise<void> => {
 
         const activities = await this._careplanRepo.getAllReanActivities();
+        const scheduledActivities = [];
 
         if (activities.length !== 0) {
-            activities.forEach(async activity => {
+            for (const activity of activities) {
 
                 const todayDateTime = new Date().toISOString()
                     .split('T');
@@ -134,18 +137,27 @@ export class CareplanService implements IUserActionService {
                     const num5 = num4[0].concat(':', num4[1]);
 
                     if (num2 === num5){
-                        const message = `${activity.Title}:\n${activity.Description}`;
-                        const patient = await this.getPatient(activity.PatientUserId);
-                        let phoneNumber = patient.User.Person.Phone;
-                        if (activity.Provider === "REAN") {
-                            phoneNumber = patient.User.Person.TelegramChatId;
-                        }
-                        Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
-                            activity.Provider, activity.Type);
+                        scheduledActivities.push(activity);
                     }
-
                 }
-            });
+            }
+
+            for (const activity of scheduledActivities) {
+                const message = `${activity.Title}:\n${activity.Description}`;
+                const patient = await this.getPatient(activity.PatientUserId);
+                let phoneNumber = patient.User.Person.Phone;
+                if (activity.Provider === "REAN") {
+                    phoneNumber = patient.User.Person.TelegramChatId;
+                }
+                let response = null;
+                response = await Loader.messagingService.sendWhatsappWithReanBot(phoneNumber, message,
+                    activity.Provider, activity.Type);
+                if (response === true) {
+                    await this._careplanRepo.updateActivity(activity.id, "Completed", new Date());
+                    Logger.instance().log(`Successfully whatsapp message send to ${phoneNumber}`);
+                }
+                await this.timer(500);
+            }
         } else {
             Logger.instance().log(`No activities fetched from careplan task.`);
         }

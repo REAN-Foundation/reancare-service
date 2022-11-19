@@ -99,3 +99,9 @@ export const ProgressStatusList: ProgressStatus[] = [
     ProgressStatus.Delayed,
     ProgressStatus.Unknown,
 ];
+
+export enum OSType {
+    Linux   = 'Linux',
+    MacOS   = 'MacOS',
+    Windows = 'Windows',
+}

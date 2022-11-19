@@ -3,11 +3,12 @@ import child_process from 'child_process';
 import * as crypto from 'crypto';
 import express from 'express';
 import * as fs from 'fs';
+import * as os from 'os';
 import { generate } from 'generate-password';
 import mime = require('mime-types');
 import path from 'path';
 import { ConfigurationManager } from '../config/configuration.manager';
-import { Gender } from '../domain.types/miscellaneous/system.types';
+import { Gender, OSType } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
 import { TimeHelper } from './time.helper';
 import Countries from './misc/countries';
@@ -32,7 +33,21 @@ export class Helper {
     static hasProperty = (obj, prop) => {
         return Object.prototype.hasOwnProperty.call(obj, prop);
     }
-    
+
+    static getOSType = () => {
+        var type = os.type();
+        switch (type) {
+            case 'Darwin':
+                return OSType.MacOS;
+            case 'Linux':
+                return OSType.Linux;
+            case 'Windows_NT':
+                return OSType.Windows;
+            default:
+                return OSType.Linux;
+        }
+    }
+
     static isUrl = (str) => {
         if (!str) {
             return false;
@@ -49,7 +64,7 @@ export class Helper {
         const txt = JSON.stringify(obj, null, '    ');
         fs.writeFileSync(filename, txt);
     }
-    
+
     static jsonToObj = (jsonPath) => {
 
         if (!fs.existsSync(jsonPath)) {
@@ -327,7 +342,7 @@ export class Helper {
         }
         return Promise.resolve();
     }
-    
+
     public static sleep = (miliseconds) => {
         return new Promise((resolve) => {
             setTimeout(resolve, miliseconds);
@@ -386,7 +401,7 @@ export class Helper {
         if (phone == null) {
             return [];
         }
-        
+
         let phoneTemp = phone;
         phoneTemp = phoneTemp.trim();
         const countryCodes = Countries.map(x => x.PhoneCode);
@@ -402,12 +417,12 @@ export class Helper {
                 phoneTemp = phoneTemp.replace('-', '');
             }
         }
-    
+
         if (phonePrefix) {
             possiblePhoneNumbers.push(phonePrefix + phoneTemp);
             possiblePhoneNumbers.push(phonePrefix + "-" + phoneTemp);
             possiblePhoneNumbers.push(phoneTemp);
-    
+
         } else {
 
             var possibles = Countries.map(x => {
@@ -471,7 +486,7 @@ export class Helper {
 
         return downloadFolderPath;
     };
-    
+
     public static createTempDownloadFolder = async() => {
         var tempDownloadFolder = ConfigurationManager.DownloadTemporaryFolder();
         if (fs.existsSync(tempDownloadFolder)) {
@@ -480,7 +495,7 @@ export class Helper {
         await fs.promises.mkdir(tempDownloadFolder, { recursive: true });
         return tempDownloadFolder;
     };
-    
+
     public static createTempUploadFolder = async() => {
         var tempUploadFolder = ConfigurationManager.UploadTemporaryFolder();
         if (fs.existsSync(tempUploadFolder)) {
@@ -496,7 +511,7 @@ export class Helper {
         var ext = extension.startsWith('.') ? extension : '.' + extension;
         return tmp + ext;
     };
-    
+
     public static getMimeType = (pathOrExtension: string) => {
         var mimeType = mime.lookup(pathOrExtension);
         if (!mimeType) {
@@ -504,7 +519,7 @@ export class Helper {
         }
         return mimeType;
     };
-    
+
     public static getValueForEitherKeys = (obj: any, keys: string[]): string => {
         const existingKeys = Object.keys(obj);
         for (var key of keys) {

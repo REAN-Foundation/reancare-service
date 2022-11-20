@@ -30,6 +30,7 @@ import { PatientDetailsDto } from "../../../domain.types/users/patient/patient/p
 import { Helper } from "../../../common/helper";
 import { TimeHelper } from "../../../common/time.helper";
 import { PDFGenerator } from "../../../modules/reports/pdf.generator";
+import { ChartGenerator } from "../../../modules/charts/chart.generator";
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -153,7 +154,7 @@ export class StatisticsService {
             Age           : patientAge,
             ReportDate    : date,
             ReportDateStr : reportDateStr,
-            ...stats
+            Stats         : stats
         };
     };
 
@@ -167,13 +168,59 @@ export class StatisticsService {
     };
 
     private generateChartImages = async (
-        stats: any): Promise<any> => {
-        const chartImagePaths = {};
-        // const overallScore = score.OverallSummaryScore.toFixed();
-        // var txt = kccqChartHtmlText;
-        // txt = txt.replace('{{GAUGE_VALUE}}', overallScore);
-        // txt = txt.replace('{{GAUGE_VALUE}}', overallScore);
+        reportModel: any): Promise<any> => {
+        const chartImagePaths = [];
+
+        let imageLocations = await this.createNutritionCharts(reportModel.Stats.Nutrition);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await this.createPhysicalActivityCharts(reportModel.Stats.PhysicalActivity);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await this.createBodyWeightCharts(reportModel.Stats.BodyWeight);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await this.createLabRecordsCharts(reportModel.Stats.LabRecords);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await this.createSleepTrendCharts(reportModel.Stats.SleepTrend);
+        chartImagePaths.push(...imageLocations);
+        imageLocations = await this.createMedicationTrendCharts(reportModel.Stats.MedicationTrend);
+        chartImagePaths.push(...imageLocations);
+
         return chartImagePaths;
+    };
+
+    private createNutritionCharts = async (data) => {
+        var locations = [];
+        const lastMonthCalorieStats = data.LastMonth.CalorieStats.map(c => {
+            return {
+                x : new Date(c.DateStr),
+                y : c.Calories
+            };
+        });
+        return locations;
+    };
+
+    private createPhysicalActivityCharts = async (data) => {
+        var locations = [];
+        return locations;
+    };
+
+    private createBodyWeightCharts = async (data) => {
+        var locations = [];
+        return locations;
+    };
+
+    private createLabRecordsCharts = async (data) => {
+        var locations = [];
+        return locations;
+    };
+
+    private createSleepTrendCharts = async (data) => {
+        var locations = [];
+        return locations;
+    };
+
+    private createMedicationTrendCharts = async (data) => {
+        var locations = [];
+        return locations;
     };
 
     private exportReportToPDF = async (reportModel: any, absoluteChartImagePath: any) => {

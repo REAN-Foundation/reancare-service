@@ -7,7 +7,7 @@ import { htmlTextToPNG } from '../../common/html.renderer';
 
 export class ChartGenerator {
 
-    createLineChart = async (data: any[], options: LineChartOptions): Promise<string> => {
+    static createLineChart = async (data: any[], options: LineChartOptions): Promise<string> => {
         const cwd = process.cwd();
         const templatePath = path.join(cwd,'assets/charts/html.templates/','simple.line.chart.html');
         var template = fs.readFileSync(templatePath, "utf8");

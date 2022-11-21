@@ -35,15 +35,14 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
                 output        : generatedFilePath,
                 html          : htmlText,
                 puppeteerArgs : puppeteerArgs
-            })
-                .then(() => {
-                    Logger.instance().log('Imgae file created');
-                    resolve(generatedFilePath);
-                })
-                .catch(async (error) => {
-                    Logger.instance().log(`Error creating image file: ${error.message}`);
-                    reject(null);
-                });
+            }).then(() => {
+                Logger.instance().log('Imgae file created');
+                resolve(generatedFilePath);
+            // eslint-disable-next-line newline-per-chained-call
+            }).catch(async (error) => {
+                Logger.instance().log(`Error creating image file: ${error.message}`);
+                reject(null);
+            });
         });
     }
     catch (error) {

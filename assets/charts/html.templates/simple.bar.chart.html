@@ -33,89 +33,41 @@
 		// customization
 
 		const data = [
-			{ x: new Date("2007-04-23T00:00:00.000Z"), y: 93.24 },
-			{ x: new Date("2007-04-24T00:00:00.000Z"), y: 95.35 },
-			{ x: new Date("2007-04-25T00:00:00.000Z"), y: 98.84 },
-			{ x: new Date("2007-04-26T00:00:00.000Z"), y: 99.92 },
-			{ x: new Date("2007-04-29T00:00:00.000Z"), y: 99.8 },
-			{ x: new Date("2007-05-01T00:00:00.000Z"), y: 99.47 },
-			{ x: new Date("2007-05-02T00:00:00.000Z"), y: 100.39 },
-			{ x: new Date("2007-05-03T00:00:00.000Z"), y: 100.4 },
-			{ x: new Date("2007-05-04T00:00:00.000Z"), y: 100.81 },
-			{ x: new Date("2007-05-07T00:00:00.000Z"), y: 103.92 },
-			{ x: new Date("2007-05-08T00:00:00.000Z"), y: 105.06 },
-			{ x: new Date("2007-05-09T00:00:00.000Z"), y: 106.88 },
-			{ x: new Date("2007-05-09T00:00:00.000Z"), y: 107.34 },
-			{ x: new Date("2007-05-10T00:00:00.000Z"), y: 108.74 },
-			{ x: new Date("2007-05-13T00:00:00.000Z"), y: 109.36 },
-			{ x: new Date("2007-05-14T00:00:00.000Z"), y: 107.52 },
-			{ x: new Date("2007-05-15T00:00:00.000Z"), y: 107.34 },
-			{ x: new Date("2007-05-16T00:00:00.000Z"), y: 109.44 },
-			{ x: new Date("2007-05-17T00:00:00.000Z"), y: 110.02 },
-			{ x: new Date("2007-05-20T00:00:00.000Z"), y: 111.98 },
-			{ x: new Date("2007-05-21T00:00:00.000Z"), y: 113.54 },
-			{ x: new Date("2007-05-22T00:00:00.000Z"), y: 112.89 },
-			{ x: new Date("2007-05-23T00:00:00.000Z"), y: 110.69 },
-			{ x: new Date("2007-05-24T00:00:00.000Z"), y: 113.62 },
-			{ x: new Date("2007-05-28T00:00:00.000Z"), y: 114.35 },
-			{ x: new Date("2007-05-29T00:00:00.000Z"), y: 118.77 },
-			{ x: new Date("2007-05-30T00:00:00.000Z"), y: 121.19 },
-			{ x: new Date("2007-06-01T00:00:00.000Z"), y: 118.4 },
-			{ x: new Date("2007-06-04T00:00:00.000Z"), y: 121.33 },
-			{ x: new Date("2007-06-05T00:00:00.000Z"), y: 122.67 },
-			{ x: new Date("2007-06-06T00:00:00.000Z"), y: 123.64 },
-			{ x: new Date("2007-06-07T00:00:00.000Z"), y: 124.07 },
-			{ x: new Date("2007-06-08T00:00:00.000Z"), y: 124.49 },
-			{ x: new Date("2007-06-10T00:00:00.000Z"), y: 120.19 },
-			{ x: new Date("2007-06-11T00:00:00.000Z"), y: 120.38 },
-			{ x: new Date("2007-06-12T00:00:00.000Z"), y: 117.5 },
-			{ x: new Date("2007-06-13T00:00:00.000Z"), y: 118.75 },
-			{ x: new Date("2007-06-14T00:00:00.000Z"), y: 120.5 },
-			{ x: new Date("2007-06-17T00:00:00.000Z"), y: 125.09 },
-			{ x: new Date("2007-06-18T00:00:00.000Z"), y: 123.66 },
-			{ x: new Date("2007-06-19T00:00:00.000Z"), y: 121.55 },
-			{ x: new Date("2007-06-20T00:00:00.000Z"), y: 123.9 },
-			{ x: new Date("2007-06-21T00:00:00.000Z"), y: 123 },
-			{ x: new Date("2007-06-24T00:00:00.000Z"), y: 122.34 },
-			{ x: new Date("2007-06-25T00:00:00.000Z"), y: 119.65 },
-			{ x: new Date("2007-06-26T00:00:00.000Z"), y: 121.89 },
-			{ x: new Date("2007-06-27T00:00:00.000Z"), y: 120.56 },
-			{ x: new Date("2007-06-28T00:00:00.000Z"), y: 122.04 },
+			{ x: "Sunday", y: 93.24 },
+			{ x: "Monday", y: 125.35 },
+			{ x: "Tuesday", y: 8.84 },
+			{ x: "Wednesday", y: 99.92 },
+			{ x: "Thursday", y: 25.8 },
+			{ x: "Friday", y: 78.47 },
+			{ x: "Saturday", y: 34.39 },
 		];
 
 		const width = 650;
 		const height = 400;
-		const xFrom = null;
-		const xTo = new Date("2007-06-09T00:00:00.000Z");
-		const yFrom = 70;
-		const yTo = null;
-		const xAxisTimeScaled = true;
-		const yLabel = 'Day Close $'
+		const yLabel = 'Frequency'
 		const fontSize = "14px";
-		const axisStrokeWidth = 3.5;
-		const axisColor = "#2E4053";
 
 		// customization
 
 		function barChart(container, data, {
-			x = (d, i) => i, // given d in data, returns the (ordinal) x-value
-			y = d => d, // given d in data, returns the (quantitative) y-value
-			title, // given d in data, returns the title text
-			marginTop = 20, // the top margin, in pixels
-			marginRight = 0, // the right margin, in pixels
-			marginBottom = 30, // the bottom margin, in pixels
-			marginLeft = 40, // the left margin, in pixels
-			width = 640, // the outer width of the chart, in pixels
-			height = 400, // the outer height of the chart, in pixels
-			xDomain, // an array of (ordinal) x-values
-			xRange = [marginLeft, width - marginRight], // [left, right]
-			yType = d3.scaleLinear, // y-scale type
-			yDomain, // [ymin, ymax]
-			yRange = [height - marginBottom, marginTop], // [bottom, top]
-			xPadding = 0.1, // amount of x-range to reserve to separate bars
-			yFormat, // a format specifier string for the y-axis
-			yLabel, // a label for the y-axis
-			color = "currentColor" // bar fill color
+			x = (d, i) => i,   		// given d in data, returns the (ordinal) x-value
+			y = d => d,        		// given d in data, returns the (quantitative) y-value
+			title,             		// given d in data, returns the title text
+			marginTop    = 20,    	// the top margin, in pixels
+			marginRight  = 0,     	// the right margin, in pixels
+			marginBottom = 30,    	// the bottom margin, in pixels
+			marginLeft   = 40,    	// the left margin, in pixels
+			width        = 640,   	// the outer width of the chart, in pixels
+			height       = 400,   	// the outer height of the chart, in pixels
+			xDomain,
+			xRange = [marginLeft, width - marginRight],   	// [left, right]
+			yType  = d3.scaleLinear,                      	// y-scale type
+			yDomain, 				// [ymin, ymax]
+			yRange   = [height - marginBottom, marginTop],  // [bottom, top]
+			xPadding = 0.1,                                 // amount of x-range to reserve to separate bars
+			yFormat, 				// a format specifier string for the y-axis
+			yLabel, 				// a label for the y-axis
+			color = "currentColor"  // bar fill color
 		} = {}) {
 			// Compute values.
 			const X = d3.map(data, x);
@@ -145,13 +97,15 @@
 				title = i => T(O[i], i, data);
 			}
 
-			const svg = d3.create("svg")
+			const svg = d3.select(container)
+				.append('svg:svg')
 				.attr("width", width)
 				.attr("height", height)
 				.attr("viewBox", [0, 0, width, height])
 				.attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
 			svg.append("g")
+			.style("font-size", fontSize)
 				.attr("transform", `translate(${marginLeft},0)`)
 				.call(yAxis)
 				.call(g => g.select(".domain").remove())
@@ -179,6 +133,7 @@
 				.text(title);
 
 			svg.append("g")
+				.style("font-size", fontSize)
 				.attr("transform", `translate(0,${height - marginBottom})`)
 				.call(xAxis);
 
@@ -186,25 +141,13 @@
 		}
 
 		barChart('#chart', data, {
-			x: d => d.letter,
-			y: d => d.frequency,
-			xDomain: d3.groupSort(alphabet, ([d]) => -d.frequency, d => d.letter), // sort by descending frequency
-			yFormat: "%",
-			yLabel: "↑ Frequency",
-			width,
-			height: 500,
-			color: "steelblue"
-			})
-
-		lineChart('#chart', data, {
-			x: d => d.date,
-			y: d => d.close,
-			yLabel: yLabel ?? '',
+			x: d => d.x,
+			y: d => d.y,
+			yLabel: yLabel,
 			width: width,
 			height: height,
 			color: "steelblue"
-		})
-
+		});
 
 	</script>
 

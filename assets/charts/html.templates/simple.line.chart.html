@@ -53,14 +53,14 @@
 		{ x: new Date ("2007-05-15T00:00:00.000Z"), y: 107.34 },
 		{ x: new Date ("2007-05-16T00:00:00.000Z"), y: 109.44 },
 		{ x: new Date ("2007-05-17T00:00:00.000Z"), y: 110.02 },
-		{ x: new Date ("2007-05-20T00:00:00.000Z"), y: 111.98 },
-		{ x: new Date ("2007-05-21T00:00:00.000Z"), y: 113.54 },
-		{ x: new Date ("2007-05-22T00:00:00.000Z"), y: 112.89 },
-		{ x: new Date ("2007-05-23T00:00:00.000Z"), y: 110.69 },
-		{ x: new Date ("2007-05-24T00:00:00.000Z"), y: 113.62 },
-		{ x: new Date ("2007-05-28T00:00:00.000Z"), y: 114.35 },
-		{ x: new Date ("2007-05-29T00:00:00.000Z"), y: 118.77 },
-		{ x: new Date ("2007-05-30T00:00:00.000Z"), y: 121.19 },
+		{ x: new Date ("2007-05-20T00:00:00.000Z"), y: 80.98 },
+		{ x: new Date ("2007-05-21T00:00:00.000Z"), y: 60.54 },
+		{ x: new Date ("2007-05-22T00:00:00.000Z"), y: -12.89 },
+		{ x: new Date ("2007-05-23T00:00:00.000Z"), y: -50.69 },
+		{ x: new Date ("2007-05-24T00:00:00.000Z"), y: -113.62 },
+		{ x: new Date ("2007-05-28T00:00:00.000Z"), y: -105.35 },
+		{ x: new Date ("2007-05-29T00:00:00.000Z"), y: -20.77 },
+		{ x: new Date ("2007-05-30T00:00:00.000Z"), y: 80.19 },
 		{ x: new Date ("2007-06-01T00:00:00.000Z"), y: 118.4 },
 		{ x: new Date ("2007-06-04T00:00:00.000Z"), y: 121.33 },
 		{ x: new Date ("2007-06-05T00:00:00.000Z"), y: 122.67 },
@@ -87,9 +87,11 @@
 	const width           = 650;
 	const height          = 400;
 	const xFrom           = null;
-	const xTo             = new Date("2007-06-09T00:00:00.000Z");
-	const yFrom           = 70;
+	const xTo             = null;
+	const yFrom           = null;
 	const yTo             = null;
+	// const xTo             = new Date("2007-06-09T00:00:00.000Z");
+	// const yFrom           = 70;
 	const xAxisTimeScaled = true;
 	const yLabel          = 'Day Close $'
 	const fontSize        = "14px";
@@ -135,9 +137,14 @@
 		xExtent[0] = xFrom ?? xExtent[0];
 		xExtent[1] = xTo ?? xExtent[1];
 
+		const yExtent = d3.extent(Y);
+		yExtent[0] = yFrom ?? yExtent[0];
+		yExtent[1] = yTo ?? yExtent[1];
+
 		// Compute default domains.
 		if (xDomain === undefined) xDomain = xExtent;
-		if (yDomain === undefined) yDomain = [yFrom ?? 0, yTo ?? d3.max(Y)];
+		//if (yDomain === undefined) yDomain = [yFrom ?? 0, yTo ?? d3.max(Y)];
+		if (yDomain === undefined) yDomain = yExtent;
 
 		// Construct scales and axes.
 		const xScale = xType(xDomain, xRange);
@@ -168,7 +175,7 @@
 			.style("font-size", fontSize)
 			.attr("transform", `translate(${marginLeft},0)`)
 			.call(yAxis)
-			.call(g => g.select(".domain").remove())
+			//.call(g => g.select(".domain").remove())
 			.call(g => g.selectAll(".tick line").clone()
 				.attr("x2", width - marginLeft - marginRight)
 				.attr("stroke-opacity", 0.1))

@@ -191,19 +191,8 @@ export class StatisticsService {
 
     private createNutritionCharts = async (data) => {
         var locations = [];
-        const lastMonthCalorieStats = data.LastMonth.CalorieStats.map(c => {
-            return {
-                x : new Date(c.DateStr),
-                y : c.Calories
-            };
-        });
-        const options: LineChartOptions = defaultLineChartOptions();
-        options.Width = 550;
-        options.Height = 350;
-        options.XAxisTimeScaled = true;
-        options.YLabel = 'Calories';
+        const caloriesForMonthlocation = await this.createCalorieChart(data.LastMonth.CalorieStats, 'caloriesForMonthlocation');
 
-        const caloriesForMonthlocation = await ChartGenerator.createLineChart(lastMonthCalorieStats, options, 'caloriesForMonthlocation');
         locations.push({
             NutritionCaloriesForLastMonth : caloriesForMonthlocation
         });
@@ -464,6 +453,22 @@ export class StatisticsService {
                 underline : false
             });
     };
+
+    private async createCalorieChart(stats: any, filename: string) {
+        const lastMonthCalorieStats = stats.map(c => {
+            return {
+                x : new Date(c.DateStr),
+                y : c.Calories
+            };
+        });
+        const options: LineChartOptions = defaultLineChartOptions();
+        options.Width = 550;
+        options.Height = 275;
+        options.XAxisTimeScaled = true;
+        options.YLabel = 'Calories';
+
+        return await ChartGenerator.createLineChart(lastMonthCalorieStats, options, filename);
+    }
 
     //#endregion
 

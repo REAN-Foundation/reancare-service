@@ -45,7 +45,7 @@ export class DatabaseConnector_Sequelize implements IDatabaseConnector {
 
             await this.createDatabase();
             await this._sequelize.authenticate();
-            await this._sequelize.sync({ alter: true });
+            await this._sequelize.sync({ force: false, alter: true });
 
             Logger.instance().log(`Connected to database.`);
 

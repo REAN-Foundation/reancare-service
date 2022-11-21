@@ -89,8 +89,8 @@ export default class HealthProfile extends Model {
     @Column({
         type         : DataType.ENUM,
         values       : MaritalStatusList,
-        defaultValue : 'Unknown',
-        allowNull    : false,
+        defaultValue : null,
+        allowNull    : true,
     })
     MaritalStatus: string;
 

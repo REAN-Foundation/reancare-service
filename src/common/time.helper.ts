@@ -31,11 +31,17 @@ export class TimeHelper {
         return date.getTime().toString();
     };
 
-    static getWeekDay = (date: Date): string => {
-        var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-        var day = days[ date.getDay() ];
-        return day;
-    }
+    static getWeekDay = (date: Date, short: boolean): string => {
+        const idx = date.getDay();
+        if (short) {
+            var days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+            return days[idx];
+        }
+        else {
+            var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            return days[idx];
+        }
+    };
 
     static getMonth = (date: Date): string => {
         var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];

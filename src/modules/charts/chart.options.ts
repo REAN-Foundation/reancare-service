@@ -34,3 +34,7 @@ export const defaultLineChartOptions = () => {
     };
     return x;
 };
+
+export interface BarChartOptions extends ChartOptions {
+    YLabel          ?: string; // 'Day Close $'
+}

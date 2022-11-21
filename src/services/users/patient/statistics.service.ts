@@ -33,7 +33,7 @@ import { PDFGenerator } from "../../../modules/reports/pdf.generator";
 import { ChartGenerator } from "../../../modules/charts/chart.generator";
 import * as fs from 'fs';
 import * as path from 'path';
-import { defaultLineChartOptions, LineChartOptions } from "../../../modules/charts/chart.options";
+import { BarChartOptions, defaultLineChartOptions, LineChartOptions } from "../../../modules/charts/chart.options";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -191,10 +191,13 @@ export class StatisticsService {
 
     private createNutritionCharts = async (data) => {
         var locations = [];
-        const caloriesForMonthlocation = await this.createCalorieChart(data.LastMonth.CalorieStats, 'caloriesForMonthlocation');
-
+        const caloriesForMonthlocation = await this.createCalorieLineChart(data.LastMonth.CalorieStats, 'caloriesForMonthlocation');
         locations.push({
             NutritionCaloriesForLastMonth : caloriesForMonthlocation
+        });
+        const caloriesForWeeklocation = await this.createCalorieBarChart(data.LastWeek.CalorieStats, 'caloriesForWeeklocation');
+        locations.push({
+            NutritionCaloriesForLastWeek : caloriesForWeeklocation
         });
         return locations;
     };
@@ -454,7 +457,7 @@ export class StatisticsService {
             });
     };
 
-    private async createCalorieChart(stats: any, filename: string) {
+    private async createCalorieLineChart(stats: any, filename: string) {
         const lastMonthCalorieStats = stats.map(c => {
             return {
                 x : new Date(c.DateStr),
@@ -468,6 +471,21 @@ export class StatisticsService {
         options.YLabel = 'Calories';
 
         return await ChartGenerator.createLineChart(lastMonthCalorieStats, options, filename);
+    }
+
+    private async createCalorieBarChart(stats: any, filename: string) {
+        const calorieStats = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
+                y : c.Calories
+            };
+        });
+        const options: BarChartOptions = defaultLineChartOptions();
+        options.Width = 550;
+        options.Height = 275;
+        options.YLabel = 'Calories';
+
+        return await ChartGenerator.createBarChart(calorieStats, options, filename);
     }
 
     //#endregion

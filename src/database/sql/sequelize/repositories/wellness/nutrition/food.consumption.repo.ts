@@ -579,11 +579,12 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     private async getDayByDayCalorieStats(patientUserId: string, numDays: number) {
 
         const timezone = await this.getPatientTimezone(patientUserId);
-        const todayStr = (new Date()).toISOString()
-            .split('T')[0];
-        const todayStart = TimeHelper.getDateWithTimezone(todayStr, timezone);
         const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
-        const reference = todayStart;
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+        const tempDate = TimeHelper.addDuration(new Date(), offsetMinutes, DurationType.Minute);
+        const todayStr = tempDate.toISOString()
+            .split('T')[0];
+        const reference = new Date(todayStr);
 
         const stats = [];
 

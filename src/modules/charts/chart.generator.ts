@@ -2,12 +2,13 @@ import path from "path";
 import fs from "fs";
 import { LineChartOptions } from "./chart.options";
 import { htmlTextToPNG } from '../../common/html.renderer';
+import { Helper } from "../../common/helper";
 
 /////////////////////////////////////////////////////////////////////////////////
 
 export class ChartGenerator {
 
-    static createLineChart = async (data: any[], options: LineChartOptions): Promise<string> => {
+    static createLineChart = async (data: any[], options: LineChartOptions, filename: string): Promise<string> => {
         const cwd = process.cwd();
         const templatePath = path.join(cwd,'assets/charts/html.templates/','simple.line.chart.html');
         var template = fs.readFileSync(templatePath, "utf8");
@@ -17,33 +18,35 @@ export class ChartGenerator {
         let dataStr = `\nconst data = [\n`;
         if (options.XAxisTimeScaled) {
             for (var d of data) {
-                const str = `{ x: new Date("${d.x?.toISOString()}"), y: ${d.y?.toString()} },\n`;
+                const str = `\t{ x: new Date("${d.x?.toISOString()}"), y: ${d.y?.toString()} },\n`;
                 dataStr += str;
             }
         }
         else {
             for (var d of data) {
-                const str = `{ x: ${d.x?.toString()}, y: ${d.y?.toString()} },\n`;
+                const str = `\t{ x: ${d.x?.toString()}, y: ${d.y?.toString()} },\n`;
                 dataStr += str;
             }
         }
-        dataStr += `];`;
+        dataStr += `];\n\n`;
 
-        dataStr += `const width           = 650;\n`;
-        dataStr += `const height          = 400;\n`;
-        dataStr += `const xFrom           = null;\n`;
-        dataStr += `const xTo             = new Date("2007-06-09T00:00:00.000Z");\n`;
-        dataStr += `const yFrom           = 70;\n`;
-        dataStr += `const yTo             = null;\n`;
-        dataStr += `const xAxisTimeScaled = true;\n`;
-        dataStr += `const yLabel          = 'Day Close $'\n`;
-        dataStr += `const fontSize        = "14px";\n`;
-        dataStr += `const axisStrokeWidth = 3.5;\n`;
-        dataStr += `const axisColor       = "#2E4053";\n`;
+        dataStr += `\tconst width           = ${options.Width};\n`;
+        dataStr += `\tconst height          = ${options.Width};\n`;
+        dataStr += `\tconst xFrom           = ${options.XFrom ?? 'null' };\n`;
+        dataStr += `\tconst xTo             = ${options.XTo ?? 'null' };\n`;
+        dataStr += `\tconst yFrom           = ${options.YFrom ?? 'null' };\n`;
+        dataStr += `\tconst yTo             = ${options.YTo ?? 'null' };\n`;
+        dataStr += `\tconst xAxisTimeScaled = ${options.XAxisTimeScaled ? 'true' : 'false'};\n`;
+        dataStr += `\tconst yLabel          = "${options.YLabel}"\n`;
+        dataStr += `\tconst fontSize        = "${options.FontSize ??  `14px` }";\n`;
+        dataStr += `\tconst axisStrokeWidth = ${options.AxisStrokeWidth ?? `3.5` };\n`;
+        dataStr += `\tconst axisColor       = "${options.AxisColor ?? `#2E4053` }";\n`;
 
         const html = pre + dataStr + post;
 
-        const imageLocation = await htmlTextToPNG(html, 550, 350);
+        Helper.writeTextToFile(html, `${filename}.html`);
+
+        const imageLocation = await htmlTextToPNG(html, 550, 350, filename);
         return imageLocation;
     };
 

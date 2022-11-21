@@ -33,6 +33,7 @@ import { PDFGenerator } from "../../../modules/reports/pdf.generator";
 import { ChartGenerator } from "../../../modules/charts/chart.generator";
 import * as fs from 'fs';
 import * as path from 'path';
+import { defaultLineChartOptions, LineChartOptions } from "../../../modules/charts/chart.options";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -169,6 +170,7 @@ export class StatisticsService {
 
     private generateChartImages = async (
         reportModel: any): Promise<any> => {
+
         const chartImagePaths = [];
 
         let imageLocations = await this.createNutritionCharts(reportModel.Stats.Nutrition);
@@ -194,6 +196,16 @@ export class StatisticsService {
                 x : new Date(c.DateStr),
                 y : c.Calories
             };
+        });
+        const options: LineChartOptions = defaultLineChartOptions();
+        options.Width = 550;
+        options.Height = 350;
+        options.XAxisTimeScaled = true;
+        options.YLabel = 'Calories';
+
+        const caloriesForMonthlocation = await ChartGenerator.createLineChart(lastMonthCalorieStats, options, 'caloriesForMonthlocation');
+        locations.push({
+            NutritionCaloriesForLastMonth : caloriesForMonthlocation
         });
         return locations;
     };

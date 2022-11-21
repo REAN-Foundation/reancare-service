@@ -12,6 +12,8 @@ import { Gender, OSType } from '../domain.types/miscellaneous/system.types';
 import { InputValidationError } from './input.validation.error';
 import { TimeHelper } from './time.helper';
 import Countries from './misc/countries';
+import { DateStringFormat } from '../domain.types/miscellaneous/time.types';
+import { Logger } from './logger';
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -30,9 +32,25 @@ export class Helper {
         return null;
     };
 
+    static writeTextToFile = async (text: string, filename: string) => {
+        try {
+            var uploadFolder = ConfigurationManager.UploadTemporaryFolder();
+            var dateFolder = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
+            var fileFolder = path.join(uploadFolder, dateFolder);
+            if (!fs.existsSync(fileFolder)) {
+                await fs.promises.mkdir(fileFolder, { recursive: true });
+            }
+            const filePath = path.join(fileFolder, filename);
+            fs.writeFileSync(filePath, text);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
     static hasProperty = (obj, prop) => {
         return Object.prototype.hasOwnProperty.call(obj, prop);
-    }
+    };
 
     static getOSType = () => {
         var type = os.type();

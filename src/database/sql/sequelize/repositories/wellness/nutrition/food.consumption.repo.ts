@@ -589,8 +589,8 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
         for await (var day of dayList) {
 
-            var dayStart = TimeHelper.subtractDuration(reference, (day - 1) * 24, DurationType.Hour);
-            var dayEnd = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+            var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+            var dayEnd = TimeHelper.subtractDuration(reference, (day - 1) * 24, DurationType.Hour);
 
             const dayStr = dayStart.toISOString().split('T')[0];
 

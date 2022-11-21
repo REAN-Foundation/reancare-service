@@ -74,15 +74,13 @@ export default class HealthProfile extends Model {
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
-        defaultValue : false,
+        allowNull    : true,
     })
     IsDiabetic: boolean;
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
-        defaultValue : false,
+        allowNull    : true,
     })
     HasHeartAilment: boolean;
 
@@ -210,7 +208,6 @@ export default class HealthProfile extends Model {
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : true,
-        defaultValue : false,
     })
     TobaccoQuestionAns: boolean;
 

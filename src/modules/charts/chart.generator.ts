@@ -77,4 +77,33 @@ export class ChartGenerator {
         return await htmlTextToPNG(html, 350, 225, `${filename}.png`);
     };
 
+    static createGroupBarChart = async (data: any[], options: BarChartOptions, filename: string)
+        : Promise<string|undefined> => {
+        const cwd = process.cwd();
+        const templatePath = path.join(cwd,'assets/charts/html.templates/','simple.bar.chart.html');
+        var template = fs.readFileSync(templatePath, "utf8");
+        const tokens = template.split('// customization');
+        const pre = tokens[0];
+        const post = tokens[2];
+
+        let dataStr = `\n\tconst data = [\n`;
+        for (var d of data) {
+            const str = `\t\t{ x: ${d.x?.toString()}, y: ${d.y?.toString()} },\n`;
+            dataStr += str;
+        }
+
+        dataStr += `\t];\n\n`;
+
+        dataStr += `\tconst width           = ${options.Width};\n`;
+        dataStr += `\tconst height          = ${options.Height};\n`;
+        dataStr += `\tconst yLabel          = "${options.YLabel}"\n`;
+        dataStr += `\tconst fontSize        = "${options.FontSize ??  `11px` }";\n`;
+
+        const html = pre + dataStr + post;
+
+        Helper.writeTextToFile(html, `${filename}.html`);
+
+        return await htmlTextToPNG(html, 350, 225, `${filename}.png`);
+    };
+
 }

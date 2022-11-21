@@ -380,32 +380,44 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
     //#region Privates
 
-    private getBooleanStats = (x) => {
+    private getBooleanStats = (x, timezoneOffsetMinutes, key) => {
+        const tempDate = TimeHelper.addDuration(x.CreatedAt, timezoneOffsetMinutes, DurationType.Minute);
+        const dateStr = tempDate.toISOString()
+            .split('T')[0];
+
         if (x.UserResponse === true) {
             return {
-                Response  : 1,
-                CreatedAt : x.CreatedAt,
+                Response : 1,
+                Type     : key,
+                DateStr  : dateStr,
             };
         }
         else {
             return {
-                Response  : 0,
-                CreatedAt : x.CreatedAt,
+                Response : 0,
+                Type     : key,
+                DateStr  : dateStr,
             };
         }
     };
 
-    private getServingStats = (x) => {
+    private getServingStats = (x, timezoneOffsetMinutes, key) => {
+        const tempDate = TimeHelper.addDuration(x.CreatedAt, timezoneOffsetMinutes, DurationType.Minute);
+        const dateStr = tempDate.toISOString()
+            .split('T')[0];
+
         if (x.Servings) {
             return {
-                Servings  : x.Servings,
-                CreatedAt : x.CreatedAt,
+                Servings : x.Servings,
+                Type     : key,
+                DateStr  : dateStr,
             };
         }
         else {
             return {
-                Servings  : 0,
-                CreatedAt : x.CreatedAt,
+                Servings : 0,
+                Type     : key,
+                DateStr  : dateStr,
             };
         }
     };
@@ -501,6 +513,9 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
         const records = await this.getQuestionnaireRecords(patientUserId, numDays, DurationType.Day);
 
+        const timezone = await this.getPatientTimezone(patientUserId);
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+
         //Questionnaire handling
         const genericNutritionRecords = records.filter(x => x.FoodTypes === `["GenericNutrition"]`);
         const proteinConsumptionRecords = records.filter(x => x.FoodTypes === `["Protein"]`);
@@ -512,14 +527,14 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         const sugaryDrinksServingsRecords = records.filter(x => x.FoodTypes === `["Sugary drinks"]`);
         const seaFoodServingsRecords = records.filter(x => x.FoodTypes === `["Sea food"]`);
 
-        const healthyFoodChoicesStats = genericNutritionRecords.map(x => this.getBooleanStats(x));
-        const healthyProteinConsumptionStats = proteinConsumptionRecords.map(x => this.getBooleanStats(x));
-        const lowSaltConsumptionStats = lowSaltConsumptionRecords.map(x => this.getBooleanStats(x));
-        const vegetableServingsStats = vegetableServingsRecords.map(x => this.getServingStats(x));
-        const fruitServingsStatss = fruitServingsRecords.map(x => this.getServingStats(x));
-        const grainServingsStats = grainServingsRecords.map(x => this.getServingStats(x));
-        const sugaryDrinksServingsStats = sugaryDrinksServingsRecords.map(x => this.getServingStats(x));
-        const seaFoodServingsStats = seaFoodServingsRecords.map(x => this.getServingStats(x));
+        const healthyFoodChoicesStats = genericNutritionRecords.map(x => this.getBooleanStats(x, offsetMinutes, 'Healthy'));
+        const healthyProteinConsumptionStats = proteinConsumptionRecords.map(x => this.getBooleanStats(x, offsetMinutes, 'Protein'));
+        const lowSaltConsumptionStats = lowSaltConsumptionRecords.map(x => this.getBooleanStats(x, offsetMinutes, 'Low Salt'));
+        const vegetableServingsStats = vegetableServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Veggies'));
+        const fruitServingsStatss = fruitServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Fruits'));
+        const grainServingsStats = grainServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Grains'));
+        const sugaryDrinksServingsStats = sugaryDrinksServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Sugary'));
+        const seaFoodServingsStats = seaFoodServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Seafood'));
 
         return {
             HealthyFoodChoices : {

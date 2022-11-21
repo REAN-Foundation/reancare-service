@@ -191,13 +191,58 @@ export class StatisticsService {
 
     private createNutritionCharts = async (data) => {
         var locations = [];
-        const caloriesForMonthlocation = await this.createCalorieLineChart(data.LastMonth.CalorieStats, 'caloriesForMonthlocation');
+        //Calories
+        let location = await this.createCalorieLineChart(data.LastMonth.CalorieStats, 'caloriesForMonthlocation');
         locations.push({
-            NutritionCaloriesForLastMonth : caloriesForMonthlocation
+            NutritionCaloriesForLastMonth : location
         });
-        const caloriesForWeeklocation = await this.createCalorieBarChart(data.LastWeek.CalorieStats, 'caloriesForWeeklocation');
+        location = await this.createCalorieBarChart(data.LastWeek.CalorieStats, 'caloriesForWeeklocation');
         locations.push({
-            NutritionCaloriesForLastWeek : caloriesForWeeklocation
+            NutritionCaloriesForLastWeek : location
+        });
+
+        //Questionnaire
+        let qstats = {
+            ...(data.LastWeek.QuestionnaireStats.HealthyFoodChoices),
+            ...(data.LastWeek.QuestionnaireStats.HealthyProteinConsumptions),
+            ...(data.LastWeek.QuestionnaireStats.LowSaltFoods),
+        };
+        location = await this.createNutritionQueryBarChartForWeek(qstats, 'nutriQueryForWeeklocation');
+        locations.push({
+            NutritionQueryForLastWeek : location
+        });
+        qstats = {
+            ...(data.LastMonth.QuestionnaireStats.HealthyFoodChoices),
+            ...(data.LastMonth.QuestionnaireStats.HealthyProteinConsumptions),
+            ...(data.LastMonth.QuestionnaireStats.LowSaltFoods),
+        };
+        location = await this.createNutritionQueryBarChartForMonth(qstats, 'nutriQueryForMonthlocation');
+        locations.push({
+            NutritionQueryForLastMonth : location
+        });
+
+        //Servings
+        let servingsStats = {
+            ...(data.LastMonth.QuestionnaireStats.VegetableServings),
+            ...(data.LastMonth.QuestionnaireStats.FruitServings),
+            ...(data.LastMonth.QuestionnaireStats.WholeGrainServings),
+            ...(data.LastMonth.QuestionnaireStats.SugaryDrinksServings),
+            ...(data.LastMonth.QuestionnaireStats.SeafoodServings),
+        };
+        location = await this.createNutritionServingsBarChartForMonth(servingsStats, 'nutriServingsForMonthlocation');
+        locations.push({
+            NutritionServingsForLastMonth : location
+        });
+        servingsStats = {
+            ...(data.LastWeek.QuestionnaireStats.VegetableServings),
+            ...(data.LastWeek.QuestionnaireStats.FruitServings),
+            ...(data.LastWeek.QuestionnaireStats.WholeGrainServings),
+            ...(data.LastWeek.QuestionnaireStats.SugaryDrinksServings),
+            ...(data.LastWeek.QuestionnaireStats.SeafoodServings),
+        };
+        location = await this.createNutritionServingsBarChartForWeek(servingsStats, 'nutriServingsForWeeklocation');
+        locations.push({
+            NutritionServingsForLastWeek : location
         });
         return locations;
     };
@@ -486,6 +531,66 @@ export class StatisticsService {
         options.YLabel = 'Calories';
 
         return await ChartGenerator.createBarChart(calorieStats, options, filename);
+    }
+
+    private async createNutritionQueryBarChartForWeek(stats: any, filename: string) {
+        const temp = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
+                y : c.Response
+            };
+        });
+        const options: BarChartOptions = defaultLineChartOptions();
+        options.Width = 550;
+        options.Height = 275;
+        options.YLabel = 'User Response';
+
+        return await ChartGenerator.createGroupBarChart(temp, options, filename);
+    }
+
+    private async createNutritionQueryBarChartForMonth(stats: any, filename: string) {
+        const temp = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getDayOfMonth(c.CreatedAt)}"`,
+                y : c.Response
+            };
+        });
+        const options: BarChartOptions = defaultLineChartOptions();
+        options.Width = 550;
+        options.Height = 275;
+        options.YLabel = 'User Response';
+
+        return await ChartGenerator.createGroupBarChart(temp, options, filename);
+    }
+
+    private async createNutritionServingsBarChartForWeek(stats: any, filename: string) {
+        const temp = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
+                y : c.Response
+            };
+        });
+        const options: BarChartOptions = defaultLineChartOptions();
+        options.Width = 550;
+        options.Height = 275;
+        options.YLabel = 'User Response';
+
+        return await ChartGenerator.createGroupBarChart(temp, options, filename);
+    }
+
+    private async createNutritionServingsBarChartForMonth(stats: any, filename: string) {
+        const temp = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getDayOfMonth(c.CreatedAt)}"`,
+                y : c.Response
+            };
+        });
+        const options: BarChartOptions = defaultLineChartOptions();
+        options.Width = 550;
+        options.Height = 275;
+        options.YLabel = 'User Response';
+
+        return await ChartGenerator.createGroupBarChart(temp, options, filename);
     }
 
     //#endregion

@@ -29,6 +29,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                 Provider                    : model.Provider ?? null,
                 ServeListNodeChildrenAtOnce : model.ServeListNodeChildrenAtOnce ?? false,
                 ScoringApplicable           : model.ScoringApplicable ?? false,
+                TotalNumberOfQuestions      : model.TotalNumberOfQuestions ?? null,
             };
             const assessmentTemplate = await AssessmentTemplate.create(entity);
             return AssessmentTemplateMapper.toDto(assessmentTemplate);
@@ -152,6 +153,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             }
             if (updateModel.ServeListNodeChildrenAtOnce != null) {
                 assessmentTemplate.ServeListNodeChildrenAtOnce = updateModel.ServeListNodeChildrenAtOnce;
+            }
+            if (updateModel.TotalNumberOfQuestions != null) {
+                assessmentTemplate.TotalNumberOfQuestions = updateModel.TotalNumberOfQuestions;
             }
             await assessmentTemplate.save();
 

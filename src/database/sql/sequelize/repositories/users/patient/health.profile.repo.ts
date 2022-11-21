@@ -14,29 +14,33 @@ export class HealthProfileRepo implements IHealthProfileRepo {
     : Promise<HealthProfileDto> => {
         try {
             const entity = {
-                PatientUserId      : patientHealthProfileDomainModel.PatientUserId,
-                BloodGroup         : patientHealthProfileDomainModel.BloodGroup ?? '',
-                MajorAilment       : patientHealthProfileDomainModel.MajorAilment ?? '',
-                OtherConditions    : patientHealthProfileDomainModel.OtherConditions ?? '',
-                IsDiabetic         : patientHealthProfileDomainModel.IsDiabetic ?? false,
-                HasHeartAilment    : patientHealthProfileDomainModel.HasHeartAilment ?? false,
-                MaritalStatus      : patientHealthProfileDomainModel.MaritalStatus ?? 'Unknown',
-                Ethnicity          : patientHealthProfileDomainModel.Ethnicity ?? '',
-                Race               : patientHealthProfileDomainModel.Race ?? '',
-                Nationality        : patientHealthProfileDomainModel.Nationality ?? '',
-                Occupation         : patientHealthProfileDomainModel.Occupation ?? '',
-                SedentaryLifestyle : patientHealthProfileDomainModel.SedentaryLifestyle ?? false,
-                IsSmoker           : patientHealthProfileDomainModel.IsSmoker ?? false,
-                SmokingSeverity    : patientHealthProfileDomainModel.SmokingSeverity ?? 'Low',
-                SmokingSince       : patientHealthProfileDomainModel.SmokingSince ?? null,
-                IsDrinker          : patientHealthProfileDomainModel.IsDrinker ?? false,
-                DrinkingSeverity   : patientHealthProfileDomainModel.DrinkingSeverity ?? 'Low',
-                DrinkingSince      : patientHealthProfileDomainModel.DrinkingSince ?? null,
-                SubstanceAbuse     : patientHealthProfileDomainModel.SubstanceAbuse ?? false,
-                ProcedureHistory   : patientHealthProfileDomainModel.ProcedureHistory ?? '',
-                ObstetricHistory   : patientHealthProfileDomainModel.ObstetricHistory ?? '',
-                OtherInformation   : patientHealthProfileDomainModel.OtherInformation ?? '',
-                TobaccoQuestion    : "Have you used tobacco products (such as cigarettes, electronic cigarettes, cigars, smokeless tobacco, or hookah) over the past year?"
+                PatientUserId         : patientHealthProfileDomainModel.PatientUserId,
+                BloodGroup            : patientHealthProfileDomainModel.BloodGroup ?? '',
+                MajorAilment          : patientHealthProfileDomainModel.MajorAilment ?? '',
+                OtherConditions       : patientHealthProfileDomainModel.OtherConditions ?? '',
+                IsDiabetic            : patientHealthProfileDomainModel.IsDiabetic ?? null,
+                HasHeartAilment       : patientHealthProfileDomainModel.HasHeartAilment ?? null,
+                MaritalStatus         : patientHealthProfileDomainModel.MaritalStatus ?? 'Unknown',
+                Ethnicity             : patientHealthProfileDomainModel.Ethnicity ?? '',
+                Race                  : patientHealthProfileDomainModel.Race ?? '',
+                Nationality           : patientHealthProfileDomainModel.Nationality ?? '',
+                Occupation            : patientHealthProfileDomainModel.Occupation ?? '',
+                SedentaryLifestyle    : patientHealthProfileDomainModel.SedentaryLifestyle ?? false,
+                IsSmoker              : patientHealthProfileDomainModel.IsSmoker ?? false,
+                SmokingSeverity       : patientHealthProfileDomainModel.SmokingSeverity ?? 'Low',
+                SmokingSince          : patientHealthProfileDomainModel.SmokingSince ?? null,
+                IsDrinker             : patientHealthProfileDomainModel.IsDrinker ?? false,
+                DrinkingSeverity      : patientHealthProfileDomainModel.DrinkingSeverity ?? 'Low',
+                DrinkingSince         : patientHealthProfileDomainModel.DrinkingSince ?? null,
+                SubstanceAbuse        : patientHealthProfileDomainModel.SubstanceAbuse ?? false,
+                ProcedureHistory      : patientHealthProfileDomainModel.ProcedureHistory ?? '',
+                ObstetricHistory      : patientHealthProfileDomainModel.ObstetricHistory ?? '',
+                OtherInformation      : patientHealthProfileDomainModel.OtherInformation ?? '',
+                TypeOfStroke          : patientHealthProfileDomainModel.TypeOfStroke ?? null,
+                HasHighBloodPressure  : patientHealthProfileDomainModel.HasHighBloodPressure ?? null,
+                HasHighCholesterol    : patientHealthProfileDomainModel.HasHighCholesterol ?? null,
+                HasAtrialFibrillation : patientHealthProfileDomainModel.HasAtrialFibrillation ?? null,
+                TobaccoQuestion       : "Have you used tobacco products (such as cigarettes, electronic cigarettes, cigars, smokeless tobacco, or hookah) over the past year?"
             };
             const patientHealthProfile = await HealthProfile.create(entity);
             return HealthProfileMapper.toDto(patientHealthProfile);
@@ -145,6 +149,18 @@ export class HealthProfileRepo implements IHealthProfileRepo {
             }
             if (patientHealthProfileDomainModel.TobaccoQuestionAns !== undefined) {
                 patientHealthProfile.TobaccoQuestionAns = patientHealthProfileDomainModel.TobaccoQuestionAns;
+            }
+            if (patientHealthProfileDomainModel.TypeOfStroke !== undefined) {
+                patientHealthProfile.TypeOfStroke = patientHealthProfileDomainModel.TypeOfStroke;
+            }
+            if (patientHealthProfileDomainModel.HasHighBloodPressure !== undefined) {
+                patientHealthProfile.HasHighBloodPressure = patientHealthProfileDomainModel.HasHighBloodPressure;
+            }
+            if (patientHealthProfileDomainModel.HasHighCholesterol !== undefined) {
+                patientHealthProfile.HasHighCholesterol = patientHealthProfileDomainModel.HasHighCholesterol;
+            }
+            if (patientHealthProfileDomainModel.HasAtrialFibrillation !== undefined) {
+                patientHealthProfile.HasAtrialFibrillation = patientHealthProfileDomainModel.HasAtrialFibrillation;
             }
 
             await patientHealthProfile.save();

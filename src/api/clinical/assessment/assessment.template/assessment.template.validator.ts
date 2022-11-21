@@ -15,7 +15,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): AssessmentTemplateDomainModel => {
 
-        const patientAssessmentTemplateModel: AssessmentTemplateDomainModel = {
+        const model: AssessmentTemplateDomainModel = {
             Type                        : request.body.Type ?? null,
             Title                       : request.body.Title ?? null,
             Description                 : request.body.Description,
@@ -24,9 +24,10 @@ export class AssessmentTemplateValidator extends BaseValidator {
             ProviderAssessmentCode      : request.body.ProviderAssessmentCode ?? null,
             Provider                    : request.body.Provider ?? null,
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
+            TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,
         };
 
-        return patientAssessmentTemplateModel;
+        return model;
     };
 
     create = async (request: express.Request): Promise<AssessmentTemplateDomainModel> => {
@@ -65,7 +66,6 @@ export class AssessmentTemplateValidator extends BaseValidator {
     };
 
     private async validateCreateBody(request) {
-
         await this.validateString(request, 'Type', Where.Body, true, false);
         await this.validateString(request, 'Title', Where.Body, true, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
@@ -73,22 +73,19 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, false);
         await this.validateString(request, 'DisplayCode', Where.Body, false, false);
-
+        await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
         this.validateRequest(request);
-
     }
 
     private async validateUpdateBody(request) {
-
         await this.validateString(request, 'Type', Where.Body, false, false);
         await this.validateString(request, 'Title', Where.Body, false, false);
         await this.validateString(request, 'Description', Where.Body, false, false);
         await this.validateBoolean(request, 'ScoringApplicable', Where.Body, false, false);
         await this.validateString(request, 'ProviderAssessmentCode', Where.Body, false, false);
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, false);
-
+        await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
         this.validateRequest(request);
-
     }
 
     importFromJson = async (request: express.Request): Promise<AssessmentTemplateDomainModel> => {

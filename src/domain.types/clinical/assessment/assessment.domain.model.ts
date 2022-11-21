@@ -23,4 +23,5 @@ export interface AssessmentDomainModel {
     ParentActivityId?      : uuid;
     UserTaskId?            : uuid;
     ScheduledDateString?   : uuid;
+    TotalNumberOfQuestions?: number;
 }

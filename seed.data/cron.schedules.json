@@ -5,7 +5,7 @@
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
-        "ScheduleCustomTasks": "* 11 * * *",
+        "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *"
 
     },
@@ -15,7 +15,7 @@
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
-        "ScheduleCustomTasks": "* 11 * * *",
+        "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *"
 
     },
@@ -25,7 +25,7 @@
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "0 8 * * *",
+        "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *"
 
     },

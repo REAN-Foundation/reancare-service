@@ -123,6 +123,12 @@ export default class AssessmentTemplate extends Model {
     @BelongsTo(() => FileResource)
     FileResource: FileResource;
 
+    @Column({
+        type      : DataType.INTEGER,
+        allowNull : true,
+    })
+    TotalNumberOfQuestions: number;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

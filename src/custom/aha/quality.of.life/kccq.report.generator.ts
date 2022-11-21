@@ -5,7 +5,7 @@ import { PDFGenerator } from '../../../modules/reports/pdf.generator';
 import { htmlTextToPNG } from '../../../common/html.renderer';
 import { TimeHelper } from '../../../common/time.helper';
 import { Helper } from '../../../common/helper';
-import { DateStringFormat } from '../../../domain.types/miscellaneous/time.types';
+import { DateStringFormat, DurationType } from '../../../domain.types/miscellaneous/time.types';
 import { kccqChartHtmlText } from './kccq.chart.html';
 import { KccqScore } from './kccq.types';
 import { FileResourceService } from '../../../services/general/file.resource.service';
@@ -44,12 +44,13 @@ const getReportModel = (
     assessment: AssessmentDto,
     score: any) => {
 
+    const timezone = patient.User?.DefaultTimeZone ?? '+05:30';
+    const date = assessment.FinishedAt ?? new Date();
     const patientName = patient.User.Person.DisplayName;
     const patientAge = Helper.getAgeFromBirthDate(patient.User.Person.BirthDate);
-    const assessmentDate = assessment.FinishedAt ?? new Date();
-    const assessmentDateStr = assessmentDate.toISOString().split('T')[0];
-    const reportDate = TimeHelper.getDateWithTimezone(assessmentDateStr, patient.User.DefaultTimeZone);
-    const reportDateStr = TimeHelper.getDateString(reportDate, DateStringFormat.YYYY_MM_DD);
+    var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+    const assessmentDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
+    const reportDateStr = assessmentDate.toISOString().split('T')[0];
 
     return {
         Name          : patientName,
@@ -57,16 +58,17 @@ const getReportModel = (
         AssessmentId  : assessment.id,
         DisplayId     : patient.DisplayId,
         Age           : patientAge,
-        ReportDate    : reportDateStr,
+        ReportDate    : date,
+        ReportDateStr : reportDateStr,
         ...score
     };
 };
 
 const exportReportToPDF = async (reportModel: any, absoluteChartImagePath: string): Promise<string> => {
     try {
-        var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Quality-of-Life-Report-');
+        var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Quality-of-Life-Questionnaire-Score');
         var writeStream = fs.createWriteStream(absFilepath);
-        const reportTitle = `Quality of Life Assessment Score`;
+        const reportTitle = `Quality of Life Questionnaire Score`;
         const author = 'REAN Foundation';
         var document = PDFGenerator.createDocument(reportTitle, author, writeStream);
         //PDFGenerator.addNewPage(document);
@@ -87,7 +89,7 @@ const exportReportToPDF = async (reportModel: any, absoluteChartImagePath: strin
         const documentModel: DocumentDomainModel = {
             DocumentType  : DocumentTypes.Assessment,
             PatientUserId : reportModel.PatientUserId,
-            RecordDate    : new Date(reportModel.ReportDate),
+            RecordDate    : reportModel.ReportDate,
             UploadedDate  : new Date(),
             FileMetaData  : {
                 ResourceId       : resourceId,
@@ -259,7 +261,7 @@ const addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: number):
     document
         .fillColor('#444444')
         .fontSize(10)
-        .text('Date: ' + model.ReportDate, 200, y, { align: "right" })
+        .text('Date: ' + model.ReportDateStr, 200, y, { align: "right" })
         .moveDown();
 
     y = y + 20;

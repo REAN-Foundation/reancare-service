@@ -35,6 +35,7 @@ export class AssessmentRepo implements IAssessmentRepo {
                 UserTaskId             : model.UserTaskId,
                 ScheduledDateString    : model.ScheduledDateString ?? null,
                 CurrentNodeId          : model.CurrentNodeId,
+                TotalNumberOfQuestions : model.TotalNumberOfQuestions ?? null,
             };
             const assessment = await Assessment.create(entity);
             return AssessmentMapper.toDto(assessment);
@@ -139,7 +140,7 @@ export class AssessmentRepo implements IAssessmentRepo {
                 search.where['Type'] = { [Op.like]: '%' + filters.Type + '%' };
             }
             if (filters.AssessmentTemplateId != null) {
-                search.where['AssessmentTemplateId'] = { [Op.like]: '%' + filters.AssessmentTemplateId + '%' };
+                search.where['AssessmentTemplateId'] = filters.AssessmentTemplateId;
             }
 
             let orderByColum = 'Title';

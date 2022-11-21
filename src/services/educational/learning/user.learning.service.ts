@@ -24,6 +24,7 @@ export class UserLearningService {
     updateUserLearning = async (
         userId: uuid,
         contentId: uuid,
+        actionId?: uuid,
         learningPathId?: uuid,
         courseId?: uuid,
         moduleId?: uuid,
@@ -51,7 +52,7 @@ export class UserLearningService {
             progressPercentage = 100;
         }
         return await this._userLearningRepo.updateUserLearning(
-            userId, contentId, learningPathId, courseId, moduleId, progressStatus, progressPercentage);
+            userId, contentId, learningPathId, courseId, moduleId, actionId, progressStatus, progressPercentage);
     };
 
     getLearningPathProgress = async (userId: uuid, learningPathId: uuid): Promise<number> => {
@@ -115,19 +116,23 @@ export class UserLearningService {
         return 0;
     };
 
-    getUserCourseContents = async (userId: string): Promise<any[]> => {
-        const userLearnings = await this._userLearningRepo.searchUserLearnings(userId);
+    getUserCourseContents = async (userId: string, learningPathId?: uuid): Promise<any[]> => {
+        const filters = learningPathId ? {
+            LearningPathId : learningPathId
+        } : null;
+        const userLearnings = await this._userLearningRepo.searchUserLearnings(userId, filters);
         if (userLearnings.length === 0) {
             return [];
         }
         const userCourseContents = userLearnings.map(x => {
             return {
                 UserId               : x.UserId,
-                CourseContentId      : x.ContentId,
+                ContentId            : x.ContentId,
                 CourseId             : x.CourseId,
                 ModuleId             : x.ModuleId,
                 LearningPathId       : x.LearningPathId,
                 Content              : x.Content,
+                ContentType          : x.Content?.ContentType,
                 StartedAt            : x.CreatedAt,
                 LastAccessedAt       : x.UpdatedAt,
                 ProgressStatus       : x.ProgressStatus,
@@ -138,7 +143,7 @@ export class UserLearningService {
     }
 
     getUserLearningPaths = async (userId: string): Promise<any[]> => {
-        const userLearnings = await this._userLearningRepo.searchUserLearnings(userId);
+        const userLearnings = await this._userLearningRepo.searchUserLearnings(userId, null);
         if (userLearnings.length === 0) {
             return [];
         }

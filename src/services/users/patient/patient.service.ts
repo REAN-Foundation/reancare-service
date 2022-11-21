@@ -83,6 +83,31 @@ export class PatientService {
                 UserName      : items[0].UserName,
                 CurrentRoleId : 2,
             };
+        
+        }
+        results.Items = items;
+        return results;
+    };
+
+    public getPatientByPhone = async (
+        filters: PatientSearchFilters
+    ): Promise<PatientDetailsSearchResults | PatientSearchResults> => {
+        var items = [];
+        var results = await this._patientRepo.search(filters);
+        for await (var dto of results.Items) {
+            dto = await this.updateDto(dto);
+            items.push(dto);
+        }
+
+        if (items.length > 0) {
+            const currentUser: CurrentUser = {
+                UserId        : items[0].id,
+                DisplayName   : items[0].DisplayName,
+                Phone         : items[0].Phone,
+                Email         : items[0].Email,
+                UserName      : items[0].UserName,
+                CurrentRoleId : 2,
+            };
             const accessToken = await Loader.authorizer.generateUserSessionToken(currentUser);
             items[0].accessToken = accessToken;
         }
@@ -148,6 +173,8 @@ export class PatientService {
         dto.Gender = user.Person.Gender;
         dto.BirthDate = user.Person.BirthDate;
         dto.Age = user.Person.Age;
+        dto.FirstName = user.Person.FirstName;
+        dto.LastName = user.Person.LastName;
         return dto;
     };
 

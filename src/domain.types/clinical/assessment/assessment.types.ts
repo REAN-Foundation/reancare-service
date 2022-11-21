@@ -249,6 +249,7 @@ export class CAssessmentQuestionNode extends CAssessmentNode {
         this.Paths = [];
         this.Options = [];
     }
+
 }
 
 export class CAssessmentMessageNode extends CAssessmentNode {

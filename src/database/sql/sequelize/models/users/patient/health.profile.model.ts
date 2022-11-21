@@ -74,15 +74,13 @@ export default class HealthProfile extends Model {
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
-        defaultValue : false,
+        allowNull    : true,
     })
     IsDiabetic: boolean;
 
     @Column({
         type         : DataType.BOOLEAN,
-        allowNull    : false,
-        defaultValue : false,
+        allowNull    : true,
     })
     HasHeartAilment: boolean;
 
@@ -210,9 +208,32 @@ export default class HealthProfile extends Model {
     @Column({
         type         : DataType.BOOLEAN,
         allowNull    : true,
-        defaultValue : false,
     })
     TobaccoQuestionAns: boolean;
+
+    @Column({
+        type         : DataType.STRING(128),
+        allowNull    : true,
+    })
+    TypeOfStroke: string;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : true,
+    })
+    HasHighBloodPressure: boolean;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : true,
+    })
+    HasHighCholesterol: boolean;
+
+    @Column({
+        type         : DataType.BOOLEAN,
+        allowNull    : true,
+    })
+    HasAtrialFibrillation: boolean;
 
     @Column
     @CreatedAt

@@ -63,6 +63,12 @@ export class PatientRepo implements IPatientRepo {
             if (model.EhrId !== undefined) {
                 patient.EhrId = model.EhrId;
             }
+            if (model.HealthSystem != null) {
+                patient.HealthSystem = model.HealthSystem;
+            }
+            if (model.AssociatedHospital != null) {
+                patient.AssociatedHospital = model.AssociatedHospital;
+            }
             await patient.save();
             return await PatientMapper.toDetailsDto(patient);
         } catch (error) {

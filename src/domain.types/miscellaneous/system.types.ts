@@ -5,7 +5,7 @@ export type Optional<T> = T | NotThere;
 export type BloodGroup    = 'A+'| 'B+' | 'O+' | 'AB+' | 'A-' | 'B-' |'O-' | 'AB-' | null;
 export type RaceType    = 'American Indian/Alaskan Native' | 'Black/African American' | 'Native Hawaiian or Other Pacific Islander' | 'White' | null;
 export type EthnicityType    = 'Hispanic/Latino'| 'Not Hispanic/Latino' | 'Prefer not to say' | null;
-export type MaritalStatus = 'Single'| 'Married' | 'Widowed' | 'Divorcee' | 'Live-in' | 'Other' | 'Unknown' | 'Unmarried' | null;
+export type MaritalStatus = 'Single'| 'Married' | 'Divorced'  | 'Widowed' | null;
 
 export type uuid    = string | undefined | null;
 export type decimal = number | undefined | null;
@@ -46,6 +46,8 @@ export enum Gender {
     Unknown              = 'Unknown'
 }
 
+export const Genders = Object.keys(Gender);
+
 export const GenderList: Gender[] = [
     Gender.Male,
     Gender.Female,
@@ -60,12 +62,8 @@ export const GenderList: Gender[] = [
 export const MaritalStatusList: MaritalStatus[] = [
     'Single',
     'Married',
+    'Divorced',
     'Widowed',
-    'Divorcee',
-    'Live-in',
-    'Other',
-    'Unmarried',
-    'Unknown'
 ];
 
 export enum Severity {

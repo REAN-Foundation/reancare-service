@@ -9,6 +9,7 @@ import {
     IsUUID,
     PrimaryKey,
     ForeignKey,
+    BelongsTo,
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
@@ -52,6 +53,9 @@ export default class NoticeAction extends Model {
         allowNull : false,
     })
     NoticeId: string;
+
+    @BelongsTo(() => Notice, 'NoticeId')
+    Notice: Notice;
 
     @Column({
         type      : DataType.STRING(128),

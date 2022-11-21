@@ -22,7 +22,8 @@ export class AssessmentTemplateMapper {
             RootNodeId                  : template.RootNodeId,
             ScoringApplicable           : template.ScoringApplicable,
             FileResourceId              : template.FileResourceId,
-            ServeListNodeChildrenAtOnce : template.ServeListNodeChildrenAtOnce
+            ServeListNodeChildrenAtOnce : template.ServeListNodeChildrenAtOnce,
+            TotalNumberOfQuestions      : template.TotalNumberOfQuestions,
         };
         return dto;
     };

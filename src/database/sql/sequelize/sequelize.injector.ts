@@ -74,8 +74,11 @@ import { CourseContentRepo } from './repositories/educational/learning/course.co
 import { UserLearningRepo } from './repositories/educational/learning/user.learning.repo';
 import { LabRecordRepo } from './repositories/clinical/lab.record/lab.record.repo';
 import { DonorRepo } from './repositories/users/donor.repo';
+import { HealthSystemRepo } from './repositories/users/patient/health.system.repo';
 import { NotificationRepo } from './repositories/general/notification.repo';
 import { VolunteerRepo } from './repositories/users/volunteer.repo';
+import { ChatRepo } from './repositories/general/chat.repo';
+import { PatientDonorsRepo } from './repositories/clinical/donation/patient.donors.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -159,8 +162,11 @@ export class SequelizeInjector {
         container.register('IUserLearningRepo', UserLearningRepo);
         container.register('ILabRecordRepo', LabRecordRepo);
         container.register('IDonorRepo', DonorRepo);
+        container.register('IHealthSystemRepo', HealthSystemRepo);
         container.register('INotificationRepo', NotificationRepo);
         container.register('IVolunteerRepo', VolunteerRepo);
+        container.register('IChatRepo', ChatRepo);
+        container.register('IPatientDonorsRepo', PatientDonorsRepo);
 
     }
 

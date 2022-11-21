@@ -69,7 +69,8 @@ import { register as registerTestRoutes } from './general/test/test.routes';
 import { register as registerDonorRoutes } from './users/donor/donor.routes';
 import { register as registerNotificationRoutes } from './general/notification/notification.routes';
 import { register as registerVolunteerRoutes } from './users/volunteer/volunteer.routes';
-
+import { register as registerChatRoutes } from './general/chat/chat.routes';
+import { register as registerPatientDonorsRoutes } from './clinical/donation/patient.donors.routes';
 ////////////////////////////////////////////////////////////////////////////////////
 
 export class Router {
@@ -162,6 +163,8 @@ export class Router {
                 registerDonorRoutes(this._app);
                 registerNotificationRoutes(this._app);
                 registerVolunteerRoutes(this._app);
+                registerChatRoutes(this._app);
+                registerPatientDonorsRoutes(this._app);
 
                 resolve(true);
 

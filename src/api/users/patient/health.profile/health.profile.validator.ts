@@ -18,30 +18,34 @@ export class HealthProfileValidator extends BaseValidator {
     getDomainModel = (request: express.Request): HealthProfileDomainModel => {
 
         const model: HealthProfileDomainModel = {
-            BloodGroup           : request.body.BloodGroup ?? undefined,
-            BloodTransfusionDate : request.body.BloodTransfusionDate ?? undefined,
-            BloodDonationCycle   : request.body.BloodDonationCycle ?? undefined,
-            MajorAilment         : request.body.MajorAilment ?? undefined,
-            OtherConditions      : request.body.OtherConditions ?? undefined,
-            IsDiabetic           : request.body.IsDiabetic ?? undefined,
-            HasHeartAilment      : request.body.HasHeartAilment ?? undefined,
-            MaritalStatus        : request.body.MaritalStatus ?? undefined,
-            Ethnicity            : request.body.Ethnicity ?? undefined,
-            Race                 : request.body.Race ?? undefined,
-            Nationality          : request.body.Nationality ?? undefined,
-            Occupation           : request.body.Occupation ?? undefined,
-            SedentaryLifestyle   : request.body.SedentaryLifestyle ?? undefined,
-            IsSmoker             : request.body.IsSmoker ?? undefined,
-            SmokingSeverity      : request.body.SmokingSeverity ?? undefined,
-            SmokingSince         : request.body.SmokingSince ?? undefined,
-            IsDrinker            : request.body.IsDrinker ?? undefined,
-            DrinkingSeverity     : request.body.DrinkingSeverity ?? undefined,
-            DrinkingSince        : request.body.DrinkingSince ?? undefined,
-            SubstanceAbuse       : request.body.SubstanceAbuse ?? undefined,
-            ProcedureHistory     : request.body.ProcedureHistory ?? undefined,
-            ObstetricHistory     : request.body.ObstetricHistory ?? undefined,
-            OtherInformation     : request.body.OtherInformation ?? undefined,
-            TobaccoQuestionAns   : request.body.TobaccoQuestionAns ?? undefined,
+            BloodGroup            : request.body.BloodGroup ?? undefined,
+            BloodTransfusionDate  : request.body.BloodTransfusionDate ?? undefined,
+            BloodDonationCycle    : request.body.BloodDonationCycle ?? undefined,
+            MajorAilment          : request.body.MajorAilment ?? undefined,
+            OtherConditions       : request.body.OtherConditions ?? undefined,
+            IsDiabetic            : request.body.IsDiabetic ?? undefined,
+            HasHeartAilment       : request.body.HasHeartAilment ?? undefined,
+            MaritalStatus         : request.body.MaritalStatus ?? undefined,
+            Ethnicity             : request.body.Ethnicity ?? undefined,
+            Race                  : request.body.Race ?? undefined,
+            Nationality           : request.body.Nationality ?? undefined,
+            Occupation            : request.body.Occupation ?? undefined,
+            SedentaryLifestyle    : request.body.SedentaryLifestyle ?? undefined,
+            IsSmoker              : request.body.IsSmoker ?? undefined,
+            SmokingSeverity       : request.body.SmokingSeverity ?? undefined,
+            SmokingSince          : request.body.SmokingSince ?? undefined,
+            IsDrinker             : request.body.IsDrinker ?? undefined,
+            DrinkingSeverity      : request.body.DrinkingSeverity ?? undefined,
+            DrinkingSince         : request.body.DrinkingSince ?? undefined,
+            SubstanceAbuse        : request.body.SubstanceAbuse ?? undefined,
+            ProcedureHistory      : request.body.ProcedureHistory ?? undefined,
+            ObstetricHistory      : request.body.ObstetricHistory ?? undefined,
+            OtherInformation      : request.body.OtherInformation ?? undefined,
+            TobaccoQuestionAns    : request.body.TobaccoQuestionAns ?? undefined,
+            TypeOfStroke          : request.body.TypeOfStroke ?? undefined,
+            HasHighBloodPressure  : request.body.HasHighBloodPressure ?? undefined,
+            HasHighCholesterol    : request.body.HasHighCholesterol ?? undefined,
+            HasAtrialFibrillation : request.body.HasAtrialFibrillation ?? undefined,
         };
 
         return model;
@@ -80,6 +84,11 @@ export class HealthProfileValidator extends BaseValidator {
         await this.validateString(request, 'ObstetricHistory', Where.Body, false, true);
         await this.validateString(request, 'OtherInformation', Where.Body, false, true);
         await this.validateBoolean(request, 'TobaccoQuestionAns', Where.Body, false, true);
+        await this.validateString(request, 'TypeOfStroke', Where.Body, false, true);
+        await this.validateBoolean(request, 'HasHighBloodPressure', Where.Body, false, true);
+        await this.validateBoolean(request, 'HasHighCholesterol', Where.Body, false, true);
+        await this.validateBoolean(request, 'HasAtrialFibrillation', Where.Body, false, true);
+
 
         this.validateRequest(request);
 

@@ -2,7 +2,7 @@ import {
     Column, CreatedAt, DataType, DeletedAt, HasMany, Index, IsEmail, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import { Gender, GenderList } from '../../../../../domain.types/miscellaneous/system.types';
+import { Gender, Genders } from '../../../../../domain.types/miscellaneous/system.types';
 import { PersonIdentificationType } from '../../../../../domain.types/person/person.types';
 import Address from '../general/address.model';
 import User from '../users/user/user.model';
@@ -81,7 +81,7 @@ export default class Person extends Model {
 
     @Column({
         type         : DataType.ENUM,
-        values       : GenderList,
+        values       : Genders,
         defaultValue : Gender.Unknown,
         allowNull    : true,
     })
@@ -99,6 +99,20 @@ export default class Person extends Model {
     })
     MaritalStatus: string;
 
+    @Length({ max: 128 })
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    Ethnicity: string;
+
+    @Column({
+        type         : DataType.STRING(128),
+        allowNull    : true,
+        defaultValue : ''
+    })
+    Race: string;
+
     @Column({
         type      : DataType.DATE,
         allowNull : true,
@@ -110,6 +124,24 @@ export default class Person extends Model {
         allowNull : true,
     })
     Age: string;
+
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    StrokeSurvivorOrCaregiver: string;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    LivingAlone: boolean;
+
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    WorkedPriorToStroke: boolean;
 
     @IsUUID(4)
     @Column({

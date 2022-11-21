@@ -5,6 +5,7 @@ import { UserLearningDto } from "../../../../../../domain.types/educational/lear
 import { IUserLearningRepo } from '../../../../../repository.interfaces/educational/learning/user.learning.repo.interface';
 import { UserLearningMapper } from '../../../mappers/educational/learning/user.learning.mapper';
 import UserLearning from '../../../models/educational/learning/user.learning.model';
+import CourseContent from '../../../models/educational/learning/course.content.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -16,6 +17,7 @@ export class UserLearningRepo implements IUserLearningRepo {
         learningPathId?: uuid,
         courseId?: uuid,
         moduleId?: uuid,
+        actionId?: uuid,
         progressStatus?: ProgressStatus,
         progressPercentage?: number,
     ):
@@ -44,7 +46,8 @@ export class UserLearningRepo implements IUserLearningRepo {
                     CourseId             : courseId,
                     UserId               : userId ,
                     ModuleId             : moduleId,
-                    ContentId            : contentId   ,
+                    ContentId            : contentId,
+                    ActionId             : actionId,
                     ProgressStatus       : ProgressStatus.InProgress,
                     PercentageCompletion : progressPercentage ?? 100,
                 };
@@ -64,7 +67,14 @@ export class UserLearningRepo implements IUserLearningRepo {
                 where : {
                     UserId    : userId,
                     ContentId : contentId
-                }
+                },
+                include : [
+                    {
+                        model    : CourseContent,
+                        as       : 'Content',
+                        required : true,
+                    }
+                ]
             });
             return UserLearningMapper.toDto(learning);
         } catch (error) {
@@ -73,13 +83,24 @@ export class UserLearningRepo implements IUserLearningRepo {
         }
     }
 
-    searchUserLearnings = async (userId: string): Promise<any[]> => {
+    searchUserLearnings = async (userId: string, filters?: any): Promise<any[]> => {
         try {
-            var learnings = await UserLearning.findAll({
+            const search = {
                 where : {
                     UserId : userId,
-                }
-            });
+                },
+                include : [
+                    {
+                        model    : CourseContent,
+                        as       : 'Content',
+                        required : true,
+                    }
+                ]
+            };
+            if (filters?.LearningPathId) {
+                search.where['LearningPathId'] = filters.LearningPathId;
+            }
+            var learnings = await UserLearning.findAll(search);
             return learnings;
         } catch (error) {
             Logger.instance().log(error.message);

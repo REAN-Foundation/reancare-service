@@ -15,6 +15,7 @@ export class UserLearningValidator extends BaseValidator {
         const model: UserLearningDomainModel = {
             UserId               : request.params.userId,
             ContentId            : request.params.contentId,
+            ActionId             : request.body.ActionId,
             ProgressStatus       : request.body.ProgressStatus,
             PercentageCompletion : request.body.PercentageCompletion,
         };
@@ -28,13 +29,11 @@ export class UserLearningValidator extends BaseValidator {
     };
 
     private  async validateBody(request) {
-
         await this.validateUuid(request, 'userId', Where.Param, true, false);
         await this.validateUuid(request, 'contentId', Where.Param, true, false);
-
+        await this.validateUuid(request, 'ActionId', Where.Body, false, false);
         await this.validateString(request, 'ProgressStatus', Where.Body, false, true);
         await this.validateDecimal(request, 'PercentageCompletion', Where.Body, false, true);
-
         this.validateRequest(request);
     }
 

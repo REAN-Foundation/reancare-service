@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b107dd76-0fcc-4afa-a4b4-a700849abfdf",
+		"_postman_id": "5020399b-ec11-4007-9b74-973c24926ec0",
 		"name": "reancare.default",
 		"description": "This documentation details the default version of the REANCare api.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -32400,6 +32400,416 @@
 										"clinical",
 										"doctor-notes",
 										"{{DOCTOR_NOTE_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "PatientDonorsBridge",
+					"item": [
+						{
+							"name": "Add patient donors bridge",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonRes = pm.response.json();\r",
+											"\r",
+											"try {\r",
+											"    pm.environment.set(\"PATIENT_DONORS_ID\", jsonRes.Data.PatientDonors.id);\r",
+											"    pm.environment.set(\"BLOOD_BRIDGE_NAME\", jsonRes.Data.PatientDonors.Name);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"New patient donor bridge record is created\", function () {\r",
+											"\r",
+											"    var expectedDiagnosisId = pm.environment.get(\"PATIENT_DONORS_ID\");\r",
+											"    \r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientDonors');\r",
+											"    pm.expect(jsonRes.Data.PatientDonors).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PatientDonors).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PatientDonors).to.have.property('Status');\r",
+											"    pm.expect(jsonRes.Data.PatientDonors).to.have.property('DonorUserId');\r",
+											"    pm.expect(jsonRes.Data.PatientDonors).to.have.property('BloodGroup');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.PatientDonors.id).equals(expectedDiagnosisId);\r",
+											"    \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"DonorUserId\": \"{{DONOR_USER_ID}}\",\r\n    \"VolunteerUserId\": \"{{VOLUNTEER_USER_ID}}\",\r\n    \"Name\": \"DEF0007\",\r\n    \"DonorType\": \"Blood bridge\",\r\n    \"BloodGroup\": \"AB+\",\r\n    \"QuantityRequired\": 2,\r\n    \"NextDonationDate\": \"2022-11-15\",\r\n    \"LastDonationDate\": \"2022-09-15\",\r\n    \"Status\": \"active\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/patient-donors",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"patient-donors"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get patient donors bridge by Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Diagnosis record is returned\", function () {\r",
+											"\r",
+											"    var expectedValue = false;\r",
+											"    var expectedDiagnosisId = pm.environment.get(\"DIAGNOSIS_ID\");\r",
+											"    \r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Diagnosis');\r",
+											"    pm.expect(jsonRes.Data.Diagnosis).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('IsClinicallyActive');\r",
+											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('ValidationStatus');\r",
+											"    pm.expect(jsonRes.Data.Diagnosis).to.have.property('Interpretation');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.Diagnosis.IsClinicallyActive).equals(expectedValue);\r",
+											"    pm.expect(jsonRes.Data.Diagnosis.id).equals(expectedDiagnosisId);\r",
+											"    \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/patient-donors/{{PATIENT_DONORS_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"patient-donors",
+										"{{PATIENT_DONORS_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update patient donors bridge record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Updated patient donor bridge record is created\", function () {\r",
+											"\r",
+											"    var expectedDiagnosisId = pm.environment.get(\"PATIENT_DONORS_ID\");\r",
+											"    \r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientDonors');\r",
+											"    pm.expect(jsonRes.Data.PatientDonors).to.not.be.empty;\r",
+											"    pm.expect(jsonRes.Data.PatientDonors).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data.PatientDonors).to.have.property('Status');\r",
+											"    pm.expect(jsonRes.Data.PatientDonors).to.have.property('DonorUserId');\r",
+											"    pm.expect(jsonRes.Data.PatientDonors).to.have.property('BloodGroup');\r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.PatientDonors.id).equals(expectedDiagnosisId);\r",
+											"    \r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"PatientUserId\": \"{{PATIENT_USER_ID}}\",\r\n    \"DonorUserId\": \"{{DONOR_USER_ID}}\",\r\n    \"VolunteerUserId\": \"{{VOLUNTEER_USER_ID}}\",\r\n    \"Name\": \"ABC0001\",\r\n    \"DonorType\": \"Blood bridge\",\r\n    \"BloodGroup\": \"O+\",\r\n    \"QuantityRequired\": 1,\r\n    \"NextDonationDate\": \"2021-09-15\",\r\n    \"LastDonationDate\": \"2021-09-15\",\r\n    \"Status\": \"Active\"\r\n}"
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/patient-donors/{{PATIENT_DONORS_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"patient-donors",
+										"{{PATIENT_DONORS_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search patient donors bridge record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"List of patient dodnor bridge records is returned\", function () {\r",
+											"\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PatientDonors');\r",
+											"    pm.expect(jsonRes.Data.PatientDonors.Items.length).to.be.greaterThan(0);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/patient-donors/search?patientUserId={{PATIENT_USER_ID}}&onlyElligible=true",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"patient-donors",
+										"search"
+									],
+									"query": [
+										{
+											"key": "nextDonationDateFrom",
+											"value": "2021-09-14",
+											"disabled": true
+										},
+										{
+											"key": "nextDonationDateTo",
+											"value": "2021-10-15",
+											"disabled": true
+										},
+										{
+											"key": "orderedBy",
+											"value": "NextDonationDate",
+											"disabled": true
+										},
+										{
+											"key": "order",
+											"value": "ascending",
+											"disabled": true
+										},
+										{
+											"key": "pageIndex",
+											"value": "0",
+											"disabled": true
+										},
+										{
+											"key": "itemsPerPage",
+											"value": "25",
+											"disabled": true
+										},
+										{
+											"key": "patientUserId",
+											"value": "{{PATIENT_USER_ID}}"
+										},
+										{
+											"key": "donorUserId",
+											"value": "{{DONOR_USER_ID}}",
+											"disabled": true
+										},
+										{
+											"key": "volunteerUserId",
+											"value": "{{VOLUNTEER_USER_ID}}",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "{{BLOOD_BRIDGE_NAME}}",
+											"disabled": true
+										},
+										{
+											"key": "bloodGroup",
+											"value": "O+",
+											"disabled": true
+										},
+										{
+											"key": "status",
+											"value": "Active",
+											"disabled": true
+										},
+										{
+											"key": "onlyElligible",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete patient donors bridge record",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Patient donor bridge record is deleted\", function () {\r",
+											"\r",
+											"    var expectedValue = true;\r",
+											"    \r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Deleted');\r",
+											"    pm.expect(jsonRes.Data.Deleted).equals(expectedValue);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{PATIENT_USER_JWT}}",
+										"type": "text"
+									},
+									{
+										"key": "x-api-key",
+										"value": "{{API_CLIENT_INTERNAL_KEY}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BASE_URL}}/clinical/patient-donors/{{PATIENT_DONORS_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"clinical",
+										"patient-donors",
+										"{{PATIENT_DONORS_ID}}"
 									]
 								}
 							},

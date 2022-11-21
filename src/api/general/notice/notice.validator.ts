@@ -34,7 +34,7 @@ export class NoticeValidator extends BaseValidator {
         return this.getDomainModel(request);
     };
 
-    createAction = async(request: express.Request): Promise<NoticeActionDomainModel> => {
+    takeAction = async(request: express.Request): Promise<NoticeActionDomainModel> => {
         await this.validateCreateActionBody(request);
         return this.getActionDomainModel(request);
     };
@@ -87,7 +87,6 @@ export class NoticeValidator extends BaseValidator {
         await this.validateUuid(request, 'NoticeId', Where.Body, true, false);
         await this.validateString(request, 'Action', Where.Body, false, true);
         await this.validateArray(request, 'Contents', Where.Body, false, true);
-        // await this.validateDate(request, 'ActionTakenAt', Where.Body, false, true);
         this.validateRequest(request);
     }
 

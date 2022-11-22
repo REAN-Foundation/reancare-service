@@ -255,12 +255,12 @@ export class StatisticsService {
             ExerciseCaloriesBurnForLastWeek : location
         });
 
-        location = await this.createExerciseQuestionBarChartForMonth(data.LastMonth.QuestionnaireStats, 'exerciseQuestionForMonthlocation');
+        location = await this.createExerciseQuestionBarChartForMonth(data.LastMonth.QuestionnaireStats.Stats, 'exerciseQuestionForMonthlocation');
         locations.push({
             ExerciseQuestionForLastWeek : location
         });
 
-        location = await this.createExerciseQuestionsDonutChart(data.LastMonth.QuestionnaireStats, 'exerciseQuestionOverallForMonthlocation');
+        location = await this.createExerciseQuestionsDonutChart(data.LastMonth.QuestionnaireStats.Stats, 'exerciseQuestionOverallForMonthlocation');
         locations.push({
             ExerciseQuestionOverallForLastWeek : location
         });
@@ -270,6 +270,10 @@ export class StatisticsService {
 
     private createBodyWeightCharts = async (data) => {
         var locations = [];
+        const location = await this.createBodyWeightLineChart(data.LastMonth, 'BodyWeightForMonthLocation');
+        locations.push({
+            BodyWeightForMonthLocation : location
+        });
         return locations;
     };
 
@@ -280,11 +284,24 @@ export class StatisticsService {
 
     private createSleepTrendCharts = async (data) => {
         var locations = [];
+        const location = await this.createSleepTrendBarChart(data.LastMonth, 'sleepTrendForMonthLocation');
+        locations.push({
+            SleepTrendForMonthLocation : location
+        });
         return locations;
     };
 
     private createMedicationTrendCharts = async (data) => {
         var locations = [];
+        let location = await this.createMedicationBarChartForMonth(data.LastMonth.Daily, 'medicationHistoryForMonthlocation');
+        locations.push({
+            MedicationHistoryForMonthlocation : location
+        });
+
+        location = await this.createMedicationConsumptionDonutChart(data.LastMonth.Daily, 'medicationOverallForMonthlocation');
+        locations.push({
+            MedicationOverallForMonthlocation : location
+        });
         return locations;
     };
 
@@ -433,7 +450,7 @@ export class StatisticsService {
     private async createExerciseQuestionBarChartForMonth(stats: any, filename: string) {
         const calorieStats = stats.map(c => {
             return {
-                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.CreatedAt.toISOString().split('T')[0])}"`,
                 y : c.Response
             };
         });
@@ -448,12 +465,8 @@ export class StatisticsService {
     }
 
     private async createExerciseQuestionsDonutChart(stats: any, filename: string) {
-        const calorieStats = stats.map(c => {
-            return {
-                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
-                y : c.Response
-            };
-        });
+        const yesCount = stats.filter(c => c.Response === 1).length;
+        const noCount = stats.filter(c => c.Response === 0).length;
 
         const options: PieChartOptions = {
             Width  : 550,
@@ -465,7 +478,107 @@ export class StatisticsService {
             ],
         };
 
-        return await ChartGenerator.createDonutChart(calorieStats, options, filename);
+        const data = [
+            {
+                name  : "Yes",
+                value : yesCount,
+            },
+            {
+                name  : "No",
+                value : noCount,
+            }
+        ];
+
+        return await ChartGenerator.createDonutChart(data, options, filename);
+    }
+
+    private async createMedicationConsumptionDonutChart(stats: any, filename: string) {
+
+        const missedCount = stats.reduce((acc, x) => acc + x.MissedCount, 0);
+        const takenCount = stats.reduce((acc, x) => acc + x.TakenCount, 0);
+
+        const options: PieChartOptions = {
+            Width  : 550,
+            Height : 275,
+            Colors : [
+                ChartColors.Green,
+                ChartColors.Orange,
+                ChartColors.Blue,
+            ],
+        };
+
+        const data = [
+            {
+                name  : "Taken",
+                value : missedCount,
+            },
+            {
+                name  : "Missed",
+                value : takenCount,
+            },
+        ];
+
+        return await ChartGenerator.createDonutChart(data, options, filename);
+    }
+
+    private async createMedicationBarChartForMonth(stats: any, filename: string) {
+        const temp = [];
+        stats.forEach(x => {
+            temp.push({
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(x.DateStr)}"`,
+                y : x.MissedCount,
+                z : 'Missed',
+            });
+            temp.push({
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(x.DateStr)}"`,
+                y : x.TakenCount,
+                z : 'Taken',
+            });
+        });
+
+        const options: MultiBarChartOptions = {
+            Width           : 550,
+            Height          : 275,
+            YLabel          : 'Medication History',
+            CategoriesCount : 2,
+            Categories      : [ "Missed", "Taken" ],
+            Colors          : [ ChartColors.Orange, ChartColors.GreenLight ],
+            FontSize        : '9px',
+        };
+        return await ChartGenerator.createStackedBarChart(temp, options, filename);
+    }
+
+    private async createSleepTrendBarChart(stats: any, filename: string) {
+        const sleepStats = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.RecordDate.toISOString().split('T')[0])}"`,
+                y : c.SleepDuration
+            };
+        });
+        const options: BarChartOptions = {
+            Width  : 550,
+            Height : 275,
+            YLabel : 'Calories',
+            Color  : ChartColors.GrayDarker
+        };
+
+        return await ChartGenerator.createBarChart(sleepStats, options, filename);
+    }
+
+    private async createBodyWeightLineChart(stats: any, filename: string) {
+        const temp = stats.map(c => {
+            return {
+                x : new Date(c.DateStr),
+                y : c.BodyWeight
+            };
+        });
+        const options: LineChartOptions = defaultLineChartOptions();
+        options.Width = 550;
+        options.Height = 275;
+        options.XAxisTimeScaled = true;
+        options.YLabel = 'Body weight';
+
+        return await ChartGenerator.createLineChart(temp, options, filename);
     }
 
     //#endregion

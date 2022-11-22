@@ -242,18 +242,15 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
     private async getDayByDayCalorieStats(patientUserId: string, numDays: number) {
 
         const timezone = await this.getPatientTimezone(patientUserId);
-        const todayStr = (new Date()).toISOString()
-            .split('T')[0];
-        const todayStart = TimeHelper.getDateWithTimezone(todayStr, timezone);
         const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
-        const reference = todayStart;
-
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+        const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
         const stats = [];
 
         for await (var day of dayList) {
 
-            var dayStart = TimeHelper.subtractDuration(reference, (day - 1) * 24, DurationType.Hour);
-            var dayEnd = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+            var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+            var dayEnd = TimeHelper.subtractDuration(reference, (day - 1) * 24, DurationType.Hour);
 
             const dayStr = dayStart.toISOString().split('T')[0];
 

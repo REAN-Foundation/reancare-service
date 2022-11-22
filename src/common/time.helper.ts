@@ -43,6 +43,14 @@ export class TimeHelper {
         }
     };
 
+    static getStartOfDay = (date: Date, offsetMinutes: number) => {
+        const tempDate = TimeHelper.addDuration(date, offsetMinutes, DurationType.Minute);
+        const todayStr = tempDate.toISOString()
+            .split('T')[0];
+        const reference = new Date(todayStr);
+        return reference;
+    }
+
     static getDayOfMonth = (date: Date): string => {
         var tokens = date.toISOString().split('T')[0];
         const day = tokens[0].split('-')[1];

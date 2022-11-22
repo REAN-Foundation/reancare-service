@@ -546,7 +546,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
     private getBooleanStats = (records: any[], numDays: number, timezoneOffsetMinutes: number, key: string) => {
         const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
-        const reference = this.getReferenceDate(timezoneOffsetMinutes);
+        const reference = TimeHelper.getStartOfDay(new Date(), timezoneOffsetMinutes);
         const stats = [];
 
         for (var day of dayList) {
@@ -574,7 +574,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     private getServingStats = (records: any[], numDays: number, timezoneOffsetMinutes: number, key: string) => {
 
         const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
-        const reference = this.getReferenceDate(timezoneOffsetMinutes);
+        const reference = TimeHelper.getStartOfDay(new Date(), timezoneOffsetMinutes);
         const stats = [];
 
         for (var day of dayList) {
@@ -631,7 +631,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         const timezone = await this.getPatientTimezone(patientUserId);
         const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
         var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
-        const reference = this.getReferenceDate(offsetMinutes);
+        const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
 
         const stats = [];
 
@@ -663,14 +663,6 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             });
         }
         return stats;
-    }
-
-    private getReferenceDate(offsetMinutes: number) {
-        const tempDate = TimeHelper.addDuration(new Date(), offsetMinutes, DurationType.Minute);
-        const todayStr = tempDate.toISOString()
-            .split('T')[0];
-        const reference = new Date(todayStr);
-        return reference;
     }
 
     private async getPatientTimezone(patientUserId: string) {

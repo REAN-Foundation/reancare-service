@@ -93,6 +93,7 @@ export class ChartGenerator {
 
         dataStr += `\tconst width           = ${options.Width};\n`;
         dataStr += `\tconst height          = ${options.Height};\n`;
+        dataStr += `\tconst color           = "${options.Color}"\n`;
         dataStr += `\tconst xFrom           = ${options.XFrom ?? 'null'};\n`;
         dataStr += `\tconst xTo             = ${options.XTo ?? 'null'};\n`;
         dataStr += `\tconst yFrom           = ${options.YFrom ?? 'null'};\n`;
@@ -114,6 +115,7 @@ export class ChartGenerator {
         dataStr += `\t];\n\n`;
         dataStr += `\tconst width           = ${options.Width};\n`;
         dataStr += `\tconst height          = ${options.Height};\n`;
+        dataStr += `\tconst color           = "${options.Color}"\n`;
         dataStr += `\tconst yLabel          = "${options.YLabel}"\n`;
         dataStr += `\tconst fontSize        = "${options.FontSize ?? `11px`}";\n`;
         return dataStr;

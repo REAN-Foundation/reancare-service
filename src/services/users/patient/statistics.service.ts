@@ -33,7 +33,7 @@ import { PDFGenerator } from "../../../modules/reports/pdf.generator";
 import { ChartGenerator } from "../../../modules/charts/chart.generator";
 import * as fs from 'fs';
 import * as path from 'path';
-import { BarChartOptions, ChartColors, defaultLineChartOptions, MultiBarChartOptions, LineChartOptions } from "../../../modules/charts/chart.options";
+import { BarChartOptions, ChartColors, defaultLineChartOptions, MultiBarChartOptions, LineChartOptions, PieChartOptions } from "../../../modules/charts/chart.options";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -192,11 +192,11 @@ export class StatisticsService {
     private createNutritionCharts = async (data) => {
         var locations = [];
         //Calories
-        let location = await this.createCalorieLineChart(data.LastMonth.CalorieStats, 'caloriesForMonthlocation');
+        let location = await this.createNutritionCalorieLineChart(data.LastMonth.CalorieStats, 'caloriesForMonthlocation');
         locations.push({
             NutritionCaloriesForLastMonth : location
         });
-        location = await this.createCalorieBarChart(data.LastWeek.CalorieStats, 'caloriesForWeeklocation');
+        location = await this.createNutritionCalorieBarChart(data.LastWeek.CalorieStats, 'caloriesForWeeklocation');
         locations.push({
             NutritionCaloriesForLastWeek : location
         });
@@ -250,17 +250,17 @@ export class StatisticsService {
     private createPhysicalActivityCharts = async (data) => {
         var locations = [];
 
-        let location = await this.createCalorieBarChart(data.LastMonth.CalorieStats, 'exerciseCaloriesForMonthlocation');
+        let location = await this.createExerciseCalorieBarChartForMonth(data.LastMonth.CalorieStats, 'exerciseCaloriesForMonthlocation');
         locations.push({
             ExerciseCaloriesBurnForLastWeek : location
         });
 
-        location = await this.createCalorieBarChart(data.LastMonth.QuestionnaireStats, 'exerciseQuestionForMonthlocation');
+        location = await this.createExerciseQuestionBarChartForMonth(data.LastMonth.QuestionnaireStats, 'exerciseQuestionForMonthlocation');
         locations.push({
             ExerciseQuestionForLastWeek : location
         });
 
-        location = await this.createCalorieBarChart(data.LastMonth.QuestionnaireStats, 'exerciseQuestionOverallForMonthlocation');
+        location = await this.createExerciseQuestionsDonutChart(data.LastMonth.QuestionnaireStats, 'exerciseQuestionOverallForMonthlocation');
         locations.push({
             ExerciseQuestionOverallForLastWeek : location
         });
@@ -287,6 +287,190 @@ export class StatisticsService {
         var locations = [];
         return locations;
     };
+
+    private async createNutritionCalorieLineChart(stats: any, filename: string) {
+        const lastMonthCalorieStats = stats.map(c => {
+            return {
+                x : new Date(c.DateStr),
+                y : c.Calories
+            };
+        });
+        const options: LineChartOptions = defaultLineChartOptions();
+        options.Width = 550;
+        options.Height = 275;
+        options.XAxisTimeScaled = true;
+        options.YLabel = 'Calories';
+
+        return await ChartGenerator.createLineChart(lastMonthCalorieStats, options, filename);
+    }
+
+    private async createNutritionCalorieBarChart(stats: any, filename: string) {
+        const calorieStats = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
+                y : c.Calories
+            };
+        });
+        const options: BarChartOptions = {
+            Width  : 550,
+            Height : 275,
+            YLabel : 'Calories',
+            Color  : ChartColors.GreenLight
+        };
+
+        return await ChartGenerator.createBarChart(calorieStats, options, filename);
+    }
+
+    private async createNutritionQueryBarChartForWeek(stats: any, filename: string) {
+        const temp = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
+                y : c.Response,
+                z : c.Type,
+            };
+        });
+        const options: MultiBarChartOptions = {
+            Width           : 550,
+            Height          : 275,
+            YLabel          : 'User Response',
+            CategoriesCount : 3,
+            Categories      : [ "Healthy", "Protein", "Low Salt" ],
+            Colors          : [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ],
+            FontSize        : '14px',
+        };
+
+        return await ChartGenerator.createGroupBarChart(temp, options, filename);
+    }
+
+    private async createNutritionQueryBarChartForMonth(stats: any, filename: string) {
+        const temp = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
+                y : c.Response,
+                z : c.Type,
+            };
+        });
+        const options: MultiBarChartOptions = {
+            Width           : 550,
+            Height          : 275,
+            YLabel          : 'User Response',
+            CategoriesCount : 3,
+            Categories      : [ "Healthy", "Protein", "Low Salt" ],
+            Colors          : [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ],
+            FontSize        : '9px',
+        };
+        return await ChartGenerator.createStackedBarChart(temp, options, filename);
+    }
+
+    private async createNutritionServingsBarChartForWeek(stats: any, filename: string) {
+        const temp = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
+                y : c.Servings,
+                z : c.Type,
+            };
+        });
+        const options: MultiBarChartOptions = {
+            Width           : 550,
+            Height          : 275,
+            YLabel          : 'Servings',
+            CategoriesCount : 5,
+            Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
+            Colors          : [
+                ChartColors.Green,
+                ChartColors.Orange,
+                ChartColors.BrownLight,
+                ChartColors.Blue,
+                ChartColors.Red
+            ],
+            FontSize : '14px',
+        };
+        return await ChartGenerator.createGroupBarChart(temp, options, filename);
+    }
+
+    private async createNutritionServingsBarChartForMonth(stats: any, filename: string) {
+        const temp = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
+                y : c.Servings,
+                z : c.Type
+            };
+        });
+        const options: MultiBarChartOptions = {
+            Width           : 550,
+            Height          : 275,
+            YLabel          : 'Servings',
+            CategoriesCount : 5,
+            Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
+            Colors          : [
+                ChartColors.Green,
+                ChartColors.Orange,
+                ChartColors.BrownLight,
+                ChartColors.Blue,
+                ChartColors.Red
+            ],
+            FontSize : '9px',
+        };
+        return await ChartGenerator.createStackedBarChart(temp, options, filename);
+    }
+
+    private async createExerciseCalorieBarChartForMonth(stats: any, filename: string) {
+        const calorieStats = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
+                y : c.Calories
+            };
+        });
+        const options: BarChartOptions = {
+            Width  : 550,
+            Height : 275,
+            YLabel : 'Calories Burned',
+            Color  : ChartColors.OrangeYellow
+        };
+        return await ChartGenerator.createBarChart(calorieStats, options, filename);
+    }
+
+    private async createExerciseQuestionBarChartForMonth(stats: any, filename: string) {
+        const calorieStats = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
+                y : c.Response
+            };
+        });
+        const options: BarChartOptions = {
+            Width  : 550,
+            Height : 275,
+            YLabel : 'User Response',
+            Color  : ChartColors.GreenLight
+        };
+
+        return await ChartGenerator.createBarChart(calorieStats, options, filename);
+    }
+
+    private async createExerciseQuestionsDonutChart(stats: any, filename: string) {
+        const calorieStats = stats.map(c => {
+            return {
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
+                y : c.Response
+            };
+        });
+
+        const options: PieChartOptions = {
+            Width  : 550,
+            Height : 275,
+            Colors : [
+                ChartColors.Green,
+                ChartColors.Orange,
+                ChartColors.Blue,
+            ],
+        };
+
+        return await ChartGenerator.createDonutChart(calorieStats, options, filename);
+    }
+
+    //#endregion
+
+    //#region PDF generation privates
 
     private exportReportToPDF = async (reportModel: any, absoluteChartImagePath: any) => {
         try {
@@ -517,126 +701,6 @@ export class StatisticsService {
                 underline : false
             });
     };
-
-    private async createCalorieLineChart(stats: any, filename: string) {
-        const lastMonthCalorieStats = stats.map(c => {
-            return {
-                x : new Date(c.DateStr),
-                y : c.Calories
-            };
-        });
-        const options: LineChartOptions = defaultLineChartOptions();
-        options.Width = 550;
-        options.Height = 275;
-        options.XAxisTimeScaled = true;
-        options.YLabel = 'Calories';
-
-        return await ChartGenerator.createLineChart(lastMonthCalorieStats, options, filename);
-    }
-
-    private async createCalorieBarChart(stats: any, filename: string) {
-        const calorieStats = stats.map(c => {
-            return {
-                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
-                y : c.Calories
-            };
-        });
-        const options: BarChartOptions = defaultLineChartOptions();
-        options.Width = 550;
-        options.Height = 275;
-        options.YLabel = 'Calories';
-
-        return await ChartGenerator.createBarChart(calorieStats, options, filename);
-    }
-
-    private async createNutritionQueryBarChartForWeek(stats: any, filename: string) {
-        const temp = stats.map(c => {
-            return {
-                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
-                y : c.Response,
-                z : c.Type,
-            };
-        });
-        const options: MultiBarChartOptions = defaultLineChartOptions();
-        options.Width = 550;
-        options.Height = 275;
-        options.YLabel = 'User Response';
-        options.CategoriesCount = 3;
-        options.Categories = [ "Healthy", "Protein", "Low Salt" ];
-        options.Colors = [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ];
-        options.FontSize = '14px';
-
-        return await ChartGenerator.createGroupBarChart(temp, options, filename);
-    }
-
-    private async createNutritionQueryBarChartForMonth(stats: any, filename: string) {
-        const temp = stats.map(c => {
-            return {
-                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
-                y : c.Response,
-                z : c.Type,
-            };
-        });
-        const options: MultiBarChartOptions = defaultLineChartOptions();
-        options.Width = 550;
-        options.Height = 275;
-        options.YLabel = 'User Response';
-        options.CategoriesCount = 3;
-        options.Categories = [ "Healthy", "Protein", "Low Salt" ];
-        options.Colors = [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ];
-        options.FontSize = '9px';
-        return await ChartGenerator.createStackedBarChart(temp, options, filename);
-    }
-
-    private async createNutritionServingsBarChartForWeek(stats: any, filename: string) {
-        const temp = stats.map(c => {
-            return {
-                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
-                y : c.Servings,
-                z : c.Type,
-            };
-        });
-        const options: MultiBarChartOptions = defaultLineChartOptions();
-        options.Width = 550;
-        options.Height = 275;
-        options.YLabel = 'Servings';
-        options.CategoriesCount = 5;
-        options.Categories = [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ];
-        options.Colors = [
-            ChartColors.Green,
-            ChartColors.Orange,
-            ChartColors.BrownLight,
-            ChartColors.Blue,
-            ChartColors.Red
-        ];
-        options.FontSize = '14px';
-        return await ChartGenerator.createGroupBarChart(temp, options, filename);
-    }
-
-    private async createNutritionServingsBarChartForMonth(stats: any, filename: string) {
-        const temp = stats.map(c => {
-            return {
-                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
-                y : c.Servings,
-                z : c.Type
-            };
-        });
-        const options: MultiBarChartOptions = defaultLineChartOptions();
-        options.Width = 550;
-        options.Height = 275;
-        options.YLabel = 'Servings';
-        options.CategoriesCount = 5;
-        options.Categories = [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ];
-        options.Colors = [
-            ChartColors.Green,
-            ChartColors.OrangeLight,
-            ChartColors.BrownLight,
-            ChartColors.Blue,
-            ChartColors.Red
-        ];
-        options.FontSize = '9px';
-        return await ChartGenerator.createStackedBarChart(temp, options, filename);
-    }
 
     //#endregion
 

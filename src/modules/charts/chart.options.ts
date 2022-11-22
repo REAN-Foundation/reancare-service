@@ -3,7 +3,7 @@ export interface ChartOptions {
     Width    ?: number;
     Height   ?: number;
     FontSize ?: string;
-    color    ?: string;
+    Color    ?: string;
 }
 
 export enum ChartColors {
@@ -40,7 +40,7 @@ export const defaultLineChartOptions = () => {
         Width           : 650,
         Height          : 450,
         FontSize        : "14px",
-        color           : "steelblue",
+        Color           : "steelblue",
         XFrom           : null,
         XTo             : null,
         YFrom           : null,

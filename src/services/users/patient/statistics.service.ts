@@ -33,7 +33,7 @@ import { PDFGenerator } from "../../../modules/reports/pdf.generator";
 import { ChartGenerator } from "../../../modules/charts/chart.generator";
 import * as fs from 'fs';
 import * as path from 'path';
-import { BarChartOptions, defaultLineChartOptions, LineChartOptions } from "../../../modules/charts/chart.options";
+import { BarChartOptions, ChartColors, defaultLineChartOptions, GroupBarChartOptions, LineChartOptions } from "../../../modules/charts/chart.options";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -226,8 +226,8 @@ export class StatisticsService {
             ...(data.LastMonth.QuestionnaireStats.VegetableServings),
             ...(data.LastMonth.QuestionnaireStats.FruitServings),
             ...(data.LastMonth.QuestionnaireStats.WholeGrainServings),
-            ...(data.LastMonth.QuestionnaireStats.SugaryDrinksServings),
             ...(data.LastMonth.QuestionnaireStats.SeafoodServings),
+            ...(data.LastMonth.QuestionnaireStats.SugaryDrinksServings),
         };
         location = await this.createNutritionServingsBarChartForMonth(servingsStats, 'nutriServingsForMonthlocation');
         locations.push({
@@ -237,8 +237,8 @@ export class StatisticsService {
             ...(data.LastWeek.QuestionnaireStats.VegetableServings),
             ...(data.LastWeek.QuestionnaireStats.FruitServings),
             ...(data.LastWeek.QuestionnaireStats.WholeGrainServings),
-            ...(data.LastWeek.QuestionnaireStats.SugaryDrinksServings),
             ...(data.LastWeek.QuestionnaireStats.SeafoodServings),
+            ...(data.LastWeek.QuestionnaireStats.SugaryDrinksServings),
         };
         location = await this.createNutritionServingsBarChartForWeek(servingsStats, 'nutriServingsForWeeklocation');
         locations.push({
@@ -537,13 +537,17 @@ export class StatisticsService {
         const temp = stats.map(c => {
             return {
                 x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
-                y : c.Response
+                y : c.Response,
+                z : c.Type,
             };
         });
-        const options: BarChartOptions = defaultLineChartOptions();
+        const options: GroupBarChartOptions = defaultLineChartOptions();
         options.Width = 550;
         options.Height = 275;
         options.YLabel = 'User Response';
+        options.CategoriesCount = 3;
+        options.Categories = [ "Healthy", "Protein", "Salt" ];
+        options.Colors = [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ];
 
         return await ChartGenerator.createGroupBarChart(temp, options, filename);
     }
@@ -551,14 +555,18 @@ export class StatisticsService {
     private async createNutritionQueryBarChartForMonth(stats: any, filename: string) {
         const temp = stats.map(c => {
             return {
-                x : `"${TimeHelper.getDayOfMonth(c.CreatedAt)}"`,
-                y : c.Response
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
+                y : c.Response,
+                z : c.Type,
             };
         });
-        const options: BarChartOptions = defaultLineChartOptions();
+        const options: GroupBarChartOptions = defaultLineChartOptions();
         options.Width = 550;
         options.Height = 275;
         options.YLabel = 'User Response';
+        options.CategoriesCount = 3;
+        options.Categories = [ "Healthy", "Protein", "Salt" ];
+        options.Colors = [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ];
 
         return await ChartGenerator.createGroupBarChart(temp, options, filename);
     }
@@ -567,13 +575,23 @@ export class StatisticsService {
         const temp = stats.map(c => {
             return {
                 x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
-                y : c.Response
+                y : c.Response,
+                z : c.Type,
             };
         });
-        const options: BarChartOptions = defaultLineChartOptions();
+        const options: GroupBarChartOptions = defaultLineChartOptions();
         options.Width = 550;
         options.Height = 275;
-        options.YLabel = 'User Response';
+        options.YLabel = 'Servings';
+        options.CategoriesCount = 5;
+        options.Categories = [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ];
+        options.Colors = [
+            ChartColors.Green,
+            ChartColors.OrangeLight,
+            ChartColors.BrownLight,
+            ChartColors.Blue,
+            ChartColors.Red
+        ];
 
         return await ChartGenerator.createGroupBarChart(temp, options, filename);
     }
@@ -581,14 +599,24 @@ export class StatisticsService {
     private async createNutritionServingsBarChartForMonth(stats: any, filename: string) {
         const temp = stats.map(c => {
             return {
-                x : `"${TimeHelper.getDayOfMonth(c.CreatedAt)}"`,
-                y : c.Response
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
+                y : c.Response,
+                z : c.Type
             };
         });
-        const options: BarChartOptions = defaultLineChartOptions();
+        const options: GroupBarChartOptions = defaultLineChartOptions();
         options.Width = 550;
         options.Height = 275;
-        options.YLabel = 'User Response';
+        options.YLabel = 'Servings';
+        options.CategoriesCount = 5;
+        options.Categories = [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ];
+        options.Colors = [
+            ChartColors.Green,
+            ChartColors.OrangeLight,
+            ChartColors.BrownLight,
+            ChartColors.Blue,
+            ChartColors.Red
+        ];
 
         return await ChartGenerator.createGroupBarChart(temp, options, filename);
     }

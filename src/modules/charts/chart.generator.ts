@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { BarChartOptions, LineChartOptions } from "./chart.options";
+import { BarChartOptions, GroupBarChartOptions, LineChartOptions } from "./chart.options";
 import { htmlTextToPNG } from '../../common/html.renderer';
 import { Helper } from "../../common/helper";
 
@@ -77,10 +77,10 @@ export class ChartGenerator {
         return await htmlTextToPNG(html, 350, 225, `${filename}.png`);
     };
 
-    static createGroupBarChart = async (data: any[], options: BarChartOptions, filename: string)
+    static createGroupBarChart = async (data: any[], options: GroupBarChartOptions, filename: string)
         : Promise<string|undefined> => {
         const cwd = process.cwd();
-        const templatePath = path.join(cwd,'assets/charts/html.templates/','simple.bar.chart.html');
+        const templatePath = path.join(cwd,'assets/charts/html.templates/','group.bar.chart.html');
         var template = fs.readFileSync(templatePath, "utf8");
         const tokens = template.split('// customization');
         const pre = tokens[0];
@@ -88,7 +88,7 @@ export class ChartGenerator {
 
         let dataStr = `\n\tconst data = [\n`;
         for (var d of data) {
-            const str = `\t\t{ x: ${d.x?.toString()}, y: ${d.y?.toString()} },\n`;
+            const str = `\t\t{ x: "${d.x?.toString()}", y: ${d.y?.toString()}, z: "${d.z?.toString()}" },\n`;
             dataStr += str;
         }
 
@@ -97,6 +97,9 @@ export class ChartGenerator {
         dataStr += `\tconst width           = ${options.Width};\n`;
         dataStr += `\tconst height          = ${options.Height};\n`;
         dataStr += `\tconst yLabel          = "${options.YLabel}"\n`;
+        dataStr += `\tconst categoriesCount = ${options.CategoriesCount}\n`;
+        dataStr += `\tconst categories      = ${JSON.stringify(options.Categories)}\n`;
+        dataStr += `\tconst colors          = ${JSON.stringify(options.Colors)}\n`;
         dataStr += `\tconst fontSize        = "${options.FontSize ??  `11px` }";\n`;
 
         const html = pre + dataStr + post;

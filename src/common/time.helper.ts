@@ -49,6 +49,11 @@ export class TimeHelper {
         return day;
     };
 
+    static getDayOfMonthFromISODateStr = (dateStr: string): string => {
+        const day = dateStr.split('-')[1];
+        return day;
+    };
+
     static getMonth = (date: Date): string => {
         var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
         var month = months[ date.getMonth() ];

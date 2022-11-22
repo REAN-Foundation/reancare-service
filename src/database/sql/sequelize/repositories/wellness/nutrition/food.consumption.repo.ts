@@ -533,7 +533,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         const vegetableServingsStats = vegetableServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Veggies'));
         const fruitServingsStatss = fruitServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Fruits'));
         const grainServingsStats = grainServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Grains'));
-        const sugaryDrinksServingsStats = sugaryDrinksServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Sugary'));
+        const sugaryDrinksServingsStats = sugaryDrinksServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Sugar'));
         const seaFoodServingsStats = seaFoodServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Seafood'));
 
         return {

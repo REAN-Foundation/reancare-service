@@ -67,3 +67,7 @@ export interface MultiBarChartOptions extends ChartOptions {
 export interface PieChartOptions extends ChartOptions {
     Colors ?: string[];
 }
+
+export interface CalendarChartOptions extends ChartOptions {
+    Colors ?: string[];
+}

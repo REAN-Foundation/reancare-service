@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { BarChartOptions, MultiBarChartOptions, LineChartOptions, PieChartOptions } from "./chart.options";
+import { BarChartOptions, MultiBarChartOptions, LineChartOptions, PieChartOptions, ChartOptions, CalendarChartOptions } from "./chart.options";
 import { htmlTextToPNG } from '../../common/html.renderer';
 import { Helper } from "../../common/helper";
 
@@ -49,6 +49,22 @@ export class ChartGenerator {
         const templHtml = 'simple.pie.chart.html';
         const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
         const dataStr = ChartGenerator.createSimpleDonutChartTextBlock(data, options);
+        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
+    };
+
+    static createBubbleChart = async (
+        data: any[], options: ChartOptions, filename: string): Promise<string|undefined> => {
+        const templHtml = 'bubble.chart.html';
+        const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
+        const dataStr = ChartGenerator.createBubbleChartTextBlock(data, options);
+        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
+    };
+
+    static createCalendarChart = async (
+        data: any[], options: ChartOptions, filename: string): Promise<string|undefined> => {
+        const templHtml = 'calendar.chart.html';
+        const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
+        const dataStr = ChartGenerator.createCalendarChartTextBlock(data, options);
         return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
     };
 
@@ -149,6 +165,33 @@ export class ChartGenerator {
         let dataStr = `\n\tconst data = [\n`;
         for (var d of data) {
             const str = `\t\t{ name: "${d.name?.toString()}", value: ${d.value?.toString()} },\n`;
+            dataStr += str;
+        }
+        dataStr += `\t];\n\n`;
+        dataStr += `\tconst width           = ${options.Width};\n`;
+        dataStr += `\tconst height          = ${options.Height};\n`;
+        dataStr += `\tconst colors          = ${JSON.stringify(options.Colors)}\n`;
+        dataStr += `\tconst fontSize        = "${options.FontSize ?? `11px`}";\n`;
+        return dataStr;
+    }
+
+    private static createBubbleChartTextBlock(data: any[], options: ChartOptions) {
+        let dataStr = `\n\tconst data = [\n`;
+        for (var d of data) {
+            const str = `\t\t{ name: "${d.x?.toString()}", value: ${d.y?.toString()} },\n`;
+            dataStr += str;
+        }
+        dataStr += `\t];\n\n`;
+        dataStr += `\tconst width           = ${options.Width};\n`;
+        dataStr += `\tconst height          = ${options.Height};\n`;
+        dataStr += `\tconst fontSize        = "${options.FontSize ?? `11px`}";\n`;
+        return dataStr;
+    }
+
+    private static createCalendarChartTextBlock(data: any[], options: CalendarChartOptions) {
+        let dataStr = `\n\tconst data = [\n`;
+        for (var d of data) {
+            const str = `\t\t{ date: new Date("${d.x?.toISOString().split('T')[0]}"), value: ${d.y?.toString()} },\n`;
             dataStr += str;
         }
         dataStr += `\t];\n\n`;

@@ -44,6 +44,14 @@ export class ChartGenerator {
         return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
     };
 
+    static createPieChart = async (data: any[], options: MultiBarChartOptions, filename: string)
+    : Promise<string|undefined> => {
+        const templHtml = 'simple.pie.chart.html';
+        const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
+        const dataStr = ChartGenerator.createSimpleDonutChartTextBlock(data, options);
+        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
+    };
+
     //#region Common Privates
 
     private static generateChartImage = async (

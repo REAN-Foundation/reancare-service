@@ -33,7 +33,7 @@ import { PDFGenerator } from "../../../modules/reports/pdf.generator";
 import { ChartGenerator } from "../../../modules/charts/chart.generator";
 import * as fs from 'fs';
 import * as path from 'path';
-import { BarChartOptions, ChartColors, defaultLineChartOptions, GroupBarChartOptions, LineChartOptions } from "../../../modules/charts/chart.options";
+import { BarChartOptions, ChartColors, defaultLineChartOptions, MultiBarChartOptions, LineChartOptions } from "../../../modules/charts/chart.options";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -249,6 +249,22 @@ export class StatisticsService {
 
     private createPhysicalActivityCharts = async (data) => {
         var locations = [];
+
+        let location = await this.createCalorieBarChart(data.LastMonth.CalorieStats, 'exerciseCaloriesForMonthlocation');
+        locations.push({
+            ExerciseCaloriesBurnForLastWeek : location
+        });
+
+        location = await this.createCalorieBarChart(data.LastMonth.QuestionnaireStats, 'exerciseQuestionForMonthlocation');
+        locations.push({
+            ExerciseQuestionForLastWeek : location
+        });
+
+        location = await this.createCalorieBarChart(data.LastMonth.QuestionnaireStats, 'exerciseQuestionOverallForMonthlocation');
+        locations.push({
+            ExerciseQuestionOverallForLastWeek : location
+        });
+
         return locations;
     };
 
@@ -274,9 +290,9 @@ export class StatisticsService {
 
     private exportReportToPDF = async (reportModel: any, absoluteChartImagePath: any) => {
         try {
-            var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Quality-of-Life-Questionnaire-Score');
+            var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Health-statistics-and-history');
             var writeStream = fs.createWriteStream(absFilepath);
-            const reportTitle = `Quality of Life Questionnaire Score`;
+            const reportTitle = `Health Statistics and History Report`;
             const author = 'REAN Foundation';
             var document = PDFGenerator.createDocument(reportTitle, author, writeStream);
             //PDFGenerator.addNewPage(document);
@@ -541,13 +557,14 @@ export class StatisticsService {
                 z : c.Type,
             };
         });
-        const options: GroupBarChartOptions = defaultLineChartOptions();
+        const options: MultiBarChartOptions = defaultLineChartOptions();
         options.Width = 550;
         options.Height = 275;
         options.YLabel = 'User Response';
         options.CategoriesCount = 3;
         options.Categories = [ "Healthy", "Protein", "Low Salt" ];
         options.Colors = [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ];
+        options.FontSize = '14px';
 
         return await ChartGenerator.createGroupBarChart(temp, options, filename);
     }
@@ -560,15 +577,15 @@ export class StatisticsService {
                 z : c.Type,
             };
         });
-        const options: GroupBarChartOptions = defaultLineChartOptions();
+        const options: MultiBarChartOptions = defaultLineChartOptions();
         options.Width = 550;
         options.Height = 275;
         options.YLabel = 'User Response';
         options.CategoriesCount = 3;
         options.Categories = [ "Healthy", "Protein", "Low Salt" ];
         options.Colors = [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ];
-
-        return await ChartGenerator.createGroupBarChart(temp, options, filename);
+        options.FontSize = '9px';
+        return await ChartGenerator.createStackedBarChart(temp, options, filename);
     }
 
     private async createNutritionServingsBarChartForWeek(stats: any, filename: string) {
@@ -579,7 +596,7 @@ export class StatisticsService {
                 z : c.Type,
             };
         });
-        const options: GroupBarChartOptions = defaultLineChartOptions();
+        const options: MultiBarChartOptions = defaultLineChartOptions();
         options.Width = 550;
         options.Height = 275;
         options.YLabel = 'Servings';
@@ -592,7 +609,7 @@ export class StatisticsService {
             ChartColors.Blue,
             ChartColors.Red
         ];
-
+        options.FontSize = '14px';
         return await ChartGenerator.createGroupBarChart(temp, options, filename);
     }
 
@@ -604,7 +621,7 @@ export class StatisticsService {
                 z : c.Type
             };
         });
-        const options: GroupBarChartOptions = defaultLineChartOptions();
+        const options: MultiBarChartOptions = defaultLineChartOptions();
         options.Width = 550;
         options.Height = 275;
         options.YLabel = 'Servings';
@@ -617,8 +634,8 @@ export class StatisticsService {
             ChartColors.Blue,
             ChartColors.Red
         ];
-
-        return await ChartGenerator.createGroupBarChart(temp, options, filename);
+        options.FontSize = '9px';
+        return await ChartGenerator.createStackedBarChart(temp, options, filename);
     }
 
     //#endregion

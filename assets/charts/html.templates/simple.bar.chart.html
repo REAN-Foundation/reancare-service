@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<!-- Reference: https://observablehq.com/@d3/bar-chart -->
+<!-- Reference: https://observablehq.com/collection/@d3/charts -->
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=320" />
@@ -105,7 +105,7 @@
 				.attr("style", "max-width: 100%; height: auto; height: intrinsic;");
 
 			svg.append("g")
-			.style("font-size", fontSize)
+				.style("font-size", fontSize)
 				.attr("transform", `translate(${marginLeft},0)`)
 				.call(yAxis)
 				.call(g => g.select(".domain").remove())

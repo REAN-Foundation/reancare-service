@@ -20,6 +20,8 @@ export enum ChartColors {
     GrayDarker   = "#34495E",
     BrownLight   = "#EDBB99",
     Brown        = "#E59866",
+    Purple       = "#8E44AD",
+    PurpleLght   = "#BB8FCE",
 }
 
 export interface LineChartOptions extends ChartOptions {
@@ -55,9 +57,13 @@ export interface BarChartOptions extends ChartOptions {
     YLabel ?: string;
 }
 
-export interface GroupBarChartOptions extends ChartOptions {
+export interface MultiBarChartOptions extends ChartOptions {
     YLabel          ?: string;
     CategoriesCount ?: number;
     Colors          ?: string[];
     Categories      ?: string[];
+}
+
+export interface PieChartOptions extends ChartOptions {
+    Colors ?: string[];
 }

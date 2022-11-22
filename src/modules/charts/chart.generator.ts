@@ -88,7 +88,7 @@ export class ChartGenerator {
 
         let dataStr = `\n\tconst data = [\n`;
         for (var d of data) {
-            const str = `\t\t{ x: "${d.x?.toString()}", y: ${d.y?.toString()}, z: "${d.z?.toString()}" },\n`;
+            const str = `\t\t{ x: ${d.x?.toString()}, y: ${d.y?.toString()}, z: "${d.z?.toString()}" },\n`;
             dataStr += str;
         }
 

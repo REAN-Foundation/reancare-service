@@ -202,44 +202,44 @@ export class StatisticsService {
         });
 
         //Questionnaire
-        let qstats = {
-            ...(data.LastWeek.QuestionnaireStats.HealthyFoodChoices),
-            ...(data.LastWeek.QuestionnaireStats.HealthyProteinConsumptions),
-            ...(data.LastWeek.QuestionnaireStats.LowSaltFoods),
-        };
+        let qstats = [
+            ...(data.LastWeek.QuestionnaireStats.HealthyFoodChoices.Stats),
+            ...(data.LastWeek.QuestionnaireStats.HealthyProteinConsumptions.Stats),
+            ...(data.LastWeek.QuestionnaireStats.LowSaltFoods.Stats),
+        ];
         location = await this.createNutritionQueryBarChartForWeek(qstats, 'nutriQueryForWeeklocation');
         locations.push({
             NutritionQueryForLastWeek : location
         });
-        qstats = {
-            ...(data.LastMonth.QuestionnaireStats.HealthyFoodChoices),
-            ...(data.LastMonth.QuestionnaireStats.HealthyProteinConsumptions),
-            ...(data.LastMonth.QuestionnaireStats.LowSaltFoods),
-        };
+        qstats = [
+            ...(data.LastMonth.QuestionnaireStats.HealthyFoodChoices.Stats),
+            ...(data.LastMonth.QuestionnaireStats.HealthyProteinConsumptions.Stats),
+            ...(data.LastMonth.QuestionnaireStats.LowSaltFoods.Stats),
+        ];
         location = await this.createNutritionQueryBarChartForMonth(qstats, 'nutriQueryForMonthlocation');
         locations.push({
             NutritionQueryForLastMonth : location
         });
 
         //Servings
-        let servingsStats = {
-            ...(data.LastMonth.QuestionnaireStats.VegetableServings),
-            ...(data.LastMonth.QuestionnaireStats.FruitServings),
-            ...(data.LastMonth.QuestionnaireStats.WholeGrainServings),
-            ...(data.LastMonth.QuestionnaireStats.SeafoodServings),
-            ...(data.LastMonth.QuestionnaireStats.SugaryDrinksServings),
-        };
+        let servingsStats = [
+            ...(data.LastMonth.QuestionnaireStats.VegetableServings.Stats),
+            ...(data.LastMonth.QuestionnaireStats.FruitServings.Stats),
+            ...(data.LastMonth.QuestionnaireStats.WholeGrainServings.Stats),
+            ...(data.LastMonth.QuestionnaireStats.SeafoodServings.Stats),
+            ...(data.LastMonth.QuestionnaireStats.SugaryDrinksServings.Stats),
+        ];
         location = await this.createNutritionServingsBarChartForMonth(servingsStats, 'nutriServingsForMonthlocation');
         locations.push({
             NutritionServingsForLastMonth : location
         });
-        servingsStats = {
-            ...(data.LastWeek.QuestionnaireStats.VegetableServings),
-            ...(data.LastWeek.QuestionnaireStats.FruitServings),
-            ...(data.LastWeek.QuestionnaireStats.WholeGrainServings),
-            ...(data.LastWeek.QuestionnaireStats.SeafoodServings),
-            ...(data.LastWeek.QuestionnaireStats.SugaryDrinksServings),
-        };
+        servingsStats = [
+            ...(data.LastWeek.QuestionnaireStats.VegetableServings.Stats),
+            ...(data.LastWeek.QuestionnaireStats.FruitServings.Stats),
+            ...(data.LastWeek.QuestionnaireStats.WholeGrainServings.Stats),
+            ...(data.LastWeek.QuestionnaireStats.SeafoodServings.Stats),
+            ...(data.LastWeek.QuestionnaireStats.SugaryDrinksServings.Stats),
+        ];
         location = await this.createNutritionServingsBarChartForWeek(servingsStats, 'nutriServingsForWeeklocation');
         locations.push({
             NutritionServingsForLastWeek : location
@@ -546,7 +546,7 @@ export class StatisticsService {
         options.Height = 275;
         options.YLabel = 'User Response';
         options.CategoriesCount = 3;
-        options.Categories = [ "Healthy", "Protein", "Salt" ];
+        options.Categories = [ "Healthy", "Protein", "Low Salt" ];
         options.Colors = [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ];
 
         return await ChartGenerator.createGroupBarChart(temp, options, filename);
@@ -565,7 +565,7 @@ export class StatisticsService {
         options.Height = 275;
         options.YLabel = 'User Response';
         options.CategoriesCount = 3;
-        options.Categories = [ "Healthy", "Protein", "Salt" ];
+        options.Categories = [ "Healthy", "Protein", "Low Salt" ];
         options.Colors = [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ];
 
         return await ChartGenerator.createGroupBarChart(temp, options, filename);
@@ -575,7 +575,7 @@ export class StatisticsService {
         const temp = stats.map(c => {
             return {
                 x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
-                y : c.Response,
+                y : c.Servings,
                 z : c.Type,
             };
         });
@@ -587,7 +587,7 @@ export class StatisticsService {
         options.Categories = [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ];
         options.Colors = [
             ChartColors.Green,
-            ChartColors.OrangeLight,
+            ChartColors.Orange,
             ChartColors.BrownLight,
             ChartColors.Blue,
             ChartColors.Red
@@ -600,7 +600,7 @@ export class StatisticsService {
         const temp = stats.map(c => {
             return {
                 x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
-                y : c.Response,
+                y : c.Servings,
                 z : c.Type
             };
         });

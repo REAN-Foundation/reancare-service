@@ -380,48 +380,6 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
     //#region Privates
 
-    private getBooleanStats = (x, timezoneOffsetMinutes, key) => {
-        const tempDate = TimeHelper.addDuration(x.CreatedAt, timezoneOffsetMinutes, DurationType.Minute);
-        const dateStr = tempDate.toISOString()
-            .split('T')[0];
-
-        if (x.UserResponse === true) {
-            return {
-                Response : 1,
-                Type     : key,
-                DateStr  : dateStr,
-            };
-        }
-        else {
-            return {
-                Response : 0,
-                Type     : key,
-                DateStr  : dateStr,
-            };
-        }
-    };
-
-    private getServingStats = (x, timezoneOffsetMinutes, key) => {
-        const tempDate = TimeHelper.addDuration(x.CreatedAt, timezoneOffsetMinutes, DurationType.Minute);
-        const dateStr = tempDate.toISOString()
-            .split('T')[0];
-
-        if (x.Servings) {
-            return {
-                Servings : x.Servings,
-                Type     : key,
-                DateStr  : dateStr,
-            };
-        }
-        else {
-            return {
-                Servings : 0,
-                Type     : key,
-                DateStr  : dateStr,
-            };
-        }
-    };
-
     private static calculateEventTotalCalories = async (foods: FoodConsumptionDomainModel[]): Promise<number> => {
         let totalCalories = 0;
         foods.forEach((food) => {
@@ -516,25 +474,39 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         const timezone = await this.getPatientTimezone(patientUserId);
         var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
 
+        const records_ = records.map(x => {
+            const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+            const dayStr = tempDate.toISOString()
+                .split('T')[0];
+            return {
+                FoodTypes    : x.FoodTypes,
+                CreatedAt    : x.CreatedAt,
+                Servings     : x.Servings,
+                UserResponse : x.UserResponse,
+                DayStr       : dayStr,
+            };
+        });
+
         //Questionnaire handling
-        const genericNutritionRecords = records.filter(x => x.FoodTypes === `["GenericNutrition"]`);
-        const proteinConsumptionRecords = records.filter(x => x.FoodTypes === `["Protein"]`);
-        const lowSaltConsumptionRecords = records.filter(x => x.FoodTypes === `["Salt"]`);
+        const genericNutritionRecords = records_.filter(x => x.FoodTypes === `["GenericNutrition"]`);
+        const proteinConsumptionRecords = records_.filter(x => x.FoodTypes === `["Protein"]`);
+        const lowSaltConsumptionRecords = records_.filter(x => x.FoodTypes === `["Salt"]`);
 
-        const vegetableServingsRecords = records.filter(x => x.FoodTypes === `["Vegetables"]`);
-        const fruitServingsRecords = records.filter(x => x.FoodTypes === `["Fruits"]`);
-        const grainServingsRecords = records.filter(x => x.FoodTypes === `["Grains"]`);
-        const sugaryDrinksServingsRecords = records.filter(x => x.FoodTypes === `["Sugary drinks"]`);
-        const seaFoodServingsRecords = records.filter(x => x.FoodTypes === `["Sea food"]`);
+        const vegetableServingsRecords = records_.filter(x => x.FoodTypes === `["Vegetables"]`);
+        const fruitServingsRecords = records_.filter(x => x.FoodTypes === `["Fruits"]`);
+        const grainServingsRecords = records_.filter(x => x.FoodTypes === `["Grains"]`);
+        const sugaryDrinksServingsRecords = records_.filter(x => x.FoodTypes === `["Sugary drinks"]`);
+        const seaFoodServingsRecords = records_.filter(x => x.FoodTypes === `["Sea food"]`);
 
-        const healthyFoodChoicesStats = genericNutritionRecords.map(x => this.getBooleanStats(x, offsetMinutes, 'Healthy'));
-        const healthyProteinConsumptionStats = proteinConsumptionRecords.map(x => this.getBooleanStats(x, offsetMinutes, 'Protein'));
-        const lowSaltConsumptionStats = lowSaltConsumptionRecords.map(x => this.getBooleanStats(x, offsetMinutes, 'Low Salt'));
-        const vegetableServingsStats = vegetableServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Veggies'));
-        const fruitServingsStatss = fruitServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Fruits'));
-        const grainServingsStats = grainServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Grains'));
-        const sugaryDrinksServingsStats = sugaryDrinksServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Sugar'));
-        const seaFoodServingsStats = seaFoodServingsRecords.map(x => this.getServingStats(x, offsetMinutes, 'Seafood'));
+        const healthyFoodChoicesStats = this.getBooleanStats(genericNutritionRecords, numDays, offsetMinutes, 'Healthy');
+        const healthyProteinConsumptionStats = this.getBooleanStats(proteinConsumptionRecords, numDays, offsetMinutes, 'Protein');
+        const lowSaltConsumptionStats = this.getBooleanStats(lowSaltConsumptionRecords, numDays, offsetMinutes, 'Low Salt');
+
+        const vegetableServingsStats = this.getServingStats(vegetableServingsRecords, numDays, offsetMinutes, 'Veggies');
+        const fruitServingsStatss = this.getServingStats(fruitServingsRecords, numDays, offsetMinutes, 'Fruits');
+        const grainServingsStats = this.getServingStats(grainServingsRecords, numDays, offsetMinutes, 'Grains');
+        const sugaryDrinksServingsStats = this.getServingStats(sugaryDrinksServingsRecords, numDays, offsetMinutes, 'Sugar');
+        const seaFoodServingsStats = this.getServingStats(seaFoodServingsRecords, numDays, offsetMinutes, 'Seafood');
 
         return {
             HealthyFoodChoices : {
@@ -572,6 +544,69 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         };
     }
 
+    private getBooleanStats = (records: any[], numDays: number, timezoneOffsetMinutes: number, key: string) => {
+        const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
+        const reference = this.getReferenceDate(timezoneOffsetMinutes);
+        const stats = [];
+
+        for (var day of dayList) {
+            var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+            const dayStr = dayStart.toISOString().split('T')[0];
+            const x = records.find(r => r.DayStr === dayStr);
+            if (x && x?.UserResponse === true) {
+                stats.push({
+                    Response : 1,
+                    Type     : key,
+                    DateStr  : dayStr,
+                });
+            }
+            else {
+                stats.push({
+                    Response : 0,
+                    Type     : key,
+                    DateStr  : dayStr,
+                });
+            }
+        }
+        return stats;
+    };
+
+    private getServingStats = (records: any[], numDays: number, timezoneOffsetMinutes: number, key: string) => {
+
+        const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
+        const reference = this.getReferenceDate(timezoneOffsetMinutes);
+        const stats = [];
+
+        for (var day of dayList) {
+            var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+            const dayStr = dayStart.toISOString().split('T')[0];
+            const filteredForDay = records.filter(r => r.DayStr === dayStr);
+            if (filteredForDay.length === 0) {
+                stats.push({
+                    Servings : 0,
+                    Type     : key,
+                    DateStr  : dayStr,
+                });
+            }
+            else if (filteredForDay.length === 1) {
+                stats.push({
+                    Servings : filteredForDay[0].Servings,
+                    Type     : key,
+                    DateStr  : dayStr,
+                });
+            }
+            else {
+                const val = filteredForDay.reduce((acc, x) => acc + x.Servings, 0);
+                stats.push({
+                    Servings : val,
+                    Type     : key,
+                    DateStr  : dayStr,
+                });
+            }
+        }
+        return stats;
+    };
+
     private async getQuestionnaireRecords(patientUserId: string, count: number, unit: DurationType) {
         const today = new Date();
         const from = TimeHelper.subtractDuration(new Date(), count, unit);
@@ -596,10 +631,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         const timezone = await this.getPatientTimezone(patientUserId);
         const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
         var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
-        const tempDate = TimeHelper.addDuration(new Date(), offsetMinutes, DurationType.Minute);
-        const todayStr = tempDate.toISOString()
-            .split('T')[0];
-        const reference = new Date(todayStr);
+        const reference = this.getReferenceDate(offsetMinutes);
 
         const stats = [];
 
@@ -631,6 +663,14 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             });
         }
         return stats;
+    }
+
+    private getReferenceDate(offsetMinutes: number) {
+        const tempDate = TimeHelper.addDuration(new Date(), offsetMinutes, DurationType.Minute);
+        const todayStr = tempDate.toISOString()
+            .split('T')[0];
+        const reference = new Date(todayStr);
+        return reference;
     }
 
     private async getPatientTimezone(patientUserId: string) {

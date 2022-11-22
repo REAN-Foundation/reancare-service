@@ -50,7 +50,7 @@ export class TimeHelper {
     };
 
     static getDayOfMonthFromISODateStr = (dateStr: string): string => {
-        const day = dateStr.split('-')[1];
+        const day = dateStr.split('-')[2];
         return day;
     };
 

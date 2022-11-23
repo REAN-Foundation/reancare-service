@@ -3,7 +3,10 @@ import {
     Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
-import { MaritalStatusList, Severity, SeverityList } from '../../../../../../domain.types/miscellaneous/system.types';
+import {
+    //MaritalStatusList,
+    Severity,
+    SeverityList } from '../../../../../../domain.types/miscellaneous/system.types';
 import User from '../../users/user/user.model';
 
 ///////////////////////////////////////////////////////////////////////
@@ -73,22 +76,20 @@ export default class HealthProfile extends Model {
     OtherConditions: string;
 
     @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
+        type      : DataType.BOOLEAN,
+        allowNull : true,
     })
     IsDiabetic: boolean;
 
     @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
+        type      : DataType.BOOLEAN,
+        allowNull : true,
     })
     HasHeartAilment: boolean;
 
     @Column({
-        type         : DataType.ENUM,
-        values       : MaritalStatusList,
-        defaultValue : null,
-        allowNull    : true,
+        type      : DataType.STRING(128),
+        allowNull : true,
     })
     MaritalStatus: string;
 
@@ -206,8 +207,8 @@ export default class HealthProfile extends Model {
     TobaccoQuestion: string;
 
     @Column({
-        type         : DataType.BOOLEAN,
-        allowNull    : true,
+        type      : DataType.BOOLEAN,
+        allowNull : true,
     })
     TobaccoQuestionAns: boolean;
 

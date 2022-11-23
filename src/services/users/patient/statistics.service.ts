@@ -496,6 +496,8 @@ export class StatisticsService {
 
         const missedCount = stats.reduce((acc, x) => acc + x.MissedCount, 0);
         const takenCount = stats.reduce((acc, x) => acc + x.TakenCount, 0);
+        const total = stats.length;
+        const unmarked = total - (missedCount + takenCount);
 
         const options: PieChartOptions = {
             Width  : 550,
@@ -516,6 +518,10 @@ export class StatisticsService {
                 name  : "Missed",
                 value : takenCount,
             },
+            {
+                name  : "Unmarked",
+                value : unmarked,
+            }
         ];
 
         return await ChartGenerator.createDonutChart(data, options, filename);
@@ -568,7 +574,7 @@ export class StatisticsService {
     private async createBodyWeightLineChart(stats: any, filename: string) {
         const temp = stats.map(c => {
             return {
-                x : new Date(c.DateStr),
+                x : c.CreatedAt,
                 y : c.BodyWeight
             };
         });

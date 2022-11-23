@@ -7,10 +7,10 @@ import uuid
 import random
 
 mock_data_file = 'patient_stat_records.json'
-patient_user_id = '26aa83bd-3c65-4ad0-ae1a-a2177b12f0ee'
-medication_id = '86ea43eb-8e33-4fee-ac41-2f9b8ebb51ba'
-drug_name = 'Crestor (rosuvastatin)'
-drug_id = 'e92fe086-7807-4b20-a377-d14204f5bc59'
+patient_user_id = '32deb191-1ebf-4a98-85d2-fe65e1e0eb9f'
+medication_id = 'dda96f41-4649-42b6-a398-24a77293064a'
+drug_name = 'Tylenol 8 HR Arthritis Pain: 650 mg'
+drug_id = '64dd5c85-86bf-480d-b8a1-8e959892b439'
 dose = 1
 medication_details = 'Crestor (rosuvastatin): 1.0 Tablet, Afternoon'
 
@@ -102,6 +102,18 @@ def add_physical_activity(movement, calories, dt):
     str += '''INSERT INTO reancare_new.exercise_physical_activities (id, PatientUserId, Exercise, Category, CaloriesBurned, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', 'Push-up', 'Strength training', '{calories}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, calories = calories, created = dt, updated = dt)
     out_file.write(str)
 
+def add_blood_pressure(systolic, diastolic, dt):
+    str = ''''''
+    id = uuid.uuid4()
+    str += '''INSERT INTO reancare_new.biometrics_blood_pressure (id, PatientUserId, Systolic, Diastolic, Unit, RecordDate, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{systolic}', '{diastolic}', 'mmHg', '{created}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, systolic = systolic, diastolic = diastolic, created = dt, updated = dt)
+    out_file.write(str)
+
+def add_blood_glucose(blood_glucose, dt):
+    str = ''''''
+    id = uuid.uuid4()
+    str += '''INSERT INTO reancare_new.biometrics_blood_glucose (id, PatientUserId, BloodGlucose, Unit, RecordDate, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{blood_glucose}', 'mgDL', '{created}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, blood_glucose = blood_glucose, created = dt, updated = dt)
+    out_file.write(str)
+
 def add_medication_consumption(medication_taken, dt):
     taken = 0
     missed = 0
@@ -149,6 +161,8 @@ def add_contents(contents):
         add_daily_sleep_hours(c.daily_sleep_hours, dt)
         add_physical_activity(c.movement_today, c.physical_activity_calories, dt)
         add_medication_consumption(c.medication_taken, dt)
+        add_blood_pressure(c.blood_pressure_systolic, c.blood_pressure_diastolic, dt)
+        add_blood_glucose(c.blood_glucose, dt)
 
 def seed_data():
     print('seeding patient stats data...')

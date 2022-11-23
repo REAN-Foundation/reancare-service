@@ -35,6 +35,12 @@ export interface LineChartOptions extends ChartOptions {
     AxisColor       ?: string; // "#2E4053";
 }
 
+export interface MultiLineChartOptions extends ChartOptions {
+    Colors          ?: string[];
+    Categories      ?: string[];
+    XAxisTimeScaled ?: boolean; // true;
+}
+
 export const defaultLineChartOptions = () => {
     const x: LineChartOptions = {
         Width           : 650,

@@ -136,9 +136,8 @@
 		const height   = 400;
 		const yLabel   = 'Frequency'
 		const fontSize = "14px";
-		const categoriesCount = 3;
-		const categories = [ "A", "B", "C" ];
-		const colors = ["red", "blue", "green" ];
+		const categories = [ "A", "B" ];
+		const colors = [ "red", "green" ];
 
 		// customization
 
@@ -164,10 +163,9 @@
 			yFormat, // a format specifier string for the y-axis
 			yLabel, // a label for the y-axis
 			zDomain, // array of z-values
-			color = "currentColor", // stroke color of line, as a constant or a function of *z*
 			strokeLinecap, // stroke line cap of line
 			strokeLinejoin, // stroke line join of line
-			strokeWidth = 1.5, // stroke width of line
+			strokeWidth = 3.5, // stroke width of line
 			strokeOpacity, // stroke opacity of line
 			mixBlendMode = "multiply", // blend mode of lines
 			voronoi // show a Voronoi overlay? (for debugging)
@@ -205,6 +203,11 @@
 				.x(i => xScale(X[i]))
 				.y(i => yScale(Y[i]));
 
+
+			var color = d3.scaleOrdinal()
+				.domain(categories)
+				.range(colors)
+
 			const svg = d3.select(container)
 				.append('svg:svg')
 				.attr("width", width)
@@ -227,10 +230,12 @@
 					.render());
 
 			svg.append("g")
+				.style("font-size", fontSize)
 				.attr("transform", `translate(0,${height - marginBottom})`)
 				.call(xAxis);
 
 			svg.append("g")
+			.style("font-size", fontSize)
 				.attr("transform", `translate(${marginLeft},0)`)
 				.call(yAxis)
 				.call(g => g.select(".domain").remove())
@@ -246,7 +251,7 @@
 
 			const path = svg.append("g")
 				.attr("fill", "none")
-				.attr("stroke", typeof color === "string" ? color : null)
+				//.attr("stroke", typeof color === "string" ? color : null)
 				.attr("stroke-linecap", strokeLinecap)
 				.attr("stroke-linejoin", strokeLinejoin)
 				.attr("stroke-width", strokeWidth)
@@ -300,7 +305,6 @@
 			z: d => d.z,
 			yLabel: yLabel,
 			zDomain: categories,
-			colors: colors,
 			width: width,
 			height: height
 		});

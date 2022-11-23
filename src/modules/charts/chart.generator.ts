@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { BarChartOptions, MultiBarChartOptions, LineChartOptions, PieChartOptions, ChartOptions, CalendarChartOptions } from "./chart.options";
+import { BarChartOptions, MultiBarChartOptions, LineChartOptions, PieChartOptions, ChartOptions, CalendarChartOptions, MultiLineChartOptions } from "./chart.options";
 import { htmlTextToPNG } from '../../common/html.renderer';
 import { Helper } from "../../common/helper";
 
@@ -12,7 +12,15 @@ export class ChartGenerator {
         data: any[], options: LineChartOptions, filename: string): Promise<string|undefined> => {
         const templHtml = 'simple.line.chart.html';
         const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
-        const dataStr = ChartGenerator.createSimpleLineChartTextBlock(options, data);
+        const dataStr = ChartGenerator.createSimpleLineChartTextBlock(data, options);
+        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
+    };
+
+    static createMultiLineChart = async (
+        data: any[], options: MultiLineChartOptions, filename: string): Promise<string|undefined> => {
+        const templHtml = 'multi.line.chart.html';
+        const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
+        const dataStr = ChartGenerator.createMultiLineChartTextBlock(data, options);
         return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
     };
 
@@ -91,7 +99,7 @@ export class ChartGenerator {
 
     //#region Chart specific privates
 
-    private static createSimpleLineChartTextBlock(options: LineChartOptions, data: any[]) {
+    private static createSimpleLineChartTextBlock(data: any[], options: LineChartOptions) {
         let dataStr = `\n\tconst data = [\n`;
         if (options.XAxisTimeScaled) {
             for (var d of data) {
@@ -119,6 +127,30 @@ export class ChartGenerator {
         dataStr += `\tconst fontSize        = "${options.FontSize ?? `14px`}";\n`;
         dataStr += `\tconst axisStrokeWidth = ${options.AxisStrokeWidth ?? `3.5`};\n`;
         dataStr += `\tconst axisColor       = "${options.AxisColor ?? `#2E4053`}";\n`;
+        return dataStr;
+    }
+
+    private static createMultiLineChartTextBlock(data: any[], options: MultiLineChartOptions) {
+        let dataStr = `\n\tconst data = [\n`;
+        if (options.XAxisTimeScaled) {
+            for (var d of data) {
+                const str = `\t\t{ x: new Date("${d.x?.toISOString()}"), y: ${d.y?.toString()} },\n`;
+                dataStr += str;
+            }
+        }
+        else {
+            for (var d of data) {
+                const str = `\t\t{ x: ${d.x?.toString()}, y: ${d.y?.toString()} },\n`;
+                dataStr += str;
+            }
+        }
+        dataStr += `\t];\n\n`;
+
+        dataStr += `\tconst width           = ${options.Width};\n`;
+        dataStr += `\tconst height          = ${options.Height};\n`;
+        dataStr += `\tconst fontSize        = "${options.FontSize ?? `12px`}";\n`;
+        dataStr += `\tconst categories      = ${JSON.stringify(options.Categories)}\n`;
+        dataStr += `\tconst colors          = ${JSON.stringify(options.Colors)}\n`;
         return dataStr;
     }
 

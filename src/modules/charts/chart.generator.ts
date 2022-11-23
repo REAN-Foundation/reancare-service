@@ -125,7 +125,7 @@ export class ChartGenerator {
         dataStr += `\tconst xAxisTimeScaled = ${options.XAxisTimeScaled ? 'true' : 'false'};\n`;
         dataStr += `\tconst yLabel          = "${options.YLabel}"\n`;
         dataStr += `\tconst fontSize        = "${options.FontSize ?? `14px`}";\n`;
-        dataStr += `\tconst axisStrokeWidth = ${options.AxisStrokeWidth ?? `3.5`};\n`;
+        dataStr += `\tconst axisStrokeWidth = ${options.AxisStrokeWidth ?? `2.0`};\n`;
         dataStr += `\tconst axisColor       = "${options.AxisColor ?? `#2E4053`}";\n`;
         return dataStr;
     }

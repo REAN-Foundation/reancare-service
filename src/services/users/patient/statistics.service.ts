@@ -37,6 +37,10 @@ import { BarChartOptions, ChartColors, defaultLineChartOptions, MultiBarChartOpt
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+type Alignment = "left" | "right" | "center";
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 @injectable()
 export class StatisticsService {
 
@@ -149,13 +153,17 @@ export class StatisticsService {
         const reportDateStr = assessmentDate.toLocaleDateString();
 
         return {
-            Name          : patientName,
-            PatientUserId : patient.User.id,
-            DisplayId     : patient.DisplayId,
-            Age           : patientAge,
-            ReportDate    : date,
-            ReportDateStr : reportDateStr,
-            Stats         : stats
+            Name              : patientName,
+            PatientUserId     : patient.User.id,
+            DisplayId         : patient.DisplayId,
+            Age               : patientAge,
+            Gender            : patient.User.Person.Gender,
+            ReportDate        : date,
+            ReportDateStr     : reportDateStr,
+            CurrentBodyWeight : '130 lbs',
+            CurrentHeight     : '5 feet, 9 inches',
+            BodyMassIndex     : '19.2',
+            Stats             : stats
         };
     };
 
@@ -170,9 +178,9 @@ export class StatisticsService {
 
     private exportReportToPDF = async (reportModel: any, chartImagePaths: any) => {
         try {
-            var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Health-statistics-and-history');
+            var { absFilepath, filename } = await PDFGenerator.getAbsoluteFilePath('Health-history');
             var writeStream = fs.createWriteStream(absFilepath);
-            const reportTitle = `Health Statistics and History Report`;
+            const reportTitle = `Health History`;
             reportModel.ReportTitle = reportTitle;
             reportModel.ChartImagePaths = chartImagePaths;
             reportModel.Author = 'REAN Foundation';
@@ -201,63 +209,207 @@ export class StatisticsService {
     };
 
     private addMainPage = (document, model, pageNumber) => {
-        var y = this.addTop(document, model);
+        var y = this.addTop(document, model, false);
         y = this.addReportMetadata(document, model, y);
-        //y = this.addChartImage(document, absoluteChartImagePath, y);
-        y = this.addScoreDetails(document, model, y);
+        y = this.addReportSummary(document, model, y);
         this.addBottom(document, pageNumber, model);
     };
 
     private addBiometricsPage = (document, model, pageNumber) => {
         var y = this.addTop(document, model);
-        //y = this.addChartImage(document, absoluteChartImagePath, y);
-        y = this.addScoreDetails(document, model, y);
+        y = this.addPageSectionTitle(document, model, y, 'Biometrics and Vitals');
+        y = this.addBiometricStats(document, model, y);
         this.addBottom(document, pageNumber, model);
     };
 
     private addMedicationPage = (document, model, pageNumber) => {
         var y = this.addTop(document, model);
-        //y = this.addChartImage(document, absoluteChartImagePath, y);
-        y = this.addScoreDetails(document, model, y);
+        y = this.addPageSectionTitle(document, model, y, 'Medication History');
+        y = this.addMedicationStats(document, model, y);
         this.addBottom(document, pageNumber, model);
     };
 
     private addNutritionPage = (document, model, pageNumber) => {
         var y = this.addTop(document, model);
-        //y = this.addChartImage(document, absoluteChartImagePath, y);
-        y = this.addScoreDetails(document, model, y);
+        y = this.addPageSectionTitle(document, model, y, 'Food and Nutrition');
+        y = this.addNutritionStats(document, model, y);
         this.addBottom(document, pageNumber, model);
     };
 
     private addExercisePage = (document, model, pageNumber) => {
         var y = this.addTop(document, model);
-        //y = this.addChartImage(document, absoluteChartImagePath, y);
-        y = this.addScoreDetails(document, model, y);
+        y = this.addPageSectionTitle(document, model, y, 'Exercise and Physical Activity');
+        y = this.addExerciseStats(document, model, y);
         this.addBottom(document, pageNumber, model);
     };
 
     private addSleepPage = (document, model, pageNumber) => {
         var y = this.addTop(document, model);
-        //y = this.addChartImage(document, absoluteChartImagePath, y);
-        y = this.addScoreDetails(document, model, y);
+        y = this.addPageSectionTitle(document, model, y, 'Sleep Hours History');
+        y = this.addSleepStats(document, model, y);
         this.addBottom(document, pageNumber, model);
     };
 
     private addPatientEngagementPage = (document, model, pageNumber) => {
         var y = this.addTop(document, model);
-        //y = this.addChartImage(document, absoluteChartImagePath, y);
-        y = this.addScoreDetails(document, model, y);
+        y = this.addPageSectionTitle(document, model, y, 'Summary');
+        y = this.addSummaryStats(document, model, y);
         this.addBottom(document, pageNumber, model);
     };
 
+    private addBiometricStats = (document, model, y) => {
+        y = y + 45;
+
+        const bodyWeightTrendsChart = model.ChartImagePaths.find(x => x.key === 'BodyWeight_Last6Months');
+        document
+            .image(bodyWeightTrendsChart.location, 125, y, { width: 350, align: 'center' });
+        document
+            .fontSize(7);
+        document.moveDown();
+        y = y + 195;
+        this.addText(document, 'Body Weight Trend Over 6 Months', 80, y, 14, '#505050', 'center');
+
+        return y;
+    };
+
+    private addMedicationStats = (document, model, y) => {
+        y = y + 45;
+
+        var c = model.ChartImagePaths.find(x => x.key === 'MedicationsHistory_LastMonth');
+        document.image(c.location, 125, y, { width: 350, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 190;
+        this.addText(document, 'Medication History', 75, y, 14, '#505050', 'center');
+
+        y = y + 80;
+        c = model.ChartImagePaths.find(x => x.key === 'MedicationsOverall_LastMonth');
+        document.image(c.location, 125, y, { width: 350, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 190;
+        this.addText(document, 'Medication Adherence', 75, y, 14, '#505050', 'center');
+
+        return y;
+    };
+
+    private addNutritionStats = (document, model, y) => {
+        y = y + 27;
+
+        var c = model.ChartImagePaths.find(x => x.key === 'Nutrition_CaloriesConsumed_LastMonth');
+        document.image(c.location, 120, y, { width: 350, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 180;
+        this.addText(document, 'Calorie Consumption', 100, y, 13, '#505050', 'center');
+
+        y = y + 20;
+        c = model.ChartImagePaths.find(x => x.key === 'Nutrition_QuestionnaireResponses_LastMonth');
+        document.image(c.location, 125, y, { width: 350, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 180;
+        this.addText(document, 'Nutrition Questionnaire Response', 100, y, 13, '#505050', 'center');
+
+        y = y + 20;
+
+        c = model.ChartImagePaths.find(x => x.key === 'Nutrition_Servings_LastMonth');
+        document.image(c.location, 125, y, { width: 350, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 180;
+        this.addText(document, 'Servings History', 100, y, 13, '#505050', 'center');
+
+        return y;
+    };
+
+    private addExerciseStats = (document, model, y) => {
+        y = y + 30;
+
+        var c = model.ChartImagePaths.find(x => x.key === 'Exercise_CaloriesBurned_LastMonth');
+        document.image(c.location, 125, y, { width: 350, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 180;
+        this.addText(document, 'Calories Burned', 70, y, 14, '#505050', 'center');
+
+        y = y + 20;
+        c = model.ChartImagePaths.find(x => x.key === 'Exercise_Questionnaire_LastMonth');
+        document.image(c.location, 125, y, { width: 350, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 180;
+        this.addText(document, 'Physical Activity Questionnaire', 70, y, 14, '#505050', 'center');
+
+        y = y + 20;
+        c = model.ChartImagePaths.find(x => x.key === 'Exercise_Questionnaire_Overall_LastMonth');
+        document.image(c.location, 125, y, { width: 350, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 180;
+        this.addText(document, 'Daily Movements', 70, y, 14, '#505050', 'center');
+
+        return y;
+    };
+
+    private addSleepStats = (document, model, y) => {
+        y = y + 45;
+
+        const c = model.ChartImagePaths.find(x => x.key === 'SleepHours_LastMonth');
+        document
+            .image(c.location, 125, y, { width: 350, align: 'center' });
+        document
+            .fontSize(7);
+        document.moveDown();
+        y = y + 185;
+        this.addText(document, 'Sleep in Hours', 90, y, 14, '#505050', 'center');
+
+        return y;
+    };
+
+    private addSummaryStats = (document, model, y) => {
+        y = y + 30;
+
+        var c = model.ChartImagePaths.find(x => x.key === 'Nutrition_Servings_LastWeek');
+        document.image(c.location, 125, y, { width: 350, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 180;
+        this.addText(document, 'Servings for Last Week', 80, y, 14, '#505050', 'center');
+
+        y = y + 20;
+        c = model.ChartImagePaths.find(x => x.key === 'Nutrition_CaloriesConsumed_LastWeek');
+        document.image(c.location, 125, y, { width: 350, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 180;
+        this.addText(document, 'Calories Consumed Last Week', 100, y, 14, '#505050', 'center');
+
+        y = y + 20;
+        c = model.ChartImagePaths.find(x => x.key === 'Nutrition_QuestionnaireResponses_LastWeek');
+        document.image(c.location, 125, y, { width: 350, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 180;
+        this.addText(document, 'Nutrition Responses Last Week', 100, y, 14, '#505050', 'center');
+
+        return y;
+    };
+
+    //#endregion
+
+    //#region Commons
+
     private addBottom(document: any, pageNumber: any, model: any) {
         PDFGenerator.addOrderPageNumber(document, pageNumber, model.TotalPages);
-        this.addOrderFooter(document, "https://www.heart.org/", model.FooterImagePath);
+        this.addFooter(document, "https://www.heart.org/", model.FooterImagePath);
     }
 
-    private addTop(document: any, model: any) {
+    private addTop(document: any, model: any, addToNewPage = true) {
         var y = 17;
-        this.addNewPage(document);
+        if (addToNewPage) {
+            this.addNewPage(document);
+        }
         y = this.addHeader(document, model.ReportTitle, y, model.HeaderImagePath);
         y = this.addReportDate(y, document, model);
         return y;
@@ -307,51 +459,45 @@ export class StatisticsService {
         return y;
     };
 
-    private addScoreDetails = (document: PDFKit.PDFDocument, model: any, y: number): number => {
+    private addReportSummary = (document: PDFKit.PDFDocument, model: any, y: number): number => {
 
-        y = y + 230;
+        y = y + 120;
 
         //DrawLine(document, y);
-        document
-            .roundedRect(150, y, 300, 38, 1)
-            .lineWidth(0.1)
-            .fillOpacity(0.8)
-        //.fillAndStroke("#EBE0FF", "#6541A5");
-            .fill("#e8ecef");
+        // document
+        //     .roundedRect(150, y, 300, 38, 1)
+        //     .lineWidth(0.1)
+        //     .fillOpacity(0.8)
+        // //.fillAndStroke("#EBE0FF", "#6541A5");
+        //     .fill("#e8ecef");
 
-        y = y + 13;
+        // y = y + 13;
 
-        document
-            .fillOpacity(1.0)
-            .lineWidth(1)
-            .fill("#444444");
+        // document
+        //     .fillOpacity(1.0)
+        //     .lineWidth(1)
+        //     .fill("#444444");
 
-        document
-            .fillColor("#444444")
-            .font('Helvetica')
-            .fontSize(10);
+        // document
+        //     .fillColor("#444444")
+        //     .font('Helvetica')
+        //     .fontSize(10);
 
-        const overallScore = model.OverallSummaryScore.toFixed();
+        // const overallScore = model.OverallSummaryScore.toFixed();
 
-        document
-            .font('Helvetica-Bold')
-            .fontSize(16)
-            .text('Overall Score', 215, y, { align: "left" })
-            .fillColor("#c21422")
-            .font('Helvetica-Bold')
-            .text(overallScore, 365, y, { align: "left" })
-            .moveDown();
+        // document
+        //     .font('Helvetica-Bold')
+        //     .fontSize(16)
+        //     .text('Current Body Weight', 55, y, { align: "left" })
+        //     .fillColor("#c21422")
+        //     .font('Helvetica-Bold')
+        //     .text(model.CurrentBodyWeight, 365, y, { align: "left" })
+        //     .moveDown();
 
-        y = y + 65;
+        // y = y + 65;
 
-        const physicalLimitationScore = model.PhysicalLimitation_KCCQ_PL_score.toFixed();
-        const symptomFrequencyScore = model.SymptomFrequency_KCCQ_SF_score.toFixed();
-        const qualityOfLifeScore = model.QualityOfLife_KCCQ_QL_score.toFixed();
-        const socialLimitationScore = model.SocialLimitation_KCCQ_SL_score.toFixed();
-        const clinicalSummaryScore = model.ClinicalSummaryScore.toFixed();
-
-        const labelX = 180;
-        const valueX = 400;
+        const labelX = 110;
+        const valueX = 300;
         const rowYOffset = 25;
 
         document
@@ -360,41 +506,41 @@ export class StatisticsService {
 
         document
             .font('Helvetica-Bold')
-            .text('Physical Limitation Score', labelX, y, { align: "left" })
+            .text('Age', labelX, y, { align: "left" })
             .font('Helvetica')
-            .text(physicalLimitationScore, valueX, y, { align: "left" })
+            .text(model.Age, valueX, y, { align: "left" })
             .moveDown();
         y = y + rowYOffset;
 
         document
             .font('Helvetica-Bold')
-            .text('Symptom Frequency Score', labelX, y, { align: "left" })
+            .text('Gender', labelX, y, { align: "left" })
             .font('Helvetica')
-            .text(symptomFrequencyScore, valueX, y, { align: "left" })
+            .text(model.Gender, valueX, y, { align: "left" })
             .moveDown();
         y = y + rowYOffset;
 
         document
             .font('Helvetica-Bold')
-            .text('Quality of Life Score', labelX, y, { align: "left" })
+            .text('Current Weight', labelX, y, { align: "left" })
             .font('Helvetica')
-            .text(qualityOfLifeScore, valueX, y, { align: "left" })
+            .text(model.CurrentBodyWeight, valueX, y, { align: "left" })
             .moveDown();
         y = y + rowYOffset;
 
         document
             .font('Helvetica-Bold')
-            .text('Social Limitation Score', labelX, y, { align: "left" })
+            .text('Current Height', labelX, y, { align: "left" })
             .font('Helvetica')
-            .text(socialLimitationScore, valueX, y, { align: "left" })
+            .text(model.CurrentHeight, valueX, y, { align: "left" })
             .moveDown();
         y = y + rowYOffset;
 
         document
             .font('Helvetica-Bold')
-            .text('Clinical Summary Score', labelX, y, { align: "left" })
+            .text('Body Mass Index (BMI)', labelX, y, { align: "left" })
             .font('Helvetica')
-            .text(clinicalSummaryScore, valueX, y, { align: "left" })
+            .text(model.BodyMassIndex, valueX, y, { align: "left" })
             .moveDown();
         y = y + rowYOffset;
 
@@ -404,19 +550,47 @@ export class StatisticsService {
     private addChartImage = (document: PDFKit.PDFDocument, absoluteChartImagePath: string, y: number): number => {
 
         y = y + 35;
-
         document
             .image(absoluteChartImagePath, 125, y, { width: 350, align: 'center' });
-
         document
             .fontSize(7);
-
         y = y + 25;
-
         document.moveDown();
 
         return y;
     };
+
+    private addPageSectionTitle = (document: PDFKit.PDFDocument, model: any, y: number, pageTitle: string): number => {
+        y = y + 20;
+
+        //DrawLine(document, y);
+        document
+            .roundedRect(50, y, 500, 55, 1)
+            .lineWidth(0.1)
+            .fillOpacity(0.8)
+            .fill("#e8ecef");
+
+        y = y + 22;
+
+        document
+            .fillOpacity(1.0)
+            .lineWidth(1)
+            .fill("#444444");
+
+        document
+            .fillColor("#444444")
+            .font('Helvetica')
+            .fontSize(13);
+
+        document
+            .font('Helvetica-Bold')
+            .text(pageTitle, 35, y, { align: "center" })
+            .moveDown();
+
+        y = y + 23;
+
+        return y;
+    }
 
     private addReportMetadata = (document: PDFKit.PDFDocument, model: any, y: number): number => {
 
@@ -427,7 +601,6 @@ export class StatisticsService {
             .roundedRect(50, y, 500, 65, 1)
             .lineWidth(0.1)
             .fillOpacity(0.8)
-        //.fillAndStroke("#EBE0FF", "#6541A5");
             .fill("#e8ecef");
 
         y = y + 20;
@@ -461,7 +634,7 @@ export class StatisticsService {
         return y;
     };
 
-    private addOrderFooter = (document, text, logoImagePath) => {
+    private addFooter = (document, text, logoImagePath) => {
 
         //var imageFile = path.join(process.cwd(), "./assets/images/REANCare_Footer.png");
         var imageFile = path.join(process.cwd(), logoImagePath);
@@ -480,6 +653,31 @@ export class StatisticsService {
                 underline : false
             });
     };
+
+    private addText = (
+        document, text: string, textX: number, textY: number,
+        fontSize: number, color: string, alignment: Alignment) => {
+        document
+            .fontSize(fontSize)
+            .fillColor(color)
+            .text(text, textX, textY, { align: alignment })
+            .moveDown();
+    }
+
+    private addLabeledText = (
+        document, label: string, text: string,
+        labelX: number, labelY: number,
+        textX: number, textY: number,
+        fontSize: number, color: string, alignment: Alignment) => {
+        document
+            .font('Helvetica-Bold')
+            .fontSize(fontSize)
+            .text(label, labelX, labelY, { align: alignment })
+            .fillColor(color)
+            .font('Helvetica-Bold')
+            .text(text, textX, textY, { align: "left" })
+            .moveDown();
+    }
 
     //#endregion
 
@@ -509,13 +707,15 @@ export class StatisticsService {
     private createNutritionCharts = async (data) => {
         var locations = [];
         //Calories
-        let location = await this.createNutritionCalorieLineChart(data.LastMonth.CalorieStats, 'caloriesForMonthlocation');
+        let location = await this.createNutritionCalorieLineChart(data.LastMonth.CalorieStats, 'Nutrition_CaloriesConsumed_LastMonth');
         locations.push({
-            NutritionCaloriesForLastMonth : location
+            key : 'Nutrition_CaloriesConsumed_LastMonth',
+            location
         });
-        location = await this.createNutritionCalorieBarChart(data.LastWeek.CalorieStats, 'caloriesForWeeklocation');
+        location = await this.createNutritionCalorieBarChart(data.LastWeek.CalorieStats, 'Nutrition_CaloriesConsumed_LastWeek');
         locations.push({
-            NutritionCaloriesForLastWeek : location
+            key : 'Nutrition_CaloriesConsumed_LastWeek',
+            location
         });
 
         //Questionnaire
@@ -524,18 +724,20 @@ export class StatisticsService {
             ...(data.LastWeek.QuestionnaireStats.HealthyProteinConsumptions.Stats),
             ...(data.LastWeek.QuestionnaireStats.LowSaltFoods.Stats),
         ];
-        location = await this.createNutritionQueryBarChartForWeek(qstats, 'nutriQueryForWeeklocation');
+        location = await this.createNutritionQueryBarChartForWeek(qstats, 'Nutrition_QuestionnaireResponses_LastWeek');
         locations.push({
-            NutritionQueryForLastWeek : location
+            key : 'Nutrition_QuestionnaireResponses_LastWeek',
+            location
         });
         qstats = [
             ...(data.LastMonth.QuestionnaireStats.HealthyFoodChoices.Stats),
             ...(data.LastMonth.QuestionnaireStats.HealthyProteinConsumptions.Stats),
             ...(data.LastMonth.QuestionnaireStats.LowSaltFoods.Stats),
         ];
-        location = await this.createNutritionQueryBarChartForMonth(qstats, 'nutriQueryForMonthlocation');
+        location = await this.createNutritionQueryBarChartForMonth(qstats, 'Nutrition_QuestionnaireResponses_LastMonth');
         locations.push({
-            NutritionQueryForLastMonth : location
+            key : 'Nutrition_QuestionnaireResponses_LastMonth',
+            location
         });
 
         //Servings
@@ -546,9 +748,10 @@ export class StatisticsService {
             ...(data.LastMonth.QuestionnaireStats.SeafoodServings.Stats),
             ...(data.LastMonth.QuestionnaireStats.SugaryDrinksServings.Stats),
         ];
-        location = await this.createNutritionServingsBarChartForMonth(servingsStats, 'nutriServingsForMonthlocation');
+        location = await this.createNutritionServingsBarChartForMonth(servingsStats, 'Nutrition_Servings_LastMonth');
         locations.push({
-            NutritionServingsForLastMonth : location
+            key : 'Nutrition_Servings_LastMonth',
+            location
         });
         servingsStats = [
             ...(data.LastWeek.QuestionnaireStats.VegetableServings.Stats),
@@ -557,9 +760,10 @@ export class StatisticsService {
             ...(data.LastWeek.QuestionnaireStats.SeafoodServings.Stats),
             ...(data.LastWeek.QuestionnaireStats.SugaryDrinksServings.Stats),
         ];
-        location = await this.createNutritionServingsBarChartForWeek(servingsStats, 'nutriServingsForWeeklocation');
+        location = await this.createNutritionServingsBarChartForWeek(servingsStats, 'Nutrition_Servings_LastWeek');
         locations.push({
-            NutritionServingsForLastWeek : location
+            key : 'Nutrition_Servings_LastWeek',
+            location
         });
         return locations;
     };
@@ -567,19 +771,22 @@ export class StatisticsService {
     private createPhysicalActivityCharts = async (data) => {
         var locations = [];
 
-        let location = await this.createExerciseCalorieBarChartForMonth(data.LastMonth.CalorieStats, 'exerciseCaloriesForMonthlocation');
+        let location = await this.createExerciseCalorieBarChartForMonth(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
         locations.push({
-            ExerciseCaloriesBurnForLastWeek : location
+            key : 'Exercise_CaloriesBurned_LastMonth',
+            location
         });
 
-        location = await this.createExerciseQuestionBarChartForMonth(data.LastMonth.QuestionnaireStats.Stats, 'exerciseQuestionForMonthlocation');
+        location = await this.createExerciseQuestionBarChartForMonth(data.LastMonth.QuestionnaireStats.Stats, 'Exercise_Questionnaire_LastMonth');
         locations.push({
-            ExerciseQuestionForLastWeek : location
+            key : 'Exercise_Questionnaire_LastMonth',
+            location
         });
 
-        location = await this.createExerciseQuestionsDonutChart(data.LastMonth.QuestionnaireStats.Stats, 'exerciseQuestionOverallForMonthlocation');
+        location = await this.createExerciseQuestionsDonutChart(data.LastMonth.QuestionnaireStats.Stats, 'Exercise_Questionnaire_Overall_LastMonth');
         locations.push({
-            ExerciseQuestionOverallForLastWeek : location
+            key : 'Exercise_Questionnaire_Overall_LastMonth',
+            location
         });
 
         return locations;
@@ -587,9 +794,10 @@ export class StatisticsService {
 
     private createBodyWeightCharts = async (data) => {
         var locations = [];
-        const location = await this.createBodyWeightLineChart(data.LastMonth, 'BodyWeightForMonthLocation');
+        const location = await this.createBodyWeightLineChart(data.LastMonth, 'BodyWeight_Last6Months');
         locations.push({
-            BodyWeightForMonthLocation : location
+            key : 'BodyWeight_Last6Months',
+            location
         });
         return locations;
     };
@@ -601,23 +809,26 @@ export class StatisticsService {
 
     private createSleepTrendCharts = async (data) => {
         var locations = [];
-        const location = await this.createSleepTrendBarChart(data.LastMonth, 'sleepTrendForMonthLocation');
+        const location = await this.createSleepTrendBarChart(data.LastMonth, 'SleepHours_LastMonth');
         locations.push({
-            SleepTrendForMonthLocation : location
+            key : 'SleepHours_LastMonth',
+            location
         });
         return locations;
     };
 
     private createMedicationTrendCharts = async (data) => {
         var locations = [];
-        let location = await this.createMedicationBarChartForMonth(data.LastMonth.Daily, 'medicationHistoryForMonthlocation');
+        let location = await this.createMedicationBarChartForMonth(data.LastMonth.Daily, 'MedicationsHistory_LastMonth');
         locations.push({
-            MedicationHistoryForMonthlocation : location
+            key : 'MedicationsHistory_LastMonth',
+            location
         });
 
-        location = await this.createMedicationConsumptionDonutChart(data.LastMonth.Daily, 'medicationOverallForMonthlocation');
+        location = await this.createMedicationConsumptionDonutChart(data.LastMonth.Daily, 'MedicationsOverall_LastMonth');
         locations.push({
-            MedicationOverallForMonthlocation : location
+            key : 'MedicationsOverall_LastMonth',
+            location
         });
         return locations;
     };
@@ -881,7 +1092,7 @@ export class StatisticsService {
         const options: BarChartOptions = {
             Width  : 550,
             Height : 275,
-            YLabel : 'Calories',
+            YLabel : 'Sleep in Hours',
             Color  : ChartColors.GrayDarker
         };
 

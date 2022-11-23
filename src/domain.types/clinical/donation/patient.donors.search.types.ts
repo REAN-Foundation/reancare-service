@@ -8,7 +8,7 @@ export interface PatientDonorsSearchFilters extends BaseSearchFilters {
     Name?: string;
     PatientUserId?: string;
     DonorUserId?: string;
-    VolunteerUserId?: Gender;
+    VolunteerUserId?: string;
     BloodGroup? : string,
     Status? : string,
     NextDonationDateFrom?: Date;

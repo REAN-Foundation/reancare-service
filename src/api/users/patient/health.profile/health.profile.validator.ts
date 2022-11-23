@@ -42,10 +42,10 @@ export class HealthProfileValidator extends BaseValidator {
             ObstetricHistory      : request.body.ObstetricHistory ?? undefined,
             OtherInformation      : request.body.OtherInformation ?? undefined,
             TobaccoQuestionAns    : request.body.TobaccoQuestionAns ?? undefined,
-            TypeOfStroke          : request.body.TypeOfStroke ?? null,
-            HasHighBloodPressure  : request.body.HasHighBloodPressure ?? null,
-            HasHighCholesterol    : request.body.HasHighCholesterol ?? null,
-            HasAtrialFibrillation : request.body.HasAtrialFibrillation ?? null,
+            TypeOfStroke          : request.body.TypeOfStroke ?? undefined,
+            HasHighBloodPressure  : request.body.HasHighBloodPressure ?? undefined,
+            HasHighCholesterol    : request.body.HasHighCholesterol ?? undefined,
+            HasAtrialFibrillation : request.body.HasAtrialFibrillation ?? undefined,
         };
 
         return model;

@@ -33,7 +33,7 @@ import { PDFGenerator } from "../../../modules/reports/pdf.generator";
 import { ChartGenerator } from "../../../modules/charts/chart.generator";
 import * as fs from 'fs';
 import * as path from 'path';
-import { BarChartOptions, ChartColors, defaultLineChartOptions, MultiBarChartOptions, LineChartOptions, PieChartOptions } from "../../../modules/charts/chart.options";
+import { BarChartOptions, ChartColors, DefaultChartOptions, MultiBarChartOptions, LineChartOptions, PieChartOptions } from "../../../modules/charts/chart.options";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -840,7 +840,7 @@ export class StatisticsService {
                 y : c.Calories
             };
         });
-        const options: LineChartOptions = defaultLineChartOptions();
+        const options: LineChartOptions = DefaultChartOptions.lineChart();
         options.Width = 550;
         options.Height = 275;
         options.XAxisTimeScaled = true;
@@ -1106,7 +1106,7 @@ export class StatisticsService {
                 y : c.BodyWeight
             };
         });
-        const options: LineChartOptions = defaultLineChartOptions();
+        const options: LineChartOptions = DefaultChartOptions.lineChart();
         options.Width = 550;
         options.Height = 275;
         options.XAxisTimeScaled = true;

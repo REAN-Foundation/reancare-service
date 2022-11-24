@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { BarChartOptions, MultiBarChartOptions, LineChartOptions, PieChartOptions, ChartOptions, CalendarChartOptions, MultiLineChartOptions } from "./chart.options";
+import { BarChartOptions, MultiBarChartOptions, LineChartOptions, PieChartOptions, ChartOptions, CalendarChartOptions, MultiLineChartOptions, CircledNumberChartOptions, CircularProgressChartOptions, LinearProgressChartOptions } from "./chart.options";
 import { htmlTextToPNG } from '../../common/html.renderer';
 import { Helper } from "../../common/helper";
 
@@ -73,6 +73,30 @@ export class ChartGenerator {
         const templHtml = 'calendar.chart.html';
         const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
         const dataStr = ChartGenerator.createCalendarChartTextBlock(data, options);
+        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
+    };
+
+    static createCircledNumberChart = async (
+        data: number, options: CircledNumberChartOptions, filename: string): Promise<string|undefined> => {
+        const templHtml = 'circled.number.chart.html';
+        const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
+        const dataStr = ChartGenerator.createCircledNumberChartTextBlock(data, options);
+        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
+    };
+
+    static createCircularProgressChart = async (
+        data: number, options: CircularProgressChartOptions, filename: string): Promise<string|undefined> => {
+        const templHtml = 'circular.progress.chart.html';
+        const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
+        const dataStr = ChartGenerator.createCircularProgressChartTextBlock(data, options);
+        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
+    };
+
+    static createLinearProgressChart = async (
+        data: number, options: LinearProgressChartOptions, filename: string): Promise<string|undefined> => {
+        const templHtml = 'linear.progress.chart.html';
+        const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
+        const dataStr = ChartGenerator.createLinearProgressChartTextBlock(data, options);
         return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
     };
 
@@ -231,6 +255,48 @@ export class ChartGenerator {
         dataStr += `\tconst height          = ${options.Height};\n`;
         dataStr += `\tconst colors          = ${JSON.stringify(options.Colors)}\n`;
         dataStr += `\tconst fontSize        = "${options.FontSize ?? `11px`}";\n`;
+        return dataStr;
+    }
+
+    static createCircledNumberChartTextBlock(data: number, options: CircledNumberChartOptions) {
+        let dataStr = `\n`;
+        dataStr += `\tconst theNumber = ${data};\n`;
+        dataStr += `\tconst width  = ${options.Width};\n`;
+        dataStr += `\tconst height = ${options.Height};\n`;
+        dataStr += `\tconst innerRadius = ${options.InnerRadius};\n`;
+        dataStr += `\tconst fontSize = ${options.FontSize};\n`;
+        dataStr += `\tconst gradientColor1 = ${options.GradientColor1};\n`;
+        dataStr += `\tconst gradientColor2 = ${options.GradientColor2};\n`;
+        dataStr += `\tconst pathColor = ${options.PathColor};\n`;
+        dataStr += `\tconst textColor = ${options.TextColor};\n`;
+        return dataStr;
+    }
+
+    static createCircularProgressChartTextBlock(data: number, options: CircularProgressChartOptions) {
+        let dataStr = `\n`;
+        dataStr += `\tconst percentage = ${data};\n`;
+        dataStr += `\tconst width  = ${options.Width};\n`;
+        dataStr += `\tconst height = ${options.Height};\n`;
+        dataStr += `\tconst innerRadius = ${options.InnerRadius};\n`;
+        dataStr += `\tconst fontSize = ${options.FontSize};\n`;
+        dataStr += `\tconst symbolFontSize = ${options.SymbolFontSize};\n`;
+        dataStr += `\tconst gradientColor1 = ${options.GradientColor1};\n`;
+        dataStr += `\tconst gradientColor2 = ${options.GradientColor2};\n`;
+        dataStr += `\tconst pathColor = ${options.PathColor};\n`;
+        dataStr += `\tconst textColor = ${options.TextColor};\n`;
+        return dataStr;
+    }
+
+    static createLinearProgressChartTextBlock(data: number, options: LinearProgressChartOptions) {
+        let dataStr = `\n`;
+        dataStr += `\tconst percentage = ${data};\n`;
+        dataStr += `\tconst width  = ${options.Width};\n`;
+        dataStr += `\tconst height = ${options.Height};\n`;
+        dataStr += `\tconst fontSize = ${options.FontSize};\n`;
+        dataStr += `\tconst gradientColor1 = ${options.GradientColor1};\n`;
+        dataStr += `\tconst gradientColor2 = ${options.GradientColor2};\n`;
+        dataStr += `\tconst pathColor = ${options.PathColor};\n`;
+        dataStr += `\tconst textColor = ${options.TextColor};\n`;
         return dataStr;
     }
 

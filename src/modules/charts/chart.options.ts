@@ -41,24 +41,6 @@ export interface MultiLineChartOptions extends ChartOptions {
     XAxisTimeScaled ?: boolean; // true;
 }
 
-export const defaultLineChartOptions = () => {
-    const x: LineChartOptions = {
-        Width           : 650,
-        Height          : 450,
-        FontSize        : "14px",
-        Color           : "steelblue",
-        XFrom           : null,
-        XTo             : null,
-        YFrom           : null,
-        YTo             : null,
-        XAxisTimeScaled : true,
-        YLabel          : '',
-        AxisStrokeWidth : 3.5,
-        AxisColor       : "#2E4053",
-    };
-    return x;
-};
-
 export interface BarChartOptions extends ChartOptions {
     YLabel ?: string;
 }
@@ -76,4 +58,92 @@ export interface PieChartOptions extends ChartOptions {
 
 export interface CalendarChartOptions extends ChartOptions {
     Colors ?: string[];
+}
+
+export interface CircledNumberChartOptions extends ChartOptions {
+    InnerRadius: number;
+    GradientColor1: string;
+    GradientColor2: string;
+    PathColor: string;
+    TextColor: string;
+}
+
+export interface CircularProgressChartOptions extends ChartOptions {
+    SymbolFontSize: string;
+    InnerRadius: number;
+    GradientColor1: string;
+    GradientColor2: string;
+    PathColor: string;
+    TextColor: string;
+}
+
+export interface LinearProgressChartOptions extends ChartOptions {
+    GradientColor1: string;
+    GradientColor2: string;
+    PathColor: string;
+    TextColor: string;
+}
+
+export class DefaultChartOptions {
+
+    static lineChart = (): LineChartOptions => {
+        const opts: LineChartOptions = {
+            Width           : 650,
+            Height          : 450,
+            FontSize        : "14px",
+            Color           : "steelblue",
+            XFrom           : null,
+            XTo             : null,
+            YFrom           : null,
+            YTo             : null,
+            XAxisTimeScaled : true,
+            YLabel          : '',
+            AxisStrokeWidth : 3.5,
+            AxisColor       : "#2E4053",
+        };
+        return opts;
+    };
+
+    static circledNumber = (): CircledNumberChartOptions => {
+        const opts: CircledNumberChartOptions = {
+            Width          : 350,
+            Height         : 350,
+            InnerRadius    : 135,
+            FontSize       : "165px",
+            GradientColor1 : '#f2503f',
+            GradientColor2 : '#ea0859',
+            PathColor      : '#404F70',
+            TextColor      : 'slategray',
+        };
+        return opts;
+    };
+
+    static circularProgress = (): CircularProgressChartOptions => {
+        const opts: CircularProgressChartOptions = {
+            Width          : 350,
+            Height         : 350,
+            InnerRadius    : 135,
+            FontSize       : "165px",
+            GradientColor1 : '#f2503f',
+            GradientColor2 : '#ea0859',
+            PathColor      : '#404F70',
+            TextColor      : 'slategray',
+            SymbolFontSize : "50px",
+        };
+        return opts;
+    };
+
+    static linearProgress = (): LinearProgressChartOptions => {
+        const opts: LinearProgressChartOptions = {
+            Width          : 650,
+            Height         : 40,
+            FontSize       : "24px",
+            GradientColor1 : '#f2503f',
+            GradientColor2 : '#ea0859',
+            PathColor      : '#404F70',
+            TextColor      : 'slategray',
+        };
+        return opts;
+    };
+
 }

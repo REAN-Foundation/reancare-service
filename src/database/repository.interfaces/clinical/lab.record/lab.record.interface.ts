@@ -25,10 +25,6 @@ export interface ILabRecordRepo {
 
     getTypeByDisplayName(displayName: string): Promise<any>;
 
-    getLabRecordsForLastMonth(patientUserId: string): Promise<any>;
-
-    getLabRecordsForLast3Months(patientUserId: string): Promise<any>;
-
-    getLabRecordsForLast6Months(patientUserId: string): Promise<any>;
+    getStats(patientUserId: string, numMonths: number): Promise<any>;
 
 }

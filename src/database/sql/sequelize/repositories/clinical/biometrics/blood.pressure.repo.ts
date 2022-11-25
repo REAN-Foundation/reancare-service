@@ -1,4 +1,7 @@
 import { Op } from 'sequelize';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { BloodPressureDomainModel } from "../../../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.domain.model";
@@ -6,7 +9,7 @@ import { BloodPressureDto } from "../../../../../../domain.types/clinical/biomet
 import { BloodPressureSearchFilters, BloodPressureSearchResults } from "../../../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.search.types";
 import { IBloodPressureRepo } from '../../../../../repository.interfaces/clinical/biometrics/blood.pressure.repo.interface';
 import { BloodPressureMapper } from '../../../mappers/clinical/biometrics/blood.pressure.mapper';
-import BloodPressureModel from '../../../models/clinical/biometrics/blood.pressure.model';
+import BloodPressure from '../../../models/clinical/biometrics/blood.pressure.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -25,7 +28,7 @@ export class BloodPressureRepo implements IBloodPressureRepo {
                 RecordedByUserId : createModel.RecordedByUserId
             };
 
-            const bloodPressure = await BloodPressureModel.create(entity);
+            const bloodPressure = await BloodPressure.create(entity);
             return await BloodPressureMapper.toDto(bloodPressure);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -35,7 +38,7 @@ export class BloodPressureRepo implements IBloodPressureRepo {
 
     getById = async (id: string): Promise<BloodPressureDto> => {
         try {
-            const bloodPressure = await BloodPressureModel.findByPk(id);
+            const bloodPressure = await BloodPressure.findByPk(id);
             return await BloodPressureMapper.toDto(bloodPressure);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -120,7 +123,7 @@ export class BloodPressureRepo implements IBloodPressureRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            const foundResults = await BloodPressureModel.findAndCountAll(search);
+            const foundResults = await BloodPressure.findAndCountAll(search);
 
             const dtos: BloodPressureDto[] = [];
             for (const bloodPressure of foundResults.rows) {
@@ -148,7 +151,7 @@ export class BloodPressureRepo implements IBloodPressureRepo {
     update = async (id: string, updateModel: BloodPressureDomainModel):
     Promise<BloodPressureDto> => {
         try {
-            const bloodPressure = await BloodPressureModel.findByPk(id);
+            const bloodPressure = await BloodPressure.findByPk(id);
 
             if (updateModel.PatientUserId != null) {
                 bloodPressure.PatientUserId = updateModel.PatientUserId;
@@ -168,7 +171,7 @@ export class BloodPressureRepo implements IBloodPressureRepo {
             if (updateModel.RecordedByUserId != null) {
                 bloodPressure.RecordedByUserId = updateModel.RecordedByUserId;
             }
-    
+
             await bloodPressure.save();
 
             return await BloodPressureMapper.toDto(bloodPressure);
@@ -182,12 +185,53 @@ export class BloodPressureRepo implements IBloodPressureRepo {
     delete = async (id: string): Promise<boolean> => {
         try {
 
-            const result = await BloodPressureModel.destroy({ where: { id: id } });
+            const result = await BloodPressure.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
+
+    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+        try {
+            const records = await this.getRecords(patientUserId, numMonths);
+            return records.map(x => {
+                const dayStr = x.CreatedAt.toISOString()
+                    .split('T')[0];
+                return {
+                    Diastolic : x.Diastolic,
+                    Systolic  : x.Systolic,
+                    DayStr    : dayStr,
+                };
+            });
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private async getRecords(patientUserId: string, months: number) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const result = await BloodPressure.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                CreatedAt     : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        let records = result.map(x => {
+            return {
+                Diastolic : x.Diastolic,
+                Systolic  : x.Systolic,
+                CreatedAt : x.CreatedAt,
+            };
+        });
+        records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+        return records;
+    }
 
 }

@@ -6,8 +6,6 @@ import { MedicationConsumptionSearchFilters, MedicationConsumptionSearchResults 
 
 export interface IMedicationConsumptionRepo {
 
-    getMedicationStats(patientUserId: string, numDays: number): Promise<any>;
-
     getPendingConsumptionCountForMedication(medicationId: string): Promise<number>;
 
     getTotalConsumptionCountForMedication(medicationId: string): Promise<number>;
@@ -40,5 +38,7 @@ export interface IMedicationConsumptionRepo {
     getSchedulesForDay(patientUserId: string, date: Date): Promise<MedicationConsumptionDto[]>;
 
     cancelSchedule(id: string): Promise<boolean>;
+
+    getStats(patientUserId: string, numMonths: number): Promise<any>;
 
 }

@@ -24,8 +24,7 @@ import NutritionQuestionnaire from '../../../models/wellness/nutrition/nutrition
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
-import Patient from '../../../models/users/patient/patient.model';
-import User from '../../../models/users/user/user.model';
+import { HelperRepo } from '../../common/helper.repo';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -348,24 +347,11 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
     };
 
-    public getNutritionStatsForLastWeek = async (patientUserId: uuid): Promise<any> => {
+    public getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
         try {
-            const questionnaireStats = await this.getQuestionnaireStats(patientUserId, 7);
-            const calorieStats = await this.getDayByDayCalorieStats(patientUserId, 7);
-            return {
-                QuestionnaireStats : questionnaireStats,
-                CalorieStats       : calorieStats,
-            };
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    public getNutritionStatsForLastMonth = async (patientUserId: uuid): Promise<any> => {
-        try {
-            const questionnaireStats = await this.getQuestionnaireStats(patientUserId, 30);
-            const calorieStats = await this.getDayByDayCalorieStats(patientUserId, 30);
+            const numDays = 30 * numMonths;
+            const questionnaireStats = await this.getQuestionnaireStats(patientUserId, numDays);
+            const calorieStats = await this.getDayByDayCalorieStats(patientUserId, numDays);
             return {
                 QuestionnaireStats : questionnaireStats,
                 CalorieStats       : calorieStats,
@@ -470,9 +456,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
     private async getQuestionnaireStats(patientUserId: string, numDays: number) {
 
         const records = await this.getQuestionnaireRecords(patientUserId, numDays, DurationType.Day);
-
-        const timezone = await this.getPatientTimezone(patientUserId);
-        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+        const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
 
         const records_ = records.map(x => {
             const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
@@ -557,14 +541,14 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 stats.push({
                     Response : 1,
                     Type     : key,
-                    DateStr  : dayStr,
+                    DayStr   : dayStr,
                 });
             }
             else {
                 stats.push({
                     Response : 0,
                     Type     : key,
-                    DateStr  : dayStr,
+                    DayStr   : dayStr,
                 });
             }
         }
@@ -585,14 +569,14 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 stats.push({
                     Servings : 0,
                     Type     : key,
-                    DateStr  : dayStr,
+                    DayStr   : dayStr,
                 });
             }
             else if (filteredForDay.length === 1) {
                 stats.push({
                     Servings : filteredForDay[0].Servings,
                     Type     : key,
-                    DateStr  : dayStr,
+                    DayStr   : dayStr,
                 });
             }
             else {
@@ -600,7 +584,7 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
                 stats.push({
                     Servings : val,
                     Type     : key,
-                    DateStr  : dayStr,
+                    DayStr   : dayStr,
                 });
             }
         }
@@ -628,9 +612,8 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
 
     private async getDayByDayCalorieStats(patientUserId: string, numDays: number) {
 
-        const timezone = await this.getPatientTimezone(patientUserId);
+        const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
         const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
-        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
         const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
 
         const stats = [];
@@ -658,31 +641,11 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
             });
 
             stats.push({
-                DateStr  : dayStr,
+                DayStr   : dayStr,
                 Calories : totalCaloriesForDay,
             });
         }
         return stats;
-    }
-
-    private async getPatientTimezone(patientUserId: string) {
-        let timezone = '+05:30';
-        const patient = await Patient.findOne({
-            where : {
-                UserId : patientUserId
-            },
-            include : [
-                {
-                    model    : User,
-                    as       : 'User',
-                    required : true,
-                }
-            ]
-        });
-        if (patient) {
-            timezone = patient.User.CurrentTimeZone;
-        }
-        return timezone;
     }
 
     //#endregion

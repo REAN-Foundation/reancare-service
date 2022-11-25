@@ -76,52 +76,38 @@ export class StatisticsService {
     public getPatientStats = async (patientUserId: uuid) => {
 
         //Nutrition
-        const nutritionLastWeek = await this._foodConsumptionRepo.getNutritionStatsForLastWeek(patientUserId);
-        const nutritionLastMonth = await this._foodConsumptionRepo.getNutritionStatsForLastMonth(patientUserId);
+        const nutritionLastMonth = await this._foodConsumptionRepo.getStats(patientUserId, 1);
         const nutrition = {
-            LastWeek  : nutritionLastWeek,
             LastMonth : nutritionLastMonth,
         };
 
         //Physical activity
-        const exerciseLastWeek = await this._physicalActivityRepo.getPhysicalActivityStatsForLastWeek(patientUserId);
-        const exerciseLastMonth = await this._physicalActivityRepo.getPhysicalActivityStatsForLastMonth(patientUserId);
+        const exerciseLastMonth = await this._physicalActivityRepo.getStats(patientUserId, 1);
         const physicalActivityTrends = {
-            LastWeek  : exerciseLastWeek,
             LastMonth : exerciseLastMonth,
         };
 
         //Body weight
-        const bodyWeightLast3Months = await this._bodyWeightRepo.getBodyWeightStatsForLast3Months(patientUserId);
-        const bodyWeightLast6Months = await this._bodyWeightRepo.getBodyWeightStatsForLast6Months(patientUserId);
+        const bodyWeightLast6Months = await this._bodyWeightRepo.getStats(patientUserId, 6);
         const bodyWeightTrends = {
-            LastWeek  : bodyWeightLast3Months,
-            LastMonth : bodyWeightLast6Months,
+            Last6Months : bodyWeightLast6Months,
         };
 
         //Lab values
-        const labRecordsLastMonth = await this._labRecordsRepo.getLabRecordsForLastMonth(patientUserId);
-        const labRecordsLast3Months = await this._labRecordsRepo.getLabRecordsForLast3Months(patientUserId);
-        const labRecordsLast6Months = await this._labRecordsRepo.getLabRecordsForLast6Months(patientUserId);
+        const labRecordsLast6Months = await this._labRecordsRepo.getStats(patientUserId, 6);
         const labRecords = {
-            LastMonth   : labRecordsLastMonth,
-            Last3Months : labRecordsLast3Months,
             Last6Months : labRecordsLast6Months,
         };
 
         //Sleep trend
-        const SleepTrendLastWeek = await this._sleepRepo.getSleepStatsForLastWeek(patientUserId);
-        const SleepTrendLastMonth = await this._sleepRepo.getSleepStatsForLastMonth(patientUserId);
+        const SleepTrendLastMonth = await this._sleepRepo.getStats(patientUserId, 1);
         const sleepTrend = {
-            LastWeek  : SleepTrendLastWeek,
             LastMonth : SleepTrendLastMonth,
         };
 
         //Medication trends
-        const medsLastWeek = await this._medicationConsumptionRepo.getMedicationStats(patientUserId, 7);
-        const medsLastMonth = await this._medicationConsumptionRepo.getMedicationStats(patientUserId, 30);
+        const medsLastMonth = await this._medicationConsumptionRepo.getStats(patientUserId, 1);
         const medicationTrend = {
-            LastWeek  : medsLastWeek,
             LastMonth : medsLastMonth,
         };
 
@@ -706,34 +692,30 @@ export class StatisticsService {
 
     private createNutritionCharts = async (data) => {
         var locations = [];
+
         //Calories
         let location = await this.createNutritionCalorieLineChart(data.LastMonth.CalorieStats, 'Nutrition_CaloriesConsumed_LastMonth');
         locations.push({
             key : 'Nutrition_CaloriesConsumed_LastMonth',
             location
         });
-        location = await this.createNutritionCalorieBarChart(data.LastWeek.CalorieStats, 'Nutrition_CaloriesConsumed_LastWeek');
+        location = await this.createNutritionCalorieBarChart(data.LastMonth.CalorieStats, 'Nutrition_CaloriesConsumed_LastWeek');
         locations.push({
             key : 'Nutrition_CaloriesConsumed_LastWeek',
             location
         });
 
         //Questionnaire
-        let qstats = [
-            ...(data.LastWeek.QuestionnaireStats.HealthyFoodChoices.Stats),
-            ...(data.LastWeek.QuestionnaireStats.HealthyProteinConsumptions.Stats),
-            ...(data.LastWeek.QuestionnaireStats.LowSaltFoods.Stats),
+        const qstats = [
+            ...(data.LastMonth.QuestionnaireStats.HealthyFoodChoices.Stats),
+            ...(data.LastMonth.QuestionnaireStats.HealthyProteinConsumptions.Stats),
+            ...(data.LastMonth.QuestionnaireStats.LowSaltFoods.Stats),
         ];
         location = await this.createNutritionQueryBarChartForWeek(qstats, 'Nutrition_QuestionnaireResponses_LastWeek');
         locations.push({
             key : 'Nutrition_QuestionnaireResponses_LastWeek',
             location
         });
-        qstats = [
-            ...(data.LastMonth.QuestionnaireStats.HealthyFoodChoices.Stats),
-            ...(data.LastMonth.QuestionnaireStats.HealthyProteinConsumptions.Stats),
-            ...(data.LastMonth.QuestionnaireStats.LowSaltFoods.Stats),
-        ];
         location = await this.createNutritionQueryBarChartForMonth(qstats, 'Nutrition_QuestionnaireResponses_LastMonth');
         locations.push({
             key : 'Nutrition_QuestionnaireResponses_LastMonth',
@@ -741,7 +723,7 @@ export class StatisticsService {
         });
 
         //Servings
-        let servingsStats = [
+        const servingsStats = [
             ...(data.LastMonth.QuestionnaireStats.VegetableServings.Stats),
             ...(data.LastMonth.QuestionnaireStats.FruitServings.Stats),
             ...(data.LastMonth.QuestionnaireStats.WholeGrainServings.Stats),
@@ -753,18 +735,12 @@ export class StatisticsService {
             key : 'Nutrition_Servings_LastMonth',
             location
         });
-        servingsStats = [
-            ...(data.LastWeek.QuestionnaireStats.VegetableServings.Stats),
-            ...(data.LastWeek.QuestionnaireStats.FruitServings.Stats),
-            ...(data.LastWeek.QuestionnaireStats.WholeGrainServings.Stats),
-            ...(data.LastWeek.QuestionnaireStats.SeafoodServings.Stats),
-            ...(data.LastWeek.QuestionnaireStats.SugaryDrinksServings.Stats),
-        ];
         location = await this.createNutritionServingsBarChartForWeek(servingsStats, 'Nutrition_Servings_LastWeek');
         locations.push({
             key : 'Nutrition_Servings_LastWeek',
             location
         });
+
         return locations;
     };
 
@@ -824,7 +800,6 @@ export class StatisticsService {
             key : 'MedicationsHistory_LastMonth',
             location
         });
-
         location = await this.createMedicationConsumptionDonutChart(data.LastMonth.Daily, 'MedicationsOverall_LastMonth');
         locations.push({
             key : 'MedicationsOverall_LastMonth',
@@ -836,7 +811,7 @@ export class StatisticsService {
     private async createNutritionCalorieLineChart(stats: any, filename: string) {
         const lastMonthCalorieStats = stats.map(c => {
             return {
-                x : new Date(c.DateStr),
+                x : new Date(c.DayStr),
                 y : c.Calories
             };
         });
@@ -845,14 +820,13 @@ export class StatisticsService {
         options.Height = 275;
         options.XAxisTimeScaled = true;
         options.YLabel = 'Calories';
-
         return await ChartGenerator.createLineChart(lastMonthCalorieStats, options, filename);
     }
 
     private async createNutritionCalorieBarChart(stats: any, filename: string) {
         const calorieStats = stats.map(c => {
             return {
-                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
+                x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
                 y : c.Calories
             };
         });
@@ -869,7 +843,7 @@ export class StatisticsService {
     private async createNutritionQueryBarChartForWeek(stats: any, filename: string) {
         const temp = stats.map(c => {
             return {
-                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
+                x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
                 y : c.Response,
                 z : c.Type,
             };
@@ -890,7 +864,7 @@ export class StatisticsService {
     private async createNutritionQueryBarChartForMonth(stats: any, filename: string) {
         const temp = stats.map(c => {
             return {
-                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
                 y : c.Response,
                 z : c.Type,
             };
@@ -910,7 +884,7 @@ export class StatisticsService {
     private async createNutritionServingsBarChartForWeek(stats: any, filename: string) {
         const temp = stats.map(c => {
             return {
-                x : `"${TimeHelper.getWeekDay(new Date(c.DateStr), true)}"`,
+                x : `"${TimeHelper.getWeekDay(new Date(c.DayStr), true)}"`,
                 y : c.Servings,
                 z : c.Type,
             };
@@ -936,7 +910,7 @@ export class StatisticsService {
     private async createNutritionServingsBarChartForMonth(stats: any, filename: string) {
         const temp = stats.map(c => {
             return {
-                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
                 y : c.Servings,
                 z : c.Type
             };
@@ -962,7 +936,7 @@ export class StatisticsService {
     private async createExerciseCalorieBarChartForMonth(stats: any, filename: string) {
         const calorieStats = stats.map(c => {
             return {
-                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DateStr)}"`,
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
                 y : c.Calories
             };
         });
@@ -978,7 +952,7 @@ export class StatisticsService {
     private async createExerciseQuestionBarChartForMonth(stats: any, filename: string) {
         const calorieStats = stats.map(c => {
             return {
-                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.CreatedAt.toISOString().split('T')[0])}"`,
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
                 y : c.Response
             };
         });
@@ -1059,12 +1033,12 @@ export class StatisticsService {
         const temp = [];
         stats.forEach(x => {
             temp.push({
-                x : `"${TimeHelper.getDayOfMonthFromISODateStr(x.DateStr)}"`,
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(x.DayStr)}"`,
                 y : x.MissedCount,
                 z : 'Missed',
             });
             temp.push({
-                x : `"${TimeHelper.getDayOfMonthFromISODateStr(x.DateStr)}"`,
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(x.DayStr)}"`,
                 y : x.TakenCount,
                 z : 'Taken',
             });

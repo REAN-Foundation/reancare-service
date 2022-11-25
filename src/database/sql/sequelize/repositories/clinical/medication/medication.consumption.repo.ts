@@ -406,8 +406,9 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    getMedicationStats = async (patientUserId: uuid, numDays: number): Promise<any> => {
+    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
         try {
+            const numDays = 30 * numMonths;
             return await this.getDayByDayStats(patientUserId, numDays);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -456,7 +457,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                 }
             });
             stats.push({
-                DateStr     : dayStr,
+                DayStr      : dayStr,
                 TakenCount  : takenCount,
                 MissedCount : missedCount,
             });

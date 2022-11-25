@@ -18,8 +18,6 @@ export interface ISleepRepo {
 
     delete(id: uuid): Promise<boolean>;
 
-    getSleepStatsForLastWeek(patientUserId: uuid): Promise<any>;
-
-    getSleepStatsForLastMonth(patientUserId: uuid): Promise<any>;
+    getStats(patientUserId: string, numMonths: number): Promise<any>;
 
 }

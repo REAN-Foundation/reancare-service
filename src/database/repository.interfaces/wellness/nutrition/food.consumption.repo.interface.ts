@@ -34,8 +34,6 @@ export interface IFoodConsumptionRepo {
 
     totalCount(): Promise<number>;
 
-    getNutritionStatsForLastWeek(patientUserId: string): Promise<any>;
-
-    getNutritionStatsForLastMonth(patientUserId: string): Promise<any>;
+    getStats(patientUserId: string, numMonths: number): Promise<any>;
 
 }

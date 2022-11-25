@@ -166,24 +166,11 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
         }
     };
 
-    public getPhysicalActivityStatsForLastWeek = async (patientUserId: uuid): Promise<any> => {
+    public getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
         try {
-            const questionnaireStats = await this.getQuestionnaireStats(patientUserId, 7);
-            const calorieStats = await this.getDayByDayCalorieStats(patientUserId, 7);
-            return {
-                QuestionnaireStats : questionnaireStats,
-                CalorieStats       : calorieStats,
-            };
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    public getPhysicalActivityStatsForLastMonth = async (patientUserId: uuid): Promise<any> => {
-        try {
-            const questionnaireStats = await this.getQuestionnaireStats(patientUserId, 30);
-            const calorieStats = await this.getDayByDayCalorieStats(patientUserId, 30);
+            const numDays = 30 * numMonths;
+            const questionnaireStats = await this.getQuestionnaireStats(patientUserId, numDays);
+            const calorieStats = await this.getDayByDayCalorieStats(patientUserId, numDays);
             return {
                 QuestionnaireStats : questionnaireStats,
                 CalorieStats       : calorieStats,
@@ -196,24 +183,20 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
 
     //#region Privates
 
-    private getBooleanStats = (x) => {
-        if (x.PhysicalActivityQuestionAns === true) {
-            return {
-                Response  : 1,
-                CreatedAt : x.CreatedAt,
-            };
-        }
-        else {
-            return {
-                Response  : 0,
-                CreatedAt : x.CreatedAt,
-            };
-        }
-    };
-
     private async getQuestionnaireStats(patientUserId: string, numDays: number) {
-        const questionnaireRecords = await this.getQuestionnaireRecords(patientUserId, numDays, DurationType.Day);
-        const quesrionnaireStats = questionnaireRecords.map(x => this.getBooleanStats(x));
+        const timezone = await this.getPatientTimezone(patientUserId);
+        var offsetMinutes = TimeHelper.getTimezoneOffsets(timezone, DurationType.Minute);
+
+        const records = await this.getQuestionnaireRecords(patientUserId, numDays, DurationType.Day);
+        const quesrionnaireStats = records.map(x => {
+            const tempDate = TimeHelper.addDuration(x.CreatedAt, offsetMinutes, DurationType.Minute);
+            const dayStr = tempDate.toISOString()
+                .split('T')[0];
+            return {
+                Response : x.PhysicalActivityQuestionAns === true ? 1 : 0,
+                DayStr   : dayStr,
+            };
+        });
         return {
             Question : `Did you add movement to your day today?`,
             Stats    : quesrionnaireStats,
@@ -223,7 +206,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
     private async getQuestionnaireRecords(patientUserId: string, count: number, unit: DurationType) {
         const today = new Date();
         const from = TimeHelper.subtractDuration(new Date(), count, unit);
-        let nutritionRecords = await PhysicalActivity.findAll({
+        let records = await PhysicalActivity.findAll({
             where : {
                 PatientUserId            : patientUserId,
                 PhysicalActivityQuestion : {
@@ -235,8 +218,8 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
                 }
             }
         });
-        nutritionRecords = nutritionRecords.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
-        return nutritionRecords;
+        records = records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+        return records;
     }
 
     private async getDayByDayCalorieStats(patientUserId: string, numDays: number) {
@@ -270,7 +253,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             });
 
             stats.push({
-                DateStr  : dayStr,
+                DayStr   : dayStr,
                 Calories : totalCaloriesForDay,
             });
         }

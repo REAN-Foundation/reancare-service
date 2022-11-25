@@ -9,6 +9,8 @@ import { SleepSearchFilters, SleepSearchResults } from '../../../../../../domain
 import { ISleepRepo } from '../../../../../repository.interfaces/wellness/daily.records/sleep.repo.interface';
 import { SleepMapper } from '../../../mappers/wellness/daily.records/sleep.mapper';
 import Sleep from '../../../models/wellness/daily.records/sleep.model';
+import { HelperRepo } from '../../common/helper.repo';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -162,25 +164,32 @@ export class SleepRepo implements ISleepRepo {
         }
     };
 
-    getSleepStatsForLastWeek = async (patientUserId: string): Promise<any> => {
+    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
         try {
-            return await this.getStats(patientUserId, 7, DurationType.Day);
+            const numDays = 30 * numMonths;
+            const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+            const records = await this.getSleepRecords(patientUserId, 1, DurationType.Month);
+            const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
+            const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
+            const stats = [];
+            for (var day of dayList) {
+                var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+                var dayEnd = TimeHelper.subtractDuration(reference, (day - 1) * 24, DurationType.Hour);
+                const dayStr = dayStart.toISOString().split('T')[0];
+                const filtered = records.filter(x => x.RecordDate >= dayStart && x.RecordDate <= dayEnd);
+                const totalSleepHours = filtered.reduce((acc, x) => acc + x.SleepDuration, 0);
+                stats.push({
+                    SleepDuration : totalSleepHours,
+                    DayStr        : dayStr,
+                });
+            }
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    getSleepStatsForLastMonth = async (patientUserId: string): Promise<any> => {
-        try {
-            return await this.getStats(patientUserId, 1, DurationType.Month);
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    private async getStats(patientUserId: string, count: number, unit: DurationType) {
+    private async getSleepRecords(patientUserId: string, count: number, unit: DurationType) {
         const today = new Date();
         const from = TimeHelper.subtractDuration(new Date(), count, unit);
         const result = await Sleep.findAll({

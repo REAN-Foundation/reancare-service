@@ -14,8 +14,6 @@ export interface IBodyWeightRepo {
 
     delete(id: string): Promise<boolean>;
 
-    getBodyWeightStatsForLast3Months(patientUserId: string): Promise<any>;
-
-    getBodyWeightStatsForLast6Months(patientUserId: string): Promise<any>;
+    getStats(patientUserId: string, numMonths: number): Promise<any>;
 
 }

@@ -14,8 +14,6 @@ export interface IPhysicalActivityRepo {
 
     delete(id: string): Promise<boolean>;
 
-    getPhysicalActivityStatsForLastWeek(patientUserId: string): Promise<any>;
-
-    getPhysicalActivityStatsForLastMonth(patientUserId: string): Promise<any>;
+    getStats(patientUserId: string, numMonths: number): Promise<any>;
 
 }

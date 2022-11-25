@@ -166,25 +166,24 @@ export class BodyWeightRepo implements IBodyWeightRepo {
         }
     };
 
-    getBodyWeightStatsForLast3Months = async (patientUserId: string): Promise<any> => {
+    getStats = async (patientUserId: string, numMonths: number): Promise<any> => {
         try {
-            return await this.getStats(patientUserId, 3);
+            const records = await this.getRecords(patientUserId, numMonths);
+            return records.map(x => {
+                const dayStr = x.CreatedAt.toISOString()
+                    .split('T')[0];
+                return {
+                    BodyWeight : x.BodyWeight,
+                    DayStr     : dayStr,
+                };
+            });
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    getBodyWeightStatsForLast6Months = async (patientUserId: string): Promise<any> => {
-        try {
-            return await this.getStats(patientUserId, 6);
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    private async getStats(patientUserId: string, months: number) {
+    private async getRecords(patientUserId: string, months: number) {
         const today = new Date();
         const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
         const result = await BodyWeight.findAll({

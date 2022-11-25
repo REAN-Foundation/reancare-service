@@ -7,9 +7,11 @@ import { ApiError } from '../../../../../../common/api.error';
 import { SymptomDomainModel } from '../../../../../../domain.types/clinical/symptom/symptom/symptom.domain.model';
 import { SymptomDto } from '../../../../../../domain.types/clinical/symptom/symptom/symptom.dto';
 import { SymptomSearchFilters, SymptomSearchResults } from '../../../../../../domain.types/clinical/symptom/symptom/symptom.search.types';
-import { Severity } from '../../../../../../domain.types/miscellaneous/system.types';
+import { Severity, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { ClinicalValidationStatus } from '../../../../../../domain.types/miscellaneous/clinical.types';
 import { ClinicalInterpretation } from '../../../../../../domain.types/miscellaneous/clinical.types';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -164,5 +166,50 @@ export class SymptomRepo implements ISymptomRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+        try {
+            const records = await this.getRecords(patientUserId, numMonths);
+            return records.map(x => {
+                const dayStr = x.RecordDate.toISOString()
+                    .split('T')[0];
+                return {
+                    Symptom          : x.Symptom,
+                    Severity         : x.Severity,
+                    ValidationStatus : x.ValidationStatus,
+                    Interpretation   : x.Interpretation,
+                    DayStr           : dayStr,
+                };
+            });
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private async getRecords(patientUserId: string, months: number) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const result = await Symptom.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                CreatedAt     : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        let records = result.map(x => {
+            return {
+                Symptom          : x.Symptom,
+                Severity         : x.Severity,
+                ValidationStatus : x.ValidationStatus,
+                Interpretation   : x.Interpretation,
+                RecordDate       : x.RecordDate,
+            };
+        });
+        records = records.sort((a, b) => b.RecordDate.getTime() - a.RecordDate.getTime());
+        return records;
+    }
 
 }

@@ -1,4 +1,7 @@
 import { Op } from 'sequelize';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { DailyAssessmentDomainModel } from '../../../../../../domain.types/clinical/daily.assessment/daily.assessment.domain.model';
@@ -102,11 +105,46 @@ export class DailyAssessmentRepo implements IDailyAssessmentRepo {
             };
 
             return searchResults;
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
+
+    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+        try {
+            const records = await this.getRecords(patientUserId, numMonths);
+            const records_ = records.map(x => {
+                const dayStr = x.CreatedAt.toISOString()
+                    .split('T')[0];
+                return {
+                    Feeling      : x.Feeling,
+                    Mood         : x.Mood,
+                    EnergyLevels : JSON.parse(x.EnergyLevels),
+                    DayStr       : dayStr,
+                };
+            });
+            return records_;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private async getRecords(patientUserId: string, months: number) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const records = await DailyAssessment.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                CreatedAt     : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        return records.sort((a, b) => b.CreatedAt.getTime() - a.CreatedAt.getTime());
+    }
 
 }

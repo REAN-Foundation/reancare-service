@@ -12,6 +12,9 @@ import LabRecordType from '../../../models/clinical/lab.record/lab.record.type.m
 import LabRecord from '../../../models/clinical/lab.record/lab.record.model';
 import { LabRecordMapper } from '../../../mappers/clinical/lab.record/lab.record.mapper';
 import { LabRecordTypeMapper } from '../../../mappers/clinical/lab.record/lab.record.type.mapper';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -32,7 +35,6 @@ export class LabRecordRepo implements ILabRecordRepo {
                 OrderId        : createModel.OrderId ?? null,
                 RecordedAt     : createModel.RecordedAt
             };
-
             const labRecord = await LabRecord.create(entity);
             return await LabRecordMapper.toDto(labRecord);
         } catch (error) {
@@ -247,8 +249,46 @@ export class LabRecordRepo implements ILabRecordRepo {
         }
     };
 
-    getStats = async (patientUserId: string, numMonths: number): Promise<any> => {
-        return {};
+    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+        try {
+            const records = await this.getRecords(patientUserId, numMonths);
+            const records_ = records.map(x => {
+                const dayStr = x.RecordedAt.toISOString()
+                    .split('T')[0];
+                return {
+                    TypeName     : x.TypeName,
+                    DisplayName  : x.DisplayName,
+                    PrimaryValue : x.PrimaryValue,
+                    Unit         : x.Unit,
+                    DayStr       : dayStr,
+                };
+            });
+            return {
+                TotalCholesterol  : records_.filter(x => x.DisplayName === 'Total Cholesterol'),
+                HDL               : records_.filter(x => x.DisplayName === 'HDL'),
+                LDL               : records_.filter(x => x.DisplayName === 'LDL'),
+                TriglycerideLevel : records_.filter(x => x.DisplayName === 'Triglyceride Level'),
+                A1CLevel          : records_.filter(x => x.DisplayName === 'A1C Level'),
+            };
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
     };
+
+    private async getRecords(patientUserId: string, months: number) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const records = await LabRecord.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                CreatedAt     : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        return records.sort((a, b) => b.RecordedAt.getTime() - a.RecordedAt.getTime());
+    }
 
 }

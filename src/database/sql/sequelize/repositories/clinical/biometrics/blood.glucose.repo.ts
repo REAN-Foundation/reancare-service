@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { BloodGlucoseDomainModel } from "../../../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.domain.model";
@@ -6,7 +7,9 @@ import { BloodGlucoseDto } from "../../../../../../domain.types/clinical/biometr
 import { BloodGlucoseSearchFilters, BloodGlucoseSearchResults } from "../../../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.search.types";
 import { IBloodGlucoseRepo } from "../../../../../repository.interfaces/clinical/biometrics/blood.glucose.repo.interface";
 import { BloodGlucoseMapper } from "../../../mappers/clinical/biometrics/blood.glucose.mapper";
-import BloodGlucoseModel from "../../../models/clinical/biometrics/blood.glucose.model";
+import BloodGlucose from "../../../models/clinical/biometrics/blood.glucose.model";
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -24,7 +27,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
                 RecordedByUserId : createModel.RecordedByUserId,
             };
 
-            const bloodGlucose = await BloodGlucoseModel.create(entity);
+            const bloodGlucose = await BloodGlucose.create(entity);
             return await BloodGlucoseMapper.toDto(bloodGlucose);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -34,7 +37,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
 
     getById = async (id: string): Promise<BloodGlucoseDto> => {
         try {
-            const bloodGlucose = await BloodGlucoseModel.findByPk(id);
+            const bloodGlucose = await BloodGlucose.findByPk(id);
             return await BloodGlucoseMapper.toDto(bloodGlucose);
         } catch (error) {
             Logger.instance().log(error.message);
@@ -44,7 +47,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
 
     search = async (filters: BloodGlucoseSearchFilters): Promise<BloodGlucoseSearchResults> => {
         try {
-            
+
             const search = { where: {} };
 
             if (filters.PatientUserId != null) {
@@ -105,7 +108,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
             search['limit'] = limit;
             search['offset'] = offset;
 
-            const foundResults = await BloodGlucoseModel.findAndCountAll(search);
+            const foundResults = await BloodGlucose.findAndCountAll(search);
 
             const dtos: BloodGlucoseDto[] = [];
             for (const bloodGlucose of foundResults.rows) {
@@ -133,7 +136,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
     update = async (id: string, updateModel: BloodGlucoseDomainModel):
     Promise<BloodGlucoseDto> => {
         try {
-            const bloodGlucose = await BloodGlucoseModel.findByPk(id);
+            const bloodGlucose = await BloodGlucose.findByPk(id);
 
             if (updateModel.PatientUserId != null) {
                 bloodGlucose.PatientUserId = updateModel.PatientUserId;
@@ -150,7 +153,7 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
             if (updateModel.RecordedByUserId != null) {
                 bloodGlucose.RecordedByUserId = updateModel.RecordedByUserId;
             }
-    
+
             await bloodGlucose.save();
 
             return await BloodGlucoseMapper.toDto(bloodGlucose);
@@ -162,13 +165,54 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
 
     delete = async (id: string): Promise<boolean> => {
         try {
-            
-            const result = await BloodGlucoseModel.destroy({ where: { id: id } });
+
+            const result = await BloodGlucose.destroy({ where: { id: id } });
             return result === 1;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
+
+    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+        try {
+            const records = await this.getRecords(patientUserId, numMonths);
+            return records.map(x => {
+                const dayStr = x.RecordDate.toISOString()
+                    .split('T')[0];
+                return {
+                    BloodGlucose : x.BloodGlucose,
+                    Unit         : x.Unit,
+                    DayStr       : dayStr,
+                };
+            });
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private async getRecords(patientUserId: string, months: number) {
+        const today = new Date();
+        const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);
+        const result = await BloodGlucose.findAll({
+            where : {
+                PatientUserId : patientUserId,
+                CreatedAt     : {
+                    [Op.gte] : from,
+                    [Op.lte] : today,
+                }
+            }
+        });
+        let records = result.map(x => {
+            return {
+                BloodGlucose : x.BloodGlucose,
+                Unit         : x.Unit,
+                RecordDate   : x.RecordDate,
+            };
+        });
+        records = records.sort((a, b) => b.RecordDate.getTime() - a.RecordDate.getTime());
+        return records;
+    }
 
 }

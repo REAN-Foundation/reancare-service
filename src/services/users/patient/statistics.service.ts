@@ -34,6 +34,16 @@ import { ChartGenerator } from "../../../modules/charts/chart.generator";
 import * as fs from 'fs';
 import * as path from 'path';
 import { BarChartOptions, ChartColors, DefaultChartOptions, MultiBarChartOptions, LineChartOptions, PieChartOptions } from "../../../modules/charts/chart.options";
+import { IBloodPressureRepo } from "../../../database/repository.interfaces/clinical/biometrics/blood.pressure.repo.interface";
+import { IBloodGlucoseRepo } from "../../../database/repository.interfaces/clinical/biometrics/blood.glucose.repo.interface";
+import { IDailyAssessmentRepo } from "../../../database/repository.interfaces/clinical/daily.assessment/daily.assessment.repo.interface";
+import { ISymptomRepo } from "../../../database/repository.interfaces/clinical/symptom/symptom.repo.interface";
+import { IHowDoYouFeelRepo } from "../../../database/repository.interfaces/clinical/symptom/how.do.you.feel.repo.interface";
+import { BloodGlucoseRepo } from "../../../database/sql/sequelize/repositories/clinical/biometrics/blood.glucose.repo";
+import { BloodPressureRepo } from "../../../database/sql/sequelize/repositories/clinical/biometrics/blood.pressure.repo";
+import { DailyAssessmentRepo } from "../../../database/sql/sequelize/repositories/clinical/daily.assessment/daily.assessment.repo";
+import { HowDoYouFeelRepo } from "../../../database/sql/sequelize/repositories/clinical/symptom/how.do.you.feel.repo";
+import { SymptomRepo } from "../../../database/sql/sequelize/repositories/clinical/symptom/symptom.repo";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -56,8 +66,12 @@ export class StatisticsService {
         @inject('IBodyWeightRepo') private _bodyWeightRepo: IBodyWeightRepo,
         @inject('ILabRecordRepo') private _labRecordsRepo: ILabRecordRepo,
         @inject('ISleepRepo') private _sleepRepo: ISleepRepo,
+        @inject('IBloodPressureRepo') private _bloodPressureRepo: IBloodPressureRepo,
+        @inject('IBloodGlucoseRepo') private _bloodGlucoseRepo: IBloodGlucoseRepo,
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
-
+        @inject('IDailyAssessmentRepo') private _dailyAssessmentRepo: IDailyAssessmentRepo,
+        @inject('ISymptomRepo') private _symptomRepoRepo: ISymptomRepo,
+        @inject('IHowDoYouFeelRepo') private _howDoYouFeelRepo: IHowDoYouFeelRepo,
     ) {
         this._documentRepo = Loader.container.resolve(DocumentRepo);
         this._patientRepo = Loader.container.resolve(PatientRepo);
@@ -71,6 +85,11 @@ export class StatisticsService {
         this._labRecordsRepo = Loader.container.resolve(LabRecordRepo);
         this._sleepRepo = Loader.container.resolve(SleepRepo);
         this._assessmentRepo = Loader.container.resolve(AssessmentRepo);
+        this._bloodPressureRepo = Loader.container.resolve(BloodPressureRepo);
+        this._bloodGlucoseRepo = Loader.container.resolve(BloodGlucoseRepo);
+        this._dailyAssessmentRepo = Loader.container.resolve(DailyAssessmentRepo);
+        this._symptomRepoRepo = Loader.container.resolve(SymptomRepo);
+        this._howDoYouFeelRepo = Loader.container.resolve(HowDoYouFeelRepo);
     }
 
     public getPatientStats = async (patientUserId: uuid) => {
@@ -94,10 +113,19 @@ export class StatisticsService {
         };
 
         //Lab values
-        const labRecordsLast6Months = await this._labRecordsRepo.getStats(patientUserId, 6);
+        const cholesterolStats = await this._labRecordsRepo.getStats(patientUserId, 6);
+        const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, 6);
+        const bloodGlucoseStats = await this._bloodGlucoseRepo.getStats(patientUserId, 6);
         const labRecords = {
-            Last6Months : labRecordsLast6Months,
+            Last6Months : {
+                BloodPressure : bloodPressureStats,
+                BloodGlucose  : bloodGlucoseStats,
+                Cholesterol   : cholesterolStats,
+            }
         };
+
+        //Daily assessments
+
 
         //Sleep trend
         const SleepTrendLastMonth = await this._sleepRepo.getStats(patientUserId, 1);
@@ -780,6 +808,11 @@ export class StatisticsService {
 
     private createLabRecordsCharts = async (data) => {
         var locations = [];
+        // const location = await this.createBloodPressure_MultiLineChart(data.LastMonth, 'BloodPressure_LastMonth');
+        // locations.push({
+        //     key : 'SleepHours_LastMonth',
+        //     location
+        // });
         return locations;
     };
 

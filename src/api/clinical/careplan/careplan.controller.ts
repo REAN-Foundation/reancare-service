@@ -127,7 +127,8 @@ export class CareplanController extends BaseController {
             await this.setContext('Careplan.GetPatientEnrollments', request, response);
 
             const patientUserId = request.params.patientUserId;
-            const enrollments = await this._service.getPatientEnrollments(patientUserId);
+            var isActive = request.query.isActive === 'true' ? true : false;
+            const enrollments = await this._service.getPatientEnrollments(patientUserId, isActive);
             ResponseHandler.success(request, response, 'Patient enrollments retrieved successfully!', 200, {
                 PatientEnrollments : enrollments,
             });

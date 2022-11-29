@@ -20,7 +20,9 @@ export interface ICareplanRepo {
 
     getCareplanEnrollment(careplanId: uuid): Promise<EnrollmentDto>;
 
-    getPatientEnrollments(patientUserId: uuid): Promise<EnrollmentDto[]>;
+    getPatientEnrollments(patientUserId: uuid, isActive: boolean): Promise<EnrollmentDto[]>;
+
+    getCompletedEnrollments(daysPassed: number, planNames: string[]): Promise<EnrollmentDto[]>;
 
     getAllCareplanEnrollment(): Promise<EnrollmentDto[]>;
 

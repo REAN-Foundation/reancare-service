@@ -14,7 +14,6 @@ import { PatientService } from '../../../../services/users/patient/patient.servi
 import { UserDeviceDetailsService } from '../../../../services/users/user/user.device.details.service';
 import { PersonService } from '../../../../services/person/person.service';
 
-
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class BloodPressureController extends BaseController {
@@ -54,10 +53,11 @@ export class BloodPressureController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for blood pressure!');
             }
             this.addEHRRecord(model.PatientUserId, bloodPressure.id, model);
-            if (model.Systolic > 120 || model.Diastolic > 80) {
+            
+            /* if (model.Systolic > 120 || model.Diastolic > 80) {
                 this.sendBPMessage(model.PatientUserId, model);
                 await this._service.sendBPNotification(model.PatientUserId, model);
-            }
+            } */
             ResponseHandler.success(request, response, 'Blood pressure record created successfully!', 201, {
                 BloodPressure : bloodPressure,
             });

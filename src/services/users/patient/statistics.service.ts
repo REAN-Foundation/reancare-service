@@ -46,6 +46,8 @@ import { HowDoYouFeelRepo } from "../../../database/sql/sequelize/repositories/c
 import { SymptomRepo } from "../../../database/sql/sequelize/repositories/clinical/symptom/symptom.repo";
 import { UserTaskRepo } from "../../../database/sql/sequelize/repositories/users/user/user.task.repo";
 import { IUserTaskRepo } from "../../../database/repository.interfaces/users/user/user.task.repo.interface";
+import { CareplanRepo } from "../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
+import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -75,6 +77,7 @@ export class StatisticsService {
         @inject('ISymptomRepo') private _symptomRepoRepo: ISymptomRepo,
         @inject('IHowDoYouFeelRepo') private _howDoYouFeelRepo: IHowDoYouFeelRepo,
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
+        @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {
         this._documentRepo = Loader.container.resolve(DocumentRepo);
         this._patientRepo = Loader.container.resolve(PatientRepo);
@@ -94,6 +97,7 @@ export class StatisticsService {
         this._symptomRepoRepo = Loader.container.resolve(SymptomRepo);
         this._howDoYouFeelRepo = Loader.container.resolve(HowDoYouFeelRepo);
         this._userTaskRepo = Loader.container.resolve(UserTaskRepo);
+        this._careplanRepo = Loader.container.resolve(CareplanRepo);
     }
 
     public getPatientStats = async (patientUserId: uuid) => {
@@ -152,6 +156,13 @@ export class StatisticsService {
             LastMonth : userTasks,
         };
 
+        //Health journey / Careplan stats
+        const activeEnrollments = await this._careplanRepo.getPatientEnrollments(patientUserId, true);
+        const careplanEnrollment = activeEnrollments.length > 0 ? activeEnrollments[0] : null;
+        const careplanStats = {
+            Enrollment : careplanEnrollment,
+        };
+
         const stats = {
             Nutrition        : nutrition,
             PhysicalActivity : physicalActivityTrend,
@@ -161,6 +172,7 @@ export class StatisticsService {
             Medication       : medicationTrend,
             DailyAssessent   : dailyAssessmentTrend,
             UserEngagement   : userTasksTrend,
+            Careplan         : careplanStats,
         };
 
         return stats;
@@ -187,6 +199,8 @@ export class StatisticsService {
             DisplayId         : patient.DisplayId,
             Age               : patientAge,
             Gender            : patient.User.Person.Gender,
+            ImageResourceId   : patient.User.Person.ImageResourceId,
+            ProfileImagePath  : null,
             ReportDate        : date,
             ReportDateStr     : reportDateStr,
             CurrentBodyWeight : '130 lbs',

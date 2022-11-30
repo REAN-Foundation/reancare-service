@@ -71,6 +71,13 @@ export class StatisticsController {
             const patient = await this._patientService.getByUserId(patientUserId);
             const stats = await this._service.getPatientStats(patientUserId);
             const reportModel = this._service.getReportModel(patient, stats);
+            if (reportModel.ImageResourceId != null) {
+                const profileImageLocation = await this._fileResourceService.downloadById(reportModel.ImageResourceId);
+                reportModel.ProfileImagePath = profileImageLocation;
+            }
+            else {
+                reportModel.ProfileImagePath = Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
+            }
             const { filename, localFilePath } = await this._service.generateReport(reportModel);
             const reportUrl = await this.createReportDocument(reportModel, filename, localFilePath);
             ResponseHandler.success(request, response, 'Document retrieved successfully!', 200, {

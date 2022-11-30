@@ -75,6 +75,7 @@ export class PatientService {
         }
 
         if (items.length > 0) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const currentUser: CurrentUser = {
                 UserId        : items[0].id,
                 DisplayName   : items[0].DisplayName,
@@ -83,7 +84,7 @@ export class PatientService {
                 UserName      : items[0].UserName,
                 CurrentRoleId : 2,
             };
-        
+
         }
         results.Items = items;
         return results;

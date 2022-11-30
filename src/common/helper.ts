@@ -554,4 +554,18 @@ export class Helper {
         return key || null;
     };
 
+    public static getDefaultProfileImageForGender = (gender: Gender): string => {
+        const cwd = process.cwd();
+        const imageLocation = path.join(cwd, 'assets/images/stock.profile.images/');
+        if (gender === Gender.Male) {
+            return path.join(imageLocation, 'male_white.png');
+        }
+        else if (gender === Gender.Female) {
+            return path.join(imageLocation, 'female_white.png');
+        }
+        else {
+            return path.join(imageLocation, 'male_african.png');
+        }
+    };
+
 }

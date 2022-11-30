@@ -293,7 +293,7 @@ export class AHAActions {
 
         const domainModel: CustomTaskDomainModel = {
             UserId      : userId,
-            Task        : "Survey",
+            Task        : "Patient Satisfaction Survey",
             Description : "Take a survey to help us understand you better!",
             Category    : UserTaskCategory.Custom,
             Details     : {
@@ -305,7 +305,7 @@ export class AHAActions {
 
         const task = await this._commonActions.createCustomTask(domainModel);
         if (task == null) {
-            Logger.instance().log('Unable to create HS patient survey task!');
+            Logger.instance().log('Unable to create patient satisfaction survey task!');
         }
 
     };

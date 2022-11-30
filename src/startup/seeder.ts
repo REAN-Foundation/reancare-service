@@ -144,8 +144,8 @@ export class Seeder {
             await this.seedInternalClients();
             await this.seedSystemAdmin();
             // await this.seedInternalPatients();
-            await this.seedMedicationStockImages();
-            await this.seedSymptomTypes();
+            //await this.seedMedicationStockImages();
+            //await this.seedSymptomTypes();
             await this.seedSymptomAsseessmentTemplates();
             await this.seedKnowledgeNuggets();
             await this.seedDrugs();

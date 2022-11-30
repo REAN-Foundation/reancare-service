@@ -16,7 +16,7 @@
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "*/15 * * * *"
+        "ScheduleDailyCareplanPushTasks": "20 * * * * *"
 
     },
     "uat": {

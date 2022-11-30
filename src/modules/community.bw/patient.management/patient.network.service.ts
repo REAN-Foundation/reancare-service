@@ -18,8 +18,8 @@ export class PatientNetworkService implements IBloodWarriorService {
         var activityEntities: CareplanActivity[] = [];
 
         activities.forEach(async activity => {
-            let activityDate = TimeHelper.addDuration(startDate, activity.Day, DurationType.Day);
-            activityDate = TimeHelper.addDuration(activityDate, 210, DurationType.Minute);
+            const activityDate = TimeHelper.addDuration(new Date(), activity.Day, DurationType.Minute);
+            //activityDate = TimeHelper.addDuration(activityDate, 210, DurationType.Minute);
 
             var entity: CareplanActivity = {
                 ParticipantId          : participantId,

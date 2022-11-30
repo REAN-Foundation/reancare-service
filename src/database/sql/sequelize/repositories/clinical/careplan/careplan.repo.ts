@@ -18,6 +18,8 @@ import HealthPriority from '../../../models/users/patient/health.priority.model'
 import { HealthPriorityMapper } from '../../../mappers/users/patient/health.priority.mapper';
 import { Helper } from '../../../../../../common/helper';
 import UserTask from '../../../models/users/user/user.task.model';
+import { TimeHelper } from '../../../../../../common/time.helper';
+import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -103,13 +105,17 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    public getPatientEnrollments = async (patientUserId: string): Promise<EnrollmentDto[]> => {
+    public getPatientEnrollments = async (patientUserId: string, isActive: boolean): Promise<EnrollmentDto[]> => {
         try {
+            var where_clause = { PatientUserId: patientUserId };
+            if (isActive) {
+                where_clause['EndDate'] = { [Op.gte]: new Date() };
+            }
+
             const enrollments = await CareplanEnrollment.findAll({
-                where : {
-                    PatientUserId : patientUserId
-                }
+                where : where_clause
             });
+
             return enrollments.map(x => {
                 return EnrollmentMapper.toDto(x);
             });
@@ -130,6 +136,32 @@ export class CareplanRepo implements ICareplanRepo {
                 },
             });
             return EnrollmentMapper.toDto(enrollment);
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public getCompletedEnrollments = async (daysPassed: number, planNames: string[]): Promise<EnrollmentDto[]> => {
+        try {
+            var today = new Date();
+            var endDate = TimeHelper.subtractDuration(today, daysPassed, DurationType.Day);
+            Logger.instance().log(`[HsCron] Enrollment End date:${endDate}`);
+            var endOfDay = TimeHelper.endOf(endDate, DurationType.Day);
+            var startOfDay = TimeHelper.startOf(endDate, DurationType.Day);
+            Logger.instance().log(`[HsCron] start and end of the day:${startOfDay} and ${endOfDay}`);
+            var enrollments = await CareplanEnrollment.findAll({
+                where : {
+                    EndDate : {
+                        [Op.and] : [ { [Op.gte]: startOfDay }, { [Op.lte]: endOfDay } ],
+                    },
+                    PlanName : {
+                        [Op.or] : planNames,
+                    },
+                },
+            });
+            return enrollments.map(x => {
+                return EnrollmentMapper.toDto(x);
+            });
         } catch (error) {
             Logger.instance().log(error.message);
         }

@@ -6,7 +6,8 @@
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "*/15 * * * *"
+        "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
+        "ScheduleHsSurvey": "0 11 * * *"
 
     },
     "development": {
@@ -16,7 +17,9 @@
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleDailyHighRiskCareplan": "0 3 * * *",
         "ScheduleCustomTasks": "0 11 * * *",
-        "ScheduleDailyCareplanPushTasks": "*/15 * * * *"
+        "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
+        "ScheduleHsSurvey": "0 11 * * *"
+
 
     },
     "uat": {
@@ -26,7 +29,9 @@
         "PatientDailyTasks": "*/7 * * * *",
         "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "*/15 * * * *",
-        "ScheduleDailyHighRiskCareplan": "0 3 * * *"
+        "ScheduleDailyHighRiskCareplan": "0 3 * * *",
+        "ScheduleHsSurvey": "0 11 * * *"
+
 
     },
     "production": {
@@ -36,7 +41,9 @@
         "PatientDailyTasks": "5 0 * * *",
         "ScheduleCustomTasks": "0 11 * * *",
         "ScheduleDailyCareplanPushTasks": "0 8 * * *",
-        "ScheduleDailyHighRiskCareplan": "0 3 * * *"
+        "ScheduleDailyHighRiskCareplan": "0 3 * * *",
+        "ScheduleHsSurvey": "0 11 * * *"
+
         
     }
 }

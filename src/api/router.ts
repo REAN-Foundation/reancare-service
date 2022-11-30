@@ -73,6 +73,7 @@ import { register as registerChatRoutes } from './general/chat/chat.routes';
 import { register as registerPatientStatisticsRoutes } from './users/patient/statistics/statistics.routes';
 import { register as registerNewsfeedRoutes } from './general/newsfeed/newsfeed.routes';
 import { register as registerPatientDonorsRoutes } from './clinical/donation/patient.donors.routes';
+import { register as registerDonationRecordRoutes } from './clinical/donation.record/donation.record.routes';
 ////////////////////////////////////////////////////////////////////////////////////
 
 export class Router {
@@ -169,6 +170,7 @@ export class Router {
                 registerPatientStatisticsRoutes(this._app);
                 registerNewsfeedRoutes(this._app);
                 registerPatientDonorsRoutes(this._app);
+                registerDonationRecordRoutes(this._app);
 
                 resolve(true);
 

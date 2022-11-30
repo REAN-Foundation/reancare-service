@@ -44,6 +44,8 @@ import { BloodPressureRepo } from "../../../database/sql/sequelize/repositories/
 import { DailyAssessmentRepo } from "../../../database/sql/sequelize/repositories/clinical/daily.assessment/daily.assessment.repo";
 import { HowDoYouFeelRepo } from "../../../database/sql/sequelize/repositories/clinical/symptom/how.do.you.feel.repo";
 import { SymptomRepo } from "../../../database/sql/sequelize/repositories/clinical/symptom/symptom.repo";
+import { UserTaskRepo } from "../../../database/sql/sequelize/repositories/users/user/user.task.repo";
+import { IUserTaskRepo } from "../../../database/repository.interfaces/users/user/user.task.repo.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -72,6 +74,7 @@ export class StatisticsService {
         @inject('IDailyAssessmentRepo') private _dailyAssessmentRepo: IDailyAssessmentRepo,
         @inject('ISymptomRepo') private _symptomRepoRepo: ISymptomRepo,
         @inject('IHowDoYouFeelRepo') private _howDoYouFeelRepo: IHowDoYouFeelRepo,
+        @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
     ) {
         this._documentRepo = Loader.container.resolve(DocumentRepo);
         this._patientRepo = Loader.container.resolve(PatientRepo);
@@ -90,6 +93,7 @@ export class StatisticsService {
         this._dailyAssessmentRepo = Loader.container.resolve(DailyAssessmentRepo);
         this._symptomRepoRepo = Loader.container.resolve(SymptomRepo);
         this._howDoYouFeelRepo = Loader.container.resolve(HowDoYouFeelRepo);
+        this._userTaskRepo = Loader.container.resolve(UserTaskRepo);
     }
 
     public getPatientStats = async (patientUserId: uuid) => {
@@ -102,13 +106,13 @@ export class StatisticsService {
 
         //Physical activity
         const exerciseLastMonth = await this._physicalActivityRepo.getStats(patientUserId, 1);
-        const physicalActivityTrends = {
+        const physicalActivityTrend = {
             LastMonth : exerciseLastMonth,
         };
 
         //Body weight
         const bodyWeightLast6Months = await this._bodyWeightRepo.getStats(patientUserId, 6);
-        const bodyWeightTrends = {
+        const bodyWeightTrend = {
             Last6Months : bodyWeightLast6Months,
         };
 
@@ -125,7 +129,10 @@ export class StatisticsService {
         };
 
         //Daily assessments
-
+        const dailyAssessments = await this._dailyAssessmentRepo.getStats(patientUserId, 6);
+        const dailyAssessmentTrend = {
+            Last6Months : dailyAssessments
+        };
 
         //Sleep trend
         const SleepTrendLastMonth = await this._sleepRepo.getStats(patientUserId, 1);
@@ -139,13 +146,21 @@ export class StatisticsService {
             LastMonth : medsLastMonth,
         };
 
+        //User engagement
+        const userTasks = await this._userTaskRepo.getStats(patientUserId, 1);
+        const userTasksTrend = {
+            LastMonth : userTasks,
+        };
+
         const stats = {
             Nutrition        : nutrition,
-            PhysicalActivity : physicalActivityTrends,
-            BodyWeight       : bodyWeightTrends,
+            PhysicalActivity : physicalActivityTrend,
+            BodyWeight       : bodyWeightTrend,
             LabRecords       : labRecords,
-            SleepTrend       : sleepTrend,
-            MedicationTrend  : medicationTrend
+            Sleep            : sleepTrend,
+            Medication       : medicationTrend,
+            DailyAssessent   : dailyAssessmentTrend,
+            UserEngagement   : userTasksTrend,
         };
 
         return stats;

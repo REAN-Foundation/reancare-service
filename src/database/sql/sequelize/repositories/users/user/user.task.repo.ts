@@ -3,7 +3,7 @@ import { Op } from 'sequelize';
 import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { TimeHelper } from '../../../../../../common/time.helper';
-import { ProgressStatus } from '../../../../../../domain.types/miscellaneous/system.types';
+import { ProgressStatus, uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { UserTaskCategory } from '../../../../../../domain.types/users/user.task/user.task.types';
 import { UserTaskDomainModel } from '../../../../../../domain.types/users/user.task/user.task.domain.model';
@@ -13,6 +13,7 @@ import { IUserTaskRepo } from '../../../../../repository.interfaces/users/user/u
 import { UserTaskMapper } from '../../../mappers/users/user/user.task.mapper';
 import User from '../../../models/users/user/user.model';
 import UserTask from '../../../models/users/user/user.task.model';
+import { HelperRepo } from '../../common/helper.repo';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -486,5 +487,72 @@ export class UserTaskRepo implements IUserTaskRepo {
             throw new ApiError(500, error.message);
         }
     };
+
+    getStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+        try {
+            const numDays = 30 * numMonths;
+            const { stats, totalFinished, totalUnfinished } = await this.getDayByDayStats(patientUserId, numDays);
+            return {
+                TaskStats       : stats,
+                TotalFinished   : totalFinished,
+                TotalUnfinished : totalUnfinished,
+            };
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private async getDayByDayStats(patientUserId: string, numDays: number) {
+
+        const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
+        const dayList = Array.from({ length: numDays }, (_, index) => index + 1);
+        const reference = TimeHelper.getStartOfDay(new Date(), offsetMinutes);
+
+        const stats = [];
+        let totalUnfinished = 0;
+        let totalFinished = 0;
+
+        for await (var day of dayList) {
+
+            var dayStart = TimeHelper.subtractDuration(reference, day * 24, DurationType.Hour);
+            var dayEnd = TimeHelper.subtractDuration(reference, (day - 1) * 24, DurationType.Hour);
+
+            const dayStr = dayStart.toISOString().split('T')[0];
+
+            const unfinished = await UserTask.count({
+                where : {
+                    UserId             : patientUserId,
+                    ScheduledStartTime : {
+                        [Op.gte] : dayStart,
+                        [Op.lte] : dayEnd,
+                    },
+                    Cancelled : false,
+                    Finished  : false
+                }
+            });
+            const finished = await UserTask.count({
+                where : {
+                    UserId             : patientUserId,
+                    ScheduledStartTime : {
+                        [Op.gte] : dayStart,
+                        [Op.lte] : dayEnd,
+                    },
+                    Cancelled : false,
+                    Finished  : true
+                }
+            });
+
+            stats.push({
+                DayStr     : dayStr,
+                Finished   : finished,
+                Unfinished : unfinished,
+            });
+
+            totalFinished += finished;
+            totalUnfinished += unfinished;
+        }
+        return { stats, totalFinished, totalUnfinished };
+    }
 
 }

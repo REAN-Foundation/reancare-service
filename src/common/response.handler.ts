@@ -19,7 +19,7 @@ export class ResponseHandler {
         const ips = [
             request.header('x-forwarded-for') || request.socket.remoteAddress
         ];
-        
+
         const msg = error ? error.message : (message ? message : 'An error has occurred.');
 
         const errorStack = error ? error.stack : '';
@@ -46,7 +46,7 @@ export class ResponseHandler {
             APIVersion     : process.env.API_VERSION,
             ServiceVersion : process.env.SERVICE_VERSION,
         };
-        
+
         if (process.env.NODE_ENV !== 'test') {
             Logger.instance().log(JSON.stringify(responseObject, null, 2));
         }
@@ -71,7 +71,7 @@ export class ResponseHandler {
         const ips = [
             request.header('x-forwarded-for') || request.socket.remoteAddress
         ];
-       
+
         const responseObject: ResponseDto = {
             Status   : 'success',
             Message  : message,
@@ -100,9 +100,9 @@ export class ResponseHandler {
             }
             Logger.instance().log(JSON.stringify(responseObject, null, 2));
         }
-        
+
         ActivityRecorder.record(responseObject);
-        
+
         //Sanitize response: Don't send request and trace related info in response, only use it for logging
         delete responseObject.Request;
         delete responseObject.Trace;
@@ -124,7 +124,7 @@ export class ResponseHandler {
             ResponseHandler.failure(request, response, err.errorMessage, err.httpErrorCode, error);
         }
         else {
-            ResponseHandler.failure(request, response, error.message, 400, error);
+            ResponseHandler.failure(request, response, error?.message, 400, error);
         }
     }
 

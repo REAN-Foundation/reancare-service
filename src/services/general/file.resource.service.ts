@@ -181,6 +181,9 @@ export class FileResourceService {
     downloadById = async (id: string): Promise<string> => {
         var downloadFolderPath = await this.generateDownloadFolderPath();
         var dto = await this._fileResourceRepo.getById(id);
+        if (dto == null) {
+            return null;
+        }
         var versionMetadata = dto.DefaultVersion;
         if (!dto.DefaultVersion) {
             versionMetadata = await this._fileResourceRepo.getLatestVersion(id);

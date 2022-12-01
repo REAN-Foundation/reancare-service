@@ -651,6 +651,9 @@ export class StatisticsService {
         y = y + 20;
 
         document
+            .image(model.ProfileImagePath, 0, y, { fit: [100, 100], align: 'center', valign: "center" });
+
+        document
             .fillOpacity(1.0)
             .lineWidth(1)
             .fill("#444444");
@@ -741,9 +744,9 @@ export class StatisticsService {
         chartImagePaths.push(...imageLocations);
         imageLocations = await this.createLabRecordsCharts(reportModel.Stats.LabRecords);
         chartImagePaths.push(...imageLocations);
-        imageLocations = await this.createSleepTrendCharts(reportModel.Stats.SleepTrend);
+        imageLocations = await this.createSleepTrendCharts(reportModel.Stats.Sleep);
         chartImagePaths.push(...imageLocations);
-        imageLocations = await this.createMedicationTrendCharts(reportModel.Stats.MedicationTrend);
+        imageLocations = await this.createMedicationTrendCharts(reportModel.Stats.Medication);
         chartImagePaths.push(...imageLocations);
 
         return chartImagePaths;
@@ -829,7 +832,7 @@ export class StatisticsService {
 
     private createBodyWeightCharts = async (data) => {
         var locations = [];
-        const location = await this.createBodyWeightLineChart(data.LastMonth, 'BodyWeight_Last6Months');
+        const location = await this.createBodyWeightLineChart(data.Last6Months, 'BodyWeight_Last6Months');
         locations.push({
             key : 'BodyWeight_Last6Months',
             location
@@ -1123,7 +1126,7 @@ export class StatisticsService {
     private async createSleepTrendBarChart(stats: any, filename: string) {
         const sleepStats = stats.map(c => {
             return {
-                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.RecordDate.toISOString().split('T')[0])}"`,
+                x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
                 y : c.SleepDuration
             };
         });
@@ -1140,7 +1143,7 @@ export class StatisticsService {
     private async createBodyWeightLineChart(stats: any, filename: string) {
         const temp = stats.map(c => {
             return {
-                x : c.CreatedAt,
+                x : new Date(c.DayStr),
                 y : c.BodyWeight
             };
         });

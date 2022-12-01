@@ -73,7 +73,8 @@ export class StatisticsController {
             const reportModel = this._service.getReportModel(patient, stats);
             if (reportModel.ImageResourceId != null) {
                 const profileImageLocation = await this._fileResourceService.downloadById(reportModel.ImageResourceId);
-                reportModel.ProfileImagePath = profileImageLocation;
+                reportModel.ProfileImagePath = profileImageLocation ??
+                    Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);
             }
             else {
                 reportModel.ProfileImagePath = Helper.getDefaultProfileImageForGender(patient.User.Person.Gender);

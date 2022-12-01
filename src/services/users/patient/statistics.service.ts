@@ -146,8 +146,10 @@ export class StatisticsService {
 
         //Medication trends
         const medsLastMonth = await this._medicationConsumptionRepo.getStats(patientUserId, 1);
+        const currentMedications = await this._medicationRepo.getCurrentMedications(patientUserId);
         const medicationTrend = {
-            LastMonth : medsLastMonth,
+            LastMonth          : medsLastMonth,
+            CurrentMedications : currentMedications,
         };
 
         //User engagement

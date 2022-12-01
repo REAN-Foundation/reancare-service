@@ -7,17 +7,23 @@ import uuid
 import random
 
 mock_data_file = 'patient_stat_records.json'
-patient_user_id = '32deb191-1ebf-4a98-85d2-fe65e1e0eb9f'
+patient_user_id = '0aa5b3b6-aba8-4257-bb99-fcd7d78764aa'
 medication_id = 'dda96f41-4649-42b6-a398-24a77293064a'
 drug_name = 'Tylenol 8 HR Arthritis Pain: 650 mg'
 drug_id = '64dd5c85-86bf-480d-b8a1-8e959892b439'
 dose = 1
 medication_details = 'Crestor (rosuvastatin): 1.0 Tablet, Afternoon'
 
+lab_record_type_LDL = '839fd0f5-087a-43f3-b5fd-49edb5d575a8'
+lab_record_type_tri = '9569a685-2204-4ac4-ac48-91b66713541d'
+lab_record_type_HDL = 'f9b3523e-fe3b-46eb-9689-eb63c815807e'
+lab_record_type_Total = 'c064b14e-06fb-4b7a-b830-0885a9c44532'
+lab_record_type_a1c = 'e4e8697b-e1b7-451b-a605-473449178642'
+
 out_file = open('out_test_data.sql', mode='w', encoding='utf-8')
 
-def read_json():
-    data_file = os.path.join(os.getcwd(), mock_data_file)
+def read_json(mock_data_file_):
+    data_file = os.path.join(os.getcwd(), mock_data_file_)
     fille_ = open(data_file, mode='r', encoding='utf-8')
     txt = fille_.read()
     fille_.close()
@@ -149,6 +155,32 @@ def add_medication_consumption(medication_taken, dt):
         updated = dt)
     out_file.write(str)
 
+def add_lab_records(c, dt):
+    str = ''''''
+    total_cholesterol  = c.total_cholesterol
+    HDL                = c.HDL
+    LDL                = c.LDL
+    triglyceride_level = c.triglyceride_level
+    a1c_level          = c.a1c_level
+
+
+    id = uuid.uuid4()
+    str += '''INSERT INTO reancare_new.lab_records (id, PatientUserId, TypeId, TypeName, DisplayName, PrimaryValue, Unit, RecordedAt, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{recordType}', 'Cholesterol', 'Total Cholesterol', {primaryValue}, 'mg/dL', '{created}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, recordType = lab_record_type_Total, primaryValue = total_cholesterol, created = dt, updated = dt)
+
+    id = uuid.uuid4()
+    str += '''INSERT INTO reancare_new.lab_records (id, PatientUserId, TypeId, TypeName, DisplayName, PrimaryValue, Unit, RecordedAt, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{recordType}', 'Cholesterol', 'HDL', {primaryValue}, 'mg/dL', '{created}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, recordType = lab_record_type_HDL, primaryValue = HDL, created = dt, updated = dt)
+
+    id = uuid.uuid4()
+    str += '''INSERT INTO reancare_new.lab_records (id, PatientUserId, TypeId, TypeName, DisplayName, PrimaryValue, Unit, RecordedAt, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{recordType}', 'Cholesterol', 'LDL', {primaryValue}, 'mg/dL', '{created}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, recordType = lab_record_type_LDL, primaryValue = LDL, created = dt, updated = dt)
+
+    id = uuid.uuid4()
+    str += '''INSERT INTO reancare_new.lab_records (id, PatientUserId, TypeId, TypeName, DisplayName, PrimaryValue, Unit, RecordedAt, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{recordType}', 'Cholesterol', 'Triglyceride Level', {primaryValue}, 'mg/dL', '{created}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, recordType = lab_record_type_tri, primaryValue = triglyceride_level, created = dt, updated = dt)
+
+    id = uuid.uuid4()
+    str += '''INSERT INTO reancare_new.lab_records (id, PatientUserId, TypeId, TypeName, DisplayName, PrimaryValue, Unit, RecordedAt, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{recordType}', 'Cholesterol', 'A1C Level', {primaryValue}, 'mg/dL', '{created}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, recordType = lab_record_type_a1c, primaryValue = a1c_level, created = dt, updated = dt)
+
+    out_file.write(str)
+
 def add_contents(contents):
     count = 0
     today = datetime.today()
@@ -163,11 +195,32 @@ def add_contents(contents):
         add_medication_consumption(c.medication_taken, dt)
         add_blood_pressure(c.blood_pressure_systolic, c.blood_pressure_diastolic, dt)
         add_blood_glucose(c.blood_glucose, dt)
+        # add_lab_records(c, dt)
+
+def add_user_task(t):
+    str = ''''''
+    id = uuid.uuid4()
+    str += '''INSERT INTO reancare_new.user_tasks (id, UserId, DisplayId, Task, Category, Description, ActionType, ActionId, ScheduledStartTime, ScheduledEndTime, Started, Finished, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{displayId}', '{task}', '{category}', '{description}', '{actionType}', '{actionId}', '{scheduledStartTime}', '{scheduledEndTime}', '{started}', '{finished}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, displayId = t.DisplayId, task = t.Task, category = t.Category, description = t.Description, actionType = t.ActionType, actionId = t.ActionId, scheduledStartTime = t.ScheduledStartTime, scheduledEndTime = t.ScheduledEndTime, started = t.Started, finished = t.Finished, created = t.CreatedAt, updated = t.UpdatedAt)
+    out_file.write(str)
+
+def add_enrollment(e):
+    str = ''''''
+    id = uuid.uuid4()
+    str += '''INSERT INTO reancare_new.careplan_enrollments (id, PatientUserId, EnrollmentId, ParticipantId, Provider, PlanCode, PlanName, StartDate, EndDate, IsActive, ParticipantStringId, EnrollmentStringId, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{enrollmentId}', '{participantId}', '{provider}', '{planCode}', '{planName}', '{startDate}', '{endDate}', '{isActive}', '{participantStringId}', '{enrollmentStringId}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, enrollmentId = e.EnrollmentId, participantId = e.ParticipantId, provider = e.Provider, planCode = e.PlanCode, planName = e.PlanName, startDate = e.StartDate, endDate = e.EndDate, isActive = e.IsActive, participantStringId = e.ParticipantStringId, enrollmentStringId = e.EnrollmentStringId, created = e.CreatedAt, updated = e.UpdatedAt)
+    out_file.write(str)
+
+def add_user_tasks(user_tasks):
+    for c in user_tasks:
+        add_user_task(c)
 
 def seed_data():
     print('seeding patient stats data...')
-    contents = read_json()
+    contents = read_json(mock_data_file)
     add_contents(contents)
+    user_tasks = read_json('user_tasks.json')
+    careplan_enrollments = read_json('enrollments.json')
+    add_user_tasks(user_tasks)
+    add_enrollment(careplan_enrollments[0])
 
 if __name__ == '__main__':
     seed_data()

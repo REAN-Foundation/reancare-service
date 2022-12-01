@@ -1,0 +1,22 @@
+[
+	{
+		"id" : "8c9800f3-dc47-4b1f-a80e-387cf0379927",
+		"PatientUserId" : "0aa5b3b6-aba8-4257-bb99-fcd7d78764aa",
+		"EnrollmentId" : 1441,
+		"ParticipantId" : 821,
+		"Provider" : "AHA",
+		"PlanCode" : "Stroke",
+		"PlanName" : "AHA-Stroke",
+		"StartDate" : "2022-08-05 00:00:00",
+		"EndDate" : "2022-12-28 00:00:00",
+		"IsActive" : 1,
+		"Name" : null,
+		"CreatedAt" : "2022-08-05 09:22:13",
+		"UpdatedAt" : "2022-08-05 09:22:13",
+		"DeletedAt" : null,
+		"ParticipantStringId" : "1441",
+		"EnrollmentStringId" : "1441",
+		"Complication" : null,
+		"HasHighRisk" : 0
+	}
+]

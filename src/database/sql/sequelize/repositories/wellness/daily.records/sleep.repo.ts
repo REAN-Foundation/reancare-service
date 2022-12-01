@@ -183,6 +183,7 @@ export class SleepRepo implements ISleepRepo {
                     DayStr        : dayStr,
                 });
             }
+            return stats;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

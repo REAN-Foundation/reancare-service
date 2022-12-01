@@ -7,18 +7,18 @@ import uuid
 import random
 
 mock_data_file = 'patient_stat_records.json'
-patient_user_id = '0aa5b3b6-aba8-4257-bb99-fcd7d78764aa'
+patient_user_id = 'fdc032b3-63e9-410e-8eb4-12c38c7ae57f'
 medication_id = 'dda96f41-4649-42b6-a398-24a77293064a'
 drug_name = 'Tylenol 8 HR Arthritis Pain: 650 mg'
 drug_id = '64dd5c85-86bf-480d-b8a1-8e959892b439'
 dose = 1
 medication_details = 'Crestor (rosuvastatin): 1.0 Tablet, Afternoon'
 
-lab_record_type_LDL = '839fd0f5-087a-43f3-b5fd-49edb5d575a8'
-lab_record_type_tri = '9569a685-2204-4ac4-ac48-91b66713541d'
-lab_record_type_HDL = 'f9b3523e-fe3b-46eb-9689-eb63c815807e'
-lab_record_type_Total = 'c064b14e-06fb-4b7a-b830-0885a9c44532'
-lab_record_type_a1c = 'e4e8697b-e1b7-451b-a605-473449178642'
+lab_record_type_LDL = '712bb004-8174-4c3e-9d8b-da56033bb17a'
+lab_record_type_tri = '7e5ecc39-8e68-4b8c-b04c-dba156b93dc9'
+lab_record_type_HDL = '04c5f67b-4d91-43fb-90a9-77da5ccd2b77'
+lab_record_type_Total = '2321342e-1a8f-4efa-bd7d-84f113474c12'
+lab_record_type_a1c = '6f9fc248-6886-4062-9f4b-226e1c9263ca'
 
 out_file = open('out_test_data.sql', mode='w', encoding='utf-8')
 
@@ -117,7 +117,7 @@ def add_blood_pressure(systolic, diastolic, dt):
 def add_blood_glucose(blood_glucose, dt):
     str = ''''''
     id = uuid.uuid4()
-    str += '''INSERT INTO reancare_new.biometrics_blood_glucose (id, PatientUserId, BloodGlucose, Unit, RecordDate, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{blood_glucose}', 'mgDL', '{created}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, blood_glucose = blood_glucose, created = dt, updated = dt)
+    str += '''INSERT INTO reancare_new.biometrics_blood_glucose (id, PatientUserId, BloodGlucose, Unit, RecordDate, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{blood_glucose}', 'mg/dL', '{created}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, blood_glucose = blood_glucose, created = dt, updated = dt)
     out_file.write(str)
 
 def add_medication_consumption(medication_taken, dt):
@@ -137,9 +137,7 @@ def add_medication_consumption(medication_taken, dt):
     start = schedule.split(' ')[0] + ' 06:00:00'
     end = schedule.split(' ')[0] + ' 08:00:00'
 
-    str = '''INSERT INTO reancare_new.medication_consumptions (id, PatientUserId, MedicationId, DrugName, DrugId, Dose, Details, TimeScheduleStart, TimeScheduleEnd, IsTaken, IsMissed, CreatedAt, UpdatedAt)
-    VALUES ('{id}', '{patient_user_id}', '{medication_id}', '{drug_name}', '{drug_id}', '{dose}', '{details}', '{start}', '{end}', '{taken}', '{missed}', '{created}', '{updated}');
-    \n'''.format(
+    str = '''INSERT INTO reancare_new.medication_consumptions (id, PatientUserId, MedicationId, DrugName, DrugId, Dose, Details, TimeScheduleStart,  TimeScheduleEnd, IsTaken, IsMissed, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{medication_id}', '{drug_name}', '{drug_id}', '{dose}', '{details}', '{start}', '{end}', '{taken}', '{missed}', '{created}', '{updated}');\n'''.format(
         id = id,
         patient_user_id = patient_user_id,
         medication_id = medication_id,
@@ -181,6 +179,24 @@ def add_lab_records(c, dt):
 
     out_file.write(str)
 
+def add_daily_assessments(feeling, mood, energy_level, dt):
+    str = ''''''
+
+    feelings = ["Worse", "Same", "Better", "Unspecified"]
+    feeling_str = feelings[feeling - 1]
+
+    moods = ["Happy", "Lonely", "Angry", "Stressed", "Anxious", "Fearful", "Sad", "Hopeful", "Calm", "Status Quo", "Unspecified"]
+    mood_str = moods[mood - 1]
+
+    energy_levels = ["Get off the bed", "Climb stairs", "Exercise", "Walk", "Stand", "Eat", "Get through the day without a nap", "Unspecified"]
+    energy_levels_str = '[\"' + energy_levels[energy_level - 1] + '\"]'
+
+    id = uuid.uuid4()
+    str += '''INSERT INTO reancare_new.daily_assessments (id, PatientUserId, Feeling, Mood, EnergyLevels, RecordDate, CreatedAt, UpdatedAt) VALUES ('{id}', '{patient_user_id}', '{feeling}', '{mood}', '{energy_levels}', '{created}', '{created}', '{updated}');\n'''.format(id = id, patient_user_id = patient_user_id, feeling = feeling_str, mood = mood_str, energy_levels = energy_levels_str, created = dt, updated = dt)
+
+    out_file.write(str)
+
+
 def add_contents(contents):
     count = 0
     today = datetime.today()
@@ -195,7 +211,8 @@ def add_contents(contents):
         add_medication_consumption(c.medication_taken, dt)
         add_blood_pressure(c.blood_pressure_systolic, c.blood_pressure_diastolic, dt)
         add_blood_glucose(c.blood_glucose, dt)
-        # add_lab_records(c, dt)
+        add_daily_assessments(c.daily_assessment_feeling, c.daily_assessment_mood, c.daily_assessment_energy_level, dt)
+        add_lab_records(c, dt)
 
 def add_user_task(t):
     str = ''''''

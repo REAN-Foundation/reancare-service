@@ -10,7 +10,6 @@ export const DailyAssessmentFeelingList: DailyAssessmentFeelings [] = [
     DailyAssessmentFeelings.Same,
     DailyAssessmentFeelings.Better,
     DailyAssessmentFeelings.UnSpecified,
-
 ];
 
 export enum DailyAssessmentMoods {
@@ -51,7 +50,7 @@ export enum DailyAssessmentEnergyLevels {
     Eat                         = 'Eat',
     GetThroughTheDayWithoutANap = 'Get through the day without a nap',
     UnSpecified = 'Unspecified',
-     
+
 }
 
 export const DailyAssessmentEnergyLevelList: DailyAssessmentEnergyLevels [] = [

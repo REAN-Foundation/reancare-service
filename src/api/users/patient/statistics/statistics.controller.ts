@@ -3,7 +3,7 @@ import { PatientService } from '../../../../services/users/patient/patient.servi
 import { Authorizer } from '../../../../auth/authorizer';
 import { ResponseHandler } from '../../../../common/response.handler';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
-import { StatisticsService } from '../../../../services/users/patient/statistics.service';
+import { StatisticsService } from '../../../../services/users/patient/statistics/statistics.service';
 import { Loader } from '../../../../startup/loader';
 import { StatisticsValidator } from './statistics.validator';
 import { Helper } from '../../../../common/helper';

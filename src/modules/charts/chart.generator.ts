@@ -97,16 +97,18 @@ export class ChartGenerator {
         const templHtml = 'linear.progress.chart.html';
         const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
         const dataStr = ChartGenerator.createLinearProgressChartTextBlock(data, options);
-        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
+        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options, true);
     };
 
     //#region Common Privates
 
     private static generateChartImage = async (
-        pre: string, dataStr: string, post: string, filename: string, options: BarChartOptions) => {
+        pre: string, dataStr: string, post: string, filename: string, options: BarChartOptions, addMargin = false) => {
         const html = pre + dataStr + post;
         Helper.writeTextToFile(html, `${filename}.html`);
-        return await htmlTextToPNG(html, options.Width, options.Height, `${filename}.png`);
+        const w = addMargin ? Math.round(options.Width * 1.20) : options.Width;
+        const h = addMargin ? Math.round(options.Height * 1.20) : options.Height;
+        return await htmlTextToPNG(html, w, h, `${filename}.png`);
     }
 
     private static extractPrePostTextBlocks(templHtml: string) {
@@ -292,11 +294,11 @@ export class ChartGenerator {
         dataStr += `\tconst percentage = ${data};\n`;
         dataStr += `\tconst width  = ${options.Width};\n`;
         dataStr += `\tconst height = ${options.Height};\n`;
-        dataStr += `\tconst fontSize = ${options.FontSize};\n`;
-        dataStr += `\tconst gradientColor1 = ${options.GradientColor1};\n`;
-        dataStr += `\tconst gradientColor2 = ${options.GradientColor2};\n`;
-        dataStr += `\tconst pathColor = ${options.PathColor};\n`;
-        dataStr += `\tconst textColor = ${options.TextColor};\n`;
+        dataStr += `\tconst fontSize = "${options.FontSize}";\n`;
+        dataStr += `\tconst gradientColor1 = "${options.GradientColor1}";\n`;
+        dataStr += `\tconst gradientColor2 = "${options.GradientColor2}";\n`;
+        dataStr += `\tconst pathColor = "${options.PathColor}";\n`;
+        dataStr += `\tconst textColor = "${options.TextColor}";\n`;
         return dataStr;
     }
 

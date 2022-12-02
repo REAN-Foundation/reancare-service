@@ -94,6 +94,10 @@
 			var percent = percentage;
 			const percentageText = percent.toFixed(0);
 
+			marginTop    = Math.round(height * 0.04);
+			marginRight  = Math.round(width  * 0.04);
+			marginBottom = Math.round(height * 0.04);
+			marginLeft   = Math.round(width  * 0.04);
 
 			var colors = [gradientColor1, gradientColor2, pathColor];
 			const textX = marginLeft + (width / 2);
@@ -104,11 +108,14 @@
 			const symbolHorizontalOffset = percentageText.length * 0.48 * fontSize_;
 			const symbolFontSize = (fontSize_ * .55).toFixed(0) + 'px';
 
+			const widthx = width * 1.1;
+			const heightx = height * 1.1;
+
 			const svg = d3.select(container)
 					.append("svg:svg")
-					.attr("width", width + 50)
-					.attr("height", height + 50)
-					.attr("viewBox", [0, 0, width + 50, height + 50])
+					.attr("width", widthx)
+					.attr("height", heightx)
+					.attr("viewBox", [0, 0, widthx, heightx])
 					.attr("class", 'shadow')
 
 			createGradient(svg,'gradient',colors[0],colors[1]);

@@ -189,9 +189,11 @@ export class StatisticsService {
         };
 
         //User engagement
-        const userTasks = await this._userTaskRepo.getStats(patientUserId, 1);
+        const userTasksForLastMonth = await this._userTaskRepo.getStats(patientUserId, 1);
+        const userEngagementForLast6Months = await this._userTaskRepo.getUserEngagementStats(patientUserId, 6);
         const userTasksTrend = {
-            LastMonth : userTasks,
+            LastMonth   : userTasksForLastMonth,
+            Last6Months : userEngagementForLast6Months,
         };
 
         //Health journey / Careplan stats

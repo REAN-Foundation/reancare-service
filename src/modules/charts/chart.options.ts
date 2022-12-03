@@ -277,13 +277,13 @@ export class DefaultChartOptions {
         const opts: CircularProgressChartOptions = {
             Width          : 350,
             Height         : 350,
-            InnerRadius    : 135,
-            FontSize       : "165px",
+            InnerRadius    : 110,
+            FontSize       : "90px",
             GradientColor1 : '#f2503f',
             GradientColor2 : '#ea0859',
             PathColor      : '#404F70',
             TextColor      : 'slategray',
-            SymbolFontSize : "50px",
+            SymbolFontSize : "40px",
         };
         return opts;
     };

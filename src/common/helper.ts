@@ -568,4 +568,15 @@ export class Helper {
         }
     };
 
+    public static sortObjectKeysAlphabetically = (obj) => {
+        const sorted = Object.keys(obj)
+            .sort()
+            .reduce((accumulator, key) => {
+                accumulator[key] = obj[key];
+
+                return accumulator;
+            }, {});
+        return sorted;
+    };
+
 }

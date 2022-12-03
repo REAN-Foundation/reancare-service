@@ -100,7 +100,7 @@ export default class StatReportCommons {
         return y;
     }
 
-    public addFooter = (document, text, logoImagePath) => {
+    public addFooter = (document: PDFKit.PDFDocument, text, logoImagePath) => {
 
         //var imageFile = path.join(process.cwd(), "./assets/images/REANCare_Footer.png");
         var imageFile = path.join(process.cwd(), logoImagePath);
@@ -121,13 +121,45 @@ export default class StatReportCommons {
     };
 
     public addText = (
-        document, text: string, textX: number, textY: number,
+        document: PDFKit.PDFDocument, text: string, textX: number, textY: number,
         fontSize: number, color: string, alignment: Alignment) => {
         document
             .fontSize(fontSize)
             .fillColor(color)
             .text(text, textX, textY, { align: alignment })
             .moveDown();
+    }
+
+    public addLegend = (document: PDFKit.PDFDocument, y: number,
+        legendItems: any, startX: number, fontSize: number, margin = 10) => {
+
+        y = y + margin;
+        const rowYOffset = 20;
+
+        document
+            .fontSize(fontSize)
+            .fillColor("#444444");
+
+        for (var l of legendItems) {
+
+            const text = l.key;
+            const color = l.color;
+
+            document
+                .roundedRect(startX, y, 75, 30, 3)
+                .lineWidth(0.1)
+                .fillOpacity(0.8)
+                .fill(color);
+
+            document
+                .font('Helvetica')
+                .text(text, startX + 125, y, { align: "left" })
+                .moveDown();
+
+            y = y + rowYOffset;
+        }
+
+        return y;
     }
 
     public addLabeledText = (

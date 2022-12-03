@@ -503,6 +503,44 @@ export class UserTaskRepo implements IUserTaskRepo {
         }
     };
 
+    getUserEngagementStats = async (patientUserId: uuid, numMonths: number): Promise<any> => {
+        try {
+            const numDays = 30 * numMonths;
+            var start = TimeHelper.subtractDuration(new Date(), numDays, DurationType.Day);
+            var end = new Date();
+
+            const unfinished = await UserTask.count({
+                where : {
+                    UserId             : patientUserId,
+                    ScheduledStartTime : {
+                        [Op.gte] : start,
+                        [Op.lte] : end,
+                    },
+                    Cancelled : false,
+                    Finished  : false
+                }
+            });
+            const finished = await UserTask.count({
+                where : {
+                    UserId             : patientUserId,
+                    ScheduledStartTime : {
+                        [Op.gte] : start,
+                        [Op.lte] : end,
+                    },
+                    Cancelled : false,
+                    Finished  : true
+                }
+            });
+            return {
+                Finished   : finished,
+                Unfinished : unfinished,
+            };
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     private async getDayByDayStats(patientUserId: string, numDays: number) {
 
         const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);

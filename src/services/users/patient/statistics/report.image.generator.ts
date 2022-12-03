@@ -1,6 +1,7 @@
+import { Helper } from "../../../../common/helper";
 import { TimeHelper } from "../../../../common/time.helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
-import { LineChartOptions, DefaultChartOptions, BarChartOptions, ChartColors, MultiBarChartOptions, PieChartOptions, LinearProgressChartOptions, MultiLineChartOptions } from "../../../../modules/charts/chart.options";
+import { LineChartOptions, DefaultChartOptions, BarChartOptions, ChartColors, MultiBarChartOptions, PieChartOptions, LinearProgressChartOptions, MultiLineChartOptions, CircledNumberChartOptions, CircularProgressChartOptions } from "../../../../modules/charts/chart.options";
 
 export default class ReportImageGenerator {
 
@@ -15,11 +16,7 @@ export default class ReportImageGenerator {
             chartImagePaths.push(...imageLocations);
             imageLocations = await this.createPhysicalActivityCharts(reportModel.Stats.PhysicalActivity);
             chartImagePaths.push(...imageLocations);
-
             imageLocations = await this.createBiometricsCharts(reportModel.Stats.Biometrics);
-            chartImagePaths.push(...imageLocations);
-
-            imageLocations = await this.createLabRecordsCharts(reportModel.Stats.LabRecords);
             chartImagePaths.push(...imageLocations);
             imageLocations = await this.createSleepTrendCharts(reportModel.Stats.Sleep);
             chartImagePaths.push(...imageLocations);
@@ -27,10 +24,8 @@ export default class ReportImageGenerator {
             chartImagePaths.push(...imageLocations);
             imageLocations = await this.createDailyAssessentCharts(reportModel.Stats.DailyAssessent);
             chartImagePaths.push(...imageLocations);
-
-            // imageLocations = await this.createUserTaskCharts(reportModel.Stats.UserEngagement);
-            // chartImagePaths.push(...imageLocations);
-
+            imageLocations = await this.createUserTaskCharts(reportModel.Stats.UserEngagement);
+            chartImagePaths.push(...imageLocations);
             imageLocations = await this.createCareplanCharts(reportModel.Stats.Careplan);
             chartImagePaths.push(...imageLocations);
 
@@ -72,17 +67,21 @@ export default class ReportImageGenerator {
         private createUserTaskCharts = async (data) => {
             var locations = [];
 
-            let location = await this.createExerciseCalorieForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
+            let location = await this.createUserTasks_StackedBarChart(data.LastMonth.TaskStats, 'UserTasks_LastMonth');
             locations.push({
                 key : 'UserTasks_LastMonth',
                 location
             });
-            location = await this.createExerciseCalorieForMonth_BarChart(data.LastMonth.CalorieStats, 'Exercise_CaloriesBurned_LastMonth');
+            location = await this.createUserEngagement_DonutChart(data.Last6Months, 'UserEngagement_Last6Months');
             locations.push({
-                key : 'UserTasks_LastMonth',
+                key : 'UserEngagement_Last6Months',
                 location
             });
-
+            location = await this.createUserEngagement_CircularProgress(data.Last6Months, 'UserEngagementRation_Last6Months');
+            locations.push({
+                key : 'UserEngagementRation_Last6Months',
+                location
+            });
             return locations;
         }
 
@@ -124,7 +123,7 @@ export default class ReportImageGenerator {
                 key : 'Nutrition_QuestionnaireResponses_LastWeek',
                 location
             });
-            location = await this.createNutritionQueryForMonth_BarChart(qstats, 'Nutrition_QuestionnaireResponses_LastMonth');
+            location = await this.createNutritionQueryForMonth_StackedBarChart(qstats, 'Nutrition_QuestionnaireResponses_LastMonth');
             locations.push({
                 key : 'Nutrition_QuestionnaireResponses_LastMonth',
                 location
@@ -178,7 +177,7 @@ export default class ReportImageGenerator {
 
         private createBodyWeightCharts = async (data) => {
             var locations = [];
-            const location = await this.createBodyWeight_LineChart(data.Last6Months, 'BodyWeight_Last6Months');
+            const location = await this.createBodyWeight_LineChart(data, 'BodyWeight_Last6Months');
             locations.push({
                 key : 'BodyWeight_Last6Months',
                 location
@@ -189,13 +188,13 @@ export default class ReportImageGenerator {
         private createBiometricsCharts = async (data) => {
             var locations = [];
 
-            const bodyWeightLocations = await this.createBodyWeightCharts(data.BodyWeight);
+            const bodyWeightLocations = await this.createBodyWeightCharts(data.Last6Months.BodyWeight);
             locations.push(...bodyWeightLocations);
-            const bloddPressureLocations = await this.createBodyWeightCharts(data.BodyWeight);
+            const bloddPressureLocations = await this.createBloodPressureCharts(data.Last6Months.BloodPressure);
             locations.push(...bloddPressureLocations);
-            const bloodGlucoseLocations = await this.createBodyWeightCharts(data.BodyWeight);
+            const bloodGlucoseLocations = await this.createBloodGlucoseCharts(data.Last6Months.BodyGlucose);
             locations.push(...bloodGlucoseLocations);
-            const cholesterolLocations = await this.createBodyWeightCharts(data.BodyWeight);
+            const cholesterolLocations = await this.createCholesterolCharts(data.Last6Months.Cholesterol);
             locations.push(...cholesterolLocations);
 
             return locations;
@@ -203,11 +202,31 @@ export default class ReportImageGenerator {
 
         //
 
-        private createLabRecordsCharts = async (data) => {
+        private createBloodPressureCharts = async (data) => {
             var locations = [];
-            const location = await this.createBloodPressure_MultiLineChart(data.LastMonth, 'BloodPressure_LastMonth');
+            const location = await this.createBloodPressure_MultiLineChart(data, 'BloodPressure_Last6Months');
             locations.push({
-                key : 'SleepHours_LastMonth',
+                key : 'BloodPressure_Last6Months',
+                location
+            });
+            return locations;
+        };
+
+        private createBloodGlucoseCharts = async (data) => {
+            var locations = [];
+            const location = await this.createBloodGlucose_LineChart(data, 'BloodGlucose_Last6Months');
+            locations.push({
+                key : 'BloodGlucose_Last6Months',
+                location
+            });
+            return locations;
+        };
+
+        private createCholesterolCharts = async (data) => {
+            var locations = [];
+            const location = await this.createCholesterolCharts_MultiLineChart(data, 'Cholesterol_Last6Months');
+            locations.push({
+                key : 'Cholesterol_Last6Months',
                 location
             });
             return locations;
@@ -302,7 +321,7 @@ export default class ReportImageGenerator {
             return await ChartGenerator.createGroupBarChart(temp, options, filename);
         }
 
-        private async createNutritionQueryForMonth_BarChart(stats: any, filename: string) {
+        private async createNutritionQueryForMonth_StackedBarChart(stats: any, filename: string) {
             const temp = stats.map(c => {
                 return {
                     x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
@@ -413,7 +432,7 @@ export default class ReportImageGenerator {
 
             const options: PieChartOptions = {
                 Width  : 550,
-                Height : 275,
+                Height : 550,
                 Colors : [
                     ChartColors.Green,
                     ChartColors.Orange,
@@ -444,7 +463,7 @@ export default class ReportImageGenerator {
 
             const options: PieChartOptions = {
                 Width  : 550,
-                Height : 275,
+                Height : 550,
                 Colors : [
                     ChartColors.Green,
                     ChartColors.Orange,
@@ -530,6 +549,23 @@ export default class ReportImageGenerator {
             return await ChartGenerator.createLineChart(temp, options, filename);
         }
 
+        private async createBloodGlucose_LineChart(stats: any, filename: string) {
+            const temp = stats.map(c => {
+                return {
+                    x : new Date(c.DayStr),
+                    y : c.BloodGlucose
+                };
+            });
+            const options: LineChartOptions = DefaultChartOptions.lineChart();
+            options.Width = 550;
+            options.Height = 275;
+            options.Color = ChartColors.BlueViolet;
+            options.XAxisTimeScaled = true;
+            options.YLabel = 'Body weight';
+
+            return await ChartGenerator.createLineChart(temp, options, filename);
+        }
+
         private async createBloodPressure_MultiLineChart(stats: any, filename: string) {
 
             const temp = [];
@@ -554,35 +590,83 @@ export default class ReportImageGenerator {
             return await ChartGenerator.createMultiLineChart(temp, options, filename);
         }
 
+        private async createCholesterolCharts_MultiLineChart(stats: any, filename: string) {
+
+            const temp = [];
+            for (var c of stats) {
+                temp.push({
+                    x : new Date(c.DayStr),
+                    y : c.TotalCholesterol,
+                    z : 'Total Cholesterol'
+                });
+                temp.push({
+                    x : new Date(c.DayStr),
+                    y : c.HDL,
+                    z : 'HDL'
+                });
+                temp.push({
+                    x : new Date(c.DayStr),
+                    y : c.LDL,
+                    z : 'LDL'
+                });
+                temp.push({
+                    x : new Date(c.DayStr),
+                    y : c.TriglycerideLevel,
+                    z : 'Triglyceride Level'
+                });
+                temp.push({
+                    x : new Date(c.DayStr),
+                    y : c.A1CLevel,
+                    z : 'A1C Level'
+                });
+            }
+            const options: MultiLineChartOptions = DefaultChartOptions.multiLineChart();
+            options.Width = 550;
+            options.Height = 275;
+            options.XAxisTimeScaled = true;
+            options.Categories = ['Total Cholesterol', 'HDL', 'LDL', 'Triglyceride Level', 'A1C Level'];
+
+            return await ChartGenerator.createMultiLineChart(temp, options, filename);
+        }
+
         private async createFeelings_DonutChart(stats: any, filename: string) {
             const feelings_ = stats.map(x => x.Feeling);
-            const feelings = this.findKeyCounts(feelings_);
+            const tempFeelings = this.findKeyCounts(feelings_);
+            const feelings = Helper.sortObjectKeysAlphabetically(tempFeelings);
             const options: PieChartOptions = {
                 Width  : 550,
-                Height : 275,
+                Height : 550,
                 Colors : [
                     ChartColors.GreenLight,
-                    ChartColors.Orange,
                     ChartColors.SkyBlue,
+                    ChartColors.Orange,
+                    ChartColors.Charcoal,
                 ],
             };
             const data = this.constructDonutChartData(feelings);
             return await ChartGenerator.createDonutChart(data, options, filename);
         }
 
-        // feelings = ["Worse", "Same", "Better", "Unspecified"]
-        // moods = ["Happy", "Lonely", "Angry", "Stressed", "Anxious", "Fearful", "Sad", "Hopeful", "Calm", "Status Quo", "Unspecified"]
-        // energy_levels = ["Get off the bed", "Climb stairs", "Exercise", "Walk", "Stand", "Eat", "Get through the day without a nap", "Unspecified"]
-
         private async createMoods_DonutChart(stats: any, filename: string) {
             const moods_ = stats.map(x => x.Mood);
-            const moods = this.findKeyCounts(moods_);
-            const keys = Object.keys(moods);
-            const colors = this.getCategoryColors(keys.length);
+            const tempMoods = this.findKeyCounts(moods_);
+            const moods = Helper.sortObjectKeysAlphabetically(tempMoods);
             const options: PieChartOptions = {
                 Width  : 550,
-                Height : 275,
-                Colors : colors,
+                Height : 550,
+                Colors : [
+                    ChartColors.OrangeRed,
+                    ChartColors.Magenta,
+                    ChartColors.DodgerBlue,
+                    ChartColors.DarkCyan,
+                    ChartColors.SlateGray,
+                    ChartColors.BlueViolet,
+                    ChartColors.Bisque,
+                    ChartColors.Lime,
+                    ChartColors.Bisque,
+                    ChartColors.Charcoal,
+                    ChartColors.DarkCyan,
+                ],
             };
             const data = this.constructDonutChartData(moods);
             return await ChartGenerator.createDonutChart(data, options, filename);
@@ -595,16 +679,91 @@ export default class ReportImageGenerator {
             for (var x of energyLevels_) {
                 e_.push(...x);
             }
-            const energyLevels = this.findKeyCounts(e_);
-            const keys = Object.keys(energyLevels);
-            const colors = this.getCategoryColors(keys.length);
+            const tempEnergyLevels = this.findKeyCounts(e_);
+            const energyLevels = Helper.sortObjectKeysAlphabetically(tempEnergyLevels);
             const options: PieChartOptions = {
                 Width  : 550,
-                Height : 275,
-                Colors : colors,
+                Height : 550,
+                Colors : [
+                    ChartColors.OrangeRed,
+                    ChartColors.Magenta,
+                    ChartColors.DodgerBlue,
+                    ChartColors.DarkCyan,
+                    ChartColors.SlateGray,
+                    ChartColors.BlueViolet,
+                    ChartColors.Bisque,
+                    ChartColors.Lime,
+                ],
             };
             const data = this.constructDonutChartData(energyLevels);
+            return await ChartGenerator.createBubbleChart(data, options, filename);
+        }
+
+        private async createUserEngagement_DonutChart(stats: any, filename: string) {
+            const options: PieChartOptions = {
+                Width  : 550,
+                Height : 550,
+                Colors : [
+                    ChartColors.Green,
+                    ChartColors.Orange,
+                ],
+            };
+            const data = [
+                {
+                    name  : "Finished",
+                    value : stats.Finished,
+                },
+                {
+                    name  : "Unfinished",
+                    value : stats.Unfinished,
+                }
+            ];
             return await ChartGenerator.createDonutChart(data, options, filename);
+        }
+
+        private async createUserEngagement_CircularProgress(stats: any, filename: string) {
+
+            let total = stats.Finished + stats.Unfinished;
+            if (total === 0) {
+                total = 1;
+            }
+            const percentage = (stats.Finished / total) * 100;
+
+            const options: CircularProgressChartOptions = DefaultChartOptions.circularProgress();
+
+            options.Width  = 350;
+            options.Height = 350;
+            options.GradientColor1 = ChartColors.Lime;
+            options.GradientColor2 = ChartColors.DodgerBlue;
+            options.PathColor      = '#404F70';
+
+            return await ChartGenerator.createCircularProgressChart(percentage, options, filename);
+        }
+
+        private async createUserTasks_StackedBarChart(stats: any, filename: string) {
+            const temp = [];
+            for (var c of stats) {
+                temp.push({
+                    x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+                    y : c.Finished,
+                    z : 'Finished'
+                });
+                temp.push({
+                    x : `"${TimeHelper.getDayOfMonthFromISODateStr(c.DayStr)}"`,
+                    y : c.Unfinished,
+                    z : 'Unfinished'
+                });
+            }
+            const options: MultiBarChartOptions = {
+                Width           : 550,
+                Height          : 275,
+                YLabel          : 'User Response',
+                CategoriesCount : 2,
+                Categories      : [ "Finished", "Unfinished"],
+                Colors          : [ ChartColors.Green, ChartColors.OrangeRed ],
+                FontSize        : '9px',
+            };
+            return await ChartGenerator.createStackedBarChart(temp, options, filename);
         }
 
         private constructDonutChartData(x_) {
@@ -631,17 +790,10 @@ export default class ReportImageGenerator {
             return counts;
         }
 
-        private getCategoryColors(length) {
-            const colors:string[] = [];
-            const colorCount = Object.keys(ChartColors);
-
-            return colors;
-        }
-
 }
 
-// [
-//     ChartColors.Green,
-//     ChartColors.Orange,
-//     ChartColors.Blue,
-// ]
+// feelings = ["Better", "Same", "Worse", "Unspecified"]
+// moods = ["Happy", "Lonely", "Angry", "Stressed", "Anxious",
+//  "Fearful", "Sad", "Hopeful", "Calm", "Status Quo", "Unspecified"]
+// energy_levels = ["Get off the bed", "Climb stairs", "Exercise",
+//  "Walk", "Stand", "Eat", "Get through the day without a nap", "Unspecified"]

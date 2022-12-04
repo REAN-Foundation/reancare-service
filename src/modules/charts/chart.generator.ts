@@ -89,7 +89,7 @@ export class ChartGenerator {
         const templHtml = 'circular.progress.chart.html';
         const { pre, post } = ChartGenerator.extractPrePostTextBlocks(templHtml);
         const dataStr = ChartGenerator.createCircularProgressChartTextBlock(data, options);
-        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options);
+        return await ChartGenerator.generateChartImage(pre, dataStr, post, filename, options, true);
     };
 
     static createLinearProgressChart = async (

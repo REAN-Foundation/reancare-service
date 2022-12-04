@@ -732,8 +732,8 @@ export default class ReportImageGenerator {
 
             const options: CircularProgressChartOptions = DefaultChartOptions.circularProgress();
 
-            options.Width  = 350;
-            options.Height = 350;
+            options.Width  = 400;
+            options.Height = 400;
             options.GradientColor1 = ChartColors.Lime;
             options.GradientColor2 = ChartColors.DodgerBlue;
             options.PathColor      = '#404F70';

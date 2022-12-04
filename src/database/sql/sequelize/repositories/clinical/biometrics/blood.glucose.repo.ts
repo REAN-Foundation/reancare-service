@@ -215,4 +215,19 @@ export class BloodGlucoseRepo implements IBloodGlucoseRepo {
         return records;
     }
 
+    getRecent = async (patientUserId: string): Promise<BloodGlucoseDto> => {
+        try {
+            const record = await BloodGlucose.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['RecordDate', 'DESC']]
+            });
+            return await BloodGlucoseMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

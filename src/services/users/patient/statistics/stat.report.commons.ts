@@ -69,16 +69,16 @@ export default class StatReportCommons {
     };
 
     public addSectionTitle = (document: PDFKit.PDFDocument, y: number, pageTitle: string): number => {
-        y = y + 20;
+        y = y + 18;
 
         //DrawLine(document, y);
         document
-            .roundedRect(50, y, 500, 55, 1)
+            .roundedRect(50, y, 500, 40, 2)
             .lineWidth(0.1)
             .fillOpacity(0.8)
             .fill("#e8ecef");
 
-        y = y + 22;
+        y = y + 15;
 
         document
             .fillOpacity(1.0)
@@ -95,7 +95,7 @@ export default class StatReportCommons {
             .text(pageTitle, 35, y, { align: "center" })
             .moveDown();
 
-        y = y + 23;
+        y = y + 20;
 
         return y;
     }
@@ -134,7 +134,9 @@ export default class StatReportCommons {
         legendItems: any, startX: number, fontSize: number, margin = 10) => {
 
         y = y + margin;
-        const rowYOffset = 20;
+
+        const colorStripWidth = 150;
+        const rowYOffset = 17;
 
         document
             .fontSize(fontSize)
@@ -142,18 +144,18 @@ export default class StatReportCommons {
 
         for (var l of legendItems) {
 
-            const text = l.key;
-            const color = l.color;
+            const text = l.Key;
+            const color = l.Color;
 
             document
-                .roundedRect(startX, y, 75, 30, 3)
+                .roundedRect(startX, y, colorStripWidth, 6, 3)
                 .lineWidth(0.1)
                 .fillOpacity(0.8)
                 .fill(color);
 
             document
                 .font('Helvetica')
-                .text(text, startX + 125, y, { align: "left" })
+                .text(text, startX + colorStripWidth + 15, y, { align: "left" })
                 .moveDown();
 
             y = y + rowYOffset;

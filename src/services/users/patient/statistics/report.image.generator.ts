@@ -3,6 +3,15 @@ import { TimeHelper } from "../../../../common/time.helper";
 import { ChartGenerator } from "../../../../modules/charts/chart.generator";
 import { LineChartOptions, DefaultChartOptions, BarChartOptions, ChartColors, MultiBarChartOptions, PieChartOptions, LinearProgressChartOptions, MultiLineChartOptions, CircledNumberChartOptions, CircularProgressChartOptions } from "../../../../modules/charts/chart.options";
 
+//////////////////////////////////////////////////////////////////////////////////
+
+const RECTANGULAR_CHART_WIDTH = 600;
+const RECTANGULAR_CHART_HEIGHT = 250;
+const SQUARE_CHART_WIDTH = 400;
+const SQUARE_CHART_HEIGHT = 400;
+
+//////////////////////////////////////////////////////////////////////////////////
+
 export default class ReportImageGenerator {
 
     //#region Chart image generation
@@ -77,9 +86,9 @@ export default class ReportImageGenerator {
                 key : 'UserEngagement_Last6Months',
                 location
             });
-            location = await this.createUserEngagement_CircularProgress(data.Last6Months, 'UserEngagementRation_Last6Months');
+            location = await this.createUserEngagement_CircularProgress(data.Last6Months, 'UserEngagementRatio_Last6Months');
             locations.push({
-                key : 'UserEngagementRation_Last6Months',
+                key : 'UserEngagementRatio_Last6Months',
                 location
             });
             return locations;
@@ -188,11 +197,11 @@ export default class ReportImageGenerator {
         private createBiometricsCharts = async (data) => {
             var locations = [];
 
-            const bodyWeightLocations = await this.createBodyWeightCharts(data.Last6Months.BodyWeight);
+            const bodyWeightLocations = await this.createBodyWeightCharts(data.Last6Months.BodyWeight.History);
             locations.push(...bodyWeightLocations);
-            const bloddPressureLocations = await this.createBloodPressureCharts(data.Last6Months.BloodPressure);
+            const bloddPressureLocations = await this.createBloodPressureCharts(data.Last6Months.BloodPressure.History);
             locations.push(...bloddPressureLocations);
-            const bloodGlucoseLocations = await this.createBloodGlucoseCharts(data.Last6Months.BloodGlucose);
+            const bloodGlucoseLocations = await this.createBloodGlucoseCharts(data.Last6Months.BloodGlucose.History);
             locations.push(...bloodGlucoseLocations);
             const cholesterolLocations = await this.createCholesterolCharts(data.Last6Months.Cholesterol);
             locations.push(...cholesterolLocations);
@@ -263,8 +272,8 @@ export default class ReportImageGenerator {
                 };
             });
             const options: LineChartOptions = DefaultChartOptions.lineChart();
-            options.Width = 550;
-            options.Height = 275;
+            options.Width  = RECTANGULAR_CHART_WIDTH;
+            options.Height = RECTANGULAR_CHART_HEIGHT;
             options.XAxisTimeScaled = true;
             options.YLabel = 'Calories';
             return await ChartGenerator.createLineChart(lastMonthCalorieStats, options, filename);
@@ -274,7 +283,7 @@ export default class ReportImageGenerator {
             const options: LinearProgressChartOptions = DefaultChartOptions.linearProgress();
             options.Width = 650;
             options.Height = 40;
-            options.GradientColor1 = ChartColors.Green;
+            options.GradientColor1 = ChartColors.MediumSeaGreen;
             options.GradientColor2 = ChartColors.DodgerBlue;
             options.PathColor = ChartColors.GrayDarker;
             options.TextColor = ChartColors.WhiteSmoke;
@@ -289,8 +298,8 @@ export default class ReportImageGenerator {
                 };
             });
             const options: BarChartOptions = {
-                Width  : 550,
-                Height : 275,
+                Width  : RECTANGULAR_CHART_WIDTH,
+                Height : RECTANGULAR_CHART_HEIGHT,
                 YLabel : 'Calories',
                 Color  : ChartColors.GreenLight
             };
@@ -307,8 +316,8 @@ export default class ReportImageGenerator {
                 };
             });
             const options: MultiBarChartOptions = {
-                Width           : 550,
-                Height          : 275,
+                Width           : RECTANGULAR_CHART_WIDTH,
+                Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'User Response',
                 CategoriesCount : 3,
                 Categories      : [ "Healthy", "Protein", "Low Salt" ],
@@ -328,8 +337,8 @@ export default class ReportImageGenerator {
                 };
             });
             const options: MultiBarChartOptions = {
-                Width           : 550,
-                Height          : 275,
+                Width           : RECTANGULAR_CHART_WIDTH,
+                Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'User Response',
                 CategoriesCount : 3,
                 Categories      : [ "Healthy", "Protein", "Low Salt" ],
@@ -348,8 +357,8 @@ export default class ReportImageGenerator {
                 };
             });
             const options: MultiBarChartOptions = {
-                Width           : 550,
-                Height          : 275,
+                Width           : RECTANGULAR_CHART_WIDTH,
+                Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'Servings',
                 CategoriesCount : 5,
                 Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
@@ -374,8 +383,8 @@ export default class ReportImageGenerator {
                 };
             });
             const options: MultiBarChartOptions = {
-                Width           : 550,
-                Height          : 275,
+                Width           : RECTANGULAR_CHART_WIDTH,
+                Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'Servings',
                 CategoriesCount : 5,
                 Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
@@ -399,8 +408,8 @@ export default class ReportImageGenerator {
                 };
             });
             const options: BarChartOptions = {
-                Width  : 550,
-                Height : 275,
+                Width  : RECTANGULAR_CHART_WIDTH,
+                Height : RECTANGULAR_CHART_HEIGHT,
                 YLabel : 'Calories Burned',
                 Color  : ChartColors.OrangeRed
             };
@@ -415,8 +424,8 @@ export default class ReportImageGenerator {
                 };
             });
             const options: BarChartOptions = {
-                Width  : 550,
-                Height : 275,
+                Width  : RECTANGULAR_CHART_WIDTH,
+                Height : RECTANGULAR_CHART_HEIGHT,
                 YLabel : 'User Response',
                 Color  : ChartColors.SpringGreen
             };
@@ -429,8 +438,8 @@ export default class ReportImageGenerator {
             const noCount = stats.filter(c => c.Response === 0).length;
 
             const options: PieChartOptions = {
-                Width  : 550,
-                Height : 550,
+                Width  : SQUARE_CHART_WIDTH,
+                Height : SQUARE_CHART_HEIGHT,
                 Colors : [
                     ChartColors.MediumSeaGreen,
                     ChartColors.Coral,
@@ -460,8 +469,8 @@ export default class ReportImageGenerator {
             const unmarked = total - (missedCount + takenCount);
 
             const options: PieChartOptions = {
-                Width  : 550,
-                Height : 550,
+                Width  : SQUARE_CHART_WIDTH,
+                Height : SQUARE_CHART_HEIGHT,
                 Colors : [
                     ChartColors.MediumSeaGreen,
                     ChartColors.Coral,
@@ -503,8 +512,8 @@ export default class ReportImageGenerator {
             });
 
             const options: MultiBarChartOptions = {
-                Width           : 550,
-                Height          : 275,
+                Width           : RECTANGULAR_CHART_WIDTH,
+                Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'Medication History',
                 CategoriesCount : 2,
                 Categories      : [ "Missed", "Taken" ],
@@ -522,8 +531,8 @@ export default class ReportImageGenerator {
                 };
             });
             const options: BarChartOptions = {
-                Width  : 550,
-                Height : 275,
+                Width  : RECTANGULAR_CHART_WIDTH,
+                Height : RECTANGULAR_CHART_HEIGHT,
                 YLabel : 'Sleep in Hours',
                 Color  : ChartColors.GrayDarker
             };
@@ -539,8 +548,8 @@ export default class ReportImageGenerator {
                 };
             });
             const options: LineChartOptions = DefaultChartOptions.lineChart();
-            options.Width = 550;
-            options.Height = 275;
+            options.Width = RECTANGULAR_CHART_WIDTH;
+            options.Height = RECTANGULAR_CHART_HEIGHT;
             options.XAxisTimeScaled = true;
             options.YLabel = 'Body weight';
 
@@ -555,8 +564,8 @@ export default class ReportImageGenerator {
                 };
             });
             const options: LineChartOptions = DefaultChartOptions.lineChart();
-            options.Width = 550;
-            options.Height = 275;
+            options.Width = RECTANGULAR_CHART_WIDTH;
+            options.Height = RECTANGULAR_CHART_HEIGHT;
             options.Color = ChartColors.BlueViolet;
             options.XAxisTimeScaled = true;
             options.YLabel = 'Blood Glucose';
@@ -580,8 +589,8 @@ export default class ReportImageGenerator {
                 });
             }
             const options: MultiLineChartOptions = DefaultChartOptions.multiLineChart();
-            options.Width = 550;
-            options.Height = 275;
+            options.Width = RECTANGULAR_CHART_WIDTH;
+            options.Height = RECTANGULAR_CHART_HEIGHT;
             options.XAxisTimeScaled = true;
             options.Categories = ['Diastolic', 'Systolic'];
             options.YLabel = 'mmHg';
@@ -613,8 +622,8 @@ export default class ReportImageGenerator {
             temp.push(...records);
 
             const options: MultiLineChartOptions = DefaultChartOptions.multiLineChart();
-            options.Width = 550;
-            options.Height = 275;
+            options.Width = RECTANGULAR_CHART_WIDTH;
+            options.Height = RECTANGULAR_CHART_HEIGHT;
             options.XAxisTimeScaled = true;
             options.YLabel = '';
             options.StrokeWidth = 1.5;
@@ -635,8 +644,8 @@ export default class ReportImageGenerator {
             const tempFeelings = this.findKeyCounts(feelings_);
             const feelings = Helper.sortObjectKeysAlphabetically(tempFeelings);
             const options: PieChartOptions = {
-                Width  : 550,
-                Height : 550,
+                Width  : SQUARE_CHART_WIDTH,
+                Height : SQUARE_CHART_HEIGHT,
                 Colors : [
                     ChartColors.MediumSeaGreen,
                     ChartColors.DodgerBlue,
@@ -653,8 +662,8 @@ export default class ReportImageGenerator {
             const tempMoods = this.findKeyCounts(moods_);
             const moods = Helper.sortObjectKeysAlphabetically(tempMoods);
             const options: PieChartOptions = {
-                Width  : 550,
-                Height : 550,
+                Width  : SQUARE_CHART_WIDTH,
+                Height : SQUARE_CHART_HEIGHT,
                 Colors : [
                     ChartColors.Tomato,
                     ChartColors.Crimson,
@@ -683,8 +692,8 @@ export default class ReportImageGenerator {
             const tempEnergyLevels = this.findKeyCounts(e_);
             const energyLevels = Helper.sortObjectKeysAlphabetically(tempEnergyLevels);
             const options: PieChartOptions = {
-                Width  : 550,
-                Height : 550,
+                Width  : SQUARE_CHART_WIDTH,
+                Height : SQUARE_CHART_HEIGHT,
                 Colors : [
                     ChartColors.OrangeRed,
                     ChartColors.Magenta,
@@ -702,8 +711,8 @@ export default class ReportImageGenerator {
 
         private async createUserEngagement_DonutChart(stats: any, filename: string) {
             const options: PieChartOptions = {
-                Width  : 550,
-                Height : 550,
+                Width  : SQUARE_CHART_WIDTH,
+                Height : SQUARE_CHART_HEIGHT,
                 Colors : [
                     ChartColors.Green,
                     ChartColors.Orange,
@@ -731,9 +740,8 @@ export default class ReportImageGenerator {
             const percentage = (stats.Finished / total) * 100;
 
             const options: CircularProgressChartOptions = DefaultChartOptions.circularProgress();
-
-            options.Width  = 400;
-            options.Height = 400;
+            options.Width  = SQUARE_CHART_WIDTH;
+            options.Height = SQUARE_CHART_HEIGHT;
             options.GradientColor1 = ChartColors.Lime;
             options.GradientColor2 = ChartColors.DodgerBlue;
             options.PathColor      = '#404F70';
@@ -756,8 +764,8 @@ export default class ReportImageGenerator {
                 });
             }
             const options: MultiBarChartOptions = {
-                Width           : 550,
-                Height          : 275,
+                Width           : RECTANGULAR_CHART_WIDTH,
+                Height          : RECTANGULAR_CHART_HEIGHT,
                 YLabel          : 'User Response',
                 CategoriesCount : 2,
                 Categories      : [ "Finished", "Unfinished"],

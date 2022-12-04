@@ -234,4 +234,19 @@ export class BloodPressureRepo implements IBloodPressureRepo {
         return records;
     }
 
+    getRecent = async (patientUserId: string): Promise<BloodPressureDto> => {
+        try {
+            const record = await BloodPressure.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['RecordDate', 'DESC']]
+            });
+            return await BloodPressureMapper.toDto(record);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

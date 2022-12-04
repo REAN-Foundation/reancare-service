@@ -48,6 +48,8 @@ import { ICareplanRepo } from "../../../../database/repository.interfaces/clinic
 import ReportImageGenerator from "./report.image.generator";
 import StatReportCommons from "./stat.report.commons";
 import { Logger } from "../../../../common/logger";
+import { Model } from "sequelize-typescript";
+import { ChartColors } from "../../../../modules/charts/chart.options";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -156,15 +158,38 @@ export class StatisticsService {
 
         //Body weight, Lab values
         const bodyWeightStats = await this._bodyWeightRepo.getStats(patientUserId, 6);
-        const cholesterolStats = await this._labRecordsRepo.getStats(patientUserId, 6);
+        const currentBodyWeight = await this._bodyWeightRepo.getRecent(patientUserId);
+        const sum = bodyWeightStats.reduce((acc, x) => acc + x.BodyWeight, 0);
+        const averageBodyWeight = bodyWeightStats.length === 0 ? null : sum / bodyWeightStats.length;
+
         const bloodPressureStats = await this._bloodPressureRepo.getStats(patientUserId, 6);
+        const currentBloodPressure = await this._bloodPressureRepo.getRecent(patientUserId);
+
         const bloodGlucoseStats = await this._bloodGlucoseRepo.getStats(patientUserId, 6);
+        const currentBloodGlucose = await this._bloodGlucoseRepo.getRecent(patientUserId);
+
+        const cholesterolStats = await this._labRecordsRepo.getStats(patientUserId, 6);
+
         const biometrics = {
             Last6Months : {
-                BloodPressure : bloodPressureStats,
-                BloodGlucose  : bloodGlucoseStats,
-                Cholesterol   : cholesterolStats,
-                BodyWeight    : bodyWeightStats,
+                BloodPressure : {
+                    History                       : bloodPressureStats,
+                    CurrentBloodPressureDiastolic : currentBloodPressure ? currentBloodPressure.Diastolic : null,
+                    CurrentBloodPressureSystolic  : currentBloodPressure ? currentBloodPressure.Systolic : null,
+                    LastMeasuredDate              : currentBloodPressure ? currentBloodPressure.RecordDate : null,
+                },
+                BodyWeight : {
+                    History           : bodyWeightStats,
+                    AverageBodyWeight : averageBodyWeight,
+                    CurrentBodyWeight : currentBodyWeight ? currentBodyWeight.BodyWeight : null,
+                    LastMeasuredDate  : currentBodyWeight ? currentBodyWeight.RecordDate : null,
+                },
+                BloodGlucose : {
+                    History             : bloodGlucoseStats,
+                    CurrentBloodGlucose : currentBloodGlucose ? currentBloodGlucose.BloodGlucose : null,
+                    LastMeasuredDate    : currentBloodGlucose ? currentBloodGlucose.RecordDate : null,
+                },
+                Cholesterol : cholesterolStats,
             }
         };
 
@@ -255,13 +280,16 @@ export class StatisticsService {
 
             var document = PDFGenerator.createDocument(reportTitle, reportModel.Author, writeStream);
 
-            this.addMainPage(document, reportModel, 1);
-            this.addBiometricsPage(document, reportModel, 2);
-            this.addMedicationPage(document, reportModel, 3);
-            this.addNutritionPage(document, reportModel, 4);
-            this.addExercisePage(document, reportModel, 5);
-            this.addSleepPage(document, reportModel, 6);
-            this.addPatientEngagementPage(document, reportModel, 7);
+            let pageNumber = 1;
+            reportModel.TotalPages = 8;
+            pageNumber = this.addMainPage(document, reportModel, pageNumber);
+            pageNumber = this.addBiometricsPageA(document, reportModel, pageNumber);
+            pageNumber = this.addBiometricsPageB(document, reportModel, pageNumber);
+            pageNumber = this.addMedicationPage(document, reportModel, pageNumber);
+            pageNumber = this.addNutritionPage(document, reportModel, pageNumber);
+            pageNumber = this.addExercisePage(document, reportModel, pageNumber);
+            pageNumber = this.addSleepPage(document, reportModel, pageNumber);
+            pageNumber = this.addPatientEngagementPage(document, reportModel, pageNumber);
 
             document.end();
 
@@ -279,13 +307,28 @@ export class StatisticsService {
         y = this.addReportSummary(document, model, y);
         y = this.addHealthJourney(document, model, y);
         this._commons.addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
     };
 
-    private addBiometricsPage = (document, model, pageNumber) => {
+    private addBiometricsPageA = (document, model, pageNumber) => {
         var y = this._commons.addTop(document, model);
-        y = this._commons.addSectionTitle(document, y, 'Biometrics and Vitals');
-        this.addBiometricStats(document, model, y);
+        y = this.addBodyWeightStats(model, document, y);
+        y = y + 15;
+        y = this.addBloodGlucoseStats(model, document, y);
         this._commons.addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
+    };
+
+    private addBiometricsPageB = (document, model, pageNumber) => {
+        var y = this._commons.addTop(document, model);
+        y = this.addBloodPressureStats(model, document, y);
+        y = y + 15;
+        y = this.addCholesterolStats(model, document, y);
+        this._commons.addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
     };
 
     private addMedicationPage = (document, model, pageNumber) => {
@@ -293,6 +336,8 @@ export class StatisticsService {
         y = this._commons.addSectionTitle(document, y, 'Medication History');
         this.addMedicationStats(document, model, y);
         this._commons.addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
     };
 
     private addNutritionPage = (document, model, pageNumber) => {
@@ -300,6 +345,8 @@ export class StatisticsService {
         y = this._commons.addSectionTitle(document, y, 'Food and Nutrition');
         this.addNutritionStats(document, model, y);
         this._commons.addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
     };
 
     private addExercisePage = (document, model, pageNumber) => {
@@ -307,6 +354,8 @@ export class StatisticsService {
         y = this._commons.addSectionTitle(document, y, 'Exercise and Physical Activity');
         this.addExerciseStats(document, model, y);
         this._commons.addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
     };
 
     private addSleepPage = (document, model, pageNumber) => {
@@ -314,6 +363,8 @@ export class StatisticsService {
         y = this._commons.addSectionTitle(document, y, 'Sleep Hours History');
         this.addSleepStats(document, model, y);
         this._commons.addBottom(document, pageNumber, model);
+        pageNumber += 1;
+        return pageNumber;
     };
 
     private addPatientEngagementPage = (document, model, pageNumber) => {
@@ -321,21 +372,8 @@ export class StatisticsService {
         y = this._commons.addSectionTitle(document, y, 'Summary');
         this.addSummaryStats(document, model, y);
         this._commons.addBottom(document, pageNumber, model);
-    };
-
-    private addBiometricStats = (document, model, y) => {
-        y = y + 45;
-
-        const bodyWeightTrendsChart = model.ChartImagePaths.find(x => x.key === 'BodyWeight_Last6Months');
-        document
-            .image(bodyWeightTrendsChart.location, 125, y, { width: 350, align: 'center' });
-        document
-            .fontSize(7);
-        document.moveDown();
-        y = y + 195;
-        this._commons.addText(document, 'Body Weight Trend Over 6 Months', 80, y, 14, '#505050', 'center');
-
-        return y;
+        pageNumber += 1;
+        return pageNumber;
     };
 
     private addMedicationStats = (document, model, y) => {
@@ -664,6 +702,155 @@ export class StatisticsService {
         this._commons.addText(document, 'Health Journey Progress', 75, y, 9, '#505050', 'center');
         return y;
     };
+
+    private addBodyWeightStats(model: any, document: PDFKit.PDFDocument, y: any) {
+
+        const chartImage = 'BodyWeight_Last6Months';
+        const detailedTitle = 'Body Weight (Kg) Trend Over 6 Months';
+        const titleColor = '#505050';
+        const sectionTitle = 'Body Weight';
+
+        y = this._commons.addSectionTitle(document, y, sectionTitle);
+
+        y = y + 25;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 20;
+
+        let value = model.Stats.Biometrics.Last6Months.BodyWeight.AverageBodyWeight.toFixed();
+        y = this.addLabeledText(document, 'Average Weight (Kg)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BodyWeight.CurrentBodyWeight.toString();
+        y = this.addLabeledText(document, 'Current Body Weight (Kg)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BodyWeight.LastMeasuredDate.toLocaleDateString();
+        y = this.addLabeledText(document, 'Last Measured Date', value, y);
+
+        return y;
+    }
+
+    private addBloodPressureStats(model: any, document: PDFKit.PDFDocument, y: any) {
+
+        const chartImage = 'BloodPressure_Last6Months';
+        const detailedTitle = 'Blood Pressure Trend Over 6 Months';
+        const titleColor = '#505050';
+        const sectionTitle = 'Blood Pressure';
+
+        y = this._commons.addSectionTitle(document, y, sectionTitle);
+
+        y = y + 25;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 20;
+
+        let value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureDiastolic.toString();
+        y = this.addLabeledText(document, 'Recent Diastolic BP (mmHg)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BloodPressure.CurrentBloodPressureSystolic.toString();
+        y = this.addLabeledText(document, 'Recent Systolic BP (mmHg)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BloodPressure.LastMeasuredDate.toLocaleDateString();
+        y = this.addLabeledText(document, 'Last Measured Date', value, y);
+
+        return y;
+    }
+
+    private addBloodGlucoseStats(model: any, document: PDFKit.PDFDocument, y: any) {
+
+        const chartImage = 'BloodGlucose_Last6Months';
+        const detailedTitle = 'Blood Glucose Trend Over 6 Months';
+        const titleColor = '#505050';
+        const sectionTitle = 'Blood Glucose';
+
+        y = this._commons.addSectionTitle(document, y, sectionTitle);
+
+        y = y + 25;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 20;
+
+        let value = model.Stats.Biometrics.Last6Months.BloodGlucose.CurrentBloodGlucose?.toString();
+        y = this.addLabeledText(document, 'Recent Blood Glucose (mg/dL)', value, y);
+
+        value = model.Stats.Biometrics.Last6Months.BloodGlucose.LastMeasuredDate?.toLocaleDateString();
+        y = this.addLabeledText(document, 'Last Measured Date', value, y);
+
+        return y;
+    }
+
+    private addCholesterolStats(model: any, document: PDFKit.PDFDocument, y: any) {
+
+        const chartImage = 'Cholesterol_Last6Months';
+        const detailedTitle = 'Lipids Trend Over 6 Months';
+        const titleColor = '#505050';
+        const sectionTitle = 'Lipids';
+
+        const lipidLegend = [
+            {
+                Key   : 'Total Cholesterol',
+                Color : ChartColors.Coral,
+            },
+            {
+                Key   : 'HDL',
+                Color : ChartColors.Green,
+            },
+            {
+                Key   : 'LDL',
+                Color : ChartColors.Fuchsia,
+            },
+            {
+                Key   : 'Triglyceride Level',
+                Color : ChartColors.LightSlateGray,
+            },
+            {
+                Key   : 'A1C Level',
+                Color : ChartColors.DodgerBlue,
+            },
+        ];
+
+        y = this._commons.addSectionTitle(document, y, sectionTitle);
+
+        y = y + 25;
+        y = this.addRectangularChartImage(document, model, chartImage, y, detailedTitle, titleColor);
+        y = y + 20;
+
+        y = this._commons.addLegend(document, y, lipidLegend, 150, 11, 10);
+
+        return y;
+    }
+
+    private addLabeledText(document: PDFKit.PDFDocument, label: string, value: string, y: any) {
+
+        const labelX = 135;
+        const valueX = 325;
+        const rowYOffset = 23;
+
+        document
+            .fontSize(11)
+            .fillColor("#444444");
+
+        y = y + rowYOffset;
+
+        document
+            .font('Helvetica-Bold')
+            .text(label, labelX, y, { align: "left" })
+            .font('Helvetica')
+            .text(value, valueX, y, { align: "left" })
+            .moveDown();
+
+        return y;
+    }
+
+    private addRectangularChartImage(
+        document: PDFKit.PDFDocument, model: any,
+        chartImage: string, y: any, title: string,
+        titleColor: string) {
+        const imageWidth = 350;
+        const chart = model.ChartImagePaths.find(x => x.key === chartImage);
+        document.image(chart.location, 125, y, { width: imageWidth, align: 'center' });
+        document.fontSize(7);
+        document.moveDown();
+        y = y + 160;
+        this._commons.addText(document, title, 80, y, 12, titleColor, 'center');
+        return y;
+    }
 
     //#endregion
 

@@ -183,6 +183,21 @@ export class BodyWeightRepo implements IBodyWeightRepo {
         }
     };
 
+    getRecent = async (patientUserId: string): Promise<BodyWeightDto> => {
+        try {
+            const bodyWeight = await BodyWeight.findOne({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                order : [['CreatedAt', 'DESC']]
+            });
+            return await BodyWeightMapper.toDto(bodyWeight);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     private async getRecords(patientUserId: string, months: number) {
         const today = new Date();
         const from = TimeHelper.subtractDuration(new Date(), months, DurationType.Month);

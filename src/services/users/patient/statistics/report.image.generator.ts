@@ -333,7 +333,7 @@ export default class ReportImageGenerator {
                 YLabel          : 'User Response',
                 CategoriesCount : 3,
                 Categories      : [ "Healthy", "Protein", "Low Salt" ],
-                Colors          : [ ChartColors.LightGreen, ChartColors.DodgerBlue, ChartColors.Charcoal ],
+                Colors          : [ ChartColors.MediumSeaGreen, ChartColors.DodgerBlue, ChartColors.Charcoal ],
                 FontSize        : '9px',
             };
             return await ChartGenerator.createStackedBarChart(temp, options, filename);
@@ -354,7 +354,7 @@ export default class ReportImageGenerator {
                 CategoriesCount : 5,
                 Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
                 Colors          : [
-                    ChartColors.LightGreen,
+                    ChartColors.MediumSeaGreen,
                     ChartColors.Gold,
                     ChartColors.Tan,
                     ChartColors.DodgerBlue,
@@ -380,7 +380,7 @@ export default class ReportImageGenerator {
                 CategoriesCount : 5,
                 Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
                 Colors          : [
-                    ChartColors.LightGreen,
+                    ChartColors.MediumSeaGreen,
                     ChartColors.Gold,
                     ChartColors.Tan,
                     ChartColors.DodgerBlue,
@@ -432,7 +432,7 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 550,
                 Colors : [
-                    ChartColors.LightGreen,
+                    ChartColors.MediumSeaGreen,
                     ChartColors.Coral,
                     ChartColors.DodgerBlue,
                 ],
@@ -463,7 +463,7 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 550,
                 Colors : [
-                    ChartColors.LightGreen,
+                    ChartColors.MediumSeaGreen,
                     ChartColors.Coral,
                     ChartColors.DodgerBlue,
                 ],
@@ -617,13 +617,13 @@ export default class ReportImageGenerator {
             options.Height = 275;
             options.XAxisTimeScaled = true;
             options.YLabel = '';
-            options.StrokeWidth = 2;
+            options.StrokeWidth = 1.5;
             options.Colors = [
                 ChartColors.OrangeLight,
-                ChartColors.LightGreen,
+                ChartColors.MediumSeaGreen,
                 ChartColors.Crimson,
                 ChartColors.Charcoal,
-                ChartColors.BlueViolet
+                ChartColors.DodgerBlue
             ];
             options.Categories = ['Total Cholesterol', 'HDL', 'LDL', 'Triglyceride Level', 'A1C Level'];
 
@@ -638,7 +638,7 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 550,
                 Colors : [
-                    ChartColors.LightGreen,
+                    ChartColors.MediumSeaGreen,
                     ChartColors.DodgerBlue,
                     ChartColors.Charcoal,
                     ChartColors.Coral,
@@ -660,7 +660,7 @@ export default class ReportImageGenerator {
                     ChartColors.Crimson,
                     ChartColors.DodgerBlue,
                     ChartColors.LightSlateGray,
-                    ChartColors.LightGreen,
+                    ChartColors.MediumSeaGreen,
                     ChartColors.Gold,
                     ChartColors.LightGray,
                     ChartColors.DarkSlateBlue,

@@ -178,6 +178,7 @@ export class ChartGenerator {
         dataStr += `\tconst categories      = ${JSON.stringify(options.Categories)}\n`;
         dataStr += `\tconst colors          = ${JSON.stringify(options.Colors)}\n`;
         dataStr += `\tconst yLabel          = "${options.YLabel}"\n`;
+        dataStr += `\tconst strokeWidth     = ${options.StrokeWidth}\n`;
         return dataStr;
     }
 

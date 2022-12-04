@@ -160,13 +160,13 @@ export class ChartGenerator {
         let dataStr = `\n\tconst data = [\n`;
         if (options.XAxisTimeScaled) {
             for (var d of data) {
-                const str = `\t\t{ x: new Date("${d.x?.toISOString()}"), y: ${d.y?.toString()} },\n`;
+                const str = `\t\t{ x: new Date("${d.x?.toISOString()}"), y: ${d.y?.toString()}, z: "${d.z?.toString()}" },\n`;
                 dataStr += str;
             }
         }
         else {
             for (var d of data) {
-                const str = `\t\t{ x: ${d.x?.toString()}, y: ${d.y?.toString()} },\n`;
+                const str = `\t\t{ x: ${d.x?.toString()}, y: ${d.y?.toString()}, z: "${d.z?.toString()}" },\n`;
                 dataStr += str;
             }
         }
@@ -177,6 +177,7 @@ export class ChartGenerator {
         dataStr += `\tconst fontSize        = "${options.FontSize ?? `12px`}";\n`;
         dataStr += `\tconst categories      = ${JSON.stringify(options.Categories)}\n`;
         dataStr += `\tconst colors          = ${JSON.stringify(options.Colors)}\n`;
+        dataStr += `\tconst yLabel          = "${options.YLabel}"\n`;
         return dataStr;
     }
 
@@ -236,7 +237,7 @@ export class ChartGenerator {
     private static createBubbleChartTextBlock(data: any[], options: ChartOptions) {
         let dataStr = `\n\tconst data = [\n`;
         for (var d of data) {
-            const str = `\t\t{ name: "${d.x?.toString()}", value: ${d.y?.toString()} },\n`;
+            const str = `\t\t{ name: "${d.name?.toString()}", value: ${d.value?.toString()} },\n`;
             dataStr += str;
         }
         dataStr += `\t];\n\n`;
@@ -280,12 +281,12 @@ export class ChartGenerator {
         dataStr += `\tconst width  = ${options.Width};\n`;
         dataStr += `\tconst height = ${options.Height};\n`;
         dataStr += `\tconst innerRadius = ${options.InnerRadius};\n`;
-        dataStr += `\tconst fontSize = ${options.FontSize};\n`;
-        dataStr += `\tconst symbolFontSize = ${options.SymbolFontSize};\n`;
-        dataStr += `\tconst gradientColor1 = ${options.GradientColor1};\n`;
-        dataStr += `\tconst gradientColor2 = ${options.GradientColor2};\n`;
-        dataStr += `\tconst pathColor = ${options.PathColor};\n`;
-        dataStr += `\tconst textColor = ${options.TextColor};\n`;
+        dataStr += `\tconst fontSize = "${options.FontSize}";\n`;
+        dataStr += `\tconst symbolFontSize = "${options.SymbolFontSize}";\n`;
+        dataStr += `\tconst gradientColor1 = "${options.GradientColor1}";\n`;
+        dataStr += `\tconst gradientColor2 = "${options.GradientColor2}";\n`;
+        dataStr += `\tconst pathColor = "${options.PathColor}";\n`;
+        dataStr += `\tconst textColor = "${options.TextColor}";\n`;
         return dataStr;
     }
 

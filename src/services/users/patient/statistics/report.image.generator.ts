@@ -192,15 +192,13 @@ export default class ReportImageGenerator {
             locations.push(...bodyWeightLocations);
             const bloddPressureLocations = await this.createBloodPressureCharts(data.Last6Months.BloodPressure);
             locations.push(...bloddPressureLocations);
-            const bloodGlucoseLocations = await this.createBloodGlucoseCharts(data.Last6Months.BodyGlucose);
+            const bloodGlucoseLocations = await this.createBloodGlucoseCharts(data.Last6Months.BloodGlucose);
             locations.push(...bloodGlucoseLocations);
             const cholesterolLocations = await this.createCholesterolCharts(data.Last6Months.Cholesterol);
             locations.push(...cholesterolLocations);
 
             return locations;
         }
-
-        //
 
         private createBloodPressureCharts = async (data) => {
             var locations = [];
@@ -335,7 +333,7 @@ export default class ReportImageGenerator {
                 YLabel          : 'User Response',
                 CategoriesCount : 3,
                 Categories      : [ "Healthy", "Protein", "Low Salt" ],
-                Colors          : [ ChartColors.Green, ChartColors.Blue, ChartColors.GrayMedium ],
+                Colors          : [ ChartColors.MediumSpringGreen, ChartColors.DodgerBlue, ChartColors.Charcoal ],
                 FontSize        : '9px',
             };
             return await ChartGenerator.createStackedBarChart(temp, options, filename);
@@ -356,11 +354,11 @@ export default class ReportImageGenerator {
                 CategoriesCount : 5,
                 Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
                 Colors          : [
-                    ChartColors.Green,
-                    ChartColors.Orange,
-                    ChartColors.BrownLight,
-                    ChartColors.Blue,
-                    ChartColors.Red
+                    ChartColors.MediumSpringGreen,
+                    ChartColors.Gold,
+                    ChartColors.Tan,
+                    ChartColors.DodgerBlue,
+                    ChartColors.Tomato
                 ],
                 FontSize : '14px',
             };
@@ -382,11 +380,11 @@ export default class ReportImageGenerator {
                 CategoriesCount : 5,
                 Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
                 Colors          : [
-                    ChartColors.Green,
-                    ChartColors.Orange,
-                    ChartColors.BrownLight,
-                    ChartColors.Blue,
-                    ChartColors.Red
+                    ChartColors.MediumSpringGreen,
+                    ChartColors.Gold,
+                    ChartColors.Tan,
+                    ChartColors.DodgerBlue,
+                    ChartColors.Tomato
                 ],
                 FontSize : '9px',
             };
@@ -404,7 +402,7 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 275,
                 YLabel : 'Calories Burned',
-                Color  : ChartColors.OrangeYellow
+                Color  : ChartColors.OrangeRed
             };
             return await ChartGenerator.createBarChart(calorieStats, options, filename);
         }
@@ -420,7 +418,7 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 275,
                 YLabel : 'User Response',
-                Color  : ChartColors.GreenLight
+                Color  : ChartColors.SpringGreen
             };
 
             return await ChartGenerator.createBarChart(calorieStats, options, filename);
@@ -434,9 +432,9 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 550,
                 Colors : [
-                    ChartColors.Green,
-                    ChartColors.Orange,
-                    ChartColors.Blue,
+                    ChartColors.MediumSpringGreen,
+                    ChartColors.Coral,
+                    ChartColors.DodgerBlue,
                 ],
             };
 
@@ -465,9 +463,9 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 550,
                 Colors : [
-                    ChartColors.Green,
-                    ChartColors.Orange,
-                    ChartColors.Blue,
+                    ChartColors.MediumSpringGreen,
+                    ChartColors.Coral,
+                    ChartColors.DodgerBlue,
                 ],
             };
 
@@ -561,7 +559,7 @@ export default class ReportImageGenerator {
             options.Height = 275;
             options.Color = ChartColors.BlueViolet;
             options.XAxisTimeScaled = true;
-            options.YLabel = 'Body weight';
+            options.YLabel = 'Blood Glucose';
 
             return await ChartGenerator.createLineChart(temp, options, filename);
         }
@@ -586,44 +584,47 @@ export default class ReportImageGenerator {
             options.Height = 275;
             options.XAxisTimeScaled = true;
             options.Categories = ['Diastolic', 'Systolic'];
+            options.YLabel = 'mmHg';
 
             return await ChartGenerator.createMultiLineChart(temp, options, filename);
         }
 
         private async createCholesterolCharts_MultiLineChart(stats: any, filename: string) {
 
+            const getRecords = (c) => {
+                return {
+                    x : new Date(c.DayStr),
+                    y : c.PrimaryValue,
+                    z : c.DisplayName,
+                };
+            };
+
             const temp = [];
-            for (var c of stats) {
-                temp.push({
-                    x : new Date(c.DayStr),
-                    y : c.TotalCholesterol,
-                    z : 'Total Cholesterol'
-                });
-                temp.push({
-                    x : new Date(c.DayStr),
-                    y : c.HDL,
-                    z : 'HDL'
-                });
-                temp.push({
-                    x : new Date(c.DayStr),
-                    y : c.LDL,
-                    z : 'LDL'
-                });
-                temp.push({
-                    x : new Date(c.DayStr),
-                    y : c.TriglycerideLevel,
-                    z : 'Triglyceride Level'
-                });
-                temp.push({
-                    x : new Date(c.DayStr),
-                    y : c.A1CLevel,
-                    z : 'A1C Level'
-                });
-            }
+
+            let records = stats.TotalCholesterol.map(getRecords);
+            temp.push(...records);
+            records = stats.HDL.map(getRecords);
+            temp.push(...records);
+            records = stats.LDL.map(getRecords);
+            temp.push(...records);
+            records = stats.TriglycerideLevel.map(getRecords);
+            temp.push(...records);
+            records = stats.A1CLevel.map(getRecords);
+            temp.push(...records);
+
             const options: MultiLineChartOptions = DefaultChartOptions.multiLineChart();
             options.Width = 550;
             options.Height = 275;
             options.XAxisTimeScaled = true;
+            options.YLabel = '';
+            options.StrokeWidth = 2;
+            options.Colors = [
+                ChartColors.OrangeLight,
+                ChartColors.MediumSpringGreen,
+                ChartColors.Crimson,
+                ChartColors.Charcoal,
+                ChartColors.BlueViolet
+            ];
             options.Categories = ['Total Cholesterol', 'HDL', 'LDL', 'Triglyceride Level', 'A1C Level'];
 
             return await ChartGenerator.createMultiLineChart(temp, options, filename);
@@ -637,10 +638,10 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 550,
                 Colors : [
-                    ChartColors.GreenLight,
-                    ChartColors.SkyBlue,
-                    ChartColors.Orange,
+                    ChartColors.MediumSpringGreen,
+                    ChartColors.DodgerBlue,
                     ChartColors.Charcoal,
+                    ChartColors.Coral,
                 ],
             };
             const data = this.constructDonutChartData(feelings);
@@ -655,17 +656,17 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 550,
                 Colors : [
-                    ChartColors.OrangeRed,
-                    ChartColors.Magenta,
+                    ChartColors.Tomato,
+                    ChartColors.Crimson,
                     ChartColors.DodgerBlue,
-                    ChartColors.DarkCyan,
-                    ChartColors.SlateGray,
-                    ChartColors.BlueViolet,
-                    ChartColors.Bisque,
-                    ChartColors.Lime,
-                    ChartColors.Bisque,
-                    ChartColors.Charcoal,
-                    ChartColors.DarkCyan,
+                    ChartColors.LightSlateGray,
+                    ChartColors.MediumSpringGreen,
+                    ChartColors.Gold,
+                    ChartColors.LightGray,
+                    ChartColors.DarkSlateBlue,
+                    ChartColors.Cyan,
+                    ChartColors.OrangeRed,
+                    ChartColors.Turquoise,
                 ],
             };
             const data = this.constructDonutChartData(moods);

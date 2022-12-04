@@ -175,12 +175,15 @@ export interface LineChartOptions extends ChartOptions {
     YLabel?         : string;   // 'Day Close $'
     AxisStrokeWidth?: number;   // 3.5;
     AxisColor?      : string;   // "#2E4053";
+    StrokeWidth?    : number;
 }
 
 export interface MultiLineChartOptions extends ChartOptions {
     Colors?: string[];
     Categories?: string[];
     XAxisTimeScaled?: boolean; // true;
+    YLabel?: string;
+    StrokeWidth?: number;
 }
 
 export interface BarChartOptions extends ChartOptions {
@@ -242,6 +245,7 @@ export class DefaultChartOptions {
             YLabel          : '',
             AxisStrokeWidth : 3.5,
             AxisColor       : "#2E4053",
+            StrokeWidth     : 3,
         };
         return opts;
     };
@@ -255,6 +259,7 @@ export class DefaultChartOptions {
             XAxisTimeScaled : true,
             Colors          : [ChartColors.Orange, ChartColors.Green],
             Categories      : ['Y1', 'Y2'],
+            StrokeWidth     : 3,
         };
         return opts;
     };

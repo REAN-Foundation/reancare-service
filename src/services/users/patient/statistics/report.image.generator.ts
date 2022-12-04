@@ -619,10 +619,10 @@ export default class ReportImageGenerator {
             options.YLabel = '';
             options.StrokeWidth = 1.5;
             options.Colors = [
-                ChartColors.OrangeLight,
-                ChartColors.MediumSeaGreen,
-                ChartColors.Crimson,
-                ChartColors.Charcoal,
+                ChartColors.Coral,
+                ChartColors.Green,
+                ChartColors.Fuchsia,
+                ChartColors.LightSlateGray,
                 ChartColors.DodgerBlue
             ];
             options.Categories = ['Total Cholesterol', 'HDL', 'LDL', 'Triglyceride Level', 'A1C Level'];

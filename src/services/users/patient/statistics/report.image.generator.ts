@@ -275,9 +275,9 @@ export default class ReportImageGenerator {
             options.Width = 650;
             options.Height = 40;
             options.GradientColor1 = ChartColors.Green;
-            options.GradientColor2 = ChartColors.GrayMedium;
+            options.GradientColor2 = ChartColors.DodgerBlue;
             options.PathColor = ChartColors.GrayDarker;
-            options.TextColor = ChartColors.Charcoal;
+            options.TextColor = ChartColors.WhiteSmoke;
             return await ChartGenerator.createLinearProgressChart(stats, options, filename);
         }
 
@@ -333,7 +333,7 @@ export default class ReportImageGenerator {
                 YLabel          : 'User Response',
                 CategoriesCount : 3,
                 Categories      : [ "Healthy", "Protein", "Low Salt" ],
-                Colors          : [ ChartColors.MediumSpringGreen, ChartColors.DodgerBlue, ChartColors.Charcoal ],
+                Colors          : [ ChartColors.LightGreen, ChartColors.DodgerBlue, ChartColors.Charcoal ],
                 FontSize        : '9px',
             };
             return await ChartGenerator.createStackedBarChart(temp, options, filename);
@@ -354,7 +354,7 @@ export default class ReportImageGenerator {
                 CategoriesCount : 5,
                 Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
                 Colors          : [
-                    ChartColors.MediumSpringGreen,
+                    ChartColors.LightGreen,
                     ChartColors.Gold,
                     ChartColors.Tan,
                     ChartColors.DodgerBlue,
@@ -380,7 +380,7 @@ export default class ReportImageGenerator {
                 CategoriesCount : 5,
                 Categories      : [ "Veggies", "Fruits", "Grains", "Seafood", "Sugar" ],
                 Colors          : [
-                    ChartColors.MediumSpringGreen,
+                    ChartColors.LightGreen,
                     ChartColors.Gold,
                     ChartColors.Tan,
                     ChartColors.DodgerBlue,
@@ -432,7 +432,7 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 550,
                 Colors : [
-                    ChartColors.MediumSpringGreen,
+                    ChartColors.LightGreen,
                     ChartColors.Coral,
                     ChartColors.DodgerBlue,
                 ],
@@ -463,7 +463,7 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 550,
                 Colors : [
-                    ChartColors.MediumSpringGreen,
+                    ChartColors.LightGreen,
                     ChartColors.Coral,
                     ChartColors.DodgerBlue,
                 ],
@@ -620,7 +620,7 @@ export default class ReportImageGenerator {
             options.StrokeWidth = 2;
             options.Colors = [
                 ChartColors.OrangeLight,
-                ChartColors.MediumSpringGreen,
+                ChartColors.LightGreen,
                 ChartColors.Crimson,
                 ChartColors.Charcoal,
                 ChartColors.BlueViolet
@@ -638,7 +638,7 @@ export default class ReportImageGenerator {
                 Width  : 550,
                 Height : 550,
                 Colors : [
-                    ChartColors.MediumSpringGreen,
+                    ChartColors.LightGreen,
                     ChartColors.DodgerBlue,
                     ChartColors.Charcoal,
                     ChartColors.Coral,
@@ -660,7 +660,7 @@ export default class ReportImageGenerator {
                     ChartColors.Crimson,
                     ChartColors.DodgerBlue,
                     ChartColors.LightSlateGray,
-                    ChartColors.MediumSpringGreen,
+                    ChartColors.LightGreen,
                     ChartColors.Gold,
                     ChartColors.LightGray,
                     ChartColors.DarkSlateBlue,
